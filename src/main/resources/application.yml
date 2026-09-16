@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: meet-me-server
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
