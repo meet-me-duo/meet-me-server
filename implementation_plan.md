@@ -44,7 +44,7 @@
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
 - **아키텍처 자동 검사:** initial commit과 Phase 1에서는 ArchUnit·Konsist를 도입하지 않고 코드 리뷰로 헥사고날 의존 방향을 확인한다. 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 도구를 다시 비교한다.
-- **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR의 `Closes #<issue-number>`로 연결한다. PR은 사람이 읽고 검토하는 위험 기반형 템플릿을 사용하며 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적는다.
+- **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR의 `Closes #<issue-number>`로 연결한다. PR 제목은 `<type>: <summary>` 형식과 허용 type을 지키며 summary를 명사형 한국어로 끝낸다. 본문은 사람이 읽고 검토하는 위험 기반형 템플릿으로 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적는다.
 - **완료 정책:** 예상 참여 인원·제출 마감은 선택 사항이며, 둘 다 없으면 수동 마감 방식을 명시한다. 자동 조건이 있어도 주최자는 경고 후 조기 마감할 수 있다.
 - **최소 인원:** 예상 참여 인원은 2명 이상이며, 모든 종료 방식에서 주최자 포함 고유 제출이 2개 미만이면 `INSUFFICIENT_PARTICIPANTS`로 종료하고 후보를 만들지 않는다.
 - **비동기 전달:** PostgreSQL Transactional Outbox + Redis Streams 확정. PostgreSQL이 작업 상태의 기준이며 Pub/Sub은 비즈니스 작업에 사용하지 않는다.
@@ -64,7 +64,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1이 `develop`에 병합되었다. 이후 작업은 Issue를 먼저 만들고 최신 `develop`에서 feature 브랜치를 생성하여 `Closes #<issue-number>` PR로 검토한다.
-- **현재 작업:** Issue #2의 `ko-KR` locale·MessageSource 기반을 `feature/i18n-foundation`에서 구현하고 검증했다. 병합 후 Issue 연동 개발 흐름과 PR 템플릿을 별도 작업으로 반영한 다음 CI 작업을 진행한다.
+- **현재 작업:** Issue #2의 `ko-KR` locale·MessageSource 기반을 `feature/i18n-foundation`에서 구현하고 검증했다. PR #3 리뷰에서 확인된 제목 형식과 Issue 자동 종료 규칙을 개발 지침·PR 템플릿에 반영했으며, 병합 후 CI 작업을 진행한다.
 
 ## Phase 0 — 프로젝트 기반
 
@@ -94,7 +94,7 @@
 - [x] TDD 가드 단위 테스트를 추가하고 통과시킨다.
 - [x] 선택지 B 위험도 기반 TDD와 Red-Green-Refactor 절차를 개발 규칙으로 확정한다.
 - [x] 고위험 변경의 범위와 테스트 설계자·구현자 책임을 정의한다.
-- [ ] `[AGENT]` 작업 전 GitHub Issue를 생성하고 PR 템플릿의 필수 `Closes #<issue-number>`로 병합 시 자동 종료하는 개발 흐름을 규칙과 템플릿에 반영한다.
+- [x] `[AGENT]` 작업 전 GitHub Issue를 생성하고 PR 템플릿의 필수 `Closes #<issue-number>`로 병합 시 자동 종료하는 개발 흐름을 규칙과 템플릿에 반영한다.
 - [x] RED 증거는 Git 추적 요약 `.tdd/red/<work-item>.json`과 로컬 원본 로그 `.codex/tdd-evidence/<work-item>.log`로 분리하는 선택지 C로 확정한다.
 - [ ] RED 요약 JSON Schema, 파일 수명주기와 로컬 원본 로그의 Git 제외 규칙을 구현한다.
 - [ ] TDD 가드에 RED 근거·테스트 지문 검증과 프로덕션 RED용 `TODO` 차단을 구현한다.
@@ -631,4 +631,4 @@
 | 2026-09-16 | 빈 원격 저장소에 PR 기준점용 `main` 커밋 `64e5759`와 `develop`을 push하고 최신 `develop`에서 `feature/initial-setup` 생성 | `git pull --ff-only origin develop` 성공, 브랜치와 원격 추적 상태 확인 | `64e5759`, 초기 구성은 동일 커밋 예정 |
 | 2026-09-16 | 초기 구성 커밋 전 전체 품질 검사 수행 | TDD 가드 자체 테스트 6개 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정 |
 | 2026-09-16 | Issue #2의 `ko-KR` 기본 locale, `Accept-Language` fallback과 UTF-8 MessageSource 기반 구현 | locale·메시지 focused test 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정, #2 |
-| 2026-09-16 | 작업 전 Issue 생성과 PR의 `Closes #<issue-number>` 자동 종료 흐름을 후속 독립 작업으로 추가 | Issue #2 생성 및 국제화 PR 연결 준비, 변경 단위 원칙 검토 | #2, 후속 PR 예정 |
+| 2026-09-16 | 작업 전 Issue 생성, `<type>: <summary>` 명사형 PR 제목과 `Closes #<issue-number>` 자동 종료 흐름을 개발 규칙·PR 템플릿에 명시 | Issue #2와 PR #3 연결 및 템플릿·개발 규칙 일치 검토 | 동일 커밋 예정, #2, PR #3 |
