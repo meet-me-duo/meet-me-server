@@ -1,3 +1,7 @@
+<!-- PR 제목: <type>: <summary> -->
+<!-- type: feat | fix | refactor | test | docs | chore | build | ci | perf | revert -->
+<!-- summary: 마침표 없이 변경 결과를 설명하고 서술형이 아닌 명사형 한국어로 끝냅니다. 예: feat: ko-KR locale 기반 추가 -->
+
 ## 변경 목적
 
 <!-- 왜 필요한 변경인지, 적용되면 무엇이 달라지는지 작성해주세요. -->
@@ -20,4 +24,6 @@
 
 ## 관련 이슈
 
-<!-- Closes #issue-number -->
+Closes #<issue-number>
+
+<!-- 실제 이슈 번호로 바꿔야 합니다. 자리표시자를 남기거나 이슈 번호 없이 PR을 생성하지 않습니다. -->
