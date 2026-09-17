@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-09-16  
+> **최종 갱신:** 2026-09-17
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -18,12 +18,13 @@
 - 의미 있는 제약이나 복수의 구현 방안이 있으면 장점, 단점, 비용과 장기 영향을 제시하고 사용자 선택을 받은 뒤 진행한다.
 - `TBD`가 걸린 작업은 의사결정 게이트가 완료되기 전에 종속 구현을 시작하지 않는다.
 - 하나의 체크 항목 또는 밀접한 하위 항목 묶음을 하나의 명확한 PR 목적으로 유지한다.
-- 작업 브랜치를 만들기 전에 GitHub Issue를 생성하고 PR 본문에서 `Closes #<issue-number>`로 연결하여 `develop` 병합 시 자동 종료한다.
+- 작업 브랜치를 만들기 전에 GitHub Issue를 생성하고 PR 본문의 독립된 `Closes #<issue-number>` 행으로 연결한다. 프로젝트 GitHub Action이 형식과 열린 Issue 참조를 검증하고 `develop` 병합 시 자동 종료한다.
 - 사용자와의 대화에서 범위, 우선순위, 작업 순서 또는 결정이 바뀌면 이 계획도 현재 합의에 맞게 수정한다.
 - 빈 원격 저장소의 초기 구성만 `main`에 기준점용 커밋을 만든 뒤 `develop`과 `feature/initial-setup`을 생성하여 PR로 검토한다. 이 초기 절차가 끝난 뒤에는 예외 없이 최신 `develop`에서 feature 브랜치를 만드는 일반 브랜치 전략을 적용한다.
 - 작업 완료 시 체크박스, 최종 갱신일과 하단 진행 기록을 함께 갱신한다.
 - 사용자가 완료된 작업의 커밋과 푸시를 요청하면, 커밋 전에 완료 체크박스, 현재 진행 요약, 최종 갱신일과 진행 기록을 먼저 실제 상태에 맞게 반영한다.
 - 커밋 전 진행 기록의 Commit/PR 칸은 `동일 커밋 예정`으로 기록할 수 있으며, 실제 커밋 해시는 Git 이력을 기준으로 추적한다.
+- 한 단위 작업의 구현·검증이 끝나면 PR 생성 전에 제목과 본문 전체 초안을 사용자에게 보여주고 그 내용 그대로 생성할지 확인받는다. 승인 전에는 PR을 생성하지 않으며, 초안이 실질적으로 바뀌면 다시 확인받는다.
 - 비밀정보, 개인정보, OAuth 토큰과 외부 API 키는 이 문서와 Issue/PR/로그에 기록하지 않는다.
 
 ### 책임 표기
@@ -44,7 +45,7 @@
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
 - **아키텍처 자동 검사:** initial commit과 Phase 1에서는 ArchUnit·Konsist를 도입하지 않고 코드 리뷰로 헥사고날 의존 방향을 확인한다. 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 도구를 다시 비교한다.
-- **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR의 `Closes #<issue-number>`로 연결한다. PR 제목은 `<type>: <summary>` 형식과 허용 type을 지키며 summary를 명사형 한국어로 끝낸다. 본문은 사람이 읽고 검토하는 위험 기반형 템플릿으로 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적는다.
+- **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR 본문의 독립된 `Closes #<issue-number>` 행으로 연결한다. 프로젝트 GitHub Action은 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 종료한다. PR 제목은 `<type>: <summary>` 형식과 허용 type을 지키며 summary를 명사형 한국어로 끝낸다. 본문은 사람이 읽고 검토하는 위험 기반형 템플릿으로 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적고, 생성 전에 전체 초안을 사용자에게 보여준 뒤 승인을 받는다.
 - **완료 정책:** 예상 참여 인원·제출 마감은 선택 사항이며, 둘 다 없으면 수동 마감 방식을 명시한다. 자동 조건이 있어도 주최자는 경고 후 조기 마감할 수 있다.
 - **최소 인원:** 예상 참여 인원은 2명 이상이며, 모든 종료 방식에서 주최자 포함 고유 제출이 2개 미만이면 `INSUFFICIENT_PARTICIPANTS`로 종료하고 후보를 만들지 않는다.
 - **비동기 전달:** PostgreSQL Transactional Outbox + Redis Streams 확정. PostgreSQL이 작업 상태의 기준이며 Pub/Sub은 비즈니스 작업에 사용하지 않는다.
@@ -63,8 +64,8 @@
 - **시간 결과:** 탐색 범위에서 자연어 조건을 실제 날짜별 구간으로 확장하고 후보별 포함 참여자의 Calendar 불가 시간을 차감한다. 구조화 후보와 MessageSource 템플릿 자연어 요약을 함께 반환하며 실제 날짜 공지는 주최자가 담당한다.
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
-- **GitHub:** 초기 구성 PR #1이 `develop`에 병합되었다. 이후 작업은 Issue를 먼저 만들고 최신 `develop`에서 feature 브랜치를 생성하여 `Closes #<issue-number>` PR로 검토한다.
-- **현재 작업:** Issue #2의 `ko-KR` locale·MessageSource 기반을 `feature/i18n-foundation`에서 구현하고 검증했다. PR #3 리뷰에서 확인된 제목 형식과 Issue 자동 종료 규칙을 개발 지침·PR 템플릿에 반영했으며, 병합 후 CI 작업을 진행한다.
+- **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
+- **현재 작업:** Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료를 `feature/ci-issue-automation`에서 구현했다. 파서·Issue API 처리 테스트 9개, actionlint v1.7.12와 `ktlintCheck`, `assemble`, `test`가 로컬에서 통과했으며 PR에서 실제 GitHub Actions 실행과 병합 후 자동 종료 검증이 남았다.
 
 ## Phase 0 — 프로젝트 기반
 
@@ -94,7 +95,7 @@
 - [x] TDD 가드 단위 테스트를 추가하고 통과시킨다.
 - [x] 선택지 B 위험도 기반 TDD와 Red-Green-Refactor 절차를 개발 규칙으로 확정한다.
 - [x] 고위험 변경의 범위와 테스트 설계자·구현자 책임을 정의한다.
-- [x] `[AGENT]` 작업 전 GitHub Issue를 생성하고 PR 템플릿의 필수 `Closes #<issue-number>`로 병합 시 자동 종료하는 개발 흐름을 규칙과 템플릿에 반영한다.
+- [x] `[AGENT]` 작업 전 GitHub Issue를 생성하고 PR 템플릿의 필수 `Closes #<issue-number>`로 연결하는 개발 흐름을 규칙과 템플릿에 반영한다.
 - [x] RED 증거는 Git 추적 요약 `.tdd/red/<work-item>.json`과 로컬 원본 로그 `.codex/tdd-evidence/<work-item>.log`로 분리하는 선택지 C로 확정한다.
 - [ ] RED 요약 JSON Schema, 파일 수명주기와 로컬 원본 로그의 Git 제외 규칙을 구현한다.
 - [ ] TDD 가드에 RED 근거·테스트 지문 검증과 프로덕션 RED용 `TODO` 차단을 구현한다.
@@ -105,6 +106,7 @@
 - [ ] 고위험 변경의 독립 테스트 검토와 의도적 결함 주입 결과를 품질 게이트에 연결한다.
 - [ ] `[USER]` Codex `/hooks`에서 현재 프로젝트 훅 정의를 검토하고 신뢰 등록한다.
 - [ ] `[AGENT]` CI에서 `ktlintCheck`, `assemble`, `test`를 실행하는 GitHub Actions 워크플로를 추가한다.
+- [ ] `[AGENT]` PR의 `Closes #<issue-number>` 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 자동 종료하는 GitHub Action을 추가한다.
 - [x] 아키텍처 자동 검사는 initial commit과 Phase 1에서 제외하고 코드 리뷰로 의존 방향을 확인하도록 결정한다.
 - [ ] `[DEFERRED]` 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 ArchUnit·Konsist의 Kotlin 호환성, 검사 범위와 유지 비용을 다시 비교한다.
 - [ ] `[DEFERRED]` 후속 도구를 채택하면 `domain <- application <- adapter` 의존성 규칙을 자동 검증한다.
@@ -632,3 +634,5 @@
 | 2026-09-16 | 초기 구성 커밋 전 전체 품질 검사 수행 | TDD 가드 자체 테스트 6개 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정 |
 | 2026-09-16 | Issue #2의 `ko-KR` 기본 locale, `Accept-Language` fallback과 UTF-8 MessageSource 기반 구현 | locale·메시지 focused test 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정, #2 |
 | 2026-09-16 | 작업 전 Issue 생성, `<type>: <summary>` 명사형 PR 제목과 `Closes #<issue-number>` 자동 종료 흐름을 개발 규칙·PR 템플릿에 명시 | Issue #2와 PR #3 연결 및 템플릿·개발 규칙 일치 검토 | 동일 커밋 예정, #2, PR #3 |
+| 2026-09-17 | Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료 구현. GitHub 기본 closing keyword가 비기본 브랜치에서 무시되는 경계를 프로젝트 Action으로 보완 | 파서·Issue API 처리 테스트 9개 통과, actionlint v1.7.12 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정, #4 |
+| 2026-09-17 | 단위 작업 완료 후 PR 제목·본문 전체 초안을 사용자에게 제시하고 승인 뒤 생성하는 검토 흐름 추가 | Development Rules와 운영 규칙 간 일치 검토 | 동일 커밋 예정, #4 |

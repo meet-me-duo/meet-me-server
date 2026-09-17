@@ -1,0 +1,113 @@
+name: Issue Lifecycle
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  validate-link:
+    name: Validate Issue Link
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: read
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v7
+
+      - name: Test issue link parser
+        run: node --test .github/scripts/issue-links.test.cjs
+
+      - name: Validate linked issues
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const path = require("node:path");
+            const { extractClosingIssueNumbers, validateIssueReferences } = require(
+              path.join(process.env.GITHUB_WORKSPACE, ".github/scripts/issue-links.cjs")
+            );
+
+            const issueNumbers = extractClosingIssueNumbers(
+              context.payload.pull_request.body
+            );
+            if (issueNumbers.length === 0) {
+              core.setFailed(
+                "PR 본문에 독립된 `Closes #<issue-number>` 행이 필요합니다."
+              );
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const invalidReferences = await validateIssueReferences({
+              github,
+              owner,
+              repo,
+              issueNumbers,
+            });
+
+            if (invalidReferences.length > 0) {
+              core.setFailed(invalidReferences.join("\n"));
+            }
+
+  close-linked-issues:
+    name: Close Linked Issues
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'develop'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Check out merged base branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      - name: Test issue link parser
+        run: node --test .github/scripts/issue-links.test.cjs
+
+      - name: Close linked issues
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const path = require("node:path");
+            const { closeLinkedIssues, extractClosingIssueNumbers } = require(
+              path.join(process.env.GITHUB_WORKSPACE, ".github/scripts/issue-links.cjs")
+            );
+
+            const pullRequest = context.payload.pull_request;
+            const issueNumbers = extractClosingIssueNumbers(pullRequest.body);
+            if (issueNumbers.length === 0) {
+              core.setFailed(
+                "병합된 PR 본문에 유효한 `Closes #<issue-number>` 행이 없습니다."
+              );
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            await closeLinkedIssues({
+              github,
+              owner,
+              repo,
+              issueNumbers,
+              pullRequest,
+              log: (message) => core.info(message),
+            });
