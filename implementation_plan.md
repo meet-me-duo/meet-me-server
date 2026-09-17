@@ -39,8 +39,9 @@
 
 - **현재 단계:** Phase 0 — 프로젝트 기반
 - **제품 기능:** 미착수
-- **현재 차단 사항:** Phase 1 착수를 막는 아키텍처 결정은 없다. 인증·Gemini 등 후속 기능은 각 Decision Gate의 남은 세부값을 구현 직전에 확정한다.
-- **현재 사용자 개입:** `[USER]` Codex `/hooks`에서 프로젝트 훅 정의 검토 및 신뢰 등록
+- **출시 목표:** 사용자가 2026-09-19 출시 목표를 공유했다. 되돌리기 쉬운 내부 세부사항은 권장안으로 즉시 진행하고 제품 범위·보안·데이터 호환성·외부 계약을 바꾸는 필수 결정만 사용자와 논의한다.
+- **현재 차단 사항:** Phase 1 착수를 막는 아키텍처 결정은 없지만 제품 기능이 미착수여서 2026-09-19에 전체 MVP를 출시하는 일정은 현재 범위와 양립하기 어렵다. 출시 대상을 핵심 데모로 축소할지 전체 MVP를 유지할지 결정이 필요하다.
+- **현재 사용자 개입:** `[USER]` Codex `/hooks`에서 프로젝트 훅 정의 검토 및 신뢰 등록. 실제 Gemini API Key는 Git에서 제외된 `.env.local`의 `GEMINI_API_KEY=` 뒤에 직접 입력하고 값은 저장소·채팅에 공유하지 않는다. GitHub Actions·배포 연동 직전에 에이전트가 같은 이름의 GitHub Secret 등록 위치와 확인 절차를 안내한다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
@@ -65,7 +66,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료를 `feature/ci-issue-automation`에서 구현하고 PR #5를 생성했다. 파서·Issue API 처리 테스트 9개, actionlint v1.7.12, `ktlintCheck`, `assemble`, `test`와 PR의 `Quality Gate`·`Validate Issue Link`가 통과했으며 병합 후 Issue #4 자동 종료 검증이 남았다.
+- **현재 작업:** PR #5가 `develop`에 병합됐고 `Close Linked Issues` 성공으로 Issue #4가 `completed` 종료됐다. Issue #6의 RED 증거 JSON Schema, 수명주기와 로컬 원본 로그 Git 제외 규칙을 `feature/tdd-red-evidence-contract`에서 구현하고 검증했다. 사용자 요청에 따라 실제 값이 비어 있는 로컬 `.env.local`, 추적 가능한 `.env.example`과 Git 제외 규칙도 준비했다.
 
 ## Phase 0 — 프로젝트 기반
 
@@ -78,6 +79,7 @@
 - [x] Spring MVC, Validation, Actuator와 springdoc-openapi 기본 의존성을 구성한다.
 - [x] `ko-KR` 기본 message bundle, `Accept-Language` 해석과 fallback 기반을 구성한다.
 - [x] Flyway SQL 마이그레이션 기본 경로 `src/main/resources/db/migration`을 준비한다.
+- [x] `[AGENT]` 실제 Secret을 넣는 로컬 `.env.local`을 Git에서 제외하고 키 이름만 있는 `.env.example`을 제공한다.
 - [x] 애플리케이션 컨텍스트 기동 테스트를 추가한다.
 - [x] `ktlintCheck`, `assemble`, `test`가 통과하는지 검증한다.
 - [x] GitHub Issue와 사람이 읽기 쉬운 위험 기반형 Pull Request 템플릿을 구성한다.
@@ -97,7 +99,7 @@
 - [x] 고위험 변경의 범위와 테스트 설계자·구현자 책임을 정의한다.
 - [x] `[AGENT]` 작업 전 GitHub Issue를 생성하고 PR 템플릿의 필수 `Closes #<issue-number>`로 연결하는 개발 흐름을 규칙과 템플릿에 반영한다.
 - [x] RED 증거는 Git 추적 요약 `.tdd/red/<work-item>.json`과 로컬 원본 로그 `.codex/tdd-evidence/<work-item>.log`로 분리하는 선택지 C로 확정한다.
-- [ ] RED 요약 JSON Schema, 파일 수명주기와 로컬 원본 로그의 Git 제외 규칙을 구현한다.
+- [x] RED 요약 JSON Schema, 파일 수명주기와 로컬 원본 로그의 Git 제외 규칙을 구현한다.
 - [ ] TDD 가드에 RED 근거·테스트 지문 검증과 프로덕션 RED용 `TODO` 차단을 구현한다.
 - [x] PIT는 initial commit과 Phase 1의 품질 게이트에서 제외하고 핵심 결정론적 매칭 로직 구현 후 효과가 큰 패키지에만 선택 적용하는 선택지 B로 조정한다.
 - [ ] `[DEFERRED]` 시간 교집합·장소 영역·후보 점수 구현 후 PIT 도입 실익, Kotlin 호환성과 실행 비용을 재평가한다.
@@ -106,7 +108,7 @@
 - [ ] 고위험 변경의 독립 테스트 검토와 의도적 결함 주입 결과를 품질 게이트에 연결한다.
 - [ ] `[USER]` Codex `/hooks`에서 현재 프로젝트 훅 정의를 검토하고 신뢰 등록한다.
 - [x] `[AGENT]` CI에서 `ktlintCheck`, `assemble`, `test`를 실행하는 GitHub Actions 워크플로를 추가한다.
-- [ ] `[AGENT]` PR의 `Closes #<issue-number>` 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 자동 종료하는 GitHub Action을 추가한다.
+- [x] `[AGENT]` PR의 `Closes #<issue-number>` 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 자동 종료하는 GitHub Action을 추가한다.
 - [x] 아키텍처 자동 검사는 initial commit과 Phase 1에서 제외하고 코드 리뷰로 의존 방향을 확인하도록 결정한다.
 - [ ] `[DEFERRED]` 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 ArchUnit·Konsist의 Kotlin 호환성, 검사 범위와 유지 비용을 다시 비교한다.
 - [ ] `[DEFERRED]` 후속 도구를 채택하면 `domain <- application <- adapter` 의존성 규칙을 자동 검증한다.
@@ -636,3 +638,6 @@
 | 2026-09-16 | 작업 전 Issue 생성, `<type>: <summary>` 명사형 PR 제목과 `Closes #<issue-number>` 자동 종료 흐름을 개발 규칙·PR 템플릿에 명시 | Issue #2와 PR #3 연결 및 템플릿·개발 규칙 일치 검토 | 동일 커밋 예정, #2, PR #3 |
 | 2026-09-17 | Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료 구현. GitHub 기본 closing keyword가 비기본 브랜치에서 무시되는 경계를 프로젝트 Action으로 보완 | 파서·Issue API 처리 테스트 9개, actionlint v1.7.12, `ktlintCheck`, `assemble`, `test`와 PR `Quality Gate`·`Validate Issue Link` 통과 | `0523463`, #4, PR #5 |
 | 2026-09-17 | 단위 작업 완료 후 PR 제목·본문 전체 초안을 사용자에게 제시하고 승인 뒤 생성하는 검토 흐름 추가 | Development Rules와 운영 규칙 간 일치 검토 | `0523463`, #4, PR #5 |
+| 2026-09-17 | PR #5 병합 후 `Close Linked Issues` 성공과 Issue #4 `completed` 종료 확인 | GitHub PR·Issue 상태와 `develop` 병합 커밋 `b0fed8a` 확인 | `b0fed8a`, #4, PR #5 |
+| 2026-09-17 | Issue #6의 RED 증거 Draft 2020-12 JSON Schema, 생성·무효화·보존 수명주기와 로컬 원본 로그 Git 제외 규칙 추가. 2026-09-19 출시 목표와 권장안 우선 결정 원칙 반영 | 계약 테스트 5개, 전체 훅 테스트 11개, `git check-ignore`, `ktlintCheck`, `assemble`, `test` 통과 | 동일 커밋 예정, #6 |
+| 2026-09-17 | 실제 Gemini API Key 입력용 로컬 `.env.local`, 키 이름만 있는 `.env.example`과 Secret Git 제외 규칙 추가. 후속 GitHub Actions·배포 Secret은 종속 구현 직전 사용자 행동 가이드를 제공하도록 계획에 명시 | `.env.local` ignore 및 `.env.example` 추적 대상 확인, 실제 값 미포함 확인 | 동일 커밋 예정, #6 |
