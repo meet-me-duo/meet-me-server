@@ -7,5 +7,9 @@ out/
 *.iml
 __pycache__/
 *.py[cod]
+/.env
+/.env.*
+!/.env.example
+/.codex/tdd-evidence/
 
 !gradle/wrapper/gradle-wrapper.jar

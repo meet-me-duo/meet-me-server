@@ -16,6 +16,19 @@ AI 기반 일정 조율 서비스의 Spring Boot/Kotlin 백엔드입니다. 핵�
 
 Windows PowerShell에서는 `./gradlew.bat`을 사용합니다.
 
+## 로컬 비밀정보
+
+`.env.example`을 기준으로 저장소 루트의 `.env.local`에 실제 값을 입력합니다.
+`.env.local`은 Git에서 제외되며 실제 API Key, Client Secret과 Token은 채팅,
+Issue, PR 또는 커밋에 남기지 않습니다.
+
+```properties
+GEMINI_API_KEY=
+```
+
+현재 파일은 안전한 입력 위치만 준비한 상태입니다. Gemini 어댑터를 구현할 때
+`GEMINI_API_KEY` 환경 변수 주입과 GitHub Actions Secret 참조를 연결합니다.
+
 Codex가 `git commit`을 실행할 때 같은 검증이 `.codex/hooks/tdd_guard.py`를
 통해 자동으로 실행됩니다. 프로덕션 Kotlin 코드가 변경되었다면
 `src/test/kotlin` 아래의 테스트도 함께 변경해야 합니다.
