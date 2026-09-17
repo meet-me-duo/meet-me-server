@@ -65,7 +65,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료를 `feature/ci-issue-automation`에서 구현했다. 파서·Issue API 처리 테스트 9개, actionlint v1.7.12와 `ktlintCheck`, `assemble`, `test`가 로컬에서 통과했으며 PR에서 실제 GitHub Actions 실행과 병합 후 자동 종료 검증이 남았다.
+- **현재 작업:** Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료를 `feature/ci-issue-automation`에서 구현하고 PR #5를 생성했다. 파서·Issue API 처리 테스트 9개, actionlint v1.7.12, `ktlintCheck`, `assemble`, `test`와 PR의 `Quality Gate`·`Validate Issue Link`가 통과했으며 병합 후 Issue #4 자동 종료 검증이 남았다.
 
 ## Phase 0 — 프로젝트 기반
 
@@ -105,7 +105,7 @@
 - [ ] 의도적 결함 주입 시나리오와 검토 결과 기록 형식을 확정한다.
 - [ ] 고위험 변경의 독립 테스트 검토와 의도적 결함 주입 결과를 품질 게이트에 연결한다.
 - [ ] `[USER]` Codex `/hooks`에서 현재 프로젝트 훅 정의를 검토하고 신뢰 등록한다.
-- [ ] `[AGENT]` CI에서 `ktlintCheck`, `assemble`, `test`를 실행하는 GitHub Actions 워크플로를 추가한다.
+- [x] `[AGENT]` CI에서 `ktlintCheck`, `assemble`, `test`를 실행하는 GitHub Actions 워크플로를 추가한다.
 - [ ] `[AGENT]` PR의 `Closes #<issue-number>` 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 자동 종료하는 GitHub Action을 추가한다.
 - [x] 아키텍처 자동 검사는 initial commit과 Phase 1에서 제외하고 코드 리뷰로 의존 방향을 확인하도록 결정한다.
 - [ ] `[DEFERRED]` 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 ArchUnit·Konsist의 Kotlin 호환성, 검사 범위와 유지 비용을 다시 비교한다.
@@ -634,5 +634,5 @@
 | 2026-09-16 | 초기 구성 커밋 전 전체 품질 검사 수행 | TDD 가드 자체 테스트 6개 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정 |
 | 2026-09-16 | Issue #2의 `ko-KR` 기본 locale, `Accept-Language` fallback과 UTF-8 MessageSource 기반 구현 | locale·메시지 focused test 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정, #2 |
 | 2026-09-16 | 작업 전 Issue 생성, `<type>: <summary>` 명사형 PR 제목과 `Closes #<issue-number>` 자동 종료 흐름을 개발 규칙·PR 템플릿에 명시 | Issue #2와 PR #3 연결 및 템플릿·개발 규칙 일치 검토 | 동일 커밋 예정, #2, PR #3 |
-| 2026-09-17 | Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료 구현. GitHub 기본 closing keyword가 비기본 브랜치에서 무시되는 경계를 프로젝트 Action으로 보완 | 파서·Issue API 처리 테스트 9개 통과, actionlint v1.7.12 통과, `ktlintCheck`, `assemble`, `test` 성공 | 동일 커밋 예정, #4 |
-| 2026-09-17 | 단위 작업 완료 후 PR 제목·본문 전체 초안을 사용자에게 제시하고 승인 뒤 생성하는 검토 흐름 추가 | Development Rules와 운영 규칙 간 일치 검토 | 동일 커밋 예정, #4 |
+| 2026-09-17 | Issue #4의 기본 CI와 `develop` 병합 Issue 자동 종료 구현. GitHub 기본 closing keyword가 비기본 브랜치에서 무시되는 경계를 프로젝트 Action으로 보완 | 파서·Issue API 처리 테스트 9개, actionlint v1.7.12, `ktlintCheck`, `assemble`, `test`와 PR `Quality Gate`·`Validate Issue Link` 통과 | `0523463`, #4, PR #5 |
+| 2026-09-17 | 단위 작업 완료 후 PR 제목·본문 전체 초안을 사용자에게 제시하고 승인 뒤 생성하는 검토 흐름 추가 | Development Rules와 운영 규칙 간 일치 검토 | `0523463`, #4, PR #5 |
