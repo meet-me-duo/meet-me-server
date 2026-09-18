@@ -101,6 +101,15 @@ Inbound Adapter
 - **Inbound Ports:** 방 생성, 참여, 조건 제출·본인 최신 입력 조회, 지연된 방 분석 재요청, 매칭 실행, 최종 확정과 같은 시스템 진입점을 정의한다.
 - **Outbound Ports:** 데이터 저장, 캐시, 자연어 파싱, OAuth, 캘린더 조회, 좌표 변환과 같은 외부 의존성을 추상화한다.
 
+핵심 도메인은 다음 네 Aggregate 경계를 사용한다.
+
+- `MeetingRoom`: 방 설정, 입력 수집 상태, 종료 정책·원인과 탐색 날짜 범위를 소유한다.
+- `Participant`: 방별 참여와 `HOST`·`MEMBER` 역할 및 익명 브라우저 세션 소유권을 표현한다.
+- `Submission`: 참여자별 제출 head와 최신 불변 제출 버전을 소유한다. 과거 버전은 PostgreSQL에 보존하되 Aggregate를 불필요하게 키우지 않는다.
+- `CoordinationRun`: 마감 시 고정한 제출 배치, 조율 작업 상태, 후보 품질·목록과 최종 확정을 소유한다.
+
+Aggregate 사이 불변식과 여러 저장소를 묶는 원자성은 Application 서비스와 PostgreSQL 제약으로 조정한다. 한 방의 참여자·제출 전체를 `MeetingRoom` 안에 적재하지 않아 동시 제출 시 거대한 Aggregate 경합을 피한다. 소셜 `User`와 공급자 계정은 제출 MVP Aggregate에 포함하지 않고 Post-MVP 경계로 유지한다.
+
 ### 어댑터 영역
 
 - **Web Adapter:** HTTP 요청 검증, 인증 주체 해석, DTO 변환과 응답 직렬화를 담당한다.
@@ -265,6 +274,7 @@ LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않
 - 방은 탐색 범위 출처를 주최자 명시 또는 기본 14일 적용으로 구분해 저장한다. 이 출처는 방 전용 가능 시간과 추가 불가 시간의 실제 날짜형·주간 반복형 계약을 결정하며 날짜 값만 비교해 추론하지 않는다.
 - locale은 BCP 47 태그로 표현하며 시간대와 분리한다. 제출 버전에는 입력 locale을 기록하고 도메인 enum, 상태, 실패 사유와 오류 코드는 언어 중립적인 값으로 저장한다.
 - 사용자 노출 문자열을 영속 도메인 데이터로 저장하지 않는다. 후보의 실제 날짜별 구간은 구조화 데이터로 저장하고 자연어 요약은 조회 시 생성한다. MVP message bundle은 `ko-KR`를 제공하고 추가 bundle로 언어를 확장한다.
+- DST gap 안의 존재하지 않는 지역 경계 시각은 해당 전환의 다음 유효 시각으로 이동한다. DST overlap의 지역 구간은 시작 경계에 이른 실제 Instant가 되는 offset, 종료 경계에 늦은 실제 Instant가 되는 offset을 적용하여 반복된 실제 구간을 누락하지 않는다. 변환 결과는 UTC `Instant` 반개구간으로 고정하며 비어 있거나 역전된 구간은 거부한다.
 
 ### PostgreSQL
 
@@ -291,7 +301,7 @@ PostgreSQL을 비즈니스 데이터의 최종 기준으로 사용한다. 구체
 - Komapper의 스키마 생성 기능을 애플리케이션 스키마 관리에 사용하지 않는다. 실제 스키마의 기준은 Flyway SQL이며 Komapper 매핑은 Flyway 스키마와의 통합 테스트로 검증한다.
 - 방 마감, 최신 제출 배치 고정과 Outbox 기록 같은 원자적 유스케이스의 트랜잭션 경계는 Application 서비스의 공개 유스케이스 메서드에 Spring `@Transactional`을 적용하여 정의한다. 같은 메서드에서 호출하는 Komapper JDBC 작업은 Spring이 관리하는 동일 트랜잭션에 참여한다. Domain과 outbound persistence port에는 Spring 트랜잭션 타입을 노출하지 않으며, 단일 조회처럼 원자적 쓰기 경계가 필요 없는 메서드에는 관성적으로 애너테이션을 붙이지 않는다.
 
-2026-09-08 기준 Komapper 공식 문서에서 Kotlin 2.3.21 이상, JRE 17 이상, Spring Boot 관리 DataSource·트랜잭션, Kotlin value class와 JDBC 지원을 확인했다. 실제 의존성 추가 시 호환되는 stable 버전을 고정하고 KSP 생성 및 Spring Boot 4.1.1 통합 테스트를 수행한다.
+Komapper 7.0.0과 KSP 2.3.12를 고정하고 Kotlin 2.3.21, JRE 17, Spring Boot 4.1.1 관리 DataSource·트랜잭션에서 KSP 생성과 PostgreSQL 통합 테스트를 검증했다. Komapper 7.0.0이 사용하는 coroutine 1.11.0 API와 Spring Boot 4.1.1 기본 BOM의 1.10.2가 런타임 호환되지 않으므로 `kotlin-coroutines.version`을 1.11.0으로 명시한다.
 
 공식 근거: [Komapper Overview](https://www.komapper.org/docs/overview/), [Komapper Entity Classes](https://www.komapper.org/docs/reference/entity-class/), [Komapper Spring Boot Starters](https://www.komapper.org/docs/reference/starter/)
 
