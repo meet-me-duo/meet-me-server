@@ -36,3 +36,11 @@
   병합되고 후속 검증이 끝나면 로컬 로그는 삭제할 수 있다.
 - 구현이 되돌려져 요약이 더 이상 현재 코드의 근거가 아니어도 과거 Git 이력은 보존한다.
   현재 트리에서 제거할 필요가 있으면 별도 정리 변경으로 삭제 이유를 남긴다.
+
+## 고위험 결함 주입 검증
+
+트랜잭션·동시성·보안·외부 Adapter처럼 PIT로 충분히 검증할 수 없는 경계는 구현을 복구한
+최종 source 지문과 의도적으로 주입한 결함, 이를 탐지한 테스트를
+`verification/<workItem>.json`에 기록한다. 계약은
+[`schema/fault-injection-evidence.schema.json`](schema/fault-injection-evidence.schema.json)을 따른다.
+전체 실행 출력은 RED 로그와 동일하게 `.codex/tdd-evidence/`에만 보관하고 Git에는 넣지 않는다.

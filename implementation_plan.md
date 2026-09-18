@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-09-18
+> **최종 갱신:** 2026-09-19
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -24,7 +24,7 @@
 - 작업 완료 시 체크박스, 최종 갱신일과 하단 진행 기록을 함께 갱신한다.
 - 사용자가 완료된 작업의 커밋과 푸시를 요청하면, 커밋 전에 완료 체크박스, 현재 진행 요약, 최종 갱신일과 진행 기록을 먼저 실제 상태에 맞게 반영한다.
 - 커밋 전 진행 기록의 Commit/PR 칸은 `동일 커밋 예정`으로 기록할 수 있으며, 실제 커밋 해시는 Git 이력을 기준으로 추적한다.
-- 한 단위 작업의 구현·검증이 끝나면 PR 생성 전에 제목과 본문 전체 초안을 사용자에게 보여주고 그 내용 그대로 생성할지 확인받는다. 승인 전에는 PR을 생성하지 않으며, 초안이 실질적으로 바뀌면 다시 확인받는다.
+- 한 단위 작업의 구현·검증이 끝나면 기본적으로 PR 생성 전에 제목과 본문 전체 초안을 사용자에게 보여주고 승인을 받는다. 번호 기반 실행처럼 커밋·push·PR 생성을 명시적으로 위임받은 흐름은 별도 승인 대기 없이 생성하고 즉시 결과를 보고한다.
 - 비밀정보, 개인정보, OAuth 토큰과 외부 API 키는 이 문서와 Issue/PR/로그에 기록하지 않는다.
 
 ### 책임 표기
@@ -37,14 +37,15 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** Phase 0 — 프로젝트 기반
-- **제품 기능:** 미착수
+- **현재 단계:** Phase 1~2 — 1번 브랜치 구현·검증 완료, PR 생성 준비
+- **제품 기능:** 핵심 도메인과 PostgreSQL 영속 기반 구현 완료. 익명 방 생명주기는 2번 브랜치에서 시작
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
 - **현재 차단 사항:** 기능 구현을 막는 외부 자격 증명은 없다. 운영 domain은 `meet-me.co.kr`, 장소 공급자는 Kakao Local API로 확정했고 Gemini·Kakao Local 개발 키를 로컬과 GitHub `integration` Environment에 등록했다. AWS 관련 설정은 사용자 지시 전까지 보류하며, 공개 배포 전 AWS 계정·예산·Region·배포 방식, Route 53 생성 후 가비아 네임서버 변경과 Gemini Paid 전환 승인이 필요하다.
 - **현재 사용자 개입:** 제출 MVP 기능 구현 전 필요한 Gemini·Kakao Local 개발 키와 domain 준비를 완료했다. 지금은 가비아 기본 네임서버를 유지하고 AWS 작업을 시작하지 않는다. 이후 사용자가 AWS 진행을 지시하면 계정 보안·예산을 확인하고, Terraform이 Route 53 Hosted Zone을 만든 뒤 가비아 네임서버를 교체한다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Paid Tier 전환을 승인한다. OAuth·Calendar 사용자 작업은 Post-MVP까지 중단한다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
 - **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. 각 PR의 범위·검증·URL은 생성 직후 보고하며, 결제·비밀정보 입력·운영 배포와 파괴적 작업은 이 위임에 포함하지 않는다.
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
+- **고위험 검증:** 트랜잭션·동시성·외부 Adapter의 의도적 결함 주입은 `.tdd/verification/<work-item>.json`에 최종 source·test 지문과 탐지 결과를 추적하고 전체 출력은 로컬 로그로 분리한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
 - **아키텍처 자동 검사:** initial commit과 Phase 1에서는 ArchUnit·Konsist를 도입하지 않고 코드 리뷰로 헥사고날 의존 방향을 확인한다. 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 도구를 다시 비교한다.
 - **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR 본문의 독립된 `Closes #<issue-number>` 행으로 연결한다. 프로젝트 GitHub Action은 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 종료한다. PR 제목은 `<type>: <summary>` 형식과 허용 type을 지키며 summary를 명사형 한국어로 끝낸다. 본문은 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적는다. 현재 위임 범위에서는 커밋·push·PR 생성 전 승인 대기 없이 진행하고 생성 직후 결과를 보고한다.
@@ -57,17 +58,18 @@
 - **Post-MVP 인증·Calendar:** Google·Kakao 로그인, RS256 Access/회전형 Refresh Token, 공급자 token 암호화와 Google Calendar 연결·방별 ON/OFF·스냅샷은 Post-MVP 백로그로 분리한다.
 - **분석 실패:** 최초 1회와 Full Jitter 기반 최대 3회 기술 재시도를 수행한다. 소진 시 입력을 보존하고 `ANALYSIS_DELAYED`로 전이해 후보를 만들지 않으며, 주최자가 같은 고정 배치를 방 단위로 다시 요청할 수 있다. Gemini 응답 성공 후 개별 의미 검증 실패만 `PARTIAL`로 처리한다.
 - **상태 모델:** 방 입력 수집, 고정 배치 조율 작업, 후보 품질과 최종 확정을 독립적인 PostgreSQL 상태로 관리하고 API에는 계산된 단일 진행 상태를 제공한다. 재분석은 닫힌 입력 수집을 다시 열지 않는다.
-- **데이터 접근:** Komapper JDBC를 사용한다. 도메인 Aggregate·Entity·VO, Application Command·Result, Web·외부 공급자 DTO와 영속 `*Record`를 분리하고 Komapper·KSP 타입은 Persistence Adapter 내부에만 둔다. Flyway SQL이 스키마의 기준이다.
+- **데이터 접근:** Komapper JDBC 7.0.0과 KSP 2.3.12를 사용한다. 도메인 Aggregate·Entity·VO, Application Command·Result, Web·외부 공급자 DTO와 영속 `*Record`를 분리하고 Komapper·KSP 타입은 Persistence Adapter 내부에만 둔다. Flyway SQL이 스키마의 기준이다. Komapper 호환을 위해 coroutine 1.11.0을 명시적으로 고정한다.
 - **트랜잭션 경계:** 원자적 유스케이스의 Application 서비스 공개 메서드에 Spring `@Transactional`을 적용하고 Komapper JDBC 작업을 같은 트랜잭션에 참여시킨다. Domain은 Spring을 알지 못한다.
 - **로컬·테스트 DB:** 로컬 PostgreSQL과 Redis는 Docker Compose로 실행하고 영속성 통합 테스트는 H2 없이 PostgreSQL Testcontainers를 사용한다. Domain·Application 단위 테스트는 가능한 한 DB 없이 실행한다.
 - **관측성:** Actuator·Micrometer 지표와 JSON 로그를 Alloy로 수집해 Grafana Cloud Metrics·Loki·Grafana-managed Alerting에 전송한다. PostgreSQL은 실패 이력의 기준이며 동일 Redis 메시지가 첫 전달 포함 총 5회 실패하면 원문 없는 poison message 참조만 DLQ에 보관한다.
 - **시간대·국제화:** MVP는 `Asia/Seoul`, `ko-KR`로 고정하되 IANA Zone ID·UTC Instant·BCP 47 locale·MessageSource 경계를 선도입한다.
+- **DST 경계:** gap의 존재하지 않는 경계는 다음 유효 시각으로 이동하고 overlap은 이른 시작 offset부터 늦은 종료 offset까지 실제 구간을 보존한다.
 - **후보 탐색 범위:** 주최자가 지역 날짜 범위를 선택하며, 생략하면 프론트엔드가 안내한 방 생성일 포함 14일을 서버가 적용·저장한다.
 - **시간 결과:** 탐색 범위에서 자연어 조건을 실제 날짜별 구간으로 확장하고 후보별 포함 참여자의 Calendar 불가 시간을 차감한다. 구조화 후보와 MessageSource 템플릿 자연어 요약을 함께 반환하며 실제 날짜 공지는 주최자가 담당한다.
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #8의 사용자 개입 실행 가이드, Wanted 제출 MVP 익명 주최자 재범위화, domain·Kakao Local 준비를 완료하고 PR #9를 생성했다. AWS 설정은 사용자 지시 전까지 보류한다. 사용자는 아래 구현 브랜치의 커밋·push·PR 생성을 위임했으며 Context window는 500k로 확장했다.
+- **현재 작업:** Issue #10의 `feature/core-domain-persistence`에서 4개 Aggregate, 시간 값 객체, Flyway V1 스키마, Komapper Record·Mapper·adapter와 Outbox 원자성 검증을 완료했다. AWS 설정은 사용자 지시 전까지 보류한다.
 
 ## 실행 순서
 
@@ -200,7 +202,7 @@
 
 ### DG-01 핵심 도메인과 시간 모델
 
-- [ ] 모임, 사용자, 참여자, 조건 제출, 후보와 최종 확정의 생명주기 및 불변식을 합의한다.
+- [x] 제출 MVP 핵심 도메인을 `MeetingRoom`, `Participant`, `Submission`, `CoordinationRun` 네 Aggregate로 분리하고 생명주기와 불변식을 ADR-034로 확정한다. 소셜 `User`는 Post-MVP로 유지한다.
 - [x] 방 입력 수집, 고정 배치 조율 작업, 후보 품질과 최종 확정을 독립 상태로 분리하고 API 공개 진행 상태는 이 값들에서 계산하도록 확정한다.
 - [x] 예상 참여 인원·제출 마감·수동 마감 중 하나 이상을 선택하고, 자동 조건이 있어도 수동 조기 마감을 허용하는 완료 정책을 확정한다.
 - [x] 예상 참여 인원과 제출 마감을 함께 설정하면 먼저 충족된 조건으로 입력 수집을 종료하도록 확정한다.
@@ -230,7 +232,7 @@
 - [x] `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출 가능하고, 모두 없을 때만 거부하도록 확정한다.
 - [x] 공백이 아닌 자연어, 현재 방의 Calendar ON, 하나 이상의 수동 가능 시간이 모두 없으면 미입력으로 보아 `SUBMISSION_INPUT_REQUIRED`로 거부하고 제출 완료 인원에 포함하지 않도록 확정한다.
 - [ ] 후보가 세 개 미만일 때의 서버 응답과 동률 후보 정렬 규칙을 선택한다.
-- [ ] 확정 내용을 Architecture에 반영하고 장기 영향이 크면 ADR을 추가한다.
+- [x] 핵심 Aggregate 경계와 DST 변환 정책을 Architecture 및 ADR-034·ADR-035에 반영한다.
 
 ### DG-02 PostgreSQL 접근과 로컬 데이터베이스
 
@@ -355,27 +357,27 @@
 
 **선행 조건:** DG-01
 
-- [ ] 핵심 용어와 Aggregate 경계를 정리하고 사용자 검토를 받는다.
-- [ ] 모임 방식(대면/비대면/모두 가능), 방 입력 수집 상태·마감 원인·조율 작업 상태·후보 품질과 참여자 역할 값 객체를 테스트부터 작성한다.
-- [ ] IANA Zone ID, 지역 날짜·시간, UTC Instant, 기간, 실제 날짜형·주간 반복형 불가 시간 구간, 좌표와 소요 시간 값 객체를 테스트부터 작성한다.
-- [ ] DST gap·overlap이 있는 대표 Zone으로 `ZoneRules` 기반 변환 테스트를 작성한다.
-- [ ] 모임 생성, 참여, 조건 제출, 매칭, 확정 상태 전이 규칙을 테스트부터 작성한다.
-- [ ] 도메인 코드에 Spring·영속성·외부 SDK 의존성이 없는지 검증한다.
-- [ ] 동일 입력이 동일한 결과를 만드는 결정론적 테스트 기반을 마련한다.
+- [x] 핵심 용어와 `MeetingRoom`·`Participant`·`Submission`·`CoordinationRun` Aggregate 경계를 정리하고 사용자 검토를 받는다.
+- [x] 모임 방식, 방 입력 수집 상태·마감 원인·조율 작업 상태·후보 품질과 참여자 역할 값 객체를 테스트부터 작성한다.
+- [x] IANA Zone ID, 지역 날짜·시간, UTC Instant, 기간, 실제 날짜형·주간 반복형 시간 구간, 좌표와 소요 시간 값 객체를 테스트부터 작성한다.
+- [x] DST gap·overlap이 있는 `America/New_York`으로 `ZoneRules` 기반 변환 테스트를 작성한다.
+- [x] 모임 생성, 참여, 조건 제출 버전, 조율과 확정 상태 전이 규칙을 테스트부터 작성한다.
+- [x] 코드 리뷰와 import 검사로 도메인 코드에 Spring·Komapper·외부 SDK 의존성이 없음을 검증한다.
+- [x] Clock·UUID를 경계 값으로 받고 후보를 rank로 정렬하여 동일 입력이 동일한 결과를 만드는 결정론적 테스트 기반을 마련한다.
 
 ## Phase 2 — PostgreSQL과 마이그레이션 기반
 
 **선행 조건:** DG-02
 
-- [ ] 호환되는 stable Komapper JDBC·KSP 의존성, PostgreSQL 드라이버와 Flyway를 추가하고 버전을 고정한다.
-- [ ] 로컬·테스트·운영 프로파일의 데이터베이스 설정 경계를 구성한다.
-- [ ] 제출 MVP의 익명 브라우저 세션과 방별 참여자·주최자 소유권, 모임, 조건, 분석 배치·시도, 후보, 최종 확정의 초기 스키마를 설계하고 검토받는다. 소셜 계정·공급자 grant 테이블은 Post-MVP 마이그레이션으로 분리한다.
-- [ ] 최초 Flyway 마이그레이션을 추가한다.
-- [ ] 영속 `*Record`·`@KomapperEntityDef`와 도메인 모델 Mapper를 Persistence Adapter에 분리한다.
-- [ ] Outbound persistence port와 PostgreSQL adapter를 구현한다.
-- [ ] Application 서비스의 원자적 쓰기 유스케이스에 `@Transactional`을 적용하고 Komapper 작업과 Outbox 기록의 원자성을 통합 테스트한다.
-- [ ] 마이그레이션 순서와 영속성 매핑 통합 테스트를 추가한다.
-- [ ] 이미 적용된 Flyway 파일을 수정하지 않는 검증 절차를 마련한다.
+- [x] Komapper JDBC 7.0.0·KSP 2.3.12, Spring Boot 관리 PostgreSQL·Flyway·Testcontainers 의존성을 고정하고 coroutine 1.11.0 호환성을 검증한다.
+- [x] 로컬·테스트·운영 프로파일의 데이터베이스 설정 경계를 구성한다.
+- [x] 익명 브라우저 세션, 방별 참여자·주최자 소유권, 모임, 제출 버전, 분석 배치·시도, 후보, 최종 확정과 Outbox 초기 스키마를 설계한다. 소셜 계정·공급자 grant는 제외한다.
+- [x] 최초 Flyway `V1__create_core_domain.sql` 마이그레이션을 추가한다.
+- [x] 영속 `*Record`·`@KomapperEntityDef`와 도메인 모델 Mapper를 Persistence Adapter에 분리한다.
+- [x] Aggregate별 outbound persistence port와 Komapper PostgreSQL adapter를 구현한다.
+- [x] `CoordinationPersistenceService.persist`에 `@Transactional`을 적용하고 CoordinationRun·Outbox 원자성과 rollback을 PostgreSQL에서 통합 테스트한다.
+- [x] fresh migrate·validate, 제약과 도메인–Record 왕복 매핑 통합 테스트를 추가한다.
+- [x] Flyway SQL을 스키마 기준으로 명시하고 Testcontainers의 fresh migrate·checksum validate로 적용된 파일 변경을 탐지한다.
 
 ## Phase 3 — 제출 MVP 익명 세션과 권한
 
@@ -609,7 +611,7 @@
 | --- | --- | --- |
 | FR-000A 제출 MVP 익명 접근·주최자 권한 | Phase 3, 4, 10 | 미착수 |
 | FR-001 방 생성 | Phase 4 | 미착수 |
-| FR-001A 주최자의 참여자 등록·예상 인원 포함 | Phase 1, 4 | 미착수 |
+| FR-001A 주최자의 참여자 등록·예상 인원 포함 | Phase 1, 4 | 도메인·영속 기반 완료 |
 | FR-001B 주최자 선택 탐색 범위와 기본 14일 표시 | Phase 4, 6 | 미착수 |
 | FR-002 참여 링크 | Phase 4 | 미착수 |
 | FR-002A 주최자 필수 Google·Kakao 로그인 | Post-MVP PM-01 | Post-MVP |
@@ -619,7 +621,7 @@
 | FR-003A Calendar 연결과 방별 ON/OFF 적용 분리 | Post-MVP PM-02 | Post-MVP |
 | FR-004 Calendar 불가 시간 변환 | Post-MVP PM-02 | Post-MVP |
 | FR-004B Calendar ON 제출 시점 스냅샷 고정 | Post-MVP PM-02 | Post-MVP |
-| FR-004A 제출 MVP 수동 가능 시간 격자 | Phase 1, 4, 5, 6 | 미착수 |
+| FR-004A 제출 MVP 수동 가능 시간 격자 | Phase 1, 4, 5, 6 | 시간 모델·영속 기반 완료 |
 | FR-005 선택적 자연어 조건과 슬롯 전용 제출 | Phase 5 | 미착수 |
 | FR-006 위치 표현 분류와 검증된 장소 정규화 | Phase 5 | 미착수 |
 | FR-006A 이동 제약·미확정 장소의 좌표 생성 금지 | Phase 5 | 미착수 |
@@ -637,7 +639,7 @@
 | FR-011A 구조화 후보·자연어 요약 | Phase 6 | 미착수 |
 | FR-012 주최자 최종 확정 | Phase 3, 7 | 미착수 |
 | FR-012A 부분 결과의 무수정·무추가확인 원클릭 확정 | Phase 7 | 미착수 |
-| FR-013 IANA Zone ID와 UTC 기반 시간 모델 | Phase 1, 4, 5 | 미착수 |
+| FR-013 IANA Zone ID와 UTC 기반 시간 모델 | Phase 1, 4, 5 | 도메인·DST 기반 완료 |
 | FR-014 i18n과 언어 중립 API 코드 | Phase 0, 3, 5 | 미착수 |
 
 ## 진행 기록
@@ -711,3 +713,7 @@
 | 2026-09-18 | Kakao Local REST API Key를 로컬과 GitHub `integration` Environment에 등록 | 실제 값 출력 없이 두 위치의 `KAKAO_LOCAL_API_KEY` 존재 여부 확인 | 동일 커밋 예정, #8 |
 | 2026-09-18 | 사용자 개입 선행 준비와 Wanted 제출 MVP 재범위화 문서 검증 | `git diff --check`, hook 단위 테스트, `ktlintCheck`, `assemble`, `test` 통과. `.env.local` Git 제외와 실제 secret 미추적 확인 | 동일 커밋 예정, #8 |
 | 2026-09-18 | 제출 MVP 6개와 Post-MVP 2개 구현 브랜치의 이름·Phase 범위·번호 호출 계약 확정 | 각 Phase와 선행 병합 규칙, 자동 실행 위임 및 사용자 전용 승인 경계 대조. `git diff --check`, hook 테스트 11개, `ktlintCheck`, `assemble`, `test` 통과 | PR #9 후속 커밋 예정, #8 |
+| 2026-09-19 | Issue #10의 4개 핵심 Aggregate와 상태 전이, IANA 시간·DST gap/overlap, 좌표·기간·실제 날짜형·주간 반복형 값 객체 구현 | Domain RED 15개 중 의도한 11개 실패 확인 후 15개 전체 GREEN, 프레임워크 import 부재 검토 | 동일 커밋 예정, #10 |
+| 2026-09-19 | Komapper 7.0.0·KSP 2.3.12, Flyway V1, PostgreSQL 18·Redis 8 Compose, Record·Mapper·adapter와 profile 설정 구현 | PostgreSQL Testcontainers fresh migrate·validate, Aggregate 왕복과 CoordinationRun·Outbox rollback 통합 테스트 통과 | 동일 커밋 예정, #10 |
+| 2026-09-19 | 고위험 결함 주입 JSON 계약 추가 및 `@Transactional` 제거 결함이 rollback 테스트에서 탐지되는지 검증 | 결함 주입 시 테스트 실패, 복구 후 source·test SHA-256 기록. 전체 출력은 로컬 전용 로그로 분리 | 동일 커밋 예정, #10 |
+| 2026-09-19 | Phase 1~2 구현 전체 품질 게이트와 로컬 Compose 계약 검증 | hook 테스트 12개, Domain 15개·PostgreSQL 통합 4개 포함 전체 24개 테스트, `ktlintCheck`, `assemble`, `test`, `docker compose config`, `git diff --check` 통과 | 동일 커밋 예정, #10 |

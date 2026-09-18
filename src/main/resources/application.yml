@@ -1,6 +1,12 @@
 spring:
   application:
     name: meet-me-server
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/meetme}
+    username: ${DATABASE_USERNAME:meetme}
+    password: ${DATABASE_PASSWORD:meetme}
+  flyway:
+    enabled: true
   messages:
     basename: messages
     encoding: UTF-8

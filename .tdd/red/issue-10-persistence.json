@@ -1,0 +1,25 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-10-persistence",
+  "sourceRevision": "6bd9169a086db09bce08ce94774247ceff970199",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "bc45390c3d59294d5a95d84b4ef312ebb68eaac0665aafd19f26bc260b56d21d"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.adapter.output.persistence.CorePersistenceIntegrationTest"
+  ],
+  "failedTests": [
+    "Room Participant Submission을 Record와 분리해 왕복 저장한다",
+    "CoordinationRun과 Outbox를 하나의 트랜잭션으로 저장한다",
+    "Outbox 저장 실패 시 CoordinationRun도 rollback한다"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-18T15:04:58.4401316Z"
+}
