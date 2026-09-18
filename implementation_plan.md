@@ -67,7 +67,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #8의 사용자 개입 실행 가이드, Wanted 제출 MVP 익명 주최자 재범위화, domain·Kakao Local 준비를 완료하고 PR을 생성한다. AWS 설정은 사용자 지시 전까지 보류한다. 사용자는 후속 구현의 커밋·push·PR 생성을 위임했으며 Context window는 500k로 확장했다.
+- **현재 작업:** Issue #8의 사용자 개입 실행 가이드, Wanted 제출 MVP 익명 주최자 재범위화, domain·Kakao Local 준비를 완료하고 PR #9를 생성했다. AWS 설정은 사용자 지시 전까지 보류한다. 사용자는 아래 구현 브랜치의 커밋·push·PR 생성을 위임했으며 Context window는 500k로 확장했다.
 
 ## 실행 순서
 
@@ -76,6 +76,43 @@
 3. `[AGENT]` 이후 `implementation_plan.md` 순서로 Issue 생성, TDD 구현, 검증, 커밋, push와 PR 생성을 승인 대기 없이 반복한다.
 4. `[USER]` Context 정리가 필요할 때만 중간 개입하며, 비밀정보 입력·결제·DNS·운영 배포 승인은 해당 시점에 직접 수행한다.
 5. `[AGENT]` 제출 MVP가 배포·검증된 뒤 별도 Post-MVP 백로그에서 OAuth와 Calendar를 진행한다.
+
+## 구현 브랜치 로드맵
+
+현재 문서 PR #9는 아래 구현 브랜치 수에 포함하지 않는다. 각 브랜치는 직전 PR이 `develop`에 병합된 뒤
+깨끗한 작업 트리에서 최신 `develop`을 받아 생성한다.
+
+### 제출 MVP — 6개 브랜치
+
+| 번호 | 브랜치 | 포함 단계 | 완료 결과 |
+| --- | --- | --- | --- |
+| 1 | `feature/core-domain-persistence` | Phase 1~2 | 핵심 도메인 모델, PostgreSQL·Flyway·Komapper 영속 경계 |
+| 2 | `feature/anonymous-room-lifecycle` | Phase 3~4 | 익명 브라우저 세션, 주최자 권한, 방 생성·참여·마감 |
+| 3 | `feature/submission-gemini-pipeline` | Phase 5 | 조건 제출·수정, 배치 고정, Outbox와 Gemini 구조화 파이프라인 |
+| 4 | `feature/deterministic-matching-results` | Phase 6~7 | Kakao Local 장소 정규화, 결정론적 매칭, Plan A/B/C와 결과 확정 |
+| 5 | `feature/reliability-observability` | Phase 8 | Redis Streams, 재시도·DLQ, 보안, 로그·지표와 rate limit |
+| 6 | `feature/aws-release` | Phase 9~10 | 컨테이너·Terraform·배포, E2E와 Wanted 제출 MVP 출시 검증 |
+
+### Post-MVP — 2개 브랜치
+
+| 호출 번호 | 브랜치 | 포함 백로그 | 완료 결과 |
+| --- | --- | --- | --- |
+| PM-1 | `feature/social-auth` | PM-01 | Google·Kakao 로그인과 서비스 Access/Refresh Token |
+| PM-2 | `feature/google-calendar` | PM-02 | Google Calendar 연결, 방별 ON/OFF와 불가 시간 스냅샷 |
+
+### 번호 기반 실행 계약
+
+- 사용자가 `1번 브랜치 작업해줘`처럼 번호로 요청하면 에이전트는 이 표의 브랜치와 범위를 그대로 사용한다.
+- 에이전트는 선행 PR의 `develop` 병합과 작업 트리 상태를 확인하고, GitHub Issue 생성 → 최신 `develop` 갱신 →
+  브랜치 생성 → 위험도 기반 TDD 구현 → 검증 → `implementation_plan.md` 갱신 → 커밋 → push → PR 생성을
+  별도 승인 대기 없이 수행한다.
+- 선행 PR이 아직 병합되지 않았거나 `develop`을 fast-forward 할 수 없으면 임의로 merge·rebase하지 않고
+  차단 원인과 필요한 사용자 행동만 보고한다.
+- 번호 요청은 해당 브랜치의 구현·커밋·push·PR 생성까지 위임한다. PR 병합, 결제, 실제 secret 입력,
+  DNS 변경과 운영 배포 승인은 포함하지 않는다.
+- 6번 브랜치는 AWS 작업 보류를 해제하는 별도 사용자 지시가 있어야 시작한다. `6번 브랜치 작업해줘`는
+  AWS 작업 시작 지시로 간주하지만 실제 비용 발생·DNS 변경·운영 배포는 각 사용자 체크포인트에서 다시 확인한다.
+- PM-1과 PM-2는 제출 MVP 완료 후에만 시작한다. `PM-1 브랜치 작업해줘`, `PM-2 브랜치 작업해줘` 형식으로 호출한다.
 
 ## Phase 0 — 프로젝트 기반
 
@@ -673,3 +710,4 @@
 | 2026-09-18 | 제출 MVP의 장소 검색·정규화 공급자로 Kakao Local API 확정 | Architecture, ADR-033과 `KAKAO_LOCAL_API_KEY` 설정 계약 반영 | 동일 커밋 예정, #8 |
 | 2026-09-18 | Kakao Local REST API Key를 로컬과 GitHub `integration` Environment에 등록 | 실제 값 출력 없이 두 위치의 `KAKAO_LOCAL_API_KEY` 존재 여부 확인 | 동일 커밋 예정, #8 |
 | 2026-09-18 | 사용자 개입 선행 준비와 Wanted 제출 MVP 재범위화 문서 검증 | `git diff --check`, hook 단위 테스트, `ktlintCheck`, `assemble`, `test` 통과. `.env.local` Git 제외와 실제 secret 미추적 확인 | 동일 커밋 예정, #8 |
+| 2026-09-18 | 제출 MVP 6개와 Post-MVP 2개 구현 브랜치의 이름·Phase 범위·번호 호출 계약 확정 | 각 Phase와 선행 병합 규칙, 자동 실행 위임 및 사용자 전용 승인 경계 대조. `git diff --check`, hook 테스트 11개, `ktlintCheck`, `assemble`, `test` 통과 | PR #9 후속 커밋 예정, #8 |
