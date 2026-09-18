@@ -24,10 +24,17 @@ Issue, PR 또는 커밋에 남기지 않습니다.
 
 ```properties
 GEMINI_API_KEY=
+KAKAO_LOCAL_API_KEY=
+GOOGLE_OAUTH_CLIENT_ID=
+GOOGLE_OAUTH_CLIENT_SECRET=
+KAKAO_OAUTH_CLIENT_ID=
+KAKAO_OAUTH_CLIENT_SECRET=
 ```
 
-현재 파일은 안전한 입력 위치만 준비한 상태입니다. Gemini 어댑터를 구현할 때
-`GEMINI_API_KEY` 환경 변수 주입과 GitHub Actions Secret 참조를 연결합니다.
+Wanted 제출 MVP에서 애플리케이션이 읽을 외부 값은 `GEMINI_API_KEY`와
+`KAKAO_LOCAL_API_KEY`입니다. Google·Kakao OAuth 값은 Post-MVP까지 비워 둡니다.
+현재 CI에는 외부 Secret이 필요하지 않으며, 발급 위치·최소 권한과 GitHub/AWS 배포 시 저장 위치는
+[`docs/USER_INTERVENTION.md`](docs/USER_INTERVENTION.md)를 따릅니다.
 
 Codex가 `git commit`을 실행할 때 같은 검증이 `.codex/hooks/tdd_guard.py`를
 통해 자동으로 실행됩니다. 프로덕션 Kotlin 코드가 변경되었다면

@@ -26,13 +26,13 @@
 | 로컬·테스트 데이터베이스 | Docker Compose PostgreSQL, Testcontainers PostgreSQL | 확정, H2 미사용 |
 | 인메모리 데이터 저장소 | Redis | Streams 작업 전달과 meet-me Refresh Token TTL 확정, 캐시 등 추가 책임 TBD |
 | 리버스 프록시 | Nginx | 도입 확정, 배치와 책임 범위 TBD |
-| 사용자 로그인 | 주최자 Google·Kakao 로그인 필수, 일반 참여자 게스트 허용 | RS256 Access JWT 15분 + Refresh 미사용 14일·패밀리 최대 30일, body·header 전달과 Refresh cookie·CSRF 경계 확정 |
+| 사용자 접근 | 제출 MVP는 전원 익명 브라우저 세션, Post-MVP는 주최자 Google·Kakao 로그인 | 제출 MVP 주최자 권한은 방 생성 세션에 귀속. RS256 Access/Refresh와 OAuth는 Post-MVP |
 | 자연어 파싱 | Google Gemini Flash Structured Output, 공식 Google GenAI SDK | 공급자·SDK 확정, 모델 ID TBD |
 | 운영 데이터베이스 | Amazon RDS for PostgreSQL | 확정 |
 | Infrastructure as Code | Terraform | 확정 |
 | 운영 컴퓨팅 | Amazon EC2 또는 Amazon ECS | TBD |
 | 이미지 레지스트리 | Docker Hub 또는 Amazon ECR | TBD |
-| 지도·좌표 공급자 | 미정 | TBD |
+| 지도·좌표 공급자 | Kakao Local API | 장소 검색·정규화와 표시 이름만 외부 위임, 거리·영역 계산은 서버 담당 |
 | API 계약 문서 | Swagger/OpenAPI, springdoc-openapi 3.1.0 | 확정 |
 | 시간대 | IANA Zone ID, MVP `Asia/Seoul` | 저장·계산 경계 확정, 사용자 선택은 MVP 이후 |
 | 국제화 | Spring MessageSource, BCP 47 locale, MVP `ko-KR` | 기반 도입 확정, 추가 언어 TBD |
@@ -48,9 +48,9 @@ flowchart LR
     App --> Postgres[(PostgreSQL / RDS)]
     App --> Redis[(Redis)]
     App --> Gemini[Google Gemini API]
-    App --> Google[Google OAuth / Calendar]
-    App --> Kakao[Kakao OAuth]
-    App --> Map[지도·좌표 API / TBD]
+    App -. Post-MVP .-> Google[Google OAuth / Calendar]
+    App -. Post-MVP .-> Kakao[Kakao OAuth]
+    App --> Map[Kakao Local API]
     App -->|Prometheus metrics / JSON logs| Alloy[Grafana Alloy]
     Alloy --> GrafanaCloud[Grafana Cloud Metrics / Loki / Alerting]
 
@@ -64,12 +64,21 @@ flowchart LR
 
 ### 외부 경계
 
-- **프론트엔드:** 주최자 로그인 시작, 방 생성·참여, Google Calendar 연동, 방별 Calendar 사용 ON/OFF, 선택적 자연어·일정 입력, 본인 최신 입력 복원, 비동기 분석 상태, 부가 기능인 방 전용 가능 시간 격자·Calendar 추가 불가 시간 격자 및 플랜 확정 UI를 담당한다. Calendar를 해당 참여자·방에서 최초 ON할 때 불가 일정 외 시간이 후보가 될 수 있음을 확인하는 팝업을 한 번만 표시하며 별도 장소 입력란이나 지도 기반 좌표 수집은 제공하지 않는다.
-- **Google/Kakao:** meet-me 사용자 인증을 제공한다. Google Calendar 연동은 meet-me 인증을 완료한 사용자에게만 제공하며 Google의 별도 Calendar 동의 범위가 필요하다.
+- **프론트엔드:** 제출 MVP에서는 로그인 없이 방 생성·참여, 선택적 자연어·방 전용 가능 시간 입력, 본인 최신 입력 복원, 비동기 분석 상태와 플랜 확정 UI를 담당한다. Post-MVP에는 주최자 로그인, Google Calendar 연결과 방별 ON/OFF UI를 추가한다. 별도 장소 입력란이나 지도 기반 좌표 수집은 제공하지 않는다.
+- **Google/Kakao:** Post-MVP에 meet-me 사용자 인증을 제공한다. Google Calendar 연동은 meet-me 인증을 완료한 사용자에게만 제공하며 Google의 별도 Calendar 동의 범위가 필요하다.
 - **Google Gemini:** 자연어 조건 구조화와 시간표 이미지 분석만 담당한다.
-- **지도·좌표 API:** 자연어에서 추출된 장소 표현을 검색·정규화하고 결과 표시용 이름을 제공한다. 공급자는 아직 정하지 않았으며 거리와 영역 계산은 서버가 담당한다.
+- **Kakao Local API:** 자연어에서 추출된 국내 장소 표현을 키워드로 검색·정규화하고 결과 표시용 이름을 제공한다. 거리와 영역 계산, 검색 결과 고유성 판정과 후보 순위는 서버가 담당한다.
 - **AWS:** 애플리케이션 런타임과 운영 PostgreSQL을 제공한다.
 - **Grafana Cloud:** Alloy가 전송한 애플리케이션·Worker 지표와 로그를 관리형 Metrics 및 Loki에 저장하고 Grafana-managed Alerting으로 운영 알림을 평가한다. MVP에서는 Grafana·Loki를 자체 운영하지 않는다.
+
+### 제출 MVP 접근 모드
+
+- Wanted AI Champion 심사·투표용 배포는 소셜 로그인 없이 공개한다.
+- 서버는 첫 방 생성 또는 참여 시 암호학적으로 안전한 익명 브라우저 자격 증명을 `Secure HttpOnly` 쿠키로 발급하고 PostgreSQL에는 해시만 저장한다.
+- 방 생성 세션은 첫 참여자와 `HOST` 역할을 함께 소유하며, 같은 세션만 마감·재분석·후보 확정 같은 주최자 명령을 수행한다.
+- 공유 링크는 방 진입 수단일 뿐 참여자 또는 주최자 권한 증명이 아니다.
+- Google·Kakao OAuth, 서비스 JWT/Refresh Token과 Google Calendar endpoint·adapter는 제출 MVP에서 활성화하지 않고 Post-MVP에 구현한다.
+- 제출 기간 종료 후 인증 모드 전환은 자동 날짜 조건이 아니라 명시적인 배포 설정과 회귀 테스트를 거쳐 수행한다.
 
 ## 4. 헥사고날 아키텍처
 
@@ -98,8 +107,8 @@ Inbound Adapter
 - **Persistence Adapter:** Komapper JDBC로 PostgreSQL에 접근하고 영속 `Record`와 도메인 모델 간 변환을 담당한다.
 - **Redis Adapter:** Redis Streams 기반 비동기 작업 전달을 구현한다. 인증 상태·캐시 등 추가 책임은 확정된 범위에만 구현한다.
 - **AI Adapter:** Gemini 요청·응답과 도메인에서 사용하는 구조화 결과 사이를 변환한다.
-- **OAuth Adapter:** Google·Kakao 로그인 공급자별 차이를 내부 인증 포트 뒤로 숨긴다.
-- **Calendar Adapter:** Google Calendar 이벤트를 절대 불가 시간으로 변환한다.
+- **OAuth Adapter (Post-MVP):** Google·Kakao 로그인 공급자별 차이를 내부 인증 포트 뒤로 숨긴다.
+- **Calendar Adapter (Post-MVP):** Google Calendar 이벤트를 절대 불가 시간으로 변환한다.
 - **Geo Adapter:** 추출된 장소 표현을 지도 공급자로 검색하고 하나의 위치로 특정 가능한 경우에만 공급자 응답을 도메인의 정규화된 장소 값으로 변환한다.
 
 ### 모듈 구성 원칙
@@ -151,11 +160,11 @@ Spring Boot에서 Swagger UI와 OpenAPI 명세는 `springdoc-openapi-starter-web
 
 meet-me 서비스는 15분 수명의 RS256 JWT Access Token과 암호학적으로 안전한 불투명 Refresh Token을 발급한다. JWT 헤더의 `kid`로 검증 공개키를 선택하고 현재 private key 하나만 서명에 사용한다. 교체 시 이전 public key는 이미 발급된 Access Token의 15분 수명과 허용 clock skew가 모두 지난 뒤 제거한다. Private key는 저장소·이미지·로그에 넣지 않고 환경별 비밀 저장소에서 주입하며 검증용 public key 집합과 분리한다. Access Token은 로그인·갱신 response body로 전달하고 프론트엔드는 영구 브라우저 저장소에 보관하지 않은 채 이후 요청의 `Authorization: Bearer` 헤더로 전송한다. 서버는 요청마다 Redis를 조회하지 않고 Access Token의 서명과 만료를 검증한다. Refresh Token은 `Set-Cookie`의 `Secure HttpOnly` 쿠키로만 전달하며 원문은 서버에 저장하지 않는다. 서버는 Refresh 해시, 사용자·토큰 패밀리 참조, 회전·폐기 상태를 Redis TTL로 관리한다.
 
-Refresh Token은 마지막 정상 사용으로부터 14일 동안 유효하지만 토큰 패밀리의 절대 수명은 최초 로그인부터 30일이다. 갱신할 때 기존 Refresh Token을 폐기하고 새 값의 미사용 TTL을 14일로 시작하되 패밀리의 남은 절대 수명을 넘기지 않는다. 폐기된 토큰의 재사용이 감지되면 해당 토큰 패밀리를 폐기한다. Redis 장애 중에는 갱신이 실패하고 Redis 데이터 유실 시 기존 Refresh 세션은 무효화되어 재로그인이 필요하지만 영구 사용자·방 데이터는 유실되지 않는다. 운영 프론트엔드와 API는 같은 상위 사이트의 서브도메인에 배치한다. Refresh 쿠키는 `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/api/auth`를 사용하고 `Domain`을 생략해 API 호스트 전용으로 제한한다. 매 발급·회전의 `Max-Age`는 미사용 14일과 토큰 패밀리의 남은 절대 수명 중 짧은 값이다. Refresh·로그아웃 요청은 명시적 프론트엔드 Origin과 정확히 일치할 때만 허용하며 누락·불일치 Origin을 거부한다. 이 MVP 경계에서는 별도 synchronizer 또는 double-submit CSRF token을 추가하지 않는다. 일반 로그아웃은 요청의 Refresh Token이 속한 현재 기기 패밀리만 Redis에서 폐기하고 Refresh 쿠키를 만료시킨다. 별도의 인증된 모든 기기 로그아웃은 사용자와 연결된 모든 Refresh Token 패밀리를 폐기하고 현재 쿠키도 만료시킨다. Redis에는 사용자별 활성 패밀리를 찾을 수 있는 인덱스를 두되 일반 API 요청의 Access Token 검증은 Redis를 조회하지 않는다. 따라서 두 로그아웃 이후에도 기존 Access Token은 최대 15분 동안 유효할 수 있다. 서비스 로그아웃은 Google·Kakao 계정 연결이나 Calendar grant를 폐기하지 않는다.
+Refresh Token은 마지막 정상 사용으로부터 14일 동안 유효하지만 토큰 패밀리의 절대 수명은 최초 로그인부터 30일이다. 갱신할 때 기존 Refresh Token을 폐기하고 새 값의 미사용 TTL을 14일로 시작하되 패밀리의 남은 절대 수명을 넘기지 않는다. 폐기된 토큰의 재사용이 감지되면 해당 토큰 패밀리를 폐기한다. Redis 장애 중에는 갱신이 실패하고 Redis 데이터 유실 시 기존 Refresh 세션은 무효화되어 재로그인이 필요하지만 영구 사용자·방 데이터는 유실되지 않는다. 운영 프론트엔드와 API는 같은 상위 사이트의 서브도메인에 배치한다. Refresh 쿠키는 `Secure`, `HttpOnly`, `SameSite=Lax`, `Path=/api/auth`를 사용하고 `Domain`을 생략해 API 호스트 전용으로 제한한다. 매 발급·회전의 `Max-Age`는 미사용 14일과 토큰 패밀리의 남은 절대 수명 중 짧은 값이다. Refresh·로그아웃 요청은 명시적 프론트엔드 Origin과 정확히 일치할 때만 허용하며 누락·불일치 Origin을 거부한다. 이 Post-MVP 소셜 로그인 경계에서는 별도 synchronizer 또는 double-submit CSRF token을 추가하지 않는다. 일반 로그아웃은 요청의 Refresh Token이 속한 현재 기기 패밀리만 Redis에서 폐기하고 Refresh 쿠키를 만료시킨다. 별도의 인증된 모든 기기 로그아웃은 사용자와 연결된 모든 Refresh Token 패밀리를 폐기하고 현재 쿠키도 만료시킨다. Redis에는 사용자별 활성 패밀리를 찾을 수 있는 인덱스를 두되 일반 API 요청의 Access Token 검증은 Redis를 조회하지 않는다. 따라서 두 로그아웃 이후에도 기존 Access Token은 최대 15분 동안 유효할 수 있다. 서비스 로그아웃은 Google·Kakao 계정 연결이나 Calendar grant를 폐기하지 않는다.
 
 Google·Kakao가 발급한 공급자 Refresh Token은 meet-me 서비스 Refresh Token과 다른 비밀정보다. Calendar 재사용 등에 필요한 공급자 토큰은 Redis TTL에 두지 않고 PostgreSQL의 암호화된 grant로 영구 보관하며 암호화 키 관리와 공급자별 갱신·폐기 절차는 TBD다. 게스트 자격 증명은 로그인 토큰과 분리된 하나의 브라우저 세션으로 여러 방의 참여를 소유하는 `Secure HttpOnly` 쿠키를 사용한다. cookie `SameSite`·`Domain`·`Path`·`Max-Age`, 회전·회수와 복구 방식은 배포 origin 및 CSRF 방어와 함께 확정한다. 공유 링크는 방 진입 수단일 뿐 제출 소유권 증명이 아니다. Google Calendar 동의는 meet-me 서비스 로그인과 별도의 권한이지만 인증된 서비스 사용자만 시작할 수 있다.
 
-### 6.2 Google Calendar 불가 시간 수집
+### 6.2 Google Calendar 불가 시간 수집 (Post-MVP)
 
 1. 애플리케이션은 참여자가 meet-me에 로그인했는지 확인하고, 비로그인 게스트의 Calendar 연동 요청은 거부한다.
 2. 인증된 사용자가 Google Calendar 연동에 필요한 동의 범위를 승인한다.
@@ -352,6 +361,9 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 
 - PostgreSQL은 Amazon RDS for PostgreSQL을 사용한다.
 - AWS 인프라는 Terraform으로 생성하고 변경한다.
+- 운영 domain은 `meet-me.co.kr`이며 프론트엔드는 `https://app.meet-me.co.kr`, API는 `https://api.meet-me.co.kr`를 사용한다. 루트 domain은 프론트엔드로 연결한다.
+- DNS는 Amazon Route 53 Hosted Zone으로 관리한다. Terraform이 Hosted Zone을 생성한 뒤 등록기관인 가비아의 네임서버를 Route 53이 할당한 네임서버 4개로 교체한다.
+- TLS 인증서는 AWS Certificate Manager에서 발급하고 DNS 검증 레코드를 Terraform으로 관리한다.
 - 애플리케이션 런타임은 EC2와 ECS 중에서 선택한다.
 - 컨테이너 이미지 레지스트리는 Docker Hub와 ECR 중에서 선택한다.
 - Nginx와 Redis의 배치 방식은 컴퓨팅 선택 이후 확정한다.
@@ -374,8 +386,8 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 - Gemini, OAuth, 지도 API와 AWS 자격 증명을 코드나 Git에 저장하지 않는다.
 - 인증 공급자의 토큰은 필요한 최소 범위와 기간으로 취급한다.
 - 방과 일정 API는 주최자·참여자 권한을 서버에서 검증한다.
-- 방 생성과 주최자 전용 명령은 로그인한 주최자에게만 허용한다. 비로그인 참여자의 제출 조회·수정은 추측하기 어려운 본인 증명이 필요하며 공유 초대 링크만으로 허용하지 않는다.
-- Google Calendar OAuth 시작·콜백과 토큰 저장은 인증된 meet-me 사용자에게만 허용하며 게스트 브라우저 세션에 grant를 연결하지 않는다.
+- 제출 MVP의 방 생성과 주최자 전용 명령은 해당 방을 만든 익명 브라우저 세션에만 허용한다. 참여자의 제출 조회·수정에도 추측하기 어려운 본인 증명이 필요하며 공유 초대 링크만으로 허용하지 않는다.
+- Post-MVP 전환 뒤에는 방 생성과 주최자 전용 명령을 로그인한 주최자에게만 허용한다. Google Calendar OAuth 시작·콜백과 토큰 저장도 인증된 meet-me 사용자에게만 허용하며 익명 브라우저 세션에 grant를 연결하지 않는다.
 - 게스트 자격 증명은 암호학적으로 안전한 난수 생성기로 충분한 엔트로피를 갖게 만들고 `Secure HttpOnly` 쿠키의 `Set-Cookie`로만 전달한다. 서버는 원문 대신 단방향 해시를 저장하며 원문을 응답 본문, URL, 로그, metric label, Redis 메시지 또는 프론트엔드 `localStorage`·`sessionStorage`에 넣지 않는다.
 - 운영 프론트엔드와 API는 같은 상위 사이트의 서브도메인에 배치한다. Refresh 쿠키 기반의 갱신·로그아웃은 `SameSite=Lax`와 정확한 프론트엔드 `Origin` 허용 목록을 함께 적용하고, 누락·불일치 Origin과 wildcard credential CORS를 허용하지 않는다. Access Token을 `Authorization` 헤더로 받는 일반 API는 브라우저 자동 쿠키 인증에 의존하지 않는다. 게스트 쿠키 기반 변경 요청의 cookie 속성과 CSRF 방어는 게스트 자격 증명 정책에서 별도로 확정한다.
 - 쿠키가 삭제되거나 다른 브라우저·기기에서 접근하면 서버의 입력 데이터는 보존되지만 기존 게스트 소유권을 자동 복구하지 않는다. 복구 지원 여부와 절차는 후속 결정이다.
@@ -420,7 +432,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 - 애플리케이션 테스트는 포트의 테스트 대역을 사용해 유스케이스 흐름을 검증한다.
 - 어댑터 통합 테스트는 PostgreSQL, Redis, HTTP 직렬화와 외부 API 계약을 각각 검증한다.
 - Gemini 계약 테스트는 참가자 제출·수정 중 호출이 없고 마감 시 자연어가 있는 제출만 방 전체 논리 작업 하나에 포함되는지 검증한다. 전원이 정형 일정만 제출하면 Gemini 작업이 생성되지 않는지, Full Jitter의 범위와 재시도 분류, 제공된 자연어 길이 경계 및 배치 응답의 참조값 일치 여부도 검증한다.
-- 권한 테스트는 로그인한 주최자만 방 생성·재분석·확정을 수행하고, `Secure HttpOnly` 게스트 쿠키가 있는 참여자만 본인 최신 제출을 조회·수정하며 공유 링크·누락/위조 쿠키·다른 참여자의 자격 증명으로 타인 입력을 조회할 수 없는지 검증한다. 같은 게스트 세션은 여러 방의 각 본인 참여를 조회할 수 있지만 같은 방에 두 번째 게스트 참여자를 만들 수 없어야 한다.
+- 제출 MVP 권한 테스트는 방 생성 익명 세션만 재분석·확정을 수행하고, `Secure HttpOnly` 익명 쿠키가 있는 참여자만 본인 최신 제출을 조회·수정하며 공유 링크·누락/위조 쿠키·다른 참여자의 자격 증명으로 권한을 얻지 못하는지 검증한다. Post-MVP에는 로그인한 주최자 권한과 계정 전환 회귀 테스트를 추가한다.
 - Calendar 권한 테스트는 인증된 참여자만 Google OAuth 흐름과 저장된 Calendar grant를 사용하고, 게스트 요청은 OAuth 시작 전에 거부되며 방 전용 시간 격자만 사용할 수 있는지 검증한다.
 - Calendar 스냅샷 테스트는 ON 제출·수정 시점마다 조회 결과와 조회 시각이 해당 불변 버전에 저장되고, 입력 수집 종료에서는 Google Calendar를 호출하지 않으며 최신 제출 버전의 스냅샷만 사용하는지 검증한다.
 - 보안 테스트는 게스트 자격 증명 원문이 응답 JSON·URL·로그·Redis·브라우저 스크립트 저장 계약에 노출되지 않고 PostgreSQL에는 해시만 저장되는지 검증한다. Refresh·로그아웃 테스트는 허용된 Origin만 cookie credential 요청을 처리하고 Origin 누락·불일치와 wildcard credential CORS를 거부하는지 검증한다. 일반 로그아웃이 현재 패밀리만 폐기하고 다른 기기 패밀리는 유지하는지, 모든 기기 로그아웃이 사용자에게 속한 전체 패밀리를 폐기하지만 공급자 grant는 유지하는지 검증한다. 게스트 쿠키 CSRF 테스트는 후속 게스트 방어 방식 결정에 맞춰 추가한다.
