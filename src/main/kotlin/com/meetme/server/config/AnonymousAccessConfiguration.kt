@@ -1,10 +1,10 @@
 package com.meetme.server.config
 
-import com.meetme.server.adapter.output.security.GuestCredentialService
-import com.meetme.server.adapter.output.security.SecureInviteCodeGenerator
-import com.meetme.server.adapter.output.security.SystemIdGenerator
-import com.meetme.server.application.port.output.IdGenerator
-import com.meetme.server.application.port.output.InviteCodeGenerator
+import com.meetme.server.meetingroom.adapter.output.security.SecureInviteCodeGenerator
+import com.meetme.server.meetingroom.application.port.output.InviteCodeGenerator
+import com.meetme.server.participant.adapter.output.security.GuestCredentialService
+import com.meetme.server.shared.adapter.output.security.SystemIdGenerator
+import com.meetme.server.shared.application.port.output.IdGenerator
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean

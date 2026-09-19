@@ -1,0 +1,22 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-18-migration",
+  "sourceRevision": "ceb7fea3a26fdcc5e5168496198e415883325025",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/MeetingDurationRemovalMigrationTest.kt",
+      "sha256": "ee5017e83c07d5e550143823fcde5a401ee23f055a2c635efaccde6fe4083cb2"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "test",
+    "--tests",
+    "*MeetingDurationRemovalMigrationTest"
+  ],
+  "failedTests": [
+    "MeetingDurationRemovalMigrationTest - latest migration remained V4 and duration_minutes still existed"
+  ],
+  "expectedFailureCategory": "EXPECTED_ASSERTION_FAILURE",
+  "recordedAt": "2026-09-19T16:13:44.6825819Z"
+}

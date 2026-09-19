@@ -129,9 +129,10 @@ Aggregate 사이 불변식과 여러 저장소를 묶는 원자성은 Applicatio
 - 영속 타입은 DDD Entity와 혼동하지 않도록 `Entity` 대신 `Record` 또는 `Row` 접미사를 사용하고, 명시적인 Mapper로 도메인 모델과 변환한다.
 - 포트는 실제 교체 가능성이나 테스트 경계가 있는 외부 의존성에만 둔다.
 - 방 생성 유스케이스는 모임과 주최자 역할의 첫 참여자 생성을 하나의 트랜잭션으로 처리한다. 주최자도 조건 제출 상태를 가지며 예상 참여 인원 계산에서 제외하지 않는다.
-- MVP는 단일 Gradle 모듈에서 `domain`, `application`, `adapter`, `config`의 최상위 패키지 경계를 사용한다.
-- `application.port.input`은 시스템 진입 유스케이스를, `application.port.output`은 실제 외부 교체 또는 독립 테스트 가치가 있는 의존성을 정의한다.
-- `adapter.input.web`은 HTTP 진입점을, `adapter.output.persistence`와 `adapter.output.integration`은 영속성과 외부 서비스 연동을 구현한다.
+- MVP는 단일 Gradle 모듈에서 `meetingroom`, `participant`, `submission`, `coordination` Aggregate를 최상위 기능 패키지로 두고, 각 패키지 아래에 `domain`, `application`, `adapter` 헥사고날 경계를 둔다. 전역 `domain`, `application`, `adapter` 최상위 패키지는 사용하지 않는다.
+- 각 Aggregate의 `application.port.input`은 시스템 진입 유스케이스를, `application.port.output`은 실제 외부 교체 또는 독립 테스트 가치가 있는 의존성을 정의한다. Aggregate를 조정하는 유스케이스는 주된 상태 변경을 소유하는 Aggregate의 Application 계층에 둔다.
+- 각 Aggregate의 `adapter.input.web`은 HTTP 진입점을, `adapter.output.persistence`와 `adapter.output.integration`은 영속성과 외부 서비스 연동을 구현한다. 여러 Aggregate에서 사용하는 ID·시간 값, 기술 중립 생성기 계약과 공통 HTTP 오류·게스트 쿠키 같은 횡단 기술 계약만 `shared`에 두며 Aggregate별 저장소·Record·Mapper는 `shared`로 올리지 않는다.
+- 소스 경로와 package 선언의 일치, 네 Aggregate별 세 계층의 존재, Domain의 프레임워크 독립성과 Domain·Application의 Adapter 비의존은 아키텍처 테스트로 검증한다.
 - 규모와 독립 배포 필요성이 확인되기 전에는 멀티 모듈로 분리하지 않는다.
 
 ## 5. API 계약과 Swagger
@@ -223,7 +224,7 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 4. 도메인 서비스가 자연어에서 구조화된 요일·지역 시간 조건을 `[searchStartDate, searchEndDate)` 안의 실제 날짜별 구간으로 확장하고 `ZoneRules`를 적용한다.
 5. 자연어 시간 조건이 없거나 의미 검증에서 제외되면 정형 일정 입력을 적용할 수 있도록 탐색 범위 전체를 중립적인 기준 구간으로 사용한다.
 6. `MANUAL_AVAILABILITY` 참여자가 실제 날짜형·확장된 주간 반복형 가능 시간을 하나 이상 제출했다면 기준 구간과 교차한다. 빈 배열이면 기준 구간을 그대로 유지한다. `CALENDAR` 참여자는 ON 선택에 따라 자연어가 없으면 탐색 범위 전체를 기준 구간으로 사용하고, Calendar 불가 시간과 실제 날짜형·확장된 주간 반복형 추가 불가 시간의 합집합을 차감한다. 남은 시간은 다른 참여자의 가능 범위와 교차한다.
-7. 고정된 후보 격자로 양자화하지 않고 교차·차감 후 남은 연속 시간 구간을 그대로 계산하며, 모임 소요 시간을 충족하는 구간만 시간 후보로 유지한다.
+7. 고정된 후보 격자로 양자화하거나 임의 길이로 자르지 않고 교차·차감 후 남은 모든 연속 시간 구간을 그대로 시간 후보로 유지한다.
 8. 사용자가 명시한 반경 또는 기본 1km 반경으로 각 정규화된 장소의 허용 원을 만든다.
 9. 한 참여자의 대안 장소들은 합집합으로, 관련 참여자들의 허용 영역은 교집합으로 계산한다.
 10. 이동 제약 또는 미확정 표현만 있는 조건 분기는 계산 가능한 오프라인 영역을 만들지 않으며 온라인 후보로 fallback할 수 있다.
@@ -444,7 +445,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 ## 11. 테스트 경계
 
 - 도메인 단위 테스트는 Spring 컨텍스트 없이 시간·장소 허용 영역·Plan A/B/C 규칙을 검증한다.
-- 시간 테스트는 구조화된 요일·시간 조건을 탐색 범위의 실제 날짜로 확장하고, 참여자 중 한 명이라도 가진 Calendar 불가 시간을 차감하며, 남은 구간이 모임 소요 시간을 충족하는지를 검증한다.
+- 시간 테스트는 구조화된 요일·시간 조건을 탐색 범위의 실제 날짜로 확장하고, 참여자 중 한 명이라도 가진 Calendar 불가 시간을 차감한 뒤 길이와 관계없이 남은 모든 연속 구간을 보존하는지 검증한다.
 - 정형 일정 입력 테스트는 명시 범위의 실제 날짜형과 기본 범위의 주간 반복형을 구분한다. `MANUAL_AVAILABILITY` 가능 시간이 있으면 자연어 또는 중립 기준 구간과 교차하고, 빈 배열이면 자연어 기준 구간을 그대로 유지한다. 자연어·Calendar ON·수동 가능 시간이 모두 없으면 `SUBMISSION_INPUT_REQUIRED`로 거부하고 완료 인원이 증가하지 않는지 검증한다. Calendar 연결·조회와 방별 ON/OFF가 독립적인지, OFF 데이터는 무시되는지, ON이면 자연어 없이 빈 불가 시간 스냅샷도 유효한지, 공급자·추가 불가 시간을 합친 뒤 고정 슬롯 없이 연속 구간으로 차감하는지도 검증한다.
 - 후보 표현 테스트는 자연어 요약이 구조화 후보와 의미상 동일하고 제외된 날짜·시간을 가능하다고 표현하지 않는지 검증한다. 예외 수가 실제 가능 날짜 수보다 적을 때만 패턴과 모든 예외를 사용하고, 동률·예외 우세·불규칙 후보에서는 실제 날짜 목록을 선택하는 경계를 포함한다.
 - 시간 테스트는 `Asia/Seoul`뿐 아니라 DST gap·overlap이 있는 대표 IANA Zone을 사용해 Zone ID 기반 계산 경계를 검증한다.

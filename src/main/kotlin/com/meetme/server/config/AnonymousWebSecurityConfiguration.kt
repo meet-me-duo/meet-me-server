@@ -1,7 +1,7 @@
 package com.meetme.server.config
 
-import com.meetme.server.application.port.input.RoomLifecycleErrorCode
-import com.meetme.server.application.port.input.RoomLifecycleException
+import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
+import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Configuration

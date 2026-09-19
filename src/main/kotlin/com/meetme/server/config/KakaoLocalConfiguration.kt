@@ -1,8 +1,8 @@
 package com.meetme.server.config
 
-import com.meetme.server.adapter.output.integration.KakaoLocalPlaceAdapter
-import com.meetme.server.adapter.output.integration.KakaoLocalProperties
-import com.meetme.server.application.port.output.PlaceSearchPort
+import com.meetme.server.coordination.adapter.output.integration.KakaoLocalPlaceAdapter
+import com.meetme.server.coordination.adapter.output.integration.KakaoLocalProperties
+import com.meetme.server.coordination.application.port.output.PlaceSearchPort
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean

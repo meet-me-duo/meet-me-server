@@ -5,15 +5,15 @@
   "boundary": "Deterministic Plan C ordering, Kakao exact-name uniqueness, unresolved-place PARTIAL handling, and PostgreSQL room ownership",
   "sourceFiles": [
     {
-      "path": "src/main/kotlin/com/meetme/server/domain/matching/DeterministicCandidateMatcher.kt",
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
       "sha256": "89935be2fff8ac293864f01b4a5fb9b0000f8fc40f86a53b9b3bc1ffa03ec0a6"
     },
     {
-      "path": "src/main/kotlin/com/meetme/server/adapter/output/integration/KakaoLocalPlaceAdapter.kt",
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/KakaoLocalPlaceAdapter.kt",
       "sha256": "fe670b9b64e6731156dd39d549e1b4d5f7ea3e2be7ea7c08df4b5242d26ebd32"
     },
     {
-      "path": "src/main/kotlin/com/meetme/server/application/service/MatchingProcessor.kt",
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
       "sha256": "49662d9512bc2aa4d2d33bda5b38b85a26035d37e02b053f2be553bab7ab95af"
     },
     {
@@ -23,19 +23,19 @@
   ],
   "testFiles": [
     {
-      "path": "src/test/kotlin/com/meetme/server/domain/matching/DeterministicCandidateMatcherTest.kt",
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcherTest.kt",
       "sha256": "4699a4f79070b8c17e8b6315b85e8e19a74027d6f5cc7c87997a1ffa1537c795"
     },
     {
-      "path": "src/test/kotlin/com/meetme/server/adapter/output/integration/KakaoLocalPlaceAdapterTest.kt",
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/KakaoLocalPlaceAdapterTest.kt",
       "sha256": "a266f2e9ec8f8ffa973c827c55682bc9883106e0c3f4abc07ef1b85d615101d6"
     },
     {
-      "path": "src/test/kotlin/com/meetme/server/adapter/output/persistence/MatchingResultsMigrationTest.kt",
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/MatchingResultsMigrationTest.kt",
       "sha256": "ed7b87b7efac56002cd6a7948d80ae326617a29db2f69c93af9ef45033a376ae"
     },
     {
-      "path": "src/test/kotlin/com/meetme/server/application/service/MatchingProcessorTest.kt",
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingProcessorTest.kt",
       "sha256": "382442b1c59ec838c3cc18720a8e5aea03077b51183625521e78b9e42322d62e"
     }
   ],
