@@ -37,8 +37,8 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** Phase 6~7 — Issue #16 결정론적 매칭·결과 확정 구현·검증 완료, PR 생성 준비
-- **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화에 이어 Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다.
+- **현재 단계:** 4번 완료 후 5번 시작 전 긴급 정정 — Issue #18 구현·검증 완료, 커밋·PR 생성 준비
+- **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
 - **현재 차단 사항:** 기능 구현을 막는 외부 자격 증명은 없다. 운영 domain은 `meet-me.co.kr`, 장소 공급자는 Kakao Local API로 확정했고 Gemini·Kakao Local 개발 키를 로컬과 GitHub `integration` Environment에 등록했다. AWS 관련 설정은 사용자 지시 전까지 보류하며, 공개 배포 전 AWS 계정·예산·Region·배포 방식, Route 53 생성 후 가비아 네임서버 변경과 Gemini Paid 전환 승인이 필요하다.
 - **현재 사용자 개입:** 제출 MVP 기능 구현 전 필요한 Gemini·Kakao Local 개발 키와 domain 준비를 완료했다. 지금은 가비아 기본 네임서버를 유지하고 AWS 작업을 시작하지 않는다. 이후 사용자가 AWS 진행을 지시하면 계정 보안·예산을 확인하고, Terraform이 Route 53 Hosted Zone을 만든 뒤 가비아 네임서버를 교체한다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Paid Tier 전환을 승인한다. OAuth·Calendar 사용자 작업은 Post-MVP까지 중단한다.
@@ -47,7 +47,7 @@
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **고위험 검증:** 트랜잭션·동시성·외부 Adapter의 의도적 결함 주입은 `.tdd/verification/<work-item>.json`에 최종 source·test 지문과 탐지 결과를 추적하고 전체 출력은 로컬 로그로 분리한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
-- **아키텍처 자동 검사:** initial commit과 Phase 1에서는 ArchUnit·Konsist를 도입하지 않고 코드 리뷰로 헥사고날 의존 방향을 확인한다. 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 도구를 다시 비교한다.
+- **아키텍처 자동 검사:** 실제 패키지 경계 문제를 계기로 별도 라이브러리 없이 소스 경로·package 일치, 네 Aggregate별 `domain/application/adapter` 존재, Domain 프레임워크 독립성과 Domain·Application의 Adapter 비의존을 검사하는 회귀 테스트를 도입했다. ArchUnit·Konsist는 현재 검사 범위로 부족해질 때 재비교한다.
 - **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR 본문의 독립된 `Closes #<issue-number>` 행으로 연결한다. 프로젝트 GitHub Action은 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 종료한다. PR 제목은 `<type>: <summary>` 형식과 허용 type을 지키며 summary를 명사형 한국어로 끝낸다. 본문은 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적는다. 현재 위임 범위에서는 커밋·push·PR 생성 전 승인 대기 없이 진행하고 생성 직후 결과를 보고한다.
 - **완료 정책:** 예상 참여 인원·제출 마감은 선택 사항이며, 둘 다 없으면 수동 마감 방식을 명시한다. 자동 조건이 있어도 주최자는 경고 후 조기 마감할 수 있다.
 - **최소 인원:** 예상 참여 인원은 2명 이상이며, 모든 종료 방식에서 주최자 포함 고유 제출이 2개 미만이면 `INSUFFICIENT_PARTICIPANTS`로 종료하고 후보를 만들지 않는다.
@@ -65,11 +65,11 @@
 - **시간대·국제화:** MVP는 `Asia/Seoul`, `ko-KR`로 고정하되 IANA Zone ID·UTC Instant·BCP 47 locale·MessageSource 경계를 선도입한다.
 - **DST 경계:** gap의 존재하지 않는 경계는 다음 유효 시각으로 이동하고 overlap은 이른 시작 offset부터 늦은 종료 offset까지 실제 구간을 보존한다.
 - **후보 탐색 범위:** 주최자가 지역 날짜 범위를 선택하며, 생략하면 프론트엔드가 안내한 방 생성일 포함 14일을 서버가 적용·저장한다.
-- **시간 결과:** 탐색 범위에서 자연어 조건을 실제 날짜별 구간으로 확장하고 후보별 포함 참여자의 Calendar 불가 시간을 차감한다. 구조화 후보와 MessageSource 템플릿 자연어 요약을 함께 반환하며 실제 날짜 공지는 주최자가 담당한다.
+- **시간 결과:** 탐색 범위에서 자연어 조건을 실제 날짜별 구간으로 확장하고 후보별 포함 참여자의 Calendar 불가 시간을 차감한다. 별도 소요 시간으로 자르거나 제외하지 않고 남은 모든 연속 가능 구간과 MessageSource 템플릿 자연어 요약을 함께 반환하며 실제 날짜·시간 공지는 주최자가 담당한다.
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #16의 `feature/deterministic-matching-results`에서 시간·장소 교집합, Kakao 고유 정확명 정규화, Plan A/B/C, `NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정을 역할 분리 TDD로 완료했다. Redis relay·consumer는 5번 브랜치로 유지하고 AWS 설정은 사용자 지시 전까지 보류한다.
+- **현재 작업:** Issue #16과 PR #17의 4번 작업을 `develop`에 병합한 뒤 Issue #18의 `refactor/aggregate-hexagonal-structure`에서 긴급 정정 구현과 전체 품질 게이트를 완료했다. PR 병합 후 Redis relay·consumer를 다루는 5번 브랜치로 복귀하며 AWS 설정은 사용자 지시 전까지 보류한다.
 
 ## 실행 순서
 
@@ -84,7 +84,7 @@
 현재 문서 PR #9는 아래 구현 브랜치 수에 포함하지 않는다. 각 브랜치는 직전 PR이 `develop`에 병합된 뒤
 깨끗한 작업 트리에서 최신 `develop`을 받아 생성한다.
 
-### 제출 MVP — 6개 브랜치
+### 제출 MVP — 6개 브랜치와 긴급 정정 1개
 
 | 번호 | 브랜치 | 포함 단계 | 완료 결과 |
 | --- | --- | --- | --- |
@@ -92,6 +92,7 @@
 | 2 | `feature/anonymous-room-lifecycle` | Phase 3~4 | 익명 브라우저 세션, 주최자 권한, 방 생성·참여·마감 |
 | 3 | `feature/submission-gemini-pipeline` | Phase 5 | 조건 제출·수정, 배치 고정, Outbox와 Gemini 구조화 파이프라인 |
 | 4 | `feature/deterministic-matching-results` | Phase 6~7 | Kakao Local 장소 정규화, 결정론적 매칭, Plan A/B/C와 결과 확정 |
+| 4A | `refactor/aggregate-hexagonal-structure` | 4번 이후·5번 이전 긴급 정정 | 소요 시간 제거, Aggregate 우선 패키지 재편과 아키텍처 회귀 검사 |
 | 5 | `feature/reliability-observability` | Phase 8 | Redis Streams, 재시도·DLQ, 보안, 로그·지표와 rate limit |
 | 6 | `feature/aws-release` | Phase 9~10 | 컨테이너·Terraform·배포, E2E와 Wanted 제출 MVP 출시 검증 |
 
@@ -359,7 +360,7 @@
 
 - [x] 핵심 용어와 `MeetingRoom`·`Participant`·`Submission`·`CoordinationRun` Aggregate 경계를 정리하고 사용자 검토를 받는다.
 - [x] 모임 방식, 방 입력 수집 상태·마감 원인·조율 작업 상태·후보 품질과 참여자 역할 값 객체를 테스트부터 작성한다.
-- [x] IANA Zone ID, 지역 날짜·시간, UTC Instant, 기간, 실제 날짜형·주간 반복형 시간 구간, 좌표와 소요 시간 값 객체를 테스트부터 작성한다.
+- [x] IANA Zone ID, 지역 날짜·시간, UTC Instant, 실제 날짜형·주간 반복형 시간 구간과 좌표 값 객체를 테스트부터 작성한다. 초기 소요 시간 값 객체는 4A 긴급 정정에서 제거한다.
 - [x] DST gap·overlap이 있는 `America/New_York`으로 `ZoneRules` 기반 변환 테스트를 작성한다.
 - [x] 모임 생성, 참여, 조건 제출 버전, 조율과 확정 상태 전이 규칙을 테스트부터 작성한다.
 - [x] 코드 리뷰와 import 검사로 도메인 코드에 Spring·Komapper·외부 SDK 의존성이 없음을 검증한다.
@@ -403,7 +404,7 @@
 
 - [x] 모임 생성 inbound port와 애플리케이션 서비스를 테스트부터 구현한다.
 - [x] 로그인 없이 방 생성을 허용하고 생성 요청의 익명 브라우저 세션에 주최자 참여를 연결하는 테스트를 작성한다.
-- [x] 모임 목적, 소요 시간과 선호 방식 입력 검증을 구현한다.
+- [x] 모임 목적과 선호 방식 입력 검증을 구현한다. 초기 소요 시간 입력은 4A 긴급 정정에서 제거한다.
 - [x] 방 생성 시 주최자를 첫 번째 참여자로 같은 트랜잭션에서 생성하고 예상 참여 인원에 포함하는 테스트를 작성한다.
 - [x] 예상 참여 인원을 설정할 때 2명 미만을 거부하는 검증 테스트를 작성한다.
 - [x] MVP 방 생성 시 `Asia/Seoul` Zone ID를 저장하고 다른 Zone 선택을 허용하지 않는 계약 테스트를 작성한다.
@@ -474,7 +475,7 @@
 - [x] 수동 가능 시간이 있으면 자연어 또는 중립 기준 구간과 교차하고, 빈 배열이면 자연어 기준 구간을 유지하며, 자연어와 슬롯이 모두 없으면 제출을 거부하는 테스트를 작성한다.
 - [x] 자연어 요일·시간 조건을 방 시간대와 탐색 범위의 실제 날짜별 구간으로 확장하는 테스트를 작성한다.
 - [x] 후보가 방의 `[searchStartDate, searchEndDate)` 지역 날짜 범위를 벗어나지 않는 테스트를 작성한다.
-- [x] 고정 슬롯 양자화 없이 남은 연속 구간이 모임 소요 시간을 만족하는지 테스트한다.
+- [x] 고정 슬롯 양자화나 최소 길이 필터 없이 남은 모든 연속 가능 구간을 보존하는지 테스트한다.
 - [x] 좌표 간 거리 계산 테스트를 작성한다.
 - [x] 사용자 명시 반경과 기본 1km 허용 반경 적용 테스트를 작성한다.
 - [x] 한 참여자의 대안 장소 허용 영역 합집합 테스트를 작성한다.
@@ -512,6 +513,19 @@
 - [x] 참여자용 확정 결과 조회 API를 구현한다.
 - [x] 주요 충돌·권한 오류 `@ApiResponse`와 DTO `@Schema`를 작성한다.
 - [x] 확정 및 결과 조회 OpenAPI 계약과 통합 테스트를 검증한다.
+
+## 긴급 정정 4A — 소요 시간 제거와 Aggregate 우선 패키지 재편
+
+**관련 Issue:** #18
+**삽입 위치:** 4번 `feature/deterministic-matching-results` 병합 후, 5번 `feature/reliability-observability` 시작 전
+
+- [x] 방 생성 요청·응답, `MeetingRoom`, 영속 Record·Mapper와 매칭 함수에서 소요 시간 값을 제거한다.
+- [x] 교집합·차감 뒤 남은 모든 연속 가능 구간을 길이와 관계없이 후보에 포함하는 회귀 테스트를 통과한다.
+- [x] 기존 V1~V4를 수정하지 않고 V5 Flyway 마이그레이션으로 `duration_minutes`를 제거하며 기존 방 데이터 보존을 검증한다.
+- [x] `meetingroom`, `participant`, `submission`, `coordination`을 최상위 Aggregate 패키지로 두고 각 패키지 아래에 `domain/application/adapter`를 배치한다.
+- [x] Aggregate별 persistence port·Record·Mapper·adapter를 해당 Aggregate로 이동하고 전역 최상위 `domain/application/adapter` 디렉터리를 프로덕션·테스트 모두에서 제거한다.
+- [x] 소스 경로·package 일치, Aggregate별 계층 존재, Domain 프레임워크 독립성과 Domain·Application의 Adapter 비의존을 아키텍처 테스트로 고정한다.
+- [x] PRD, Architecture, ADR-039와 이 구현 계획을 변경된 제품·기술 결정에 맞게 동기화한다.
 
 ## Phase 8 — Redis, 신뢰성, 보안과 관측성
 
@@ -609,38 +623,38 @@
 
 | 요구사항 | 구현 단계 | 상태 |
 | --- | --- | --- |
-| FR-000A 제출 MVP 익명 접근·주최자 권한 | Phase 3, 4, 10 | 방 생성·참여·마감 권한 완료, 후속 주최자 명령 남음 |
+| FR-000A 제출 MVP 익명 접근·주최자 권한 | Phase 3, 4, 10 | 핵심 주최자 명령 완료, 공개 배포 검증 남음 |
 | FR-001 방 생성 | Phase 4 | 완료 |
 | FR-001A 주최자의 참여자 등록·예상 인원 포함 | Phase 1, 4 | 완료 |
-| FR-001B 주최자 선택 탐색 범위와 기본 14일 표시 | Phase 4, 6 | 방 계약 완료, 후보 경계 남음 |
+| FR-001B 주최자 선택 탐색 범위와 기본 14일 표시 | Phase 4, 6 | 완료 |
 | FR-002 참여 링크 | Phase 4 | 완료 |
 | FR-002A 주최자 필수 Google·Kakao 로그인 | Post-MVP PM-01 | Post-MVP |
 | FR-002B 서비스 계정 연결 | Post-MVP PM-01 | Post-MVP |
-| FR-002C 익명 참여자 본인 증명 | Phase 3, 4, 5 | 세션·참여 소유권 완료, 제출 소유권 남음 |
+| FR-002C 익명 참여자 본인 증명 | Phase 3, 4, 5 | 완료 |
 | FR-003 로그인 사용자 Calendar 연동 | Post-MVP PM-02 | Post-MVP |
 | FR-003A Calendar 연결과 방별 ON/OFF 적용 분리 | Post-MVP PM-02 | Post-MVP |
 | FR-004 Calendar 불가 시간 변환 | Post-MVP PM-02 | Post-MVP |
 | FR-004B Calendar ON 제출 시점 스냅샷 고정 | Post-MVP PM-02 | Post-MVP |
-| FR-004A 제출 MVP 수동 가능 시간 격자 | Phase 1, 4, 5, 6 | 시간 모델·영속 기반 완료 |
-| FR-005 선택적 자연어 조건과 슬롯 전용 제출 | Phase 5 | 미착수 |
-| FR-006 위치 표현 분류와 검증된 장소 정규화 | Phase 5 | 미착수 |
-| FR-006A 이동 제약·미확정 장소의 좌표 생성 금지 | Phase 5 | 미착수 |
-| FR-007 1-Pass Payload | Phase 5 | 미착수 |
-| FR-007A 본인 최신 제출 조회 | Phase 3, 5 | 미착수 |
-| FR-008 방 전체 제출 배치별 논리 파싱 작업·입력 제한·기술 오류 재시도 | Phase 5, 8 | 미착수 |
-| FR-008A 수집 종료 전 수정과 최신 버전 매칭 | Phase 5 | 미착수 |
-| FR-008B 기술 실패 분석 지연·의미 실패 부분 결과 | Phase 5, 6, 7, 8 | 미착수 |
-| FR-008C 주최자 방 단위 재분석 | Phase 3, 5, 8 | 미착수 |
-| FR-009 참여자별 조건 비공개 | Phase 3, 5 | 미착수 |
-| FR-010 완료 조건 후 매칭 | Phase 4, 5, 6 | 종료 정책·수동 마감 완료, 자동 종료·매칭 남음 |
+| FR-004A 제출 MVP 수동 가능 시간 격자 | Phase 1, 4, 5, 6 | 완료 |
+| FR-005 선택적 자연어 조건과 슬롯 전용 제출 | Phase 5 | 완료 |
+| FR-006 위치 표현 분류와 검증된 장소 정규화 | Phase 5, 6 | 완료 |
+| FR-006A 이동 제약·미확정 장소의 좌표 생성 금지 | Phase 5, 6 | 완료 |
+| FR-007 1-Pass Payload | Phase 5 | 완료 |
+| FR-007A 본인 최신 제출 조회 | Phase 3, 5 | 완료 |
+| FR-008 방 전체 제출 배치별 논리 파싱 작업·입력 제한·기술 오류 재시도 | Phase 5, 8 | 구조화·Gemini 재시도 완료, Redis 전달 남음 |
+| FR-008A 수집 종료 전 수정과 최신 버전 매칭 | Phase 5 | 완료 |
+| FR-008B 기술 실패 분석 지연·의미 실패 부분 결과 | Phase 5, 6, 7, 8 | 분석 지연·부분 결과 완료, DLQ 연계 남음 |
+| FR-008C 주최자 방 단위 재분석 | Phase 3, 5, 8 | API 완료, Redis 소비 연계 남음 |
+| FR-009 참여자별 조건 비공개 | Phase 3, 5, 7 | 완료 |
+| FR-010 완료 조건 후 매칭 | Phase 4, 5, 6 | 완료 |
 | FR-010A 주최자 수동 조기 마감 | Phase 4 | 완료 |
-| FR-010B 최소 2명 제출 전 후보 생성 금지 | Phase 4, 6 | 공개 상태 완료, 후보 생성 차단 남음 |
-| FR-011 Plan A/B/C | Phase 6 | 미착수 |
-| FR-011A 구조화 후보·자연어 요약 | Phase 6 | 미착수 |
-| FR-012 주최자 최종 확정 | Phase 3, 7 | 미착수 |
-| FR-012A 부분 결과의 무수정·무추가확인 원클릭 확정 | Phase 7 | 미착수 |
+| FR-010B 최소 2명 제출 전 후보 생성 금지 | Phase 4, 6 | 완료 |
+| FR-011 Plan A/B/C | Phase 6 | 완료 |
+| FR-011A 구조화 후보·자연어 요약 | Phase 6, 4A | 모든 연속 가능 구간 반환으로 정정 완료 |
+| FR-012 주최자 최종 확정 | Phase 3, 7 | 완료 |
+| FR-012A 부분 결과의 무수정·무추가확인 원클릭 확정 | Phase 7 | 완료 |
 | FR-013 IANA Zone ID와 UTC 기반 시간 모델 | Phase 1, 4, 5 | 도메인·DST 기반 완료 |
-| FR-014 i18n과 언어 중립 API 코드 | Phase 0, 3, 5 | 공통 ProblemDetail·오류 코드 완료, 제출 API 남음 |
+| FR-014 i18n과 언어 중립 API 코드 | Phase 0, 3, 5, 6 | 완료 |
 
 ## 진행 기록
 
@@ -720,3 +734,4 @@
 | 2026-09-19 | Issue #12의 30일 고정 익명 세션, 128비트 초대 코드, 표시 이름과 방 생성·조회·참여·HOST 수동 마감 API 구현 | Domain·보안 RED 11개, V2 migration RED 4개, 전체 51개·hook 12개 테스트, 결함 주입 4종, `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #12 |
 | 2026-09-19 | Issue #14의 조건 제출·수정·본인 조회, 50명 상한, 자동·수동·데드라인 마감의 최신 배치 고정, 참조형 Outbox와 `gemini-3.8-flash` Structured Output·분석 지연 재요청 구현 | RED 4개, 전체 76개·hook 12개 테스트, V3 fresh/upgrade, 동시성·멱등성 및 좌표·원문·잠금 결함 주입 3종, `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #14 |
 | 2026-09-20 | Issue #16의 연속 시간·장소 영역 교집합, Kakao 정확명 고유 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회·주최자 미반영 입력 조회와 멱등 확정 구현 | 역할 분리 RED, 핵심 순위·Kakao 경합·부분 결과·교차 방 FK 결함 주입 탐지, 전체 133개 테스트와 `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #16 |
+| 2026-09-20 | Issue #18의 소요 시간 전 계층 제거, V5 마이그레이션과 Aggregate 우선 헥사고날 패키지 재편. 프로덕션·테스트의 구형 최상위 `adapter/application/domain` 제거와 ADR-039 추가 | 새 구조 기준 RED·마이그레이션·API 실패 증거, 아키텍처 회귀 검사, hook 12개와 전체 139개 테스트, `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #18 |

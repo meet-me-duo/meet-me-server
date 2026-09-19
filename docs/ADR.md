@@ -86,6 +86,8 @@ MVP 출시 속도와 핵심 일정 조율 로직의 정확성을 우선한다. A
 
 **트레이드오프**: 모듈 수준의 컴파일 격리가 없으므로 패키지 의존성 규율과 아키텍처 테스트가 필요하다. 기능과 팀이 커져 독립 빌드 또는 강한 경계가 필요해지면 멀티 모듈 전환 비용이 발생한다.
 
+> 최상위 패키지 배치 결정은 ADR-039에서 Aggregate 우선 구조로 대체한다. 단일 Gradle 모듈과 헥사고날 의존 방향 결정은 유지한다.
+
 ### ADR-011: PostgreSQL Transactional Outbox와 Redis Streams로 비동기 작업 전달
 
 **결정**: 자연어 조건 구조화와 일정 후보 생성 같은 비동기 작업은 비즈니스 상태와 Outbox 이벤트를 같은 PostgreSQL 트랜잭션에 기록한 뒤 relay가 Redis Streams에 발행한다. Worker는 Consumer Group으로 작업을 소비하고 처리 성공 후 ACK한다. PostgreSQL을 작업 필요 여부와 처리 상태의 기준으로 유지하며, Redis Pub/Sub은 유실 가능한 실시간 보조 알림 외의 비즈니스 작업 전달에는 사용하지 않는다.
@@ -355,3 +357,14 @@ MVP 출시 속도와 핵심 일정 조율 로직의 정확성을 우선한다. A
 **이유**: Kakao 응답에는 서버가 임계값으로 사용할 수 있는 신뢰도 점수가 없으므로 동명 장소를 임의 선택하지 않아야 한다. 플랜 종류별 카드와 안정적인 동률 규칙은 동일 입력의 결과를 재현하면서 프론트엔드가 제한된 후보 계약을 유지하게 한다. 빈 결과와 외부 장애를 분리하고 첫 확정을 유지하면 사용자가 공유한 결과가 조용히 바뀌지 않는다.
 
 **트레이드오프**: 보수적인 정확명 정책 때문에 사람이 이해할 수 있는 일부 장소도 미확정으로 남을 수 있다. 공통 가능 지역은 실제 매장이 아니므로 주최자가 구체 장소를 별도로 정해야 한다. Plan C 동률에서 일부 가능한 참여자 조합을 숨기며, 첫 확정 우선 정책은 다른 후보로 바꾸려면 향후 명시적 확정 변경 기능이 필요하다. 대신 공급자 오판, 비결정적 후보 순서와 동시 확정 덮어쓰기를 피한다.
+
+### ADR-039: Aggregate 우선 패키지 기반 헥사고날 구조 채택
+
+**상태**: Accepted
+**날짜**: 2026-09-20
+
+**결정**: 단일 Gradle 모듈은 유지하되 `com.meetme.server` 바로 아래에 `meetingroom`, `participant`, `submission`, `coordination` Aggregate 패키지를 두고, 각 Aggregate 안에 `domain`, `application`, `adapter`를 배치한다. 기존 전역 `domain`, `application`, `adapter` 최상위 패키지는 제거한다. Aggregate별 저장소 port, 영속 Record·Mapper와 adapter는 해당 Aggregate가 소유한다. 여러 Aggregate에서 의미가 동일한 ID·시간 값, 기술 중립적인 ID 생성기와 공통 HTTP 오류·게스트 쿠키처럼 횡단 기술 계약인 최소 요소만 `shared`에 둔다. Aggregate 간 유스케이스 조정은 주된 상태 변경을 소유하는 Aggregate의 Application 서비스가 다른 Aggregate의 outbound port를 사용해 수행한다. 이 결정은 ADR-010의 최상위 패키지 배치를 대체하며 단일 모듈과 `adapter → application → domain` 의존 방향은 유지한다.
+
+**이유**: 계층을 최상위에 먼저 두면 하나의 기능을 변경할 때 저장소 전체의 `domain`, `application`, `adapter`를 오가야 하고 Aggregate 소유권이 디렉터리 구조에 드러나지 않는다. Aggregate를 먼저 배치하면 관련 도메인, 유스케이스, port와 adapter를 함께 탐색할 수 있고 네 Aggregate 경계와 코드 소유권이 일치한다. 저장소 port와 영속 구현까지 같은 경계에 두면 `shared`가 모든 비즈니스 타입을 아는 공용 계층으로 팽창하는 것도 막을 수 있다.
+
+**트레이드오프**: Aggregate를 함께 조정하는 유스케이스는 여러 기능 패키지의 port와 domain 타입을 import하므로 패키지 간 의존 관계를 검토해야 한다. 공통 값의 `shared` 승격 기준이 느슨하면 다시 결합도가 커질 수 있어 최소 공유 원칙과 아키텍처 테스트가 필요하다. 동일한 `adapter/application/domain` 하위 구조가 반복되지만 기능 탐색성과 향후 모듈 분리 경로가 명확해진다.

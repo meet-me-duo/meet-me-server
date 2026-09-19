@@ -5,11 +5,11 @@
   "boundary": "Anonymous credential secrecy, host authorization, room lifecycle transaction, and concurrent idempotent join",
   "sourceFiles": [
     {
-      "path": "src/main/kotlin/com/meetme/server/application/service/RoomLifecycleService.kt",
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt",
       "sha256": "ac143309b5e958542126ed45a78af7157aafa463bb4574c6c6e9e775112cfa29"
     },
     {
-      "path": "src/main/kotlin/com/meetme/server/adapter/output/security/GuestCredentialService.kt",
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestCredentialService.kt",
       "sha256": "42dd3fa1fa022386339ec089e7a2dfd69f714d64ea94d33e00489a62c253b90a"
     },
     {
@@ -17,13 +17,13 @@
       "sha256": "59c18cd5da025486a2327f2ac924d91e9c545e6c355cb659f356c7e02b9732c3"
     },
     {
-      "path": "src/main/kotlin/com/meetme/server/adapter/output/persistence/KomapperPersistenceAdapters.kt",
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/KomapperMeetingRoomRepository.kt",
       "sha256": "6c0de1cd8791764681242679f6f06207a5d5eb50dfb7457dfb884286b601df53"
     }
   ],
   "testFiles": [
     {
-      "path": "src/test/kotlin/com/meetme/server/adapter/input/web/RoomLifecycleWebIntegrationTest.kt",
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleWebIntegrationTest.kt",
       "sha256": "65c406c1155330725388b4703a5334c6ac14135d02dbfac209acd48f39a0782e"
     }
   ],

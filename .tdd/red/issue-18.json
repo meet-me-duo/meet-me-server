@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-18",
+  "sourceRevision": "ceb7fea3a26fdcc5e5168496198e415883325025",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcherTest.kt",
+      "sha256": "cd4968fbf3d99e6fcfc91a083ae1da817d29fdb01b8dfdc21aabacd2cbbff574"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcherTest.kt",
+      "sha256": "190bb20e498e06246bde5ca07fe48a4770a7c49634de536f7cc5bf22f2c5616e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/architecture/AggregatePackageArchitectureTest.kt",
+      "sha256": "061aebe1ef22167763f9de208de2c88069732843e1575efebbed46ff455de143"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "test",
+    "--tests",
+    "*DeterministicCandidateMatcherTest",
+    "--tests",
+    "*TimeRangeMatcherTest",
+    "--tests",
+    "*AggregatePackageArchitectureTest"
+  ],
+  "failedTests": [
+    "DeterministicCandidateMatcherTest - duration-free candidate generation reached TDD TODO",
+    "TimeRangeMatcherTest - duration-free availability calculation reached TDD TODO",
+    "AggregatePackageArchitectureTest - legacy top-level adapter package was detected"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-19T16:12:03.1568926Z"
+}

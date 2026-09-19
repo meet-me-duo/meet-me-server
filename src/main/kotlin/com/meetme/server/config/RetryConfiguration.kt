@@ -1,8 +1,8 @@
 package com.meetme.server.config
 
-import com.meetme.server.application.port.output.JitterPort
-import com.meetme.server.application.port.output.MonotonicTimePort
-import com.meetme.server.application.port.output.RetryDelayPort
+import com.meetme.server.coordination.application.port.output.JitterPort
+import com.meetme.server.coordination.application.port.output.MonotonicTimePort
+import com.meetme.server.coordination.application.port.output.RetryDelayPort
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.util.concurrent.ThreadLocalRandom
