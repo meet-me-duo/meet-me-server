@@ -1,0 +1,37 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-12-domain-security",
+  "sourceRevision": "be484add280e484f89bc9030251a4f331d01195d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/meeting/InviteCodeTest.kt",
+      "sha256": "1d13a277d5f2881c900f87c61b8e671a55d5920c7ea24f1a941af5a979d46fa0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/participant/ParticipantDisplayNameTest.kt",
+      "sha256": "ebbc8d7757474711cb590ea2c2bd0f3936d2a773ec14c48b871d3543f580c98e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/security/GuestCredentialServiceTest.kt",
+      "sha256": "f347f47b88156754cde0fa54ae5f9513e050a2f7ca2b3941728f248e51f5d592"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.domain.meeting.InviteCodeTest",
+    "--tests",
+    "com.meetme.server.domain.participant.ParticipantDisplayNameTest",
+    "--tests",
+    "com.meetme.server.adapter.output.security.GuestCredentialServiceTest"
+  ],
+  "failedTests": [
+    "InviteCodeTest (3 tests)",
+    "ParticipantDisplayNameTest (4 tests)",
+    "GuestCredentialServiceTest (4 tests)"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-19T08:55:00Z"
+}

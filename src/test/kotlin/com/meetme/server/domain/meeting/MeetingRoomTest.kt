@@ -4,6 +4,7 @@ import com.meetme.server.domain.common.GuestSessionId
 import com.meetme.server.domain.common.MeetingRoomId
 import com.meetme.server.domain.common.ParticipantId
 import com.meetme.server.domain.participant.Participant
+import com.meetme.server.domain.participant.ParticipantDisplayName
 import com.meetme.server.domain.participant.ParticipantRole
 import com.meetme.server.domain.time.MeetingDuration
 import com.meetme.server.domain.time.MeetingTimeZone
@@ -34,6 +35,7 @@ class MeetingRoomTest {
                 ParticipantId(UUID.randomUUID()),
                 room.id,
                 GuestSessionId(UUID.randomUUID()),
+                ParticipantDisplayName.of("주최자"),
                 createdAt,
             )
 
@@ -49,9 +51,7 @@ class MeetingRoomTest {
 
         assertEquals(CollectionStatus.CLOSED, closed.collectionStatus)
         assertEquals(ClosureReason.EXPECTED_PARTICIPANTS, closed.closureReason)
-        assertThrows<IllegalStateException> {
-            closed.close(ClosureReason.MANUAL, createdAt.plusSeconds(120), 2)
-        }
+        assertEquals(closed, closed.close(ClosureReason.MANUAL, createdAt.plusSeconds(120), 2))
     }
 
     @Test
@@ -67,6 +67,7 @@ class MeetingRoomTest {
     private fun room(policy: ClosurePolicy) =
         MeetingRoom.create(
             id = MeetingRoomId(UUID.randomUUID()),
+            inviteCode = InviteCode.fromEntropy(ByteArray(16) { it.toByte() }),
             purpose = "프로젝트 회의",
             duration = MeetingDuration.ofMinutes(60),
             mode = MeetingMode.EITHER,

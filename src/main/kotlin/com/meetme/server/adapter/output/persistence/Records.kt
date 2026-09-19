@@ -26,6 +26,7 @@ data class GuestSessionRecordDef(
 
 data class MeetingRoomRecord(
     val id: UUID,
+    val inviteCode: String,
     val purpose: String,
     val durationMinutes: Int,
     val meetingMode: String,
@@ -54,6 +55,7 @@ data class ParticipantRecord(
     val id: UUID,
     val roomId: UUID,
     val guestSessionId: UUID,
+    val displayName: String,
     val role: String,
     val joinedAt: OffsetDateTime,
 )

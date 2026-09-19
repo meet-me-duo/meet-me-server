@@ -22,12 +22,15 @@ data class GuestSession(
         require(expiresAt > createdAt) { "Guest session expiry must be after creation" }
         require(revokedAt == null || revokedAt >= createdAt) { "Revocation cannot precede creation" }
     }
+
+    fun isActive(at: Instant): Boolean = revokedAt == null && at < expiresAt
 }
 
 data class Participant private constructor(
     val id: ParticipantId,
     val roomId: MeetingRoomId,
     val guestSessionId: GuestSessionId,
+    val displayName: ParticipantDisplayName,
     val role: ParticipantRole,
     val joinedAt: Instant,
 ) {
@@ -36,22 +39,25 @@ data class Participant private constructor(
             id: ParticipantId,
             roomId: MeetingRoomId,
             guestSessionId: GuestSessionId,
+            displayName: ParticipantDisplayName,
             joinedAt: Instant,
-        ): Participant = Participant(id, roomId, guestSessionId, ParticipantRole.HOST, joinedAt)
+        ): Participant = Participant(id, roomId, guestSessionId, displayName, ParticipantRole.HOST, joinedAt)
 
         fun member(
             id: ParticipantId,
             roomId: MeetingRoomId,
             guestSessionId: GuestSessionId,
+            displayName: ParticipantDisplayName,
             joinedAt: Instant,
-        ): Participant = Participant(id, roomId, guestSessionId, ParticipantRole.MEMBER, joinedAt)
+        ): Participant = Participant(id, roomId, guestSessionId, displayName, ParticipantRole.MEMBER, joinedAt)
 
         fun restore(
             id: ParticipantId,
             roomId: MeetingRoomId,
             guestSessionId: GuestSessionId,
+            displayName: ParticipantDisplayName,
             role: ParticipantRole,
             joinedAt: Instant,
-        ): Participant = Participant(id, roomId, guestSessionId, role, joinedAt)
+        ): Participant = Participant(id, roomId, guestSessionId, displayName, role, joinedAt)
     }
 }
