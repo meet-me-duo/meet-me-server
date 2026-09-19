@@ -17,3 +17,8 @@ management:
     web:
       exposure:
         include: health,info
+
+meetme:
+  anonymous:
+    allowed-origins: ${APP_ALLOWED_ORIGINS:https://app.meet-me.co.kr}
+    cookie-secure: ${ANONYMOUS_COOKIE_SECURE:true}

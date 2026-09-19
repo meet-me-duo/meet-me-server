@@ -22,10 +22,12 @@ import com.meetme.server.domain.coordination.CoordinationRun
 import com.meetme.server.domain.coordination.MeetingCandidate
 import com.meetme.server.domain.coordination.SubmissionBatch
 import com.meetme.server.domain.meeting.ClosurePolicy
+import com.meetme.server.domain.meeting.InviteCode
 import com.meetme.server.domain.meeting.MeetingMode
 import com.meetme.server.domain.meeting.MeetingRoom
 import com.meetme.server.domain.participant.GuestSession
 import com.meetme.server.domain.participant.Participant
+import com.meetme.server.domain.participant.ParticipantDisplayName
 import com.meetme.server.domain.submission.Submission
 import com.meetme.server.domain.time.InstantTimeRange
 import com.meetme.server.domain.time.MeetingDuration
@@ -92,7 +94,7 @@ class CorePersistenceIntegrationTest {
     @Test
     fun `Flyway 최초 마이그레이션을 적용하고 검증한다`() {
         assertEquals(
-            "1",
+            "2",
             flyway
                 .info()
                 .current()
@@ -145,7 +147,13 @@ class CorePersistenceIntegrationTest {
         val secondSession = guestSession()
         guestSessionRepository.insert(secondSession)
         val secondParticipant =
-            Participant.member(ParticipantId(UUID.randomUUID()), first.room.id, secondSession.id, NOW.plusSeconds(1))
+            Participant.member(
+                ParticipantId(UUID.randomUUID()),
+                first.room.id,
+                secondSession.id,
+                ParticipantDisplayName.of("두 번째 참여자"),
+                NOW.plusSeconds(1),
+            )
         participantRepository.insert(secondParticipant)
         val secondSubmission = submission(first.room.id, secondParticipant.id, "목요일 저녁")
         submissionRepository.insert(secondSubmission)
@@ -177,7 +185,14 @@ class CorePersistenceIntegrationTest {
         roomRepository.insert(room)
         val guestSession = guestSession()
         guestSessionRepository.insert(guestSession)
-        val participant = Participant.host(ParticipantId(UUID.randomUUID()), room.id, guestSession.id, NOW)
+        val participant =
+            Participant.host(
+                ParticipantId(UUID.randomUUID()),
+                room.id,
+                guestSession.id,
+                ParticipantDisplayName.of("주최자"),
+                NOW,
+            )
         participantRepository.insert(participant)
         val submission = submission(room.id, participant.id, "화요일 저녁")
         submissionRepository.insert(submission)
@@ -187,6 +202,7 @@ class CorePersistenceIntegrationTest {
     private fun room() =
         MeetingRoom.create(
             MeetingRoomId(UUID.randomUUID()),
+            InviteCode.fromEntropy(ByteArray(16) { it.toByte() }),
             "통합 테스트 회의",
             MeetingDuration.ofMinutes(60),
             MeetingMode.EITHER,

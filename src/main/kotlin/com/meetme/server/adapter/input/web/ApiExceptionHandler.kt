@@ -1,0 +1,87 @@
+package com.meetme.server.adapter.input.web
+
+import com.meetme.server.application.port.input.RoomLifecycleErrorCode
+import com.meetme.server.application.port.input.RoomLifecycleException
+import jakarta.servlet.http.HttpServletRequest
+import org.springframework.context.MessageSource
+import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+import java.net.URI
+import java.util.Locale
+
+@RestControllerAdvice
+class ApiExceptionHandler(
+    private val messageSource: MessageSource,
+) {
+    @ExceptionHandler(RoomLifecycleException::class)
+    fun lifecycle(
+        exception: RoomLifecycleException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> {
+        val status = exception.code.status()
+        val problem = problem(status, exception.code.name, request, locale)
+        exception.details.forEach(problem::setProperty)
+        return ResponseEntity.status(status).body(problem)
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun validation(
+        exception: MethodArgumentNotValidException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> {
+        val problem = problem(HttpStatus.BAD_REQUEST, RoomLifecycleErrorCode.VALIDATION_FAILED.name, request, locale)
+        problem.setProperty(
+            "field_errors",
+            exception.bindingResult.fieldErrors.associate { it.field to (it.defaultMessage ?: "invalid") },
+        )
+        return ResponseEntity.badRequest().body(problem)
+    }
+
+    @ExceptionHandler(IllegalArgumentException::class)
+    fun illegalArgument(
+        @Suppress("UNUSED_PARAMETER") exception: IllegalArgumentException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> =
+        ResponseEntity.badRequest().body(
+            problem(HttpStatus.BAD_REQUEST, RoomLifecycleErrorCode.VALIDATION_FAILED.name, request, locale),
+        )
+
+    private fun problem(
+        status: HttpStatus,
+        code: String,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ProblemDetail =
+        ProblemDetail
+            .forStatusAndDetail(
+                status,
+                messageSource.getMessage("api.error.$code", null, code, locale),
+            ).apply {
+                title = status.reasonPhrase
+                type = URI.create("https://api.meet-me.co.kr/problems/${code.lowercase().replace('_', '-')}")
+                instance = URI.create(request.requestURI)
+                setProperty("code", code)
+            }
+}
+
+private fun RoomLifecycleErrorCode.status(): HttpStatus =
+    when (this) {
+        RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED,
+        RoomLifecycleErrorCode.GUEST_SESSION_INVALID,
+        -> HttpStatus.UNAUTHORIZED
+        RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED -> HttpStatus.FORBIDDEN
+        RoomLifecycleErrorCode.ROOM_NOT_FOUND -> HttpStatus.NOT_FOUND
+        RoomLifecycleErrorCode.ROOM_CLOSED,
+        RoomLifecycleErrorCode.EARLY_CLOSE_CONFIRMATION_REQUIRED,
+        -> HttpStatus.CONFLICT
+        RoomLifecycleErrorCode.INVITE_CODE_GENERATION_FAILED -> HttpStatus.SERVICE_UNAVAILABLE
+        RoomLifecycleErrorCode.VALIDATION_FAILED -> HttpStatus.BAD_REQUEST
+        RoomLifecycleErrorCode.ORIGIN_NOT_ALLOWED -> HttpStatus.FORBIDDEN
+    }

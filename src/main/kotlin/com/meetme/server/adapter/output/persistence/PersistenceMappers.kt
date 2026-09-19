@@ -19,10 +19,12 @@ import com.meetme.server.domain.coordination.SubmissionBatch
 import com.meetme.server.domain.meeting.ClosurePolicy
 import com.meetme.server.domain.meeting.ClosureReason
 import com.meetme.server.domain.meeting.CollectionStatus
+import com.meetme.server.domain.meeting.InviteCode
 import com.meetme.server.domain.meeting.MeetingMode
 import com.meetme.server.domain.meeting.MeetingRoom
 import com.meetme.server.domain.participant.GuestSession
 import com.meetme.server.domain.participant.Participant
+import com.meetme.server.domain.participant.ParticipantDisplayName
 import com.meetme.server.domain.participant.ParticipantRole
 import com.meetme.server.domain.submission.ManualAvailability
 import com.meetme.server.domain.submission.Submission
@@ -44,6 +46,7 @@ object PersistenceMappers {
     fun toRecord(domain: MeetingRoom): MeetingRoomRecord =
         MeetingRoomRecord(
             id = domain.id.value,
+            inviteCode = domain.inviteCode.value,
             purpose = domain.purpose,
             durationMinutes =
                 domain.duration.value
@@ -67,6 +70,7 @@ object PersistenceMappers {
     fun toDomain(record: MeetingRoomRecord): MeetingRoom =
         MeetingRoom.restore(
             id = MeetingRoomId(record.id),
+            inviteCode = InviteCode.of(record.inviteCode),
             purpose = record.purpose,
             duration = MeetingDuration.ofMinutes(record.durationMinutes.toLong()),
             mode = MeetingMode.valueOf(record.meetingMode),
@@ -113,6 +117,7 @@ object PersistenceMappers {
             domain.id.value,
             domain.roomId.value,
             domain.guestSessionId.value,
+            domain.displayName.value,
             domain.role.name,
             domain.joinedAt.atOffset(ZoneOffset.UTC),
         )
@@ -122,6 +127,7 @@ object PersistenceMappers {
             ParticipantId(record.id),
             MeetingRoomId(record.roomId),
             GuestSessionId(record.guestSessionId),
+            ParticipantDisplayName.of(record.displayName),
             ParticipantRole.valueOf(record.role),
             record.joinedAt.toInstant(),
         )

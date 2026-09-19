@@ -47,6 +47,7 @@ data class ClosurePolicy private constructor(
 
 data class MeetingRoom private constructor(
     val id: MeetingRoomId,
+    val inviteCode: InviteCode,
     val purpose: String,
     val duration: MeetingDuration,
     val mode: MeetingMode,
@@ -62,6 +63,7 @@ data class MeetingRoom private constructor(
     companion object {
         fun create(
             id: MeetingRoomId,
+            inviteCode: InviteCode,
             purpose: String,
             duration: MeetingDuration,
             mode: MeetingMode,
@@ -76,6 +78,7 @@ data class MeetingRoom private constructor(
             }
             return MeetingRoom(
                 id = id,
+                inviteCode = inviteCode,
                 purpose = purpose,
                 duration = duration,
                 mode = mode,
@@ -92,6 +95,7 @@ data class MeetingRoom private constructor(
 
         fun restore(
             id: MeetingRoomId,
+            inviteCode: InviteCode,
             purpose: String,
             duration: MeetingDuration,
             mode: MeetingMode,
@@ -106,6 +110,7 @@ data class MeetingRoom private constructor(
         ): MeetingRoom =
             MeetingRoom(
                 id,
+                inviteCode,
                 purpose,
                 duration,
                 mode,
@@ -125,7 +130,9 @@ data class MeetingRoom private constructor(
         at: Instant,
         submittedParticipants: Int,
     ): MeetingRoom {
-        check(collectionStatus == CollectionStatus.COLLECTING) { "Room input collection is already closed" }
+        if (collectionStatus == CollectionStatus.CLOSED) {
+            return this
+        }
         require(at >= createdAt) { "Closure time cannot precede room creation" }
         require(submittedParticipants >= 0) { "Submitted participant count cannot be negative" }
         when (reason) {
@@ -148,4 +155,15 @@ data class MeetingRoom private constructor(
             version = version + 1,
         )
     }
+
+    fun automaticClosureReason(
+        at: Instant,
+        submittedParticipants: Int,
+    ): ClosureReason? =
+        when {
+            closurePolicy.expectedParticipants != null && submittedParticipants >= closurePolicy.expectedParticipants ->
+                ClosureReason.EXPECTED_PARTICIPANTS
+            closurePolicy.deadline != null && at >= closurePolicy.deadline -> ClosureReason.DEADLINE
+            else -> null
+        }
 }

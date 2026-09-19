@@ -1,0 +1,57 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-12-anonymous-lifecycle",
+  "sourceRevision": "be484add280e484f89bc9030251a4f331d01195d",
+  "boundary": "Anonymous credential secrecy, host authorization, room lifecycle transaction, and concurrent idempotent join",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/application/service/RoomLifecycleService.kt",
+      "sha256": "ac143309b5e958542126ed45a78af7157aafa463bb4574c6c6e9e775112cfa29"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/adapter/output/security/GuestCredentialService.kt",
+      "sha256": "42dd3fa1fa022386339ec089e7a2dfd69f714d64ea94d33e00489a62c253b90a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/AnonymousWebSecurityConfiguration.kt",
+      "sha256": "59c18cd5da025486a2327f2ac924d91e9c545e6c355cb659f356c7e02b9732c3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/adapter/output/persistence/KomapperPersistenceAdapters.kt",
+      "sha256": "6c0de1cd8791764681242679f6f06207a5d5eb50dfb7457dfb884286b601df53"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/input/web/RoomLifecycleWebIntegrationTest.kt",
+      "sha256": "65c406c1155330725388b4703a5334c6ac14135d02dbfac209acd48f39a0782e"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Stored the raw guest credential in PostgreSQL instead of its SHA-256 digest",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "com.meetme.server.adapter.input.web.RoomLifecycleWebIntegrationTest"],
+      "detectedBy": "Digest-at-rest assertion and cookie reuse authorization tests failed",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Changed host authorization to accept MEMBER and reject HOST",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "com.meetme.server.adapter.input.web.RoomLifecycleWebIntegrationTest"],
+      "detectedBy": "HOST close and MEMBER forbidden contract tests failed",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Removed @Transactional from room, session, and HOST creation",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "com.meetme.server.adapter.input.web.RoomLifecycleWebIntegrationTest"],
+      "detectedBy": "Rollback assertion observed the unexpectedly committed guest session",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Removed both room-row and guest-session locks from concurrent join",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*RoomLifecycleWebIntegrationTest*동시 참여*"],
+      "detectedBy": "Concurrent join surfaced a unique-constraint failure instead of converging on one participant",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-19T09:00:21.9907398Z"
+}
