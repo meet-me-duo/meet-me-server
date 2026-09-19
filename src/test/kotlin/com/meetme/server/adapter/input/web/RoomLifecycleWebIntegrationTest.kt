@@ -280,6 +280,19 @@ class RoomLifecycleWebIntegrationTest {
             .andExpect(jsonPath("$.components.schemas.ApiProblemSchema").exists())
     }
 
+    @Test
+    fun `OpenAPI는 후보 조회와 확정 결과의 snake case 시간 계약을 노출한다`() {
+        mockMvc
+            .perform(get("/v3/api-docs"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/candidates'].get").exists())
+            .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/candidates/unapplied-inputs'].get").exists())
+            .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/candidates/{candidateId}/confirmation'].post").exists())
+            .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/result'].get").exists())
+            .andExpect(jsonPath("$.components.schemas.CandidateTimeRangeResponse.properties.start_at").exists())
+            .andExpect(jsonPath("$.components.schemas.CandidateTimeRangeResponse.properties.end_at").exists())
+    }
+
     private fun createRoom(
         manualOnly: Boolean,
         expectedParticipants: Int? = null,

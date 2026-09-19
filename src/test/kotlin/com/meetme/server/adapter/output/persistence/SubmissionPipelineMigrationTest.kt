@@ -22,7 +22,7 @@ class SubmissionPipelineMigrationTest {
     }
 
     @Test
-    fun `데이터가 있는 V2를 V3로 올리고 제출 파이프라인 제약을 적용한다`() {
+    fun `데이터가 있는 V2를 최신 스키마로 올리고 제출 파이프라인 제약을 유지한다`() {
         flyway("2").migrate()
         insertRoom(50)
 
@@ -30,7 +30,7 @@ class SubmissionPipelineMigrationTest {
         latest.migrate()
 
         assertEquals(
-            "3",
+            "4",
             latest
                 .info()
                 .current()

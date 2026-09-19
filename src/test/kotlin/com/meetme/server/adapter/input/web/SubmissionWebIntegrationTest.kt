@@ -1,5 +1,6 @@
 package com.meetme.server.adapter.input.web
 
+import com.meetme.server.application.service.CollectionClosureService
 import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -116,7 +117,7 @@ class SubmissionWebIntegrationTest {
     }
 
     @Test
-    fun `전원이 수동 시간만 제출하면 Gemini Outbox 없이 MATCHING으로 전이한다`() {
+    fun `전원이 수동 시간만 제출하면 Gemini 없이 매칭 Outbox로 전이한다`() {
         val host = createRoom(expectedParticipants = 2, manualOnly = false)
         val manual =
             """{"manual_available_times":[{"kind":"WEEKLY","day_of_week":"MONDAY","start_time":"18:00","end_time":"20:00"}]}"""
@@ -125,7 +126,11 @@ class SubmissionWebIntegrationTest {
         mockMvc.perform(save(member, manual)).andExpect(status().isOk)
 
         assertEquals("MATCHING", jdbcTemplate.queryForObject("SELECT status FROM coordination_runs", String::class.java))
-        assertEquals(0, count("outbox_events"))
+        assertEquals(1, count("outbox_events"))
+        assertEquals(
+            CollectionClosureService.MATCHING_REQUESTED,
+            jdbcTemplate.queryForObject("SELECT event_type FROM outbox_events", String::class.java),
+        )
     }
 
     @Test

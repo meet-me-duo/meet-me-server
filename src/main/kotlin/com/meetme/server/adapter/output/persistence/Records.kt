@@ -141,6 +141,7 @@ data class CoordinationRunRecord(
     val batchId: UUID,
     val status: String,
     val candidateQuality: String?,
+    val resumeStage: String?,
     val createdAt: OffsetDateTime,
     val version: Long,
 )
@@ -156,6 +157,10 @@ data class CandidateRecord(
     val id: UUID,
     val coordinationRunId: UUID,
     val rank: Int,
+    val planType: String,
+    val meetingMode: String,
+    val attendanceCount: Int,
+    val totalParticipants: Int,
     val placeName: String?,
     val latitude: java.math.BigDecimal?,
     val longitude: java.math.BigDecimal?,
@@ -165,6 +170,20 @@ data class CandidateRecord(
 @KomapperTable("candidates")
 data class CandidateRecordDef(
     @KomapperId val id: Nothing,
+)
+
+data class CandidateParticipantRecord(
+    val candidateId: UUID,
+    val participantId: UUID,
+    val coordinationRunId: UUID,
+    val roomId: UUID,
+)
+
+@KomapperEntityDef(CandidateParticipantRecord::class)
+@KomapperTable("candidate_participants")
+data class CandidateParticipantRecordDef(
+    @KomapperId @KomapperColumn(name = "candidate_id") val candidateId: Nothing,
+    @KomapperId @KomapperColumn(name = "participant_id") val participantId: Nothing,
 )
 
 data class CandidateTimeRangeRecord(
@@ -191,6 +210,28 @@ data class FinalConfirmationRecord(
 @KomapperTable("final_confirmations")
 data class FinalConfirmationRecordDef(
     @KomapperId val coordinationRunId: Nothing,
+)
+
+data class NormalizedPlaceRecord(
+    val id: UUID,
+    val coordinationRunId: UUID,
+    val batchId: UUID,
+    val submissionVersionId: UUID,
+    val conditionIndex: Int,
+    val query: String,
+    val radiusMeters: Int,
+    val status: String,
+    val provider: String?,
+    val providerPlaceId: String?,
+    val displayName: String?,
+    val latitude: java.math.BigDecimal?,
+    val longitude: java.math.BigDecimal?,
+)
+
+@KomapperEntityDef(NormalizedPlaceRecord::class)
+@KomapperTable("normalized_places")
+data class NormalizedPlaceRecordDef(
+    @KomapperId val id: Nothing,
 )
 
 data class OutboxEventRecord(

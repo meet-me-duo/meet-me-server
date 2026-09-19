@@ -29,3 +29,6 @@ meetme:
     api-key: ${GEMINI_API_KEY:}
     model: gemini-3.8-flash
     max-response-bytes: 262144
+  kakao-local:
+    api-key: ${KAKAO_LOCAL_API_KEY:}
+    base-url: https://dapi.kakao.com

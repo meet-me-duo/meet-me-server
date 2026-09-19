@@ -1,6 +1,7 @@
 package com.meetme.server.adapter.input.web
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.meetme.server.application.port.input.InputDisclosurePolicy
 import com.meetme.server.application.port.input.RoomView
 import com.meetme.server.domain.meeting.ClosureReason
 import com.meetme.server.domain.meeting.CollectionStatus
@@ -126,6 +127,9 @@ data class RoomResponse(
     val publicStatus: String,
     @field:Schema(description = "현재 브라우저 세션의 참여 정보")
     val viewer: ViewerParticipationResponse,
+    @field:JsonProperty("input_disclosure_policy")
+    @field:Schema(description = "부분 결과에서 미반영 원문을 공개하는 범위")
+    val inputDisclosurePolicy: InputDisclosurePolicy,
 ) {
     companion object {
         fun from(view: RoomView) =
@@ -146,6 +150,7 @@ data class RoomResponse(
                 view.closedAt,
                 view.publicStatus.name,
                 ViewerParticipationResponse(view.viewer.joined, view.viewer.displayName, view.viewer.role),
+                view.inputDisclosurePolicy,
             )
     }
 }

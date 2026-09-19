@@ -1,5 +1,7 @@
 package com.meetme.server.adapter.input.web
 
+import com.meetme.server.application.port.input.MatchingResultErrorCode
+import com.meetme.server.application.port.input.MatchingResultException
 import com.meetme.server.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.application.port.input.RoomLifecycleException
 import com.meetme.server.application.port.input.SubmissionErrorCode
@@ -19,6 +21,16 @@ import java.util.Locale
 class ApiExceptionHandler(
     private val messageSource: MessageSource,
 ) {
+    @ExceptionHandler(MatchingResultException::class)
+    fun matchingResult(
+        exception: MatchingResultException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> {
+        val status = exception.code.status()
+        return ResponseEntity.status(status).body(problem(status, exception.code.name, request, locale))
+    }
+
     @ExceptionHandler(RoomLifecycleException::class)
     fun lifecycle(
         exception: RoomLifecycleException,
@@ -84,6 +96,23 @@ class ApiExceptionHandler(
                 setProperty("code", code)
             }
 }
+
+private fun MatchingResultErrorCode.status(): HttpStatus =
+    when (this) {
+        MatchingResultErrorCode.GUEST_SESSION_REQUIRED,
+        MatchingResultErrorCode.GUEST_SESSION_INVALID,
+        -> HttpStatus.UNAUTHORIZED
+        MatchingResultErrorCode.PARTICIPANT_REQUIRED,
+        MatchingResultErrorCode.HOST_PERMISSION_REQUIRED,
+        -> HttpStatus.FORBIDDEN
+        MatchingResultErrorCode.ROOM_NOT_FOUND,
+        MatchingResultErrorCode.CANDIDATE_NOT_FOUND,
+        MatchingResultErrorCode.RESULT_NOT_CONFIRMED,
+        -> HttpStatus.NOT_FOUND
+        MatchingResultErrorCode.CANDIDATES_NOT_READY,
+        MatchingResultErrorCode.CANDIDATE_ALREADY_CONFIRMED,
+        -> HttpStatus.CONFLICT
+    }
 
 private fun RoomLifecycleErrorCode.status(): HttpStatus =
     when (this) {

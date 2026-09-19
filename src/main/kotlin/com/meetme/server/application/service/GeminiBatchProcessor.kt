@@ -37,6 +37,7 @@ class GeminiBatchProcessor(
     private val monotonicTime: MonotonicTimePort,
     private val clock: Clock,
     private val persistence: GeminiProcessingPersistenceService,
+    private val matchingProcessor: MatchingProcessor? = null,
 ) {
     fun process(batchId: SubmissionBatchId) {
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
@@ -95,6 +96,7 @@ class GeminiBatchProcessor(
                     result.results,
                     attempt.complete(clock.instant(), result.usage, null),
                 )
+                matchingProcessor?.process(batchId)
                 return
             } catch (exception: NaturalLanguageParserException) {
                 attemptRepository.update(attempt.complete(clock.instant(), ParserUsage(null, null, null), exception.kind.name))

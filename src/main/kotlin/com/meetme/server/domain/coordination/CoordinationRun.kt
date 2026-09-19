@@ -3,8 +3,12 @@ package com.meetme.server.domain.coordination
 import com.meetme.server.domain.common.CandidateId
 import com.meetme.server.domain.common.CoordinationRunId
 import com.meetme.server.domain.common.MeetingRoomId
+import com.meetme.server.domain.common.ParticipantId
 import com.meetme.server.domain.common.SubmissionBatchId
 import com.meetme.server.domain.common.SubmissionVersionId
+import com.meetme.server.domain.location.GeoCoordinate
+import com.meetme.server.domain.matching.PlanType
+import com.meetme.server.domain.meeting.MeetingMode
 import com.meetme.server.domain.time.InstantTimeRange
 import java.time.Instant
 
@@ -22,6 +26,11 @@ enum class CandidateQuality {
     PARTIAL,
 }
 
+enum class ResumeStage {
+    STRUCTURING,
+    MATCHING,
+}
+
 data class SubmissionBatch(
     val id: SubmissionBatchId,
     val roomId: MeetingRoomId,
@@ -33,6 +42,16 @@ data class MeetingCandidate(
     val id: CandidateId,
     val rank: Int,
     val timeRanges: List<InstantTimeRange>,
+    val planType: PlanType = PlanType.A,
+    val meetingMode: MeetingMode = MeetingMode.IN_PERSON,
+    val participantIds: List<ParticipantId> = emptyList(),
+    val totalParticipants: Int = participantIds.size,
+    val place: CandidatePlace? = null,
+)
+
+data class CandidatePlace(
+    val displayName: String,
+    val coordinate: GeoCoordinate,
 )
 
 data class CoordinationRun private constructor(
@@ -44,6 +63,7 @@ data class CoordinationRun private constructor(
     val candidates: List<MeetingCandidate>,
     val confirmedCandidateId: CandidateId?,
     val confirmedAt: Instant?,
+    val resumeStage: ResumeStage?,
     val version: Long,
 ) {
     companion object {
@@ -61,6 +81,7 @@ data class CoordinationRun private constructor(
                 candidates = emptyList(),
                 confirmedCandidateId = null,
                 confirmedAt = null,
+                resumeStage = null,
                 version = 0,
             )
         }
@@ -74,6 +95,7 @@ data class CoordinationRun private constructor(
             candidates: List<MeetingCandidate>,
             confirmedCandidateId: CandidateId?,
             confirmedAt: Instant?,
+            resumeStage: ResumeStage? = null,
             version: Long,
         ): CoordinationRun =
             CoordinationRun(
@@ -85,6 +107,7 @@ data class CoordinationRun private constructor(
                 candidates.sortedBy { it.rank },
                 confirmedCandidateId,
                 confirmedAt,
+                resumeStage,
                 version,
             )
     }
@@ -106,7 +129,7 @@ data class CoordinationRun private constructor(
         candidates: List<MeetingCandidate>,
     ): CoordinationRun {
         requireStatus(CoordinationStatus.MATCHING)
-        require(candidates.isNotEmpty() && candidates.size <= 3) { "One to three candidates are required" }
+        require(candidates.size <= 3) { "At most three candidates are allowed" }
         require(candidates.map { it.id }.distinct().size == candidates.size) { "Candidate IDs must be unique" }
         require(candidates.map { it.rank }.distinct().size == candidates.size) { "Candidate ranks must be unique" }
         require(candidates.all { it.rank in 1..3 && it.timeRanges.isNotEmpty() }) { "Candidate rank and time ranges are invalid" }
@@ -114,6 +137,7 @@ data class CoordinationRun private constructor(
             status = CoordinationStatus.COMPLETED,
             quality = quality,
             candidates = candidates.sortedBy { it.rank },
+            resumeStage = null,
             version = version + 1,
         )
     }
@@ -122,7 +146,8 @@ data class CoordinationRun private constructor(
         check(status == CoordinationStatus.QUEUED || status == CoordinationStatus.STRUCTURING || status == CoordinationStatus.MATCHING) {
             "Only an active coordination run can be delayed"
         }
-        return copy(status = CoordinationStatus.ANALYSIS_DELAYED, version = version + 1)
+        val stage = if (status == CoordinationStatus.MATCHING) ResumeStage.MATCHING else ResumeStage.STRUCTURING
+        return copy(status = CoordinationStatus.ANALYSIS_DELAYED, resumeStage = stage, version = version + 1)
     }
 
     fun finishStructuring(): CoordinationRun {
@@ -132,7 +157,11 @@ data class CoordinationRun private constructor(
 
     fun retryAnalysis(): CoordinationRun {
         requireStatus(CoordinationStatus.ANALYSIS_DELAYED)
-        return copy(status = CoordinationStatus.QUEUED, version = version + 1)
+        return copy(
+            status = if (resumeStage == ResumeStage.MATCHING) CoordinationStatus.MATCHING else CoordinationStatus.QUEUED,
+            resumeStage = null,
+            version = version + 1,
+        )
     }
 
     fun confirm(

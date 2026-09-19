@@ -1,0 +1,31 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-16-matching-domain",
+  "sourceRevision": "7204f35ed1e0fef76ded43573145a97cf761857e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/matching/TimeRangeMatcherTest.kt",
+      "sha256": "138ce7ce74de44b0628b56b0b1615ed7d3a82ad3d9ad5b6b95be4a302fe77876"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/matching/GeoMatcherTest.kt",
+      "sha256": "fd9ae2b47e02488b0835c89b7948ddb4f91f6967fc899dee277b3aedefbdf2e0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/matching/DeterministicCandidateMatcherTest.kt",
+      "sha256": "4699a4f79070b8c17e8b6315b85e8e19a74027d6f5cc7c87997a1ffa1537c795"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.domain.matching.*"
+  ],
+  "failedTests": [
+    "DeterministicCandidateMatcherTest (Plan C total-duration ordering mutation)"
+  ],
+  "expectedFailureCategory": "ASSERTION_MISMATCH",
+  "recordedAt": "2026-09-19T14:51:43.7650623Z"
+}

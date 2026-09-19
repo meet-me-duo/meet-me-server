@@ -112,6 +112,10 @@ fun LocalTimeRange.resolveOn(
     return InstantTimeRange(start, end)
 }
 
+fun LocalDate.resolveStartOfDay(zone: MeetingTimeZone): Instant = resolveBoundary(this, LocalTime.MIDNIGHT, zone, Boundary.START)
+
+fun LocalDate.resolveEndOfDayBoundary(zone: MeetingTimeZone): Instant = resolveBoundary(this, LocalTime.MIDNIGHT, zone, Boundary.END)
+
 private enum class Boundary {
     START,
     END,

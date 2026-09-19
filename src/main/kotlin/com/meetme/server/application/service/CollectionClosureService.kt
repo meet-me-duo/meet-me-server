@@ -50,23 +50,22 @@ class CollectionClosureService(
         val hasNaturalLanguage = submissions.any { !it.latest.rawText.isNullOrBlank() }
         if (!hasNaturalLanguage) run = run.startMatching()
         coordinationRunRepository.insert(run)
-        if (hasNaturalLanguage) {
-            val eventId = OutboxEventId(idGenerator.next())
-            outboxRepository.insert(
-                OutboxEvent(
-                    id = eventId,
-                    aggregateType = "CoordinationRun",
-                    aggregateId = run.id.value,
-                    eventType = STRUCTURING_REQUESTED,
-                    payload = "{\"event_id\":\"${eventId.value}\",\"submission_batch_id\":\"${batch.id.value}\"}",
-                    occurredAt = at,
-                ),
-            )
-        }
+        val eventId = OutboxEventId(idGenerator.next())
+        outboxRepository.insert(
+            OutboxEvent(
+                id = eventId,
+                aggregateType = "CoordinationRun",
+                aggregateId = run.id.value,
+                eventType = if (hasNaturalLanguage) STRUCTURING_REQUESTED else MATCHING_REQUESTED,
+                payload = "{\"event_id\":\"${eventId.value}\",\"submission_batch_id\":\"${batch.id.value}\"}",
+                occurredAt = at,
+            ),
+        )
         return closed
     }
 
     companion object {
         const val STRUCTURING_REQUESTED = "SubmissionBatchStructuringRequested"
+        const val MATCHING_REQUESTED = "SubmissionBatchMatchingRequested"
     }
 }
