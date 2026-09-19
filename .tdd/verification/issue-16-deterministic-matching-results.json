@@ -1,0 +1,69 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-16-deterministic-matching-results",
+  "sourceRevision": "7204f35ed1e0fef76ded43573145a97cf761857e",
+  "boundary": "Deterministic Plan C ordering, Kakao exact-name uniqueness, unresolved-place PARTIAL handling, and PostgreSQL room ownership",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/domain/matching/DeterministicCandidateMatcher.kt",
+      "sha256": "89935be2fff8ac293864f01b4a5fb9b0000f8fc40f86a53b9b3bc1ffa03ec0a6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/adapter/output/integration/KakaoLocalPlaceAdapter.kt",
+      "sha256": "fe670b9b64e6731156dd39d549e1b4d5f7ea3e2be7ea7c08df4b5242d26ebd32"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/application/service/MatchingProcessor.kt",
+      "sha256": "49662d9512bc2aa4d2d33bda5b38b85a26035d37e02b053f2be553bab7ab95af"
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__add_matching_results.sql",
+      "sha256": "14f90ca0642a4ee02242d334ebe542503907b509ee1a4fdfcc45f6c33905fe9d"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/matching/DeterministicCandidateMatcherTest.kt",
+      "sha256": "4699a4f79070b8c17e8b6315b85e8e19a74027d6f5cc7c87997a1ffa1537c795"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/integration/KakaoLocalPlaceAdapterTest.kt",
+      "sha256": "a266f2e9ec8f8ffa973c827c55682bc9883106e0c3f4abc07ef1b85d615101d6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/persistence/MatchingResultsMigrationTest.kt",
+      "sha256": "ed7b87b7efac56002cd6a7948d80ae326617a29db2f69c93af9ef45033a376ae"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/application/service/MatchingProcessorTest.kt",
+      "sha256": "382442b1c59ec838c3cc18720a8e5aea03077b51183625521e78b9e42322d62e"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Reversed Plan C total common-duration ordering",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "com.meetme.server.domain.matching.*"],
+      "detectedBy": "Plan C total-duration regression tests selected the shorter participant subset",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Accepted the first Kakao result when multiple exact normalized names existed",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*KakaoLocalPlaceAdapterTest"],
+      "detectedBy": "Kakao adapter contract test required AMBIGUOUS for exact-name matches on different pages",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Did not mark an unresolved place as a PARTIAL candidate set",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*MatchingProcessorTest"],
+      "detectedBy": "MatchingProcessor test observed COMPLETE instead of PARTIAL while preserving the unresolved snapshot",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Relaxed candidate participant membership from same-room composite FK to participant ID only",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*MatchingResultsMigrationTest"],
+      "detectedBy": "V4 migration test inserted a participant owned by another room and failed the expected rejection assertion",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-19T14:53:25.8964145Z"
+}

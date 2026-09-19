@@ -57,7 +57,9 @@ class RetryAnalysisService(
         val run =
             coordinationRunRepository.findLatestByRoom(room.id)
                 ?: throw SubmissionException(SubmissionErrorCode.ANALYSIS_NOT_DELAYED)
-        val hasPending = outboxRepository.existsPending(run.id.value, CollectionClosureService.STRUCTURING_REQUESTED)
+        val hasPending =
+            outboxRepository.existsPending(run.id.value, CollectionClosureService.STRUCTURING_REQUESTED) ||
+                outboxRepository.existsPending(run.id.value, CollectionClosureService.MATCHING_REQUESTED)
         if (run.status == CoordinationStatus.QUEUED && hasPending) {
             return getRoom.get(inviteCode, rawCredential)
         }
@@ -68,12 +70,18 @@ class RetryAnalysisService(
             val retried = run.retryAnalysis()
             coordinationRunRepository.update(retried)
             val eventId = OutboxEventId(idGenerator.next())
+            val eventType =
+                if (retried.status == CoordinationStatus.MATCHING) {
+                    CollectionClosureService.MATCHING_REQUESTED
+                } else {
+                    CollectionClosureService.STRUCTURING_REQUESTED
+                }
             outboxRepository.insert(
                 OutboxEvent(
                     eventId,
                     "CoordinationRun",
                     run.id.value,
-                    CollectionClosureService.STRUCTURING_REQUESTED,
+                    eventType,
                     "{\"event_id\":\"${eventId.value}\",\"submission_batch_id\":\"${run.batch.id.value}\"}",
                     occurredAt = clock.instant(),
                 ),

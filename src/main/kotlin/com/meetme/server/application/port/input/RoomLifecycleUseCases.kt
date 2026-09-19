@@ -44,6 +44,14 @@ enum class PublicRoomStatus {
     ANALYZING,
     INSUFFICIENT_PARTICIPANTS,
     ANALYSIS_DELAYED,
+    NO_MATCH,
+    READY,
+    READY_WITH_WARNINGS,
+    CONFIRMED,
+}
+
+enum class InputDisclosurePolicy {
+    HOST_ON_PARTIAL_RESULT,
 }
 
 data class RoomView(
@@ -63,6 +71,7 @@ data class RoomView(
     val closedAt: Instant?,
     val publicStatus: PublicRoomStatus,
     val viewer: ViewerParticipation,
+    val inputDisclosurePolicy: InputDisclosurePolicy = InputDisclosurePolicy.HOST_ON_PARTIAL_RESULT,
 )
 
 data class RoomAccessResult(

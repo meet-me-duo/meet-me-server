@@ -11,11 +11,15 @@ import com.meetme.server.domain.common.ParticipantId
 import com.meetme.server.domain.common.SubmissionBatchId
 import com.meetme.server.domain.common.SubmissionId
 import com.meetme.server.domain.common.SubmissionVersionId
+import com.meetme.server.domain.coordination.CandidatePlace
 import com.meetme.server.domain.coordination.CandidateQuality
 import com.meetme.server.domain.coordination.CoordinationRun
 import com.meetme.server.domain.coordination.CoordinationStatus
 import com.meetme.server.domain.coordination.MeetingCandidate
+import com.meetme.server.domain.coordination.ResumeStage
 import com.meetme.server.domain.coordination.SubmissionBatch
+import com.meetme.server.domain.location.GeoCoordinate
+import com.meetme.server.domain.matching.PlanType
 import com.meetme.server.domain.meeting.ClosurePolicy
 import com.meetme.server.domain.meeting.ClosureReason
 import com.meetme.server.domain.meeting.CollectionStatus
@@ -209,8 +213,25 @@ object PersistenceMappers {
 
     fun toRecords(domain: CoordinationRun): CoordinationRecords {
         val candidates =
-            domain.candidates.map {
-                CandidateRecord(it.id.value, domain.id.value, it.rank, null, null, null)
+            domain.candidates.map { candidate ->
+                CandidateRecord(
+                    id = candidate.id.value,
+                    coordinationRunId = domain.id.value,
+                    rank = candidate.rank,
+                    planType = "PLAN_${candidate.planType.name}",
+                    meetingMode = candidate.meetingMode.name,
+                    attendanceCount = candidate.participantIds.size,
+                    totalParticipants = candidate.totalParticipants,
+                    placeName = candidate.place?.displayName,
+                    latitude = candidate.place?.coordinate?.latitude,
+                    longitude = candidate.place?.coordinate?.longitude,
+                )
+            }
+        val candidateParticipants =
+            domain.candidates.flatMap { candidate ->
+                candidate.participantIds.map {
+                    CandidateParticipantRecord(candidate.id.value, it.value, domain.id.value, domain.roomId.value)
+                }
             }
         val ranges =
             domain.candidates.flatMap { candidate ->
@@ -236,10 +257,12 @@ object PersistenceMappers {
                     domain.batch.id.value,
                     domain.status.name,
                     domain.quality?.name,
+                    domain.resumeStage?.name,
                     domain.batch.fixedAt.atOffset(ZoneOffset.UTC),
                     domain.version,
                 ),
             candidates = candidates,
+            candidateParticipants = candidateParticipants,
             timeRanges = ranges,
             confirmation =
                 domain.confirmedCandidateId?.let {
@@ -258,6 +281,21 @@ object PersistenceMappers {
                         .filter { it.candidateId == candidate.id }
                         .sortedBy { it.rangeOrder }
                         .map { InstantTimeRange(it.startAt.toInstant(), it.endAt.toInstant()) },
+                    planType = PlanType.valueOf(candidate.planType.removePrefix("PLAN_")),
+                    meetingMode = MeetingMode.valueOf(candidate.meetingMode),
+                    participantIds =
+                        records.candidateParticipants
+                            .filter { it.candidateId == candidate.id }
+                            .map { ParticipantId(it.participantId) }
+                            .sortedBy { it.value.toString() },
+                    totalParticipants = candidate.totalParticipants,
+                    place =
+                        candidate.placeName?.let { placeName ->
+                            CandidatePlace(
+                                placeName,
+                                GeoCoordinate.of(requireNotNull(candidate.latitude), requireNotNull(candidate.longitude)),
+                            )
+                        },
                 )
             }
         val batch =
@@ -276,6 +314,7 @@ object PersistenceMappers {
             candidates = candidates,
             confirmedCandidateId = records.confirmation?.let { CandidateId(it.candidateId) },
             confirmedAt = records.confirmation?.confirmedAt?.toInstant(),
+            resumeStage = records.run.resumeStage?.let(ResumeStage::valueOf),
             version = records.run.version,
         )
     }
@@ -316,6 +355,7 @@ data class CoordinationRecords(
     val batchItems: List<SubmissionBatchItemRecord>,
     val run: CoordinationRunRecord,
     val candidates: List<CandidateRecord>,
+    val candidateParticipants: List<CandidateParticipantRecord>,
     val timeRanges: List<CandidateTimeRangeRecord>,
     val confirmation: FinalConfirmationRecord?,
 )

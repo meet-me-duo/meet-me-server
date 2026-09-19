@@ -8,6 +8,7 @@ import com.meetme.server.domain.common.ParticipantId
 import com.meetme.server.domain.common.SubmissionBatchId
 import com.meetme.server.domain.common.SubmissionId
 import com.meetme.server.domain.coordination.CoordinationRun
+import com.meetme.server.domain.location.GeoCoordinate
 import com.meetme.server.domain.meeting.InviteCode
 import com.meetme.server.domain.meeting.MeetingRoom
 import com.meetme.server.domain.participant.GuestSession
@@ -84,6 +85,8 @@ interface CoordinationRunRepository {
 
     fun findLatestByRoom(roomId: MeetingRoomId): CoordinationRun?
 
+    fun findLatestByRoomForUpdate(roomId: MeetingRoomId): CoordinationRun?
+
     fun findByBatchId(batchId: SubmissionBatchId): CoordinationRun?
 }
 
@@ -95,6 +98,33 @@ interface StructuredSubmissionRepository {
     )
 
     fun findByBatch(batchId: SubmissionBatchId): List<StructuredSubmissionResult>
+}
+
+enum class NormalizedPlaceStatus {
+    RESOLVED,
+    NO_EXACT_MATCH,
+    AMBIGUOUS,
+}
+
+data class NormalizedPlace(
+    val batchId: SubmissionBatchId,
+    val submissionVersionId: com.meetme.server.domain.common.SubmissionVersionId,
+    val conditionIndex: Int,
+    val query: String,
+    val radiusMeters: Int,
+    val status: NormalizedPlaceStatus,
+    val providerPlaceId: String? = null,
+    val displayName: String? = null,
+    val coordinate: GeoCoordinate? = null,
+)
+
+interface NormalizedPlaceRepository {
+    fun replaceForBatch(
+        batchId: SubmissionBatchId,
+        places: List<NormalizedPlace>,
+    )
+
+    fun findByBatch(batchId: SubmissionBatchId): List<NormalizedPlace>
 }
 
 data class CoordinationAttempt(

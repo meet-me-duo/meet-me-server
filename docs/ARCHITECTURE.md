@@ -145,6 +145,8 @@ Swagger/OpenAPI 문서를 별도 프론트엔드 저장소가 사용하는 공�
 - API 변경 시 구현, OpenAPI 문서와 계약 검증 테스트를 함께 갱신한다.
 - API의 상태와 오류 코드는 locale에 관계없이 안정적으로 유지한다. 서버가 제공하는 사용자 노출 메시지는 `Accept-Language`를 BCP 47 locale로 해석해 MessageSource에서 조회하며 MVP는 `ko-KR`로 fallback한다.
 - 후보 조회 응답은 계산의 기준인 언어 중립 구조화 시간 후보와 표시용 자연어 요약을 함께 제공한다. 자연어 요약은 응답 시 구조화 결과에서 MessageSource 템플릿으로 생성하며 LLM 출력이나 영속 데이터의 기준으로 사용하지 않는다.
+- 인증된 참여자는 `GET /api/rooms/{inviteCode}/candidates`로 확정 전 후보를 조회한다. `PARTIAL`의 참여자 표시 이름·실패 원문·미반영 사유는 별도 HOST 전용 `GET /api/rooms/{inviteCode}/candidates/unapplied-inputs`에서만 제공한다. 방 응답은 제출 전 고지를 위한 `input_disclosure_policy=HOST_ON_PARTIAL_RESULT`를 포함한다.
+- HOST는 `POST /api/rooms/{inviteCode}/candidates/{candidateId}/confirmation`으로 후보를 확정하고, 참여자는 `GET /api/rooms/{inviteCode}/result`로 확정 결과를 조회한다. 같은 후보의 재요청은 멱등하게 성공하고 다른 후보의 중복·동시 요청은 `409`로 거부한다.
 - 절대 시각은 ISO 8601 offset을 포함해 직렬화하고 방 응답에는 IANA Time Zone ID를 별도 필드로 제공한다.
 - 방 생성 요청의 `search_start_date`, `search_end_date`는 지역 날짜 쌍이며 둘 다 전달하거나 둘 다 생략해야 한다. 둘 다 생략하면 서버가 방 생성 시점의 `Asia/Seoul` 날짜를 시작일, 14일 뒤를 배타적 종료일로 확정한다.
 - 명시된 탐색 범위는 양수이며 최대 31일이어야 한다. 이 검증은 Web DTO에만 의존하지 않고 방 생성 유스케이스와 도메인 값 객체에서도 보장한다.
@@ -230,7 +232,11 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 13. 미반영 입력이 하나라도 있으면 후보 집합을 `PARTIAL`로 저장하고 반영 제출 수, 전체 제출 수와 미반영 입력 수를 함께 기록한다.
 14. 후보 조회 시 구조화 결과를 입력으로 손실 없는 요약 형태를 선택하고 MessageSource 템플릿 기반 자연어 요약을 생성한 뒤 결과 및 주최자 전용 미반영 입력을 주최자에게 제공한다.
 
-LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않으며 후보 자연어 요약도 생성하지 않는다. 매칭 과정에서는 LLM과 지도 API를 호출하지 않고 저장된 정규화 결과로 시간, 거리와 영역을 결정론적으로 계산한다. 자연어 요약은 구조화 후보에 없는 날짜·시간을 추가하거나 Calendar로 제외된 구간을 가능한 것으로 표현해서는 안 된다. 동일한 입력과 locale에는 동일한 구조화 후보와 요약이 나와야 한다. 여러 종료 조건이나 중복 작업 전달이 동시에 발생해도 방마다 하나의 매칭 실행만 유효해야 한다.
+Kakao Local 정규화는 Unicode NFKC, 공백 정리와 대소문자 정규화 후 전체 노출 가능 정확도순 결과에서 정확한 장소명 일치가 하나인 경우만 성공한다. 질의별 결과는 배치 안에서 재사용하며 장소 ID·표시명·좌표만 제출 배치 스냅샷으로 저장하고 공급자 원본 응답은 저장하지 않는다. timeout·429·5xx는 호출별 3초, 최초 호출과 최대 2회 Full Jitter 재시도를 전체 15초 안에서 수행하고, 소진하면 후보를 만들지 않고 `ANALYSIS_DELAYED`로 전이한다. 재분석은 구조화가 끝난 동일 배치라면 Kakao 정규화·매칭 단계부터 재개한다.
+
+Plan A, B, C는 종류별 최대 한 후보로 저장하고 카드 안에 모든 유효 실제 시간 구간을 둔다. Plan C는 전원 시간 교집합이 없을 때만 최소 2명을 유지하며 `N-1`, `N-2` 순으로 탐색한다. 동률은 공통 가능 총시간, 가장 이른 시작, 정렬된 내부 참여자 식별자 순으로 해소한다. 정상 계산 후 후보가 없으면 작업은 빈 후보 집합으로 `COMPLETED`되고 공개 상태는 `NO_MATCH`다.
+
+LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않으며 후보 자연어 요약도 생성하지 않는다. 애플리케이션 단계에서 Kakao 장소 정규화 스냅샷을 완성한 뒤, 결정론적 도메인 계산 단계에서는 LLM과 지도 API를 호출하지 않고 저장된 정규화 결과로 시간, 거리와 영역을 계산한다. 자연어 요약은 구조화 후보에 없는 날짜·시간을 추가하거나 Calendar로 제외된 구간을 가능한 것으로 표현해서는 안 된다. 동일한 입력과 locale에는 동일한 구조화 후보와 요약이 나와야 한다. 여러 종료 조건이나 중복 작업 전달이 동시에 발생해도 방마다 하나의 매칭 실행만 유효해야 한다.
 
 자연어 요약 정책은 외부 서비스나 Spring에 의존하지 않는 언어 중립적인 요약 형태를 먼저 선택한다. 반복 요일·시간 조건이 있는 후보에 대해 실제 가능 날짜를 나열할 때 필요한 날짜 참조 수와 완전 제외 또는 일부 축소된 모든 예외의 날짜 참조 수를 비교한다. 예외 수가 실제 가능 날짜 수보다 적으면 `PATTERN_WITH_EXCEPTIONS`, 같거나 많으면 더 명시적인 `EXPLICIT_OCCURRENCES`를 선택한다. 특정 날짜 조건, 불규칙한 후보 또는 모든 예외를 표현할 수 없는 경우에도 `EXPLICIT_OCCURRENCES`를 선택한다. 동률에서 실제 날짜 나열을 우선하여 모호성을 줄인다. 선택된 언어 중립 요약 형태를 애플리케이션의 응답 렌더러가 MessageSource로 지역화하며, 이 내부 렌더러를 위한 형식적인 outbound port는 만들지 않는다.
 
@@ -254,7 +260,7 @@ LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않
 | 마감 원인 | `EXPECTED_PARTICIPANTS`, `DEADLINE`, `MANUAL` | 가장 먼저 수집을 종료한 원인을 `closed_at`과 함께 기록한다. |
 | 고정 배치 조율 작업 | `QUEUED`, `STRUCTURING`, `MATCHING`, `COMPLETED`, `ANALYSIS_DELAYED`, `DEAD_LETTERED` | Redis 전달과 무관하게 PostgreSQL이 작업 진행과 실패의 기준이다. 자연어가 없는 배치는 `STRUCTURING`을 건너뛴다. |
 | 후보 집합 품질 | `COMPLETE`, `PARTIAL` | 후보가 모든 유효 입력을 반영했는지, 일부 자연어 조건이 미반영되었는지를 나타낸다. |
-| 최종 확정 | `confirmed_candidate_id`, `confirmed_at` | 값의 존재 여부로 최종 후보 확정을 표현한다. 중복·경합 확정의 세부 정책은 별도 Decision Gate에서 정한다. |
+| 최종 확정 | `confirmed_candidate_id`, `confirmed_at` | 값의 존재 여부로 최종 후보 확정을 표현한다. 같은 후보 재요청은 멱등 성공하고 다른 후보 경합은 먼저 커밋된 확정을 유지한다. |
 
 공개 진행 상태는 다음 우선순위로 계산한다.
 
@@ -262,8 +268,9 @@ LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않
 2. 입력 수집 중이면 `COLLECTING`이다.
 3. 입력 수집이 종료되었고 고유 제출이 2개 미만이면 `INSUFFICIENT_PARTICIPANTS`다.
 4. 조율 작업이 `ANALYSIS_DELAYED` 또는 `DEAD_LETTERED`이면 사용자에게는 `ANALYSIS_DELAYED`로 제공하고, 내부 실패 차이는 운영 지표와 로그에서 구분한다.
-5. 후보 집합이 `PARTIAL`이면 `READY_WITH_WARNINGS`, `COMPLETE`이면 `READY`다.
-6. 그 밖의 종료 후 대기·구조화·매칭 구간은 `ANALYZING`이다.
+5. 조율 작업이 완료되었고 후보가 비어 있으면 `NO_MATCH`다.
+6. 후보 집합이 `PARTIAL`이면 `READY_WITH_WARNINGS`, `COMPLETE`이면 `READY`다.
+7. 그 밖의 종료 후 대기·구조화·매칭 구간은 `ANALYZING`이다.
 
 입력 수집 종료 트랜잭션은 `CLOSED`, 마감 원인, 종료 시점의 최신 제출 배치와 필요한 Outbox 이벤트를 원자적으로 기록한다. 예상 참여 인원·데드라인·수동 마감이 경합해도 하나의 종료만 성공해야 한다. 재분석은 같은 불변 배치를 사용하여 조율 작업과 시도 이력만 갱신하고 입력 수집 상태를 변경하지 않는다. `PARTIAL`은 분석 작업 실패 상태가 아니라 생성된 후보 집합의 품질이므로 `ANALYSIS_DELAYED`와 동시에 성립하지 않는다.
 
@@ -461,15 +468,13 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 3. Redis Streams의 메시지 범위·보존·Pending 복구와 인증 상태 등 추가 책임
 4. Google Calendar 인증 범위, 조회 기간, 동기화 방식과 로그인 사용자 토큰 저장 정책
 5. Gemini 모델 교체 시 한국어 조건 파싱 회귀 평가와 비용 기준
-6. 지도·지오코딩 공급자와 거리 계산 책임
-7. 가능 시간·추가 불가 시간 격자의 5분·10분 입력 간격, 하루 표시 범위와 긴 날짜 범위의 UI 이동 방식
-8. 비동기 처리 상태 조회 방식과 `ANALYSIS_DELAYED` 재분석 API, 자동 지연 재시도 여부·상한
-10. EC2와 ECS 중 운영 컴퓨팅 선택
-11. Docker Hub와 ECR 중 이미지 레지스트리 선택
-12. Terraform 상태, 환경 분리와 비밀정보 관리
-13. CI/CD와 배포·롤백 방식
-15. Redis Stream Pending 회수 대기시간, poison message DLQ의 보존·trimming·재처리 정책과 Grafana Cloud 알림 연락 채널·임계값
-16. `PARTIAL` 결과와 주최자 전용 미반영 입력의 상세 API 스키마
-17. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책
-18. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
+6. 가능 시간·추가 불가 시간 격자의 5분·10분 입력 간격, 하루 표시 범위와 긴 날짜 범위의 UI 이동 방식
+7. 비동기 처리 상태 조회 방식과 `ANALYSIS_DELAYED` 재분석 API, 자동 지연 재시도 여부·상한
+8. EC2와 ECS 중 운영 컴퓨팅 선택
+9. Docker Hub와 ECR 중 이미지 레지스트리 선택
+10. Terraform 상태, 환경 분리와 비밀정보 관리
+11. CI/CD와 배포·롤백 방식
+12. Redis Stream Pending 회수 대기시간, poison message DLQ의 보존·trimming·재처리 정책과 Grafana Cloud 알림 연락 채널·임계값
+13. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책
+14. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
 19. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX

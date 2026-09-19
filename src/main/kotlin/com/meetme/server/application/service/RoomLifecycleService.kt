@@ -261,17 +261,29 @@ class RoomLifecycleService(
             collectionStatus = collectionStatus,
             closureReason = closureReason,
             closedAt = closedAt,
-            publicStatus =
-                when {
-                    collectionStatus == CollectionStatus.COLLECTING -> PublicRoomStatus.COLLECTING
-                    submittedParticipants < 2 -> PublicRoomStatus.INSUFFICIENT_PARTICIPANTS
-                    coordinationRunRepository.findLatestByRoom(id)?.status ==
-                        com.meetme.server.domain.coordination.CoordinationStatus.ANALYSIS_DELAYED ->
-                        PublicRoomStatus.ANALYSIS_DELAYED
-                    else -> PublicRoomStatus.ANALYZING
-                },
+            publicStatus = publicStatus(submittedParticipants),
             viewer = ViewerParticipation(viewer != null, viewer?.displayName?.value, viewer?.role),
         )
+
+    private fun MeetingRoom.publicStatus(submittedParticipants: Int): PublicRoomStatus {
+        if (collectionStatus == CollectionStatus.COLLECTING) return PublicRoomStatus.COLLECTING
+        if (submittedParticipants < 2) return PublicRoomStatus.INSUFFICIENT_PARTICIPANTS
+        val run = coordinationRunRepository.findLatestByRoom(id) ?: return PublicRoomStatus.ANALYZING
+        if (run.confirmedCandidateId != null) return PublicRoomStatus.CONFIRMED
+        return when (run.status) {
+            com.meetme.server.domain.coordination.CoordinationStatus.ANALYSIS_DELAYED,
+            com.meetme.server.domain.coordination.CoordinationStatus.DEAD_LETTERED,
+            -> PublicRoomStatus.ANALYSIS_DELAYED
+            com.meetme.server.domain.coordination.CoordinationStatus.COMPLETED ->
+                when {
+                    run.candidates.isEmpty() -> PublicRoomStatus.NO_MATCH
+                    run.quality == com.meetme.server.domain.coordination.CandidateQuality.PARTIAL ->
+                        PublicRoomStatus.READY_WITH_WARNINGS
+                    else -> PublicRoomStatus.READY
+                }
+            else -> PublicRoomStatus.ANALYZING
+        }
+    }
 
     private data class SessionResolution(
         val domain: GuestSession,

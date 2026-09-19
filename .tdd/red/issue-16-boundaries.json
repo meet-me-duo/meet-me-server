@@ -1,0 +1,37 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-16-boundaries",
+  "sourceRevision": "7204f35ed1e0fef76ded43573145a97cf761857e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/integration/KakaoLocalPlaceAdapterTest.kt",
+      "sha256": "a266f2e9ec8f8ffa973c827c55682bc9883106e0c3f4abc07ef1b85d615101d6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/persistence/MatchingResultsMigrationTest.kt",
+      "sha256": "ed7b87b7efac56002cd6a7948d80ae326617a29db2f69c93af9ef45033a376ae"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/application/service/MatchingProcessorTest.kt",
+      "sha256": "382442b1c59ec838c3cc18720a8e5aea03077b51183625521e78b9e42322d62e"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*KakaoLocalPlaceAdapterTest",
+    "--tests",
+    "*MatchingResultsMigrationTest",
+    "--tests",
+    "*MatchingProcessorTest"
+  ],
+  "failedTests": [
+    "KakaoLocalPlaceAdapterTest (ambiguous exact-name first-result mutation)",
+    "MatchingResultsMigrationTest (cross-room participant FK mutation)",
+    "MatchingProcessorTest (UnresolvedPlace PARTIAL mutation)"
+  ],
+  "expectedFailureCategory": "INTENTIONAL_FAULT_DETECTED",
+  "recordedAt": "2026-09-19T14:51:43.7650623Z"
+}
