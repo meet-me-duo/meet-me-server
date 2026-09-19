@@ -27,7 +27,7 @@
 | 인메모리 데이터 저장소 | Redis | Streams 작업 전달과 meet-me Refresh Token TTL 확정, 캐시 등 추가 책임 TBD |
 | 리버스 프록시 | Nginx | 도입 확정, 배치와 책임 범위 TBD |
 | 사용자 접근 | 제출 MVP는 전원 익명 브라우저 세션, Post-MVP는 주최자 Google·Kakao 로그인 | 제출 MVP 주최자 권한은 방 생성 세션에 귀속. RS256 Access/Refresh와 OAuth는 Post-MVP |
-| 자연어 파싱 | Google Gemini Flash Structured Output, 공식 Google GenAI SDK | 공급자·SDK 확정, 모델 ID TBD |
+| 자연어 파싱 | `gemini-3.8-flash` Structured Output, Google GenAI Java SDK 1.72.0 | 고정 stable ID, 조건 유니온과 256KiB 응답 상한 |
 | 운영 데이터베이스 | Amazon RDS for PostgreSQL | 확정 |
 | Infrastructure as Code | Terraform | 확정 |
 | 운영 컴퓨팅 | Amazon EC2 또는 Amazon ECS | TBD |
@@ -194,14 +194,14 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 
 ### 6.3 참여자 조건 제출
 
-1. 프론트엔드는 nullable `raw_text`, `schedule_input_mode`와 해당 모드의 정형 시간 구간을 한 번에 제출하며 별도 장소나 기준 좌표를 보내지 않는다. `MANUAL_AVAILABILITY`에서 가능 시간을 하나 이상 선택하거나 `CALENDAR`를 ON하면 `raw_text`를 생략할 수 있다. `MANUAL_AVAILABILITY`는 선택적인 `manual_available_times`, `CALENDAR`는 유효한 `calendar_blocked_times` 스냅샷과 선택적인 `additional_blocked_times`를 사용하고 상충하는 모드 필드를 함께 보내지 않는다.
+1. 제출 MVP의 `PUT /api/rooms/{inviteCode}/submission`은 nullable `raw_text`와 선택적인 `manual_available_times`를 한 번에 받으며 별도 장소나 기준 좌표를 받지 않는다. `CALENDAR`, `calendar_blocked_times`, `additional_blocked_times`와 알 수 없는 필드는 거부한다. Post-MVP에는 일정 입력 모드 판별자와 Calendar 필드를 별도 계약 변경으로 추가한다.
 2. 애플리케이션은 Payload의 형식과 방 참여 권한을 검증한다.
 3. 애플리케이션은 제공된 `raw_text`가 공백이 아닌 1~500 Unicode 코드 포인트이고 해당 방의 비어 있지 않은 최신 자연어 합계가 10,000 코드 포인트 이하인지 검증한다. 공백이 아닌 자연어, 현재 방의 Calendar ON, 하나 이상의 수동 가능 시간이 모두 없으면 `SUBMISSION_INPUT_REQUIRED`로 거부하며 제출 버전이나 완료 인원을 만들지 않는다. `CALENDAR`는 인증된 참여자의 방별 ON 선택과 해당 제출 요청에서 새로 조회·고정한 유효한 Calendar 스냅샷이 있으면 자연어 없이 허용한다. 검증된 원본 제출과 정형 일정 입력을 불변 버전으로 PostgreSQL에 저장하고 접수 응답을 반환하며 초과 입력은 자르지 않는다. 해당 참여자의 최초 버전 트랜잭션이 커밋되면 예상 참여 인원 계산에서 완료로 세며 수정 버전은 인원을 증가시키지 않는다.
 4. 참가자의 제출·수정 트랜잭션은 Gemini 작업을 만들지 않는다. 예상 참여 인원수의 고유 참여자 제출 접수, 제출 마감 또는 주최자의 수동 마감으로 입력 수집을 종료한다.
 5. 종료 트랜잭션은 외부 Calendar 호출 없이 참가자별 최신 제출 버전 식별자와 그 버전에 저장된 Calendar 스냅샷을 하나의 불변 방 전체 제출 배치로 고정한다. 자연어가 하나 이상이면 배치당 하나의 논리적 구조화 작업과 Outbox 이벤트를 함께 기록하고, 자연어가 하나도 없으면 Gemini 작업 없이 결정론적 매칭 작업을 시작한다.
 6. Outbox relay는 원문이 아닌 이벤트 ID와 방 전체 제출 배치 ID를 Redis Stream에 발행한다. Worker는 PostgreSQL에서 배치와 최신 원문을 다시 조회한다.
 7. Worker는 참가자 실명 대신 배치 안에서만 유효한 불투명 입력 참조값을 사용해 비어 있지 않은 최신 `raw_text`만 하나의 Gemini Structured Output 요청으로 전달한다. 자연어가 없는 참여자는 AI 요청에서 제외하되 정형 일정 입력은 매칭에 유지한다. 방 Time Zone ID와 각 자연어 입력 locale은 해석 문맥으로 전달하지만 Calendar 불가 시간, 방 전용 가능 시간과 추가 불가 시간은 AI에 전달하지 않는다.
-8. 애플리케이션은 요청·응답의 입력 참조값과 개수가 일치하는지 확인하고 참가자별 AI 출력을 독립적으로 서버 스키마에 재검증한다. Geo Adapter는 장소 표현을 검색하고 하나의 결과로 특정 가능한 경우에만 정규화된 장소와 좌표를 만든다.
+8. 애플리케이션은 요청·응답의 입력 참조값과 개수가 일치하는지 확인하고 참가자별 AI 출력을 독립적으로 서버 스키마에 재검증한다. Phase 5는 LLM 좌표를 거부하고 장소 표현 분류까지만 저장하며, Kakao 검색·고유성 판정·좌표 스냅샷은 Phase 6의 Geo Adapter가 담당한다.
 9. Gemini 응답이 성공하면 애플리케이션은 유효한 정형 조건, 의미 검증 실패의 미반영 사유, 일정 입력 모드, Calendar 불가 시간, 방 전용 가능 시간, 추가 불가 시간과 방 전체 작업의 종결 상태를 PostgreSQL에 저장한 뒤 매칭 작업을 시작한다.
 10. 기술적 재시도가 소진되면 입력과 고정 배치를 유지한 채 방을 `ANALYSIS_DELAYED`로 전이하고 매칭을 시작하지 않는다. 주최자의 방 단위 재요청은 같은 배치를 대상으로 새 Outbox 이벤트를 멱등하게 발행한다.
 
@@ -209,9 +209,9 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 
 방 전용 격자는 LLM용 입력 표현이 아니라 Web Adapter가 정형 시간 구간 DTO로 받으며 계정 프로필이나 다른 방에 복사·재사용하지 않는다. 비로그인 게스트와 Calendar를 OFF한 로그인 참여자는 필요할 때 `MANUAL_AVAILABILITY` 모드에서 가능한 시간을 선택한다. 하나 이상 선택했다면 자연어 없이 제출할 수 있다. 빈 배열은 `가능 시간 없음`이 아니라 부가 슬롯 제약을 적용하지 않는다는 뜻이며, 이때는 유효한 자연어가 있어야 한다. Calendar ON 참여자는 `CALENDAR` 모드에서 공급자 불가 시간을 사용하고 필요하면 별도의 추가 불가 시간을 선택하며 자연어는 선택 사항이다. 입력 수집 중 ON/OFF를 바꾸면 새 제출 버전으로 저장하고 종료 시점의 최신 모드만 매칭에 사용한다.
 
-방의 범위 출처가 주최자 명시이면 `DateSpecificAvailableInterval` 또는 `DateSpecificBlockedInterval`만 허용하고 각 날짜가 저장된 탐색 범위 안에 있는지 검증한다. 기본 14일 적용이면 `WeeklyAvailableInterval` 또는 `WeeklyBlockedInterval`만 허용하고 월~일의 요일과 지역 시작·종료 시간으로 저장한다. 격자의 칸 배열 전체가 아니라 연속 선택을 병합한 구간만 전송·저장한다. 일정 입력 모드 판별자·세부 JSON 필드와 격자 입력 간격은 TBD다.
+방의 범위 출처가 주최자 명시이면 `DATED` 구간만 허용하고 각 날짜가 저장된 탐색 범위 안에 있는지 검증한다. 기본 14일 적용이면 `WEEKLY` 구간만 허용하고 월~일의 요일과 지역 시작·종료 시간으로 저장한다. 격자의 칸 배열 전체가 아니라 연속·중첩 선택을 병합한 구간만 전송·저장한다. 격자 입력 간격은 프론트엔드 후속 결정으로 유지하되 API는 분 단위 지역 시각 구간을 받는다.
 
-참여자 요청은 외부 AI 응답과 매칭 계산을 기다리지 않는다. 입력 수집 종료 상태, 방 전체 제출 배치와 Outbox 이벤트는 같은 PostgreSQL 트랜잭션에 기록하고, relay가 Redis Streams로 작업을 전달한다. 공개 API는 서버가 판정한 수정 가능 여부와 `ANALYSIS_DELAYED`를 포함한 방 전체 작업의 처리 상태를 제공해야 한다. 참여자는 본인 증명을 거쳐 자신의 최신 저장 Payload를 다시 조회할 수 있으므로 새로고침이나 분석 지연 때문에 재입력하지 않는다. 접수·조회 응답의 상세 형식과 상태 갱신 방식은 TBD다.
+참여자 요청은 외부 AI 응답과 매칭 계산을 기다리지 않는다. 입력 수집 종료 상태, 방 전체 제출 배치와 Outbox 이벤트는 같은 PostgreSQL 트랜잭션에 기록한다. Phase 5는 Outbox 기록과 호출 가능한 처리 서비스까지 제공하고 Redis Streams relay·consumer는 Phase 8에서 연결한다. `GET /api/rooms/{inviteCode}/submission`은 본인 최신 Payload와 revision·locale·수정 가능 여부를 반환하며 `POST /api/rooms/{inviteCode}/analysis/retry`는 HOST가 같은 고정 배치의 지연 분석을 멱등하게 재요청한다.
 
 ### 6.4 일정 매칭
 
@@ -343,9 +343,9 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 
 ## 8. Google Gemini 연동
 
-- 자연어 파싱은 Google Gemini Flash 계열 모델을 사용한다.
-- AI Adapter는 공식 Google GenAI SDK의 Java 클라이언트를 사용한다. SDK 요청·응답·예외 타입은 Adapter 내부에만 두고 Application outbound port의 공급자 독립 타입과 실패 분류로 변환한다.
-- 자연어 파싱 결과는 JSON Schema 기반 Structured Output으로 제한한 뒤 서버에서 재검증한다.
+- 자연어 파싱은 고정 stable ID `gemini-3.8-flash`를 사용한다.
+- AI Adapter는 Google GenAI Java SDK 1.72.0을 고정한다. SDK 요청·응답·예외 타입은 Adapter 내부에만 두고 Application outbound port의 공급자 독립 타입과 실패 분류로 변환한다.
+- 자연어 파싱 결과는 추가 속성을 금지한 JSON Schema 기반 Structured Output으로 제한한다. 입력별 최대 32개 조건과 전체 UTF-8 응답 256KiB를 서버에서도 재검증한다.
 - AI에는 `raw_text`만 전달하며 Calendar 불가 시간, 방 전용 가능 시간과 추가 불가 시간 격자 입력을 전달하거나 칸 단위로 재구성하게 하지 않는다.
 - AI Adapter는 방 전체 제출 배치에서 비어 있지 않은 최신 `raw_text`만 배치 내부 불투명 참조값으로 구분하고, 각 입력 locale과 방 Time Zone ID를 파싱 문맥으로 전달한다. 자연어가 없는 참여자는 AI 요청에서 제외하며 결과는 요청한 입력 참조값별 언어 중립 서버 스키마와 지역 날짜·시간 값으로 변환한다.
 - 참가자 제출·수정에는 파싱 작업을 생성하지 않는다. 입력 수집 종료 시 고정한 방 전체 제출 배치에 자연어가 하나 이상 있을 때만 하나의 논리 파싱 작업을 생성한다. 자연어가 전혀 없으면 Gemini를 건너뛰고 정형 일정 입력으로 결정론적 매칭을 시작한다.
@@ -353,9 +353,8 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 - 논리 파싱 작업은 최초 호출 1회와 최대 3회의 재시도로 구성한다. 네트워크 오류, timeout, HTTP 429와 공급자 5xx에만 재시도하고 의미 파싱 또는 스키마·도메인 검증 실패에는 같은 배치를 자동 재호출하지 않는다.
 - 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 15초이고 논리 작업 전체 timeout은 60초다.
 - 응답은 자연어가 있어 요청에 포함된 불투명 참조값의 개수와 집합이 일치해야 하며 참가자별 항목을 독립적으로 검증한다. 배치 전체의 기술적 재시도가 소진되면 입력과 고정 배치를 보존하고 `ANALYSIS_DELAYED`로 전이하며 매칭하지 않는다.
-- 서버는 유효한 조건을 참가자·조건 단위로 보존한다. Gemini 응답 성공 후 일부 자연어 조건을 의미·스키마·도메인 검증에서 반영하지 못한 경우에만 미반영 사유를 기록하고 조율 작업을 `COMPLETED`로 종결한 뒤 후보 집합 품질을 `PARTIAL`로 저장하여 매칭 결과를 제공한다.
-- 2026-09-04 기준 여러 stable Gemini Flash 모델이 제공되므로 정확한 모델 ID는 비용과 한국어 조건 파싱 품질을 비교한 뒤 확정한다.
-- 운영에서는 `latest` alias보다 명시적인 stable 모델 ID를 우선 검토하여 예기치 않은 모델 교체를 피한다.
+- 조건은 `TIME_WINDOW`, `SPECIFIC_PLACE`, `TRAVEL_CONSTRAINT`, `UNRESOLVED_PLACE` 유니온으로 저장한다. 좌표는 스키마에 포함하지 않으며 조건 단위 검증 실패는 유효 조건과 분리해 미반영 사유로 보존한다.
+- 2026-09-19 기준 stable `gemini-3.8-flash`를 `latest` alias 없이 고정해 예기치 않은 모델 교체를 피한다. low thinking, 최대 32,768 출력 토큰, 호출별 15초 제한을 사용한다.
 - 호출 횟수, 입력·출력 토큰과 이미지 비용을 기록하여 모임별 AI 비용을 계산한다.
 
 공식 근거: [Gemini 모델 목록](https://ai.google.dev/gemini-api/docs/models), [Gemini Structured Output](https://ai.google.dev/gemini-api/docs/structured-output), [Gemini API libraries](https://ai.google.dev/gemini-api/docs/libraries)
@@ -461,7 +460,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 2. Google·Kakao 공급자 토큰 암호화 키 관리와 갱신·폐기 방식
 3. Redis Streams의 메시지 범위·보존·Pending 복구와 인증 상태 등 추가 책임
 4. Google Calendar 인증 범위, 조회 기간, 동기화 방식과 로그인 사용자 토큰 저장 정책
-5. Gemini Flash의 정확한 stable 모델 ID와 Google GenAI SDK 버전
+5. Gemini 모델 교체 시 한국어 조건 파싱 회귀 평가와 비용 기준
 6. 지도·지오코딩 공급자와 거리 계산 책임
 7. 가능 시간·추가 불가 시간 격자의 5분·10분 입력 간격, 하루 표시 범위와 긴 날짜 범위의 UI 이동 방식
 8. 비동기 처리 상태 조회 방식과 `ANALYSIS_DELAYED` 재분석 API, 자동 지연 재시도 여부·상한
@@ -469,7 +468,6 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 11. Docker Hub와 ECR 중 이미지 레지스트리 선택
 12. Terraform 상태, 환경 분리와 비밀정보 관리
 13. CI/CD와 배포·롤백 방식
-14. 방의 최대 참여자 수와 배치 출력 크기의 추가 상한
 15. Redis Stream Pending 회수 대기시간, poison message DLQ의 보존·trimming·재처리 정책과 Grafana Cloud 알림 연락 채널·임계값
 16. `PARTIAL` 결과와 주최자 전용 미반영 입력의 상세 API 스키마
 17. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책

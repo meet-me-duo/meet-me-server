@@ -43,6 +43,7 @@ enum class PublicRoomStatus {
     COLLECTING,
     ANALYZING,
     INSUFFICIENT_PARTICIPANTS,
+    ANALYSIS_DELAYED,
 }
 
 data class RoomView(
@@ -99,6 +100,7 @@ enum class RoomLifecycleErrorCode {
     INVITE_CODE_GENERATION_FAILED,
     VALIDATION_FAILED,
     ORIGIN_NOT_ALLOWED,
+    ROOM_PARTICIPANT_LIMIT_REACHED,
 }
 
 class RoomLifecycleException(

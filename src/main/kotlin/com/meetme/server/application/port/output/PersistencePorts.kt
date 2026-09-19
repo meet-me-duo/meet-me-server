@@ -5,12 +5,14 @@ import com.meetme.server.domain.common.GuestSessionId
 import com.meetme.server.domain.common.MeetingRoomId
 import com.meetme.server.domain.common.OutboxEventId
 import com.meetme.server.domain.common.ParticipantId
+import com.meetme.server.domain.common.SubmissionBatchId
 import com.meetme.server.domain.common.SubmissionId
 import com.meetme.server.domain.coordination.CoordinationRun
 import com.meetme.server.domain.meeting.InviteCode
 import com.meetme.server.domain.meeting.MeetingRoom
 import com.meetme.server.domain.participant.GuestSession
 import com.meetme.server.domain.participant.Participant
+import com.meetme.server.domain.submission.StructuredSubmissionResult
 import com.meetme.server.domain.submission.Submission
 import java.time.Instant
 import java.util.UUID
@@ -29,6 +31,11 @@ interface MeetingRoomRepository {
     fun findByInviteCodeForUpdate(inviteCode: InviteCode): MeetingRoom?
 
     fun existsByInviteCode(inviteCode: InviteCode): Boolean
+
+    fun findDueForUpdate(
+        now: Instant,
+        limit: Int,
+    ): List<MeetingRoom>
 }
 
 interface GuestSessionRepository {
@@ -50,12 +57,20 @@ interface ParticipantRepository {
         roomId: MeetingRoomId,
         guestSessionId: GuestSessionId,
     ): Participant?
+
+    fun countByRoom(roomId: MeetingRoomId): Int
 }
 
 interface SubmissionRepository {
     fun insert(submission: Submission)
 
     fun findById(id: SubmissionId): Submission?
+
+    fun save(submission: Submission)
+
+    fun findByParticipant(participantId: ParticipantId): Submission?
+
+    fun findLatestByRoom(roomId: MeetingRoomId): List<Submission>
 
     fun countSubmittedParticipants(roomId: MeetingRoomId): Int
 }
@@ -64,6 +79,43 @@ interface CoordinationRunRepository {
     fun insert(run: CoordinationRun)
 
     fun findById(id: CoordinationRunId): CoordinationRun?
+
+    fun update(run: CoordinationRun)
+
+    fun findLatestByRoom(roomId: MeetingRoomId): CoordinationRun?
+
+    fun findByBatchId(batchId: SubmissionBatchId): CoordinationRun?
+}
+
+interface StructuredSubmissionRepository {
+    fun replaceForBatch(
+        batchId: SubmissionBatchId,
+        results: List<StructuredSubmissionResult>,
+        processedAt: Instant,
+    )
+
+    fun findByBatch(batchId: SubmissionBatchId): List<StructuredSubmissionResult>
+}
+
+data class CoordinationAttempt(
+    val id: UUID,
+    val coordinationRunId: CoordinationRunId,
+    val attemptNumber: Int,
+    val startedAt: Instant,
+    val finishedAt: Instant?,
+    val failureKind: String?,
+    val inputTokens: Long?,
+    val outputTokens: Long?,
+    val responseBytes: Int?,
+    val estimatedCostUsd: java.math.BigDecimal?,
+)
+
+interface CoordinationAttemptRepository {
+    fun insert(attempt: CoordinationAttempt)
+
+    fun update(attempt: CoordinationAttempt)
+
+    fun countByRun(runId: CoordinationRunId): Int
 }
 
 enum class OutboxStatus {
@@ -93,4 +145,9 @@ interface OutboxRepository {
     fun insert(event: OutboxEvent)
 
     fun findById(id: OutboxEventId): OutboxEvent?
+
+    fun existsPending(
+        aggregateId: UUID,
+        eventType: String,
+    ): Boolean
 }

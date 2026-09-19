@@ -37,6 +37,9 @@ data class ClosurePolicy private constructor(
             require(expectedParticipants == null || expectedParticipants >= 2) {
                 "Expected participants must be at least 2"
             }
+            require(expectedParticipants == null || expectedParticipants <= 50) {
+                "Expected participants must not exceed 50"
+            }
             val hasAutomaticCondition = expectedParticipants != null || deadline != null
             require(hasAutomaticCondition || manualOnly) { "At least one closure condition is required" }
             require(!(hasAutomaticCondition && manualOnly)) { "Manual-only policy cannot have automatic conditions" }

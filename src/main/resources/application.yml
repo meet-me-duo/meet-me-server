@@ -11,6 +11,9 @@ spring:
     basename: messages
     encoding: UTF-8
     fallback-to-system-locale: false
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
 
 management:
   endpoints:
@@ -22,3 +25,7 @@ meetme:
   anonymous:
     allowed-origins: ${APP_ALLOWED_ORIGINS:https://app.meet-me.co.kr}
     cookie-secure: ${ANONYMOUS_COOKIE_SECURE:true}
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: gemini-3.8-flash
+    max-response-bytes: 262144

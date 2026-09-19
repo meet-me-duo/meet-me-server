@@ -1,0 +1,69 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-14-submission-gemini-pipeline",
+  "sourceRevision": "deab4a7da870f4d00814c5a5f5c6a83b41384da5",
+  "boundary": "Submission concurrency, PostgreSQL batch and outbox atomicity, sensitive input isolation, and Gemini structured output validation",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/application/service/SubmissionService.kt",
+      "sha256": "2bc15b88f9c2a51e8fcceec9ba6e0153d060039128de3bcebd76b5d11e85211b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/application/service/CollectionClosureService.kt",
+      "sha256": "1fb9cdfb01bf24a10cc02fd06086cf3120a192a8a2caac17e1f2ccef55107ef2"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "f8a81665673a710df90da6c6e339853bf8234c3efc3196fcd4aacc0e7f36655f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/input/web/SubmissionWebIntegrationTest.kt",
+      "sha256": "1a83f361a8dc56b5b56ce83ccf5662df4c203d5d4f9c5681ce3c1d5b41b69b8a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "1bdf66266f183aed5ab018253a17a1c04d235bd38ebd2249f5f3b9976b91788e"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Allowed a Gemini SPECIFIC_PLACE condition to carry an LLM-generated latitude",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GeminiNaturalLanguageParserAdapterTest.LLM*"
+      ],
+      "detectedBy": "Structured output contract test observed that the coordinate-bearing condition was no longer rejected",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Copied a participant raw_text value into the PostgreSQL Outbox payload",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*SubmissionWebIntegrationTest.두 번째*"
+      ],
+      "detectedBy": "Outbox privacy assertion found the original Korean input in the event payload",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Removed the meeting-room row lock from concurrent submission acceptance",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*SubmissionWebIntegrationTest.N번째*"
+      ],
+      "detectedBy": "Concurrent Nth submission test surfaced a lost optimistic update instead of one accepted and one closed response",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-19T10:53:19.4310386Z"
+}
