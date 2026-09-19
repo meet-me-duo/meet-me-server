@@ -176,4 +176,10 @@ data class ApiProblemSchema(
     @field:JsonProperty("submission_deadline")
     @field:Schema(description = "조기 마감 확인 시 제출 마감", nullable = true)
     val submissionDeadline: Instant? = null,
+    @field:Schema(description = "길이·개수 검증의 실제 값", nullable = true)
+    val actual: Int? = null,
+    @field:Schema(description = "길이·개수 검증의 최대 허용 값", nullable = true)
+    val maximum: Int? = null,
+    @field:Schema(description = "세부 검증 거부 사유", nullable = true)
+    val reason: String? = null,
 )

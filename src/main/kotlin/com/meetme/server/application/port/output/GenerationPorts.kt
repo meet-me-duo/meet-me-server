@@ -1,6 +1,7 @@
 package com.meetme.server.application.port.output
 
 import com.meetme.server.domain.meeting.InviteCode
+import java.time.Duration
 import java.time.Instant
 import java.util.UUID
 
@@ -22,4 +23,16 @@ interface GuestCredentialPort {
     fun issue(createdAt: Instant): IssuedGuestCredential
 
     fun digest(rawCredential: String): String
+}
+
+fun interface RetryDelayPort {
+    fun sleep(duration: Duration)
+}
+
+fun interface JitterPort {
+    fun nextLong(upperExclusive: Long): Long
+}
+
+fun interface MonotonicTimePort {
+    fun nanoTime(): Long
 }

@@ -36,6 +36,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
+    implementation("com.google.genai:google-genai:1.72.0")
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.komapper:komapper-spring-boot-starter-jdbc")
     implementation("org.komapper:komapper-dialect-postgresql-jdbc")

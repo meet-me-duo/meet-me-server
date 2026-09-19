@@ -13,6 +13,7 @@ import com.meetme.server.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.application.port.input.RoomLifecycleException
 import com.meetme.server.application.port.input.RoomView
 import com.meetme.server.application.port.input.ViewerParticipation
+import com.meetme.server.application.port.output.CoordinationRunRepository
 import com.meetme.server.application.port.output.GuestCredentialPort
 import com.meetme.server.application.port.output.GuestSessionRepository
 import com.meetme.server.application.port.output.IdGenerator
@@ -45,9 +46,11 @@ class RoomLifecycleService(
     private val guestSessionRepository: GuestSessionRepository,
     private val participantRepository: ParticipantRepository,
     private val submissionRepository: SubmissionRepository,
+    private val coordinationRunRepository: CoordinationRunRepository,
     private val credentialService: GuestCredentialPort,
     private val inviteCodeGenerator: InviteCodeGenerator,
     private val idGenerator: IdGenerator,
+    private val closureService: CollectionClosureService,
     private val clock: Clock,
 ) : CreateRoomUseCase,
     GetRoomUseCase,
@@ -128,6 +131,9 @@ class RoomLifecycleService(
                 false,
             )
         }
+        if (participantRepository.countByRoom(room.id) >= com.meetme.server.domain.submission.SubmissionRules.MAX_ROOM_PARTICIPANTS) {
+            throw RoomLifecycleException(RoomLifecycleErrorCode.ROOM_PARTICIPANT_LIMIT_REACHED)
+        }
         val participant =
             Participant.member(
                 id = ParticipantId(idGenerator.next()),
@@ -169,8 +175,7 @@ class RoomLifecycleService(
             )
         }
         val reason = automaticReason ?: ClosureReason.MANUAL
-        val closed = room.close(reason, now, submitted)
-        roomRepository.update(closed)
+        val closed = closureService.close(room, reason, submitted, now)
         return closed.toView(participant, submitted)
     }
 
@@ -260,6 +265,9 @@ class RoomLifecycleService(
                 when {
                     collectionStatus == CollectionStatus.COLLECTING -> PublicRoomStatus.COLLECTING
                     submittedParticipants < 2 -> PublicRoomStatus.INSUFFICIENT_PARTICIPANTS
+                    coordinationRunRepository.findLatestByRoom(id)?.status ==
+                        com.meetme.server.domain.coordination.CoordinationStatus.ANALYSIS_DELAYED ->
+                        PublicRoomStatus.ANALYSIS_DELAYED
                     else -> PublicRoomStatus.ANALYZING
                 },
             viewer = ViewerParticipation(viewer != null, viewer?.displayName?.value, viewer?.role),

@@ -23,7 +23,7 @@ class AnonymousRoomLifecycleMigrationTest {
 
     @Test
     fun `V2까지 최초 마이그레이션하고 검증한다`() {
-        val flyway = flyway()
+        val flyway = flyway(target = "2")
 
         flyway.migrate()
 

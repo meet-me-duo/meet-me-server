@@ -2,6 +2,8 @@ package com.meetme.server.adapter.input.web
 
 import com.meetme.server.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.application.port.input.RoomLifecycleException
+import com.meetme.server.application.port.input.SubmissionErrorCode
+import com.meetme.server.application.port.input.SubmissionException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
@@ -20,6 +22,18 @@ class ApiExceptionHandler(
     @ExceptionHandler(RoomLifecycleException::class)
     fun lifecycle(
         exception: RoomLifecycleException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> {
+        val status = exception.code.status()
+        val problem = problem(status, exception.code.name, request, locale)
+        exception.details.forEach(problem::setProperty)
+        return ResponseEntity.status(status).body(problem)
+    }
+
+    @ExceptionHandler(SubmissionException::class)
+    fun submission(
+        exception: SubmissionException,
         request: HttpServletRequest,
         locale: Locale,
     ): ResponseEntity<ProblemDetail> {
@@ -80,8 +94,23 @@ private fun RoomLifecycleErrorCode.status(): HttpStatus =
         RoomLifecycleErrorCode.ROOM_NOT_FOUND -> HttpStatus.NOT_FOUND
         RoomLifecycleErrorCode.ROOM_CLOSED,
         RoomLifecycleErrorCode.EARLY_CLOSE_CONFIRMATION_REQUIRED,
+        RoomLifecycleErrorCode.ROOM_PARTICIPANT_LIMIT_REACHED,
         -> HttpStatus.CONFLICT
         RoomLifecycleErrorCode.INVITE_CODE_GENERATION_FAILED -> HttpStatus.SERVICE_UNAVAILABLE
         RoomLifecycleErrorCode.VALIDATION_FAILED -> HttpStatus.BAD_REQUEST
         RoomLifecycleErrorCode.ORIGIN_NOT_ALLOWED -> HttpStatus.FORBIDDEN
+    }
+
+private fun SubmissionErrorCode.status(): HttpStatus =
+    when (this) {
+        SubmissionErrorCode.SUBMISSION_NOT_FOUND -> HttpStatus.NOT_FOUND
+        SubmissionErrorCode.PARTICIPANT_REQUIRED -> HttpStatus.FORBIDDEN
+        SubmissionErrorCode.SUBMISSION_BATCH_TEXT_LIMIT_EXCEEDED,
+        SubmissionErrorCode.ANALYSIS_NOT_DELAYED,
+        -> HttpStatus.CONFLICT
+        SubmissionErrorCode.SUBMISSION_INPUT_REQUIRED,
+        SubmissionErrorCode.SUBMISSION_TEXT_TOO_LONG,
+        SubmissionErrorCode.SUBMISSION_TIME_RANGE_INVALID,
+        SubmissionErrorCode.SUBMISSION_TIME_RANGE_MODE_MISMATCH,
+        -> HttpStatus.BAD_REQUEST
     }

@@ -125,6 +125,16 @@ data class CoordinationRun private constructor(
         return copy(status = CoordinationStatus.ANALYSIS_DELAYED, version = version + 1)
     }
 
+    fun finishStructuring(): CoordinationRun {
+        requireStatus(CoordinationStatus.STRUCTURING)
+        return copy(status = CoordinationStatus.MATCHING, version = version + 1)
+    }
+
+    fun retryAnalysis(): CoordinationRun {
+        requireStatus(CoordinationStatus.ANALYSIS_DELAYED)
+        return copy(status = CoordinationStatus.QUEUED, version = version + 1)
+    }
+
     fun confirm(
         candidateId: CandidateId,
         at: Instant,

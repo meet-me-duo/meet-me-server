@@ -1,6 +1,7 @@
 package com.meetme.server.application.service
 
 import com.meetme.server.application.port.input.CreateRoomCommand
+import com.meetme.server.application.port.output.CoordinationRunRepository
 import com.meetme.server.application.port.output.GuestCredentialPort
 import com.meetme.server.application.port.output.GuestSessionRepository
 import com.meetme.server.application.port.output.IdGenerator
@@ -31,6 +32,8 @@ class RoomLifecycleServiceTest {
         val participantRepository = mock(ParticipantRepository::class.java)
         val submissionRepository = mock(SubmissionRepository::class.java)
         val credentialPort = mock(GuestCredentialPort::class.java)
+        val coordinationRunRepository = mock(CoordinationRunRepository::class.java)
+        val closureService = mock(CollectionClosureService::class.java)
         val inviteGenerator = mock(InviteCodeGenerator::class.java)
         val idGenerator = mock(IdGenerator::class.java)
         val firstCode = InviteCode.of("abcdefghijklmnopqrstuv")
@@ -47,9 +50,11 @@ class RoomLifecycleServiceTest {
                 guestRepository,
                 participantRepository,
                 submissionRepository,
+                coordinationRunRepository,
                 credentialPort,
                 inviteGenerator,
                 idGenerator,
+                closureService,
                 Clock.fixed(NOW, ZoneOffset.UTC),
             )
 

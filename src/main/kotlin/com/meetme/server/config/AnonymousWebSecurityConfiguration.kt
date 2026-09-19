@@ -18,7 +18,7 @@ class AnonymousWebSecurityConfiguration(
         registry
             .addMapping("/api/**")
             .allowedOrigins(*properties.allowedOrigins.toTypedArray())
-            .allowedMethods("GET", "POST", "OPTIONS")
+            .allowedMethods("GET", "POST", "PUT", "OPTIONS")
             .allowedHeaders("Content-Type", "Accept-Language")
             .allowCredentials(true)
     }
