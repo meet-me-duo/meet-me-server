@@ -156,6 +156,28 @@ class TimeRangeMatcherTest {
         )
     }
 
+    @Test
+    fun `다음 날 자정 경계는 DST gap 날짜의 실제 23시간을 보존한다`() {
+        val fullGapDay =
+            StructuredCondition.TimeWindow(
+                polarity = TimePolarity.AVAILABLE,
+                date = LocalDate.of(2026, 3, 8),
+                dayOfWeek = null,
+                startTime = LocalTime.MIDNIGHT,
+                endTime = LocalTime.MIDNIGHT,
+                endsAtNextDayStart = true,
+            )
+
+        assertEquals(
+            listOf(range("2026-03-08T05:00:00Z", "2026-03-09T04:00:00Z")),
+            TimeRangeMatcher.expandNaturalWindows(
+                listOf(fullGapDay),
+                SearchDateRange.explicit(LocalDate.of(2026, 3, 8), LocalDate.of(2026, 3, 9)),
+                MeetingTimeZone.of("America/New_York"),
+            ),
+        )
+    }
+
     private fun calculate(
         naturalWindows: List<StructuredCondition.TimeWindow>,
         datedManualAvailability: List<DatedTimeRange> = emptyList(),

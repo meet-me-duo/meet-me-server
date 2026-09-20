@@ -142,7 +142,7 @@ class JdbcStructuredSubmissionRepository(
                 """.trimIndent(),
                 batchId.value,
                 result.submissionVersionId.value,
-                objectMapper.writeValueAsString(result.conditions.map(::conditionToMap)),
+                objectMapper.writeValueAsString(result.conditions.map(StructuredConditionJsonMapper::toMap)),
                 result.rejectionCode,
                 processedAt.atOffset(ZoneOffset.UTC),
             )
@@ -160,14 +160,16 @@ class JdbcStructuredSubmissionRepository(
                 val maps = objectMapper.readValue(rs.getString("conditions"), List::class.java) as List<Map<String, Any?>>
                 StructuredSubmissionResult(
                     SubmissionVersionId(rs.getObject("submission_version_id", UUID::class.java)),
-                    maps.map(::mapToCondition),
+                    maps.map(StructuredConditionJsonMapper::fromMap),
                     rs.getString("rejection_code"),
                 )
             },
             batchId.value,
         )
+}
 
-    private fun conditionToMap(condition: StructuredCondition): Map<String, Any?> =
+internal object StructuredConditionJsonMapper {
+    fun toMap(condition: StructuredCondition): Map<String, Any?> =
         when (condition) {
             is StructuredCondition.TimeWindow ->
                 mapOf(
@@ -176,7 +178,7 @@ class JdbcStructuredSubmissionRepository(
                     "date" to condition.date?.toString(),
                     "day_of_week" to condition.dayOfWeek?.name,
                     "start_time" to condition.startTime.toString(),
-                    "end_time" to condition.endTime.toString(),
+                    "end_time" to if (condition.endsAtNextDayStart) END_OF_DAY else condition.endTime.toString(),
                 )
             is StructuredCondition.SpecificPlace ->
                 mapOf("type" to "SPECIFIC_PLACE", "query" to condition.query, "radius_meters" to condition.radiusMeters)
@@ -186,16 +188,20 @@ class JdbcStructuredSubmissionRepository(
                 mapOf("type" to "UNRESOLVED_PLACE", "query" to condition.query)
         }
 
-    private fun mapToCondition(map: Map<String, Any?>): StructuredCondition =
+    fun fromMap(map: Map<String, Any?>): StructuredCondition =
         when (map["type"]) {
             "TIME_WINDOW" ->
-                StructuredCondition.TimeWindow(
-                    TimePolarity.valueOf(map.getValue("polarity").toString()),
-                    map["date"]?.toString()?.let(LocalDate::parse),
-                    map["day_of_week"]?.toString()?.let(DayOfWeek::valueOf),
-                    LocalTime.parse(map.getValue("start_time").toString()),
-                    LocalTime.parse(map.getValue("end_time").toString()),
-                )
+                map.getValue("end_time").toString().let { rawEndTime ->
+                    val endsAtNextDayStart = rawEndTime == END_OF_DAY
+                    StructuredCondition.TimeWindow(
+                        TimePolarity.valueOf(map.getValue("polarity").toString()),
+                        map["date"]?.toString()?.let(LocalDate::parse),
+                        map["day_of_week"]?.toString()?.let(DayOfWeek::valueOf),
+                        LocalTime.parse(map.getValue("start_time").toString()),
+                        if (endsAtNextDayStart) LocalTime.MIDNIGHT else LocalTime.parse(rawEndTime),
+                        endsAtNextDayStart,
+                    )
+                }
             "SPECIFIC_PLACE" ->
                 StructuredCondition.SpecificPlace(
                     map.getValue("query").toString(),
@@ -205,4 +211,6 @@ class JdbcStructuredSubmissionRepository(
             "UNRESOLVED_PLACE" -> StructuredCondition.UnresolvedPlace(map.getValue("query").toString())
             else -> error("Unknown structured condition type")
         }
+
+    private const val END_OF_DAY = "24:00"
 }

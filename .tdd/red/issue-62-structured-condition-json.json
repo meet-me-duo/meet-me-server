@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-62-structured-condition-json",
+  "sourceRevision": "6cd54c5204021feaa2fbf159a85261f7f9cc664f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/StructuredConditionJsonMapperTest.kt",
+      "sha256": "15600e0ec69b10de04b671db822dab261b3c3583f57978359b68a4c11532dd35"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*StructuredConditionJsonMapperTest.다음 날 자정 경계를 24시로 저장하고 같은 의미로 복원한다"
+  ],
+  "failedTests": [
+    "StructuredConditionJsonMapperTest - 다음 날 자정 경계를 24시로 저장하고 같은 의미로 복원한다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T14:16:29.9222150Z"
+}
