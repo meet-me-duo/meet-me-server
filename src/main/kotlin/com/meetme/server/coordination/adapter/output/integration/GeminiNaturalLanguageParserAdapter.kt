@@ -220,11 +220,12 @@ class GeminiNaturalLanguageParserAdapter(
             ?.toLong()
     }
 
-    private fun prompt(request: NaturalLanguageBatchRequest): String =
+    internal fun prompt(request: NaturalLanguageBatchRequest): String =
         buildString {
             appendLine("Convert each Korean meeting constraint into the supplied language-neutral JSON schema.")
             appendLine("Never invent coordinates. Classify home/work/school-near expressions as TRAVEL_CONSTRAINT.")
             appendLine("Use UNRESOLVED_PLACE when a location cannot identify one place. Preserve every input_ref exactly once.")
+            appendLine("Use HH:mm room-local wall-clock time without a UTC offset for start_time and end_time.")
             appendLine("Room time zone: ${request.timeZone.id}")
             appendLine("Search range: ${request.searchStartDate} until ${request.searchEndDate} (exclusive)")
             appendLine("Inputs:")
@@ -235,6 +236,48 @@ class GeminiNaturalLanguageParserAdapter(
         internal const val CALL_TIMEOUT_MILLIS = 15_000
         internal const val MAX_OUTPUT_TOKENS = 32_768
         private val TIME_FIELDS = setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time")
+        private val LOCAL_TIME_SCHEMA: Map<String, Any> =
+            mapOf(
+                "type" to "string",
+                "description" to "Room-local wall-clock time in HH:mm format without a UTC offset",
+            )
+        private val POLARITY_SCHEMA: Map<String, Any> =
+            mapOf("type" to "string", "enum" to listOf("AVAILABLE", "UNAVAILABLE"))
+        private val CONDITION_SCHEMAS: List<Map<String, Any>> =
+            listOf(
+                timeWindowSchema(
+                    date = mapOf("type" to "string", "format" to "date"),
+                    dayOfWeek = mapOf("type" to "null"),
+                ),
+                timeWindowSchema(
+                    date = mapOf("type" to "null"),
+                    dayOfWeek = mapOf("type" to "string", "enum" to DayOfWeek.entries.map { it.name }),
+                ),
+                conditionSchema(
+                    type = "SPECIFIC_PLACE",
+                    required = listOf("type", "query", "radius_meters"),
+                    properties =
+                        mapOf(
+                            "query" to mapOf("type" to "string"),
+                            "radius_meters" to
+                                mapOf(
+                                    "type" to "integer",
+                                    "minimum" to 100,
+                                    "maximum" to 50_000,
+                                ),
+                        ),
+                ),
+                conditionSchema(
+                    type = "TRAVEL_CONSTRAINT",
+                    required = listOf("type", "expression"),
+                    properties = mapOf("expression" to mapOf("type" to "string")),
+                ),
+                conditionSchema(
+                    type = "UNRESOLVED_PLACE",
+                    required = listOf("type", "query"),
+                    properties = mapOf("query" to mapOf("type" to "string")),
+                ),
+            )
         internal val RESPONSE_SCHEMA: Map<String, Any> =
             mapOf(
                 "type" to "object",
@@ -262,53 +305,46 @@ class GeminiNaturalLanguageParserAdapter(
                                                         "type" to "array",
                                                         "items" to
                                                             mapOf(
-                                                                "type" to "object",
-                                                                "additionalProperties" to false,
-                                                                "required" to listOf("type"),
-                                                                "properties" to
-                                                                    mapOf(
-                                                                        "type" to
-                                                                            mapOf(
-                                                                                "type" to "string",
-                                                                                "enum" to
-                                                                                    listOf(
-                                                                                        "TIME_WINDOW",
-                                                                                        "SPECIFIC_PLACE",
-                                                                                        "TRAVEL_CONSTRAINT",
-                                                                                        "UNRESOLVED_PLACE",
-                                                                                    ),
-                                                                            ),
-                                                                        "polarity" to
-                                                                            mapOf(
-                                                                                "type" to "string",
-                                                                                "enum" to listOf("AVAILABLE", "UNAVAILABLE"),
-                                                                            ),
-                                                                        "date" to
-                                                                            mapOf("type" to listOf("string", "null"), "format" to "date"),
-                                                                        "day_of_week" to
-                                                                            mapOf(
-                                                                                "type" to listOf("string", "null"),
-                                                                                "enum" to DayOfWeek.entries.map { it.name } + null,
-                                                                            ),
-                                                                        "start_time" to
-                                                                            mapOf("type" to listOf("string", "null"), "format" to "time"),
-                                                                        "end_time" to
-                                                                            mapOf("type" to listOf("string", "null"), "format" to "time"),
-                                                                        "query" to mapOf("type" to listOf("string", "null")),
-                                                                        "radius_meters" to
-                                                                            mapOf(
-                                                                                "type" to listOf("integer", "null"),
-                                                                                "minimum" to 100,
-                                                                                "maximum" to 50_000,
-                                                                            ),
-                                                                        "expression" to mapOf("type" to listOf("string", "null")),
-                                                                    ),
+                                                                "anyOf" to CONDITION_SCHEMAS,
                                                             ),
                                                     ),
                                             ),
                                     ),
                             ),
                     ),
+            )
+
+        private fun timeWindowSchema(
+            date: Map<String, Any>,
+            dayOfWeek: Map<String, Any>,
+        ): Map<String, Any> =
+            conditionSchema(
+                type = "TIME_WINDOW",
+                required = listOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
+                properties =
+                    mapOf(
+                        "polarity" to POLARITY_SCHEMA,
+                        "date" to date,
+                        "day_of_week" to dayOfWeek,
+                        "start_time" to LOCAL_TIME_SCHEMA,
+                        "end_time" to LOCAL_TIME_SCHEMA,
+                    ),
+            )
+
+        private fun conditionSchema(
+            type: String,
+            required: List<String>,
+            properties: Map<String, Map<String, Any>>,
+        ): Map<String, Any> =
+            mapOf(
+                "type" to "object",
+                "additionalProperties" to false,
+                "required" to required,
+                "properties" to
+                    buildMap {
+                        put("type", mapOf("type" to "string", "enum" to listOf(type)))
+                        putAll(properties)
+                    },
             )
     }
 }

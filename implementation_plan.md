@@ -37,10 +37,10 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후속 `feature/gemini-semantic-normalization` — Issue #46의 Gemini 의미 조건 출력 정규화와 운영 자연어 E2E 보완
+- **현재 단계:** 후속 `feature/gemini-typed-output-schema` — Issue #50의 Gemini 타입별 구조화 출력 계약과 운영 자연어 E2E 보완
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** Deploy Production run #35506995695로 중첩 `maxItems` 호환 수정 재배포와 `ANALYSIS_DELAYED` 재분석은 성공했다. 실제 Gemini 응답이 관련 없는 필드를 `null`로 포함하고 명시 날짜와 같은 요일을 함께 반환해 두 자연어 입력이 `CONDITION_VALIDATION_FAILED`로 제외됐다. 선택 A에 따라 관련 없는 null을 무시하고 일치하는 날짜·요일만 날짜 조건으로 정규화하는 수정의 병합·재배포와 COMPLETE 자연어 E2E가 남았다. 부하 테스트와 실제 이전 digest rollback·RDS 복구 리허설도 아직 수행하지 않았다.
+- **현재 차단 사항:** Deploy Production run #35508363012로 의미 조건 정규화 재배포는 성공했지만 새 자연어 방은 Gemini가 공통 optional schema에서 `polarity`·`end_time`을 생략하고 RFC 3339 offset time을 반환해 `ANALYSIS_DELAYED`가 됐다. 타입별 `anyOf` 필수 필드와 offset 없는 `HH:mm` 방 지역 시각 계약을 실제 Gemini probe 200으로 확인해 구현했으며, 병합·재배포 뒤 기존 지연 방의 `READY`·`COMPLETE` 재분석이 남았다. 부하 테스트와 실제 이전 digest rollback·RDS 복구 리허설도 아직 수행하지 않았다.
 - **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개, GitHub `production` Environment 변수 7개 등록과 첫 운영 배포 승인을 완료했다. Google AI Studio 프로젝트도 Tier 1로 전환했고 등록 키·모델 metadata와 최소 생성 호출이 200이므로 현재 키가 운영 호출에 허용됨을 값 노출 없이 확인했다. 프로젝트 spend cap·사용량 알림 설정 여부는 확인이 남아 있다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
@@ -70,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #46의 `feature/gemini-semantic-normalization`에서 공급자 null 필드와 중복 날짜·요일을 보수적으로 정규화하고, 수정 재배포 뒤 자연어 전용·조합 제출이 COMPLETE 후보로 전이하는지 검증한다.
+- **현재 작업:** Issue #50의 `feature/gemini-typed-output-schema`에서 조건 타입별 필수 출력과 offset 없는 `HH:mm` 지역 시각을 provider schema·prompt에 강제하고, 수정 재배포 뒤 자연어 전용·조합 제출이 COMPLETE 후보로 전이하는지 검증한다.
 
 ## 실행 순서
 
@@ -783,3 +783,6 @@
 | 2026-09-20 | 기존 합성 자연어 방을 `ANALYSIS_DELAYED`에서 호스트 재분석해 `READY_WITH_WARNINGS`로 전이하고 PARTIAL 보안·확정 흐름 검증 | attempt 2 성공, input/output token 233/403·추정 USD 0.001686·10원 미만 지표 확인. 미반영 원문은 호스트 200, 멤버 403, 무쿠키 401이며 멤버 결과에 미반영 정보 없음, Plan B 확정 후 `CONFIRMED` | 동일 커밋 예정, #46 |
 | 2026-09-20 | 실제 Gemini 응답 모양을 값 없이 조사하고 의미 조건 정규화 선택지 A 확정 | TIME_WINDOW마다 관련 없는 `query`·`radius_meters`·`expression`이 null이고 date·day_of_week가 함께 존재함을 확인. 관련 없는 null은 무시하고 date와 day가 일치할 때 date 우선, 불일치·관련 없는 non-null은 거부하도록 결정 | 동일 커밋 예정, #46 |
 | 2026-09-20 | Issue #46의 Gemini 의미 조건 출력 정규화 구현 | 실제 응답 모양 RED 후 Adapter 전체 GREEN. 날짜·요일 불일치 허용과 TIME_WINDOW의 non-null `query` 허용 결함을 각각 주입해 같은 계약 테스트가 모두 탐지하고 정상 구현 복구 | 동일 커밋 예정, #46 |
+| 2026-09-20 | PR #49의 `main` 병합 뒤 Deploy Production run #35508363012로 Gemini 의미 조건 정규화 재배포 | ARM64 image·ECR·Flyway V6 멱등·SSM 교체·앱과 Nginx health·공개 health와 OpenAPI 전체 성공 | 동일 커밋 예정, #50 |
+| 2026-09-20 | 새 합성 방의 자연어 전용·자연어와 수동 슬롯 조합 제출이 다시 `ANALYSIS_DELAYED`로 종결된 원인 분리 | 최신 attempt 1회 `INVALID_RESPONSE`. 실제 structured response에서 공통 optional schema가 `polarity`·`end_time`을 생략하고 `start_time`에 `+09:00` offset을 포함함을 합성 응답으로 확인 | 동일 커밋 예정, #50 |
+| 2026-09-20 | 조건 타입별 `anyOf`와 offset 없는 방 지역 시각 계약 선택지 A 확정·구현 | 5개 타입 변형과 필수 필드를 가진 schema probe 200, `format: time` 제거와 `HH:mm` description·prompt 적용 probe 200 및 완전한 시간 구간 확인. RED/GREEN과 `end_time` 필수 해제·`format: time` 복원 결함 주입 탐지 | 동일 커밋 예정, #50 |
