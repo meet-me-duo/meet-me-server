@@ -19,18 +19,29 @@ fi
 cd "$release_directory"
 APP_IMAGE="$app_image" docker compose -f compose.production.yml up -d --remove-orphans
 
-for _ in $(seq 1 24); do
-  status="$(docker inspect --format '{{.State.Health.Status}}' meet-me-app 2>/dev/null || true)"
-  if [[ "$status" == "healthy" ]]; then
-    ln -sfn "$release_directory" /opt/meet-me/current
-    exit 0
-  fi
-  if [[ "$status" == "unhealthy" ]]; then
-    break
-  fi
-  sleep 5
-done
+wait_for_healthy_container() {
+  local container_name="$1"
+  local status
+
+  for _ in $(seq 1 24); do
+    status="$(docker inspect --format '{{.State.Health.Status}}' "$container_name" 2>/dev/null || true)"
+    if [[ "$status" == "healthy" ]]; then
+      return 0
+    fi
+    if [[ "$status" == "unhealthy" ]]; then
+      return 1
+    fi
+    sleep 5
+  done
+  return 1
+}
+
+if wait_for_healthy_container meet-me-app && wait_for_healthy_container meet-me-nginx; then
+  ln -sfn "$release_directory" /opt/meet-me/current
+  exit 0
+fi
 
 docker logs --tail 100 meet-me-app >&2 || true
+docker logs --tail 100 meet-me-nginx >&2 || true
 echo "Rollback health check failed" >&2
 exit 1
