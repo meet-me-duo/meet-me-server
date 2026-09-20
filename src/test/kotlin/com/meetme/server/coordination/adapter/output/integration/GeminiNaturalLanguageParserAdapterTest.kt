@@ -17,6 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class GeminiNaturalLanguageParserAdapterTest {
     private val adapter = GeminiNaturalLanguageParserAdapter(GeminiProperties(), JsonMapper.builder().build())
@@ -54,6 +55,43 @@ class GeminiNaturalLanguageParserAdapterTest {
             """.trimIndent()
 
         assertThrows<NaturalLanguageParserException> { adapter.parseProviderResponse(response, request) }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun `타입별 필수 조건과 offset 없는 지역 시각 schema를 제공한다`() {
+        val rootProperties = GeminiNaturalLanguageParserAdapter.RESPONSE_SCHEMA.getValue("properties") as Map<String, Any>
+        val results = rootProperties.getValue("results") as Map<String, Any>
+        val resultItem = results.getValue("items") as Map<String, Any>
+        val resultProperties = resultItem.getValue("properties") as Map<String, Any>
+        val conditions = resultProperties.getValue("conditions") as Map<String, Any>
+        val conditionItem = conditions.getValue("items") as Map<String, Any>
+        val variants = conditionItem.getValue("anyOf") as List<Map<String, Any>>
+
+        assertEquals(5, variants.size)
+        val timeVariants =
+            variants.filter { variant ->
+                val properties = variant.getValue("properties") as Map<String, Any>
+                val type = properties.getValue("type") as Map<String, Any>
+                type["enum"] == listOf("TIME_WINDOW")
+            }
+        assertEquals(2, timeVariants.size)
+
+        timeVariants.forEach { variant ->
+            assertEquals(
+                setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
+                (variant.getValue("required") as List<String>).toSet(),
+            )
+            val properties = variant.getValue("properties") as Map<String, Any>
+            listOf("start_time", "end_time").forEach { field ->
+                val time = properties.getValue(field) as Map<String, Any>
+                assertFalse(time.containsKey("format"))
+                assertTrue(time.getValue("description").toString().contains("HH:mm"))
+                assertTrue(time.getValue("description").toString().contains("without a UTC offset"))
+            }
+        }
+
+        assertTrue(adapter.prompt(request(1)).contains("HH:mm room-local wall-clock time without a UTC offset"))
     }
 
     @Test

@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-50-gemini-typed-output-schema",
+  "sourceRevision": "597f5aa5ad46ffc89d5995225f669fa950f28830",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "0cd9fcb291f8ced833846cec99305747caa33d37b1dbfea3d538d6a37090369f"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest.타입별 필수 조건과 offset 없는 지역 시각 schema를 제공한다"
+  ],
+  "failedTests": [
+    "GeminiNaturalLanguageParserAdapterTest - 타입별 필수 조건과 offset 없는 지역 시각 schema를 제공한다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T11:48:45.2428489Z"
+}
