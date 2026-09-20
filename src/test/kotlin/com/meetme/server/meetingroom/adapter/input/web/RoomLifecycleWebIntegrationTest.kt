@@ -6,6 +6,7 @@ import com.meetme.server.meetingroom.application.service.RoomLifecycleService
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import jakarta.servlet.http.Cookie
+import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -280,6 +281,10 @@ class RoomLifecycleWebIntegrationTest {
             .andExpect(jsonPath("$.components.schemas.ApiProblemSchema").exists())
             .andExpect(jsonPath("$.components.schemas.CreateRoomRequest.properties.duration_minutes").doesNotExist())
             .andExpect(jsonPath("$.components.schemas.RoomResponse.properties.duration_minutes").doesNotExist())
+            .andExpect(jsonPath("$.components.schemas.RoomResponse.properties.public_status.enum").isArray)
+            .andExpect(jsonPath("$.components.schemas.RoomResponse.properties.public_status.enum").value(hasItem("ANALYZING")))
+            .andExpect(jsonPath("$.components.schemas.RoomResponse.properties.public_status.enum").value(hasItem("ANALYSIS_DELAYED")))
+            .andExpect(jsonPath("$.components.schemas.RoomResponse.properties.public_status.enum").value(hasItem("READY_WITH_WARNINGS")))
     }
 
     @Test

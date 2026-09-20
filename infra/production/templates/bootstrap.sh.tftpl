@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dnf update -y
+dnf install -y docker jq
+systemctl enable --now docker
+
+install -d -m 0755 /usr/local/lib/docker/cli-plugins
+architecture="$(uname -m)"
+case "$architecture" in
+  aarch64) compose_arch="aarch64" ;;
+  x86_64) compose_arch="x86_64" ;;
+  *) echo "Unsupported architecture: $architecture" >&2; exit 1 ;;
+esac
+curl --fail --silent --show-error --location \
+  "https://github.com/docker/compose/releases/download/${compose_version}/docker-compose-linux-$compose_arch" \
+  --output /usr/local/lib/docker/cli-plugins/docker-compose
+chmod 0755 /usr/local/lib/docker/cli-plugins/docker-compose
+
+install -d -m 0750 /opt/meet-me/releases /opt/meet-me/tls

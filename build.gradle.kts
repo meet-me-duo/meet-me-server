@@ -11,6 +11,10 @@ group = "com.meetme"
 version = "0.0.1-SNAPSHOT"
 description = "AI-assisted meeting coordination backend"
 
+springBoot {
+    mainClass.set("com.meetme.server.MeetMeServerApplicationKt")
+}
+
 extra["kotlin-coroutines.version"] = "1.11.0"
 
 java {

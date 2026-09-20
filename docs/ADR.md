@@ -383,3 +383,16 @@ MVP 출시 속도와 핵심 일정 조율 로직의 정확성을 우선한다. A
 **이유**: Redis가 비어 있거나 재시작되어도 영구 작업과 사용자 입력을 PostgreSQL에서 다시 찾을 수 있게 하고, 중복 전달을 허용하면서도 LLM 호출과 상태 전이의 동시 중복을 lease로 막기 위해서다. 2분은 Gemini 논리 작업의 60초 상한과 Kakao 정규화의 15초 상한에 처리 여유를 더한 값이다. 제출 MVP에서 외부 telemetry 계정과 수집기 배포를 제외하면 비밀정보·비용·운영 의존성을 늘리지 않고도 지표와 구조화 로그 계약을 먼저 검증할 수 있다. 수동 분석 재시도와 제한된 호출 한도는 공개 익명 서비스의 비용 폭주를 줄인다.
 
 **트레이드오프**: 고정 구간 호출 제한은 구간 경계에서 순간 burst를 허용하고 첫 요청의 IP digest는 역추정 가능성이 있어 Redis의 단기 운영 데이터로만 사용해야 한다. fail closed 명령은 Redis 장애 중 사용할 수 없고, fail open 제출은 장애 중 남용 제한이 약해진다. 2분 복구는 장애 직후 결과를 지연시키며 relay 재발행으로 중복 Stream entry가 생길 수 있으나 PostgreSQL lease와 상태가 중복 실행을 막는다. ACK 후 entry 삭제와 제한된 DLQ 보존은 Redis 자체의 장기 감사 이력을 제공하지 않으므로 PostgreSQL 이력과 로그에 의존한다. Grafana Cloud를 미루면 제출 MVP에서는 중앙 대시보드와 자동 알림이 없고 운영자가 로컬 endpoint와 표준 출력을 직접 확인해야 한다.
+
+### ADR-041: 제출 MVP를 단일 EC2와 AWS 관리형 데이터 서비스로 배포
+
+**상태**: Accepted
+**날짜**: 2026-09-20
+
+**결정**: Wanted 제출 MVP는 서울 리전 `ap-northeast-2`의 단일 Amazon EC2 `t4g.small`에서 Nginx와 Spring Boot 컨테이너를 실행한다. 컨테이너 이미지는 Amazon ECR에 저장하고 image digest를 배포 기준으로 사용한다. 운영 데이터는 private subnet의 RDS PostgreSQL 18 `db.t4g.micro` Single-AZ에 두고 Redis Streams·호출 제한·DLQ는 ElastiCache Serverless for Valkey로 EC2 수명주기와 분리한다. 초기 토폴로지에는 ALB와 NAT Gateway를 두지 않으며 EC2의 고정 public IPv4를 Nginx 진입점으로 사용한다. Route 53이 `meet-me.co.kr` Hosted Zone을 소유하고 ACM exportable public certificate를 Nginx에 배포한다.
+
+Terraform state는 versioning과 암호화를 활성화한 전용 S3 backend 및 native lock file로 관리하고 환경별 state key를 분리한다. RDS master password는 RDS managed Secrets Manager secret을 사용하며 Gemini·Kakao API key는 사용자가 SSM Parameter Store `SecureString`에 직접 입력하여 Terraform state에 원문이 들어가지 않게 한다. 로컬 bootstrap은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용하고, GitHub Actions는 장기 Access Key 없이 OIDC와 환경별 최소 권한 role을 사용한다. 배포는 ECR image digest 고정, 동일 이미지의 Flyway 선실행, 애플리케이션 교체 순서로 수행하며 실패 시 이전 image digest로 애플리케이션만 되돌리고 Flyway migration은 자동 downgrade하지 않는다. 이 결정은 ADR-005에서 유보한 컴퓨팅과 레지스트리를 확정한다.
+
+**이유**: 제출 MVP는 단일 백엔드와 비동기 Worker를 함께 실행하고 초기 트래픽·고가용성 요구가 작으므로 ECS Service·Task Definition·ALB를 추가하는 것보다 EC2가 월 비용과 구현 시간을 줄인다. RDS와 관리형 Valkey, ECR을 EC2 밖에 두면 영구 데이터와 작업 전달 상태를 호스트 교체로부터 격리하고 이후 ECS 전환에도 같은 이미지와 데이터 경계를 재사용할 수 있다. 서울 리전 초기 비용은 세전 월 USD 50~75로 추정하며 월 USD 80 Budget으로 사용량을 감시한다.
+
+**트레이드오프**: 단일 EC2와 Single-AZ RDS는 인스턴스·가용 영역 장애 시 서비스 중단을 허용하고 운영자가 OS 패치, 용량과 복구를 관리해야 한다. 수평 확장과 무중단 rolling deployment가 필요해지면 ECS와 ALB를 다시 평가한다. 관리형 Valkey는 EC2 동거 Redis보다 비용이 추가되지만 장애와 수명주기를 분리한다. ACM exportable certificate는 인증서 비용과 갱신된 private key의 안전한 재배포 자동화가 필요하다. Flyway 자동 downgrade를 금지하므로 모든 운영 migration은 이전 애플리케이션과 호환되는 단계적 변경을 우선해야 한다.

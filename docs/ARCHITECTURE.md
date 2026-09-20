@@ -24,14 +24,14 @@
 | 데이터 접근 | Komapper JDBC | 확정, 구체 의존성 버전은 구현 시 고정 |
 | DB 스키마 마이그레이션 | Flyway | 확정 |
 | 로컬·테스트 데이터베이스 | Docker Compose PostgreSQL, Testcontainers PostgreSQL | 확정, H2 미사용 |
-| 인메모리 데이터 저장소 | Redis | Streams 작업 전달과 meet-me Refresh Token TTL 확정, 캐시 등 추가 책임 TBD |
-| 리버스 프록시 | Nginx | 도입 확정, 배치와 책임 범위 TBD |
+| 인메모리 데이터 저장소 | Redis 호환 ElastiCache Serverless for Valkey | 제출 MVP의 Streams·호출 제한·DLQ 운영 배치 확정, Post-MVP Refresh Token TTL·백업 정책 TBD |
+| 리버스 프록시 | EC2의 Nginx | TLS 종료, API 라우팅, 요청 제한과 헬스체크 담당 |
 | 사용자 접근 | 제출 MVP는 전원 익명 브라우저 세션, Post-MVP는 주최자 Google·Kakao 로그인 | 제출 MVP 주최자 권한은 방 생성 세션에 귀속. RS256 Access/Refresh와 OAuth는 Post-MVP |
 | 자연어 파싱 | `gemini-3.8-flash` Structured Output, Google GenAI Java SDK 1.72.0 | 고정 stable ID, 조건 유니온과 256KiB 응답 상한 |
 | 운영 데이터베이스 | Amazon RDS for PostgreSQL | 확정 |
 | Infrastructure as Code | Terraform | 확정 |
-| 운영 컴퓨팅 | Amazon EC2 또는 Amazon ECS | TBD |
-| 이미지 레지스트리 | Docker Hub 또는 Amazon ECR | TBD |
+| 운영 컴퓨팅 | Amazon EC2 `t4g.small` | 제출 MVP 단일 인스턴스, ECS 전환 가능성을 컨테이너 경계로 보존 |
+| 이미지 레지스트리 | Amazon ECR | 이미지 digest 기반 배포 |
 | 지도·좌표 공급자 | Kakao Local API | 장소 검색·정규화와 표시 이름만 외부 위임, 거리·영역 계산은 서버 담당 |
 | API 계약 문서 | Swagger/OpenAPI, springdoc-openapi 3.1.0 | 확정 |
 | 시간대 | IANA Zone ID, MVP `Asia/Seoul` | 저장·계산 경계 확정, 사용자 선택은 MVP 이후 |
@@ -46,7 +46,7 @@ flowchart LR
     Nginx --> App[Spring Boot / Kotlin]
 
     App --> Postgres[(PostgreSQL / RDS)]
-    App --> Redis[(Redis)]
+    App --> Redis[(ElastiCache Serverless for Valkey)]
     App --> Gemini[Google Gemini API]
     App -. Post-MVP .-> Google[Google OAuth / Calendar]
     App -. Post-MVP .-> Kakao[Kakao OAuth]
@@ -54,11 +54,11 @@ flowchart LR
     App -. Post-MVP: Prometheus metrics / JSON logs .-> Alloy[Grafana Alloy]
     Alloy -. Post-MVP .-> GrafanaCloud[Grafana Cloud Metrics / Loki / Alerting]
 
-    Terraform[Terraform] -. 프로비저닝 .-> Runtime[AWS Runtime / EC2 또는 ECS]
+    Terraform[Terraform] -. 프로비저닝 .-> Runtime[Amazon EC2]
     Terraform -. 프로비저닝 .-> Postgres
     Runtime -. 실행 .-> Nginx
     Runtime -. 실행 .-> App
-    Runtime -. 실행 위치 TBD .-> Redis
+    Terraform -. 프로비저닝 .-> Redis
     Runtime -. 실행 위치 TBD .-> Alloy
 ```
 
@@ -253,7 +253,7 @@ LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않
 
 ### 6.6 상태 모델과 공개 진행 상태
 
-입력 수집, 비동기 조율 작업, 후보 품질과 최종 확정은 하나의 `RoomStatus`에 섞지 않고 각각의 책임에 맞는 PostgreSQL 상태로 관리한다. 프론트엔드에는 이 상태들을 조합한 단일 공개 진행 상태를 제공하되, 공개 진행 상태 자체를 별도의 영구 비즈니스 상태로 중복 저장하지 않는다.
+입력 수집, 비동기 조율 작업, 후보 품질과 최종 확정은 하나의 `RoomStatus`에 섞지 않고 각각의 책임에 맞는 PostgreSQL 상태로 관리한다. 프론트엔드에는 이 상태들을 조합한 단일 공개 진행 상태를 제공하되, 공개 진행 상태 자체를 별도의 영구 비즈니스 상태로 중복 저장하지 않는다. 제출 MVP는 프론트엔드가 상태 조회 API를 Polling하는 방식으로 갱신하며 서버는 SSE·WebSocket 연결을 제공하지 않는다. 프론트엔드는 종결 상태에 도달하거나 분석 지연 응답을 받으면 Polling을 중단한다.
 
 | 책임 | 기준 상태 | 의미 |
 | --- | --- | --- |
@@ -385,12 +385,17 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 - AWS 인프라는 Terraform으로 생성하고 변경한다.
 - 운영 domain은 `meet-me.co.kr`이며 프론트엔드는 `https://app.meet-me.co.kr`, API는 `https://api.meet-me.co.kr`를 사용한다. 루트 domain은 프론트엔드로 연결한다.
 - DNS는 Amazon Route 53 Hosted Zone으로 관리한다. Terraform이 Hosted Zone을 생성한 뒤 등록기관인 가비아의 네임서버를 Route 53이 할당한 네임서버 4개로 교체한다.
-- TLS 인증서는 AWS Certificate Manager에서 발급하고 DNS 검증 레코드를 Terraform으로 관리한다.
-- 애플리케이션 런타임은 EC2와 ECS 중에서 선택한다.
-- 컨테이너 이미지 레지스트리는 Docker Hub와 ECR 중에서 선택한다.
-- Nginx와 Redis의 배치 방식은 컴퓨팅 선택 이후 확정한다.
+- TLS 인증서는 AWS Certificate Manager의 exportable public certificate로 발급하고 DNS 검증 레코드와 Nginx 배포·갱신 경계를 Terraform 및 배포 자동화로 관리한다.
+- 제출 MVP 애플리케이션과 Nginx는 단일 Amazon EC2 `t4g.small`에서 컨테이너로 실행한다. ALB와 NAT Gateway는 초기 토폴로지에 두지 않는다.
+- 컨테이너 이미지는 Amazon ECR에 저장하고 tag가 아닌 image digest를 배포 기준으로 사용한다.
+- 운영 PostgreSQL은 private subnet의 RDS PostgreSQL 18 `db.t4g.micro` Single-AZ로 시작한다.
+- Redis Streams·호출 제한·DLQ는 ElastiCache Serverless for Valkey에 두고 EC2 수명주기와 분리한다.
+- Terraform state는 versioning·암호화를 활성화한 전용 S3 backend와 native lock file로 관리한다. 환경은 별도 state key로 분리한다.
+- RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini·Kakao API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다.
+- 로컬 관리 작업은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용한다. GitHub Actions는 장기 Access Key 없이 OIDC로 환경별 최소 권한 role을 사용한다.
+- 배포는 ECR image digest 고정, 동일 이미지의 Flyway 선실행, 애플리케이션 교체 순서로 수행한다. 실패 시 이전 image digest로 애플리케이션만 되돌리고 적용된 Flyway migration은 자동 downgrade하지 않는다.
 
-### 현재 고려해야 할 토폴로지 차이
+### 제출 MVP 토폴로지 선택 근거
 
 | 항목 | EC2 | ECS |
 | --- | --- | --- |
@@ -399,7 +404,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 | 확장 | 인스턴스 중심 | 서비스와 태스크 중심 |
 | Nginx·Redis | 동일 인스턴스 배치 가능 | 별도 서비스 또는 관리형 대안 검토 필요 |
 
-이 표는 선택을 확정하지 않으며, 예상 트래픽, 월 예산, 운영 경험과 고가용성 요구를 확인한 뒤 ADR로 결정한다.
+제출 MVP는 초기 트래픽과 월 예산을 우선하여 EC2를 선택했다. ECS는 다중 인스턴스, 자동 복구와 무중단 rolling deployment 요구가 생길 때 재평가한다. EC2의 단일 장애점과 운영 패치 부담은 수용하되 영구 데이터는 RDS, 휘발성 작업 전달은 관리형 Valkey, 이미지는 ECR에 분리하여 이후 ECS 전환 시 애플리케이션 이미지를 재사용한다.
 
 ## 10. 횡단 관심사
 
@@ -472,12 +477,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 4. Google Calendar 인증 범위, 조회 기간, 동기화 방식과 로그인 사용자 토큰 저장 정책
 5. Gemini 모델 교체 시 한국어 조건 파싱 회귀 평가와 비용 기준
 6. 가능 시간·추가 불가 시간 격자의 5분·10분 입력 간격, 하루 표시 범위와 긴 날짜 범위의 UI 이동 방식
-7. 비동기 처리 상태 갱신을 Polling, SSE 또는 WebSocket 중 어떤 방식으로 전달할지
-8. EC2와 ECS 중 운영 컴퓨팅 선택
-9. Docker Hub와 ECR 중 이미지 레지스트리 선택
-10. Terraform 상태, 환경 분리와 비밀정보 관리
-11. CI/CD와 배포·롤백 방식
-12. Post-MVP Alloy 배치, Grafana Cloud 보존·대시보드·알림 연락 채널과 임계값
-13. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책
-14. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
-15. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX
+7. Post-MVP Alloy 배치, Grafana Cloud 보존·대시보드·알림 연락 채널과 임계값
+8. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책
+9. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
+10. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX

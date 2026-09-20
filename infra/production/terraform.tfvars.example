@@ -1,0 +1,8 @@
+aws_region             = "ap-northeast-2"
+project_name           = "meet-me"
+domain_name            = "meet-me.co.kr"
+instance_type          = "t4g.small"
+db_instance_class      = "db.t4g.micro"
+db_engine_version      = "18"
+db_deletion_protection = true
+

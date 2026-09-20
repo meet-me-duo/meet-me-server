@@ -10,6 +10,13 @@ __pycache__/
 /.env
 /.env.*
 !/.env.example
+/deploy/.env.runtime
+**/.terraform/
+/.terraform-plugin-cache/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/terraform.tfvars
 /.codex/tdd-evidence/
 
 !gradle/wrapper/gradle-wrapper.jar

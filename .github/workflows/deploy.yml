@@ -1,0 +1,116 @@
+name: Deploy Production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Require main branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "Production deployment is allowed only from main." >&2
+          exit 1
+
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Configure temporary AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push ARM64 application image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: ${{ vars.ECR_REPOSITORY_URL }}:git-${{ github.sha }}-${{ github.run_id }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: true
+          sbom: true
+
+      - name: Package deployment contract
+        env:
+          RELEASE_ID: ${{ github.sha }}-${{ github.run_id }}
+        run: |
+          tar -czf release.tar.gz -C deploy \
+            compose.production.yml \
+            container-entrypoint.sh \
+            nginx \
+            scripts
+          aws s3 cp release.tar.gz \
+            "s3://${{ vars.DEPLOYMENT_ARTIFACT_BUCKET }}/releases/${RELEASE_ID}/release.tar.gz" \
+            --sse AES256
+
+      - name: Deploy through Systems Manager
+        env:
+          RELEASE_ID: ${{ github.sha }}-${{ github.run_id }}
+          APP_IMAGE: ${{ vars.ECR_REPOSITORY_URL }}@${{ steps.build.outputs.digest }}
+        run: |
+          parameters=$(jq -nc \
+            --arg bucket "${{ vars.DEPLOYMENT_ARTIFACT_BUCKET }}" \
+            --arg release "$RELEASE_ID" \
+            --arg image "$APP_IMAGE" \
+            --arg region "${{ vars.AWS_REGION }}" \
+            '{commands:[
+              "set -euo pipefail",
+              "release_directory=/opt/meet-me/releases/" + $release,
+              "install -d -m 0750 $release_directory",
+              "aws s3 cp s3://" + $bucket + "/releases/" + $release + "/release.tar.gz /tmp/meet-me-release.tar.gz",
+              "tar -xzf /tmp/meet-me-release.tar.gz -C $release_directory",
+              "AWS_REGION=" + $region + " bash $release_directory/scripts/deploy-release.sh $release_directory " + $image
+            ]}')
+
+          command_id=$(aws ssm send-command \
+            --instance-ids "${{ vars.RUNTIME_INSTANCE_ID }}" \
+            --document-name AWS-RunShellScript \
+            --comment "meet-me release ${RELEASE_ID}" \
+            --parameters "$parameters" \
+            --query 'Command.CommandId' \
+            --output text)
+
+          aws ssm wait command-executed \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.RUNTIME_INSTANCE_ID }}"
+
+          status=$(aws ssm get-command-invocation \
+            --command-id "$command_id" \
+            --instance-id "${{ vars.RUNTIME_INSTANCE_ID }}" \
+            --query 'Status' \
+            --output text)
+          test "$status" = "Success"
+
+      - name: Verify public health and OpenAPI
+        run: |
+          curl --fail --silent --show-error --retry 6 --retry-delay 5 "${{ vars.API_URL }}/healthz"
+          curl --fail --silent --show-error --retry 6 --retry-delay 5 "${{ vars.API_URL }}/v3/api-docs" >/dev/null
+
