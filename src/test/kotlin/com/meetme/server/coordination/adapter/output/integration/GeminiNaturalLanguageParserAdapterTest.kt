@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import tools.jackson.databind.json.JsonMapper
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Locale
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 
 class GeminiNaturalLanguageParserAdapterTest {
     private val adapter = GeminiNaturalLanguageParserAdapter(GeminiProperties(), JsonMapper.builder().build())
@@ -89,6 +91,51 @@ class GeminiNaturalLanguageParserAdapterTest {
         assertEquals(2, result.conditions.size)
         assertIs<StructuredCondition.TravelConstraint>(result.conditions[0])
         assertIs<StructuredCondition.TimeWindow>(result.conditions[1])
+    }
+
+    @Test
+    fun `관련 없는 null 필드와 날짜에 일치하는 요일을 명시 날짜 조건으로 정규화한다`() {
+        val request = request(1)
+        val json =
+            """
+            {"schema_version":"1","results":[
+              {"input_ref":"${request.inputs.single().inputRef}","conditions":[
+                {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":"2026-09-21","day_of_week":"MONDAY","start_time":"18:00","end_time":"20:00","query":null,"radius_meters":null,"expression":null}
+              ]}
+            ]}
+            """.trimIndent()
+
+        val result = adapter.parseProviderResponse(json, request).single()
+        val condition = assertIs<StructuredCondition.TimeWindow>(result.conditions.single())
+
+        assertNull(result.rejectionCode)
+        assertEquals(LocalDate.of(2026, 9, 21), condition.date)
+        assertNull(condition.dayOfWeek)
+        assertEquals(LocalTime.of(18, 0), condition.startTime)
+        assertEquals(LocalTime.of(20, 0), condition.endTime)
+    }
+
+    @Test
+    fun `날짜와 불일치하는 요일 또는 관련 없는 non-null 필드는 거부한다`() {
+        val request = request(2)
+        val json =
+            """
+            {"schema_version":"1","results":[
+              {"input_ref":"${request.inputs[0].inputRef}","conditions":[
+                {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":"2026-09-21","day_of_week":"TUESDAY","start_time":"18:00","end_time":"20:00","query":null,"radius_meters":null,"expression":null}
+              ]},
+              {"input_ref":"${request.inputs[1].inputRef}","conditions":[
+                {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":"2026-09-21","day_of_week":"MONDAY","start_time":"18:00","end_time":"20:00","query":"봉천역","radius_meters":null,"expression":null}
+              ]}
+            ]}
+            """.trimIndent()
+
+        val results = adapter.parseProviderResponse(json, request)
+
+        results.forEach {
+            assertEquals(emptyList(), it.conditions)
+            assertEquals("CONDITION_VALIDATION_FAILED", it.rejectionCode)
+        }
     }
 
     @Test
