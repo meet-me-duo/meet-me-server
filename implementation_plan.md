@@ -37,10 +37,10 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 6번 `feature/aws-release` — Production 인프라 적용과 Terraform state 복구 완료, DNS·비밀값·GitHub Environment 후속 사용자 작업 대기
+- **현재 단계:** 후속 `feature/arm64-runtime-image` — Issue #26의 Temurin ARM64 base image 호환성 수정·검증 완료, PR과 Production workflow 재실행 준비
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** Production Terraform은 0변경이고 EC2 `running`, RDS·Valkey `available`, 공개 DNS, ACM `ISSUED`, SSM `SecureString` 3개와 GitHub `production` Environment 변수 7개를 확인했다. 공개 배포 완료에는 변경 PR 병합·`main` 반영, 첫 workflow 배포 승인과 Gemini Paid 전환이 필요하다.
+- **현재 차단 사항:** Production Terraform과 외부 설정은 완료됐다. 첫 Deploy Production run #35501179625는 OIDC·ECR 인증 후 Temurin Alpine JDK/JRE의 `linux/arm64` manifest 부재로 image build에서 중단돼 Flyway·EC2 배포는 실행되지 않았다. Jammy JDK/JRE 전환 후 실제 ARM64 image build와 UID/GID 10001·curl·Java·healthcheck 계약 검증을 통과했으며 PR 병합·`main` 반영과 workflow 재실행, 실제 심사 전 Gemini Paid 전환이 필요하다.
 - **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개와 GitHub `production` Environment 변수 7개 등록을 완료했다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Gemini Paid Tier를 승인하고 첫 production workflow를 실행한다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
@@ -765,3 +765,5 @@
 | 2026-09-20 | 사용자가 Gemini·Kakao API key와 ACM export passphrase를 SSM Parameter Store에 직접 등록 | 실제 값 조회 없이 지정된 이름 3개 존재와 `SecureString` 타입 확인. ACM 검증 CNAME 공개 해석·기대값 일치와 도메인 검증 `SUCCESS` 확인, 인증서 전체 발급 처리 대기 | 동일 커밋 예정, #22 |
 | 2026-09-20 | 공개 DNS 전파 후 `api.meet-me.co.kr` exportable ACM 인증서 발급 완료 | ACM 상태 `ISSUED` 확인, 수동 export 없이 SSM passphrase를 사용하는 배포 스크립트로 후속 설치 예정 | 동일 커밋 예정, #22 |
 | 2026-09-20 | 사용자가 GitHub `production` Environment와 배포 Variable 7개를 직접 등록 | GitHub API에서 값 출력 없이 Environment 이름, 변수 이름 7개 정확 일치와 `main` custom deployment branch policy 확인 | 동일 커밋 예정, #22 |
+| 2026-09-20 | PR #25의 `main` 병합 후 첫 Deploy Production run #35501179625 실행. OIDC·ECR 인증 성공 뒤 Temurin Alpine JRE의 ARM64 manifest 부재로 image build 중단 | Flyway·SSM·EC2 배포 미실행 확인. Temurin Jammy JDK/JRE가 amd64·arm64/v8 manifest를 제공하고 Alpine JDK/JRE는 amd64만 제공함을 `docker buildx imagetools inspect`로 확인 | 동일 커밋 예정, #26 |
+| 2026-09-20 | Issue #26에서 Temurin build/runtime를 Jammy multi-arch로 전환하고 builder를 native `$BUILDPLATFORM`에 고정 | `docker buildx build --platform linux/arm64 --load` 성공, image architecture `arm64`, runtime UID/GID `10001:10001`, curl·Java 실행과 기존 healthcheck metadata 확인 | 동일 커밋 예정, #26 |

@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM --platform=$BUILDPLATFORM eclipse-temurin:17-jdk-jammy AS build
 
 WORKDIR /workspace
 
@@ -10,11 +10,13 @@ RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon dependencies >
 COPY src src
 RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon bootJar
 
-FROM eclipse-temurin:17-jre-alpine AS runtime
+FROM eclipse-temurin:17-jre-jammy AS runtime
 
-RUN apk add --no-cache curl \
-    && addgroup -g 10001 -S meetme \
-    && adduser -u 10001 -S -D -H -G meetme meetme
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 meetme \
+    && useradd --uid 10001 --gid 10001 --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin meetme
 
 WORKDIR /app
 
