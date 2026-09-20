@@ -13,6 +13,7 @@ import java.time.ZoneId
 import java.util.Locale
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 
 class GeminiNaturalLanguageParserAdapterTest {
@@ -26,6 +27,31 @@ class GeminiNaturalLanguageParserAdapterTest {
         assertEquals(262_144, properties.maxResponseBytes)
         assertEquals(15_000, GeminiNaturalLanguageParserAdapter.CALL_TIMEOUT_MILLIS)
         assertEquals(32_768, GeminiNaturalLanguageParserAdapter.MAX_OUTPUT_TOKENS)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun `중첩 배열 상한은 Gemini schema가 아니라 응답 검증에서 적용한다`() {
+        val properties = GeminiNaturalLanguageParserAdapter.RESPONSE_SCHEMA.getValue("properties") as Map<String, Any>
+        val results = properties.getValue("results") as Map<String, Any>
+        val resultItem = results.getValue("items") as Map<String, Any>
+        val resultProperties = resultItem.getValue("properties") as Map<String, Any>
+        val conditions = resultProperties.getValue("conditions") as Map<String, Any>
+
+        assertFalse(results.containsKey("maxItems"))
+        assertFalse(conditions.containsKey("maxItems"))
+
+        val request = request(1)
+        val tooManyConditions =
+            List(33) { """{"type":"TRAVEL_CONSTRAINT","expression":"학교 근처"}""" }.joinToString(",")
+        val response =
+            """
+            {"schema_version":"1","results":[
+              {"input_ref":"${request.inputs.single().inputRef}","conditions":[$tooManyConditions]}
+            ]}
+            """.trimIndent()
+
+        assertThrows<NaturalLanguageParserException> { adapter.parseProviderResponse(response, request) }
     }
 
     @Test
