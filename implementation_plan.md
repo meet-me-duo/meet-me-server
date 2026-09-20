@@ -37,10 +37,10 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후속 `feature/compose-secret-fidelity` — Issue #30의 Compose runtime secret 원문 보존 수정과 운영 재배포 준비
+- **현재 단계:** 후속 `feature/compose-project-lifecycle` — Issue #34의 고정 Compose project 수명주기 수정과 운영 재배포 준비
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** ARM64 수정 후 Deploy Production run #35502317970에서 image build·ECR push와 Flyway V1~V6는 성공했다. Docker Compose가 `.env.runtime`의 RDS 관리형 비밀번호에 포함된 `$...`를 변수 보간해 앱이 DB 인증 실패로 unhealthy가 됐고 Nginx는 시작되지 않았다. `env_file.format: raw`로 수정하고 실제 임시 컨테이너에서 `$` 포함 가짜 비밀번호 원문 보존을 검증했으며 PR 병합·`main` 반영과 workflow 재실행, 실제 심사 전 Gemini Paid 전환이 필요하다.
+- **현재 차단 사항:** raw secret 수정 후 Deploy Production run #35503275542에서 image·ECR·Flyway v6 멱등 검증은 성공했지만 release 디렉터리마다 달라지는 Compose project 이름이 이전 실패 run의 고정 이름 컨테이너와 충돌했다. 배포·rollback project를 `meet-me-production`으로 고정하고 다른 project label의 legacy app/nginx만 최초 제거하도록 수정한 뒤 PR 병합·`main` 반영과 workflow 재실행, 실제 심사 전 Gemini Paid 전환이 필요하다.
 - **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개와 GitHub `production` Environment 변수 7개 등록을 완료했다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Gemini Paid Tier를 승인하고 첫 production workflow를 실행한다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
@@ -769,3 +769,4 @@
 | 2026-09-20 | Issue #26에서 Temurin build/runtime를 Jammy multi-arch로 전환하고 builder를 native `$BUILDPLATFORM`에 고정 | `docker buildx build --platform linux/arm64 --load` 성공, image architecture `arm64`, runtime UID/GID `10001:10001`, curl·Java 실행과 기존 healthcheck metadata 확인 | 동일 커밋 예정, #26 |
 | 2026-09-20 | ARM64 수정 반영 후 Deploy Production run #35502317970 재실행. image build·ECR push·패키징과 RDS Flyway V1~V6 적용 성공 후 앱 health 실패 | SSM invocation과 앱 로그에서 Compose의 `$...` 변수 보간 경고와 `meetme_admin` DB 인증 실패 확인. `env_file.format: raw`와 `$` 포함 가짜 비밀번호 원문 보존 CI 회귀 검사로 수정 | 동일 커밋 예정, #30 |
 | 2026-09-20 | Production Compose runtime env file을 raw 형식으로 전달하고 공통 회귀 스크립트를 CI에 연결 | `$` 포함 가짜 비밀번호를 임시 env file에 넣고 Alpine 임시 컨테이너의 `printenv` 결과가 원문과 정확히 일치함을 확인. 실제 secret은 테스트·출력에 사용하지 않음 | 동일 커밋 예정, #30 |
+| 2026-09-20 | raw secret 수정 반영 후 Deploy Production run #35503275542 재실행. image·ECR·패키징과 Flyway v6 멱등 검증 성공 후 Compose container name 충돌 | 이전·현재 release 디렉터리명이 서로 다른 Compose project/network가 되고 고정 `meet-me-app` 이름을 공유함을 SSM stderr로 확인. 배포·rollback project를 `meet-me-production`으로 고정하고 다른 project label의 legacy 컨테이너만 제거하도록 수정, Docker label 조회와 고정 project 렌더링 검증 통과 | 동일 커밋 예정, #34 |
