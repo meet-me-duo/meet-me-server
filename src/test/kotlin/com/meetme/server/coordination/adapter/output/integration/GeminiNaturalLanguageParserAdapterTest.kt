@@ -99,6 +99,34 @@ class GeminiNaturalLanguageParserAdapterTest {
         assertTrue(adapter.prompt(request(1)).contains("HH:mm room-local wall-clock time without a UTC offset"))
     }
 
+    @Suppress("UNCHECKED_CAST")
+    @Test
+    fun `장소 조건 schema와 prompt는 배치 전체의 근접 호환 그룹을 요구한다`() {
+        val rootProperties = GeminiNaturalLanguageParserAdapter.RESPONSE_SCHEMA.getValue("properties") as Map<String, Any>
+        val results = rootProperties.getValue("results") as Map<String, Any>
+        val resultItem = results.getValue("items") as Map<String, Any>
+        val resultProperties = resultItem.getValue("properties") as Map<String, Any>
+        val conditions = resultProperties.getValue("conditions") as Map<String, Any>
+        val conditionItem = conditions.getValue("items") as Map<String, Any>
+        val variants = conditionItem.getValue("anyOf") as List<Map<String, Any>>
+        val placeVariant =
+            variants.single { variant ->
+                val properties = variant.getValue("properties") as Map<String, Any>
+                val type = properties.getValue("type") as Map<String, Any>
+                type["enum"] == listOf("SPECIFIC_PLACE")
+            }
+
+        assertEquals(
+            setOf("type", "query", "area_key", "area_name"),
+            (placeVariant.getValue("required") as List<String>).toSet(),
+        )
+        val prompt = adapter.prompt(request(2))
+        assertTrue(prompt.contains("same area_key"))
+        assertTrue(prompt.contains("봉천역"))
+        assertTrue(prompt.contains("서울대입구역"))
+        assertFalse(prompt.contains("Kakao"))
+    }
+
     @Test
     fun `입력 참조가 누락되거나 추가되면 배치 전체를 거부한다`() {
         val request = request(2)

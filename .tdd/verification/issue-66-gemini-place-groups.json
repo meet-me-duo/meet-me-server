@@ -1,0 +1,53 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-66-gemini-place-groups",
+  "sourceRevision": "f93d4bcd373c4aef23fcada7f67b79edac6a8cca",
+  "boundary": "Gemini whole-batch place grouping, deterministic group intersection, partial in-person fallback, and delayed-run migration",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "e184a04e2497e64f90f76559ea68799fe1cf5b93cbe03c38129123056feba1fc"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "f9a584cb1234b78104c604782224a5814a0d302d386ae5283ca9270515370f02"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
+      "sha256": "1f4b505df144e7511a5af04556169e5d8c7719d5ae1bb23283b7ebef8301c05a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt",
+      "sha256": "f37a18457ec204c20c1fa33f87bbbccdfa3c20bcb8e7c3081e9a588f80b8203e"
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__resume_delayed_matching_from_structuring.sql",
+      "sha256": "d252715c33435f88498e8e0131ea5b35e6e081e63fdc91fab67b7f1b6235c747"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiPlaceGroupingContractTest.kt",
+      "sha256": "926c7e215939a0661f043c3d68b844389852c471b2be6b3cd412467f8af2103b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/GeminiPlaceGroupMatcherTest.kt",
+      "sha256": "8492364aebf3b95fc53f3e4d85ed4a2aa1c88e5197e094d1ddb12f03ceb1f242"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Replaced place-group intersection with union",
+      "command": [".\\gradlew.bat", "test", "--tests", "*GeminiPlaceGroupMatcherTest"],
+      "detectedBy": "The group mismatch and far-participant Plan C tests rejected an in-person candidate containing incompatible areas",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Disabled validation that one area_key must have one identical area_name",
+      "command": [".\\gradlew.bat", "test", "--tests", "*GeminiPlaceGroupingContractTest.같은 호환 그룹의 대표 지역명이 다르면 배치 전체를 거부한다"],
+      "detectedBy": "The Gemini adapter contract test rejected acceptance of conflicting display names for one group key",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-20T15:41:41.5291441Z"
+}
