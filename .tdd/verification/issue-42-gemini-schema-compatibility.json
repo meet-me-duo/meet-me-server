@@ -1,0 +1,35 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-42-gemini-schema-compatibility",
+  "sourceRevision": "d3b2bca5b312a6b711cc38849267791c7dad55f1",
+  "boundary": "Gemini structured-output schema compatibility and application-enforced batch limits",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "03494efeef5f0d6f31e1a29ffa3cb6a4c4adeaebbece36d9f469e04e77ff4afc"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "f108a8e9d17daf4cac5e12794d923e40bf46f3299638c46b7e50b9df52845788"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Restored nested results maxItems 50 and conditions maxItems 32 in the Gemini response schema",
+      "command": [
+        "aws",
+        "ssm",
+        "send-command",
+        "--document-name",
+        "AWS-RunShellScript",
+        "--comment",
+        "Probe production Gemini structured schema with nested maxItems"
+      ],
+      "detectedBy": "The configured production Gemini model returned HTTP 400 INVALID_ARGUMENT without token usage; the otherwise identical schema without nested maxItems returned HTTP 200 with usage metadata",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-20T10:56:42.6146650Z"
+}

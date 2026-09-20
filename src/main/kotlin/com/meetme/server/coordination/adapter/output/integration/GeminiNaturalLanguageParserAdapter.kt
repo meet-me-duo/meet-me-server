@@ -226,7 +226,7 @@ class GeminiNaturalLanguageParserAdapter(
         internal const val CALL_TIMEOUT_MILLIS = 15_000
         internal const val MAX_OUTPUT_TOKENS = 32_768
         private val TIME_FIELDS = setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time")
-        private val RESPONSE_SCHEMA: Map<String, Any> =
+        internal val RESPONSE_SCHEMA: Map<String, Any> =
             mapOf(
                 "type" to "object",
                 "additionalProperties" to false,
@@ -237,7 +237,8 @@ class GeminiNaturalLanguageParserAdapter(
                         "results" to
                             mapOf(
                                 "type" to "array",
-                                "maxItems" to 50,
+                                // Gemini rejects the nested 50 x 32 maxItems product as too complex.
+                                // parseProviderResponse still enforces both application limits.
                                 "items" to
                                     mapOf(
                                         "type" to "object",
@@ -250,7 +251,6 @@ class GeminiNaturalLanguageParserAdapter(
                                                 "conditions" to
                                                     mapOf(
                                                         "type" to "array",
-                                                        "maxItems" to 32,
                                                         "items" to
                                                             mapOf(
                                                                 "type" to "object",

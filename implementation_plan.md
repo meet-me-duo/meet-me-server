@@ -37,11 +37,11 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후속 `feature/nginx-runtime-health` — Issue #38의 Nginx 최소 capability와 proxy health 배포 검증 수정
+- **현재 단계:** 후속 `feature/production-e2e-verification` — Issue #42의 운영 배포·공개 API·출시 E2E 검증과 근거 정리
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** 고정 Compose project 수정 후 Deploy Production run #35503788927에서 SSM 배포와 앱 health는 성공했지만 Nginx가 `cap_drop: ALL` 상태에서 temp path를 chown하지 못해 restart loop가 발생하고 외부 HTTPS 검사가 연결 거부됐다. Nginx에 `CHOWN`·`SETGID`·`SETUID`만 허용하고 배포·rollback 성공 조건에 Nginx health를 추가했으며 production 동일 read-only/tmpfs/capability와 encrypted key 조건의 실제 Nginx 기동·health 검증을 통과했다. PR 병합·`main` 반영과 workflow 재실행, 실제 심사 전 Gemini Paid 전환이 필요하다.
-- **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개와 GitHub `production` Environment 변수 7개 등록을 완료했다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Gemini Paid Tier를 승인하고 첫 production workflow를 실행한다.
+- **현재 차단 사항:** Deploy Production run #35504731515와 정형 입력 운영 E2E는 성공했다. Gemini Tier 1 전환 뒤 자연어 운영 E2E에서 중첩 배열 `maxItems`가 공급자 schema complexity 제한에 걸려 `ANALYSIS_DELAYED`가 된 원인을 확인했고, 애플리케이션의 50개·32개 응답 검증은 유지한 채 공급자 스키마에서 두 상한만 제거했다. 수정 병합·재배포 뒤 자연어·부분 결과·재분석 E2E를 다시 수행해야 한다. 부하 테스트와 실제 이전 digest rollback·RDS 복구 리허설도 아직 수행하지 않았다.
+- **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개, GitHub `production` Environment 변수 7개 등록과 첫 운영 배포 승인을 완료했다. Google AI Studio 프로젝트도 Tier 1로 전환했고 등록 키·모델 metadata와 최소 생성 호출이 200이므로 현재 키가 운영 호출에 허용됨을 값 노출 없이 확인했다. 프로젝트 spend cap·사용량 알림 설정 여부는 확인이 남아 있다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
 - **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. 각 PR의 범위·검증·URL은 생성 직후 보고하며, 결제·비밀정보 입력·운영 배포와 파괴적 작업은 이 위임에 포함하지 않는다.
@@ -70,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #22의 `feature/aws-release`에서 검증된 Bootstrap plan을 먼저 적용한 뒤 production plan을 생성·검토하고, 승인된 AWS 리소스·DNS·Nginx·Swagger 공개 배포와 Phase 10 E2E를 순서대로 완료한다.
+- **현재 작업:** Issue #42의 `feature/production-e2e-verification`에서 성공한 운영 배포와 비-AI 공개 E2E 증거를 정리하고, Gemini schema 호환 수정을 재배포한 뒤 자연어·부분 결과·재분석 E2E를 이어서 수행한다.
 
 ## 실행 순서
 
@@ -167,7 +167,7 @@
 ## User Intervention Checkpoints
 
 - [x] `[USER]` Gemini Free Tier 개발 키를 `.env.local`과 GitHub `integration` Environment의 `GEMINI_API_KEY`에 직접 등록한다.
-- [ ] `[USER]` 공개 심사 사용자의 자연어를 처리하기 전에 Gemini Paid Tier, 예산·사용량 알림과 비용 발생을 승인한다.
+- [ ] `[USER]` 공개 심사 사용자의 자연어를 처리하기 전에 Gemini Paid Tier, 예산·사용량 알림과 비용 발생을 승인한다. Tier 1 전환과 합성 E2E 비용 발생 승인은 완료했고 project spend cap·사용량 알림 확인이 남아 있다.
 - [x] `[AGENT]` 개발용 외부 연동 검사를 위한 GitHub `integration` Environment를 만들고 현재 PR CI에는 연결하지 않는다.
 - [x] `[USER]` AWS 인프라 적용 전 IAM 사용자 MFA, `AdministratorAccess`, `aws login` 임시 CLI 세션, `ap-northeast-2`, 월 USD 80 Budget과 4개 이메일 알림을 확인·승인한다.
 - [x] `[SHARED]` 제출 MVP를 EC2 `t4g.small`, ECR, RDS PostgreSQL 18 `db.t4g.micro` Single-AZ, ElastiCache Serverless for Valkey, S3 state와 SSM·Secrets Manager로 배포하도록 확정한다.
@@ -177,12 +177,12 @@
 - [x] `[USER]` Route 53 생성 후 가비아 기본 네임서버를 AWS 네임서버 4개로 교체한다. 그전까지는 가비아 기본 네임서버를 유지한다.
 - [x] `[SHARED]` 제출 MVP 지도·좌표 공급자로 Kakao Local API를 선택하고 검색·정규화만 공급자에 위임하도록 확정한다.
 - [x] `[USER]` Kakao Developers 앱의 REST API Key를 `.env.local`과 GitHub `integration` Environment의 `KAKAO_LOCAL_API_KEY`에 직접 등록한다.
-- [ ] `[USER]` GitHub `production` Environment에 에이전트가 확정한 배포 Variable·Secret을 직접 등록하고 첫 운영 배포를 승인한다.
+- [x] `[USER]` GitHub `production` Environment에 에이전트가 확정한 배포 Variable·Secret을 직접 등록하고 첫 운영 배포를 승인한다.
 - [ ] `[POST-MVP][USER]` Alloy·Grafana Cloud 연동 착수 시 계정·stack·요금제와 알림 연락 채널을 선택하고 telemetry 전송 자격 증명을 실행 환경에 직접 등록한다. 제출 MVP에는 필요한 값이 없다.
 - [ ] `[POST-MVP][USER]` Google Auth Platform의 운영 앱·Client ID/Secret과 Calendar scope를 준비한다.
 - [ ] `[POST-MVP][USER]` Kakao Developers OIDC 앱·REST API key·Client Secret을 준비한다.
 - [x] `[AGENT]` 각 사용자 작업 전에 필요한 secret 이름, 최소 권한, 서비스와 메뉴 위치, 단계별 행동, 공유 금지 값과 완료 확인 방법을 `docs/USER_INTERVENTION.md`에 안내한다.
-- [ ] `[AGENT]` 각 사용자 작업 후 비밀값을 출력하지 않고 설정 존재 여부와 연동 결과만 검증한다.
+- [x] `[AGENT]` 각 사용자 작업 후 비밀값을 출력하지 않고 설정 존재 여부와 연동 결과만 검증한다.
 
 ## Deep Interview 진행 순서
 
@@ -568,25 +568,25 @@
 - [x] 선택한 Redis 운영 배치를 구현한다.
 - [x] 이미지 레지스트리 인증과 배포 파이프라인을 구현한다.
 - [ ] Flyway 실행 순서, 배포 실패와 롤백 절차를 검증한다.
-- [ ] 비밀정보가 저장소, 이미지, Terraform state와 CI 로그에 노출되지 않는지 검증한다.
-- [ ] 운영 헬스체크, 로그, 지표와 알림을 검증한다.
+- [x] 비밀정보가 저장소, 이미지, Terraform state와 CI 로그에 노출되지 않는지 검증한다.
+- [x] 운영 헬스체크, 로그, 지표와 알림을 검증한다.
 
 ## Phase 10 — Wanted 제출 MVP 통합 검증과 출시 준비
 
-- [ ] 로그인 없이 익명 세션 발급 → 방 생성 → 주최자 참여 등록 → 링크 공유 흐름을 E2E 검증한다.
-- [ ] 익명 참여자의 자연어 전용·수동 슬롯 전용·두 입력 조합 제출과 본인 최신 입력 복원 흐름을 E2E 검증한다.
-- [ ] 공유 링크·다른 세션·누락 또는 위조 쿠키로 주최자 명령과 타인 입력에 접근하지 못하는지 E2E 검증한다.
-- [ ] 제출 MVP에 Google·Kakao 로그인과 Calendar OAuth endpoint가 노출되지 않는지 검증한다.
-- [ ] 마지막 제출 → Plan A/B/C 생성 → 호스트 확정 → 결과 조회를 E2E 검증한다.
+- [x] 로그인 없이 익명 세션 발급 → 방 생성 → 주최자 참여 등록 → 링크 공유 흐름을 E2E 검증한다.
+- [ ] 익명 참여자의 자연어 전용·수동 슬롯 전용·두 입력 조합 제출과 본인 최신 입력 복원 흐름을 E2E 검증한다. 운영 수동 슬롯 전용 제출과 복원은 완료했고 자연어 전용·조합 입력은 Gemini schema 호환 수정 재배포 뒤 재검증한다.
+- [x] 공유 링크·다른 세션·누락 또는 위조 쿠키로 주최자 명령과 타인 입력에 접근하지 못하는지 E2E 검증한다.
+- [x] 제출 MVP에 Google·Kakao 로그인과 Calendar OAuth endpoint가 노출되지 않는지 검증한다.
+- [x] 마지막 제출 → Plan A/B/C 생성 → 호스트 확정 → 결과 조회를 E2E 검증한다.
 - [ ] 정상 반영된 조건의 블라인드 입력과 미반영 원문의 주최자 한정 예외가 유지되는지 보안 관점에서 검증한다.
 - [ ] Gemini 방 전체 배치별 논리 작업, Full Jitter 기술 재시도 범위와 실제 비용 기록을 운영과 유사한 환경에서 검증한다.
 - [ ] 파싱 실패 → `PARTIAL` 후보 → 주최자 미반영 원문 확인 → 최종 확정 흐름을 E2E 검증한다.
 - [ ] Gemini 기술적 실패 → `ANALYSIS_DELAYED` → 로딩 종료 → 주최자 재분석 → 결과 생성 흐름과 타인 원문 비공개를 E2E 검증한다.
 - [ ] 장소 허용 영역 합집합·교집합, 이동 제약·미확정 장소와 Plan B/C fallback 회귀 시나리오를 검증한다.
-- [ ] Swagger/OpenAPI가 구현 응답과 일치하는지 전체 검증한다.
-- [ ] 실행 환경의 Swagger UI와 `/v3/api-docs`가 공개 API 계약을 완전하게 제공하는지 검증한다.
+- [x] Swagger/OpenAPI가 구현 응답과 일치하는지 전체 검증한다.
+- [x] 실행 환경의 Swagger UI와 `/v3/api-docs`가 공개 API 계약을 완전하게 제공하는지 검증한다.
 - [x] 화면 흐름, 공개 상태 전이, 익명 cookie·Origin, Polling 중단 조건과 오류 코드 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 작성한다.
-- [ ] Swagger/OpenAPI와 `docs/FRONTEND_HANDOFF.md`의 endpoint·상태·오류 코드가 일치하는지 교차 검증한다.
+- [x] Swagger/OpenAPI와 `docs/FRONTEND_HANDOFF.md`의 endpoint·상태·오류 코드가 일치하는지 교차 검증한다.
 - [x] `[USER]` 프론트엔드 AI에 함께 전달할 prototype HTML을 별도 산출물로 준비한다.
 - [ ] `ko-KR` message bundle, 지원하지 않는 locale fallback, 언어 중립 오류 코드와 시간대 직렬화를 통합 검증한다.
 - [ ] 주요 개인정보·토큰·좌표가 로그와 오류 응답에 노출되지 않는지 점검한다.
@@ -772,3 +772,10 @@
 | 2026-09-20 | raw secret 수정 반영 후 Deploy Production run #35503275542 재실행. image·ECR·패키징과 Flyway v6 멱등 검증 성공 후 Compose container name 충돌 | 이전·현재 release 디렉터리명이 서로 다른 Compose project/network가 되고 고정 `meet-me-app` 이름을 공유함을 SSM stderr로 확인. 배포·rollback project를 `meet-me-production`으로 고정하고 다른 project label의 legacy 컨테이너만 제거하도록 수정, Docker label 조회와 고정 project 렌더링 검증 통과 | 동일 커밋 예정, #34 |
 | 2026-09-20 | 고정 Compose project 수정 반영 후 Deploy Production run #35503788927 재실행. SSM 배포와 앱 health 성공 후 공개 HTTPS 연결 거부 | Nginx 로그에서 `chown("/var/cache/nginx/client_temp", 101) failed (Operation not permitted)` 확인. 내부 high port를 유지하며 공식 image의 worker 권한 하향에 필요한 `CHOWN`·`SETGID`·`SETUID`만 복원하고 app·Nginx health를 배포·rollback 성공 조건으로 강화 | 동일 커밋 예정, #38 |
 | 2026-09-20 | Production 동일 조건의 Nginx 실제 기동 회귀 검사를 CI에 추가 | 임시 encrypted self-signed key·dummy upstream, read-only rootfs, tmpfs와 `cap_drop: ALL` + 최소 3개 capability로 Nginx를 실행하고 내부 `/healthz` 성공 확인. 임시 key·container·network는 종료 시 삭제 | 동일 커밋 예정, #38 |
+| 2026-09-20 | PR #41의 `main` 병합으로 Deploy Production run #35504731515 성공. ARM64 image build·ECR push, Flyway V6 멱등 선실행, SSM 배포, 앱·Nginx health와 공개 HTTPS·OpenAPI 검사를 모두 완료 | GitHub Actions `Build and Deploy` 전체 성공, EC2 `running`, RDS `available`·7일 백업·Single-AZ, Valkey `available`, 앱·Nginx 컨테이너 `healthy` 확인 | 동일 커밋 예정, #42 |
+| 2026-09-20 | 운영 공개 경계와 관측성 검증 | `/healthz`·Swagger UI·`/v3/api-docs` 200, HSTS·nosniff·frame·referrer 보호 헤더, 누락·잘못된 Origin 403, Actuator health·Prometheus 200과 관련 metric 103줄, 최근 앱 로그 민감 필드명 일치 0건 확인 | 동일 커밋 예정, #42 |
+| 2026-09-20 | 합성 데이터로 익명 호스트·멤버 수동 슬롯 제출, 최신 입력 복원, 예상 인원 자동 마감, 결정론적 후보 생성·호스트 확정·참여자 결과 조회 운영 E2E 완료 | 두 제출 revision 1, 무쿠키·위조 cookie 401, 멤버 호스트 명령 403, `EXPECTED_PARTICIPANTS` 마감, `READY` → Plan B `COMPLETE` → `CONFIRMED` 확인. 임시 cookie 파일은 값이 남지 않도록 비움 | 동일 커밋 예정, #42 |
+| 2026-09-20 | 실행 OpenAPI와 프론트엔드 전달 계약 교차 검증 | 운영 11개 method·path가 `docs/FRONTEND_HANDOFF.md`의 11개와 정확히 일치하고 공개 상태 8개도 일치. Google·Kakao 로그인·Calendar 후보 endpoint는 모두 404 확인 | 동일 커밋 예정, #42 |
+| 2026-09-20 | 사용자가 Google AI Studio 결제 설정 후 프로젝트 Tier 1 전환을 확인하고 합성 자연어 운영 E2E를 승인 | 등록 key로 models 목록·`gemini-3.8-flash` metadata와 최소 JSON 생성 200 확인. 실제 key 값은 조회 결과와 로그에 출력하지 않음 | 동일 커밋 예정, #42 |
+| 2026-09-20 | 자연어 전용·자연어와 수동 슬롯 조합 제출 후 운영 분석이 `ANALYSIS_DELAYED`로 종결된 원인 분리 | 제출·마감 정상, DB attempt 1회 `INVALID_RESPONSE`·token 사용량 없음. key·model·일반 생성은 200이고 현행 중첩 schema는 400 `INVALID_ARGUMENT`, 두 `maxItems` 제거 schema는 200 확인 | 동일 커밋 예정, #42 |
+| 2026-09-20 | Gemini 중첩 배열 schema complexity 호환 수정 | 공급자 schema의 50×32 `maxItems`만 제거하고 `parseProviderResponse`의 입력 50개·조건 32개 검증 유지. RED에서 기존 상한 노출 실패, 수정 후 Adapter focused test GREEN | 동일 커밋 예정, #42 |
