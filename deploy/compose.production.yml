@@ -4,7 +4,8 @@ services:
     container_name: meet-me-app
     restart: unless-stopped
     env_file:
-      - .env.runtime
+      - path: ${RUNTIME_ENV_FILE:-.env.runtime}
+        format: raw
     environment:
       SPRING_PROFILES_ACTIVE: prod
     expose:

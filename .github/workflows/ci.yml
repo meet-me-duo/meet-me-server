@@ -37,3 +37,6 @@ jobs:
 
       - name: Run quality gate
         run: ./gradlew --no-daemon ktlintCheck assemble test
+
+      - name: Verify production Compose secret fidelity
+        run: bash deploy/scripts/verify-compose-secret-fidelity.sh
