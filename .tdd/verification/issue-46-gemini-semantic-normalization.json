@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-46-gemini-semantic-normalization",
+  "sourceRevision": "ed22d9b1698f745d8d891c3a8df8c96199b2b47e",
+  "boundary": "Gemini semantic-condition normalization without weakening non-null field validation",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "97d1d873c57dd143568f674c639cf0d6b64293fef68a15ecc6246f812b88ba65"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "2eaeb906fb1d296afef013f77e3bba3620006b7c79d4f68cfc02deac949e1aac"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Removed the equality guard between an explicit date and a redundant day_of_week",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GeminiNaturalLanguageParserAdapterTest.날짜와 불일치하는 요일 또는 관련 없는 non-null 필드는 거부한다"
+      ],
+      "detectedBy": "The adapter contract test observed that a mismatching date and weekday was accepted",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allowed a non-null query field on a TIME_WINDOW condition",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GeminiNaturalLanguageParserAdapterTest.날짜와 불일치하는 요일 또는 관련 없는 non-null 필드는 거부한다"
+      ],
+      "detectedBy": "The adapter contract test observed that a TIME_WINDOW carrying an unrelated non-null query was accepted",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-20T11:24:44.4840705Z"
+}
