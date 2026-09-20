@@ -62,6 +62,7 @@ data class SearchDateRange private constructor(
 data class LocalTimeRange private constructor(
     val startInclusive: LocalTime,
     val endExclusive: LocalTime,
+    val endsAtNextDayStart: Boolean,
 ) {
     companion object {
         fun of(
@@ -69,8 +70,11 @@ data class LocalTimeRange private constructor(
             endExclusive: LocalTime,
         ): LocalTimeRange {
             require(startInclusive < endExclusive) { "Local time range must be non-empty and cannot cross midnight" }
-            return LocalTimeRange(startInclusive, endExclusive)
+            return LocalTimeRange(startInclusive, endExclusive, endsAtNextDayStart = false)
         }
+
+        fun untilEndOfDay(startInclusive: LocalTime): LocalTimeRange =
+            LocalTimeRange(startInclusive, LocalTime.MIDNIGHT, endsAtNextDayStart = true)
     }
 }
 
@@ -94,7 +98,8 @@ fun LocalTimeRange.resolveOn(
     zone: MeetingTimeZone,
 ): InstantTimeRange {
     val start = resolveBoundary(date, startInclusive, zone, Boundary.START)
-    val end = resolveBoundary(date, endExclusive, zone, Boundary.END)
+    val endDate = if (endsAtNextDayStart) date.plusDays(1) else date
+    val end = resolveBoundary(endDate, endExclusive, zone, Boundary.END)
     require(start < end) { "Resolved instant range must be non-empty" }
     return InstantTimeRange(start, end)
 }

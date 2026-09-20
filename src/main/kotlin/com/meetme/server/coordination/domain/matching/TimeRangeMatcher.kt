@@ -2,6 +2,7 @@ package com.meetme.server.coordination.domain.matching
 
 import com.meetme.server.shared.domain.time.DatedTimeRange
 import com.meetme.server.shared.domain.time.InstantTimeRange
+import com.meetme.server.shared.domain.time.LocalTimeRange
 import com.meetme.server.shared.domain.time.MeetingTimeZone
 import com.meetme.server.shared.domain.time.SearchDateRange
 import com.meetme.server.shared.domain.time.WeeklyTimeRange
@@ -88,9 +89,13 @@ object TimeRangeMatcher {
         normalize(
             windows.flatMap { window ->
                 datesFor(window.date, window.dayOfWeek, searchRange).map { date ->
-                    com.meetme.server.shared.domain.time.LocalTimeRange
-                        .of(window.startTime, window.endTime)
-                        .resolveOn(date, zone)
+                    val timeRange =
+                        if (window.endsAtNextDayStart) {
+                            LocalTimeRange.untilEndOfDay(window.startTime)
+                        } else {
+                            LocalTimeRange.of(window.startTime, window.endTime)
+                        }
+                    timeRange.resolveOn(date, zone)
                 }
             },
         )

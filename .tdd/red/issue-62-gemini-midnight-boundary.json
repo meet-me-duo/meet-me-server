@@ -1,0 +1,26 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-62-gemini-midnight-boundary",
+  "sourceRevision": "6cd54c5204021feaa2fbf159a85261f7f9cc664f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "26be460decb67bfd6b0793b6472cddc6502e95863e7b388052909c7eb00c275b"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest.24시 종료를 다음 날 자정의 배타적 경계로 확장한다",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest.잘못된 지역 시각은 해당 조건만 제외하고 유효한 조건을 보존한다"
+  ],
+  "failedTests": [
+    "GeminiNaturalLanguageParserAdapterTest - 24시 종료를 다음 날 자정의 배타적 경계로 확장한다",
+    "GeminiNaturalLanguageParserAdapterTest - 잘못된 지역 시각은 해당 조건만 제외하고 유효한 조건을 보존한다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T14:21:17.8674149Z"
+}

@@ -37,11 +37,11 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후속 `docs/portfolio-readme` — Issue #58의 제품 소개 및 백엔드 포트폴리오 README 구성
+- **현재 단계:** 운영 결함 수정 `fix/gemini-midnight-boundary` — Issue #62 구현·검증 완료, PR 준비
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** 기능 백엔드, 운영 자연어 E2E와 main CI 성공 후 자동 CD를 완료했다. 현재 제품 가치와 핵심 설계·검증·운영 구조를 포트폴리오 관점에서 README에 정리 중이다. 출시 운영 준비로는 부하 테스트, 실제 이전 digest rollback과 RDS 복구 리허설이 남았다.
-- **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개, GitHub `production` Environment 변수 7개 등록과 첫 운영 배포 승인을 완료했다. Google AI Studio 프로젝트도 Tier 1로 전환했고 등록 키·모델 metadata와 최소 생성 호출이 200이므로 현재 키가 운영 호출에 허용됨을 값 노출 없이 확인했다. 프로젝트 spend cap·사용량 알림 설정 여부는 확인이 남아 있다.
+- **현재 차단 사항:** Issue #62 코드와 전체 품질 게이트는 완료했다. `develop`·`main` 병합과 자동 운영 배포 뒤 기존 지연 방 재분석이 필요하며, 운영 비밀값 회전은 사용자가 수정 우선순위를 요청해 배포 전 별도 작업으로 남아 있다.
+- **현재 사용자 개입:** Issue #62 수정과 검증을 먼저 완료한 뒤, 진단 출력에 노출된 운영 Gemini API key와 RDS 관리형 master password를 사용자가 회전하고 `main` 재배포로 런타임 값을 갱신해야 한다. 실제 비밀값은 채팅·저장소·로그에 공유하지 않는다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
 - **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. 각 PR의 범위·검증·URL은 생성 직후 보고하며, 결제·비밀정보 입력·운영 배포와 파괴적 작업은 이 위임에 포함하지 않는다.
@@ -70,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #58의 `docs/portfolio-readme`에서 제품 문제·사용자 흐름, AI와 결정론적 계산 경계, 비동기 복구·보안·테스트·AWS 자동 배포를 실제 구현과 일치하는 포트폴리오형 README로 구성한다. 브랜치 접두사는 `feature`, `fix`, `docs`, `chore`로 목적별 분류한다.
+- **현재 작업:** Issue #62에서 Gemini의 종료 `24:00`을 다음 지역 날짜 `00:00`의 정확한 배타적 경계로 보존하고, 잘못된 개별 날짜·시간 조건이 전체 배치를 `ANALYSIS_DELAYED`로 만들지 않도록 조건 단위 실패 격리와 저장 왕복을 검증한다.
 
 ## 실행 순서
 
@@ -674,6 +674,12 @@
 | FR-013 IANA Zone ID와 UTC 기반 시간 모델 | Phase 1, 4, 5 | 도메인·DST 기반 완료 |
 | FR-014 i18n과 언어 중립 API 코드 | Phase 0, 3, 5, 6 | 완료 |
 
+## 운영 결함 수정
+
+- [x] `[AGENT]` Issue #62: Gemini 종료 `24:00`을 다음 지역 날짜 시작의 배타적 경계로 보존하고, 조건 단위 시간 검증 실패 격리·내부 JSON 왕복·DST 확장을 회귀 테스트한다.
+- [ ] `[USER]` 진단 출력에 노출된 운영 Gemini API key와 RDS 관리형 master password를 회전한다.
+- [ ] `[SHARED]` Issue #62를 `main`까지 반영해 자동 배포한 뒤 기존 `ANALYSIS_DELAYED` 방을 재분석하고 운영 결과를 검증한다.
+
 ## 진행 기록
 
 | 날짜 | 변경 내용 | 검증/근거 | Commit/PR |
@@ -791,3 +797,4 @@
 | 2026-09-20 | Issue #54의 main CI 성공 후 운영 CD 자동 실행 정책 구현 | `push`·`main`·`success` 삼중 조건, 선행 `head_sha` 고정, 수동 main 복구 경로, Production Environment·OIDC 유지와 직렬·진행 중 비취소 정책 회귀 검사 | 동일 커밋 예정, #54 |
 | 2026-09-20 | PR #57의 `main` 병합으로 자동 CI/CD 최초 운영 검증 | main CI run #35511844367 성공 뒤 수동 실행 없이 `workflow_run` CD run #35511947428 성공. 두 실행의 SHA `80169fc0` 일치와 SSM 배포·공개 health·OpenAPI·Swagger UI 200 확인 | 동일 커밋 예정, #58 |
 | 2026-09-20 | Issue #58의 제품 소개·백엔드 포트폴리오 README 재구성과 작업 브랜치 분류 확장 | 기준 문서·코드 대조, markdownlint 오류 0건, 저장소 링크 존재, CI badge·운영 Swagger·OpenAPI HTTP 200, `ktlintCheck`·`assemble`·`test`와 commit guard 통과 | 동일 커밋 예정, #58 |
+| 2026-09-20 | Issue #62의 Gemini `24:00` 종료를 다음 지역 날짜 자정의 배타적 경계로 보존하고 잘못된 날짜·시간을 조건 단위로 격리, 구조화 조건 JSON 왕복과 Architecture 계약 갱신 | Adapter·Matcher·영속 Mapper RED/GREEN, `24:00` 인식·다음 날짜 이동·JSON 보존·조건 격리 결함 주입 4종 탐지, `ktlintCheck`, `assemble`, 전체 `test`, `git diff --check` 통과 | 동일 커밋 예정, #62 |

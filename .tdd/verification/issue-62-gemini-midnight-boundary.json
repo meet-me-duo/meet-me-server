@@ -1,0 +1,69 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-62-gemini-midnight-boundary",
+  "sourceRevision": "6cd54c5204021feaa2fbf159a85261f7f9cc664f",
+  "boundary": "Gemini 24:00 end-of-day parsing, condition-level date-time failure isolation, DST-aware next-day expansion, and structured-condition JSON persistence",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d20a79d8bb369cad2710e8d5a613dbc7156afeb72af85979fc164efe80600117"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/time/TimeModels.kt",
+      "sha256": "1bce0ff31c32328a229f5261e68110796dca58d842b52938aacefadbc32cee24"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcher.kt",
+      "sha256": "fe05caf825ea9c3a08cfeb244e241f10d2789e7435e7fef8e84aceb713dcd7ed"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt",
+      "sha256": "e8ab9d760861cb853bc61ad66fcd9090e4125e26029d6ca55a6064399308a462"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/SubmissionPersistenceAdapters.kt",
+      "sha256": "495599a3751caaa4b4cbff5fd343ee58d9c366f082c8d916d2141afcd4f080ce"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "26be460decb67bfd6b0793b6472cddc6502e95863e7b388052909c7eb00c275b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcherTest.kt",
+      "sha256": "655b8eebb3c86145a01715be0f5ed7084af096e7983a16e8de267844fd8104e8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/StructuredConditionJsonMapperTest.kt",
+      "sha256": "15600e0ec69b10de04b671db822dab261b3c3583f57978359b68a4c11532dd35"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Disabled recognition of 24:00 as the exclusive next-day boundary",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*GeminiNaturalLanguageParserAdapterTest.24시 종료를 다음 날 자정의 배타적 경계로 확장한다"],
+      "detectedBy": "The adapter contract test rejected the collapsed same-day midnight result",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Resolved an end-of-day boundary on the source date instead of the next local date",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*TimeRangeMatcherTest.다음 날 자정 경계는 DST gap 날짜의 실제 23시간을 보존한다"],
+      "detectedBy": "The DST gap regression test rejected the empty or reversed same-day range",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Serialized the next-day boundary as 00:00 and lost its end-of-day meaning",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*StructuredConditionJsonMapperTest.다음 날 자정 경계를 24시로 저장하고 같은 의미로 복원한다"],
+      "detectedBy": "The persistence mapper test rejected a JSON round trip that collapsed 24:00 to 00:00",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allowed DateTimeException to escape condition validation and fail the entire Gemini batch",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*GeminiNaturalLanguageParserAdapterTest.잘못된 지역 시각은 해당 조건만 제외하고 유효한 조건을 보존한다"],
+      "detectedBy": "The condition isolation test observed a batch-level exception instead of preserving valid sibling conditions",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-20T14:29:02.7316701Z"
+}
