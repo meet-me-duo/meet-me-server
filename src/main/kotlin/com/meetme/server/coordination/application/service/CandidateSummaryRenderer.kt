@@ -89,15 +89,81 @@ object CandidateSummaryRenderer {
         occurrences: List<LocalOccurrence>,
         exceptions: List<SummaryException>,
     ): String {
-        val occurrenceText = occurrences.joinToString(", ") { "${it.date.koreanDate()} ${it.start.hhmm()}~${it.end.hhmm()}" }
+        val occurrenceText = compactOccurrences(occurrences)
         val excluded = exceptions.filter { it.occurrences == null }.joinToString(", ") { "${it.date.koreanDate()} 제외" }
         return listOf(occurrenceText, excluded).filter { it.isNotBlank() }.joinToString(", ")
+    }
+
+    private fun compactOccurrences(occurrences: List<LocalOccurrence>): String {
+        val schedules =
+            occurrences
+                .groupBy { it.date }
+                .map { (date, dateOccurrences) ->
+                    DailySchedule(
+                        date,
+                        dateOccurrences
+                            .map { TimeSlot(it.start, it.end) }
+                            .distinct()
+                            .sortedWith(compareBy(TimeSlot::start, TimeSlot::end)),
+                    )
+                }
+        val segments =
+            schedules
+                .groupBy { it.timeSlots }
+                .flatMap { (timeSlots, sameScheduleDates) ->
+                    val dates = sameScheduleDates.map { it.date }.sorted()
+                    val runs = consecutiveRuns(dates)
+                    if (runs.all { it.size == 1 }) {
+                        listOf(SummarySegment(dates.first(), dates.dateListText(), timeSlots))
+                    } else {
+                        runs.map { run ->
+                            SummarySegment(
+                                run.first(),
+                                if (run.size == 1) run.single().koreanDate() else run.dateRangeText(),
+                                timeSlots,
+                            )
+                        }
+                    }
+                }.sortedWith(compareBy(SummarySegment::firstDate, { it.timeSlots.firstOrNull()?.start }))
+        return segments.joinToString(", ") { segment ->
+            "${segment.dateText} ${segment.timeSlots.joinToString(" 또는 ") { "${it.start.hhmm()}~${it.end.hhmm()}" }}"
+        }
+    }
+
+    private fun consecutiveRuns(dates: List<LocalDate>): List<List<LocalDate>> {
+        if (dates.isEmpty()) return emptyList()
+        val runs = mutableListOf<MutableList<LocalDate>>()
+        dates.forEach { date ->
+            val current = runs.lastOrNull()
+            if (current == null || current.last().plusDays(1) != date) {
+                runs += mutableListOf(date)
+            } else {
+                current += date
+            }
+        }
+        return runs
     }
 
     private data class LocalOccurrence(
         val date: LocalDate,
         val start: LocalTime,
         val end: LocalTime,
+    )
+
+    private data class TimeSlot(
+        val start: LocalTime,
+        val end: LocalTime,
+    )
+
+    private data class DailySchedule(
+        val date: LocalDate,
+        val timeSlots: List<TimeSlot>,
+    )
+
+    private data class SummarySegment(
+        val firstDate: LocalDate,
+        val dateText: String,
+        val timeSlots: List<TimeSlot>,
     )
 
     private data class SummaryException(
@@ -110,6 +176,20 @@ object CandidateSummaryRenderer {
     }
 
     private fun LocalDate.koreanDate(): String = "${monthValue}월 ${dayOfMonth}일"
+
+    private fun List<LocalDate>.dateListText(): String =
+        if (map { it.year to it.month }.distinct().size == 1) {
+            "${first().monthValue}월 ${joinToString("일·") { it.dayOfMonth.toString() }}일"
+        } else {
+            joinToString("·") { it.koreanDate() }
+        }
+
+    private fun List<LocalDate>.dateRangeText(): String {
+        val start = first()
+        val end = last()
+        val endText = if (start.year == end.year && start.month == end.month) "${end.dayOfMonth}일" else end.koreanDate()
+        return "${start.koreanDate()}부터 ${endText}까지 매일"
+    }
 
     private fun LocalTime.hhmm(): String = "%02d:%02d".format(hour, minute)
 

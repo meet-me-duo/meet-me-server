@@ -1,0 +1,33 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-70-compact-candidate-summary",
+  "sourceRevision": "e17252b6c783f515750b4588ad03cfc29053f6fa",
+  "boundary": "Deterministic lossless compression of explicit candidate dates and daily time-slot lists",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryRenderer.kt",
+      "sha256": "5c0cbf26f05c25f50692715e83c831bfef6d67503f1f1f610205dc37702c3b5a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryRendererTest.kt",
+      "sha256": "4bc07b466e0d0ce9ff633005a3b937c0dae6974877af1784f5443992b8999b75"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Changed consecutive-date detection from one-day adjacency to two-day adjacency",
+      "command": [".\\gradlew.bat", "test", "--tests", "*CandidateSummaryRendererTest.연속 날짜의 동일 시간 구간을 매일 표현으로 압축한다", "--tests", "*CandidateSummaryRendererTest.월 경계를 넘는 연속 날짜는 양쪽 월을 표시한다"],
+      "detectedBy": "The same-month and cross-month consecutive range tests rejected the incorrect date grouping",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Grouped daily schedules by only their first time slot instead of the complete slot list",
+      "command": [".\\gradlew.bat", "test", "--tests", "*CandidateSummaryRendererTest.날짜별 시간 구간 목록이 일부만 같으면 서로 묶지 않는다"],
+      "detectedBy": "The partial schedule equality test rejected merging dates whose second time slot differs",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-20T16:17:17.3830859Z"
+}
