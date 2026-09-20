@@ -1,6 +1,10 @@
 name: Deploy Production
 
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -13,22 +17,31 @@ concurrency:
 jobs:
   deploy:
     name: Build and Deploy
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: production
+    env:
+      SOURCE_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
     permissions:
       contents: read
       id-token: write
 
     steps:
       - name: Require main branch
-        if: github.ref != 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         run: |
           echo "Production deployment is allowed only from main." >&2
           exit 1
 
       - name: Check out repository
         uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
 
       - name: Configure temporary AWS credentials
         uses: aws-actions/configure-aws-credentials@v5
@@ -52,7 +65,7 @@ jobs:
           context: .
           platforms: linux/arm64
           push: true
-          tags: ${{ vars.ECR_REPOSITORY_URL }}:git-${{ github.sha }}-${{ github.run_id }}
+          tags: ${{ vars.ECR_REPOSITORY_URL }}:git-${{ env.SOURCE_SHA }}-${{ github.run_id }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: true
@@ -60,7 +73,7 @@ jobs:
 
       - name: Package deployment contract
         env:
-          RELEASE_ID: ${{ github.sha }}-${{ github.run_id }}
+          RELEASE_ID: ${{ env.SOURCE_SHA }}-${{ github.run_id }}
         run: |
           tar -czf release.tar.gz -C deploy \
             compose.production.yml \
@@ -73,7 +86,7 @@ jobs:
 
       - name: Deploy through Systems Manager
         env:
-          RELEASE_ID: ${{ github.sha }}-${{ github.run_id }}
+          RELEASE_ID: ${{ env.SOURCE_SHA }}-${{ github.run_id }}
           APP_IMAGE: ${{ vars.ECR_REPOSITORY_URL }}@${{ steps.build.outputs.digest }}
         run: |
           parameters=$(jq -nc \

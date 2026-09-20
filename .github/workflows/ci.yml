@@ -38,6 +38,9 @@ jobs:
       - name: Run quality gate
         run: ./gradlew --no-daemon ktlintCheck assemble test
 
+      - name: Verify production deployment policy
+        run: node --test .github/scripts/deploy-workflow.test.cjs
+
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
 

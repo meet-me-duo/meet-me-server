@@ -396,3 +396,14 @@ Terraform state는 versioning과 암호화를 활성화한 전용 S3 backend 및
 **이유**: 제출 MVP는 단일 백엔드와 비동기 Worker를 함께 실행하고 초기 트래픽·고가용성 요구가 작으므로 ECS Service·Task Definition·ALB를 추가하는 것보다 EC2가 월 비용과 구현 시간을 줄인다. RDS와 관리형 Valkey, ECR을 EC2 밖에 두면 영구 데이터와 작업 전달 상태를 호스트 교체로부터 격리하고 이후 ECS 전환에도 같은 이미지와 데이터 경계를 재사용할 수 있다. 서울 리전 초기 비용은 세전 월 USD 50~75로 추정하며 월 USD 80 Budget으로 사용량을 감시한다.
 
 **트레이드오프**: 단일 EC2와 Single-AZ RDS는 인스턴스·가용 영역 장애 시 서비스 중단을 허용하고 운영자가 OS 패치, 용량과 복구를 관리해야 한다. 수평 확장과 무중단 rolling deployment가 필요해지면 ECS와 ALB를 다시 평가한다. 관리형 Valkey는 EC2 동거 Redis보다 비용이 추가되지만 장애와 수명주기를 분리한다. ACM exportable certificate는 인증서 비용과 갱신된 private key의 안전한 재배포 자동화가 필요하다. Flyway 자동 downgrade를 금지하므로 모든 운영 migration은 이전 애플리케이션과 호환되는 단계적 변경을 우선해야 한다.
+
+### ADR-042: main CI 성공 후 운영 CD 자동 실행
+
+**상태**: Accepted
+**날짜**: 2026-09-20
+
+**결정**: `main` 병합을 운영 배포 승인으로 간주한다. `main` push로 시작된 `CI` workflow가 성공하면 `workflow_run`으로 권한 있는 `Deploy Production` workflow를 자동 실행한다. 배포 대상은 후속 workflow 자체의 기본 `GITHUB_SHA`가 아니라 성공한 선행 CI의 `head_sha`로 고정하고 checkout, ECR image tag와 release ID에 동일하게 사용한다. 자동 경로는 선행 실행의 event가 `push`, branch가 `main`, conclusion이 `success`인 경우에만 허용하며 PR, `develop`, 수동 CI와 실패한 CI는 배포하지 않는다. Production Environment와 GitHub OIDC 최소 권한 role은 유지한다. 운영 배포 concurrency는 한 번에 하나만 실행하고 진행 중 배포는 취소하지 않는다. `workflow_dispatch`는 `main` ref의 장애 복구·재배포 수단으로 유지한다.
+
+**이유**: 코드가 `main`에 병합됐는데 별도 사람이나 에이전트가 배포 workflow를 다시 시작해야 하는 간극을 제거하면서, 품질 게이트를 통과한 정확한 커밋만 운영에 반영하기 위해서다. 권한 없는 CI와 OIDC 배포를 분리하고 선행 event·branch·결론을 모두 검증하면 `workflow_run`의 권한 상승 경계에서 PR 코드를 배포하는 위험을 줄인다. 배포 직렬화는 단일 EC2 교체와 Flyway 선실행이 서로 경합하지 않게 한다.
+
+**트레이드오프**: 문서만 바뀐 `main` 병합도 image build와 운영 배포를 실행해 Actions 시간과 ECR 저장 비용이 발생한다. GitHub concurrency는 진행 중 실행 하나와 대기 실행 하나만 유지하므로 짧은 간격으로 세 번 이상 병합하면 중간 대기 배포는 최신 대기 배포로 교체될 수 있지만, 실행 중 배포는 끝까지 완료되고 최종 `main`은 이어서 반영된다. 자동 배포의 안전성이 branch protection과 CI 품질에 더 강하게 의존하므로 수동 복구 경로, digest rollback과 배포 후 health·OpenAPI 검증을 계속 유지해야 한다.
