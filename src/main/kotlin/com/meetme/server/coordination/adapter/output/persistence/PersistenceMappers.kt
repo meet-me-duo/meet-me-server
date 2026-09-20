@@ -105,7 +105,11 @@ object PersistenceMappers {
                         candidate.placeName?.let { placeName ->
                             CandidatePlace(
                                 placeName,
-                                GeoCoordinate.of(requireNotNull(candidate.latitude), requireNotNull(candidate.longitude)),
+                                if (candidate.latitude != null && candidate.longitude != null) {
+                                    GeoCoordinate.of(candidate.latitude, candidate.longitude)
+                                } else {
+                                    null
+                                },
                             )
                         },
                 )

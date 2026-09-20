@@ -32,7 +32,7 @@
 | Infrastructure as Code | Terraform | 확정 |
 | 운영 컴퓨팅 | Amazon EC2 `t4g.small` | 제출 MVP 단일 인스턴스, ECS 전환 가능성을 컨테이너 경계로 보존 |
 | 이미지 레지스트리 | Amazon ECR | 이미지 digest 기반 배포 |
-| 지도·좌표 공급자 | Kakao Local API | 장소 검색·정규화와 표시 이름만 외부 위임, 거리·영역 계산은 서버 담당 |
+| 장소 호환 판정 | 제출 MVP는 Gemini Structured Output | 방 전체 명시 장소의 `AREA_n` 근접 그룹과 대표 지역명만 AI가 구조화하고 서버가 그룹 교집합 계산. 지도·좌표 공급자는 Post-MVP TBD |
 | API 계약 문서 | Swagger/OpenAPI, springdoc-openapi 3.1.0 | 확정 |
 | 시간대 | IANA Zone ID, MVP `Asia/Seoul` | 저장·계산 경계 확정, 사용자 선택은 MVP 이후 |
 | 국제화 | Spring MessageSource, BCP 47 locale, MVP `ko-KR` | 기반 도입 확정, 추가 언어 TBD |
@@ -50,7 +50,7 @@ flowchart LR
     App --> Gemini[Google Gemini API]
     App -. Post-MVP .-> Google[Google OAuth / Calendar]
     App -. Post-MVP .-> Kakao[Kakao OAuth]
-    App --> Map[Kakao Local API]
+    App -. Post-MVP TBD .-> Map[지도 / 이동시간 공급자]
     App -. Post-MVP: Prometheus metrics / JSON logs .-> Alloy[Grafana Alloy]
     Alloy -. Post-MVP .-> GrafanaCloud[Grafana Cloud Metrics / Loki / Alerting]
 
@@ -66,8 +66,8 @@ flowchart LR
 
 - **프론트엔드:** 제출 MVP에서는 로그인 없이 방 생성·참여, 선택적 자연어·방 전용 가능 시간 입력, 본인 최신 입력 복원, 비동기 분석 상태와 플랜 확정 UI를 담당한다. Post-MVP에는 주최자 로그인, Google Calendar 연결과 방별 ON/OFF UI를 추가한다. 별도 장소 입력란이나 지도 기반 좌표 수집은 제공하지 않는다.
 - **Google/Kakao:** Post-MVP에 meet-me 사용자 인증을 제공한다. Google Calendar 연동은 meet-me 인증을 완료한 사용자에게만 제공하며 Google의 별도 Calendar 동의 범위가 필요하다.
-- **Google Gemini:** 자연어 조건 구조화와 시간표 이미지 분석만 담당한다.
-- **Kakao Local API:** 자연어에서 추출된 국내 장소 표현을 키워드로 검색·정규화하고 결과 표시용 이름을 제공한다. 거리와 영역 계산, 검색 결과 고유성 판정과 후보 순위는 서버가 담당한다.
+- **Google Gemini:** 자연어 조건과 방 전체 명시 장소의 근접 호환 그룹·대표 지역명을 구조화한다. 좌표, 최종 시간·참여자·플랜 선택은 만들지 않는다.
+- **지도 공급자 (Post-MVP TBD):** 제출 MVP에서는 호출하지 않는다. 실제 좌표·이동시간 검증이 제품 요구가 될 때 공급자와 결제 방식을 다시 결정한다.
 - **AWS:** 애플리케이션 런타임과 운영 PostgreSQL을 제공한다.
 - **Grafana Cloud (Post-MVP):** Alloy가 전송한 애플리케이션·Worker 지표와 로그를 관리형 Metrics 및 Loki에 저장하고 Grafana-managed Alerting으로 운영 알림을 평가한다. 제출 MVP는 계정·전송 자격 증명 없이 애플리케이션의 Prometheus endpoint와 JSON 표준 출력까지만 제공한다.
 
@@ -119,7 +119,7 @@ Aggregate 사이 불변식과 여러 저장소를 묶는 원자성은 Applicatio
 - **AI Adapter:** Gemini 요청·응답과 도메인에서 사용하는 구조화 결과 사이를 변환한다.
 - **OAuth Adapter (Post-MVP):** Google·Kakao 로그인 공급자별 차이를 내부 인증 포트 뒤로 숨긴다.
 - **Calendar Adapter (Post-MVP):** Google Calendar 이벤트를 절대 불가 시간으로 변환한다.
-- **Geo Adapter:** 추출된 장소 표현을 지도 공급자로 검색하고 하나의 위치로 특정 가능한 경우에만 공급자 응답을 도메인의 정규화된 장소 값으로 변환한다.
+- **Place Group 경계:** 제출 MVP에서는 Gemini adapter가 `SPECIFIC_PLACE`에 배치 내부 `AREA_n` 키와 대표 지역명을 부여한다. Application은 이를 공급자 독립 값으로 변환하고 Domain은 문자열 그룹의 교집합만 계산한다. Geo Adapter는 Post-MVP 후보로 남긴다.
 
 ### 모듈 구성 원칙
 
@@ -204,7 +204,7 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 5. 종료 트랜잭션은 외부 Calendar 호출 없이 참가자별 최신 제출 버전 식별자와 그 버전에 저장된 Calendar 스냅샷을 하나의 불변 방 전체 제출 배치로 고정한다. 자연어가 하나 이상이면 배치당 하나의 논리적 구조화 작업과 Outbox 이벤트를 함께 기록하고, 자연어가 하나도 없으면 Gemini 작업 없이 결정론적 매칭 작업을 시작한다.
 6. Outbox relay는 원문이 아닌 이벤트 ID와 방 전체 제출 배치 ID를 Redis Stream에 발행한다. Worker는 PostgreSQL에서 배치와 최신 원문을 다시 조회한다.
 7. Worker는 참가자 실명 대신 배치 안에서만 유효한 불투명 입력 참조값을 사용해 비어 있지 않은 최신 `raw_text`만 하나의 Gemini Structured Output 요청으로 전달한다. 자연어가 없는 참여자는 AI 요청에서 제외하되 정형 일정 입력은 매칭에 유지한다. 방 Time Zone ID와 각 자연어 입력 locale은 해석 문맥으로 전달하지만 Calendar 불가 시간, 방 전용 가능 시간과 추가 불가 시간은 AI에 전달하지 않는다.
-8. 애플리케이션은 요청·응답의 입력 참조값과 개수가 일치하는지 확인하고 참가자별 AI 출력을 독립적으로 서버 스키마에 재검증한다. Phase 5는 LLM 좌표를 거부하고 장소 표현 분류까지만 저장하며, Kakao 검색·고유성 판정·좌표 스냅샷은 Phase 6의 Geo Adapter가 담당한다.
+8. 애플리케이션은 요청·응답의 입력 참조값과 개수가 일치하는지 확인하고 참가자별 AI 출력을 독립적으로 서버 스키마에 재검증한다. `SPECIFIC_PLACE`는 원문 질의, `AREA_n` 키와 대표 지역명을 저장하고 같은 키의 대표 이름 일치 여부를 배치 단위로 검증한다. LLM 좌표는 계속 거부한다.
 9. Gemini 응답이 성공하면 애플리케이션은 유효한 정형 조건, 의미 검증 실패의 미반영 사유, 일정 입력 모드, Calendar 불가 시간, 방 전용 가능 시간, 추가 불가 시간과 방 전체 작업의 종결 상태를 PostgreSQL에 저장한 뒤 매칭 작업을 시작한다.
 10. 기술적 재시도가 소진되면 입력과 고정 배치를 유지한 채 방을 `ANALYSIS_DELAYED`로 전이하고 매칭을 시작하지 않는다. 주최자의 방 단위 재요청은 같은 배치를 대상으로 새 Outbox 이벤트를 멱등하게 발행한다.
 
@@ -225,19 +225,19 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 5. 자연어 시간 조건이 없거나 의미 검증에서 제외되면 정형 일정 입력을 적용할 수 있도록 탐색 범위 전체를 중립적인 기준 구간으로 사용한다.
 6. `MANUAL_AVAILABILITY` 참여자가 실제 날짜형·확장된 주간 반복형 가능 시간을 하나 이상 제출했다면 기준 구간과 교차한다. 빈 배열이면 기준 구간을 그대로 유지한다. `CALENDAR` 참여자는 ON 선택에 따라 자연어가 없으면 탐색 범위 전체를 기준 구간으로 사용하고, Calendar 불가 시간과 실제 날짜형·확장된 주간 반복형 추가 불가 시간의 합집합을 차감한다. 남은 시간은 다른 참여자의 가능 범위와 교차한다.
 7. 고정된 후보 격자로 양자화하거나 임의 길이로 자르지 않고 교차·차감 후 남은 모든 연속 시간 구간을 그대로 시간 후보로 유지한다.
-8. 사용자가 명시한 반경 또는 기본 1km 반경으로 각 정규화된 장소의 허용 원을 만든다.
-9. 한 참여자의 대안 장소들은 합집합으로, 관련 참여자들의 허용 영역은 교집합으로 계산한다.
+8. Gemini가 구조화한 각 특정 장소의 `area_key`와 공통 `area_name`을 검증한다.
+9. 한 참여자의 `area_key` 대안은 합집합으로, 관련 참여자들의 장소 그룹은 문자열 키 교집합으로 계산한다.
 10. 이동 제약 또는 미확정 표현만 있는 조건 분기는 계산 가능한 오프라인 영역을 만들지 않으며 온라인 후보로 fallback할 수 있다.
 11. 전원·오프라인 Plan A, 전원·온라인 Plan B, 최대 참석자 Plan C 순으로 후보를 계산한다.
 12. 계산된 실제 날짜별 구간을 구조화 후보로 저장한다. 여러 날짜에 공통인 요일·시간대는 결과 표현에서 묶을 수 있지만 반복 일정 규칙으로 저장하지 않는다.
 13. 미반영 입력이 하나라도 있으면 후보 집합을 `PARTIAL`로 저장하고 반영 제출 수, 전체 제출 수와 미반영 입력 수를 함께 기록한다.
 14. 후보 조회 시 구조화 결과를 입력으로 손실 없는 요약 형태를 선택하고 MessageSource 템플릿 기반 자연어 요약을 생성한 뒤 결과 및 주최자 전용 미반영 입력을 주최자에게 제공한다.
 
-Kakao Local 정규화는 Unicode NFKC, 공백 정리와 대소문자 정규화 후 전체 노출 가능 정확도순 결과에서 정확한 장소명 일치가 하나인 경우만 성공한다. 질의별 결과는 배치 안에서 재사용하며 장소 ID·표시명·좌표만 제출 배치 스냅샷으로 저장하고 공급자 원본 응답은 저장하지 않는다. timeout·429·5xx는 호출별 3초, 최초 호출과 최대 2회 Full Jitter 재시도를 전체 15초 안에서 수행하고, 소진하면 후보를 만들지 않고 `ANALYSIS_DELAYED`로 전이한다. 재분석은 구조화가 끝난 동일 배치라면 Kakao 정규화·매칭 단계부터 재개한다.
+제출 MVP는 Kakao Local을 포함한 지도 API를 호출하지 않는다. Gemini는 방 전체의 명시 장소를 비교하여 인접 역 또는 대략 2km 이내의 실용적인 만남 근방에 같은 `AREA_n` 키를 부여하고, 서로 멀면 다른 키를 부여한다. 참여자 내부 키 집합은 대안이고, 대면 후보는 참여자 사이 키 교집합이 있을 때만 생성한다. 기존 Kakao 단계에서 `ANALYSIS_DELAYED`가 된 실행은 V7 migration으로 재개 단계를 `STRUCTURING`으로 바꿔 새 Gemini 계약으로 다시 처리한다.
 
 Plan A, B, C는 종류별 최대 한 후보로 저장하고 카드 안에 모든 유효 실제 시간 구간을 둔다. Plan C는 전원 시간 교집합이 없을 때만 최소 2명을 유지하며 `N-1`, `N-2` 순으로 탐색한다. 동률은 공통 가능 총시간, 가장 이른 시작, 정렬된 내부 참여자 식별자 순으로 해소한다. 정상 계산 후 후보가 없으면 작업은 빈 후보 집합으로 `COMPLETED`되고 공개 상태는 `NO_MATCH`다.
 
-LLM은 좌표를 만들거나 지도 검색 결과를 임의로 선택하지 않으며 후보 자연어 요약도 생성하지 않는다. 애플리케이션 단계에서 Kakao 장소 정규화 스냅샷을 완성한 뒤, 결정론적 도메인 계산 단계에서는 LLM과 지도 API를 호출하지 않고 저장된 정규화 결과로 시간, 거리와 영역을 계산한다. 자연어 요약은 구조화 후보에 없는 날짜·시간을 추가하거나 Calendar로 제외된 구간을 가능한 것으로 표현해서는 안 된다. 동일한 입력과 locale에는 동일한 구조화 후보와 요약이 나와야 한다. 여러 종료 조건이나 중복 작업 전달이 동시에 발생해도 방마다 하나의 매칭 실행만 유효해야 한다.
+LLM은 좌표, 실제 매장, 최종 후보 또는 후보 시간 요약을 만들지 않는다. 애플리케이션이 Gemini 장소 그룹을 저장한 뒤 결정론적 Domain 계산은 외부 API를 호출하지 않고 시간과 장소 키 교집합, 참여자 조합과 순위를 계산한다. 자연어 요약은 구조화 후보에 없는 날짜·시간을 추가하거나 Calendar로 제외된 구간을 가능한 것으로 표현해서는 안 된다. 같은 고정 배치의 구조화 결과는 PostgreSQL에 고정하여 재현하며, 여러 종료 조건이나 중복 작업 전달이 동시에 발생해도 방마다 하나의 매칭 실행만 유효해야 한다.
 
 자연어 요약 정책은 외부 서비스나 Spring에 의존하지 않는 언어 중립적인 요약 형태를 먼저 선택한다. 반복 요일·시간 조건이 있는 후보에 대해 실제 가능 날짜를 나열할 때 필요한 날짜 참조 수와 완전 제외 또는 일부 축소된 모든 예외의 날짜 참조 수를 비교한다. 예외 수가 실제 가능 날짜 수보다 적으면 `PATTERN_WITH_EXCEPTIONS`, 같거나 많으면 더 명시적인 `EXPLICIT_OCCURRENCES`를 선택한다. 특정 날짜 조건, 불규칙한 후보 또는 모든 예외를 표현할 수 없는 경우에도 `EXPLICIT_OCCURRENCES`를 선택한다. 동률에서 실제 날짜 나열을 우선하여 모호성을 줄인다. 선택된 언어 중립 요약 형태를 애플리케이션의 응답 렌더러가 MessageSource로 지역화하며, 이 내부 렌더러를 위한 형식적인 outbound port는 만들지 않는다.
 
@@ -347,7 +347,7 @@ Redis Pub/Sub은 비동기 비즈니스 작업에 사용하지 않는다. 향후
 
 ### 개인정보
 
-Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장소 좌표는 개인정보로 취급한다. `집`, `회사`, `학교 근처` 같은 개인 기준 표현에 대해서는 별도 좌표를 수집하지 않는다. 제출 MVP의 종료된 방은 `closed_at`, 종료되지 않은 방은 `created_at`부터 30일이 지나면 제출 원문·일정·정규화 좌표·후보·Outbox 이력을 함께 삭제한다. 만료되고 어떤 참여자도 참조하지 않는 게스트 세션도 삭제한다. Post-MVP 공급자 토큰의 보관·폐기 정책은 인증·Calendar 구현 전에 별도로 확정한다.
+Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 그룹도 개인정보로 취급한다. 제출 MVP는 장소 좌표를 수집하지 않으며 `집`, `회사`, `학교 근처` 같은 개인 기준 표현에도 별도 좌표를 만들지 않는다. 종료된 방은 `closed_at`, 종료되지 않은 방은 `created_at`부터 30일이 지나면 제출 원문·일정·장소 그룹·후보·Outbox 이력을 함께 삭제한다. 만료되고 어떤 참여자도 참조하지 않는 게스트 세션도 삭제한다. Post-MVP 공급자 토큰과 지도 좌표의 보관·폐기 정책은 해당 연동 전에 별도로 확정한다.
 
 정상 반영된 참여자 조건은 주최자에게도 공개하지 않는다. 예외적으로 Gemini 응답 성공 후 의미·스키마·도메인 검증에 실패하여 후보 생성에 반영하지 못한 원문만 제출 전 고지를 전제로 결과 생성 후 주최자에게 공개할 수 있다. 기술적 전체 장애인 `ANALYSIS_DELAYED`에서는 모든 원문을 주최자에게 공개하지 않는다. 각 참여자는 로그인 여부와 관계없이 본인 증명을 거쳐 자신의 최신 제출만 조회할 수 있다. 원문은 다른 참여자용 결과, 로그, 지표와 Redis 메시지 payload에 포함하지 않는다.
 
@@ -363,7 +363,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 - 논리 파싱 작업은 최초 호출 1회와 최대 3회의 재시도로 구성한다. 네트워크 오류, timeout, HTTP 429와 공급자 5xx에만 재시도하고 의미 파싱 또는 스키마·도메인 검증 실패에는 같은 배치를 자동 재호출하지 않는다.
 - 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 15초이고 논리 작업 전체 timeout은 60초다.
 - 응답은 자연어가 있어 요청에 포함된 불투명 참조값의 개수와 집합이 일치해야 하며 참가자별 항목을 독립적으로 검증한다. 배치 전체의 기술적 재시도가 소진되면 입력과 고정 배치를 보존하고 `ANALYSIS_DELAYED`로 전이하며 매칭하지 않는다.
-- 조건은 `TIME_WINDOW`, `SPECIFIC_PLACE`, `TRAVEL_CONSTRAINT`, `UNRESOLVED_PLACE` 유니온으로 저장한다. 좌표는 스키마에 포함하지 않으며 조건 단위 검증 실패는 유효 조건과 분리해 미반영 사유로 보존한다.
+- 조건은 `TIME_WINDOW`, `SPECIFIC_PLACE`, `TRAVEL_CONSTRAINT`, `UNRESOLVED_PLACE` 유니온으로 저장한다. `SPECIFIC_PLACE`는 `query`, 배치 내부 `area_key`, 공통 `area_name`을 포함한다. 좌표는 스키마에 포함하지 않으며 조건 단위 검증 실패는 유효 조건과 분리해 미반영 사유로 보존한다.
 - `TIME_WINDOW`의 시작과 일반 종료는 offset 없는 `HH:mm`을 사용하고, 종료에 한해서만 `24:00`을 다음 지역 날짜 시작의 배타적 경계로 허용한다. 날짜·시간 파싱 실패는 해당 조건의 검증 실패로 격리하고 방 전체 응답 실패로 승격하지 않는다.
 - 2026-09-19 기준 stable `gemini-3.8-flash`를 `latest` alias 없이 고정해 예기치 않은 모델 교체를 피한다. low thinking, 최대 32,768 출력 토큰, 호출별 15초 제한을 사용한다.
 - 호출 횟수, 입력·출력 토큰과 이미지 비용을 기록하여 모임별 AI 비용을 계산한다.
@@ -393,7 +393,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 - 운영 PostgreSQL은 private subnet의 RDS PostgreSQL 18 `db.t4g.micro` Single-AZ로 시작한다.
 - Redis Streams·호출 제한·DLQ는 ElastiCache Serverless for Valkey에 두고 EC2 수명주기와 분리한다.
 - Terraform state는 versioning·암호화를 활성화한 전용 S3 backend와 native lock file로 관리한다. 환경은 별도 state key로 분리한다.
-- RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini·Kakao API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다.
+- RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다. Kakao Local key는 제출 MVP 런타임에서 사용하지 않는다.
 - 로컬 관리 작업은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용한다. GitHub Actions는 장기 Access Key 없이 OIDC로 환경별 최소 권한 role을 사용한다.
 - 배포는 ECR image digest 고정, 동일 이미지의 Flyway 선실행, 애플리케이션 교체 순서로 수행한다. 실패 시 이전 image digest로 애플리케이션만 되돌리고 적용된 Flyway migration은 자동 downgrade하지 않는다.
 - `main` 병합은 운영 배포 승인으로 간주한다. `main` push로 시작된 CI가 성공하면 별도의 권한 있는 Production workflow가 `workflow_run`의 정확한 `head_sha`를 배포하고, PR·`develop`·수동 CI와 실패한 CI는 자동 배포하지 않는다. 운영 배포는 하나씩 실행하되 대기 실행을 취소하지 않으며, `workflow_dispatch`는 `main`의 장애 복구·재배포 수단으로 유지한다.
@@ -454,7 +454,7 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 
 ## 11. 테스트 경계
 
-- 도메인 단위 테스트는 Spring 컨텍스트 없이 시간·장소 허용 영역·Plan A/B/C 규칙을 검증한다.
+- 도메인 단위 테스트는 Spring 컨텍스트 없이 시간·장소 호환 그룹 교집합·Plan A/B/C 규칙을 검증한다.
 - 시간 테스트는 구조화된 요일·시간 조건을 탐색 범위의 실제 날짜로 확장하고, 참여자 중 한 명이라도 가진 Calendar 불가 시간을 차감한 뒤 길이와 관계없이 남은 모든 연속 구간을 보존하는지 검증한다.
 - 정형 일정 입력 테스트는 명시 범위의 실제 날짜형과 기본 범위의 주간 반복형을 구분한다. `MANUAL_AVAILABILITY` 가능 시간이 있으면 자연어 또는 중립 기준 구간과 교차하고, 빈 배열이면 자연어 기준 구간을 그대로 유지한다. 자연어·Calendar ON·수동 가능 시간이 모두 없으면 `SUBMISSION_INPUT_REQUIRED`로 거부하고 완료 인원이 증가하지 않는지 검증한다. Calendar 연결·조회와 방별 ON/OFF가 독립적인지, OFF 데이터는 무시되는지, ON이면 자연어 없이 빈 불가 시간 스냅샷도 유효한지, 공급자·추가 불가 시간을 합친 뒤 고정 슬롯 없이 연속 구간으로 차감하는지도 검증한다.
 - 후보 표현 테스트는 자연어 요약이 구조화 후보와 의미상 동일하고 제외된 날짜·시간을 가능하다고 표현하지 않는지 검증한다. 예외 수가 실제 가능 날짜 수보다 적을 때만 패턴과 모든 예외를 사용하고, 동률·예외 우세·불규칙 후보에서는 실제 날짜 목록을 선택하는 경계를 포함한다.
@@ -478,9 +478,10 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 2. Google·Kakao 공급자 토큰 암호화 키 관리와 갱신·폐기 방식
 3. Post-MVP Refresh Token Redis key·TTL과 운영 Redis 배치·백업 정책
 4. Google Calendar 인증 범위, 조회 기간, 동기화 방식과 로그인 사용자 토큰 저장 정책
-5. Gemini 모델 교체 시 한국어 조건 파싱 회귀 평가와 비용 기준
+5. Gemini 모델 교체 시 한국어 조건 파싱과 장소 근접 그룹 회귀 평가·비용 기준
 6. 가능 시간·추가 불가 시간 격자의 5분·10분 입력 간격, 하루 표시 범위와 긴 날짜 범위의 UI 이동 방식
 7. Post-MVP Alloy 배치, Grafana Cloud 보존·대시보드·알림 연락 채널과 임계값
 8. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책
 9. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
 10. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX
+11. Post-MVP 실제 좌표·이동시간 검증을 위한 지도 공급자, 결제 방식과 Gemini 그룹 보정 정책

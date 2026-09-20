@@ -4,6 +4,7 @@ import com.meetme.server.coordination.application.port.output.CoordinationRunRep
 import com.meetme.server.coordination.application.port.output.OutboxEvent
 import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.application.service.CoordinationPersistenceService
+import com.meetme.server.coordination.domain.CandidatePlace
 import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.MeetingCandidate
@@ -93,7 +94,7 @@ class CorePersistenceIntegrationTest {
     @Test
     fun `Flyway 최초 마이그레이션을 적용하고 검증한다`() {
         assertEquals(
-            "6",
+            "7",
             flyway
                 .info()
                 .current()
@@ -186,6 +187,7 @@ class CorePersistenceIntegrationTest {
                 CandidateId(UUID.randomUUID()),
                 1,
                 listOf(InstantTimeRange(NOW.plusSeconds(3600), NOW.plusSeconds(7200))),
+                place = CandidatePlace("관악구 북부"),
             )
         val run =
             CoordinationRun

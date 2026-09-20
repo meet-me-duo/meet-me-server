@@ -181,7 +181,13 @@ internal object StructuredConditionJsonMapper {
                     "end_time" to if (condition.endsAtNextDayStart) END_OF_DAY else condition.endTime.toString(),
                 )
             is StructuredCondition.SpecificPlace ->
-                mapOf("type" to "SPECIFIC_PLACE", "query" to condition.query, "radius_meters" to condition.radiusMeters)
+                buildMap {
+                    put("type", "SPECIFIC_PLACE")
+                    put("query", condition.query)
+                    put("radius_meters", condition.radiusMeters)
+                    condition.areaKey?.let { put("area_key", it) }
+                    condition.areaName?.let { put("area_name", it) }
+                }
             is StructuredCondition.TravelConstraint ->
                 mapOf("type" to "TRAVEL_CONSTRAINT", "expression" to condition.expression)
             is StructuredCondition.UnresolvedPlace ->
@@ -206,6 +212,8 @@ internal object StructuredConditionJsonMapper {
                 StructuredCondition.SpecificPlace(
                     map.getValue("query").toString(),
                     (map.getValue("radius_meters") as Number).toInt(),
+                    map["area_key"]?.toString(),
+                    map["area_name"]?.toString(),
                 )
             "TRAVEL_CONSTRAINT" -> StructuredCondition.TravelConstraint(map.getValue("expression").toString())
             "UNRESOLVED_PLACE" -> StructuredCondition.UnresolvedPlace(map.getValue("query").toString())

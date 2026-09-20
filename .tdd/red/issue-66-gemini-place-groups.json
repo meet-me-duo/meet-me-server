@@ -1,0 +1,41 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-66-gemini-place-groups",
+  "sourceRevision": "f93d4bcd373c4aef23fcada7f67b79edac6a8cca",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "124b44663c0328098899a2a1884d4204b411f1374d3ac0332d3e0acc3d07c8b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiPlaceGroupingContractTest.kt",
+      "sha256": "926c7e215939a0661f043c3d68b844389852c471b2be6b3cd412467f8af2103b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/GeminiPlaceGroupMatcherTest.kt",
+      "sha256": "8492364aebf3b95fc53f3e4d85ed4a2aa1c88e5197e094d1ddb12f03ceb1f242"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/MatchingResultsMigrationTest.kt",
+      "sha256": "ce1acc257884b9d2f8bdd6f187368d41096f3facfdcbe06d09a56ce6655eac98"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "test",
+    "--tests",
+    "*GeminiPlaceGroupMatcherTest",
+    "--tests",
+    "*GeminiPlaceGroupingContractTest",
+    "--tests",
+    "*MatchingResultsMigrationTest.V7은 Kakao 단계에서 지연된 실행을 Gemini 구조화부터 재시도하도록 전환한다"
+  ],
+  "failedTests": [
+    "GeminiNaturalLanguageParserAdapterTest - 장소 조건 schema와 prompt는 배치 전체의 근접 호환 그룹을 요구한다",
+    "MatchingProcessorTest - Gemini가 구조화한 같은 장소명은 외부 장소 검색 없이 대면 후보에 반영한다",
+    "MatchingResultsMigrationTest - V7은 Kakao 단계에서 지연된 실행을 Gemini 구조화부터 재시도하도록 전환한다",
+    "GeminiPlaceGroupMatcherTest - 시간은 모두 겹치지만 한 참여자의 장소가 멀면 공통 그룹 참여자만 Plan C로 만든다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T15:38:34.1650800Z"
+}

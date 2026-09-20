@@ -10,6 +10,23 @@ import kotlin.test.assertTrue
 
 class StructuredConditionJsonMapperTest {
     @Test
+    fun `Gemini 장소 호환 그룹과 대표 지역명을 저장하고 복원한다`() {
+        val condition =
+            StructuredCondition.SpecificPlace(
+                query = "봉천역",
+                areaKey = "AREA_1",
+                areaName = "관악구 북부",
+            )
+
+        val stored = StructuredConditionJsonMapper.toMap(condition)
+        val restored = StructuredConditionJsonMapper.fromMap(stored)
+
+        assertEquals("AREA_1", stored["area_key"])
+        assertEquals("관악구 북부", stored["area_name"])
+        assertEquals(condition, restored)
+    }
+
+    @Test
     fun `다음 날 자정 경계를 24시로 저장하고 같은 의미로 복원한다`() {
         val condition =
             StructuredCondition.TimeWindow(

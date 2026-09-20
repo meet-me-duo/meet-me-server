@@ -87,7 +87,8 @@ class GeminiNaturalLanguageParserAdapter(
     ): List<StructuredSubmissionResult> {
         @Suppress("UNCHECKED_CAST")
         val root = objectMapper.readValue(json, Map::class.java) as Map<String, Any?>
-        if (root.keys != setOf("schema_version", "results") || root["schema_version"] != "1") {
+        val schemaVersion = root["schema_version"]?.toString()
+        if (root.keys != setOf("schema_version", "results") || schemaVersion !in setOf("1", "2")) {
             throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
         }
         @Suppress("UNCHECKED_CAST")
@@ -113,7 +114,7 @@ class GeminiNaturalLanguageParserAdapter(
                 val conditions =
                     rawConditions.mapNotNull {
                         try {
-                            parseCondition(it, request)
+                            parseCondition(it, request, requireNotNull(schemaVersion))
                         } catch (_: DateTimeException) {
                             conditionRejected = true
                             null
@@ -135,12 +136,22 @@ class GeminiNaturalLanguageParserAdapter(
         if (parsed.map { it.submissionVersionId.value.toString() }.toSet() != expectedRefs || parsed.size != request.inputs.size) {
             throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
         }
+        val groupedAreaNames =
+            parsed
+                .flatMap { it.conditions }
+                .filterIsInstance<StructuredCondition.SpecificPlace>()
+                .filter { it.areaKey != null }
+                .groupBy({ requireNotNull(it.areaKey) }, { requireNotNull(it.areaName) })
+        if (groupedAreaNames.values.any { it.distinct().size != 1 }) {
+            throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
+        }
         return parsed
     }
 
     private fun parseCondition(
         map: Map<String, Any?>,
         request: NaturalLanguageBatchRequest,
+        schemaVersion: String,
     ): StructuredCondition {
         val meaningful = map.filterValues { it != null }
         return when (meaningful["type"]?.toString()) {
@@ -171,12 +182,21 @@ class GeminiNaturalLanguageParserAdapter(
                 )
             }
             "SPECIFIC_PLACE" -> {
-                requireOnly(meaningful, setOf("type", "query", "radius_meters"))
                 if (meaningful.keys.any { it in setOf("latitude", "longitude", "coordinates") }) invalid()
-                StructuredCondition.SpecificPlace(
-                    meaningful.getValue("query").toString(),
-                    (meaningful["radius_meters"] as? Number)?.toInt() ?: 1_000,
-                )
+                if (schemaVersion == "2") {
+                    requireOnly(meaningful, setOf("type", "query", "area_key", "area_name"))
+                    StructuredCondition.SpecificPlace(
+                        query = meaningful.getValue("query").toString(),
+                        areaKey = meaningful.getValue("area_key").toString(),
+                        areaName = meaningful.getValue("area_name").toString(),
+                    )
+                } else {
+                    requireOnly(meaningful, setOf("type", "query", "radius_meters"))
+                    StructuredCondition.SpecificPlace(
+                        meaningful.getValue("query").toString(),
+                        (meaningful["radius_meters"] as? Number)?.toInt() ?: 1_000,
+                    )
+                }
             }
             "TRAVEL_CONSTRAINT" -> {
                 requireOnly(meaningful, setOf("type", "expression"))
@@ -233,6 +253,15 @@ class GeminiNaturalLanguageParserAdapter(
             appendLine("Convert each Korean meeting constraint into the supplied language-neutral JSON schema.")
             appendLine("Never invent coordinates. Classify home/work/school-near expressions as TRAVEL_CONSTRAINT.")
             appendLine("Use UNRESOLVED_PLACE when a location cannot identify one place. Preserve every input_ref exactly once.")
+            appendLine(
+                "Compare every explicit place across the whole batch and assign the same area_key to places in one practical meeting area.",
+            )
+            appendLine("Use different area_key values when places are too far apart for one local meeting area.")
+            appendLine(
+                "Adjacent stations or explicit places roughly within 2 km may share the same area_key; " +
+                    "for example 봉천역 and 서울대입구역.",
+            )
+            appendLine("Use AREA_1, AREA_2, ... keys and give every shared key one identical Korean area_name suitable for display.")
             appendLine("Use HH:mm room-local wall-clock time without a UTC offset for start_time and end_time.")
             appendLine("Only end_time may use 24:00 to mean the exclusive start of the next local day.")
             appendLine("Room time zone: ${request.timeZone.id}")
@@ -271,16 +300,15 @@ class GeminiNaturalLanguageParserAdapter(
                 ),
                 conditionSchema(
                     type = "SPECIFIC_PLACE",
-                    required = listOf("type", "query", "radius_meters"),
+                    required = listOf("type", "query", "area_key", "area_name"),
                     properties =
                         mapOf(
                             "query" to mapOf("type" to "string"),
-                            "radius_meters" to
+                            "area_key" to
                                 mapOf(
-                                    "type" to "integer",
-                                    "minimum" to 100,
-                                    "maximum" to 50_000,
+                                    "type" to "string",
                                 ),
+                            "area_name" to mapOf("type" to "string"),
                         ),
                 ),
                 conditionSchema(
@@ -301,7 +329,7 @@ class GeminiNaturalLanguageParserAdapter(
                 "required" to listOf("schema_version", "results"),
                 "properties" to
                     mapOf(
-                        "schema_version" to mapOf("type" to "string", "enum" to listOf("1")),
+                        "schema_version" to mapOf("type" to "string", "enum" to listOf("2")),
                         "results" to
                             mapOf(
                                 "type" to "array",

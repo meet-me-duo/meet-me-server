@@ -31,10 +31,17 @@ sealed interface StructuredCondition {
     data class SpecificPlace(
         val query: String,
         val radiusMeters: Int = 1_000,
+        val areaKey: String? = null,
+        val areaName: String? = null,
     ) : StructuredCondition {
         init {
             require(query.isNotBlank())
+            require(query.codePointCount(0, query.length) <= 500)
             require(radiusMeters in 100..50_000)
+            require((areaKey == null) == (areaName == null)) { "Area key and name must be provided together" }
+            require(areaKey == null || areaKey.matches(Regex("AREA_[1-9][0-9]*"))) { "Area key must use the AREA_n format" }
+            require(areaName == null || areaName.isNotBlank()) { "Area name must not be blank" }
+            require(areaName == null || areaName.codePointCount(0, areaName.length) <= 500)
         }
     }
 

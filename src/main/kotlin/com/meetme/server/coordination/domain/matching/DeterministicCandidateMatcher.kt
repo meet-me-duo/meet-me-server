@@ -21,7 +21,27 @@ data class ParticipantMatchInput(
     val participantId: ParticipantId,
     val availableTimes: List<InstantTimeRange>,
     val offlineRegion: ParticipantAllowedRegion? = null,
+    val offlineArea: ParticipantAllowedArea? = null,
 )
+
+data class CompatiblePlaceArea(
+    val key: String,
+    val displayName: String,
+) {
+    init {
+        require(key.matches(Regex("AREA_[1-9][0-9]*")))
+        require(displayName.isNotBlank())
+    }
+}
+
+data class ParticipantAllowedArea(
+    val alternatives: List<CompatiblePlaceArea>,
+) {
+    init {
+        require(alternatives.isNotEmpty())
+        require(alternatives.map { it.key }.distinct().size == alternatives.size)
+    }
+}
 
 data class DeterministicCandidate(
     val planType: PlanType,
@@ -29,6 +49,7 @@ data class DeterministicCandidate(
     val participantIds: List<ParticipantId>,
     val timeRanges: List<InstantTimeRange>,
     val representativePlace: GeoCoordinate?,
+    val representativeArea: CompatiblePlaceArea? = null,
 )
 
 data class CandidateGenerationResult(
@@ -46,7 +67,7 @@ object DeterministicCandidateMatcher {
         val allTimes = commonTimes(orderedParticipants)
         if (allTimes.isNotEmpty()) {
             val fullCandidates = fullCandidates(preferredMode, orderedParticipants, allTimes)
-            return if (fullCandidates.isEmpty()) noMatch() else CandidateGenerationResult(MatchOutcome.READY, fullCandidates)
+            if (fullCandidates.isNotEmpty()) return CandidateGenerationResult(MatchOutcome.READY, fullCandidates)
         }
 
         val minimumSize = maxOf(MINIMUM_PARTICIPANTS, orderedParticipants.size - 2)
@@ -105,6 +126,32 @@ object DeterministicCandidateMatcher {
         participants: List<ParticipantMatchInput>,
         times: List<InstantTimeRange>,
     ): DeterministicCandidate? {
+        val areas = participants.map { it.offlineArea }
+        if (areas.all { it != null }) {
+            val commonKeys =
+                areas
+                    .filterNotNull()
+                    .map { area -> area.alternatives.mapTo(mutableSetOf()) { it.key } }
+                    .reduce { common, keys -> common.apply { retainAll(keys) } }
+            val selectedKey = commonKeys.sorted().firstOrNull() ?: return null
+            val displayName =
+                areas
+                    .filterNotNull()
+                    .flatMap { it.alternatives }
+                    .filter { it.key == selectedKey }
+                    .map { it.displayName }
+                    .sorted()
+                    .first()
+            return candidate(
+                planType,
+                MeetingMode.IN_PERSON,
+                participants,
+                times,
+                place = null,
+                area = CompatiblePlaceArea(selectedKey, displayName),
+            )
+        }
+
         val regions = participants.map { it.offlineRegion ?: return null }
         val place = GeoMatcher.representativePoint(regions) ?: return null
         return candidate(planType, MeetingMode.IN_PERSON, participants, times, place)
@@ -122,12 +169,14 @@ object DeterministicCandidateMatcher {
         participants: List<ParticipantMatchInput>,
         times: List<InstantTimeRange>,
         place: GeoCoordinate?,
+        area: CompatiblePlaceArea? = null,
     ) = DeterministicCandidate(
         planType = planType,
         meetingMode = meetingMode,
         participantIds = participants.map { it.participantId }.sortedBy { it.value.toString() },
         timeRanges = times,
         representativePlace = place,
+        representativeArea = area,
     )
 
     private fun commonTimes(participants: List<ParticipantMatchInput>): List<InstantTimeRange> {

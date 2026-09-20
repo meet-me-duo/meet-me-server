@@ -4,8 +4,6 @@ import com.meetme.server.coordination.application.port.output.CoordinationRunRep
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
-import com.meetme.server.coordination.application.port.output.PlaceNormalizationResult
-import com.meetme.server.coordination.application.port.output.PlaceSearchPort
 import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
@@ -43,6 +41,52 @@ import kotlin.test.assertTrue
 
 class MatchingProcessorTest {
     @Test
+    fun `Gemini가 구조화한 같은 장소명은 외부 장소 검색 없이 대면 후보에 반영한다`() {
+        val roomRepository = mock(MeetingRoomRepository::class.java)
+        val runRepository = FakeCoordinationRunRepository()
+        val submissionRepository = mock(SubmissionRepository::class.java)
+        val structuredRepository = mock(StructuredSubmissionRepository::class.java)
+        val normalizedRepository = CapturingNormalizedPlaceRepository()
+        val room = room(MeetingMode.IN_PERSON)
+        val submissions = listOf(submission(1), submission(2))
+        val batch = SubmissionBatch(SubmissionBatchId(uuid(19)), room.id, submissions.map { it.latest.id }, NOW)
+        runRepository.current = CoordinationRun.queued(CoordinationRunId(uuid(18)), batch).startMatching()
+        `when`(roomRepository.findById(room.id)).thenReturn(room)
+        `when`(submissionRepository.findLatestByRoom(room.id)).thenReturn(submissions)
+        `when`(structuredRepository.findByBatch(batch.id)).thenReturn(
+            submissions.map {
+                StructuredSubmissionResult(
+                    it.latest.id,
+                    listOf(StructuredCondition.SpecificPlace("관악구 북부"), timeWindow()),
+                    null,
+                )
+            },
+        )
+        val persistence = MatchingProcessingPersistenceService(roomRepository, runRepository, normalizedRepository)
+        val processor =
+            MatchingProcessor(
+                runRepository,
+                submissionRepository,
+                structuredRepository,
+                normalizedRepository,
+                IdGenerator { UUID.randomUUID() },
+                persistence,
+            )
+
+        processor.process(batch.id)
+
+        val completed = requireNotNull(runRepository.current)
+        assertEquals(CoordinationStatus.COMPLETED, completed.status)
+        assertEquals(
+            "관악구 북부",
+            completed.candidates
+                .single()
+                .place
+                ?.displayName,
+        )
+    }
+
+    @Test
     fun `미확정 장소는 PARTIAL과 스냅샷으로 남기고 후보 표시명에 원문 장소를 노출하지 않는다`() {
         val roomRepository = mock(MeetingRoomRepository::class.java)
         val runRepository = FakeCoordinationRunRepository()
@@ -79,9 +123,6 @@ class MatchingProcessorTest {
                 submissionRepository,
                 structuredRepository,
                 normalizedRepository,
-                object : PlaceSearchPort {
-                    override fun normalize(query: String): PlaceNormalizationResult = PlaceNormalizationResult.NoExactMatch
-                },
                 IdGenerator { UUID.randomUUID() },
                 persistence,
             )
@@ -96,12 +137,12 @@ class MatchingProcessorTest {
         assertTrue(normalizedRepository.places.any { it.status == NormalizedPlaceStatus.NO_EXACT_MATCH })
     }
 
-    private fun room(): MeetingRoom =
+    private fun room(mode: MeetingMode = MeetingMode.REMOTE): MeetingRoom =
         MeetingRoom.create(
             MeetingRoomId(uuid(1)),
             InviteCode.of("abcdefghijklmnopqrstuv"),
             "테스트",
-            MeetingMode.REMOTE,
+            mode,
             MeetingTimeZone.of("Asia/Seoul"),
             SearchDateRange.explicit(LocalDate.of(2026, 9, 21), LocalDate.of(2026, 9, 23)),
             ClosurePolicy.of(expectedParticipants = 2),

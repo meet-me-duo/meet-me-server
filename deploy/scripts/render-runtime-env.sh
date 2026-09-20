@@ -30,7 +30,6 @@ redis_port="$(get_parameter "$parameter_root/config/redis-port")"
 redis_ssl_enabled="$(get_parameter "$parameter_root/config/redis-ssl-enabled")"
 allowed_origins="$(get_parameter "$parameter_root/config/allowed-origins")"
 gemini_api_key="$(get_parameter "$parameter_root/secret/gemini-api-key")"
-kakao_local_api_key="$(get_parameter "$parameter_root/secret/kakao-local-api-key")"
 
 umask 077
 temporary="$(mktemp "${destination}.XXXXXX")"
@@ -45,7 +44,6 @@ trap 'rm -f "$temporary"' EXIT
   printf 'REDIS_PORT=%s\n' "$redis_port"
   printf 'REDIS_SSL_ENABLED=%s\n' "$redis_ssl_enabled"
   printf 'GEMINI_API_KEY=%s\n' "$gemini_api_key"
-  printf 'KAKAO_LOCAL_API_KEY=%s\n' "$kakao_local_api_key"
   printf 'APP_ALLOWED_ORIGINS=%s\n' "$allowed_origins"
   printf 'ANONYMOUS_COOKIE_SECURE=true\n'
   printf 'MANAGEMENT_PORT=9090\n'
@@ -54,4 +52,3 @@ trap 'rm -f "$temporary"' EXIT
 } >"$temporary"
 
 install -m 0600 "$temporary" "$destination"
-

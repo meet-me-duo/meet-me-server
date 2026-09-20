@@ -18,10 +18,10 @@ data class CandidatePlaceResponse(
     @field:JsonProperty("display_name")
     @field:Schema(description = "정규화된 표시 이름")
     val displayName: String,
-    @field:Schema(description = "WGS84 위도")
-    val latitude: Double,
-    @field:Schema(description = "WGS84 경도")
-    val longitude: Double,
+    @field:Schema(description = "Post-MVP 지도 공급자 검증 시 제공되는 WGS84 위도", nullable = true)
+    val latitude: Double?,
+    @field:Schema(description = "Post-MVP 지도 공급자 검증 시 제공되는 WGS84 경도", nullable = true)
+    val longitude: Double?,
 ) {
     companion object {
         fun from(view: CandidatePlaceView) = CandidatePlaceResponse(view.displayName, view.latitude, view.longitude)
