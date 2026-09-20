@@ -1,0 +1,26 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-70-compact-candidate-summary",
+  "sourceRevision": "e17252b6c783f515750b4588ad03cfc29053f6fa",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryRendererTest.kt",
+      "sha256": "4bc07b466e0d0ce9ff633005a3b937c0dae6974877af1784f5443992b8999b75"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "test",
+    "--tests",
+    "*CandidateSummaryRendererTest"
+  ],
+  "failedTests": [
+    "CandidateSummaryRendererTest - 연속 날짜의 동일 시간 구간을 매일 표현으로 압축한다",
+    "CandidateSummaryRendererTest - 비연속 날짜의 동일 시간 구간은 날짜를 묶고 시간을 한 번만 표시한다",
+    "CandidateSummaryRendererTest - 같은 날짜의 여러 시간 구간은 또는으로 결합한다",
+    "CandidateSummaryRendererTest - 날짜별 시간 구간 목록이 같으면 복수 시간도 함께 묶는다",
+    "CandidateSummaryRendererTest - 월 경계를 넘는 연속 날짜는 양쪽 월을 표시한다"
+  ],
+  "expectedFailureCategory": "ASSERTION_MISMATCH",
+  "recordedAt": "2026-09-20T16:17:17.3830859Z"
+}

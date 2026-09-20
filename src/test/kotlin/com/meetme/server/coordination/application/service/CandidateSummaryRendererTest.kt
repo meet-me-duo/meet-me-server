@@ -14,6 +14,119 @@ import kotlin.test.assertTrue
 
 class CandidateSummaryRendererTest {
     @Test
+    fun `연속 날짜의 동일 시간 구간을 매일 표현으로 압축한다`() {
+        val summary =
+            CandidateSummaryRenderer.render(
+                request(
+                    occurrences =
+                        listOf(
+                            range("2026-09-21T10:00:00Z", "2026-09-21T13:00:00Z"),
+                            range("2026-09-22T10:00:00Z", "2026-09-22T13:00:00Z"),
+                            range("2026-09-23T10:00:00Z", "2026-09-23T13:00:00Z"),
+                            range("2026-09-24T10:00:00Z", "2026-09-24T13:00:00Z"),
+                            range("2026-09-25T10:00:00Z", "2026-09-25T13:00:00Z"),
+                            range("2026-09-26T04:00:00Z", "2026-09-26T08:00:00Z"),
+                        ),
+                ),
+            )
+
+        assertEquals(
+            "9월 21일부터 25일까지 매일 19:00~22:00, 9월 26일 13:00~17:00",
+            summary.text,
+        )
+    }
+
+    @Test
+    fun `비연속 날짜의 동일 시간 구간은 날짜를 묶고 시간을 한 번만 표시한다`() {
+        val summary =
+            CandidateSummaryRenderer.render(
+                request(
+                    occurrences =
+                        listOf(
+                            range("2026-09-21T10:00:00Z", "2026-09-21T13:00:00Z"),
+                            range("2026-09-23T10:00:00Z", "2026-09-23T13:00:00Z"),
+                            range("2026-09-26T10:00:00Z", "2026-09-26T13:00:00Z"),
+                        ),
+                ),
+            )
+
+        assertEquals("9월 21일·23일·26일 19:00~22:00", summary.text)
+    }
+
+    @Test
+    fun `같은 날짜의 여러 시간 구간은 또는으로 결합한다`() {
+        val summary =
+            CandidateSummaryRenderer.render(
+                request(
+                    occurrences =
+                        listOf(
+                            range("2026-09-21T04:00:00Z", "2026-09-21T06:00:00Z"),
+                            range("2026-09-21T10:00:00Z", "2026-09-21T13:00:00Z"),
+                        ),
+                ),
+            )
+
+        assertEquals("9월 21일 13:00~15:00 또는 19:00~22:00", summary.text)
+    }
+
+    @Test
+    fun `날짜별 시간 구간 목록이 같으면 복수 시간도 함께 묶는다`() {
+        val summary =
+            CandidateSummaryRenderer.render(
+                request(
+                    occurrences =
+                        listOf(
+                            range("2026-09-21T04:00:00Z", "2026-09-21T06:00:00Z"),
+                            range("2026-09-21T10:00:00Z", "2026-09-21T13:00:00Z"),
+                            range("2026-09-23T04:00:00Z", "2026-09-23T06:00:00Z"),
+                            range("2026-09-23T10:00:00Z", "2026-09-23T13:00:00Z"),
+                        ),
+                ),
+            )
+
+        assertEquals("9월 21일·23일 13:00~15:00 또는 19:00~22:00", summary.text)
+    }
+
+    @Test
+    fun `날짜별 시간 구간 목록이 일부만 같으면 서로 묶지 않는다`() {
+        val summary =
+            CandidateSummaryRenderer.render(
+                request(
+                    occurrences =
+                        listOf(
+                            range("2026-09-21T04:00:00Z", "2026-09-21T06:00:00Z"),
+                            range("2026-09-21T10:00:00Z", "2026-09-21T13:00:00Z"),
+                            range("2026-09-23T04:00:00Z", "2026-09-23T06:00:00Z"),
+                            range("2026-09-23T11:00:00Z", "2026-09-23T13:00:00Z"),
+                        ),
+                ),
+            )
+
+        assertEquals(
+            "9월 21일 13:00~15:00 또는 19:00~22:00, 9월 23일 13:00~15:00 또는 20:00~22:00",
+            summary.text,
+        )
+    }
+
+    @Test
+    fun `월 경계를 넘는 연속 날짜는 양쪽 월을 표시한다`() {
+        val summary =
+            CandidateSummaryRenderer.render(
+                request(
+                    occurrences =
+                        listOf(
+                            range("2026-09-30T10:00:00Z", "2026-09-30T13:00:00Z"),
+                            range("2026-10-01T10:00:00Z", "2026-10-01T13:00:00Z"),
+                            range("2026-10-02T10:00:00Z", "2026-10-02T13:00:00Z"),
+                        ),
+                    endDate = LocalDate.of(2026, 10, 4),
+                ),
+            )
+
+        assertEquals("9월 30일부터 10월 2일까지 매일 19:00~22:00", summary.text)
+    }
+
+    @Test
     fun `explicit ko KR summary represents the same local dates and times as structured occurrences`() {
         val summary =
             CandidateSummaryRenderer.render(
