@@ -331,10 +331,10 @@ Plan C는 최소 2명 미만으로 낮추지 않는다. 같은 참석 인원 후
 
 - 개발은 로컬 환경에서 수행한다.
 - 운영 PostgreSQL은 Amazon RDS로 분리한다.
-- 운영 컴퓨팅 환경은 Amazon EC2와 Amazon ECS 중에서 추후 결정한다.
-- 컨테이너 이미지 레지스트리는 Docker Hub와 Amazon ECR 중에서 추후 결정한다.
+- 제출 MVP 운영 컴퓨팅은 Amazon EC2 단일 인스턴스로 시작한다.
+- 컨테이너 이미지는 Amazon ECR에 저장하고 image digest를 배포 기준으로 사용한다.
 - RDS와 운영 컴퓨팅 환경을 포함한 AWS 인프라는 Terraform 코드로 관리한다.
-- Nginx와 Redis의 운영 배치 방식은 최종 컴퓨팅 환경에 맞춰 결정한다.
+- Nginx는 EC2에서 TLS 종료·API 라우팅·요청 제한을 담당하고, Redis 책임은 ElastiCache Serverless for Valkey로 EC2와 분리한다.
 - 로컬 PostgreSQL과 Redis는 Docker Compose로 실행하고 데이터베이스 통합 테스트는 실제 PostgreSQL Testcontainers를 사용한다. 애플리케이션 패키징 방식, 배포 자동화와 환경별 설정 전략은 아키텍처 설계에서 확정한다.
 
 ### 인증
@@ -349,6 +349,8 @@ Plan C는 최소 2명 미만으로 낮추지 않는다. 같은 참석 인원 후
 - 프론트엔드는 백엔드가 생성한 Swagger/OpenAPI 문서를 API 계약으로 사용한다.
 - 모든 Controller 엔드포인트의 주요 응답은 `@ApiResponse`로 문서화한다.
 - 요청 및 응답 DTO에는 `@Schema`를 추가하여 필드 의미와 제약을 문서화한다.
+- 비동기 분석 진행 상태는 프론트엔드가 상태 조회 API를 Polling하여 갱신하고 종결 상태 또는 `ANALYSIS_DELAYED`에서 중단한다. 제출 MVP에는 SSE와 WebSocket을 제공하지 않는다.
+- 프론트엔드 구현 전달물은 실행 검증된 Swagger/OpenAPI와 화면 흐름, 상태 전이, cookie·Origin, Polling 및 오류 처리를 필요한 범위에서 설명하는 전용 지시서로 구성한다. 별도 API 명세 문서와 prototype HTML은 백엔드 저장소에서 새로 만들지 않는다.
 
 ### 자연어 조건 파싱
 
@@ -444,13 +446,9 @@ Plan C는 최소 2명 미만으로 낮추지 않는다. 같은 참석 인원 후
 - 에브리타임 시간표 입력을 MVP 이후 어떤 방식으로 지원할지
 - Google·Kakao OAuth/OIDC 리다이렉트, meet-me RS256 운영 키 생성·비밀 저장소·교체 절차, 공급자 토큰 암호화, 계정 연결 정책과 주최자 권한 검증
 - 같은 기기에서 여러 사람이 같은 방에 참여해야 할 때의 계정·세션 전환 UX
-- `ANALYSIS_DELAYED` 상태 갱신을 Polling, SSE 또는 WebSocket 중 어떤 방식으로 전달할지
 - Post-MVP Refresh Token Redis key·TTL과 운영 Redis 배치·백업 정책
 - Nginx의 TLS 종료, 라우팅, 정적 응답 및 요청 제한 범위
-- 운영 컴퓨팅 환경으로 EC2와 ECS 중 무엇을 사용할지
-- 컨테이너 이미지 레지스트리로 Docker Hub와 ECR 중 무엇을 사용할지
-- Nginx와 Redis의 운영 배치 및 애플리케이션 배포 자동화 수준
-- Terraform 상태 저장소, 환경 분리 및 비밀정보 주입 방식
+- 다중 인스턴스·자동 복구 요구가 생길 때 EC2에서 ECS로 전환할 기준
 - 헥사고날 아키텍처의 모듈·패키지 구조와 트랜잭션 경계
 - Post-MVP Calendar 일정·공급자 토큰과 원본 이미지의 보관·삭제 정책
 - 최종 확정 결과의 알림·공유 채널

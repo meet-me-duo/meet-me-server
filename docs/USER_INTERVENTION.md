@@ -2,7 +2,7 @@
 
 > **상태:** Active
 >
-> **최종 확인:** 2026-09-18
+> **최종 확인:** 2026-09-20
 > **목적:** 외부 계정, 권한, 결제와 비밀정보가 필요한 작업의 입력 위치와 완료 기준을 비밀값 노출 없이 관리한다.
 
 이 문서는 `.agents/rules/user-intervention.md`를 이 프로젝트의 실제 외부 서비스에 적용한 실행 가이드다.
@@ -16,8 +16,8 @@ PR, 로그에 남기지 않는다.
 | 로컬 개발 | Git에서 제외된 저장소 루트 `.env.local` | `.env.example`의 이름만 복사하고 실제 값은 사용자가 직접 입력한다. |
 | 현재 GitHub CI | 없음 | 현재 `ci.yml`은 외부 API나 배포 자격 증명을 사용하지 않는다. |
 | 개발용 외부 연동 검사 | GitHub `integration` Environment | 2026-09-18 생성 완료. 수동 `workflow_dispatch` 통합 검사만 이 Environment를 사용하고 PR CI에는 노출하지 않는다. |
-| 향후 배포 workflow | GitHub `production` Environment의 Secret 또는 Variable | workflow가 참조하는 이름만 등록한다. AWS는 장기 Access Key 대신 GitHub OIDC 역할을 우선 검토한다. |
-| 운영 애플리케이션 | AWS 런타임 비밀 저장소 TBD | 애플리케이션 비밀을 GitHub에서 컨테이너 이미지나 Terraform state로 복사하지 않는다. DG-08에서 저장소와 주입 방식을 확정한다. |
+| 향후 배포 workflow | GitHub `production` Environment의 Variable | 장기 Access Key 없이 Bootstrap이 생성한 GitHub OIDC 역할과 비밀이 아닌 배포 식별자만 등록한다. |
+| 운영 애플리케이션 | AWS Systems Manager Parameter Store·RDS 관리형 Secrets Manager secret | 애플리케이션 비밀을 GitHub에서 컨테이너 이미지나 Terraform state로 복사하지 않는다. 실제 API key와 인증서 내보내기 passphrase는 사용자가 SSM `SecureString`에 직접 입력한다. |
 
 GitHub의 비밀값과 비밀이 아닌 설정을 구분한다.
 
@@ -311,18 +311,59 @@ callback은 배포 domain 확정 뒤 같은 앱에 추가하거나 운영 앱을
 - 현재 CI는 GitHub 기본 `GITHUB_TOKEN`만 사용하고 외부 Secret이 필요하지 않다.
 - GitHub `integration` Environment와 `GEMINI_API_KEY` Secret 등록은 완료됐다. 현재 workflow는 이
   Environment를 참조하지 않는다.
-- AWS 컴퓨팅, 이미지 레지스트리, Redis 배치, Terraform state와 런타임 비밀 저장소는 DG-08의 TBD다.
+- 2026-09-20 기준 사용자는 `AdministratorAccess`가 있는 IAM 사용자에 MFA를 등록했고 AWS CLI 2.36.49의
+  `aws login` 임시 자격 증명으로 `ap-northeast-2` STS 호출을 검증했다. 장기 Access Key는 만들지 않았다.
+- 월 USD 80 일반 요금 Budget과 실제 비용 50%·75%·100%, 예상 비용 100% 이메일 알림을 생성했다.
+- AWS Free Plan 잔여 기간은 182일, Credit 잔액은 USD 120이다. 잔여 기간 만료와 Credit 소진 중 먼저
+  도달하면 Free Plan이 종료되므로 공개 운영을 지속하기 전에 Paid Plan 전환 승인이 필요하다.
+- `meet-me.co.kr`의 상위 `co.kr` 위임은 가비아 네임서버 3개를 가리키지만 2026-09-20 공개 resolver와
+  가비아 권한 서버 조회는 `SERVFAIL`·`REFUSED`를 반환했다. 현재 공개 DNS 서비스는 정상 해석되지 않으므로
+  Route 53 전환 전에 운영 중인 웹·메일 레코드가 없음을 사용자에게 확인하고, Hosted Zone 생성 후 AWS
+  네임서버 4개로 위임한다.
+- 제출 MVP는 EC2 `t4g.small`, ECR, RDS PostgreSQL 18 `db.t4g.micro` Single-AZ, ElastiCache Serverless for
+  Valkey, S3 Terraform state, SSM·Secrets Manager와 GitHub OIDC를 사용한다.
+- 2026-09-20 승인된 Bootstrap plan을 적용해 암호화·버전 관리 S3 state bucket과
+  `meet-me-github-production` OIDC 역할을 생성했다. 이어서 Production plan은 생성 45개, 조회 2개,
+  변경·삭제 0개로 계산했다.
+- 승인된 Production apply는 30개 리소스를 생성한 뒤 Free Plan의 RDS 백업 보존 기간 제한과 ACM exportable
+  certificate 제한에서 중단됐다. 현재 EC2는 `running`, ElastiCache Serverless for Valkey는 `available`,
+  Route 53 Hosted Zone은 생성된 상태이며 RDS·ACM과 종속 리소스 15개가 남아 있다. 계정은 Free Plan
+  `ACTIVE`, Credit USD 120이며 Paid Plan 전환 또는 Free Plan용 인증서·백업 설계 변경을 결정하기 전에는
+  재적용하지 않는다.
+- 사용자가 Root 계정으로 Paid Plan 전환을 완료했고 IAM CLI에서 `PAID`·`ACTIVE`, Credit USD 120 유지를
+  확인했다. 동일한 나머지 15개 plan을 적용하던 중 `aws login` 단기 토큰이 만료되어 AWS 작업 자체와 별개로
+  원격 state 업로드·lock 해제가 실패했다. Terraform 프로세스가 없는 것과 Git에서 제외된 로컬
+  `errored.tfstate` 복구본을 확인했으며, IAM 사용자가 `aws login`을 갱신한 뒤 원격 state와 대조·복구하기
+  전에는 apply를 재실행하지 않는다.
+- 갱신한 IAM 세션으로 stale lock 해제, 최신 state push와 정상 `available` RDS의 taint 해제를 완료했다.
+  나머지 12개 리소스를 적용한 뒤 Terraform plan 0변경, EC2 `running`, RDS·Valkey `available`, ACM
+  `PENDING_VALIDATION`을 확인하고 민감한 로컬 복구 state와 saved plan을 삭제했다. Route 53 네임서버 4개가
+  준비됐으며 기존 웹·메일 사용 여부를 확인한 뒤 가비아 위임을 변경한다.
+- 사용자가 `meet-me.co.kr`에 운영 중인 기존 웹사이트와 메일이 없음을 확인했다. 기존 MX·TXT·웹 레코드
+  이관 없이 Route 53 네임서버 4개로 전체 위임을 변경할 수 있다.
+- 사용자가 가비아에서 Route 53 네임서버 4개로 변경을 완료했다. Route 53 권한 서버의 zone은 정상이지만
+  `.co.kr` 상위 등록부는 아직 기존 가비아 네임서버 3개를 반환하고 공개 resolver는 `SERVFAIL`이므로 전파를
+  기다린다. DNSSEC DS는 없어 서명 불일치 문제는 아니다.
+- 후속 확인에서 `.co.kr` 상위 등록부와 Cloudflare 공개 resolver가 Route 53 네임서버 4개를 정확히 반환하고
+  `api.meet-me.co.kr` A 레코드도 해석됐다. ACM은 `PENDING_VALIDATION`으로 AWS의 후속 검증 처리를 기다린다.
+- 사용자가 `/meet-me/production/secret/` 아래 Gemini·Kakao key와 ACM export passphrase 3개를 직접
+  등록했다. 값 조회 없이 세 Parameter의 존재와 `SecureString` 타입을 확인했다. ACM 검증 CNAME은 공개
+  DNS에서 AWS 기대값과 일치하고 도메인 검증은 `SUCCESS`이며 인증서 전체 발급 처리를 기다린다.
+- 후속 확인에서 `api.meet-me.co.kr` exportable ACM 인증서가 `ISSUED`로 전환됐다. 사용자가 ACM에서
+  수동으로 private key를 export하지 않고 배포 스크립트가 SSM passphrase로 export·설치한다.
+- 사용자가 GitHub `production` Environment에 배포 Variable 7개를 직접 등록했다. GitHub API로 값은
+  출력하지 않고 정확한 변수 이름 7개와 `main` custom deployment branch policy를 확인했다.
 
 ### [SHARED] 선행 결정
 
-다음 항목을 결정한 뒤에만 CD workflow와 권한을 만든다.
+다음 항목으로 CD workflow와 권한을 구현한다.
 
-1. EC2 또는 ECS
-2. ECR 또는 Docker Hub
-3. Redis 운영 배치
-4. Terraform remote state·lock·환경 분리
-5. 운영 비밀 저장소와 런타임 주입 방식
-6. Flyway 실행 순서, 배포 승인과 rollback
+1. 단일 EC2 `t4g.small`의 Nginx·Spring Boot 컨테이너
+2. ECR image digest
+3. ElastiCache Serverless for Valkey
+4. versioning·암호화와 native lock file을 사용하는 S3 remote state
+5. RDS managed Secrets Manager secret과 사용자가 직접 등록하는 SSM `SecureString`
+6. 동일 이미지 Flyway 선실행, 애플리케이션 교체, 이전 image digest rollback
 
 AWS 인증은 장기 Access Key를 GitHub Secret에 저장하는 방식보다 GitHub Actions OIDC와 환경별 최소 권한
 IAM role을 권장한다. 이 방식을 채택하면 GitHub에는 AWS secret이 없고 다음 비밀 아닌 Variable만 필요하다.
@@ -343,20 +384,25 @@ Terraform이 이를 참조할 때 확정한다.
 **위치:** [AWS Management Console](https://console.aws.amazon.com/)의 `Billing and Cost Management > Budgets`,
 `IAM Identity Center` 또는 `IAM`; GitHub 저장소 `Settings > Environments`
 
-**사전 조건:** 월 예산, 알림 수신 주소, AWS Region, DG-08 결정과 Terraform 계획 검토 완료
+**사전 조건:** 월 예산, 알림 수신 주소, AWS Region과 DG-08 결정 완료. Terraform plan 검토 전에는 실제
+인프라 apply와 가비아 네임서버 변경을 수행하지 않는다.
 
 **할 일:**
 
-1. AWS root 계정에 MFA를 활성화하고 일상 작업에는 root access key를 만들지 않는다.
-2. 관리자 작업용 사용자 또는 IAM Identity Center 권한을 준비한다.
-3. `Billing and Cost Management > Budgets`에서 월 비용 예산과 이메일 알림을 설정한다.
-4. 에이전트가 준비한 Terraform plan과 OIDC trust policy를 검토한다.
-5. GitHub `Settings > Environments > New environment`에서 `production`을 만들고 `main`만 배포하도록 제한한다.
-6. 가능한 플랜이면 Required reviewer와 self-review 방지를 설정한다.
-7. 승인된 OIDC IAM role ARN과 Region을 Environment **Variable**로 입력한다. 장기 AWS Access Key는 입력하지 않는다.
+1. `[완료]` 관리자 IAM 사용자에 MFA를 등록하고 `aws login` 임시 자격 증명을 사용한다.
+2. `[완료]` `Billing and Cost Management > Budgets`에 월 USD 80과 4개 이메일 알림을 설정한다.
+3. `[완료]` Bootstrap Terraform plan과 OIDC trust policy를 검토·적용하고 Production plan을 생성한다.
+4. `[완료]` GitHub `Settings > Environments > New environment`에서 `production`을 만들고 `main`만 배포하도록 제한한다.
+5. 가능한 플랜이면 Required reviewer와 self-review 방지를 설정한다.
+6. `[완료]` 승인된 OIDC IAM role ARN과 Region을 Environment **Variable**로 입력한다. 장기 AWS Access Key는 입력하지 않는다.
+7. `[완료]` Route 53 Hosted Zone과 기존 DNS 레코드를 확인한 뒤 가비아 네임서버를 AWS가 할당한 4개 값으로 교체한다.
 8. 첫 운영 배포는 Terraform plan, DB migration 순서와 rollback 절차를 확인한 뒤 직접 승인한다.
+9. `[완료]` Free Plan 종료 전에 공개 서비스를 계속 운영하려면 `Upgrade plan`을 직접 승인한다. AWS Organizations 또는
+   Control Tower 생성은 Credit을 즉시 만료시킬 수 있으므로 이 작업에 사용하지 않는다.
 
-**입력값:** 현재는 없음. DG-08과 workflow가 확정되면 exact Variable/Secret 목록을 이 문서에 추가한다.
+**입력값:** workflow 구현 뒤 `AWS_REGION=ap-northeast-2`, `AWS_DEPLOY_ROLE_ARN`과 ECR repository 이름을
+GitHub `production` Environment Variable로 등록한다. Gemini·Kakao key와 RDS password 원문은 GitHub에
+복사하지 않고 AWS 런타임 비밀 저장소에 직접 입력한다.
 
 **공유 금지:** AWS root 비밀번호, MFA seed·복구 코드, Access Key, Secret Access Key, session token,
 Terraform state 원문

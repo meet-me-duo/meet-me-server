@@ -37,11 +37,12 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 5번 `feature/reliability-observability` — Issue #20 구현·문서 동기화와 전체 품질 게이트 완료, 커밋·PR 생성 준비
+- **현재 단계:** 6번 `feature/aws-release` — Production 인프라 적용과 Terraform state 복구 완료, DNS·비밀값·GitHub Environment 후속 사용자 작업 대기
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** 기능 구현을 막는 외부 자격 증명은 없다. 운영 domain은 `meet-me.co.kr`, 장소 공급자는 Kakao Local API로 확정했고 Gemini·Kakao Local 개발 키를 로컬과 GitHub `integration` Environment에 등록했다. AWS 관련 설정은 사용자 지시 전까지 보류하며, 공개 배포 전 AWS 계정·예산·Region·배포 방식, Route 53 생성 후 가비아 네임서버 변경과 Gemini Paid 전환 승인이 필요하다.
-- **현재 사용자 개입:** 제출 MVP 기능 구현 전 필요한 Gemini·Kakao Local 개발 키와 domain 준비를 완료했다. 지금은 가비아 기본 네임서버를 유지하고 AWS 작업을 시작하지 않는다. 이후 사용자가 AWS 진행을 지시하면 계정 보안·예산을 확인하고, Terraform이 Route 53 Hosted Zone을 만든 뒤 가비아 네임서버를 교체한다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Paid Tier 전환을 승인한다. OAuth·Calendar 사용자 작업은 Post-MVP까지 중단한다.
+- **현재 차단 사항:** Production Terraform은 0변경이고 EC2 `running`, RDS·Valkey `available`, 공개 DNS, ACM `ISSUED`, SSM `SecureString` 3개와 GitHub `production` Environment 변수 7개를 확인했다. 공개 배포 완료에는 변경 PR 병합·`main` 반영, 첫 workflow 배포 승인과 Gemini Paid 전환이 필요하다.
+- **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개와 GitHub `production` Environment 변수 7개 등록을 완료했다. 실제 심사 사용자 자연어를 Gemini에 보내기 전 Gemini Paid Tier를 승인하고 첫 production workflow를 실행한다.
+- **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
 - **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. 각 PR의 범위·검증·URL은 생성 직후 보고하며, 결제·비밀정보 입력·운영 배포와 파괴적 작업은 이 위임에 포함하지 않는다.
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
@@ -69,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #20의 `feature/reliability-observability`에서 Outbox relay·Redis consumer, PostgreSQL 멱등 처리, DLQ·복구, 공개 API rate limit, 30일 데이터 정리와 로컬 관측 기반을 구현한다. AWS와 Grafana Cloud 외부 설정은 사용자 지시 전까지 보류한다.
+- **현재 작업:** Issue #22의 `feature/aws-release`에서 검증된 Bootstrap plan을 먼저 적용한 뒤 production plan을 생성·검토하고, 승인된 AWS 리소스·DNS·Nginx·Swagger 공개 배포와 Phase 10 E2E를 순서대로 완료한다.
 
 ## 실행 순서
 
@@ -168,12 +169,12 @@
 - [x] `[USER]` Gemini Free Tier 개발 키를 `.env.local`과 GitHub `integration` Environment의 `GEMINI_API_KEY`에 직접 등록한다.
 - [ ] `[USER]` 공개 심사 사용자의 자연어를 처리하기 전에 Gemini Paid Tier, 예산·사용량 알림과 비용 발생을 승인한다.
 - [x] `[AGENT]` 개발용 외부 연동 검사를 위한 GitHub `integration` Environment를 만들고 현재 PR CI에는 연결하지 않는다.
-- [ ] `[USER]` AWS 인프라 적용 전 계정 MFA, 관리자 접근, `ap-northeast-2` 사용, 월 예산과 알림 수신 주소를 확인·승인한다.
-- [ ] `[SHARED]` 제출 MVP 배포 토폴로지, 이미지 레지스트리, Redis 배치, Terraform state와 런타임 비밀 저장소를 확정한다.
+- [x] `[USER]` AWS 인프라 적용 전 IAM 사용자 MFA, `AdministratorAccess`, `aws login` 임시 CLI 세션, `ap-northeast-2`, 월 USD 80 Budget과 4개 이메일 알림을 확인·승인한다.
+- [x] `[SHARED]` 제출 MVP를 EC2 `t4g.small`, ECR, RDS PostgreSQL 18 `db.t4g.micro` Single-AZ, ElastiCache Serverless for Valkey, S3 state와 SSM·Secrets Manager로 배포하도록 확정한다.
 - [x] `[USER]` 운영 domain `meet-me.co.kr`을 확보하고 DNS 변경 권한을 준비한다.
 - [x] `[SHARED]` 운영 origin을 `https://app.meet-me.co.kr`, `https://api.meet-me.co.kr`로 확정하고 루트 domain은 프론트엔드로 연결한다.
-- [ ] `[AGENT]` Terraform으로 Route 53 Hosted Zone과 ACM 인증서 검증 레코드를 만들고 가비아에 입력할 네임서버 4개를 출력한다.
-- [ ] `[USER]` Route 53 생성 후 가비아 기본 네임서버를 AWS 네임서버 4개로 교체한다. 그전까지는 가비아 기본 네임서버를 유지한다.
+- [x] `[AGENT]` Terraform으로 Route 53 Hosted Zone과 ACM 인증서 검증 레코드를 만들고 가비아에 입력할 네임서버 4개를 출력한다.
+- [x] `[USER]` Route 53 생성 후 가비아 기본 네임서버를 AWS 네임서버 4개로 교체한다. 그전까지는 가비아 기본 네임서버를 유지한다.
 - [x] `[SHARED]` 제출 MVP 지도·좌표 공급자로 Kakao Local API를 선택하고 검색·정규화만 공급자에 위임하도록 확정한다.
 - [x] `[USER]` Kakao Developers 앱의 REST API Key를 `.env.local`과 GitHub `integration` Environment의 `KAKAO_LOCAL_API_KEY`에 직접 등록한다.
 - [ ] `[USER]` GitHub `production` Environment에 에이전트가 확정한 배포 Variable·Secret을 직접 등록하고 첫 운영 배포를 승인한다.
@@ -334,17 +335,18 @@
 - [x] 참여자 제출은 PostgreSQL에 접수한 뒤 응답하고, LLM 구조화와 일정 매칭은 요청 경로 밖에서 비동기로 처리하도록 경계를 확정한다.
 - [x] 비동기 작업 전달에 PostgreSQL Transactional Outbox + Redis Streams를 선택한다.
 - [x] 기술적 Gemini 실패 시 프론트엔드가 무기한 로딩하지 않고 `ANALYSIS_DELAYED`와 입력 저장 완료를 표시하도록 확정한다.
-- [ ] `ANALYSIS_DELAYED` 상태 갱신과 일반 처리 상태 갱신을 Polling, SSE 또는 WebSocket 중 어떤 방식으로 전달할지 선택한다.
-- [ ] EC2와 ECS의 비용, 운영 복잡도와 확장성 트레이드오프를 비교하고 선택한다.
-- [ ] Docker Hub와 ECR을 비교하고 이미지 레지스트리를 선택한다.
-- [ ] Nginx와 Redis의 운영 배치를 선택한다.
+- [x] `ANALYSIS_DELAYED`와 일반 처리 상태는 제출 MVP에서 상태 조회 API Polling으로 전달하고 SSE·WebSocket은 도입하지 않는다.
+- [x] EC2와 ECS의 비용, 운영 복잡도와 확장성 트레이드오프를 비교하고 제출 MVP에 단일 EC2 `t4g.small`을 선택한다.
+- [x] Docker Hub와 ECR을 비교하고 image digest 기반 Amazon ECR을 선택한다.
+- [x] Nginx는 EC2, Redis 책임은 ElastiCache Serverless for Valkey에 배치한다.
 - [x] 운영 프론트엔드와 API를 같은 상위 사이트의 서브도메인에 배치하도록 확정한다.
 - [x] 운영 domain을 `meet-me.co.kr`, 프론트엔드를 `app.meet-me.co.kr`, API를 `api.meet-me.co.kr`로 확정하고 루트 domain은 프론트엔드로 연결하도록 확정한다.
-- [ ] Terraform 상태 저장소, 잠금, 환경 분리와 비밀정보 주입 방식을 선택한다.
-- [ ] CI/CD, 롤백과 데이터베이스 마이그레이션 실행 순서를 선택한다.
+- [x] Terraform state는 versioning·암호화된 S3 backend와 native lock file, 환경별 state key를 사용하고 비밀값은 state에 넣지 않는다.
+- [x] GitHub OIDC와 SSM 배포, ECR image digest, Flyway 선실행, 이전 image digest 애플리케이션 롤백 순서를 선택한다.
 - [x] 제출 MVP는 Actuator·Micrometer Prometheus endpoint와 JSON 표준 출력까지만 구현하고 Alloy·Grafana Cloud Metrics·Loki·Alerting은 Post-MVP로 이관한다.
 - [ ] `[POST-MVP]` Gemini 배치 실패·지연, Outbox·Pending 적체와 DLQ 진입의 Grafana 알림 임계값·연락 채널을 선택한다.
-- [x] 변경 결정을 Architecture와 ADR-040에 반영한다.
+- [x] 신뢰성·관측성 결정을 Architecture와 ADR-040에 반영한다.
+- [x] AWS 제출 MVP 배포 결정을 Architecture와 ADR-041에 반영한다.
 
 ### DG-09 국제화
 
@@ -556,15 +558,15 @@
 
 **선행 조건:** DG-08
 
-- [ ] 합의한 로컬 PostgreSQL·Redis 실행 구성을 추가한다.
-- [ ] 애플리케이션 컨테이너 이미지와 비루트 실행 설정을 추가한다.
-- [ ] Nginx TLS 종료, 라우팅, 요청 제한과 헬스체크 범위를 구현한다.
-- [ ] Terraform 모듈과 환경 구성을 설계하고 검토받는다.
-- [ ] Route 53 Hosted Zone, `app`·`api` DNS 레코드와 ACM 인증서 검증을 Terraform으로 구현한다.
-- [ ] RDS for PostgreSQL과 네트워크 구성을 Terraform으로 구현한다.
-- [ ] 선택한 EC2/ECS 런타임을 Terraform으로 구현한다.
-- [ ] 선택한 Redis 운영 배치를 구현한다.
-- [ ] 이미지 레지스트리 인증과 배포 파이프라인을 구현한다.
+- [x] 합의한 로컬 PostgreSQL·Redis 실행 구성을 추가한다.
+- [x] 애플리케이션 컨테이너 이미지와 비루트 실행 설정을 추가한다.
+- [x] Nginx TLS 종료, 라우팅, 요청 제한과 헬스체크 범위를 구현한다.
+- [x] Terraform 모듈과 환경 구성을 설계하고 검토받는다.
+- [x] Route 53 Hosted Zone, `app`·`api` DNS 레코드와 ACM 인증서 검증을 Terraform으로 구현한다.
+- [x] RDS for PostgreSQL과 네트워크 구성을 Terraform으로 구현한다.
+- [x] 선택한 EC2/ECS 런타임을 Terraform으로 구현한다.
+- [x] 선택한 Redis 운영 배치를 구현한다.
+- [x] 이미지 레지스트리 인증과 배포 파이프라인을 구현한다.
 - [ ] Flyway 실행 순서, 배포 실패와 롤백 절차를 검증한다.
 - [ ] 비밀정보가 저장소, 이미지, Terraform state와 CI 로그에 노출되지 않는지 검증한다.
 - [ ] 운영 헬스체크, 로그, 지표와 알림을 검증한다.
@@ -582,6 +584,10 @@
 - [ ] Gemini 기술적 실패 → `ANALYSIS_DELAYED` → 로딩 종료 → 주최자 재분석 → 결과 생성 흐름과 타인 원문 비공개를 E2E 검증한다.
 - [ ] 장소 허용 영역 합집합·교집합, 이동 제약·미확정 장소와 Plan B/C fallback 회귀 시나리오를 검증한다.
 - [ ] Swagger/OpenAPI가 구현 응답과 일치하는지 전체 검증한다.
+- [ ] 실행 환경의 Swagger UI와 `/v3/api-docs`가 공개 API 계약을 완전하게 제공하는지 검증한다.
+- [x] 화면 흐름, 공개 상태 전이, 익명 cookie·Origin, Polling 중단 조건과 오류 코드 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 작성한다.
+- [ ] Swagger/OpenAPI와 `docs/FRONTEND_HANDOFF.md`의 endpoint·상태·오류 코드가 일치하는지 교차 검증한다.
+- [x] `[USER]` 프론트엔드 AI에 함께 전달할 prototype HTML을 별도 산출물로 준비한다.
 - [ ] `ko-KR` message bundle, 지원하지 않는 locale fallback, 언어 중립 오류 코드와 시간대 직렬화를 통합 검증한다.
 - [ ] 주요 개인정보·토큰·좌표가 로그와 오류 응답에 노출되지 않는지 점검한다.
 - [ ] 성능 목표와 예상 동시 사용자 부하를 합의하고 부하 테스트한다.
@@ -748,3 +754,14 @@
 | 2026-09-20 | Issue #16의 연속 시간·장소 영역 교집합, Kakao 정확명 고유 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회·주최자 미반영 입력 조회와 멱등 확정 구현 | 역할 분리 RED, 핵심 순위·Kakao 경합·부분 결과·교차 방 FK 결함 주입 탐지, 전체 133개 테스트와 `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #16 |
 | 2026-09-20 | Issue #18의 소요 시간 전 계층 제거, V5 마이그레이션과 Aggregate 우선 헥사고날 패키지 재편. 프로덕션·테스트의 구형 최상위 `adapter/application/domain` 제거와 ADR-039 추가 | 새 구조 기준 RED·마이그레이션·API 실패 증거, 아키텍처 회귀 검사, hook 12개와 전체 139개 테스트, `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #18 |
 | 2026-09-20 | Issue #20의 PostgreSQL Outbox relay·Redis Streams consumer, 2분 Pending/유실 복구, 5회 poison DLQ·수동 재처리, 공개 API rate limit, 30일 데이터 정리와 Prometheus·JSON 로그 기반 구현. Alloy·Grafana Cloud Metrics·Loki·Alerting은 PM-03으로 이관 | RED 3종, 중복 실행·DLQ 순서·호출 제한·민감정보·역직렬화·보관 경계 결함 주입 6종 탐지, PostgreSQL·Redis Testcontainers 포함 전체 159개 테스트와 `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #20 |
+| 2026-09-20 | Issue #22의 비루트 애플리케이션 이미지, Nginx TLS reverse proxy, Flyway 선실행·digest rollback 스크립트, AWS Bootstrap·Production Terraform, GitHub OIDC 배포 workflow와 프론트엔드 전달 지침 구현. 실제 AWS 생성은 Bootstrap apply 승인 게이트에서 대기 | migration·OpenAPI enum RED/GREEN, 전체 `ktlintCheck`·`assemble`·`test`, Docker migration·health·OpenAPI, Nginx config, Compose, Terraform validate·Bootstrap plan, actionlint와 `git diff --check` 통과 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 승인된 Bootstrap Terraform plan을 적용해 S3 remote state와 GitHub OIDC 역할을 생성하고 Production backend를 연결. Production plan은 생성 45개·조회 2개·변경 0개·삭제 0개로 확정 | Bootstrap apply·output 검증, Production backend init·validate·saved plan JSON 요약 완료. 비용 발생 Production apply 승인 대기 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 승인된 Production plan 적용 중 30개 리소스 생성 후 Free Plan 제한으로 RDS 7일 백업과 ACM exportable certificate 생성 실패. 자동 재시도 없이 state와 남은 plan을 점검 | remote state 36개 항목 중 실제 리소스 30개 확인, recovery plan 생성 15개·변경 0개·삭제 0개. 계정 Free/Active·Credit USD 120, EC2 running·Valkey available·Route 53 zone 생성 확인 | 동일 커밋 예정, #22 |
+| 2026-09-20 | Root 계정의 Paid Plan 전환 후 IAM CLI에서 Paid/Active와 Credit USD 120 유지를 확인하고 동일한 나머지 15개 plan 재적용. RDS 대기 중 임시 토큰 만료로 state 업로드·lock 해제 실패 | Terraform 프로세스 0개, 로컬 복구 state serial 6·39개 instance 보존과 `**/*.tfstate` Git 제외 확인. 새 `aws login` 후 원격 state·lock 대조 전 재적용 금지 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 갱신한 IAM 세션으로 stale lock 해제·복구 state push, 실제 `available` RDS의 taint 해제와 나머지 12개 리소스 적용 완료 | 최종 Terraform plan 0변경, remote state 52개 주소, EC2 running·RDS/Valkey available·ACM pending validation 확인. 민감 로컬 state와 saved plan 10개 삭제 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 사용자가 `meet-me.co.kr`에 운영 중인 기존 웹사이트·메일 레코드가 없음을 확인해 Route 53 전체 위임의 기존 서비스 영향이 없음을 확정 | 현재 가비아 위임의 공개 DNS 오류와 Route 53 Hosted Zone 네임서버 4개 준비 상태 대조 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 사용자가 가비아 네임서버를 Route 53의 4개 값으로 변경 | Route 53 권한 서버는 새 zone SOA·NS 정상 응답, DNSSEC DS 없음. `.co.kr` 상위 등록부는 아직 기존 가비아 NS 3개를 반환해 공개 resolver SERVFAIL·ACM pending validation 상태로 전파 대기 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 가비아 변경 후 `.co.kr` 상위 등록부와 공개 resolver에 Route 53 네임서버 4개 전파 완료 | 상위 위임 4개 정확 일치, Cloudflare NS 조회와 `api.meet-me.co.kr` A 레코드 해석 성공. ACM은 후속 DNS 검증 처리 중 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 사용자가 Gemini·Kakao API key와 ACM export passphrase를 SSM Parameter Store에 직접 등록 | 실제 값 조회 없이 지정된 이름 3개 존재와 `SecureString` 타입 확인. ACM 검증 CNAME 공개 해석·기대값 일치와 도메인 검증 `SUCCESS` 확인, 인증서 전체 발급 처리 대기 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 공개 DNS 전파 후 `api.meet-me.co.kr` exportable ACM 인증서 발급 완료 | ACM 상태 `ISSUED` 확인, 수동 export 없이 SSM passphrase를 사용하는 배포 스크립트로 후속 설치 예정 | 동일 커밋 예정, #22 |
+| 2026-09-20 | 사용자가 GitHub `production` Environment와 배포 Variable 7개를 직접 등록 | GitHub API에서 값 출력 없이 Environment 이름, 변수 이름 7개 정확 일치와 `main` custom deployment branch policy 확인 | 동일 커밋 예정, #22 |
