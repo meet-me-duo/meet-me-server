@@ -140,6 +140,20 @@ class MatchingResultsMigrationTest {
         assertEquals(1, count("final_confirmations"))
     }
 
+    @Test
+    fun `V7은 Kakao 단계에서 지연된 실행을 Gemini 구조화부터 재시도하도록 전환한다`() {
+        flyway("4").migrate()
+        val fixture = insertRun(status = "ANALYSIS_DELAYED")
+        updateResumeStage(fixture.runId, "MATCHING")
+        flyway("6").migrate()
+
+        val latest = flyway("7")
+        latest.migrate()
+
+        assertEquals("STRUCTURING", query("SELECT resume_stage FROM coordination_runs WHERE id='${fixture.runId}'"))
+        latest.validate()
+    }
+
     private fun insertRun(status: String): Fixture {
         val sessionId = UUID.randomUUID()
         val roomId = UUID.randomUUID()

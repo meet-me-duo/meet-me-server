@@ -4,17 +4,14 @@ import com.meetme.server.coordination.application.port.output.CoordinationRunRep
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
-import com.meetme.server.coordination.application.port.output.PlaceNormalizationResult
-import com.meetme.server.coordination.application.port.output.PlaceSearchException
-import com.meetme.server.coordination.application.port.output.PlaceSearchPort
 import com.meetme.server.coordination.domain.CandidatePlace
 import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
 import com.meetme.server.coordination.domain.MeetingCandidate
-import com.meetme.server.coordination.domain.matching.AllowedCircle
+import com.meetme.server.coordination.domain.matching.CompatiblePlaceArea
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
-import com.meetme.server.coordination.domain.matching.ParticipantAllowedRegion
+import com.meetme.server.coordination.domain.matching.ParticipantAllowedArea
 import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
@@ -36,7 +33,6 @@ class MatchingProcessor(
     private val submissionRepository: SubmissionRepository,
     private val structuredSubmissionRepository: StructuredSubmissionRepository,
     private val normalizedPlaceRepository: NormalizedPlaceRepository,
-    private val placeSearch: PlaceSearchPort,
     private val idGenerator: IdGenerator,
     private val persistence: MatchingProcessingPersistenceService,
     private val metrics: ApplicationMetricsPort? = null,
@@ -50,81 +46,72 @@ class MatchingProcessor(
         val submissions = submissionRepository.findLatestByRoom(run.roomId).filter { it.latest.id in frozenIds }
         check(submissions.size == frozenIds.size) { "Frozen submission batch is incomplete" }
         val structured = structuredSubmissionRepository.findByBatch(batchId).associateBy { it.submissionVersionId }
-        val queryCache = linkedMapOf<String, PlaceNormalizationResult>()
         val snapshots = mutableListOf<NormalizedPlace>()
         var hasUnappliedInput = structured.values.any { it.rejectionCode != null }
+        val legacyAreaKeys =
+            structured.values
+                .flatMap { it.conditions }
+                .filterIsInstance<StructuredCondition.SpecificPlace>()
+                .filter { it.areaKey == null }
+                .map { normalizeQuery(it.query) }
+                .distinct()
+                .sorted()
+                .mapIndexed { index, query -> query to "AREA_${index + 1}" }
+                .toMap()
 
         val inputs =
-            try {
-                submissions.map { submission ->
-                    val conditions = structured[submission.latest.id]?.conditions.orEmpty()
-                    val places =
-                        conditions
-                            .withIndex()
-                            .filter { it.value is StructuredCondition.SpecificPlace }
-                            .distinctBy { normalizeQuery((it.value as StructuredCondition.SpecificPlace).query) }
-                    val resolved =
-                        places.map { indexed ->
-                            val condition = indexed.value as StructuredCondition.SpecificPlace
-                            val result =
-                                queryCache.getOrPut(normalizeQuery(condition.query)) {
-                                    placeSearch.normalize(condition.query)
-                                }
-                            val snapshot = result.toSnapshot(batchId, submission.latest.id, indexed.index, condition)
-                            snapshots += snapshot
-                            if (snapshot.status != NormalizedPlaceStatus.RESOLVED) hasUnappliedInput = true
-                            snapshot
-                        }
-                    val unresolved =
-                        conditions.withIndex().filter { it.value is StructuredCondition.UnresolvedPlace }.map { indexed ->
-                            val condition = indexed.value as StructuredCondition.UnresolvedPlace
-                            NormalizedPlace(
-                                batchId = batchId,
-                                submissionVersionId = submission.latest.id,
-                                conditionIndex = indexed.index,
-                                query = condition.query,
-                                radiusMeters = 1_000,
-                                status = NormalizedPlaceStatus.NO_EXACT_MATCH,
+            submissions.map { submission ->
+                val conditions = structured[submission.latest.id]?.conditions.orEmpty()
+                val areas =
+                    conditions
+                        .filterIsInstance<StructuredCondition.SpecificPlace>()
+                        .map { condition ->
+                            CompatiblePlaceArea(
+                                key = condition.areaKey ?: legacyAreaKeys.getValue(normalizeQuery(condition.query)),
+                                displayName = condition.areaName ?: condition.query,
                             )
-                        }
-                    if (unresolved.isNotEmpty()) {
-                        hasUnappliedInput = true
-                        snapshots += unresolved
+                        }.distinctBy { it.key }
+                val unresolved =
+                    conditions.withIndex().filter { it.value is StructuredCondition.UnresolvedPlace }.map { indexed ->
+                        val condition = indexed.value as StructuredCondition.UnresolvedPlace
+                        NormalizedPlace(
+                            batchId = batchId,
+                            submissionVersionId = submission.latest.id,
+                            conditionIndex = indexed.index,
+                            query = condition.query,
+                            radiusMeters = 1_000,
+                            status = NormalizedPlaceStatus.NO_EXACT_MATCH,
+                        )
                     }
-                    val preventsOffline =
-                        conditions.any {
-                            it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace
-                        }
-                    val circles =
-                        resolved.mapNotNull { place ->
-                            place.coordinate?.let { AllowedCircle(it, place.radiusMeters) }
-                        }
-                    val dated =
-                        submission.latest.manualAvailability
-                            .filterIsInstance<ManualAvailability.Dated>()
-                            .map { it.range }
-                    val weekly =
-                        submission.latest.manualAvailability
-                            .filterIsInstance<ManualAvailability.Weekly>()
-                            .map { it.range }
-                    ParticipantMatchInput(
-                        participantId = submission.participantId,
-                        availableTimes =
-                            com.meetme.server.coordination.domain.matching.TimeRangeMatcher.calculateAvailability(
-                                naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
-                                datedManualAvailability = dated,
-                                weeklyManualAvailability = weekly,
-                                blocked = emptyList(),
-                                searchRange = room.searchRange,
-                                zone = room.timeZone,
-                            ),
-                        offlineRegion = if (!preventsOffline && circles.isNotEmpty()) ParticipantAllowedRegion(circles) else null,
-                    )
+                if (unresolved.isNotEmpty()) {
+                    hasUnappliedInput = true
+                    snapshots += unresolved
                 }
-            } catch (_: PlaceSearchException) {
-                persistence.delay(run)
-                metrics?.matching("ANALYSIS_DELAYED", Duration.ofNanos(System.nanoTime() - startedNanos), 0)
-                return
+                val preventsOffline =
+                    conditions.any {
+                        it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace
+                    }
+                val dated =
+                    submission.latest.manualAvailability
+                        .filterIsInstance<ManualAvailability.Dated>()
+                        .map { it.range }
+                val weekly =
+                    submission.latest.manualAvailability
+                        .filterIsInstance<ManualAvailability.Weekly>()
+                        .map { it.range }
+                ParticipantMatchInput(
+                    participantId = submission.participantId,
+                    availableTimes =
+                        com.meetme.server.coordination.domain.matching.TimeRangeMatcher.calculateAvailability(
+                            naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
+                            datedManualAvailability = dated,
+                            weeklyManualAvailability = weekly,
+                            blocked = emptyList(),
+                            searchRange = room.searchRange,
+                            zone = room.timeZone,
+                        ),
+                    offlineArea = if (!preventsOffline && areas.isNotEmpty()) ParticipantAllowedArea(areas) else null,
+                )
             }
 
         val generated = DeterministicCandidateMatcher.generate(room.mode, inputs)
@@ -140,7 +127,9 @@ class MatchingProcessor(
                     participantIds = candidate.participantIds,
                     totalParticipants = total,
                     place =
-                        candidate.representativePlace?.let {
+                        candidate.representativeArea?.let {
+                            CandidatePlace(displayName = it.displayName)
+                        } ?: candidate.representativePlace?.let {
                             CandidatePlace(
                                 displayName = "공통 가능 지역",
                                 coordinate = it,
@@ -155,45 +144,6 @@ class MatchingProcessor(
 
     private fun normalizeQuery(value: String): String =
         Normalizer.normalize(value, Normalizer.Form.NFKC).lowercase(Locale.ROOT).filterNot(Char::isWhitespace)
-
-    private fun PlaceNormalizationResult.toSnapshot(
-        batchId: SubmissionBatchId,
-        submissionVersionId: com.meetme.server.shared.domain.SubmissionVersionId,
-        index: Int,
-        condition: StructuredCondition.SpecificPlace,
-    ): NormalizedPlace =
-        when (this) {
-            is PlaceNormalizationResult.Resolved ->
-                NormalizedPlace(
-                    batchId,
-                    submissionVersionId,
-                    index,
-                    condition.query,
-                    condition.radiusMeters,
-                    NormalizedPlaceStatus.RESOLVED,
-                    place.providerPlaceId,
-                    place.displayName,
-                    place.coordinate,
-                )
-            PlaceNormalizationResult.NoExactMatch ->
-                NormalizedPlace(
-                    batchId,
-                    submissionVersionId,
-                    index,
-                    condition.query,
-                    condition.radiusMeters,
-                    NormalizedPlaceStatus.NO_EXACT_MATCH,
-                )
-            PlaceNormalizationResult.AmbiguousExactMatch ->
-                NormalizedPlace(
-                    batchId,
-                    submissionVersionId,
-                    index,
-                    condition.query,
-                    condition.radiusMeters,
-                    NormalizedPlaceStatus.AMBIGUOUS,
-                )
-        }
 }
 
 @Service

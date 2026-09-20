@@ -10,8 +10,8 @@ import java.util.UUID
 
 data class CandidatePlaceView(
     val displayName: String,
-    val latitude: Double,
-    val longitude: Double,
+    val latitude: Double?,
+    val longitude: Double?,
 )
 
 data class CandidateView(

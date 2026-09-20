@@ -32,7 +32,6 @@ GitHub의 비밀값과 비밀이 아닌 설정을 구분한다.
 | 이름 | 분류 | 발급 위치 | 현재 상태 |
 | --- | --- | --- | --- |
 | `GEMINI_API_KEY` | Secret | Google AI Studio API Keys | `.env.local`과 GitHub `integration` 등록 확인 완료. 키 값은 출력하지 않음 |
-| `KAKAO_LOCAL_API_KEY` | Secret | Kakao Developers 앱의 REST API Key | `.env.local`과 GitHub `integration` 등록 확인 완료. 키 값은 출력하지 않음 |
 
 ### Post-MVP에 준비할 OAuth 값
 
@@ -97,51 +96,12 @@ Cloud Billing 계정·결제 수단·최소 선불금 또는 후불 결제 승�
 [Gemini API 추가 약관](https://ai.google.dev/gemini-api/terms),
 [Rate limits](https://ai.google.dev/gemini-api/docs/rate-limits)
 
-## 4. Kakao Local API
+## 4. 지도 API `[POST-MVP]`
 
-### [USER ACTION REQUIRED]
-
-**이유:** 제출 MVP에서 국내 장소명을 검색·정규화하려면 Kakao Developers 앱과 REST API Key가 필요하다.
-앱 생성과 실제 key 입력은 Kakao 계정 소유자가 직접 수행해야 한다.
-
-**위치:** [Kakao Developers](https://developers.kakao.com/) → 로그인·개발자 등록 → `앱` → `앱 생성` →
-생성한 앱 → `앱 > 플랫폼 키 > REST API 키`
-
-**사전 조건:** Kakao 계정, 서비스 이름 `meet-me`, 운영 domain `https://meet-me.co.kr`
-
-**할 일:**
-
-1. Kakao Developers에 로그인하고 처음이면 개발자 등록 약관에 동의한다.
-2. 전체 앱 목록에서 `앱 생성`을 누른다.
-3. 앱 이름은 `meet-me`, 회사명은 개인 개발자명 또는 `meet-me`, 카테고리는 서비스에 가장 가까운 항목,
-   대표 domain은 `https://meet-me.co.kr`로 입력해 앱을 만든다.
-4. 생성한 앱에서 `앱 > 플랫폼 키 > REST API 키`를 연다.
-5. REST API Key의 원문만 복사한다. `KakaoAK ` 접두사는 저장하지 않는다.
-6. 저장소 루트 `.env.local`에 다음 줄을 직접 추가한다.
-
-```properties
-KAKAO_LOCAL_API_KEY=<REST API Key 원문>
-```
-
-7. GitHub 저장소 → `Settings > Environments > integration > Environment secrets > Add secret`에서
-   이름을 `KAKAO_LOCAL_API_KEY`로 만들고 같은 값을 직접 등록한다.
-8. 제출 MVP에서는 `카카오 로그인`, `OpenID Connect`, 동의 항목과 Redirect URI를 설정하지 않는다.
-9. 허용 IP는 로컬 개발과 AWS 송신 IP가 확정되지 않았으므로 지금 등록하지 않는다. 운영 네트워크 확정 뒤
-   최소 IP로 제한한다.
-
-**공유 금지:** REST API Key 원문, Admin Key, Client Secret, Kakao 계정 인증 정보
-
-**완료 확인:** `Kakao Local: 앱 생성 / 로컬 등록 / GitHub integration 등록 완료`라고만 알린다.
-
-**다음 검증:** 에이전트가 두 위치의 secret 존재 여부만 확인하고, Geo Adapter 구현 뒤 합성 장소명으로
-키워드 검색 계약을 검증한다. key 값은 출력하지 않는다.
-
-**영향 범위:** Domain·Application과 Fake Geo Adapter 개발은 계속할 수 있지만 실제 장소 검색 계약 검증은
-key 등록 전까지 차단된다.
-
-공식 근거: [Kakao API 시작하기](https://developers.kakao.com/docs/en/tutorial/start),
-[Local API 개발 가이드](https://developers.kakao.com/docs/en/local/dev-guide),
-[REST API Key 설정](https://developers.kakao.com/docs/en/app-setting/app)
+제출 MVP는 Kakao Local을 포함한 지도 API를 호출하지 않으므로 앱 활성화, 비즈월렛, 결제 카드 또는
+`KAKAO_LOCAL_API_KEY` 등록이 필요하지 않다. 기존에 등록한 key를 저장소나 채팅에 옮기지 않는다.
+Post-MVP에서 실제 좌표·이동시간 검증이 필요해지면 공급자, 무료 제공량, 결제 수단과 운영 비용을 다시
+비교하고 사용자가 결제를 승인한 뒤 별도 `[USER ACTION REQUIRED]` 절차를 작성한다.
 
 ## 5. Google 로그인과 Calendar `[POST-MVP]`
 

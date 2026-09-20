@@ -164,8 +164,8 @@ class MatchingResultService(
                 place?.let {
                     CandidatePlaceView(
                         it.displayName,
-                        it.coordinate.latitude.toDouble(),
-                        it.coordinate.longitude.toDouble(),
+                        it.coordinate?.latitude?.toDouble(),
+                        it.coordinate?.longitude?.toDouble(),
                     )
                 },
             summary =

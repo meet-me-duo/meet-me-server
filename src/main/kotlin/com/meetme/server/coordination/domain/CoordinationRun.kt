@@ -51,7 +51,7 @@ data class MeetingCandidate(
 
 data class CandidatePlace(
     val displayName: String,
-    val coordinate: GeoCoordinate,
+    val coordinate: GeoCoordinate? = null,
 )
 
 data class CoordinationRun private constructor(

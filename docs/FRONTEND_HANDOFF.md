@@ -81,6 +81,7 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 
 - `READY` 또는 `READY_WITH_WARNINGS`에서 `GET /api/rooms/{inviteCode}/candidates`를 호출한다.
 - 후보는 Plan A/B/C 중 서버가 만든 항목만 표시하며 프론트엔드에서 다시 점수화하거나 정렬하지 않는다.
+- 대면 후보의 `place.display_name`은 Gemini가 구조화한 공통 근방명이다. 제출 MVP는 지도를 사용하지 않으므로 `latitude`와 `longitude`는 `null`이며 프론트엔드는 좌표나 핀을 요구하지 않는다.
 - `READY_WITH_WARNINGS`의 HOST만 `GET /api/rooms/{inviteCode}/candidates/unapplied-inputs`를 사용할 수 있다.
 - 후보 확정은 HOST만 `POST /api/rooms/{inviteCode}/candidates/{candidateId}/confirmation`을 호출한다.
 - 같은 후보 재확정은 멱등하지만 다른 후보가 이미 확정된 `409`에서는 현재 확정 결과를 다시 조회한다.

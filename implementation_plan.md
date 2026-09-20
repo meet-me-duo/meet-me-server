@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-09-20
+> **최종 갱신:** 2026-09-21
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -37,11 +37,11 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 운영 결함 수정 `fix/gemini-midnight-boundary` — Issue #62 구현·검증 완료, PR 준비
-- **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
+- **현재 단계:** MVP 장소 공급자 제거 `feature/66-gemini-place-groups` — Gemini 장소 그룹·서버 교집합 구현 및 검증 진행
+- **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 시간·장소 그룹 구조화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 제출 MVP는 지도 API와 좌표 없이 장소 호환 그룹을 사용한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** Issue #62 코드와 전체 품질 게이트는 완료했다. `develop`·`main` 병합과 자동 운영 배포 뒤 기존 지연 방 재분석이 필요하며, 운영 비밀값 회전은 사용자가 수정 우선순위를 요청해 배포 전 별도 작업으로 남아 있다.
-- **현재 사용자 개입:** Issue #62 수정과 검증을 먼저 완료한 뒤, 진단 출력에 노출된 운영 Gemini API key와 RDS 관리형 master password를 사용자가 회전하고 `main` 재배포로 런타임 값을 갱신해야 한다. 실제 비밀값은 채팅·저장소·로그에 공유하지 않는다.
+- **현재 차단 사항:** Issue #66 전체 품질 게이트와 운영 배포가 남아 있다. 배포 후 기존 Kakao 단계 지연 방은 구조화부터 재시도해야 한다.
+- **현재 사용자 개입:** Kakao 앱 활성화·비즈월렛·결제 카드 등록은 제출 MVP에 필요하지 않다. 실제 비밀값은 채팅·저장소·로그에 공유하지 않는다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
 - **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. 각 PR의 범위·검증·URL은 생성 직후 보고하며, 결제·비밀정보 입력·운영 배포와 파괴적 작업은 이 위임에 포함하지 않는다.
@@ -53,7 +53,7 @@
 - **완료 정책:** 예상 참여 인원·제출 마감은 선택 사항이며, 둘 다 없으면 수동 마감 방식을 명시한다. 자동 조건이 있어도 주최자는 경고 후 조기 마감할 수 있다.
 - **최소 인원:** 예상 참여 인원은 2명 이상이며, 모든 종료 방식에서 주최자 포함 고유 제출이 2개 미만이면 `INSUFFICIENT_PARTICIPANTS`로 종료하고 후보를 만들지 않는다.
 - **비동기 전달:** PostgreSQL Transactional Outbox + Redis Streams를 구현했다. PostgreSQL 처리 lease와 상태가 기준이며 2분 Pending 회수·재발행, 총 5회 실패 후 참조형 DLQ와 명시적 수동 재처리를 사용한다.
-- **장소 입력:** 장소를 입력할 때는 별도 장소·지도·좌표 필드 없이 자연어만 사용한다. 특정 가능한 장소만 기본 1km 또는 명시 반경의 허용 영역을 만들고, 이동 제약·미확정 장소는 좌표를 만들지 않는다.
+- **장소 입력:** 별도 장소·지도·좌표 필드 없이 자연어만 사용한다. Gemini가 방 전체 명시 장소를 `AREA_n` 근접 호환 그룹과 대표 지역명으로 구조화하고 서버가 그룹 교집합을 계산한다. 이동 제약·미확정 장소는 그룹이나 좌표를 만들지 않는다.
 - **Gemini 배치:** 참가자 제출·수정 중에는 호출하지 않는다. 입력 수집 종료 시점의 최신 제출을 방 전체 배치로 고정하고 자연어가 하나 이상일 때만 자연어가 있는 항목으로 논리 작업 하나를 실행한다. 전원이 정형 일정만 제출하면 AI 호출 없이 매칭하며, 제공된 자연어에 참가자별 500자·배치 합계 10,000자 제한을 적용한다. 연동은 공식 Google GenAI SDK Java 클라이언트를 AI Adapter 내부에서만 사용한다.
 - **제출 MVP 인증 경계:** 모든 사용자는 로그인 없이 익명 브라우저 세션으로 이용한다. 방을 만든 `Secure HttpOnly` 불투명 세션이 첫 참여자와 `HOST` 역할을 소유하며 같은 세션만 마감·재분석·후보 확정을 수행한다. 공유 링크만으로는 참여자나 주최자 권한을 얻지 못한다.
 - **Post-MVP 인증·Calendar:** Google·Kakao 로그인, RS256 Access/회전형 Refresh Token, 공급자 token 암호화와 Google Calendar 연결·방별 ON/OFF·스냅샷은 Post-MVP 백로그로 분리한다.
@@ -70,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #62에서 Gemini의 종료 `24:00`을 다음 지역 날짜 `00:00`의 정확한 배타적 경계로 보존하고, 잘못된 개별 날짜·시간 조건이 전체 배치를 `ANALYSIS_DELAYED`로 만들지 않도록 조건 단위 실패 격리와 저장 왕복을 검증한다.
+- **현재 작업:** Issue #66에서 제출 MVP Kakao Local 호출을 제거하고, Gemini의 방 전체 장소 근접 그룹과 서버의 결정론적 그룹 교집합으로 대면 후보를 생성한다. 기존 Kakao 단계 지연 실행은 V7에서 구조화 재시도로 전환한다.
 
 ## 실행 순서
 
@@ -92,7 +92,7 @@
 | 1 | `feature/core-domain-persistence` | Phase 1~2 | 핵심 도메인 모델, PostgreSQL·Flyway·Komapper 영속 경계 |
 | 2 | `feature/anonymous-room-lifecycle` | Phase 3~4 | 익명 브라우저 세션, 주최자 권한, 방 생성·참여·마감 |
 | 3 | `feature/submission-gemini-pipeline` | Phase 5 | 조건 제출·수정, 배치 고정, Outbox와 Gemini 구조화 파이프라인 |
-| 4 | `feature/deterministic-matching-results` | Phase 6~7 | Kakao Local 장소 정규화, 결정론적 매칭, Plan A/B/C와 결과 확정 |
+| 4 | `feature/deterministic-matching-results` | Phase 6~7 | 당시 Kakao Local 장소 정규화, 결정론적 매칭, Plan A/B/C와 결과 확정. Kakao 경계는 Issue #66에서 대체 |
 | 4A | `refactor/aggregate-hexagonal-structure` | 4번 이후·5번 이전 긴급 정정 | 소요 시간 제거, Aggregate 우선 패키지 재편과 아키텍처 회귀 검사 |
 | 5 | `feature/reliability-observability` | Phase 8 | Redis Streams, 재시도·DLQ, 보안, 로그·지표와 rate limit |
 | 6 | `feature/aws-release` | Phase 9~10 | 컨테이너·Terraform·배포, E2E와 Wanted 제출 MVP 출시 검증 |
@@ -175,8 +175,8 @@
 - [x] `[SHARED]` 운영 origin을 `https://app.meet-me.co.kr`, `https://api.meet-me.co.kr`로 확정하고 루트 domain은 프론트엔드로 연결한다.
 - [x] `[AGENT]` Terraform으로 Route 53 Hosted Zone과 ACM 인증서 검증 레코드를 만들고 가비아에 입력할 네임서버 4개를 출력한다.
 - [x] `[USER]` Route 53 생성 후 가비아 기본 네임서버를 AWS 네임서버 4개로 교체한다. 그전까지는 가비아 기본 네임서버를 유지한다.
-- [x] `[SHARED]` 제출 MVP 지도·좌표 공급자로 Kakao Local API를 선택하고 검색·정규화만 공급자에 위임하도록 확정한다.
-- [x] `[USER]` Kakao Developers 앱의 REST API Key를 `.env.local`과 GitHub `integration` Environment의 `KAKAO_LOCAL_API_KEY`에 직접 등록한다.
+- [x] `[SHARED]` 제출 MVP에서 Kakao Local과 지도·좌표 공급자 호출을 제외하고 Gemini 장소 근접 그룹을 사용하도록 전환한다.
+- [x] `[USER]` 제출 MVP에는 Kakao 앱 활성화·비즈월렛·결제 카드 등록이 필요하지 않음을 확인한다.
 - [x] `[USER]` GitHub `production` Environment에 에이전트가 확정한 배포 Variable·Secret을 직접 등록하고 첫 운영 배포를 승인한다.
 - [ ] `[POST-MVP][USER]` Alloy·Grafana Cloud 연동 착수 시 계정·stack·요금제와 알림 연락 채널을 선택하고 telemetry 전송 자격 증명을 실행 환경에 직접 등록한다. 제출 MVP에는 필요한 값이 없다.
 - [ ] `[POST-MVP][USER]` Google Auth Platform의 운영 앱·Client ID/Secret과 Calendar scope를 준비한다.
@@ -191,7 +191,7 @@
 - [x] 1차 — 주최자·참여자 관계, 예상 인원과 입력 완료 의미
 - [x] 2차 — 방·참여·제출·마감·확정의 상태 전이와 동시성
 - [ ] 3차 — 시간대, 탐색 기간, 슬롯 단위와 충돌 우선순위 (시간대 모델 확정)
-- [x] 4차 — 위치 구조화, 지도 검색 고유성, 허용 영역과 실제 장소 후보
+- [x] 4차 — 위치 구조화와 장소 후보. 제출 MVP의 지도 검색·허용 영역 결정은 Issue #66에서 Gemini 장소 그룹으로 대체
 - [x] 5차 — Plan A/B/C 점수, 동률, 후보 부족과 fallback
 - [ ] 6차 — 로그인·게스트 본인 증명·계정 연결·권한·서비스 Refresh Token
 - [ ] 7차 — Calendar 동의·조회·동기화·실패 복구
@@ -318,17 +318,16 @@
 - [x] 방 최대 참여자 50명, 입력별 최대 32조건과 Gemini UTF-8 응답 최대 256KiB를 선택한다.
 - [x] 확정 내용을 Architecture와 ADR-016·ADR-018에 반영한다.
 
-### DG-07 지도·좌표
+### DG-07 장소 그룹과 Post-MVP 지도·좌표
 
 - [x] 장소 전용 입력란, 지도 선택과 사용자 기준 좌표 수집 없이 자연어만 제출하도록 확정한다.
 - [x] `집`, `회사`, `학교 근처`는 장소가 아닌 이동 제약으로, 하나로 특정되지 않는 `중앙역`은 미확정 장소로 보존하고 좌표를 만들지 않도록 확정한다.
-- [x] 특정 가능한 장소에 명시 반경 또는 기본 1km 반경을 적용하고, 참여자 내부 대안은 합집합, 참여자 사이는 교집합으로 계산하도록 확정한다.
-- [x] 국내 장소 검색 적합성, 구현 비용과 공급자 종속성을 비교해 제출 MVP 공급자로 Kakao Local API를 선택한다.
-- [x] 지도 공급자는 장소 검색·정규화와 표시용 이름을 제공하고, 거리·영역 계산은 서버가 담당하도록 확정한다.
-- [x] NFKC·공백·대소문자를 정규화한 정확한 장소명 일치가 전체 노출 가능 Kakao 결과에서 하나인 경우만 장소로 인정한다.
-- [x] 허용 영역 교집합 내부의 최대 여유 대표점을 공통 가능 지역으로 제공하고 실제 매장을 자동 선택하지 않는다.
-- [x] 장소 ID·표시명·좌표 최소 스냅샷만 방 수명 동안 보관하고 공급자 원본 응답은 저장하지 않는다.
-- [x] 확정 내용을 PRD, Architecture와 ADR-038에 반영한다.
+- [x] `[SUPERSEDED]` 반경 허용 영역과 Kakao Local 정규화는 ADR-043에 따라 제출 MVP에서 사용하지 않는다.
+- [x] Gemini가 방 전체 명시 장소에 `AREA_n` 근접 호환 그룹과 공통 대표 지역명을 부여하도록 확정한다.
+- [x] 참여자 내부 그룹은 대안 합집합, 참여자 사이는 문자열 키 교집합으로 서버가 계산하도록 확정한다.
+- [x] 후보에는 대표 지역명만 제공하고 제출 MVP 위도·경도는 `null`로 반환하도록 확정한다.
+- [x] 실제 좌표·이동시간 지도 공급자와 결제는 Post-MVP 재결정으로 이관한다.
+- [x] 확정 내용을 PRD, Architecture와 ADR-043에 반영한다.
 
 ### DG-08 실행·배포와 운영
 
@@ -479,11 +478,10 @@
 - [x] 자연어 요일·시간 조건을 방 시간대와 탐색 범위의 실제 날짜별 구간으로 확장하는 테스트를 작성한다.
 - [x] 후보가 방의 `[searchStartDate, searchEndDate)` 지역 날짜 범위를 벗어나지 않는 테스트를 작성한다.
 - [x] 고정 슬롯 양자화나 최소 길이 필터 없이 남은 모든 연속 가능 구간을 보존하는지 테스트한다.
-- [x] 좌표 간 거리 계산 테스트를 작성한다.
-- [x] 사용자 명시 반경과 기본 1km 허용 반경 적용 테스트를 작성한다.
-- [x] 한 참여자의 대안 장소 허용 영역 합집합 테스트를 작성한다.
-- [x] 여러 참여자의 장소 허용 영역 교집합과 교집합 부재 테스트를 작성한다.
-- [x] `봉천역`과 `서울대입구역` 사이 공통 허용 영역에서 후보를 만드는 회귀 테스트를 작성한다.
+- [x] `[LEGACY][POST-MVP 후보]` 좌표 간 거리와 반경 허용 영역 계산 테스트를 보존한다.
+- [x] 한 참여자의 Gemini 장소 그룹 대안 합집합 테스트를 작성한다.
+- [x] 여러 참여자의 장소 그룹 교집합과 교집합 부재 테스트를 작성한다.
+- [x] `봉천역`과 `서울대입구역`이 같은 호환 그룹이면 공통 대면 후보를 만드는 회귀 테스트를 작성한다.
 - [x] 이동 제약 또는 미확정 장소만 있는 조건 분기가 오프라인 후보를 만들지 않는 테스트를 작성한다.
 - [x] 전원 참석·오프라인 Plan A 계산을 구현한다.
 - [x] 전원 참석·온라인 Plan B 계산을 구현한다.
@@ -582,7 +580,7 @@
 - [x] Gemini 방 전체 배치별 논리 작업, Full Jitter 기술 재시도 범위와 실제 비용 기록을 운영과 유사한 환경에서 검증한다.
 - [x] 파싱 실패 → `PARTIAL` 후보 → 주최자 미반영 원문 확인 → 최종 확정 흐름을 E2E 검증한다.
 - [x] Gemini 기술적 실패 → `ANALYSIS_DELAYED` → 로딩 종료 → 주최자 재분석 → 결과 생성 흐름과 타인 원문 비공개를 E2E 검증한다.
-- [ ] 장소 허용 영역 합집합·교집합, 이동 제약·미확정 장소와 Plan B/C fallback 회귀 시나리오를 검증한다.
+- [x] 장소 그룹 대안 합집합·참여자 교집합, 그룹 불일치 제외와 이동 제약·미확정 장소의 Plan B/C fallback을 검증한다.
 - [x] Swagger/OpenAPI가 구현 응답과 일치하는지 전체 검증한다.
 - [x] 실행 환경의 Swagger UI와 `/v3/api-docs`가 공개 API 계약을 완전하게 제공하는지 검증한다.
 - [x] 화면 흐름, 공개 상태 전이, 익명 cookie·Origin, Polling 중단 조건과 오류 코드 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 작성한다.
@@ -798,3 +796,4 @@
 | 2026-09-20 | PR #57의 `main` 병합으로 자동 CI/CD 최초 운영 검증 | main CI run #35511844367 성공 뒤 수동 실행 없이 `workflow_run` CD run #35511947428 성공. 두 실행의 SHA `80169fc0` 일치와 SSM 배포·공개 health·OpenAPI·Swagger UI 200 확인 | 동일 커밋 예정, #58 |
 | 2026-09-20 | Issue #58의 제품 소개·백엔드 포트폴리오 README 재구성과 작업 브랜치 분류 확장 | 기준 문서·코드 대조, markdownlint 오류 0건, 저장소 링크 존재, CI badge·운영 Swagger·OpenAPI HTTP 200, `ktlintCheck`·`assemble`·`test`와 commit guard 통과 | 동일 커밋 예정, #58 |
 | 2026-09-20 | Issue #62의 Gemini `24:00` 종료를 다음 지역 날짜 자정의 배타적 경계로 보존하고 잘못된 날짜·시간을 조건 단위로 격리, 구조화 조건 JSON 왕복과 Architecture 계약 갱신 | Adapter·Matcher·영속 Mapper RED/GREEN, `24:00` 인식·다음 날짜 이동·JSON 보존·조건 격리 결함 주입 4종 탐지, `ktlintCheck`, `assemble`, 전체 `test`, `git diff --check` 통과 | 동일 커밋 예정, #62 |
+| 2026-09-21 | Issue #66의 제출 MVP Kakao Local 호출 제거와 Gemini 장소 근접 호환 그룹 전환 | `AREA_n` Structured Output v2, 서버 그룹 교집합·먼 참여자 Plan C 제외, 좌표 없는 대표 지역명, 기존 MATCHING 지연 실행의 STRUCTURING 재시도 migration 구현. 결함 주입 2종 탐지, `ktlintCheck`, `assemble`, 전체 176개 `test`, `git diff --check` 통과 | 동일 커밋 예정, #66 |
