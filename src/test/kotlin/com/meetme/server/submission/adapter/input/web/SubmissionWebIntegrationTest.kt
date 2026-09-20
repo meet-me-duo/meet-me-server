@@ -160,6 +160,8 @@ class SubmissionWebIntegrationTest {
             .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/submission'].put").exists())
             .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/submission'].get").exists())
             .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/analysis/retry'].post").exists())
+            .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/submission'].put.responses['429']").exists())
+            .andExpect(jsonPath("$.paths['/api/rooms/{inviteCode}/analysis/retry'].post.responses['503']").exists())
             .andExpect(jsonPath("$.components.schemas.SaveSubmissionRequest").exists())
             .andExpect(jsonPath("$.components.schemas.SubmissionResponse").exists())
     }

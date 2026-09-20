@@ -373,7 +373,11 @@ Terraform state 원문
 [GitHub Environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments),
 [AWS Budgets](https://docs.aws.amazon.com/cost-management/latest/userguide/create-cost-budget.html)
 
-## 9. Grafana Cloud
+## 9. Grafana Cloud `[POST-MVP]`
+
+제출 MVP는 Actuator·Micrometer Prometheus endpoint와 JSON 표준 출력까지만 사용한다. Alloy 설치,
+Grafana Cloud Metrics·Loki 전송, 대시보드·Alerting과 실제 자격 증명 등록은 Post-MVP 작업이므로 현재
+사용자가 설정할 값은 없다. 아래 절차는 해당 작업을 다시 시작할 때만 수행한다.
 
 ### [USER ACTION REQUIRED]
 
@@ -408,8 +412,7 @@ Terraform state 원문
 **다음 검증:** 에이전트가 token 존재 여부, 최소 scope, Alloy의 Metrics·Loki 수집 상태와 테스트 알림 결과를
 값 출력 없이 검증한다.
 
-**영향 범위:** 계정이 없어도 Actuator·Micrometer와 JSON 로그 구현은 가능하다. 실제 원격 수집·대시보드·알림
-검증만 차단된다.
+**영향 범위:** 제출 MVP에는 영향이 없다. Post-MVP의 실제 원격 수집·대시보드·알림 검증만 차단된다.
 
 공식 근거: [Stack 생성](https://grafana.com/docs/grafana-cloud/platform/security-and-account-management/account-management/cloud-stacks/create-update-stacks/),
 [Cloud Access Policy 용도](https://grafana.com/docs/grafana-cloud/platform/security-and-account-management/security-and-access/authentication-and-permissions/),
@@ -426,7 +429,7 @@ Gemini: auth key / Paid / 로컬 등록 완료
 Google OAuth: Testing / client 생성 완료 / scope 이름 / Redirect URI 목록
 Kakao OAuth: OIDC ON / 앱 생성 완료 / 동의 항목 ID / Redirect URI
 GitHub/AWS: production Environment 생성 / OIDC role 이름 / Region / Budget 설정 완료
-Grafana: stack slug / region / plan / policy scope / 테스트 알림 성공
+Grafana `[POST-MVP]`: stack slug / region / plan / policy scope / 테스트 알림 성공
 ```
 
 값이 등록됐다는 문장만으로는 외부 연동을 완료 처리하지 않는다. 에이전트가 해당 코드·workflow를 준비한 뒤

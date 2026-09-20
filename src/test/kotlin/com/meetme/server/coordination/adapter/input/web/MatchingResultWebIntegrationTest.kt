@@ -178,7 +178,7 @@ class MatchingResultWebIntegrationTest {
 
         assertEquals(setOf("200", "401", "403", "404", "409"), responseCodes.getValue("candidates"))
         assertEquals(setOf("200", "401", "403", "404", "409"), responseCodes.getValue("unappliedInputs"))
-        assertEquals(setOf("200", "401", "403", "404", "409"), responseCodes.getValue("confirm"))
+        assertEquals(setOf("200", "401", "403", "404", "409", "429", "503"), responseCodes.getValue("confirm"))
         assertEquals(setOf("200", "401", "403", "404"), responseCodes.getValue("result"))
         listOf(
             CandidateListResponse::class.java,

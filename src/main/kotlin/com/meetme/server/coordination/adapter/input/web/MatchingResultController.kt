@@ -112,6 +112,16 @@ class MatchingResultController(
             description = "다른 후보가 이미 확정됨",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
+        ApiResponse(
+            responseCode = "429",
+            description = "후보 확정 요청 제한 초과",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "503",
+            description = "요청 제한 저장소 사용 불가",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
     )
     fun confirm(
         @PathVariable inviteCode: String,

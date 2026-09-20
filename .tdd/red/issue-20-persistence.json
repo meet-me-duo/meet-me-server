@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-20-persistence",
+  "sourceRevision": "709d3291d07323841b6e02b49f947e1497462d01",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/ReliableOutboxMigrationTest.kt",
+      "sha256": "afcaf18e6d9057d4cb948009752e9f88c01a4756bb65e56f4e1a5b84c8f03cea"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ReliableOutboxMigrationTest"
+  ],
+  "failedTests": [
+    "ReliableOutboxMigrationTest - V6 Outbox lease columns were missing"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T02:01:38.3829215Z"
+}

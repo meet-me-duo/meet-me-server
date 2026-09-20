@@ -45,6 +45,16 @@ class AnalysisController(
             description = "분석 지연 상태가 아님",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
+        ApiResponse(
+            responseCode = "429",
+            description = "재분석 요청 제한 초과",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "503",
+            description = "요청 제한 저장소 사용 불가",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
     )
     fun retry(
         @PathVariable inviteCode: String,

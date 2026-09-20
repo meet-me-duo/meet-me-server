@@ -1,0 +1,81 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-20-reliability-observability",
+  "sourceRevision": "709d3291d07323841b6e02b49f947e1497462d01",
+  "boundary": "Redis 중복 전달 멱등성, PostgreSQL 우선 DLQ 전이, 호출 제한 경계, Stream 민감정보 제외와 30일 데이터 삭제",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationWorker.kt",
+      "sha256": "cdc806bc2283f38507b86d8c9e2c21824f8885e3b0552a3b5534650d8641c645"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/redis/RedisRateLimiter.kt",
+      "sha256": "92cbb92b662c6cf413786af02cefe28ac898916bfd6f57e25f39a3821e4775c6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/redis/RedisCoordinationWorkQueue.kt",
+      "sha256": "c69b2b6c56a00ab5aa2e170bc5bc2f528e43657b6d9c814953efd8ef4a8ce028"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/RoomDataRetentionRepository.kt",
+      "sha256": "48ac9c59e7aeff63643b0dcea3ede4388d1985b9ba9c227f021c04a74416d441"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CoordinationWorkerTest.kt",
+      "sha256": "af6fdeeb09a054cb2ce66c29edef8faca2c33a2e6ee548f498308d2b33430bbf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/redis/RedisRateLimiterTest.kt",
+      "sha256": "6338a36fa5e1f6466c4fd01e131fbeb3b2d434d179ce0c8e29cb39f2e90fc7c3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/redis/RedisCoordinationWorkQueueTest.kt",
+      "sha256": "8d82a360ae73f338bb02b3c878955943089026caa14517ef9e437688b9946e2c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/RoomDataRetentionRepositoryTest.kt",
+      "sha256": "e7ed5cc42f2e5dc931df1f5b4c7abc20e0237c6419621d38c7772f81575f2700"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "하나의 Stream delivery에서 조율 처리기를 두 번 실행",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*CoordinationWorkerTest"],
+      "detectedBy": "중복 전달 테스트가 처리기 호출 횟수 2회를 탐지",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "PostgreSQL 영구 실패 기록보다 Redis DLQ 추가를 먼저 수행",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*CoordinationWorkerTest"],
+      "detectedBy": "poison message 테스트가 postgres → redis → ack 순서 위반을 탐지",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "고정 구간 호출 제한의 마지막 허용 요청을 조기 거부",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*RedisRateLimiterTest"],
+      "detectedBy": "호출 제한 경계 테스트가 두 번째 허용 요청의 거부를 탐지",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Stream 메시지에 전체 Outbox payload를 복제",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*RedisCoordinationWorkQueueTest"],
+      "detectedBy": "Redis adapter 테스트가 민감한 원문이 포함된 payload field를 탐지",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "UUID 역직렬화 실패를 poison message로 분류하지 않고 poll 예외로 전파",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*RedisCoordinationWorkQueueTest"],
+      "detectedBy": "Redis adapter 테스트가 손상된 entry의 DESERIALIZATION_FAILURE 분류 누락을 탐지",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "30일보다 오래된 방 대신 최근 활성 방을 삭제",
+      "command": [".\\gradlew.bat", "--no-daemon", "test", "--tests", "*RoomDataRetentionRepositoryTest"],
+      "detectedBy": "보관 경계 통합 테스트가 이전 방 보존과 활성 방 삭제를 탐지",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-20T03:17:49.7399821Z"
+}

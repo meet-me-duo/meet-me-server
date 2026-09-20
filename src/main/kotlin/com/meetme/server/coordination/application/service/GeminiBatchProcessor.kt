@@ -13,6 +13,7 @@ import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.RetryDelayPort
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
+import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.SubmissionBatchId
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
@@ -38,8 +39,10 @@ class GeminiBatchProcessor(
     private val clock: Clock,
     private val persistence: GeminiProcessingPersistenceService,
     private val matchingProcessor: MatchingProcessor? = null,
+    private val metrics: ApplicationMetricsPort? = null,
 ) {
     fun process(batchId: SubmissionBatchId) {
+        val processingStarted = monotonicTime.nanoTime()
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
         if (initial.status !in setOf(CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING)) return
         val run = if (initial.status == CoordinationStatus.QUEUED) persistence.start(initial) else initial
@@ -71,6 +74,7 @@ class GeminiBatchProcessor(
         repeat(MAX_ATTEMPTS) { index ->
             if (monotonicTime.nanoTime() >= deadlineNanos) {
                 persistence.delay(run)
+                metrics?.geminiBatch("ANALYSIS_DELAYED", elapsed(processingStarted), index, null)
                 return
             }
             val attemptNumber = startingAttempt + index + 1
@@ -97,12 +101,14 @@ class GeminiBatchProcessor(
                     attempt.complete(clock.instant(), result.usage, null),
                 )
                 matchingProcessor?.process(batchId)
+                metrics?.geminiBatch("COMPLETED", elapsed(processingStarted), index + 1, estimateCost(result.usage))
                 return
             } catch (exception: NaturalLanguageParserException) {
                 attemptRepository.update(attempt.complete(clock.instant(), ParserUsage(null, null, null), exception.kind.name))
                 val last = index == MAX_ATTEMPTS - 1
                 if (!exception.retryable || last) {
                     persistence.delay(run)
+                    metrics?.geminiBatch("ANALYSIS_DELAYED", elapsed(processingStarted), index + 1, null)
                     return
                 }
                 val upper = 1_000L shl index
@@ -110,12 +116,15 @@ class GeminiBatchProcessor(
                 val delay = Duration.ofMillis(delayMillis)
                 if (delay.toNanos() >= deadlineNanos - monotonicTime.nanoTime()) {
                     persistence.delay(run)
+                    metrics?.geminiBatch("ANALYSIS_DELAYED", elapsed(processingStarted), index + 1, null)
                     return
                 }
                 retryDelay.sleep(delay)
             }
         }
     }
+
+    private fun elapsed(startedNanos: Long): Duration = Duration.ofNanos((monotonicTime.nanoTime() - startedNanos).coerceAtLeast(0))
 
     private fun CoordinationAttempt.complete(
         finishedAt: java.time.Instant,

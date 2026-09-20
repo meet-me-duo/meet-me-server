@@ -75,6 +75,8 @@ interface CoordinationAttemptRepository {
 enum class OutboxStatus {
     PENDING,
     PUBLISHED,
+    PROCESSED,
+    DEAD_LETTERED,
 }
 
 data class OutboxEvent(
@@ -86,14 +88,79 @@ data class OutboxEvent(
     val status: OutboxStatus = OutboxStatus.PENDING,
     val occurredAt: Instant,
     val publishedAt: Instant? = null,
+    val processedAt: Instant? = null,
+    val processingLeaseUntil: Instant? = null,
+    val deliveryCount: Int = 0,
+    val lastFailureKind: String? = null,
+    val deadLetteredAt: Instant? = null,
 ) {
     init {
         require(aggregateType.isNotBlank())
         require(eventType.isNotBlank())
         require(payload.isNotBlank())
-        require((status == OutboxStatus.PENDING) == (publishedAt == null))
+        require(deliveryCount >= 0)
+        when (status) {
+            OutboxStatus.PENDING -> {
+                require(publishedAt == null && processedAt == null && deadLetteredAt == null)
+                require(processingLeaseUntil == null)
+            }
+            OutboxStatus.PUBLISHED -> {
+                require(publishedAt != null && processedAt == null && deadLetteredAt == null)
+            }
+            OutboxStatus.PROCESSED -> {
+                require(publishedAt != null && processedAt != null && deadLetteredAt == null)
+                require(processingLeaseUntil == null)
+            }
+            OutboxStatus.DEAD_LETTERED -> {
+                require(publishedAt != null && processedAt == null && deadLetteredAt != null)
+                require(processingLeaseUntil == null)
+            }
+        }
+    }
+
+    fun processed(at: Instant): OutboxEvent {
+        check(status == OutboxStatus.PUBLISHED) { "Only a published event can be processed" }
+        return copy(status = OutboxStatus.PROCESSED, processedAt = at, processingLeaseUntil = null)
+    }
+
+    fun failed(failureKind: String): OutboxEvent {
+        check(status == OutboxStatus.PUBLISHED) { "Only a published event can fail" }
+        require(failureKind.isNotBlank())
+        return copy(processingLeaseUntil = null, lastFailureKind = failureKind)
+    }
+
+    fun deadLettered(
+        at: Instant,
+        failureKind: String,
+    ): OutboxEvent {
+        check(status == OutboxStatus.PUBLISHED) { "Only a published event can be dead-lettered" }
+        require(failureKind.isNotBlank())
+        return copy(
+            status = OutboxStatus.DEAD_LETTERED,
+            processingLeaseUntil = null,
+            lastFailureKind = failureKind,
+            deadLetteredAt = at,
+        )
+    }
+
+    fun requeued(): OutboxEvent {
+        check(status == OutboxStatus.DEAD_LETTERED) { "Only a dead-lettered event can be requeued" }
+        return copy(
+            status = OutboxStatus.PENDING,
+            publishedAt = null,
+            processedAt = null,
+            processingLeaseUntil = null,
+            deliveryCount = 0,
+            lastFailureKind = null,
+            deadLetteredAt = null,
+        )
     }
 }
+
+data class OutboxProcessingClaim(
+    val event: OutboxEvent,
+    val deliveryCount: Int,
+)
 
 interface OutboxRepository {
     fun insert(event: OutboxEvent)
@@ -104,4 +171,49 @@ interface OutboxRepository {
         aggregateId: UUID,
         eventType: String,
     ): Boolean
+
+    fun findPendingForUpdate(limit: Int): List<OutboxEvent>
+
+    fun markPublished(
+        eventId: OutboxEventId,
+        at: Instant,
+    )
+
+    fun findRecoverablePublished(
+        publishedBefore: Instant,
+        limit: Int,
+    ): List<OutboxEvent>
+
+    fun markRepublished(
+        eventId: OutboxEventId,
+        at: Instant,
+    )
+
+    fun claimProcessing(
+        eventId: OutboxEventId,
+        now: Instant,
+        leaseUntil: Instant,
+    ): OutboxProcessingClaim?
+
+    fun markProcessed(
+        eventId: OutboxEventId,
+        at: Instant,
+    )
+
+    fun releaseAfterFailure(
+        eventId: OutboxEventId,
+        failureKind: String,
+    )
+
+    fun markDeadLettered(
+        eventId: OutboxEventId,
+        at: Instant,
+        failureKind: String,
+    )
+
+    fun pendingCount(): Long = 0
+
+    fun oldestPendingAgeSeconds(now: Instant): Long = 0
+
+    fun requeue(eventId: OutboxEventId)
 }

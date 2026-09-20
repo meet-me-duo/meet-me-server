@@ -7,6 +7,7 @@ import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
 import com.meetme.server.coordination.application.port.output.OutboxEvent
+import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.location.GeoCoordinate
@@ -21,6 +22,7 @@ import org.komapper.core.dsl.query.firstOrNull
 import org.komapper.jdbc.JdbcDatabase
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.time.Instant
 import java.time.ZoneOffset
 import java.util.UUID
 
@@ -308,6 +310,180 @@ class KomapperOutboxRepository(
                 eventType,
             ),
         )
+
+    override fun findPendingForUpdate(limit: Int): List<OutboxEvent> {
+        require(limit > 0)
+        val ids =
+            jdbcTemplate.query(
+                """
+                SELECT id FROM outbox_events
+                WHERE status = 'PENDING'
+                ORDER BY occurred_at, id
+                LIMIT ?
+                FOR UPDATE SKIP LOCKED
+                """.trimIndent(),
+                { rs, _ -> OutboxEventId(rs.getObject("id", UUID::class.java)) },
+                limit,
+            )
+        return ids.mapNotNull(::findById)
+    }
+
+    override fun markPublished(
+        eventId: OutboxEventId,
+        at: Instant,
+    ) {
+        val changed =
+            jdbcTemplate.update(
+                """
+                UPDATE outbox_events
+                SET status = 'PUBLISHED', published_at = ?
+                WHERE id = ? AND status = 'PENDING'
+                """.trimIndent(),
+                at.atOffset(ZoneOffset.UTC),
+                eventId.value,
+            )
+        check(changed == 1) { "Outbox event was not pending" }
+    }
+
+    override fun findRecoverablePublished(
+        publishedBefore: Instant,
+        limit: Int,
+    ): List<OutboxEvent> {
+        require(limit > 0)
+        val ids =
+            jdbcTemplate.query(
+                """
+                SELECT id FROM outbox_events
+                WHERE status = 'PUBLISHED'
+                  AND published_at <= ?
+                  AND (processing_lease_until IS NULL OR processing_lease_until <= CURRENT_TIMESTAMP)
+                ORDER BY published_at, id
+                LIMIT ?
+                """.trimIndent(),
+                { rs, _ -> OutboxEventId(rs.getObject("id", UUID::class.java)) },
+                publishedBefore.atOffset(ZoneOffset.UTC),
+                limit,
+            )
+        return ids.mapNotNull(::findById)
+    }
+
+    override fun markRepublished(
+        eventId: OutboxEventId,
+        at: Instant,
+    ) {
+        jdbcTemplate.update(
+            "UPDATE outbox_events SET published_at = ? WHERE id = ? AND status = 'PUBLISHED'",
+            at.atOffset(ZoneOffset.UTC),
+            eventId.value,
+        )
+    }
+
+    override fun claimProcessing(
+        eventId: OutboxEventId,
+        now: Instant,
+        leaseUntil: Instant,
+    ): OutboxProcessingClaim? {
+        val deliveries =
+            jdbcTemplate
+                .query(
+                    """
+                    UPDATE outbox_events
+                    SET processing_lease_until = ?, delivery_count = delivery_count + 1
+                    WHERE id = ? AND status = 'PUBLISHED'
+                      AND (processing_lease_until IS NULL OR processing_lease_until <= ?)
+                    RETURNING delivery_count
+                    """.trimIndent(),
+                    { rs, _ -> rs.getInt("delivery_count") },
+                    leaseUntil.atOffset(ZoneOffset.UTC),
+                    eventId.value,
+                    now.atOffset(ZoneOffset.UTC),
+                ).firstOrNull() ?: return null
+        return OutboxProcessingClaim(requireNotNull(findById(eventId)), deliveries)
+    }
+
+    override fun markProcessed(
+        eventId: OutboxEventId,
+        at: Instant,
+    ) {
+        val changed =
+            jdbcTemplate.update(
+                """
+                UPDATE outbox_events
+                SET status = 'PROCESSED', processed_at = ?, processing_lease_until = NULL
+                WHERE id = ? AND status = 'PUBLISHED'
+                """.trimIndent(),
+                at.atOffset(ZoneOffset.UTC),
+                eventId.value,
+            )
+        check(changed == 1) { "Outbox event could not be marked processed" }
+    }
+
+    override fun releaseAfterFailure(
+        eventId: OutboxEventId,
+        failureKind: String,
+    ) {
+        val changed =
+            jdbcTemplate.update(
+                """
+                UPDATE outbox_events
+                SET processing_lease_until = NULL, last_failure_kind = ?
+                WHERE id = ? AND status = 'PUBLISHED'
+                """.trimIndent(),
+                failureKind,
+                eventId.value,
+            )
+        check(changed == 1) { "Outbox failure could not be recorded" }
+    }
+
+    override fun markDeadLettered(
+        eventId: OutboxEventId,
+        at: Instant,
+        failureKind: String,
+    ) {
+        val changed =
+            jdbcTemplate.update(
+                """
+                UPDATE outbox_events
+                SET status = 'DEAD_LETTERED', processing_lease_until = NULL,
+                    last_failure_kind = ?, dead_lettered_at = ?
+                WHERE id = ? AND status = 'PUBLISHED'
+                """.trimIndent(),
+                failureKind,
+                at.atOffset(ZoneOffset.UTC),
+                eventId.value,
+            )
+        check(changed == 1) { "Outbox event could not be dead-lettered" }
+    }
+
+    override fun pendingCount(): Long =
+        requireNotNull(
+            jdbcTemplate.queryForObject("SELECT count(*) FROM outbox_events WHERE status = 'PENDING'", Long::class.java),
+        )
+
+    override fun oldestPendingAgeSeconds(now: Instant): Long =
+        jdbcTemplate.queryForObject(
+            """
+            SELECT COALESCE(EXTRACT(EPOCH FROM (?::timestamptz - min(occurred_at))), 0)::bigint
+            FROM outbox_events WHERE status = 'PENDING'
+            """.trimIndent(),
+            Long::class.java,
+            now.atOffset(ZoneOffset.UTC),
+        ) ?: 0
+
+    override fun requeue(eventId: OutboxEventId) {
+        val changed =
+            jdbcTemplate.update(
+                """
+                UPDATE outbox_events
+                SET status = 'PENDING', published_at = NULL, processed_at = NULL,
+                    processing_lease_until = NULL, delivery_count = 0,
+                    last_failure_kind = NULL, dead_lettered_at = NULL
+                WHERE id = ? AND status = 'DEAD_LETTERED'
+                """.trimIndent(),
+                eventId.value,
+            )
+        check(changed == 1) { "Dead-lettered Outbox event could not be requeued" }
+    }
 }
 
 @Repository

@@ -40,4 +40,7 @@ data class ApiProblemSchema(
     val maximum: Int? = null,
     @field:Schema(description = "세부 검증 거부 사유", nullable = true)
     val reason: String? = null,
+    @field:JsonProperty("retry_after_seconds")
+    @field:Schema(description = "요청 제한 해제까지 남은 초", nullable = true)
+    val retryAfterSeconds: Long? = null,
 )

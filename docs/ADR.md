@@ -368,3 +368,18 @@ MVP 출시 속도와 핵심 일정 조율 로직의 정확성을 우선한다. A
 **이유**: 계층을 최상위에 먼저 두면 하나의 기능을 변경할 때 저장소 전체의 `domain`, `application`, `adapter`를 오가야 하고 Aggregate 소유권이 디렉터리 구조에 드러나지 않는다. Aggregate를 먼저 배치하면 관련 도메인, 유스케이스, port와 adapter를 함께 탐색할 수 있고 네 Aggregate 경계와 코드 소유권이 일치한다. 저장소 port와 영속 구현까지 같은 경계에 두면 `shared`가 모든 비즈니스 타입을 아는 공용 계층으로 팽창하는 것도 막을 수 있다.
 
 **트레이드오프**: Aggregate를 함께 조정하는 유스케이스는 여러 기능 패키지의 port와 domain 타입을 import하므로 패키지 간 의존 관계를 검토해야 한다. 공통 값의 `shared` 승격 기준이 느슨하면 다시 결합도가 커질 수 있어 최소 공유 원칙과 아키텍처 테스트가 필요하다. 동일한 `adapter/application/domain` 하위 구조가 반복되지만 기능 탐색성과 향후 모듈 분리 경로가 명확해진다.
+
+### ADR-040: PostgreSQL 기준 Redis 복구와 제출 MVP 로컬 관측 기반 채택
+
+**상태**: Accepted
+**날짜**: 2026-09-20
+
+**결정**: 제출 MVP의 비동기 작업은 `meetme:coordination:work:v1` Stream과 `coordination-workers-v1` Consumer Group을 사용하되 PostgreSQL Outbox의 발행·처리 상태, 2분 처리 lease와 전달 횟수를 최종 기준으로 둔다. Worker는 성공 또는 `ANALYSIS_DELAYED` 정상 종결 뒤 ACK하고 entry를 삭제한다. 2분 이상 Pending인 메시지를 회수하며 Redis 유실 뒤에는 2분 이상 처리되지 않은 `PUBLISHED` Outbox를 같은 참조로 재발행한다. poison message는 첫 전달 포함 5회 실패 시 PostgreSQL을 먼저 `DEAD_LETTERED`로 전이하고 참조 정보만 DLQ에 저장한다. DLQ는 30일·최근 10,000건 상한을 함께 적용하며 명시적인 운영 시작 인자로만 재처리한다. `ANALYSIS_DELAYED`는 자동 재시도하지 않고 주최자 요청만 허용한다.
+
+공개 익명 API의 Redis 호출 제한 기본값은 방 생성 IP·세션당 시간당 10회, 참여 IP·세션당 시간당 30회, 제출 세션당 분당 30회, 마감·재분석·확정 세션·방 조합당 분당 5회다. 키에는 IP 또는 게스트 cookie 원문 대신 SHA-256 digest를 사용한다. Redis 장애 시 방 생성과 비용 유발 주최자 명령은 fail closed, 참여와 제출은 fail open으로 처리한다. 종료 또는 생성 후 30일이 지난 방 데이터와 참조되지 않는 만료 게스트 세션은 삭제한다.
+
+제출 MVP 관측성은 Actuator·Micrometer Prometheus endpoint, JSON 표준 출력, 서버 생성 상관관계 ID와 민감정보 제외 테스트까지 구현한다. Gemini token 사용량의 USD 추정 비용은 환경 설정 가능한 보수적 환산율로 원화 환산해 논리 배치당 10원 미만 여부를 기록한다. Grafana Alloy, Grafana Cloud Metrics·Loki, 대시보드와 Alerting 및 전송 자격 증명 등록은 Post-MVP로 이관한다. 외부 API는 각 공급자별로 확정된 timeout과 제한 재시도를 유지하고 MVP에는 회로 차단기를 추가하지 않는다. 이 결정은 ADR-017의 Grafana Cloud를 MVP에 포함한 범위를 대체하고, ADR-011·ADR-017에서 남긴 Stream·Pending·DLQ 세부값을 확정한다.
+
+**이유**: Redis가 비어 있거나 재시작되어도 영구 작업과 사용자 입력을 PostgreSQL에서 다시 찾을 수 있게 하고, 중복 전달을 허용하면서도 LLM 호출과 상태 전이의 동시 중복을 lease로 막기 위해서다. 2분은 Gemini 논리 작업의 60초 상한과 Kakao 정규화의 15초 상한에 처리 여유를 더한 값이다. 제출 MVP에서 외부 telemetry 계정과 수집기 배포를 제외하면 비밀정보·비용·운영 의존성을 늘리지 않고도 지표와 구조화 로그 계약을 먼저 검증할 수 있다. 수동 분석 재시도와 제한된 호출 한도는 공개 익명 서비스의 비용 폭주를 줄인다.
+
+**트레이드오프**: 고정 구간 호출 제한은 구간 경계에서 순간 burst를 허용하고 첫 요청의 IP digest는 역추정 가능성이 있어 Redis의 단기 운영 데이터로만 사용해야 한다. fail closed 명령은 Redis 장애 중 사용할 수 없고, fail open 제출은 장애 중 남용 제한이 약해진다. 2분 복구는 장애 직후 결과를 지연시키며 relay 재발행으로 중복 Stream entry가 생길 수 있으나 PostgreSQL lease와 상태가 중복 실행을 막는다. ACK 후 entry 삭제와 제한된 DLQ 보존은 Redis 자체의 장기 감사 이력을 제공하지 않으므로 PostgreSQL 이력과 로그에 의존한다. Grafana Cloud를 미루면 제출 MVP에서는 중앙 대시보드와 자동 알림이 없고 운영자가 로컬 endpoint와 표준 출력을 직접 확인해야 한다.

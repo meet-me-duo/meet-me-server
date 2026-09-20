@@ -41,7 +41,7 @@ class MeetingDurationRemovalMigrationTest {
             }
         }
 
-        val latest = flyway()
+        val latest = flyway("5")
         latest.migrate()
 
         assertEquals(

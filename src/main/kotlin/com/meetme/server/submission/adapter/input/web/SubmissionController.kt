@@ -53,6 +53,11 @@ class SubmissionController(
             description = "입력 수집 종료 또는 배치 상한 초과",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
+        ApiResponse(
+            responseCode = "429",
+            description = "제출 요청 제한 초과",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
     )
     fun save(
         @PathVariable inviteCode: String,
