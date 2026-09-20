@@ -13,14 +13,14 @@
 - `[x]`는 구현, 관련 테스트, 문서 검토와 검증이 모두 끝난 작업만 표시한다.
 - `[ ]`는 미착수, 진행 중, 사용자 선택 대기 또는 검증 미완료 상태를 포함한다.
 - 작업 시작 전 현재 브랜치, `git status`, 최근 커밋과 관련 GitHub Issue/PR을 확인한다.
-- `develop`에서는 직접 작업하지 않는다. 피처 브랜치는 깨끗한 작업 트리에서 `develop`의 `git pull --ff-only origin develop`이 성공한 뒤 생성한다.
+- `develop`에서는 직접 작업하지 않는다. `feature`, `fix`, `docs`, `chore` 작업 브랜치는 깨끗한 작업 트리에서 `develop`의 `git pull --ff-only origin develop`이 성공한 뒤 변경 목적에 맞는 접두사로 생성한다.
 - `develop`이 분기되거나 pull이 충돌하면 임의 merge/rebase하지 않고 해결 선택지를 사용자에게 제시한다.
 - 의미 있는 제약이나 복수의 구현 방안이 있으면 장점, 단점, 비용과 장기 영향을 제시하고 사용자 선택을 받은 뒤 진행한다.
 - `TBD`가 걸린 작업은 의사결정 게이트가 완료되기 전에 종속 구현을 시작하지 않는다.
 - 하나의 체크 항목 또는 밀접한 하위 항목 묶음을 하나의 명확한 PR 목적으로 유지한다.
 - 작업 브랜치를 만들기 전에 GitHub Issue를 생성하고 PR 본문의 독립된 `Closes #<issue-number>` 행으로 연결한다. 프로젝트 GitHub Action이 형식과 열린 Issue 참조를 검증하고 `develop` 병합 시 자동 종료한다.
 - 사용자와의 대화에서 범위, 우선순위, 작업 순서 또는 결정이 바뀌면 이 계획도 현재 합의에 맞게 수정한다.
-- 빈 원격 저장소의 초기 구성만 `main`에 기준점용 커밋을 만든 뒤 `develop`과 `feature/initial-setup`을 생성하여 PR로 검토한다. 이 초기 절차가 끝난 뒤에는 예외 없이 최신 `develop`에서 feature 브랜치를 만드는 일반 브랜치 전략을 적용한다.
+- 빈 원격 저장소의 초기 구성만 `main`에 기준점용 커밋을 만든 뒤 `develop`과 `feature/initial-setup`을 생성하여 PR로 검토한다. 이 초기 절차가 끝난 뒤에는 예외 없이 최신 `develop`에서 목적별 작업 브랜치를 만드는 일반 브랜치 전략을 적용한다.
 - 작업 완료 시 체크박스, 최종 갱신일과 하단 진행 기록을 함께 갱신한다.
 - 사용자가 완료된 작업의 커밋과 푸시를 요청하면, 커밋 전에 완료 체크박스, 현재 진행 요약, 최종 갱신일과 진행 기록을 먼저 실제 상태에 맞게 반영한다.
 - 커밋 전 진행 기록의 Commit/PR 칸은 `동일 커밋 예정`으로 기록할 수 있으며, 실제 커밋 해시는 Git 이력을 기준으로 추적한다.
@@ -37,10 +37,10 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후속 `feature/automatic-production-cd` — Issue #54의 `main` CI 성공 후 운영 CD 자동 실행
+- **현재 단계:** 후속 `docs/portfolio-readme` — Issue #58의 제품 소개 및 백엔드 포트폴리오 README 구성
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** 기능 백엔드와 운영 자연어 E2E는 완료했다. 현재 `main` 병합 뒤 수동 실행 없이 성공한 main CI의 정확한 commit을 자동 배포하도록 CD를 보완 중이다. 출시 운영 준비로는 부하 테스트, 실제 이전 digest rollback과 RDS 복구 리허설이 남았다.
+- **현재 차단 사항:** 기능 백엔드, 운영 자연어 E2E와 main CI 성공 후 자동 CD를 완료했다. 현재 제품 가치와 핵심 설계·검증·운영 구조를 포트폴리오 관점에서 README에 정리 중이다. 출시 운영 준비로는 부하 테스트, 실제 이전 digest rollback과 RDS 복구 리허설이 남았다.
 - **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개, GitHub `production` Environment 변수 7개 등록과 첫 운영 배포 승인을 완료했다. Google AI Studio 프로젝트도 Tier 1로 전환했고 등록 키·모델 metadata와 최소 생성 호출이 200이므로 현재 키가 운영 호출에 허용됨을 값 노출 없이 확인했다. 프로젝트 spend cap·사용량 알림 설정 여부는 확인이 남아 있다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
@@ -70,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #54의 `feature/automatic-production-cd`에서 성공한 `main` push CI만 Production workflow를 자동 시작하고 선행 CI의 정확한 `head_sha`를 직렬 배포하도록 구성한다. 수동 `main` 재배포 경로와 배포 정책 회귀 검사를 유지한다.
+- **현재 작업:** Issue #58의 `docs/portfolio-readme`에서 제품 문제·사용자 흐름, AI와 결정론적 계산 경계, 비동기 복구·보안·테스트·AWS 자동 배포를 실제 구현과 일치하는 포트폴리오형 README로 구성한다. 브랜치 접두사는 `feature`, `fix`, `docs`, `chore`로 목적별 분류한다.
 
 ## 실행 순서
 
@@ -137,7 +137,7 @@
 - [x] 빈 원격 저장소의 PR 기준점용 커밋 `64e5759`를 `main`에 push한다.
 - [x] `develop` 브랜치를 생성하고 원격에 push한다.
 - [x] 최신 `develop`에서 `feature/initial-setup`을 생성하고 현재 초기 구성을 동일 커밋 예정 상태로 준비한다.
-- [x] `develop` 직접 작업 금지와 최신 `develop`에서만 피처 브랜치를 생성하는 규칙을 문서화한다.
+- [x] `develop` 직접 작업 금지와 최신 `develop`에서만 목적별 작업 브랜치를 생성하는 규칙을 문서화한다.
 - [ ] `[SHARED]` GitHub 브랜치 보호 규칙과 필수 상태 검사를 합의하고 설정한다.
 
 ### 에이전트 개발 흐름
@@ -789,3 +789,5 @@
 | 2026-09-20 | PR #53의 `main` 병합 뒤 Deploy Production run #35509635216으로 Gemini 타입별 출력 계약 재배포 | ARM64 image·ECR·Flyway V6 멱등·SSM 교체·앱과 Nginx health·공개 health와 OpenAPI 전체 성공 | 동일 커밋 예정, #54 |
 | 2026-09-20 | 기존 지연 합성 방 재분석으로 자연어 전용·자연어와 수동 슬롯 조합의 운영 E2E 완료 | `READY`, `COMPLETE`, Plan B와 실제 시간 구간, 호스트 확정 200·멤버 확정 403·멤버 결과 200·`CONFIRMED` 확인. Gemini input/output 252/311 token, 응답 738 bytes, 추정 USD 0.00135525와 배치 10원 미만 지표 확인 | 동일 커밋 예정, #54 |
 | 2026-09-20 | Issue #54의 main CI 성공 후 운영 CD 자동 실행 정책 구현 | `push`·`main`·`success` 삼중 조건, 선행 `head_sha` 고정, 수동 main 복구 경로, Production Environment·OIDC 유지와 직렬·진행 중 비취소 정책 회귀 검사 | 동일 커밋 예정, #54 |
+| 2026-09-20 | PR #57의 `main` 병합으로 자동 CI/CD 최초 운영 검증 | main CI run #35511844367 성공 뒤 수동 실행 없이 `workflow_run` CD run #35511947428 성공. 두 실행의 SHA `80169fc0` 일치와 SSM 배포·공개 health·OpenAPI·Swagger UI 200 확인 | 동일 커밋 예정, #58 |
+| 2026-09-20 | Issue #58의 제품 소개·백엔드 포트폴리오 README 재구성과 작업 브랜치 분류 확장 | 기준 문서·코드 대조, markdownlint 오류 0건, 저장소 링크 존재, CI badge·운영 Swagger·OpenAPI HTTP 200, `ktlintCheck`·`assemble`·`test`와 commit guard 통과 | 동일 커밋 예정, #58 |
