@@ -4,6 +4,8 @@ set -euo pipefail
 release_directory="${1:?release directory is required}"
 app_image="${2:?application image digest is required}"
 region="${AWS_REGION:-ap-northeast-2}"
+compose_project="${MEETME_COMPOSE_PROJECT_NAME:-meet-me-production}"
+export COMPOSE_PROJECT_NAME="$compose_project"
 
 if [[ "$app_image" != *@sha256:* ]]; then
   echo "APP_IMAGE must use an immutable sha256 digest" >&2
@@ -30,6 +32,27 @@ previous=""
 if [[ -L /opt/meet-me/current ]]; then
   previous="$(readlink -f /opt/meet-me/current || true)"
 fi
+
+remove_legacy_container() {
+  local container_name="$1"
+  local current_project
+
+  if ! docker container inspect "$container_name" >/dev/null 2>&1; then
+    return
+  fi
+
+  current_project="$(
+    docker container inspect \
+      --format '{{ index .Config.Labels "com.docker.compose.project" }}' \
+      "$container_name" 2>/dev/null || true
+  )"
+  if [[ "$current_project" != "$compose_project" ]]; then
+    docker container rm --force "$container_name" >/dev/null
+  fi
+}
+
+remove_legacy_container meet-me-app
+remove_legacy_container meet-me-nginx
 
 APP_IMAGE="$app_image" docker compose -f compose.production.yml up -d --remove-orphans
 
@@ -59,4 +82,3 @@ fi
 
 ln -sfn "$release_directory" /opt/meet-me/current
 docker image prune --force --filter 'until=168h' >/dev/null
-

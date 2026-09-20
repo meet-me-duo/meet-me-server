@@ -2,6 +2,8 @@
 set -euo pipefail
 
 release_directory="${1:?previous release directory is required}"
+compose_project="${MEETME_COMPOSE_PROJECT_NAME:-meet-me-production}"
+export COMPOSE_PROJECT_NAME="$compose_project"
 
 if [[ ! -f "$release_directory/.release.env" ]]; then
   echo "Release metadata not found: $release_directory/.release.env" >&2
@@ -32,4 +34,3 @@ done
 docker logs --tail 100 meet-me-app >&2 || true
 echo "Rollback health check failed" >&2
 exit 1
-
