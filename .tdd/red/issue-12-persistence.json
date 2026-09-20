@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-12-persistence",
+  "sourceRevision": "be484add280e484f89bc9030251a4f331d01195d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/adapter/output/persistence/AnonymousRoomLifecycleMigrationTest.kt",
+      "sha256": "b130dc98062cca7fb7a5f32817192e5d1f8e00387e738c1315275c6aa00c1aef"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.adapter.output.persistence.AnonymousRoomLifecycleMigrationTest"
+  ],
+  "failedTests": [
+    "AnonymousRoomLifecycleMigrationTest (4 tests)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-19T08:59:00Z"
+}

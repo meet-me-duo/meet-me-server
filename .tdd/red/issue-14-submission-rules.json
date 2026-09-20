@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-14-submission-rules",
+  "sourceRevision": "deab4a7da870f4d00814c5a5f5c6a83b41384da5",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/submission/SubmissionRulesTest.kt",
+      "sha256": "340f6a5dc7b5a871ee685fff30f9ee407692ee40699caa3d1988dfe246ddf18e"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.domain.submission.SubmissionRulesTest"
+  ],
+  "failedTests": [
+    "SubmissionRulesTest (4 tests)"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-19T10:36:55.3784760Z"
+}

@@ -1,0 +1,15 @@
+.git
+.github
+.gradle
+.idea
+.kotlin
+.codex
+.tdd
+build
+out
+.env
+.env.*
+!.env.example
+implementation_plan.md
+docs
+

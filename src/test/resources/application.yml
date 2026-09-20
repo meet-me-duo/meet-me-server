@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meetme_test
+    username: meetme
+    password: meetme
+  flyway:
+    enabled: false
+
+meetme:
+  reliability:
+    enabled: false
+  rate-limit:
+    enabled: false
+  data-retention:
+    enabled: false

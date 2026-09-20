@@ -1,0 +1,26 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-20-reliability",
+  "sourceRevision": "709d3291d07323841b6e02b49f947e1497462d01",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CoordinationWorkerTest.kt",
+      "sha256": "af6fdeeb09a054cb2ce66c29edef8faca2c33a2e6ee548f498308d2b33430bbf"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*CoordinationWorkerTest"
+  ],
+  "failedTests": [
+    "CoordinationWorkerTest - duplicate stream delivery reached TDD TODO",
+    "CoordinationWorkerTest - ANALYSIS_DELAYED acknowledgement reached TDD TODO",
+    "CoordinationWorkerTest - fifth poison delivery reached TDD TODO",
+    "CoordinationWorkerTest - malformed fifth delivery reached TDD TODO"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-20T03:15:24.1010167Z"
+}

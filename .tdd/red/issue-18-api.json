@@ -1,0 +1,22 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-18-api",
+  "sourceRevision": "ceb7fea3a26fdcc5e5168496198e415883325025",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleWebIntegrationTest.kt",
+      "sha256": "25ab192e31a4d724876e0bb6b109f37d858d8a8a233bdf11bc33881e5916f4ea"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "test",
+    "--tests",
+    "*RoomLifecycleWebIntegrationTest"
+  ],
+  "failedTests": [
+    "RoomLifecycleWebIntegrationTest - OpenAPI still exposed duration_minutes"
+  ],
+  "expectedFailureCategory": "EXPECTED_ASSERTION_FAILURE",
+  "recordedAt": "2026-09-19T16:24:50.1163811Z"
+}

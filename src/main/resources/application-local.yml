@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meetme
+    username: meetme
+    password: meetme
+
+meetme:
+  anonymous:
+    allowed-origins: ${APP_ALLOWED_ORIGINS:http://localhost:3000}
+    cookie-secure: ${ANONYMOUS_COOKIE_SECURE:false}

@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-22-openapi-public-status",
+  "sourceRevision": "a9c334eeba5f7ea8e4dfad7eab2938f15fdd55a6",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleWebIntegrationTest.kt",
+      "sha256": "91969c6e5d29704b027af8ffc9cb25a8f776d2d375fbff463848543dc164fada"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RoomLifecycleWebIntegrationTest.OpenAPI는 네 방 endpoint와 오류 계약을 노출한다"
+  ],
+  "failedTests": [
+    "RoomLifecycleWebIntegrationTest - OpenAPI는 네 방 endpoint와 오류 계약을 노출한다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T07:04:15.7123659Z"
+}

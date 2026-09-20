@@ -1,0 +1,38 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-10-domain",
+  "sourceRevision": "6bd9169a086db09bce08ce94774247ceff970199",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/time/TimeModelsTest.kt",
+      "sha256": "633fb26d8f886f87e524b95be98aed0802a7fb7943586b0fc9b2f980fd13fa15"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/meeting/MeetingRoomTest.kt",
+      "sha256": "53e61c8bf730620c02c85940d367c23a60f244c8ec228e2479797d3b608c9bae"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/submission/SubmissionTest.kt",
+      "sha256": "c6c31477e3da19f1350598a1a569b3bca49803436b2aed5280fb3dd7150a1491"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/domain/coordination/CoordinationRunTest.kt",
+      "sha256": "fc8613e9c96dbe814117bae50889434831961a32b509b38c56d451ecce0197ce"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.domain.*"
+  ],
+  "failedTests": [
+    "TimeModelsTest - 모임 소요 시간과 좌표의 유효 범위를 검증한다",
+    "MeetingRoomTest (4 tests)",
+    "SubmissionTest (3 tests)",
+    "CoordinationRunTest (3 tests)"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-18T15:03:24.4753747Z"
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue-10-persistence",
+  "sourceRevision": "6bd9169a086db09bce08ce94774247ceff970199",
+  "boundary": "Spring application transaction coordinating Komapper JDBC and PostgreSQL outbox writes",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationPersistenceService.kt",
+      "sha256": "8ede5ee25dfef962a3541267d9055cdfaf4b1e39a7b9de5e9082b3373e9404f7"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "bc45390c3d59294d5a95d84b4ef312ebb68eaac0665aafd19f26bc260b56d21d"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Removed @Transactional from CoordinationPersistenceService.persist so the run insert committed before a duplicate outbox insert failed",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*CorePersistenceIntegrationTest.Outbox 저장 실패 시 CoordinationRun도 rollback한다"
+      ],
+      "detectedBy": "Rollback assertion observed the unexpectedly persisted CoordinationRun",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-09-18T15:06:39.1216578Z"
+}

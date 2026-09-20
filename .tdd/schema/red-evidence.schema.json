@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://meet-me.local/schemas/red-evidence.schema.json",
+  "title": "TDD RED evidence summary",
+  "description": "Git-tracked summary of an expected RED test run. Raw test output is stored locally outside Git.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "workItem",
+    "sourceRevision",
+    "testFiles",
+    "command",
+    "failedTests",
+    "expectedFailureCategory",
+    "recordedAt"
+  ],
+  "properties": {
+    "workItem": {
+      "type": "string",
+      "description": "Stable lowercase identifier for one TDD cycle, normally based on its issue number.",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "sourceRevision": {
+      "type": "string",
+      "description": "Full Git object ID used as the source baseline before the RED cycle.",
+      "pattern": "^[0-9a-f]{40}(?:[0-9a-f]{24})?$"
+    },
+    "testFiles": {
+      "type": "array",
+      "description": "Exact Kotlin test files executed for RED and their post-edit SHA-256 fingerprints.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^src/test/kotlin/.+\\.kt$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "command": {
+      "type": "array",
+      "description": "Executed command represented as arguments so shell quoting is not ambiguous.",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "failedTests": {
+      "type": "array",
+      "description": "Stable names of tests that failed for the expected reason.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "expectedFailureCategory": {
+      "type": "string",
+      "description": "Expected failure caused by behavior that the production implementation does not provide yet.",
+      "enum": ["MISSING_BEHAVIOR", "TDD_TODO_REACHED"]
+    },
+    "recordedAt": {
+      "type": "string",
+      "description": "UTC time when the RED result was observed.",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$"
+    }
+  }
+}
