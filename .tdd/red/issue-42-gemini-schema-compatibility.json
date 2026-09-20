@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-42-gemini-schema-compatibility",
+  "sourceRevision": "d3b2bca5b312a6b711cc38849267791c7dad55f1",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "f108a8e9d17daf4cac5e12794d923e40bf46f3299638c46b7e50b9df52845788"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest.중첩 배열 상한은 Gemini schema가 아니라 응답 검증에서 적용한다"
+  ],
+  "failedTests": [
+    "GeminiNaturalLanguageParserAdapterTest - 중첩 배열 상한은 Gemini schema가 아니라 응답 검증에서 적용한다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T10:55:33.4448793Z"
+}
