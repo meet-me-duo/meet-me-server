@@ -37,10 +37,10 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후속 `feature/gemini-typed-output-schema` — Issue #50의 Gemini 타입별 구조화 출력 계약과 운영 자연어 E2E 보완
+- **현재 단계:** 후속 `feature/automatic-production-cd` — Issue #54의 `main` CI 성공 후 운영 CD 자동 실행
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** Deploy Production run #35508363012로 의미 조건 정규화 재배포는 성공했지만 새 자연어 방은 Gemini가 공통 optional schema에서 `polarity`·`end_time`을 생략하고 RFC 3339 offset time을 반환해 `ANALYSIS_DELAYED`가 됐다. 타입별 `anyOf` 필수 필드와 offset 없는 `HH:mm` 방 지역 시각 계약을 실제 Gemini probe 200으로 확인해 구현했으며, 병합·재배포 뒤 기존 지연 방의 `READY`·`COMPLETE` 재분석이 남았다. 부하 테스트와 실제 이전 digest rollback·RDS 복구 리허설도 아직 수행하지 않았다.
+- **현재 차단 사항:** 기능 백엔드와 운영 자연어 E2E는 완료했다. 현재 `main` 병합 뒤 수동 실행 없이 성공한 main CI의 정확한 commit을 자동 배포하도록 CD를 보완 중이다. 출시 운영 준비로는 부하 테스트, 실제 이전 digest rollback과 RDS 복구 리허설이 남았다.
 - **현재 사용자 개입:** AWS Paid Plan `ACTIVE`와 Credit USD 120 유지, 기존 웹·메일 없음, 가비아 네임서버 변경·공개 DNS 전파, SSM `SecureString` 3개, GitHub `production` Environment 변수 7개 등록과 첫 운영 배포 승인을 완료했다. Google AI Studio 프로젝트도 Tier 1로 전환했고 등록 키·모델 metadata와 최소 생성 호출이 200이므로 현재 키가 운영 호출에 허용됨을 값 노출 없이 확인했다. 프로젝트 spend cap·사용량 알림 설정 여부는 확인이 남아 있다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
@@ -70,7 +70,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #50의 `feature/gemini-typed-output-schema`에서 조건 타입별 필수 출력과 offset 없는 `HH:mm` 지역 시각을 provider schema·prompt에 강제하고, 수정 재배포 뒤 자연어 전용·조합 제출이 COMPLETE 후보로 전이하는지 검증한다.
+- **현재 작업:** Issue #54의 `feature/automatic-production-cd`에서 성공한 `main` push CI만 Production workflow를 자동 시작하고 선행 CI의 정확한 `head_sha`를 직렬 배포하도록 구성한다. 수동 `main` 재배포 경로와 배포 정책 회귀 검사를 유지한다.
 
 ## 실행 순서
 
@@ -574,12 +574,12 @@
 ## Phase 10 — Wanted 제출 MVP 통합 검증과 출시 준비
 
 - [x] 로그인 없이 익명 세션 발급 → 방 생성 → 주최자 참여 등록 → 링크 공유 흐름을 E2E 검증한다.
-- [ ] 익명 참여자의 자연어 전용·수동 슬롯 전용·두 입력 조합 제출과 본인 최신 입력 복원 흐름을 E2E 검증한다. 운영 수동 슬롯 전용 제출과 복원은 완료했고 자연어 전용·조합 입력은 Gemini 의미 조건 정규화 재배포 뒤 COMPLETE 결과로 재검증한다.
+- [x] 익명 참여자의 자연어 전용·수동 슬롯 전용·두 입력 조합 제출과 본인 최신 입력 복원 흐름을 E2E 검증한다.
 - [x] 공유 링크·다른 세션·누락 또는 위조 쿠키로 주최자 명령과 타인 입력에 접근하지 못하는지 E2E 검증한다.
 - [x] 제출 MVP에 Google·Kakao 로그인과 Calendar OAuth endpoint가 노출되지 않는지 검증한다.
 - [x] 마지막 제출 → Plan A/B/C 생성 → 호스트 확정 → 결과 조회를 E2E 검증한다.
 - [x] 정상 반영된 조건의 블라인드 입력과 미반영 원문의 주최자 한정 예외가 유지되는지 보안 관점에서 검증한다.
-- [ ] Gemini 방 전체 배치별 논리 작업, Full Jitter 기술 재시도 범위와 실제 비용 기록을 운영과 유사한 환경에서 검증한다.
+- [x] Gemini 방 전체 배치별 논리 작업, Full Jitter 기술 재시도 범위와 실제 비용 기록을 운영과 유사한 환경에서 검증한다.
 - [x] 파싱 실패 → `PARTIAL` 후보 → 주최자 미반영 원문 확인 → 최종 확정 흐름을 E2E 검증한다.
 - [x] Gemini 기술적 실패 → `ANALYSIS_DELAYED` → 로딩 종료 → 주최자 재분석 → 결과 생성 흐름과 타인 원문 비공개를 E2E 검증한다.
 - [ ] 장소 허용 영역 합집합·교집합, 이동 제약·미확정 장소와 Plan B/C fallback 회귀 시나리오를 검증한다.
@@ -786,3 +786,6 @@
 | 2026-09-20 | PR #49의 `main` 병합 뒤 Deploy Production run #35508363012로 Gemini 의미 조건 정규화 재배포 | ARM64 image·ECR·Flyway V6 멱등·SSM 교체·앱과 Nginx health·공개 health와 OpenAPI 전체 성공 | 동일 커밋 예정, #50 |
 | 2026-09-20 | 새 합성 방의 자연어 전용·자연어와 수동 슬롯 조합 제출이 다시 `ANALYSIS_DELAYED`로 종결된 원인 분리 | 최신 attempt 1회 `INVALID_RESPONSE`. 실제 structured response에서 공통 optional schema가 `polarity`·`end_time`을 생략하고 `start_time`에 `+09:00` offset을 포함함을 합성 응답으로 확인 | 동일 커밋 예정, #50 |
 | 2026-09-20 | 조건 타입별 `anyOf`와 offset 없는 방 지역 시각 계약 선택지 A 확정·구현 | 5개 타입 변형과 필수 필드를 가진 schema probe 200, `format: time` 제거와 `HH:mm` description·prompt 적용 probe 200 및 완전한 시간 구간 확인. RED/GREEN과 `end_time` 필수 해제·`format: time` 복원 결함 주입 탐지 | 동일 커밋 예정, #50 |
+| 2026-09-20 | PR #53의 `main` 병합 뒤 Deploy Production run #35509635216으로 Gemini 타입별 출력 계약 재배포 | ARM64 image·ECR·Flyway V6 멱등·SSM 교체·앱과 Nginx health·공개 health와 OpenAPI 전체 성공 | 동일 커밋 예정, #54 |
+| 2026-09-20 | 기존 지연 합성 방 재분석으로 자연어 전용·자연어와 수동 슬롯 조합의 운영 E2E 완료 | `READY`, `COMPLETE`, Plan B와 실제 시간 구간, 호스트 확정 200·멤버 확정 403·멤버 결과 200·`CONFIRMED` 확인. Gemini input/output 252/311 token, 응답 738 bytes, 추정 USD 0.00135525와 배치 10원 미만 지표 확인 | 동일 커밋 예정, #54 |
+| 2026-09-20 | Issue #54의 main CI 성공 후 운영 CD 자동 실행 정책 구현 | `push`·`main`·`success` 삼중 조건, 선행 `head_sha` 고정, 수동 main 복구 경로, Production Environment·OIDC 유지와 직렬·진행 중 비취소 정책 회귀 검사 | 동일 커밋 예정, #54 |
