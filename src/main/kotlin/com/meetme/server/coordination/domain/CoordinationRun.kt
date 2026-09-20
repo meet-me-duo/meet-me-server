@@ -67,6 +67,9 @@ data class CoordinationRun private constructor(
     val version: Long,
 ) {
     companion object {
+        private val ACTIVE_STATUSES =
+            setOf(CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING, CoordinationStatus.MATCHING)
+
         fun queued(
             id: CoordinationRunId,
             batch: SubmissionBatch,
@@ -157,6 +160,26 @@ data class CoordinationRun private constructor(
 
     fun retryAnalysis(): CoordinationRun {
         requireStatus(CoordinationStatus.ANALYSIS_DELAYED)
+        return copy(
+            status = if (resumeStage == ResumeStage.MATCHING) CoordinationStatus.MATCHING else CoordinationStatus.QUEUED,
+            resumeStage = null,
+            version = version + 1,
+        )
+    }
+
+    fun deadLetter(): CoordinationRun {
+        check(status in ACTIVE_STATUSES) { "Only an active coordination run can be dead-lettered" }
+        val stage = if (status == CoordinationStatus.MATCHING) ResumeStage.MATCHING else ResumeStage.STRUCTURING
+        return copy(
+            status = CoordinationStatus.DEAD_LETTERED,
+            quality = null,
+            resumeStage = stage,
+            version = version + 1,
+        )
+    }
+
+    fun retryDeadLetter(): CoordinationRun {
+        requireStatus(CoordinationStatus.DEAD_LETTERED)
         return copy(
             status = if (resumeStage == ResumeStage.MATCHING) CoordinationStatus.MATCHING else CoordinationStatus.QUEUED,
             resumeStage = null,

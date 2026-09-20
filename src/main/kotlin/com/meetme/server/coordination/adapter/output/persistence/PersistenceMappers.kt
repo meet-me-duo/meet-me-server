@@ -141,6 +141,11 @@ object PersistenceMappers {
             domain.status.name,
             domain.occurredAt.atOffset(ZoneOffset.UTC),
             domain.publishedAt?.atOffset(ZoneOffset.UTC),
+            domain.processedAt?.atOffset(ZoneOffset.UTC),
+            domain.processingLeaseUntil?.atOffset(ZoneOffset.UTC),
+            domain.deliveryCount,
+            domain.lastFailureKind,
+            domain.deadLetteredAt?.atOffset(ZoneOffset.UTC),
         )
 
     fun toDomain(record: OutboxEventRecord): OutboxEvent =
@@ -153,6 +158,11 @@ object PersistenceMappers {
             OutboxStatus.valueOf(record.status),
             record.occurredAt.toInstant(),
             record.publishedAt?.toInstant(),
+            record.processedAt?.toInstant(),
+            record.processingLeaseUntil?.toInstant(),
+            record.deliveryCount,
+            record.lastFailureKind,
+            record.deadLetteredAt?.toInstant(),
         )
 }
 

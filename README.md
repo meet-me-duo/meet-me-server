@@ -7,6 +7,18 @@ AI 기반 일정 조율 서비스의 Spring Boot/Kotlin 백엔드입니다. 핵�
 
 - Java 17+
 - 저장소에 포함된 Gradle Wrapper
+- 로컬 PostgreSQL과 Redis를 위한 Docker
+
+## 로컬 실행
+
+```shell
+docker compose up -d postgres redis
+./gradlew bootRun --args='--spring.profiles.active=local'
+```
+
+애플리케이션은 PostgreSQL Outbox를 Redis Streams로 전달합니다. 로컬 Prometheus
+지표는 `/actuator/prometheus`에서 확인할 수 있고 로그는 JSON으로 표준 출력에
+기록됩니다. Grafana Alloy와 Grafana Cloud Metrics/Loki 연동은 Post-MVP 범위입니다.
 
 ## 검증
 
@@ -44,24 +56,16 @@ Codex가 `git commit`을 실행할 때 같은 검증이 `.codex/hooks/tdd_guard.
 
 ```text
 com.meetme.server
-├── domain
-├── application
-│   ├── port
-│   │   ├── input
-│   │   └── output
-│   └── service
-├── adapter
-│   ├── input.web
-│   └── output
-│       ├── persistence
-│       └── integration
+├── meetingroom/{domain,application,adapter}
+├── participant/{domain,application,adapter}
+├── submission/{domain,application,adapter}
+├── coordination/{domain,application,adapter}
+├── shared
 └── config
 ```
 
-- `domain`은 Spring, 데이터베이스, 캐시와 외부 SDK에 의존하지 않습니다.
-- `application`은 유스케이스와 포트를 정의하고 도메인 흐름을 조정합니다.
-- `adapter`는 HTTP, 영속성, AI/OAuth/Calendar/지도 연동을 구현합니다.
-- `config`는 어댑터와 애플리케이션을 조립합니다.
+각 Aggregate 패키지 안에서 `adapter → application → domain` 의존 방향을
+유지합니다. 공통 ID·시간 값과 횡단 기술 계약만 `shared`에 둡니다.
 
 제품 요구사항과 기술 결정은 각각 `docs/PRD.md`, `docs/ARCHITECTURE.md`,
 `docs/ADR.md`를 따릅니다.

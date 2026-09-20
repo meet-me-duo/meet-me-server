@@ -32,6 +32,7 @@ dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -41,6 +42,7 @@ dependencies {
     implementation("org.komapper:komapper-spring-boot-starter-jdbc")
     implementation("org.komapper:komapper-dialect-postgresql-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation("org.flywaydb:flyway-database-postgresql")
     ksp("org.komapper:komapper-processor")
     runtimeOnly("org.postgresql:postgresql")

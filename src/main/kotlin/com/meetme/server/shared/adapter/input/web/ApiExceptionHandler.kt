@@ -4,6 +4,7 @@ import com.meetme.server.coordination.application.port.input.MatchingResultError
 import com.meetme.server.coordination.application.port.input.MatchingResultException
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
+import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.submission.application.port.input.SubmissionErrorCode
 import com.meetme.server.submission.application.port.input.SubmissionException
 import jakarta.servlet.http.HttpServletRequest
@@ -20,6 +21,7 @@ import java.util.Locale
 @RestControllerAdvice
 class ApiExceptionHandler(
     private val messageSource: MessageSource,
+    private val metrics: ApplicationMetricsPort? = null,
 ) {
     @ExceptionHandler(MatchingResultException::class)
     fun matchingResult(
@@ -28,6 +30,9 @@ class ApiExceptionHandler(
         locale: Locale,
     ): ResponseEntity<ProblemDetail> {
         val status = exception.code.status()
+        if (status == HttpStatus.UNAUTHORIZED || status == HttpStatus.FORBIDDEN) {
+            metrics?.authenticationFailure(exception.code.name)
+        }
         return ResponseEntity.status(status).body(problem(status, exception.code.name, request, locale))
     }
 
@@ -38,6 +43,9 @@ class ApiExceptionHandler(
         locale: Locale,
     ): ResponseEntity<ProblemDetail> {
         val status = exception.code.status()
+        if (status == HttpStatus.UNAUTHORIZED || status == HttpStatus.FORBIDDEN) {
+            metrics?.authenticationFailure(exception.code.name)
+        }
         val problem = problem(status, exception.code.name, request, locale)
         exception.details.forEach(problem::setProperty)
         return ResponseEntity.status(status).body(problem)
@@ -50,6 +58,9 @@ class ApiExceptionHandler(
         locale: Locale,
     ): ResponseEntity<ProblemDetail> {
         val status = exception.code.status()
+        if (status == HttpStatus.UNAUTHORIZED || status == HttpStatus.FORBIDDEN) {
+            metrics?.authenticationFailure(exception.code.name)
+        }
         val problem = problem(status, exception.code.name, request, locale)
         exception.details.forEach(problem::setProperty)
         return ResponseEntity.status(status).body(problem)

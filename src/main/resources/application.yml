@@ -7,6 +7,11 @@ spring:
     password: ${DATABASE_PASSWORD:meetme}
   flyway:
     enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: ${REDIS_TIMEOUT:2s}
   messages:
     basename: messages
     encoding: UTF-8
@@ -19,7 +24,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,prometheus
+
+logging:
+  structured:
+    format:
+      console: logstash
 
 meetme:
   anonymous:
@@ -32,3 +42,34 @@ meetme:
   kakao-local:
     api-key: ${KAKAO_LOCAL_API_KEY:}
     base-url: https://dapi.kakao.com
+  reliability:
+    enabled: ${RELIABILITY_ENABLED:true}
+    consumer-name: ${REDIS_CONSUMER_NAME:meet-me-local}
+    pending-min-idle: ${REDIS_PENDING_MIN_IDLE:2m}
+    recovery-age: ${OUTBOX_RECOVERY_AGE:2m}
+    dlq-retention: ${REDIS_DLQ_RETENTION:30d}
+    dlq-max-entries: ${REDIS_DLQ_MAX_ENTRIES:10000}
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    create-room:
+      limit: ${RATE_LIMIT_CREATE_LIMIT:10}
+      window: ${RATE_LIMIT_CREATE_WINDOW:1h}
+      fail-closed: true
+    join-room:
+      limit: ${RATE_LIMIT_JOIN_LIMIT:30}
+      window: ${RATE_LIMIT_JOIN_WINDOW:1h}
+      fail-closed: false
+    submission:
+      limit: ${RATE_LIMIT_SUBMISSION_LIMIT:30}
+      window: ${RATE_LIMIT_SUBMISSION_WINDOW:1m}
+      fail-closed: false
+    host-command:
+      limit: ${RATE_LIMIT_HOST_COMMAND_LIMIT:5}
+      window: ${RATE_LIMIT_HOST_COMMAND_WINDOW:1m}
+      fail-closed: true
+  data-retention:
+    enabled: ${DATA_RETENTION_ENABLED:true}
+    room-retention: ${ROOM_DATA_RETENTION:30d}
+  ai-cost:
+    usd-to-krw: ${AI_COST_USD_TO_KRW:1500}
+    maximum-krw-per-meeting: ${AI_COST_MAXIMUM_KRW_PER_MEETING:10}

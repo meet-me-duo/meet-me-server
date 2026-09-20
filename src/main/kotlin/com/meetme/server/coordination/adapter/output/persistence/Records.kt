@@ -140,6 +140,11 @@ data class OutboxEventRecord(
     val status: String,
     val occurredAt: OffsetDateTime,
     val publishedAt: OffsetDateTime?,
+    val processedAt: OffsetDateTime?,
+    val processingLeaseUntil: OffsetDateTime?,
+    val deliveryCount: Int,
+    val lastFailureKind: String?,
+    val deadLetteredAt: OffsetDateTime?,
 )
 
 @KomapperEntityDef(OutboxEventRecord::class)

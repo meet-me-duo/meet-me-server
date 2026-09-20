@@ -36,7 +36,7 @@
 | API 계약 문서 | Swagger/OpenAPI, springdoc-openapi 3.1.0 | 확정 |
 | 시간대 | IANA Zone ID, MVP `Asia/Seoul` | 저장·계산 경계 확정, 사용자 선택은 MVP 이후 |
 | 국제화 | Spring MessageSource, BCP 47 locale, MVP `ko-KR` | 기반 도입 확정, 추가 언어 TBD |
-| 관측성 | Spring Boot Actuator·Micrometer, Grafana Alloy, Grafana Cloud Metrics·Loki·Grafana-managed Alerting | 확정, 알림·보존 세부값 TBD |
+| 관측성 | 제출 MVP는 Spring Boot Actuator·Micrometer Prometheus 지표와 JSON 표준 출력, Grafana Alloy·Cloud Metrics·Loki·Alerting은 Post-MVP | MVP 로컬 기반 확정, 외부 전송은 후속 범위 |
 
 ## 3. 시스템 컨텍스트
 
@@ -51,8 +51,8 @@ flowchart LR
     App -. Post-MVP .-> Google[Google OAuth / Calendar]
     App -. Post-MVP .-> Kakao[Kakao OAuth]
     App --> Map[Kakao Local API]
-    App -->|Prometheus metrics / JSON logs| Alloy[Grafana Alloy]
-    Alloy --> GrafanaCloud[Grafana Cloud Metrics / Loki / Alerting]
+    App -. Post-MVP: Prometheus metrics / JSON logs .-> Alloy[Grafana Alloy]
+    Alloy -. Post-MVP .-> GrafanaCloud[Grafana Cloud Metrics / Loki / Alerting]
 
     Terraform[Terraform] -. 프로비저닝 .-> Runtime[AWS Runtime / EC2 또는 ECS]
     Terraform -. 프로비저닝 .-> Postgres
@@ -69,7 +69,7 @@ flowchart LR
 - **Google Gemini:** 자연어 조건 구조화와 시간표 이미지 분석만 담당한다.
 - **Kakao Local API:** 자연어에서 추출된 국내 장소 표현을 키워드로 검색·정규화하고 결과 표시용 이름을 제공한다. 거리와 영역 계산, 검색 결과 고유성 판정과 후보 순위는 서버가 담당한다.
 - **AWS:** 애플리케이션 런타임과 운영 PostgreSQL을 제공한다.
-- **Grafana Cloud:** Alloy가 전송한 애플리케이션·Worker 지표와 로그를 관리형 Metrics 및 Loki에 저장하고 Grafana-managed Alerting으로 운영 알림을 평가한다. MVP에서는 Grafana·Loki를 자체 운영하지 않는다.
+- **Grafana Cloud (Post-MVP):** Alloy가 전송한 애플리케이션·Worker 지표와 로그를 관리형 Metrics 및 Loki에 저장하고 Grafana-managed Alerting으로 운영 알림을 평가한다. 제출 MVP는 계정·전송 자격 증명 없이 애플리케이션의 Prometheus endpoint와 JSON 표준 출력까지만 제공한다.
 
 ### 제출 MVP 접근 모드
 
@@ -326,26 +326,27 @@ Komapper 7.0.0과 KSP 2.3.12를 고정하고 Kotlin 2.3.21, JRE 17, Spring Boot 
 
 ### Redis
 
-Redis 도입, Redis Streams를 통한 비동기 작업 전달과 meet-me Refresh Token 상태·TTL 관리는 확정했다. 다음 추가 후보는 실제 필요성이 확인된 범위만 사용한다.
+Redis 도입, Redis Streams를 통한 비동기 작업 전달과 제출 MVP 공개 API의 호출 제한을 확정했다. meet-me Refresh Token 상태·TTL은 Post-MVP 인증에서 사용한다. 다음 추가 후보는 실제 필요성이 확인된 범위만 사용한다.
 
 - meet-me 불투명 Refresh Token의 해시, 사용자·토큰 패밀리 참조, 회전·폐기 상태와 TTL
-- 짧은 수명의 중복 요청 방지 키
-- 매칭 작업의 분산 락
-- 읽기 캐시 또는 호출 제한 카운터
+- 제출 MVP의 방 생성·참여·제출·주최자 명령 호출 제한 카운터
+- 향후 별도 필요성이 확인될 때만 도입할 짧은 수명의 중복 요청 방지 키, 분산 락과 읽기 캐시
 
-비동기 작업은 PostgreSQL Transactional Outbox와 Redis Streams Consumer Group을 결합한다. 비즈니스 상태와 작업 요청을 같은 PostgreSQL 트랜잭션에 기록하고, relay가 Outbox 이벤트를 Stream에 발행하며, Worker는 처리 성공 후 ACK한다. 중복 전달을 전제로 이벤트 ID와 비즈니스 상태 전이를 사용해 소비자를 멱등하게 만든다.
+비동기 작업은 PostgreSQL Transactional Outbox와 Redis Streams Consumer Group을 결합한다. 작업 Stream key는 `meetme:coordination:work:v1`, Consumer Group은 `coordination-workers-v1`, DLQ Stream은 `meetme:coordination:dlq:v1`을 사용한다. 비즈니스 상태와 작업 요청을 같은 PostgreSQL 트랜잭션에 기록하고, relay가 이벤트 ID·제출 배치 ID·이벤트 유형만 Stream에 발행하며, Worker는 처리 성공 후 ACK하고 원본 Stream entry를 삭제한다. Outbox의 `PENDING`, `PUBLISHED`, `PROCESSED`, `DEAD_LETTERED`, 처리 lease와 전달 횟수가 Redis와 무관한 기준이다. 중복 전달은 PostgreSQL lease와 상태 전이로 한 번만 실행하고, 2분 이상 Pending인 entry를 회수한다. Redis 유실을 대비해 2분 이상 `PUBLISHED` 상태로 남고 처리 lease가 끝난 Outbox를 같은 참조로 재발행한다.
 
-Gemini의 제한된 기술적 재시도 소진은 poison message가 아니라 `ANALYSIS_DELAYED` 전이 경로다. Worker는 PostgreSQL에 방 전체 배치의 실패 분류와 시도 메타데이터를 기록하되 매칭을 시작하지 않고 원본 Stream 메시지를 ACK한다. 이 실패는 지표와 구조화 로그로 관측하며 Redis DLQ에는 넣지 않는다. 인증된 주최자의 방 단위 재분석 요청은 같은 고정 배치를 참조하는 새 Outbox 이벤트를 만들고, 중복 요청이 동시에 여러 유효 작업을 만들지 않도록 멱등하게 처리한다. 자동 지연 재시도 여부와 상한은 TBD다.
+Gemini의 제한된 기술적 재시도 소진은 poison message가 아니라 `ANALYSIS_DELAYED` 전이 경로다. Worker는 PostgreSQL에 방 전체 배치의 실패 분류와 시도 메타데이터를 기록하되 매칭을 시작하지 않고 원본 Stream 메시지를 ACK한다. 이 실패는 지표와 구조화 로그로 관측하며 Redis DLQ에는 넣지 않는다. 제출 MVP에서는 예상하지 못한 AI 비용과 장애 중 재시도 폭주를 피하기 위해 `ANALYSIS_DELAYED` 자동 재시도를 하지 않는다. 주최자의 방 단위 재분석 요청만 같은 고정 배치를 참조하는 새 Outbox 이벤트를 멱등하게 만든다.
 
-Redis DLQ는 역직렬화 실패, 존재하지 않는 참조, 반복되는 불변식 위반 또는 같은 메시지에서 Worker가 계속 중단되는 poison message에만 사용한다. 첫 전달을 포함해 동일 메시지의 처리가 총 5회 실패하면 PostgreSQL에 `DEAD_LETTERED`에 해당하는 영구 실패 상태를 먼저 기록하고, 이벤트 ID·방 전체 제출 배치 ID·실패 분류·전달 횟수만 별도 Redis Stream에 추가한 뒤 원본을 ACK한다. 이 전달 횟수는 Gemini 논리 작업 안의 API 재시도 횟수와 별도로 센다. 원문, 사용자 식별자, Calendar 일정과 공급자 응답은 DLQ에 저장하지 않는다. Redis DLQ는 운영 신호와 복구 대기열이며 최종 작업 상태의 기준은 PostgreSQL이다. Pending 회수 대기시간, DLQ 보존 기간, trimming과 재처리 절차는 TBD다.
+Redis DLQ는 역직렬화 실패, 존재하지 않는 참조, 반복되는 불변식 위반 또는 같은 메시지에서 Worker가 계속 중단되는 poison message에만 사용한다. 첫 전달을 포함해 동일 메시지의 처리가 총 5회 실패하면 PostgreSQL Outbox와 `CoordinationRun`에 `DEAD_LETTERED` 영구 상태를 먼저 기록하고, 이벤트 ID·방 전체 제출 배치 ID·실패 분류·전달 횟수만 별도 Redis Stream에 추가한 뒤 원본을 ACK한다. 이 전달 횟수는 Gemini 논리 작업 안의 API 재시도 횟수와 별도로 센다. 원문, 사용자 식별자, Calendar 일정과 공급자 응답은 DLQ에 저장하지 않는다. DLQ는 30일 또는 최근 10,000건 중 먼저 도달한 기준으로 trimming한다. 운영자는 `--meetme.operations.replay-dead-letter-event-id=<UUID>` 시작 인자로 한 이벤트를 명시해 PostgreSQL 상태와 Outbox를 원자적으로 재대기시킨 뒤 인자를 제거한다.
 
-Redis 장애나 데이터 유실이 영구 비즈니스 데이터 또는 반드시 실행해야 하는 작업의 유실로 이어지지 않아야 한다. 미전달 작업은 PostgreSQL Outbox에서 복구할 수 있어야 하고, 미완료 Stream 메시지는 Pending Entries 복구 정책을 가져야 한다. Stream key, Consumer Group, trimming, retry·보류·실패 정책과 메시지 payload 범위는 구현 전에 확정한다.
+Redis 장애나 데이터 유실이 영구 비즈니스 데이터 또는 반드시 실행해야 하는 작업의 유실로 이어지지 않아야 한다. 미전달·미완료 작업은 PostgreSQL Outbox의 상태, 처리 lease와 재발행으로 복구한다. Stream과 DLQ는 전달·운영 신호이며 최종 기준이 아니다.
+
+제출 MVP 호출 제한은 Redis의 원자적 고정 구간 카운터를 사용한다. 기본값은 방 생성 IP·세션당 시간당 10회, 참여 IP·세션당 시간당 30회, 제출 세션당 분당 30회, 마감·재분석·확정 세션·방 조합당 분당 5회이며 환경 설정으로 조정한다. 키에는 원 IP나 쿠키를 저장하지 않고 SHA-256 digest만 사용한다. Redis 장애 시 방 생성과 비용 유발 주최자 명령은 `503`으로 차단하고 참여·제출은 PostgreSQL 접수를 유지한다.
 
 Redis Pub/Sub은 비동기 비즈니스 작업에 사용하지 않는다. 향후 상태 변경의 실시간 알림처럼 메시지를 놓쳐도 PostgreSQL 상태 조회로 복구 가능한 보조 알림에만 사용할 수 있다.
 
 ### 개인정보
 
-Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장소 좌표는 개인정보로 취급한다. `집`, `회사`, `학교 근처` 같은 개인 기준 표현에 대해서는 별도 좌표를 수집하지 않는다. 일정·정규화 좌표의 보관 기간, 삭제 시점과 로그 마스킹 정책은 구현 전에 확정한다.
+Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장소 좌표는 개인정보로 취급한다. `집`, `회사`, `학교 근처` 같은 개인 기준 표현에 대해서는 별도 좌표를 수집하지 않는다. 제출 MVP의 종료된 방은 `closed_at`, 종료되지 않은 방은 `created_at`부터 30일이 지나면 제출 원문·일정·정규화 좌표·후보·Outbox 이력을 함께 삭제한다. 만료되고 어떤 참여자도 참조하지 않는 게스트 세션도 삭제한다. Post-MVP 공급자 토큰의 보관·폐기 정책은 인증·Calendar 구현 전에 별도로 확정한다.
 
 정상 반영된 참여자 조건은 주최자에게도 공개하지 않는다. 예외적으로 Gemini 응답 성공 후 의미·스키마·도메인 검증에 실패하여 후보 생성에 반영하지 못한 원문만 제출 전 고지를 전제로 결과 생성 후 주최자에게 공개할 수 있다. 기술적 전체 장애인 `ANALYSIS_DELAYED`에서는 모든 원문을 주최자에게 공개하지 않는다. 각 참여자는 로그인 여부와 관계없이 본인 증명을 거쳐 자신의 최신 제출만 조회할 수 있다. 원문은 다른 참여자용 결과, 로그, 지표와 Redis 메시지 payload에 포함하지 않는다.
 
@@ -431,12 +432,13 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 
 ### 관측성
 
-- Spring Boot Actuator와 Micrometer로 JVM·HTTP 기본 지표 및 애플리케이션 지표를 만들고 Prometheus 형식으로 노출한다. Actuator endpoint는 외부 인터넷에 공개하지 않고 Alloy만 접근할 수 있는 관리 경계에 둔다.
-- 애플리케이션과 Worker는 표준 출력에 JSON 구조화 로그를 기록한다. Grafana Alloy가 Prometheus 지표와 JSON 로그를 수집·필터링하여 Grafana Cloud Metrics와 Loki로 전송한다.
-- Grafana Cloud의 Grafana-managed Alerting을 사용해 Gemini 배치 실패·지연, Outbox 적체, Redis Pending 노후화와 DLQ 진입을 운영자에게 알린다. 구체적인 알림 연락 채널과 임계값은 TBD다.
+- Spring Boot Actuator와 Micrometer로 JVM·HTTP 기본 지표 및 애플리케이션 지표를 만들고 `/actuator/prometheus`에 노출한다. 운영 프로필은 별도 관리 port와 loopback 기본 주소를 사용하며 Nginx 공개 라우팅에 포함하지 않는다.
+- 애플리케이션과 Worker는 표준 출력에 JSON 구조화 로그를 기록한다. 서버가 생성한 상관관계 ID, HTTP method·경로 템플릿·상태·처리시간과 낮은 cardinality의 실패 분류만 기록한다. 요청 body, 원 URL 식별자, 쿠키와 인증 헤더는 기록하지 않는다.
+- Grafana Alloy 수집, Grafana Cloud Metrics·Loki 전송, 대시보드와 Grafana-managed Alerting은 Post-MVP로 이관한다. 제출 MVP에서는 Grafana Cloud 계정·token·연락 채널을 요구하지 않는다.
 - 핵심 애플리케이션 지표는 Gemini 배치 호출·종결 결과·처리시간·재시도, 미발행 Outbox의 최장 대기시간, Redis Pending 수·최장 대기시간과 DLQ 진입 수를 포함한다.
+- Gemini가 제공한 token 사용량으로 논리 배치별 USD 비용을 합산하고, 운영 설정의 보수적 환산율(기본 1 USD = 1,500 KRW)로 원화 추정 비용과 10원 미만 여부를 지표에 기록한다. 환산율은 실시간 환율이 아니라 비용 상한 판정을 위한 환경별 설정이다.
 - 지표 및 Loki label에는 `roomId`, `userId`, `batchId`, 원문, 요청 파라미터처럼 cardinality가 높거나 민감한 값을 사용하지 않는다. 진단에 필요한 상관관계 ID와 이벤트·배치 참조는 접근 통제된 로그 본문에만 넣고 원본 자연어·Calendar 일정·좌표·OAuth 토큰·외부 API 자격 증명은 기록하지 않는다.
-- Grafana·Loki·Prometheus를 자체 운영하지 않고 Grafana Cloud의 관리형 저장·조회·알림을 사용한다. Alloy는 수집기이므로 런타임과 함께 배치하며 구체적인 EC2/ECS 배치 방식은 컴퓨팅 선택 후 확정한다.
+- Post-MVP에도 Grafana·Loki·Prometheus를 자체 운영하지 않고 Grafana Cloud의 관리형 저장·조회·알림을 사용한다. Alloy 배치는 운영 컴퓨팅 선택 후 확정한다.
 - MVP에서는 분산 tracing 저장소를 도입하지 않는다. 서비스 분리나 비동기 경로의 추적 필요성이 확인되면 OpenTelemetry와 Grafana Cloud Traces 도입을 별도 결정한다.
 - 미반영 원문 열람은 주최자 전용 접근 제어와 감사 가능한 조회 경계를 갖는다.
 
@@ -466,16 +468,16 @@ Google Calendar에서 수집한 일정과 지도 검색으로 정규화한 장�
 
 1. 운영 RS256 key provisioning·교체 절차
 2. Google·Kakao 공급자 토큰 암호화 키 관리와 갱신·폐기 방식
-3. Redis Streams의 메시지 범위·보존·Pending 복구와 인증 상태 등 추가 책임
+3. Post-MVP Refresh Token Redis key·TTL과 운영 Redis 배치·백업 정책
 4. Google Calendar 인증 범위, 조회 기간, 동기화 방식과 로그인 사용자 토큰 저장 정책
 5. Gemini 모델 교체 시 한국어 조건 파싱 회귀 평가와 비용 기준
 6. 가능 시간·추가 불가 시간 격자의 5분·10분 입력 간격, 하루 표시 범위와 긴 날짜 범위의 UI 이동 방식
-7. 비동기 처리 상태 조회 방식과 `ANALYSIS_DELAYED` 재분석 API, 자동 지연 재시도 여부·상한
+7. 비동기 처리 상태 갱신을 Polling, SSE 또는 WebSocket 중 어떤 방식으로 전달할지
 8. EC2와 ECS 중 운영 컴퓨팅 선택
 9. Docker Hub와 ECR 중 이미지 레지스트리 선택
 10. Terraform 상태, 환경 분리와 비밀정보 관리
 11. CI/CD와 배포·롤백 방식
-12. Redis Stream Pending 회수 대기시간, poison message DLQ의 보존·trimming·재처리 정책과 Grafana Cloud 알림 연락 채널·임계값
+12. Post-MVP Alloy 배치, Grafana Cloud 보존·대시보드·알림 연락 채널과 임계값
 13. MVP 이후 방별 시간대 선택 UI와 허용 Zone ID 정책
 14. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
-19. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX
+15. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX

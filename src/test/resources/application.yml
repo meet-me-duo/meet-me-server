@@ -5,3 +5,11 @@ spring:
     password: meetme
   flyway:
     enabled: false
+
+meetme:
+  reliability:
+    enabled: false
+  rate-limit:
+    enabled: false
+  data-retention:
+    enabled: false

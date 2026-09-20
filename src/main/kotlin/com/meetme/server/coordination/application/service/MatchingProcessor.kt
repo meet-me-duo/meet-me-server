@@ -16,6 +16,7 @@ import com.meetme.server.coordination.domain.matching.AllowedCircle
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
 import com.meetme.server.coordination.domain.matching.ParticipantAllowedRegion
 import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
+import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CandidateId
 import com.meetme.server.shared.domain.SubmissionBatchId
@@ -26,6 +27,7 @@ import com.meetme.server.submission.domain.StructuredCondition
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.text.Normalizer
+import java.time.Duration
 import java.util.Locale
 
 @Service
@@ -37,8 +39,10 @@ class MatchingProcessor(
     private val placeSearch: PlaceSearchPort,
     private val idGenerator: IdGenerator,
     private val persistence: MatchingProcessingPersistenceService,
+    private val metrics: ApplicationMetricsPort? = null,
 ) {
     fun process(batchId: SubmissionBatchId) {
+        val startedNanos = System.nanoTime()
         val run = coordinationRunRepository.findByBatchId(batchId) ?: return
         if (run.status != CoordinationStatus.MATCHING) return
         val room = persistence.room(run.roomId)
@@ -119,6 +123,7 @@ class MatchingProcessor(
                 }
             } catch (_: PlaceSearchException) {
                 persistence.delay(run)
+                metrics?.matching("ANALYSIS_DELAYED", Duration.ofNanos(System.nanoTime() - startedNanos), 0)
                 return
             }
 
@@ -145,6 +150,7 @@ class MatchingProcessor(
             }
         val completed = run.complete(if (hasUnappliedInput) CandidateQuality.PARTIAL else CandidateQuality.COMPLETE, candidates)
         persistence.complete(completed, snapshots)
+        metrics?.matching("COMPLETED", Duration.ofNanos(System.nanoTime() - startedNanos), candidates.size)
     }
 
     private fun normalizeQuery(value: String): String =

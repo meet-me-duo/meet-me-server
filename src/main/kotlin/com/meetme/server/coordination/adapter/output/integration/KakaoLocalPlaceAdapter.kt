@@ -6,6 +6,7 @@ import com.meetme.server.coordination.application.port.output.PlaceSearchExcepti
 import com.meetme.server.coordination.application.port.output.PlaceSearchFailureKind
 import com.meetme.server.coordination.application.port.output.PlaceSearchPort
 import com.meetme.server.coordination.domain.location.GeoCoordinate
+import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import tools.jackson.databind.ObjectMapper
 import java.math.BigDecimal
 import java.net.URI
@@ -28,10 +29,27 @@ data class KakaoLocalProperties(
 class KakaoLocalPlaceAdapter(
     private val properties: KakaoLocalProperties,
     private val objectMapper: ObjectMapper = ObjectMapper(),
+    private val metrics: ApplicationMetricsPort? = null,
 ) : PlaceSearchPort {
     private val httpClient: HttpClient = HttpClient.newBuilder().build()
 
     override fun normalize(query: String): PlaceNormalizationResult {
+        val startedNanos = System.nanoTime()
+        return try {
+            normalizeMeasured(query).also {
+                metrics?.externalApi("kakao-local", "SUCCESS", Duration.ofNanos(System.nanoTime() - startedNanos))
+            }
+        } catch (exception: PlaceSearchException) {
+            metrics?.externalApi(
+                "kakao-local",
+                exception.kind.name,
+                Duration.ofNanos(System.nanoTime() - startedNanos),
+            )
+            throw exception
+        }
+    }
+
+    private fun normalizeMeasured(query: String): PlaceNormalizationResult {
         if (properties.apiKey.isBlank()) throw PlaceSearchException(PlaceSearchFailureKind.CONFIGURATION)
         require(query.isNotBlank()) { "Place query must not be blank" }
 

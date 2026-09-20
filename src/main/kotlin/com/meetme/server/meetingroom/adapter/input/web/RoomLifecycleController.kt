@@ -47,6 +47,16 @@ class RoomLifecycleController(
             description = "입력 검증 실패",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
+        ApiResponse(
+            responseCode = "429",
+            description = "방 생성 요청 제한 초과",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "503",
+            description = "요청 제한 저장소 사용 불가",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
     )
     fun create(
         @Valid @RequestBody request: CreateRoomRequest,
@@ -106,6 +116,11 @@ class RoomLifecycleController(
             description = "이미 닫힌 방",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
+        ApiResponse(
+            responseCode = "429",
+            description = "방 참여 요청 제한 초과",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
     )
     fun join(
         @PathVariable inviteCode: String,
@@ -141,6 +156,16 @@ class RoomLifecycleController(
         ApiResponse(
             responseCode = "409",
             description = "조기 마감 재확인 필요",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "429",
+            description = "주최자 명령 요청 제한 초과",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "503",
+            description = "요청 제한 저장소 사용 불가",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
     )

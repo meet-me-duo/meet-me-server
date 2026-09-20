@@ -37,7 +37,7 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 4번 완료 후 5번 시작 전 긴급 정정 — Issue #18 구현·검증 완료, 커밋·PR 생성 준비
+- **현재 단계:** 5번 `feature/reliability-observability` — Issue #20 구현·문서 동기화와 전체 품질 게이트 완료, 커밋·PR 생성 준비
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 구조화, Kakao 장소 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 방 소요 시간 입력은 제거하고 계산된 모든 연속 가능 구간을 반환한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
 - **현재 차단 사항:** 기능 구현을 막는 외부 자격 증명은 없다. 운영 domain은 `meet-me.co.kr`, 장소 공급자는 Kakao Local API로 확정했고 Gemini·Kakao Local 개발 키를 로컬과 GitHub `integration` Environment에 등록했다. AWS 관련 설정은 사용자 지시 전까지 보류하며, 공개 배포 전 AWS 계정·예산·Region·배포 방식, Route 53 생성 후 가비아 네임서버 변경과 Gemini Paid 전환 승인이 필요하다.
@@ -51,7 +51,7 @@
 - **Issue·PR 작성:** 작업 전에 범위와 완료 조건을 담은 GitHub Issue를 만들고 PR 본문의 독립된 `Closes #<issue-number>` 행으로 연결한다. 프로젝트 GitHub Action은 형식과 열린 Issue 참조를 검사하고 `develop` 병합 시 연결 Issue를 `completed`로 종료한다. PR 제목은 `<type>: <summary>` 형식과 허용 type을 지키며 summary를 명사형 한국어로 끝낸다. 본문은 목적·변경 내용·검증·리뷰 요청·영향 범위를 구체적으로 적는다. 현재 위임 범위에서는 커밋·push·PR 생성 전 승인 대기 없이 진행하고 생성 직후 결과를 보고한다.
 - **완료 정책:** 예상 참여 인원·제출 마감은 선택 사항이며, 둘 다 없으면 수동 마감 방식을 명시한다. 자동 조건이 있어도 주최자는 경고 후 조기 마감할 수 있다.
 - **최소 인원:** 예상 참여 인원은 2명 이상이며, 모든 종료 방식에서 주최자 포함 고유 제출이 2개 미만이면 `INSUFFICIENT_PARTICIPANTS`로 종료하고 후보를 만들지 않는다.
-- **비동기 전달:** PostgreSQL Transactional Outbox + Redis Streams 확정. PostgreSQL이 작업 상태의 기준이며 Pub/Sub은 비즈니스 작업에 사용하지 않는다.
+- **비동기 전달:** PostgreSQL Transactional Outbox + Redis Streams를 구현했다. PostgreSQL 처리 lease와 상태가 기준이며 2분 Pending 회수·재발행, 총 5회 실패 후 참조형 DLQ와 명시적 수동 재처리를 사용한다.
 - **장소 입력:** 장소를 입력할 때는 별도 장소·지도·좌표 필드 없이 자연어만 사용한다. 특정 가능한 장소만 기본 1km 또는 명시 반경의 허용 영역을 만들고, 이동 제약·미확정 장소는 좌표를 만들지 않는다.
 - **Gemini 배치:** 참가자 제출·수정 중에는 호출하지 않는다. 입력 수집 종료 시점의 최신 제출을 방 전체 배치로 고정하고 자연어가 하나 이상일 때만 자연어가 있는 항목으로 논리 작업 하나를 실행한다. 전원이 정형 일정만 제출하면 AI 호출 없이 매칭하며, 제공된 자연어에 참가자별 500자·배치 합계 10,000자 제한을 적용한다. 연동은 공식 Google GenAI SDK Java 클라이언트를 AI Adapter 내부에서만 사용한다.
 - **제출 MVP 인증 경계:** 모든 사용자는 로그인 없이 익명 브라우저 세션으로 이용한다. 방을 만든 `Secure HttpOnly` 불투명 세션이 첫 참여자와 `HOST` 역할을 소유하며 같은 세션만 마감·재분석·후보 확정을 수행한다. 공유 링크만으로는 참여자나 주최자 권한을 얻지 못한다.
@@ -61,7 +61,7 @@
 - **데이터 접근:** Komapper JDBC 7.0.0과 KSP 2.3.12를 사용한다. 도메인 Aggregate·Entity·VO, Application Command·Result, Web·외부 공급자 DTO와 영속 `*Record`를 분리하고 Komapper·KSP 타입은 Persistence Adapter 내부에만 둔다. Flyway SQL이 스키마의 기준이다. Komapper 호환을 위해 coroutine 1.11.0을 명시적으로 고정한다.
 - **트랜잭션 경계:** 원자적 유스케이스의 Application 서비스 공개 메서드에 Spring `@Transactional`을 적용하고 Komapper JDBC 작업을 같은 트랜잭션에 참여시킨다. Domain은 Spring을 알지 못한다.
 - **로컬·테스트 DB:** 로컬 PostgreSQL과 Redis는 Docker Compose로 실행하고 영속성 통합 테스트는 H2 없이 PostgreSQL Testcontainers를 사용한다. Domain·Application 단위 테스트는 가능한 한 DB 없이 실행한다.
-- **관측성:** Actuator·Micrometer 지표와 JSON 로그를 Alloy로 수집해 Grafana Cloud Metrics·Loki·Grafana-managed Alerting에 전송한다. PostgreSQL은 실패 이력의 기준이며 동일 Redis 메시지가 첫 전달 포함 총 5회 실패하면 원문 없는 poison message 참조만 DLQ에 보관한다.
+- **관측성:** 제출 MVP는 Actuator·Micrometer Prometheus 지표, JSON 표준 출력, 서버 생성 상관관계 ID와 민감정보 제외 테스트까지 구현한다. Alloy·Grafana Cloud Metrics·Loki·대시보드·Alerting과 전송 자격 증명은 Post-MVP로 이관했다.
 - **시간대·국제화:** MVP는 `Asia/Seoul`, `ko-KR`로 고정하되 IANA Zone ID·UTC Instant·BCP 47 locale·MessageSource 경계를 선도입한다.
 - **DST 경계:** gap의 존재하지 않는 경계는 다음 유효 시각으로 이동하고 overlap은 이른 시작 offset부터 늦은 종료 offset까지 실제 구간을 보존한다.
 - **후보 탐색 범위:** 주최자가 지역 날짜 범위를 선택하며, 생략하면 프론트엔드가 안내한 방 생성일 포함 14일을 서버가 적용·저장한다.
@@ -69,7 +69,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축하고, 동률·예외 우세·불규칙 조건은 실제 날짜와 시간을 나열한다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #16과 PR #17의 4번 작업을 `develop`에 병합한 뒤 Issue #18의 `refactor/aggregate-hexagonal-structure`에서 긴급 정정 구현과 전체 품질 게이트를 완료했다. PR 병합 후 Redis relay·consumer를 다루는 5번 브랜치로 복귀하며 AWS 설정은 사용자 지시 전까지 보류한다.
+- **현재 작업:** Issue #20의 `feature/reliability-observability`에서 Outbox relay·Redis consumer, PostgreSQL 멱등 처리, DLQ·복구, 공개 API rate limit, 30일 데이터 정리와 로컬 관측 기반을 구현한다. AWS와 Grafana Cloud 외부 설정은 사용자 지시 전까지 보류한다.
 
 ## 실행 순서
 
@@ -77,7 +77,7 @@
 2. `[SHARED]` 배포 토폴로지, 지도 공급자와 공개 운영 전 Paid 전환처럼 비용·보안에 영향을 주는 결정을 선행 구간에서 모두 확정한다.
 3. `[AGENT]` 이후 `implementation_plan.md` 순서로 Issue 생성, TDD 구현, 검증, 커밋, push와 PR 생성을 승인 대기 없이 반복한다.
 4. `[USER]` Context 정리가 필요할 때만 중간 개입하며, 비밀정보 입력·결제·DNS·운영 배포 승인은 해당 시점에 직접 수행한다.
-5. `[AGENT]` 제출 MVP가 배포·검증된 뒤 별도 Post-MVP 백로그에서 OAuth와 Calendar를 진행한다.
+5. `[AGENT]` 제출 MVP가 배포·검증된 뒤 별도 Post-MVP 백로그에서 OAuth, Calendar와 Grafana Cloud 중앙 관측성을 진행한다.
 
 ## 구현 브랜치 로드맵
 
@@ -96,12 +96,13 @@
 | 5 | `feature/reliability-observability` | Phase 8 | Redis Streams, 재시도·DLQ, 보안, 로그·지표와 rate limit |
 | 6 | `feature/aws-release` | Phase 9~10 | 컨테이너·Terraform·배포, E2E와 Wanted 제출 MVP 출시 검증 |
 
-### Post-MVP — 2개 브랜치
+### Post-MVP — 3개 브랜치
 
 | 호출 번호 | 브랜치 | 포함 백로그 | 완료 결과 |
 | --- | --- | --- | --- |
 | PM-1 | `feature/social-auth` | PM-01 | Google·Kakao 로그인과 서비스 Access/Refresh Token |
 | PM-2 | `feature/google-calendar` | PM-02 | Google Calendar 연결, 방별 ON/OFF와 불가 시간 스냅샷 |
+| PM-3 | `feature/grafana-cloud-observability` | PM-03 | Alloy, Grafana Cloud Metrics·Loki, 대시보드와 Alerting |
 
 ### 번호 기반 실행 계약
 
@@ -115,7 +116,7 @@
   DNS 변경과 운영 배포 승인은 포함하지 않는다.
 - 6번 브랜치는 AWS 작업 보류를 해제하는 별도 사용자 지시가 있어야 시작한다. `6번 브랜치 작업해줘`는
   AWS 작업 시작 지시로 간주하지만 실제 비용 발생·DNS 변경·운영 배포는 각 사용자 체크포인트에서 다시 확인한다.
-- PM-1과 PM-2는 제출 MVP 완료 후에만 시작한다. `PM-1 브랜치 작업해줘`, `PM-2 브랜치 작업해줘` 형식으로 호출한다.
+- PM-1~PM-3은 제출 MVP 완료 후에만 시작한다. `PM-1 브랜치 작업해줘`와 같은 형식으로 호출한다.
 
 ## Phase 0 — 프로젝트 기반
 
@@ -176,7 +177,7 @@
 - [x] `[SHARED]` 제출 MVP 지도·좌표 공급자로 Kakao Local API를 선택하고 검색·정규화만 공급자에 위임하도록 확정한다.
 - [x] `[USER]` Kakao Developers 앱의 REST API Key를 `.env.local`과 GitHub `integration` Environment의 `KAKAO_LOCAL_API_KEY`에 직접 등록한다.
 - [ ] `[USER]` GitHub `production` Environment에 에이전트가 확정한 배포 Variable·Secret을 직접 등록하고 첫 운영 배포를 승인한다.
-- [ ] `[USER]` 관측성 연동 직전 Grafana Cloud 계정·stack·요금제와 알림 연락 채널을 선택하고 telemetry 전송 자격 증명을 합의된 실행 환경에 직접 등록한다.
+- [ ] `[POST-MVP][USER]` Alloy·Grafana Cloud 연동 착수 시 계정·stack·요금제와 알림 연락 채널을 선택하고 telemetry 전송 자격 증명을 실행 환경에 직접 등록한다. 제출 MVP에는 필요한 값이 없다.
 - [ ] `[POST-MVP][USER]` Google Auth Platform의 운영 앱·Client ID/Secret과 Calendar scope를 준비한다.
 - [ ] `[POST-MVP][USER]` Kakao Developers OIDC 앱·REST API key·Client Secret을 준비한다.
 - [x] `[AGENT]` 각 사용자 작업 전에 필요한 secret 이름, 최소 권한, 서비스와 메뉴 위치, 단계별 행동, 공유 금지 값과 완료 확인 방법을 `docs/USER_INTERVENTION.md`에 안내한다.
@@ -273,18 +274,18 @@
 - [x] 비동기 작업 전달에 PostgreSQL Transactional Outbox와 Redis Streams Consumer Group을 사용한다.
 - [x] Redis Pub/Sub은 유실 가능한 실시간 보조 알림 외의 비즈니스 작업 전달에 사용하지 않는다.
 - [x] Redis의 추가 책임으로 meet-me Refresh Token 해시·토큰 패밀리·회전 상태와 TTL 관리를 선택한다.
-- [ ] 중복 요청 방지, 분산 락, 캐시와 호출 제한 중 추가 사용 목적은 필요 기능 착수 전에 선택한다.
+- [x] 제출 MVP의 Redis 추가 책임으로 공개 방 생성·참여·제출·주최자 명령 호출 제한을 선택하고, 별도 중복 키·분산 락·읽기 캐시는 도입하지 않는다.
 - [x] Stream 메시지는 이벤트 ID와 방 전체 제출 배치 ID만 담고 원문은 Worker가 PostgreSQL에서 조회하도록 확정한다.
-- [ ] Stream key, Consumer Group, trimming, Pending 복구, retry·보류·실패 정책을 선택한다.
+- [x] 작업 Stream `meetme:coordination:work:v1`, Consumer Group `coordination-workers-v1`, DLQ `meetme:coordination:dlq:v1`, 2분 Pending 회수와 PostgreSQL 재발행 경계를 선택한다.
 - [x] PostgreSQL을 실패 이력의 기준으로 유지하고 Redis DLQ에는 poison message의 이벤트·배치 참조와 실패 메타데이터만 저장하도록 확정한다.
 - [x] Gemini 기술적 재시도 소진은 `ANALYSIS_DELAYED`로 전이해 후보 생성 없이 ACK하고 DLQ에는 넣지 않도록 확정한다.
 - [x] 주최자의 방 단위 재분석은 같은 고정 배치를 대상으로 새 Outbox 이벤트를 멱등하게 발행하도록 확정한다.
-- [ ] `ANALYSIS_DELAYED`의 자동 지연 재시도 여부와 횟수 상한을 선택한다.
+- [x] 제출 MVP에서는 `ANALYSIS_DELAYED` 자동 재시도를 하지 않고 주최자 방 단위 재분석만 허용한다.
 - [x] 동일 메시지가 첫 전달을 포함해 총 5회 처리 실패하면 DLQ로 옮기고, Gemini API 재시도 횟수와 별도로 계산하도록 확정한다.
-- [ ] Pending 회수 대기시간, DLQ 보존 기간, trimming과 수동 재처리 절차를 선택한다.
-- [ ] 키 형식, TTL, 장애 시 동작과 PostgreSQL 복구 경계를 선택한다.
-- [ ] Redis가 없어도 영구 비즈니스 데이터가 유실되지 않는지 설계 검토한다.
-- [ ] 확정 내용을 Architecture와 ADR에 반영한다.
+- [x] Pending 회수는 2분, DLQ는 30일·최근 10,000건 상한, 명시적 이벤트 ID 시작 인자 기반 수동 재처리로 확정한다.
+- [x] 호출 제한 key에는 IP·cookie 원문 대신 SHA-256 digest를 쓰고 방 생성·비용 유발 명령은 Redis 장애 시 fail closed, 참여·제출은 fail open으로 확정한다.
+- [x] Redis 유실 뒤 PostgreSQL `PUBLISHED` Outbox와 처리 lease를 기준으로 재발행해 영구 비즈니스 데이터와 작업을 복구하도록 설계·검증한다.
+- [x] 확정 내용을 Architecture와 ADR-040에 반영한다.
 
 ### DG-05 Google Calendar 연동 `[POST-MVP]`
 
@@ -341,9 +342,9 @@
 - [x] 운영 domain을 `meet-me.co.kr`, 프론트엔드를 `app.meet-me.co.kr`, API를 `api.meet-me.co.kr`로 확정하고 루트 domain은 프론트엔드로 연결하도록 확정한다.
 - [ ] Terraform 상태 저장소, 잠금, 환경 분리와 비밀정보 주입 방식을 선택한다.
 - [ ] CI/CD, 롤백과 데이터베이스 마이그레이션 실행 순서를 선택한다.
-- [x] Actuator·Micrometer + Alloy + Grafana Cloud Metrics·Loki·Grafana-managed Alerting을 채택하고 자체 Grafana·Loki·Prometheus와 MVP tracing은 제외하도록 확정한다.
-- [ ] Gemini 배치 실패·지연, Outbox·Pending 적체와 DLQ 진입의 알림 임계값·연락 채널을 선택한다.
-- [x] 확정 내용을 Architecture와 ADR-017에 반영한다.
+- [x] 제출 MVP는 Actuator·Micrometer Prometheus endpoint와 JSON 표준 출력까지만 구현하고 Alloy·Grafana Cloud Metrics·Loki·Alerting은 Post-MVP로 이관한다.
+- [ ] `[POST-MVP]` Gemini 배치 실패·지연, Outbox·Pending 적체와 DLQ 진입의 Grafana 알림 임계값·연락 채널을 선택한다.
+- [x] 변경 결정을 Architecture와 ADR-040에 반영한다.
 
 ### DG-09 국제화
 
@@ -531,25 +532,25 @@
 
 **선행 조건:** DG-04 및 실제 사용 목적이 발생한 기능 단계
 
-- [ ] 선택한 책임에 한해 Redis port와 adapter를 구현한다.
-- [ ] PostgreSQL Outbox 저장·relay와 Redis Streams Consumer Group adapter를 구현한다.
-- [ ] Outbox 재발행과 Stream 중복 전달에도 LLM 호출·매칭 상태 전이가 중복 실행되지 않도록 멱등성 테스트를 작성한다.
-- [ ] Stream Pending 작업 회수, 보류·실패 처리와 trimming 정책을 구현하고 장애 복구를 테스트한다.
-- [ ] 기술적 재시도 소진으로 ACK된 `ANALYSIS_DELAYED` 작업과 역직렬화·불변식 위반·반복 Worker crash 같은 poison message를 구분하는 테스트를 작성한다.
-- [ ] 동일 메시지 총 5회 실패 시 PostgreSQL 영구 실패 상태를 먼저 기록하고 원문 없는 참조형 Redis DLQ로 옮기는 흐름을 구현·테스트한다.
-- [ ] Actuator·Micrometer 애플리케이션 지표와 표준 출력 JSON 구조화 로그를 구현한다.
-- [ ] Alloy가 Prometheus 지표와 JSON 로그를 필터링해 Grafana Cloud Metrics·Loki로 보내도록 구성한다.
-- [ ] Grafana-managed Alerting 규칙과 대시보드를 코드 또는 재현 가능한 설정으로 관리하고 Gemini 배치 실패를 운영자가 인지하는지 검증한다.
-- [ ] Redis 장애와 데이터 유실이 영구 데이터 유실로 이어지지 않는지 테스트한다.
-- [ ] `ANALYSIS_DELAYED` 방의 입력·고정 배치가 Redis 유실과 프로세스 재시작 뒤에도 PostgreSQL에서 복구되는지 테스트한다.
-- [ ] 중복 제출과 중복 매칭 실행의 멱등성 전략을 구현한다.
-- [ ] 외부 API별 타임아웃, 재시도와 회로 차단 필요성을 비교하고 선택한다.
-- [ ] 요청 상관관계 ID와 구조화 로그를 구성한다.
-- [ ] 로그 마스킹과 민감정보 회귀 테스트를 추가한다.
-- [ ] 미반영 원문이 로그, 지표와 Redis Stream 메시지 payload에 포함되지 않는지 검증한다.
-- [ ] 인증 실패, 외부 API 지연·오류, 매칭 시간과 결과 수 지표를 추가한다.
-- [ ] 모임별 AI 비용 집계를 구현하고 10원 미만 여부를 측정한다.
-- [ ] 일정·좌표·토큰의 보관 및 삭제 정책을 구현한다.
+- [x] 선택한 책임에 한해 Redis port와 adapter를 구현한다.
+- [x] PostgreSQL Outbox 저장·relay와 Redis Streams Consumer Group adapter를 구현한다.
+- [x] Outbox 재발행과 Stream 중복 전달에도 LLM 호출·매칭 상태 전이가 중복 실행되지 않도록 멱등성 테스트를 작성한다.
+- [x] Stream Pending 작업 회수, 보류·실패 처리와 trimming 정책을 구현하고 장애 복구를 테스트한다.
+- [x] 기술적 재시도 소진으로 ACK된 `ANALYSIS_DELAYED` 작업과 역직렬화 실패·불변식 위반·반복 Worker crash 같은 poison message를 구분하는 테스트를 작성한다.
+- [x] 동일 메시지 총 5회 실패 시 PostgreSQL 영구 실패 상태를 먼저 기록하고 원문 없는 참조형 Redis DLQ로 옮기는 흐름을 구현·테스트한다.
+- [x] Actuator·Micrometer 애플리케이션 지표와 표준 출력 JSON 구조화 로그를 구현한다.
+- [ ] `[POST-MVP]` Alloy가 Prometheus 지표와 JSON 로그를 필터링해 Grafana Cloud Metrics·Loki로 보내도록 구성한다. PM-03에서 수행한다.
+- [ ] `[POST-MVP]` Grafana-managed Alerting 규칙과 대시보드를 코드 또는 재현 가능한 설정으로 관리한다. PM-03에서 수행한다.
+- [x] Redis 장애와 데이터 유실이 영구 데이터 유실로 이어지지 않는지 테스트한다.
+- [x] `ANALYSIS_DELAYED` 방의 입력·고정 배치가 Redis 유실과 프로세스 재시작 뒤에도 PostgreSQL에서 복구되는지 테스트한다.
+- [x] 중복 제출과 중복 매칭 실행의 멱등성 전략을 구현한다.
+- [x] 외부 API별 기존 timeout·제한 재시도를 유지하고 제출 MVP에는 회로 차단기를 추가하지 않기로 선택한다.
+- [x] 요청 상관관계 ID와 구조화 로그를 구성한다.
+- [x] 로그 마스킹과 민감정보 회귀 테스트를 추가한다.
+- [x] 미반영 원문이 로그, 지표와 Redis Stream 메시지 payload에 포함되지 않는지 검증한다.
+- [x] 인증 실패, 외부 API 지연·오류, 매칭 시간과 결과 수 지표를 추가한다.
+- [x] 논리 배치별 AI 비용의 USD·보수적 KRW 추정과 10원 미만 지표를 구현한다.
+- [x] 제출 MVP 일정·좌표·게스트 자격 증명의 30일 보관 및 삭제 정책을 구현한다. Post-MVP 공급자 token은 PM-01·PM-02에서 별도로 확정한다.
 
 ## Phase 9 — 로컬 실행, 인프라와 배포
 
@@ -589,7 +590,7 @@
 - [ ] 미완료 TBD와 Post-MVP 항목이 아래 별도 백로그에 남아 있는지 확인한다.
 - [ ] 출시 승인 체크리스트와 운영 인계 문서를 완료한다.
 
-## Post-MVP — 소셜 로그인과 Google Calendar
+## Post-MVP — 인증, Calendar와 중앙 관측성
 
 ### PM-01 Google·Kakao 로그인과 서비스 토큰
 
@@ -619,6 +620,17 @@
 - [ ] 권한 철회, 만료 토큰, 할당량·일시 장애와 공급자 token 암호화를 구현한다.
 - [ ] 제출·매칭·E2E와 OpenAPI에 Calendar 모드를 추가하고 익명 사용자의 OAuth를 거부한다.
 
+### PM-03 Grafana Cloud 중앙 관측성
+
+**선행 조건:** 제출 MVP 출시, 운영 컴퓨팅·네트워크 토폴로지 확정
+
+- [ ] `[USER]` Grafana Cloud 계정·stack·요금제, 최소 쓰기 권한 Access Policy와 알림 연락 채널을 준비한다.
+- [ ] Alloy를 운영 런타임에 배치하고 비밀값 없는 설정 템플릿과 환경별 주입 경계를 구현한다.
+- [ ] Prometheus 지표를 Grafana Cloud Metrics로, 필터링한 JSON 로그를 Loki로 전송한다.
+- [ ] Gemini 지연·실패, Outbox 적체, Redis Pending 노후화와 DLQ 진입 대시보드·Alerting을 재현 가능한 설정으로 관리한다.
+- [ ] 원문·좌표·토큰·쿠키·API key가 원격 telemetry와 label에 포함되지 않는지 검증한다.
+- [ ] Metrics·Logs 사용량과 보존 기간, 알림 임계값과 비용 상한을 확정한다.
+
 ## PRD 요구사항 추적
 
 | 요구사항 | 구현 단계 | 상태 |
@@ -641,10 +653,10 @@
 | FR-006A 이동 제약·미확정 장소의 좌표 생성 금지 | Phase 5, 6 | 완료 |
 | FR-007 1-Pass Payload | Phase 5 | 완료 |
 | FR-007A 본인 최신 제출 조회 | Phase 3, 5 | 완료 |
-| FR-008 방 전체 제출 배치별 논리 파싱 작업·입력 제한·기술 오류 재시도 | Phase 5, 8 | 구조화·Gemini 재시도 완료, Redis 전달 남음 |
+| FR-008 방 전체 제출 배치별 논리 파싱 작업·입력 제한·기술 오류 재시도 | Phase 5, 8 | 완료 |
 | FR-008A 수집 종료 전 수정과 최신 버전 매칭 | Phase 5 | 완료 |
-| FR-008B 기술 실패 분석 지연·의미 실패 부분 결과 | Phase 5, 6, 7, 8 | 분석 지연·부분 결과 완료, DLQ 연계 남음 |
-| FR-008C 주최자 방 단위 재분석 | Phase 3, 5, 8 | API 완료, Redis 소비 연계 남음 |
+| FR-008B 기술 실패 분석 지연·의미 실패 부분 결과 | Phase 5, 6, 7, 8 | 완료 |
+| FR-008C 주최자 방 단위 재분석 | Phase 3, 5, 8 | 완료 |
 | FR-009 참여자별 조건 비공개 | Phase 3, 5, 7 | 완료 |
 | FR-010 완료 조건 후 매칭 | Phase 4, 5, 6 | 완료 |
 | FR-010A 주최자 수동 조기 마감 | Phase 4 | 완료 |
@@ -735,3 +747,4 @@
 | 2026-09-19 | Issue #14의 조건 제출·수정·본인 조회, 50명 상한, 자동·수동·데드라인 마감의 최신 배치 고정, 참조형 Outbox와 `gemini-3.8-flash` Structured Output·분석 지연 재요청 구현 | RED 4개, 전체 76개·hook 12개 테스트, V3 fresh/upgrade, 동시성·멱등성 및 좌표·원문·잠금 결함 주입 3종, `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #14 |
 | 2026-09-20 | Issue #16의 연속 시간·장소 영역 교집합, Kakao 정확명 고유 정규화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회·주최자 미반영 입력 조회와 멱등 확정 구현 | 역할 분리 RED, 핵심 순위·Kakao 경합·부분 결과·교차 방 FK 결함 주입 탐지, 전체 133개 테스트와 `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #16 |
 | 2026-09-20 | Issue #18의 소요 시간 전 계층 제거, V5 마이그레이션과 Aggregate 우선 헥사고날 패키지 재편. 프로덕션·테스트의 구형 최상위 `adapter/application/domain` 제거와 ADR-039 추가 | 새 구조 기준 RED·마이그레이션·API 실패 증거, 아키텍처 회귀 검사, hook 12개와 전체 139개 테스트, `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #18 |
+| 2026-09-20 | Issue #20의 PostgreSQL Outbox relay·Redis Streams consumer, 2분 Pending/유실 복구, 5회 poison DLQ·수동 재처리, 공개 API rate limit, 30일 데이터 정리와 Prometheus·JSON 로그 기반 구현. Alloy·Grafana Cloud Metrics·Loki·Alerting은 PM-03으로 이관 | RED 3종, 중복 실행·DLQ 순서·호출 제한·민감정보·역직렬화·보관 경계 결함 주입 6종 탐지, PostgreSQL·Redis Testcontainers 포함 전체 159개 테스트와 `ktlintCheck`, `assemble`, `test`, `git diff --check` 통과 | 동일 커밋 예정, #20 |

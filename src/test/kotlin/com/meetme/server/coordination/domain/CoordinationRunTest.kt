@@ -44,6 +44,15 @@ class CoordinationRunTest {
         assertThrows<IllegalStateException> { run().confirm(candidate(1).id, now) }
     }
 
+    @Test
+    fun `DLQ 재처리는 실패한 단계를 보존해 구조화 또는 매칭부터 재개한다`() {
+        val structuring = run().startStructuring().deadLetter().retryDeadLetter()
+        val matching = run().startMatching().deadLetter().retryDeadLetter()
+
+        assertEquals(CoordinationStatus.QUEUED, structuring.status)
+        assertEquals(CoordinationStatus.MATCHING, matching.status)
+    }
+
     private fun run(): CoordinationRun {
         val roomId = MeetingRoomId(UUID.randomUUID())
         val batch =

@@ -93,7 +93,7 @@ class CorePersistenceIntegrationTest {
     @Test
     fun `Flyway 최초 마이그레이션을 적용하고 검증한다`() {
         assertEquals(
-            "5",
+            "6",
             flyway
                 .info()
                 .current()
@@ -127,6 +127,23 @@ class CorePersistenceIntegrationTest {
 
         assertEquals(fixture.run, coordinationRunRepository.findById(fixture.run.id))
         assertEquals(event, outboxRepository.findById(event.id))
+    }
+
+    @Test
+    fun `Outbox 발행 처리 lease와 완료 상태를 PostgreSQL에서 원자적으로 전이한다`() {
+        val fixture = createCoordinationFixture()
+        val event = outboxEvent(fixture.run)
+        coordinationPersistenceService.persist(fixture.run, event)
+
+        outboxRepository.markPublished(event.id, NOW.plusSeconds(20))
+        val claim = outboxRepository.claimProcessing(event.id, NOW.plusSeconds(21), NOW.plusSeconds(141))
+        outboxRepository.markProcessed(event.id, NOW.plusSeconds(30))
+
+        assertEquals(1, claim?.deliveryCount)
+        assertEquals(
+            com.meetme.server.coordination.application.port.output.OutboxStatus.PROCESSED,
+            outboxRepository.findById(event.id)?.status,
+        )
     }
 
     @Test

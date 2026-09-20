@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-20-rate-limit",
+  "sourceRevision": "709d3291d07323841b6e02b49f947e1497462d01",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/redis/RedisRateLimiterTest.kt",
+      "sha256": "6338a36fa5e1f6466c4fd01e131fbeb3b2d434d179ce0c8e29cb39f2e90fc7c3"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RedisRateLimiterTest"
+  ],
+  "failedTests": [
+    "RedisRateLimiterTest - atomic fixed-window limit reached TDD TODO"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-20T02:44:59.0169267Z"
+}
