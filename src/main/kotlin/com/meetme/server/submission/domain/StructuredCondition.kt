@@ -16,10 +16,15 @@ sealed interface StructuredCondition {
         val dayOfWeek: DayOfWeek?,
         val startTime: LocalTime,
         val endTime: LocalTime,
+        val endsAtNextDayStart: Boolean = false,
     ) : StructuredCondition {
         init {
             require((date == null) != (dayOfWeek == null)) { "Exactly one date scope is required" }
-            require(startTime < endTime) { "Time window must be non-empty and cannot cross midnight" }
+            if (endsAtNextDayStart) {
+                require(endTime == LocalTime.MIDNIGHT) { "Next-day boundary must end at midnight" }
+            } else {
+                require(startTime < endTime) { "Time window must be non-empty and cannot cross midnight" }
+            }
         }
     }
 

@@ -19,6 +19,7 @@ import com.meetme.server.submission.domain.StructuredSubmissionResult
 import com.meetme.server.submission.domain.TimePolarity
 import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
+import java.time.DateTimeException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -113,6 +114,9 @@ class GeminiNaturalLanguageParserAdapter(
                     rawConditions.mapNotNull {
                         try {
                             parseCondition(it, request)
+                        } catch (_: DateTimeException) {
+                            conditionRejected = true
+                            null
                         } catch (_: IllegalArgumentException) {
                             conditionRejected = true
                             null
@@ -154,12 +158,16 @@ class GeminiNaturalLanguageParserAdapter(
                     } else {
                         day
                     }
+                val startTime = LocalTime.parse(meaningful.getValue("start_time").toString())
+                val rawEndTime = meaningful.getValue("end_time").toString()
+                val endsAtNextDayStart = rawEndTime == END_OF_DAY
                 StructuredCondition.TimeWindow(
                     TimePolarity.valueOf(meaningful.getValue("polarity").toString()),
                     date,
                     normalizedDay,
-                    LocalTime.parse(meaningful.getValue("start_time").toString()),
-                    LocalTime.parse(meaningful.getValue("end_time").toString()),
+                    startTime,
+                    if (endsAtNextDayStart) LocalTime.MIDNIGHT else LocalTime.parse(rawEndTime),
+                    endsAtNextDayStart,
                 )
             }
             "SPECIFIC_PLACE" -> {
@@ -226,6 +234,7 @@ class GeminiNaturalLanguageParserAdapter(
             appendLine("Never invent coordinates. Classify home/work/school-near expressions as TRAVEL_CONSTRAINT.")
             appendLine("Use UNRESOLVED_PLACE when a location cannot identify one place. Preserve every input_ref exactly once.")
             appendLine("Use HH:mm room-local wall-clock time without a UTC offset for start_time and end_time.")
+            appendLine("Only end_time may use 24:00 to mean the exclusive start of the next local day.")
             appendLine("Room time zone: ${request.timeZone.id}")
             appendLine("Search range: ${request.searchStartDate} until ${request.searchEndDate} (exclusive)")
             appendLine("Inputs:")
@@ -235,11 +244,18 @@ class GeminiNaturalLanguageParserAdapter(
     companion object {
         internal const val CALL_TIMEOUT_MILLIS = 15_000
         internal const val MAX_OUTPUT_TOKENS = 32_768
+        private const val END_OF_DAY = "24:00"
         private val TIME_FIELDS = setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time")
-        private val LOCAL_TIME_SCHEMA: Map<String, Any> =
+        private val START_TIME_SCHEMA: Map<String, Any> =
             mapOf(
                 "type" to "string",
                 "description" to "Room-local wall-clock time in HH:mm format without a UTC offset",
+            )
+        private val END_TIME_SCHEMA: Map<String, Any> =
+            mapOf(
+                "type" to "string",
+                "description" to
+                    "Exclusive room-local end in HH:mm format without a UTC offset; 24:00 means the next local day boundary",
             )
         private val POLARITY_SCHEMA: Map<String, Any> =
             mapOf("type" to "string", "enum" to listOf("AVAILABLE", "UNAVAILABLE"))
@@ -326,8 +342,8 @@ class GeminiNaturalLanguageParserAdapter(
                         "polarity" to POLARITY_SCHEMA,
                         "date" to date,
                         "day_of_week" to dayOfWeek,
-                        "start_time" to LOCAL_TIME_SCHEMA,
-                        "end_time" to LOCAL_TIME_SCHEMA,
+                        "start_time" to START_TIME_SCHEMA,
+                        "end_time" to END_TIME_SCHEMA,
                     ),
             )
 

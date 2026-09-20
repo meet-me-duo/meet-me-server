@@ -4,10 +4,15 @@ import com.meetme.server.config.GeminiProperties
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchRequest
 import com.meetme.server.coordination.application.port.output.NaturalLanguageInput
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
+import com.meetme.server.coordination.domain.matching.TimeRangeMatcher
+import com.meetme.server.shared.domain.time.InstantTimeRange
+import com.meetme.server.shared.domain.time.MeetingTimeZone
+import com.meetme.server.shared.domain.time.SearchDateRange
 import com.meetme.server.submission.domain.StructuredCondition
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import tools.jackson.databind.json.JsonMapper
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -212,6 +217,65 @@ class GeminiNaturalLanguageParserAdapterTest {
 
         assertEquals(3, conditions.filterIsInstance<StructuredCondition.TravelConstraint>().size)
         assertEquals("중앙역", conditions.filterIsInstance<StructuredCondition.UnresolvedPlace>().single().query)
+    }
+
+    @Test
+    fun `24시 종료를 다음 날 자정의 배타적 경계로 확장한다`() {
+        val request = request(1)
+        val json =
+            """
+            {"schema_version":"1","results":[
+              {"input_ref":"${request.inputs.single().inputRef}","conditions":[
+                {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":"2026-09-21","day_of_week":null,"start_time":"18:00","end_time":"24:00"}
+              ]}
+            ]}
+            """.trimIndent()
+
+        val window =
+            adapter
+                .parseProviderResponse(json, request)
+                .single()
+                .conditions
+                .single() as StructuredCondition.TimeWindow
+
+        assertEquals(
+            listOf(
+                InstantTimeRange(
+                    Instant.parse("2026-09-21T09:00:00Z"),
+                    Instant.parse("2026-09-21T15:00:00Z"),
+                ),
+            ),
+            TimeRangeMatcher.expandNaturalWindows(
+                listOf(window),
+                SearchDateRange.explicit(LocalDate.of(2026, 9, 20), LocalDate.of(2026, 9, 28)),
+                MeetingTimeZone.of("Asia/Seoul"),
+            ),
+        )
+    }
+
+    @Test
+    fun `잘못된 지역 시각은 해당 조건만 제외하고 유효한 조건을 보존한다`() {
+        val request = request(2)
+        val json =
+            """
+            {"schema_version":"1","results":[
+              {"input_ref":"${request.inputs[0].inputRef}","conditions":[
+                {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"MONDAY","start_time":"18:00","end_time":"25:00"},
+                {"type":"TRAVEL_CONSTRAINT","expression":"학교 근처"}
+              ]},
+              {"input_ref":"${request.inputs[1].inputRef}","conditions":[
+                {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"TUESDAY","start_time":"24:00","end_time":"24:00"},
+                {"type":"UNRESOLVED_PLACE","query":"중앙역"}
+              ]}
+            ]}
+            """.trimIndent()
+
+        val results = adapter.parseProviderResponse(json, request)
+
+        assertEquals(listOf(1, 1), results.map { it.conditions.size })
+        assertTrue(results[0].conditions.single() is StructuredCondition.TravelConstraint)
+        assertTrue(results[1].conditions.single() is StructuredCondition.UnresolvedPlace)
+        results.forEach { assertEquals("CONDITION_VALIDATION_FAILED", it.rejectionCode) }
     }
 
     private fun request(count: Int) =
