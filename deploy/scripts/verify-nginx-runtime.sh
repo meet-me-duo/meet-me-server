@@ -35,6 +35,11 @@ openssl req \
   -passout "pass:${passphrase}" \
   -subj "$certificate_subject" >/dev/null 2>&1
 printf '%s' "$passphrase" >"$temporary_directory/passphrase"
+chmod 0755 "$temporary_directory"
+chmod 0644 \
+  "$temporary_directory/fullchain.pem" \
+  "$temporary_directory/private-key.pem" \
+  "$temporary_directory/passphrase"
 
 docker network create "$network_name" >/dev/null
 docker run --detach \
