@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-46-gemini-semantic-normalization",
+  "sourceRevision": "ed22d9b1698f745d8d891c3a8df8c96199b2b47e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "2eaeb906fb1d296afef013f77e3bba3620006b7c79d4f68cfc02deac949e1aac"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest.관련 없는 null 필드와 날짜에 일치하는 요일을 명시 날짜 조건으로 정규화한다"
+  ],
+  "failedTests": [
+    "GeminiNaturalLanguageParserAdapterTest - 관련 없는 null 필드와 날짜에 일치하는 요일을 명시 날짜 조건으로 정규화한다"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-09-20T11:18:08.5289752Z"
+}

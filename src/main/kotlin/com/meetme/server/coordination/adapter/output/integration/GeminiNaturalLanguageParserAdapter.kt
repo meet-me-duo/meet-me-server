@@ -137,41 +137,50 @@ class GeminiNaturalLanguageParserAdapter(
     private fun parseCondition(
         map: Map<String, Any?>,
         request: NaturalLanguageBatchRequest,
-    ): StructuredCondition =
-        when (map["type"]?.toString()) {
+    ): StructuredCondition {
+        val meaningful = map.filterValues { it != null }
+        return when (meaningful["type"]?.toString()) {
             "TIME_WINDOW" -> {
-                requireOnly(map, TIME_FIELDS)
-                val date = map["date"]?.toString()?.let(LocalDate::parse)
-                val day = map["day_of_week"]?.toString()?.let(DayOfWeek::valueOf)
+                requireOnly(meaningful, TIME_FIELDS)
+                val date = meaningful["date"]?.toString()?.let(LocalDate::parse)
+                val day = meaningful["day_of_week"]?.toString()?.let(DayOfWeek::valueOf)
                 if (date != null && (date < request.searchStartDate || date >= request.searchEndDate)) {
                     throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 }
+                val normalizedDay =
+                    if (date != null && day != null) {
+                        require(date.dayOfWeek == day) { "Date and day_of_week must agree" }
+                        null
+                    } else {
+                        day
+                    }
                 StructuredCondition.TimeWindow(
-                    TimePolarity.valueOf(map.getValue("polarity").toString()),
+                    TimePolarity.valueOf(meaningful.getValue("polarity").toString()),
                     date,
-                    day,
-                    LocalTime.parse(map.getValue("start_time").toString()),
-                    LocalTime.parse(map.getValue("end_time").toString()),
+                    normalizedDay,
+                    LocalTime.parse(meaningful.getValue("start_time").toString()),
+                    LocalTime.parse(meaningful.getValue("end_time").toString()),
                 )
             }
             "SPECIFIC_PLACE" -> {
-                requireOnly(map, setOf("type", "query", "radius_meters"))
-                if (map.keys.any { it in setOf("latitude", "longitude", "coordinates") }) invalid()
+                requireOnly(meaningful, setOf("type", "query", "radius_meters"))
+                if (meaningful.keys.any { it in setOf("latitude", "longitude", "coordinates") }) invalid()
                 StructuredCondition.SpecificPlace(
-                    map.getValue("query").toString(),
-                    (map["radius_meters"] as? Number)?.toInt() ?: 1_000,
+                    meaningful.getValue("query").toString(),
+                    (meaningful["radius_meters"] as? Number)?.toInt() ?: 1_000,
                 )
             }
             "TRAVEL_CONSTRAINT" -> {
-                requireOnly(map, setOf("type", "expression"))
-                StructuredCondition.TravelConstraint(map.getValue("expression").toString())
+                requireOnly(meaningful, setOf("type", "expression"))
+                StructuredCondition.TravelConstraint(meaningful.getValue("expression").toString())
             }
             "UNRESOLVED_PLACE" -> {
-                requireOnly(map, setOf("type", "query"))
-                StructuredCondition.UnresolvedPlace(map.getValue("query").toString())
+                requireOnly(meaningful, setOf("type", "query"))
+                StructuredCondition.UnresolvedPlace(meaningful.getValue("query").toString())
             }
             else -> invalid()
         }
+    }
 
     private fun requireOnly(
         map: Map<String, Any?>,
