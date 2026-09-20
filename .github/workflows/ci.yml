@@ -40,3 +40,6 @@ jobs:
 
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
+
+      - name: Verify production Nginx runtime
+        run: bash deploy/scripts/verify-nginx-runtime.sh

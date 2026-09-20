@@ -56,27 +56,32 @@ remove_legacy_container meet-me-nginx
 
 APP_IMAGE="$app_image" docker compose -f compose.production.yml up -d --remove-orphans
 
-healthy=false
-for _ in $(seq 1 24); do
-  status="$(docker inspect --format '{{.State.Health.Status}}' meet-me-app 2>/dev/null || true)"
-  if [[ "$status" == "healthy" ]]; then
-    healthy=true
-    break
-  fi
-  if [[ "$status" == "unhealthy" ]]; then
-    break
-  fi
-  sleep 5
-done
+wait_for_healthy_container() {
+  local container_name="$1"
+  local status
 
-if [[ "$healthy" != "true" ]]; then
+  for _ in $(seq 1 24); do
+    status="$(docker inspect --format '{{.State.Health.Status}}' "$container_name" 2>/dev/null || true)"
+    if [[ "$status" == "healthy" ]]; then
+      return 0
+    fi
+    if [[ "$status" == "unhealthy" ]]; then
+      return 1
+    fi
+    sleep 5
+  done
+  return 1
+}
+
+if ! wait_for_healthy_container meet-me-app || ! wait_for_healthy_container meet-me-nginx; then
   docker logs --tail 100 meet-me-app >&2 || true
+  docker logs --tail 100 meet-me-nginx >&2 || true
   if [[ -n "$previous" && -f "$previous/.release.env" ]]; then
     previous_image="$(sed -n 's/^APP_IMAGE=//p' "$previous/.release.env")"
     cd "$previous"
     APP_IMAGE="$previous_image" docker compose -f compose.production.yml up -d --remove-orphans
   fi
-  echo "Deployment health check failed; application rollback attempted" >&2
+  echo "Deployment health check failed; application and proxy rollback attempted" >&2
   exit 1
 fi
 
