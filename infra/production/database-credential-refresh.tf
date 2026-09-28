@@ -52,11 +52,11 @@ resource "aws_cloudwatch_event_rule" "database_credential_reconcile" {
 }
 
 locals {
+  # AWS-owned documents use an ARN without an account ID. EventBridge rejected
+  # nested { Parameters = { commands = ... } } as INVALID_JSON in production.
   credential_refresh_document_arn = "arn:${data.aws_partition.current.partition}:ssm:${var.aws_region}::document/AWS-RunShellScript"
   credential_refresh_input = jsonencode({
-    Parameters = {
-      commands = ["bash /opt/meet-me/current/scripts/refresh-database-credential.sh"]
-    }
+    commands = ["bash /opt/meet-me/current/scripts/refresh-database-credential.sh"]
   })
 }
 
