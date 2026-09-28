@@ -807,3 +807,4 @@
 | 2026-09-21 | Issue #66의 제출 MVP Kakao Local 호출 제거와 Gemini 장소 근접 호환 그룹 전환 | `AREA_n` Structured Output v2, 서버 그룹 교집합·먼 참여자 Plan C 제외, 좌표 없는 대표 지역명, 기존 MATCHING 지연 실행의 STRUCTURING 재시도 migration 구현. 결함 주입 2종 탐지, `ktlintCheck`, `assemble`, 전체 176개 `test`, `git diff --check` 통과 | 동일 커밋 예정, #66 |
 | 2026-09-21 | Issue #70의 명시 후보 날짜·시간 요약 압축 | 날짜별 전체 시간 구간 목록 기준 그룹화, 연속 `매일`·비연속 `·`·복수 시간 `또는`·월 경계 표현 구현. RED 5개와 일정 동일성 결함 주입 2종 탐지, `ktlintCheck`, `assemble`, 전체 183개 `test`, `git diff --check` 통과 | 동일 커밋 예정, #70 |
 | 2026-09-29 | Issue #74의 RDS 비밀번호 회전 후 앱 자격 증명 자동 갱신 구현 | 운영 재배포 run #36440308054 성공·앱 `healthy`, 스크립트 회전·멱등·재시도 테스트, Terraform 형식·구성 및 계획 신규 6개만 확인, EventBridge 패턴 정·역 검사, `ktlintCheck`·`assemble`·`test` 통과 | 동일 커밋 예정, #74 |
+| 2026-09-29 | Issue #74 운영 적용 뒤 EventBridge Run Command 대상 ARN 보정 | 최초 5분 재확인에서 `FailedInvocations`가 발생해 SSM 명령이 생성되지 않은 것을 확인. AWS 계정 ID가 포함된 대상 ARN과 명시적 문서 이름으로 수정하고 Terraform 계획이 대상 2개·IAM 정책 1개 갱신만 포함함을 확인 | 동일 커밋 예정, #74 |
