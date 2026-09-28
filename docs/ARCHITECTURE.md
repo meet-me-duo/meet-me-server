@@ -394,6 +394,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - Redis Streams·호출 제한·DLQ는 ElastiCache Serverless for Valkey에 두고 EC2 수명주기와 분리한다.
 - Terraform state는 versioning·암호화를 활성화한 전용 S3 backend와 native lock file로 관리한다. 환경은 별도 state key로 분리한다.
 - RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다. Kakao Local key는 제출 MVP 런타임에서 사용하지 않는다.
+- RDS master password의 `AWSCURRENT` 버전이 바뀌면 EventBridge가 SSM Run Command로 EC2의 자격 증명 갱신 작업을 실행한다. 동일 작업을 5분마다 재확인해 이벤트 누락이나 일시 실패를 복구한다. 작업은 현재 release의 secret 값과 앱 컨테이너 설정을 비교하고 변경 시 `render-runtime-env.sh`로 환경 파일을 다시 만든 뒤 앱만 교체한다. 배포·롤백과 같은 파일 잠금을 사용하며, 비밀번호 값은 Terraform state·명령 출력·로그에 넣지 않는다. 앱 health가 정상일 때만 갱신 완료로 간주한다.
 - 로컬 관리 작업은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용한다. GitHub Actions는 장기 Access Key 없이 OIDC로 환경별 최소 권한 role을 사용한다.
 - 배포는 ECR image digest 고정, 동일 이미지의 Flyway 선실행, 애플리케이션 교체 순서로 수행한다. 실패 시 이전 image digest로 애플리케이션만 되돌리고 적용된 Flyway migration은 자동 downgrade하지 않는다.
 - `main` 병합은 운영 배포 승인으로 간주한다. `main` push로 시작된 CI가 성공하면 별도의 권한 있는 Production workflow가 `workflow_run`의 정확한 `head_sha`를 배포하고, PR·`develop`·수동 CI와 실패한 CI는 자동 배포하지 않는다. 운영 배포는 하나씩 실행하되 대기 실행을 취소하지 않으며, `workflow_dispatch`는 `main`의 장애 복구·재배포 수단으로 유지한다.

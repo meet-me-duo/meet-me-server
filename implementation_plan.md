@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-09-21
+> **최종 갱신:** 2026-09-29
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -37,7 +37,7 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** 후보 요약 압축 `feature/70-compact-candidate-summary` — 연속·비연속 동일 일정의 결정론적 표현 개선
+- **현재 단계:** Issue #74 `fix/74-rds-credential-rotation` — RDS 관리형 비밀번호 회전 후 운영 앱 자격 증명 자동 갱신
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 시간·장소 그룹 구조화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 제출 MVP는 지도 API와 좌표 없이 장소 호환 그룹을 사용한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
 - **현재 차단 사항:** Issue #70 구현 후 전체 품질 게이트와 자동 병합·운영 배포 검증이 남아 있다.
@@ -70,7 +70,14 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축한다. 명시 날짜는 날짜별 시간 구간 목록이 같으면 연속 범위를 `매일`, 비연속 날짜를 `·`, 한 날짜 복수 시간을 `또는`으로 손실 없이 묶는다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #70에서 `CandidateSummaryRenderer`의 명시 날짜 나열을 날짜별 동일 시간 목록 기준으로 압축한다. API·DB·Gemini·프론트엔드 계약은 변경하지 않는다.
+- **현재 작업:** 2026-09-29 운영 재배포 성공을 확인했다. Issue #74에서 회전 이벤트와 5분 재확인, 배포·갱신 경합 방지, 앱 health 검증을 구현하고 운영 Terraform 적용·검증을 진행한다. API·DB 스키마·Gemini·프론트엔드 계약은 변경하지 않는다.
+
+## 운영 DB 비밀번호 회전 복구 — Issue #74
+
+- [x] `[AGENT]` 운영 재배포 성공과 앱 health 정상화를 확인한다.
+- [x] `[AGENT]` Secret `AWSCURRENT` 변경 이벤트, 5분 재확인, SSM 갱신 스크립트와 배포 직렬화를 구현·검증한다.
+- [ ] `[AGENT]` 변경을 `develop`과 `main`에 병합하고 CI·운영 배포 성공을 확인한다.
+- [ ] `[AGENT]` 운영 Terraform saved plan을 검토·적용하고 EventBridge/SSM 연결 및 재확인 실행을 검증한다.
 
 ## 실행 순서
 
@@ -799,3 +806,4 @@
 | 2026-09-20 | Issue #62의 Gemini `24:00` 종료를 다음 지역 날짜 자정의 배타적 경계로 보존하고 잘못된 날짜·시간을 조건 단위로 격리, 구조화 조건 JSON 왕복과 Architecture 계약 갱신 | Adapter·Matcher·영속 Mapper RED/GREEN, `24:00` 인식·다음 날짜 이동·JSON 보존·조건 격리 결함 주입 4종 탐지, `ktlintCheck`, `assemble`, 전체 `test`, `git diff --check` 통과 | 동일 커밋 예정, #62 |
 | 2026-09-21 | Issue #66의 제출 MVP Kakao Local 호출 제거와 Gemini 장소 근접 호환 그룹 전환 | `AREA_n` Structured Output v2, 서버 그룹 교집합·먼 참여자 Plan C 제외, 좌표 없는 대표 지역명, 기존 MATCHING 지연 실행의 STRUCTURING 재시도 migration 구현. 결함 주입 2종 탐지, `ktlintCheck`, `assemble`, 전체 176개 `test`, `git diff --check` 통과 | 동일 커밋 예정, #66 |
 | 2026-09-21 | Issue #70의 명시 후보 날짜·시간 요약 압축 | 날짜별 전체 시간 구간 목록 기준 그룹화, 연속 `매일`·비연속 `·`·복수 시간 `또는`·월 경계 표현 구현. RED 5개와 일정 동일성 결함 주입 2종 탐지, `ktlintCheck`, `assemble`, 전체 183개 `test`, `git diff --check` 통과 | 동일 커밋 예정, #70 |
+| 2026-09-29 | Issue #74의 RDS 비밀번호 회전 후 앱 자격 증명 자동 갱신 구현 | 운영 재배포 run #36440308054 성공·앱 `healthy`, 스크립트 회전·멱등·재시도 테스트, Terraform 형식·구성 및 계획 신규 6개만 확인, EventBridge 패턴 정·역 검사, `ktlintCheck`·`assemble`·`test` 통과 | 동일 커밋 예정, #74 |
