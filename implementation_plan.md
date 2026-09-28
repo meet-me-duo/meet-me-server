@@ -37,14 +37,14 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** Issue #74 `fix/74-rds-credential-rotation` — RDS 관리형 비밀번호 회전 후 운영 앱 자격 증명 자동 갱신
+- **현재 단계:** Issue #74 운영 복구 완료 — RDS 관리형 비밀번호 회전 후 앱 자격 증명 자동 갱신을 배포·검증했다.
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 시간·장소 그룹 구조화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 제출 MVP는 지도 API와 좌표 없이 장소 호환 그룹을 사용한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** Issue #70 구현 후 전체 품질 게이트와 자동 병합·운영 배포 검증이 남아 있다.
-- **현재 사용자 개입:** Issue #70은 사용자가 별도 승인 없이 `develop`과 `main` 병합 및 자동 운영 배포 확인까지 위임했다. 실제 비밀값은 채팅·저장소·로그에 공유하지 않는다.
+- **현재 차단 사항:** Issue #74의 구현·운영 적용에는 남은 차단 사항이 없다. 실제 RDS 비밀번호를 강제로 회전시키는 E2E 검증은 수행하지 않았다.
+- **현재 사용자 개입:** Issue #74의 커밋·push·PR, `develop`·`main` 병합과 운영 적용은 사용자가 한 번에 위임했다. 새 비밀값 입력은 필요하지 않았다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
-- **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. Issue #70에 한해 `develop` 병합, `main` 병합과 자동 운영 배포 확인까지 추가 위임했다. 결제·비밀정보 입력과 파괴적 복구 작업은 위임에 포함하지 않는다.
+- **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. Issue #70과 #74는 `develop`·`main` 병합과 자동 운영 배포 확인까지 추가 위임했다. 결제와 비밀정보 입력은 위임에 포함하지 않는다.
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **고위험 검증:** 트랜잭션·동시성·외부 Adapter의 의도적 결함 주입은 `.tdd/verification/<work-item>.json`에 최종 source·test 지문과 탐지 결과를 추적하고 전체 출력은 로컬 로그로 분리한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
@@ -70,13 +70,13 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축한다. 명시 날짜는 날짜별 시간 구간 목록이 같으면 연속 범위를 `매일`, 비연속 날짜를 `·`, 한 날짜 복수 시간을 `또는`으로 손실 없이 묶는다.
 - **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** 2026-09-29 운영 재배포 성공을 확인했다. Issue #74에서 회전 이벤트와 5분 재확인, 배포·갱신 경합 방지, 앱 health 검증을 구현하고 운영 Terraform 적용·검증을 진행한다. API·DB 스키마·Gemini·프론트엔드 계약은 변경하지 않는다.
+- **현재 작업:** Issue #74의 회전 이벤트·5분 재확인·배포 직렬화·앱 health 검증을 `main` 배포와 운영 Terraform에 반영했다. 주기 SSM 명령 성공, 공개 OpenAPI 200, Terraform plan 0변경을 확인했다. API·DB 스키마·Gemini·프론트엔드 계약은 변경하지 않았다.
 
 ## 운영 DB 비밀번호 회전 복구 — Issue #74
 
 - [x] `[AGENT]` 운영 재배포 성공과 앱 health 정상화를 확인한다.
 - [x] `[AGENT]` Secret `AWSCURRENT` 변경 이벤트, 5분 재확인, SSM 갱신 스크립트와 배포 직렬화를 구현·검증한다.
-- [ ] `[AGENT]` 변경을 `develop`과 `main`에 병합하고 CI·운영 배포 성공을 확인한다.
+- [x] `[AGENT]` 변경을 `develop`과 `main`에 병합하고 CI·운영 배포 성공을 확인한다.
 - [x] `[AGENT]` 운영 Terraform saved plan을 검토·적용하고 EventBridge/SSM 연결 및 재확인 실행을 검증한다.
 
 ## 실행 순서
@@ -810,3 +810,4 @@
 | 2026-09-29 | Issue #74 운영 적용 뒤 EventBridge Run Command 대상 ARN 보정 | 최초 5분 재확인에서 `FailedInvocations`가 발생해 SSM 명령이 생성되지 않은 것을 확인. AWS 계정 ID가 포함된 대상 ARN과 명시적 문서 이름으로 수정하고 Terraform 계획이 대상 2개·IAM 정책 1개 갱신만 포함함을 확인 | 동일 커밋 예정, #74 |
 | 2026-09-29 | Issue #74 EventBridge 대상 입력 진단과 실제 SSM 전달 확인 | 임시 진단 대기열에서 중첩 `Parameters` 입력은 `INVALID_JSON`, 계정 범위 문서 ARN은 `InvalidDocument`로 확인. AWS 소유 문서 ARN과 직접 `commands` 입력으로 주기 명령 #3025f842 성공·앱 healthy를 확인하고 Terraform에 검증된 조합을 반영 | 동일 커밋 예정, #74 |
 | 2026-09-29 | Issue #74 검증된 EventBridge 설정 운영 반영 | Terraform 4개 갱신·생성/삭제 0개, 5분 재확인 SSM 명령 #6a6a27e·#6d42e5c 모두 성공·앱 healthy, 임시 진단 대기열 제거, 후속 Terraform plan 0변경 확인 | 동일 커밋 예정, #74 |
+| 2026-09-29 | Issue #74의 최종 `main` 승격과 자동 운영 배포 완료 | PR #75·#77·#79를 `develop`, PR #76·#78을 `main`에 병합. 최종 main CI run #36450090557과 Deploy Production run #36450384064 성공, 공개 OpenAPI 200, SSM 5분 명령 성공, Terraform 0변경·작업 트리 깨끗함을 확인 | 동일 커밋 예정, #80 |
