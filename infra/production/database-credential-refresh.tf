@@ -22,7 +22,6 @@ data "aws_iam_policy_document" "credential_refresh" {
     resources = [
       aws_instance.runtime.arn,
       "arn:${data.aws_partition.current.partition}:ssm:${var.aws_region}::document/AWS-RunShellScript",
-      "arn:${data.aws_partition.current.partition}:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:document/AWS-RunShellScript",
     ]
   }
 }
@@ -53,12 +52,11 @@ resource "aws_cloudwatch_event_rule" "database_credential_reconcile" {
 }
 
 locals {
-  credential_refresh_document_arn = "arn:${data.aws_partition.current.partition}:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:document/AWS-RunShellScript"
+  # AWS-owned documents use an ARN without an account ID. EventBridge rejected
+  # nested { Parameters = { commands = ... } } as INVALID_JSON in production.
+  credential_refresh_document_arn = "arn:${data.aws_partition.current.partition}:ssm:${var.aws_region}::document/AWS-RunShellScript"
   credential_refresh_input = jsonencode({
-    DocumentName = "AWS-RunShellScript"
-    Parameters = {
-      commands = ["bash /opt/meet-me/current/scripts/refresh-database-credential.sh"]
-    }
+    commands = ["bash /opt/meet-me/current/scripts/refresh-database-credential.sh"]
   })
 }
 
