@@ -77,7 +77,7 @@
 - [x] `[AGENT]` 운영 재배포 성공과 앱 health 정상화를 확인한다.
 - [x] `[AGENT]` Secret `AWSCURRENT` 변경 이벤트, 5분 재확인, SSM 갱신 스크립트와 배포 직렬화를 구현·검증한다.
 - [ ] `[AGENT]` 변경을 `develop`과 `main`에 병합하고 CI·운영 배포 성공을 확인한다.
-- [ ] `[AGENT]` 운영 Terraform saved plan을 검토·적용하고 EventBridge/SSM 연결 및 재확인 실행을 검증한다.
+- [x] `[AGENT]` 운영 Terraform saved plan을 검토·적용하고 EventBridge/SSM 연결 및 재확인 실행을 검증한다.
 
 ## 실행 순서
 
@@ -808,3 +808,5 @@
 | 2026-09-21 | Issue #70의 명시 후보 날짜·시간 요약 압축 | 날짜별 전체 시간 구간 목록 기준 그룹화, 연속 `매일`·비연속 `·`·복수 시간 `또는`·월 경계 표현 구현. RED 5개와 일정 동일성 결함 주입 2종 탐지, `ktlintCheck`, `assemble`, 전체 183개 `test`, `git diff --check` 통과 | 동일 커밋 예정, #70 |
 | 2026-09-29 | Issue #74의 RDS 비밀번호 회전 후 앱 자격 증명 자동 갱신 구현 | 운영 재배포 run #36440308054 성공·앱 `healthy`, 스크립트 회전·멱등·재시도 테스트, Terraform 형식·구성 및 계획 신규 6개만 확인, EventBridge 패턴 정·역 검사, `ktlintCheck`·`assemble`·`test` 통과 | 동일 커밋 예정, #74 |
 | 2026-09-29 | Issue #74 운영 적용 뒤 EventBridge Run Command 대상 ARN 보정 | 최초 5분 재확인에서 `FailedInvocations`가 발생해 SSM 명령이 생성되지 않은 것을 확인. AWS 계정 ID가 포함된 대상 ARN과 명시적 문서 이름으로 수정하고 Terraform 계획이 대상 2개·IAM 정책 1개 갱신만 포함함을 확인 | 동일 커밋 예정, #74 |
+| 2026-09-29 | Issue #74 EventBridge 대상 입력 진단과 실제 SSM 전달 확인 | 임시 진단 대기열에서 중첩 `Parameters` 입력은 `INVALID_JSON`, 계정 범위 문서 ARN은 `InvalidDocument`로 확인. AWS 소유 문서 ARN과 직접 `commands` 입력으로 주기 명령 #3025f842 성공·앱 healthy를 확인하고 Terraform에 검증된 조합을 반영 | 동일 커밋 예정, #74 |
+| 2026-09-29 | Issue #74 검증된 EventBridge 설정 운영 반영 | Terraform 4개 갱신·생성/삭제 0개, 5분 재확인 SSM 명령 #6a6a27e·#6d42e5c 모두 성공·앱 healthy, 임시 진단 대기열 제거, 후속 Terraform plan 0변경 확인 | 동일 커밋 예정, #74 |
