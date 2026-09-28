@@ -44,5 +44,8 @@ jobs:
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
 
+      - name: Verify database credential refresh
+        run: bash deploy/tests/refresh-database-credential.test.sh
+
       - name: Verify production Nginx runtime
         run: bash deploy/scripts/verify-nginx-runtime.sh

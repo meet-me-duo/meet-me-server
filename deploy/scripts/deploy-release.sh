@@ -7,6 +7,9 @@ region="${AWS_REGION:-ap-northeast-2}"
 compose_project="${MEETME_COMPOSE_PROJECT_NAME:-meet-me-production}"
 export COMPOSE_PROJECT_NAME="$compose_project"
 
+exec 9>"${MEETME_DEPLOY_LOCK:-/var/lock/meet-me-release.lock}"
+flock -w 300 9
+
 if [[ "$app_image" != *@sha256:* ]]; then
   echo "APP_IMAGE must use an immutable sha256 digest" >&2
   exit 1
