@@ -67,7 +67,7 @@ data class Submission private constructor(
             locale: Locale,
             at: Instant,
         ): SubmissionVersion {
-            val hasText = !rawText.isNullOrBlank()
+            val hasText = !rawText?.let(SubmissionRules::trimRawText).isNullOrEmpty()
             require(hasText || manualAvailability.isNotEmpty()) { "Submission input is required" }
             if (rawText != null) {
                 require(rawText.codePointCount(0, rawText.length) <= 500) { "Natural language input must not exceed 500 code points" }

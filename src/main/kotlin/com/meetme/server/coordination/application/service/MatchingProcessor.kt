@@ -19,11 +19,12 @@ import com.meetme.server.shared.domain.CandidateId
 import com.meetme.server.shared.domain.SubmissionBatchId
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
-import com.meetme.server.submission.domain.ManualAvailability
 import com.meetme.server.submission.domain.StructuredCondition
+import com.meetme.server.submission.domain.StructuredSubmissionResult
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.text.Normalizer
+import java.time.Clock
 import java.time.Duration
 import java.util.Locale
 
@@ -36,7 +37,9 @@ class MatchingProcessor(
     private val idGenerator: IdGenerator,
     private val persistence: MatchingProcessingPersistenceService,
     private val metrics: ApplicationMetricsPort? = null,
+    private val clock: Clock = Clock.systemUTC(),
 ) {
+    @Transactional
     fun process(batchId: SubmissionBatchId) {
         val startedNanos = System.nanoTime()
         val run = coordinationRunRepository.findByBatchId(batchId) ?: return
@@ -45,7 +48,17 @@ class MatchingProcessor(
         val frozenIds = run.batch.submissionVersionIds.toSet()
         val submissions = submissionRepository.findLatestByRoom(run.roomId).filter { it.latest.id in frozenIds }
         check(submissions.size == frozenIds.size) { "Frozen submission batch is incomplete" }
-        val structured = structuredSubmissionRepository.findByBatch(batchId).associateBy { it.submissionVersionId }
+        val existingStructured = structuredSubmissionRepository.findByBatch(batchId)
+        val legacyResults =
+            submissions.filter { it.latest.rawText == null }.map {
+                StructuredSubmissionResult(it.latest.id, emptyList(), "LEGACY_MANUAL_ONLY_UNSUPPORTED")
+            }
+        val legacyIds = legacyResults.mapTo(mutableSetOf()) { it.submissionVersionId }
+        val results = existingStructured.filter { it.submissionVersionId !in legacyIds } + legacyResults
+        if (legacyResults.isNotEmpty()) {
+            structuredSubmissionRepository.replaceForBatch(batchId, results, clock.instant())
+        }
+        val structured = results.associateBy { it.submissionVersionId }
         val snapshots = mutableListOf<NormalizedPlace>()
         var hasUnappliedInput = structured.values.any { it.rejectionCode != null }
         val legacyAreaKeys =
@@ -91,25 +104,21 @@ class MatchingProcessor(
                     conditions.any {
                         it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace
                     }
-                val dated =
-                    submission.latest.manualAvailability
-                        .filterIsInstance<ManualAvailability.Dated>()
-                        .map { it.range }
-                val weekly =
-                    submission.latest.manualAvailability
-                        .filterIsInstance<ManualAvailability.Weekly>()
-                        .map { it.range }
                 ParticipantMatchInput(
                     participantId = submission.participantId,
                     availableTimes =
-                        com.meetme.server.coordination.domain.matching.TimeRangeMatcher.calculateAvailability(
-                            naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
-                            datedManualAvailability = dated,
-                            weeklyManualAvailability = weekly,
-                            blocked = emptyList(),
-                            searchRange = room.searchRange,
-                            zone = room.timeZone,
-                        ),
+                        if (submission.latest.rawText == null) {
+                            emptyList()
+                        } else {
+                            com.meetme.server.coordination.domain.matching.TimeRangeMatcher.calculateAvailability(
+                                naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
+                                datedManualAvailability = emptyList(),
+                                weeklyManualAvailability = emptyList(),
+                                blocked = emptyList(),
+                                searchRange = room.searchRange,
+                                zone = room.timeZone,
+                            )
+                        },
                     offlineArea = if (!preventsOffline && areas.isNotEmpty()) ParticipantAllowedArea(areas) else null,
                 )
             }

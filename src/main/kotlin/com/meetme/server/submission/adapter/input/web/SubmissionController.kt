@@ -64,14 +64,13 @@ class SubmissionController(
         @Valid @RequestBody request: SaveSubmissionRequest,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
-    ): SubmissionResponse =
-        SubmissionResponse.from(
+    ): SavedSubmissionResponse =
+        SavedSubmissionResponse.from(
             saveSubmission.save(
                 SaveSubmissionCommand(
                     inviteCode,
                     credential,
-                    request.rawText,
-                    request.manualAvailableTimes.map(ManualAvailabilityDto::toDomain),
+                    request.naturalText(),
                     locale,
                 ),
             ),

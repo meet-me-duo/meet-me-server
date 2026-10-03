@@ -1,0 +1,95 @@
+{
+    "failedTests":  [
+                        "com.meetme.server.coordination.adapter.input.web.MatchingResultNaturalLanguageOnlyWebTest#HOST can read nullable archived raw text and explicit reason even with no candidates()",
+                        "com.meetme.server.coordination.application.service.GeminiNaturalLanguageOnlyTest#successful response with all invalid natural conditions yields neutral partial rather than analysis delayed()",
+                        "com.meetme.server.coordination.application.service.GeminiNaturalLanguageOnlyTest#mixed archived batch sends only natural input and persists legacy unsupported reason()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#place-only natural input uses full search boundary while another natural time narrows it()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#valid time survives partial rejection and all failed natural input retains neutral base()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#available alternatives union before unavailable subtraction and preserve all precise intervals()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#all archived slot-only inputs complete partial with no candidates rather than full boundary()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#unavailable-only input subtracts from neutral base without archived slot constraints()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#archived slots cannot narrow natural language candidates()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#legacy slot-only participant stays in total but has empty availability for Plan C()",
+                        "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#one natural and one legacy cannot satisfy minimum two and host sees nullable unapplied on no match()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#[3] shim = \",\\\"manual_available_times\\\":null\"",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#one natural plus legacy finishes NO_MATCH with host-only unapplied endpoint available()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#OpenAPI declares required natural text and deprecated empty manual shim()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 6: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 7: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 8: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 9: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 10: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 11: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 12: \"SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 13: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 14: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 15: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 16: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 17: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 18: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 19: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#invalid body case 20: \"VALIDATION_FAILED\" without mutation",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#collecting archived slot-only input is nullable on GET and revisable without deleting old rows()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#length applies after exact trim and uses supplementary Unicode codepoints without truncation()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#ECMAScript trim U+65279",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#legacy mixed batch exposes partial counts and warnings with Plan C and preserves confirmation()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#[2] codePoint = 28",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#GET keeps nullable archived text but never exposes archived manual slots()",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 1",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 2",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 3",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 4",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 5",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 6",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 7",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 8",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 9",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#wrong JSON shape case 10",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 1",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 2",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 3",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 4",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 5",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 6",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 7",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 8",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 9",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 10",
+                        "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#[3] shim = \",\\\"manual_available_times\\\":null\""
+                    ],
+    "testFiles":  [
+                      {
+                          "sha256":  "63fea987396a40c65ba72a38f492cc6ac78f935852846bb198d13a8b5f87970c",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultNaturalLanguageOnlyWebTest.kt"
+                      },
+                      {
+                          "sha256":  "8c7d817288b4eead83a64d715dcc50a1f8818019166eee376d6ceced999bb56e",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiNaturalLanguageOnlyTest.kt"
+                      },
+                      {
+                          "sha256":  "80144dbb5be926fc83463881bc89ce458f75c56c5e184ae23fec543a898926d6",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingNaturalLanguageOnlyTest.kt"
+                      },
+                      {
+                          "sha256":  "d40034978b1a79774ad31f72731cbea9c6048e9a0cdb7fc77d85c1570101910e",
+                          "path":  "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionNaturalLanguageOnlyIntegrationTest.kt"
+                      },
+                      {
+                          "sha256":  "abc57159e7fcdfb9afe30c5b10f7c5a61c59f4c062c83e367deb56fe4c10e1e1",
+                          "path":  "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionNaturalLanguageOnlyWebTest.kt"
+                      }
+                  ],
+    "command":  [
+                    "C:\\Users\\jinhy\\AppData\\Local\\Temp\\meet-me-server-issue-83-red-review-1791012730721\\gradlew.bat",
+                    "--project-dir",
+                    "C:/Users/jinhy/AppData/Local/Temp/meet-me-server-issue-83-red-review-1791012730721",
+                    "--no-daemon",
+                    "test",
+                    "--tests",
+                    "*NaturalLanguageOnly*"
+                ],
+    "recordedAt":  "2026-10-03T08:11:08.7135332Z",
+    "expectedFailureCategory":  "MISSING_BEHAVIOR",
+    "sourceRevision":  "ab7917e048fab75868c2be2417785facc1c29a4a",
+    "workItem":  "issue-83-natural-language-only"
+}

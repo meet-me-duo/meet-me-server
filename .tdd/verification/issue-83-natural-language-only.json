@@ -1,0 +1,81 @@
+{
+  "workItem": "issue-83-natural-language-only",
+  "sourceRevision": "ab7917e048fab75868c2be2417785facc1c29a4a",
+  "boundary": "Deprecated manual transport rejection, ECMAScript text normalization and exclusion of archived manual-only input from new matching; deliberate defects executed only in a byte-identical isolated snapshot",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionDtos.kt",
+      "sha256": "364ee0e859c881e6e122e1d46357d6dfac32e3f54716aa9ecde63c5b4c116f1a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/SubmissionRules.kt",
+      "sha256": "763e0a801db9f3a1374e1dc249206fee1d9e0786bce8ced7cdfbe69304e88903"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "ca70dcbb5a35e72044777e28c62cb3865ad592020a16a6241ebed3e52c103397"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionNaturalLanguageOnlyWebTest.kt",
+      "sha256": "abc57159e7fcdfb9afe30c5b10f7c5a61c59f4c062c83e367deb56fe4c10e1e1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionNaturalLanguageOnlyIntegrationTest.kt",
+      "sha256": "d40034978b1a79774ad31f72731cbea9c6048e9a0cdb7fc77d85c1570101910e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingNaturalLanguageOnlyTest.kt",
+      "sha256": "80144dbb5be926fc83463881bc89ce458f75c56c5e184ae23fec543a898926d6"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Allow nonempty deprecated manual arrays to reach the save use case",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "C:\\Users\\jinhy\\AppData\\Local\\Temp\\meet-me-server-issue83-green-nqvrrdwj\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*SubmissionNaturalLanguageOnlyWebTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 1; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 2; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 3; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 4; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 5; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 6; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 7; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 8; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 9; com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest#unsupported array case 10",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit FEFF from the ECMAScript trim set, changing normalized text and 500-codepoint boundaries",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "C:\\Users\\jinhy\\AppData\\Local\\Temp\\meet-me-server-issue83-green-nqvrrdwj\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*SubmissionNaturalLanguageOnlyIntegrationTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#length applies after exact trim and uses supplementary Unicode codepoints without truncation(); com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest#ECMAScript trim U+65279",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Route manual-only legacy submissions through neutral natural-language search availability",
+      "command": [
+        "cmd.exe",
+        "/d",
+        "/c",
+        "C:\\Users\\jinhy\\AppData\\Local\\Temp\\meet-me-server-issue83-green-nqvrrdwj\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*MatchingNaturalLanguageOnlyTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#all archived slot-only inputs complete partial with no candidates rather than full boundary(); com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#legacy slot-only participant stays in total but has empty availability for Plan C(); com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest#one natural and one legacy cannot satisfy minimum two and host sees nullable unapplied on no match()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-03T08:49:06.148268Z"
+}

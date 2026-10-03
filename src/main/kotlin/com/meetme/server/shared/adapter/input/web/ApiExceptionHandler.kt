@@ -12,6 +12,7 @@ import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -90,6 +91,16 @@ class ApiExceptionHandler(
             problem(HttpStatus.BAD_REQUEST, RoomLifecycleErrorCode.VALIDATION_FAILED.name, request, locale),
         )
 
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun unreadableSubmission(
+        @Suppress("UNUSED_PARAMETER") exception: HttpMessageNotReadableException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> =
+        ResponseEntity.badRequest().body(
+            problem(HttpStatus.BAD_REQUEST, RoomLifecycleErrorCode.VALIDATION_FAILED.name, request, locale),
+        )
+
     private fun problem(
         status: HttpStatus,
         code: String,
@@ -149,6 +160,7 @@ private fun SubmissionErrorCode.status(): HttpStatus =
         SubmissionErrorCode.ANALYSIS_NOT_DELAYED,
         -> HttpStatus.CONFLICT
         SubmissionErrorCode.SUBMISSION_INPUT_REQUIRED,
+        SubmissionErrorCode.SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED,
         SubmissionErrorCode.SUBMISSION_TEXT_TOO_LONG,
         SubmissionErrorCode.SUBMISSION_TIME_RANGE_INVALID,
         SubmissionErrorCode.SUBMISSION_TIME_RANGE_MODE_MISMATCH,

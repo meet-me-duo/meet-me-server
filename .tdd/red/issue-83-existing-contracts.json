@@ -1,0 +1,82 @@
+{
+    "failedTests":  [
+                        "com.meetme.server.submission.adapter.input.web.SubmissionWebIntegrationTest#수동 시간만 제출하면 거부하며 배치와 Outbox를 만들지 않는다()"
+                    ],
+    "testFiles":  [
+                      {
+                          "sha256":  "13a98bb17174f8a881b78665b6d34d2592014f76d5ffc127a49e46ceadd1ba98",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultWebIntegrationTest.kt"
+                      },
+                      {
+                          "sha256":  "6e0ccd2ffd38b33d139bcbfe703daa3e1584b650ff6d93fc3527f65488412e20",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorTest.kt"
+                      },
+                      {
+                          "sha256":  "c2f8e59377fb5b494abf43e1e0fa98c14ec50134a2368dac981bddf0f2bd46d3",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingProcessorTest.kt"
+                      },
+                      {
+                          "sha256":  "270b5fefab469aec9d0e1e80b9a83801d2d00e41c8a9d189d022c21efb9ce63f",
+                          "path":  "src/test/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcherTest.kt"
+                      },
+                      {
+                          "sha256":  "cc50c513c0e1e6a0fa7cabf6102c0c794fe1a8deb13baac2a9523204317c66d1",
+                          "path":  "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt"
+                      },
+                      {
+                          "sha256":  "ac14b12c17055af238e17bf571a014890ac9139fd2870505e685fb8fd9ceebc7",
+                          "path":  "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/MatchingResultsMigrationTest.kt"
+                      },
+                      {
+                          "sha256":  "607b9976afcdd866a929c49cc38e90fd3b9c2cd6f94b27b0159e2dfcb31f0123",
+                          "path":  "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/SubmissionPipelineMigrationTest.kt"
+                      },
+                      {
+                          "sha256":  "138f427a4b9ccdc5b4b15365ca8b97ea1f11e8e65adfcd3ec03b0b512a7d1a49",
+                          "path":  "src/test/kotlin/com/meetme/server/shared/domain/time/TimeModelsTest.kt"
+                      },
+                      {
+                          "sha256":  "b4042f9dbdbc4897d5a8a7acc72bc99b77dcff636cf34c14cab8a7026c33375e",
+                          "path":  "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionWebIntegrationTest.kt"
+                      },
+                      {
+                          "sha256":  "af871bb937f18604265b608591080ba7f44d6e75f01cd1d68e9d7f4339d479f7",
+                          "path":  "src/test/kotlin/com/meetme/server/submission/domain/SubmissionRulesTest.kt"
+                      },
+                      {
+                          "sha256":  "210a560a24b5070faf013eaffcd2c569294736d44634889e67d56992f97f7d31",
+                          "path":  "src/test/kotlin/com/meetme/server/submission/domain/SubmissionTest.kt"
+                      }
+                  ],
+    "command":  [
+                    ".\\gradlew.bat",
+                    "--no-daemon",
+                    "test",
+                    "--tests",
+                    "*SubmissionWebIntegrationTest",
+                    "--tests",
+                    "*MatchingProcessorTest",
+                    "--tests",
+                    "*GeminiBatchProcessorTest",
+                    "--tests",
+                    "*MatchingResultWebIntegrationTest",
+                    "--tests",
+                    "*TimeRangeMatcherTest",
+                    "--tests",
+                    "*SubmissionTest",
+                    "--tests",
+                    "*SubmissionRulesTest",
+                    "--tests",
+                    "*TimeModelsTest",
+                    "--tests",
+                    "*SubmissionPipelineMigrationTest",
+                    "--tests",
+                    "*MatchingResultsMigrationTest",
+                    "--tests",
+                    "*CorePersistenceIntegrationTest"
+                ],
+    "recordedAt":  "2026-10-03T06:57:31.9024929Z",
+    "expectedFailureCategory":  "MISSING_BEHAVIOR",
+    "sourceRevision":  "ab7917e048fab75868c2be2417785facc1c29a4a",
+    "workItem":  "issue-83-existing-contracts"
+}

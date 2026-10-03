@@ -2,7 +2,6 @@ package com.meetme.server.coordination.domain.matching
 
 import com.meetme.server.shared.domain.time.DatedTimeRange
 import com.meetme.server.shared.domain.time.InstantTimeRange
-import com.meetme.server.shared.domain.time.LocalTimeRange
 import com.meetme.server.shared.domain.time.MeetingTimeZone
 import com.meetme.server.shared.domain.time.SearchDateRange
 import com.meetme.server.shared.domain.time.WeeklyTimeRange
@@ -81,18 +80,21 @@ class TimeRangeMatcherTest {
     }
 
     @Test
-    fun `수동 가능 시간이 있으면 자연어 가능 시간과 교차한다`() {
+    fun `자연어 가능 시간 대안은 합집합으로 보존한다`() {
         val natural = datedWindow(LocalDate.of(2026, 9, 21), 9, 0, 13, 0)
-        val manual = DatedTimeRange(LocalDate.of(2026, 9, 21), LocalTimeRange.of(LocalTime.of(10, 0), LocalTime.of(12, 0)))
+        val alternative = datedWindow(LocalDate.of(2026, 9, 21), 14, 0, 16, 0)
 
         assertEquals(
-            listOf(range("2026-09-21T01:00:00Z", "2026-09-21T03:00:00Z")),
-            calculate(naturalWindows = listOf(natural), datedManualAvailability = listOf(manual)),
+            listOf(
+                range("2026-09-21T00:00:00Z", "2026-09-21T04:00:00Z"),
+                range("2026-09-21T05:00:00Z", "2026-09-21T07:00:00Z"),
+            ),
+            calculate(naturalWindows = listOf(natural, alternative)),
         )
     }
 
     @Test
-    fun `빈 수동 가능 시간은 자연어 기준 구간을 제한하지 않는다`() {
+    fun `자연어 가능 시간은 정확한 기준 구간을 제공한다`() {
         val natural = datedWindow(LocalDate.of(2026, 9, 21), 9, 0, 11, 0)
 
         assertEquals(
@@ -174,6 +176,57 @@ class TimeRangeMatcherTest {
                 listOf(fullGapDay),
                 SearchDateRange.explicit(LocalDate.of(2026, 3, 8), LocalDate.of(2026, 3, 9)),
                 MeetingTimeZone.of("America/New_York"),
+            ),
+        )
+    }
+
+    @Test
+    fun `자연어 가능 조건이 없으면 장소 전용 입력의 기준은 전체 탐색 범위다`() {
+        assertEquals(
+            listOf(range("2026-09-20T15:00:00Z", "2026-09-22T15:00:00Z")),
+            calculate(naturalWindows = emptyList()),
+        )
+    }
+
+    @Test
+    fun `불가 조건만 있으면 전체 탐색 범위에서 그 반개구간만 차감한다`() {
+        val unavailable = datedWindow(LocalDate.of(2026, 9, 21), 10, 15, 11, 45).copy(polarity = TimePolarity.UNAVAILABLE)
+
+        assertEquals(
+            listOf(
+                range("2026-09-20T15:00:00Z", "2026-09-21T01:15:00Z"),
+                range("2026-09-21T02:45:00Z", "2026-09-22T15:00:00Z"),
+            ),
+            calculate(naturalWindows = listOf(unavailable)),
+        )
+    }
+
+    @Test
+    fun `자연어 분 단위와 24시 끝 경계를 보존하고 탐색 종료 날짜는 제외한다`() {
+        val untilMidnight =
+            StructuredCondition.TimeWindow(
+                TimePolarity.AVAILABLE,
+                LocalDate.of(2026, 9, 22),
+                null,
+                LocalTime.of(23, 17),
+                LocalTime.MIDNIGHT,
+                endsAtNextDayStart = true,
+            )
+        val onExcludedEndDate = datedWindow(LocalDate.of(2026, 9, 23), 9, 0, 10, 0)
+
+        assertEquals(
+            listOf(range("2026-09-22T14:17:00Z", "2026-09-22T15:00:00Z")),
+            calculate(naturalWindows = listOf(untilMidnight, onExcludedEndDate)),
+        )
+    }
+
+    @Test
+    fun `끝과 시작이 맞닿은 시간은 참석 교집합을 만들지 않는다`() {
+        assertEquals(
+            emptyList(),
+            TimeRangeMatcher.intersect(
+                listOf(range("2026-09-21T01:15:00Z", "2026-09-21T02:45:00Z")),
+                listOf(range("2026-09-21T02:45:00Z", "2026-09-21T04:00:00Z")),
             ),
         )
     }

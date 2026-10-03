@@ -46,15 +46,6 @@ class SubmissionService(
         }
         val participant = requireParticipant(room.id, command.rawCredential)
         val rawText = normalizeText(command.rawText)
-        val availability =
-            try {
-                SubmissionRules.normalizeAvailability(command.manualAvailability, room.searchRange)
-            } catch (exception: IllegalArgumentException) {
-                throw SubmissionException(SubmissionErrorCode.SUBMISSION_TIME_RANGE_INVALID, causeDetails(exception))
-            }
-        if (rawText == null && availability.isEmpty()) {
-            throw SubmissionException(SubmissionErrorCode.SUBMISSION_INPUT_REQUIRED)
-        }
 
         val existing = submissionRepository.findByParticipant(participant.id)
         val otherTextLength =
@@ -62,7 +53,7 @@ class SubmissionService(
                 .findLatestByRoom(room.id)
                 .filter { it.participantId != participant.id }
                 .sumOf { it.latest.rawText?.codePointCount(0, it.latest.rawText.length) ?: 0 }
-        val newLength = rawText?.codePointCount(0, rawText.length) ?: 0
+        val newLength = rawText.codePointCount(0, rawText.length)
         if (otherTextLength + newLength > SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS) {
             throw SubmissionException(
                 SubmissionErrorCode.SUBMISSION_BATCH_TEXT_LIMIT_EXCEEDED,
@@ -71,14 +62,14 @@ class SubmissionService(
         }
         val now = clock.instant()
         val submission =
-            existing?.revise(SubmissionVersionId(idGenerator.next()), rawText, availability, command.locale, now)
+            existing?.revise(SubmissionVersionId(idGenerator.next()), rawText, emptyList(), command.locale, now)
                 ?: Submission.start(
                     SubmissionId(idGenerator.next()),
                     room.id,
                     participant.id,
                     SubmissionVersionId(idGenerator.next()),
                     rawText,
-                    availability,
+                    emptyList(),
                     command.locale,
                     now,
                 )
@@ -102,10 +93,9 @@ class SubmissionService(
         return submission.toView(room.collectionStatus == CollectionStatus.COLLECTING)
     }
 
-    private fun normalizeText(rawText: String?): String? {
-        if (rawText == null) return null
-        val trimmed = rawText.trim()
-        if (trimmed.isEmpty()) return null
+    private fun normalizeText(rawText: String?): String {
+        val trimmed = rawText?.let(SubmissionRules::trimRawText)
+        if (trimmed.isNullOrEmpty()) throw SubmissionException(SubmissionErrorCode.SUBMISSION_INPUT_REQUIRED)
         val length = trimmed.codePointCount(0, trimmed.length)
         if (length > SubmissionRules.MAX_RAW_TEXT_CODE_POINTS) {
             throw SubmissionException(
@@ -159,6 +149,4 @@ class SubmissionService(
             latest.createdAt,
             editable,
         )
-
-    private fun causeDetails(exception: IllegalArgumentException) = mapOf("reason" to (exception.message ?: "invalid"))
 }
