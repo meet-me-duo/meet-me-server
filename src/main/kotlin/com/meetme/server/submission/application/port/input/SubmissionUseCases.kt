@@ -8,7 +8,6 @@ data class SaveSubmissionCommand(
     val inviteCode: String,
     val rawCredential: String?,
     val rawText: String?,
-    val manualAvailability: List<ManualAvailability>,
     val locale: Locale,
 )
 
@@ -34,6 +33,7 @@ interface GetOwnSubmissionUseCase {
 
 enum class SubmissionErrorCode {
     SUBMISSION_INPUT_REQUIRED,
+    SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED,
     SUBMISSION_TEXT_TOO_LONG,
     SUBMISSION_BATCH_TEXT_LIMIT_EXCEEDED,
     SUBMISSION_TIME_RANGE_INVALID,

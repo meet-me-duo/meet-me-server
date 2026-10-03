@@ -47,9 +47,9 @@ Swagger가 이 문서나 prototype과 다르면 임의로 맞추지 말고 백�
 
 1. 현재 참여자의 기존 입력 복원은 `GET /api/rooms/{inviteCode}/submission`을 사용한다.
 2. 제출과 수정은 모두 `PUT /api/rooms/{inviteCode}/submission`을 사용한다.
-3. 자연어와 수동 가능 시간은 각각 선택 입력이지만 둘 다 비어 있으면 안 된다.
-4. 수동 시간은 가능한 시간을 의미한다. 별도 소요 시간 입력과 장소 전용 입력란은 만들지 않는다.
-5. 다른 참여자의 입력은 조회하지 않는다.
+3. 자연어는 필수다. ECMAScript String.trim 후 Unicode 코드포인트로 길이를 검증한다. UTF-16 textarea maxLength를 500자로 간주하지 않는다. 정확한 집합은 PRD Rule 1을 따르며 U+FEFF는 제거하고 U+0085는 보존한다.
+4. 입력용 타임테이블·수동 상태·복원·전송과 deprecated 응답 배열 사용을 제거한다. 날짜 범위 입력과 읽기 전용 후보·확정 time_ranges는 유지한다.
+5. GET legacy null은 빈 입력으로 안전하게 복원하고 자연어 입력 필요를 안내한다. 로드만으로 PUT하지 않으며 collecting에서 명시적으로 저장할 때 새 revision을 만든다. nonempty 수동 요청의 지원 종료 오류는 자연어 재입력으로 안내한다. 타인 입력은 조회하지 않는다.
 
 ### 입력 마감
 
@@ -82,7 +82,7 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - `READY` 또는 `READY_WITH_WARNINGS`에서 `GET /api/rooms/{inviteCode}/candidates`를 호출한다.
 - 후보는 Plan A/B/C 중 서버가 만든 항목만 표시하며 프론트엔드에서 다시 점수화하거나 정렬하지 않는다.
 - 대면 후보의 `place.display_name`은 Gemini가 구조화한 공통 근방명이다. 제출 MVP는 지도를 사용하지 않으므로 `latitude`와 `longitude`는 `null`이며 프론트엔드는 좌표나 핀을 요구하지 않는다.
-- `READY_WITH_WARNINGS`의 HOST만 `GET /api/rooms/{inviteCode}/candidates/unapplied-inputs`를 사용할 수 있다.
+- READY_WITH_WARNINGS 또는 NO_MATCH의 HOST는 미반영 endpoint를 사용할 수 있다. legacy 슬롯 전용은 nullable raw_text와 LEGACY_MANUAL_ONLY_UNSUPPORTED로 표시하며 타인 정상 입력·수동 구간은 공개하지 않는다.
 - 후보 확정은 HOST만 `POST /api/rooms/{inviteCode}/candidates/{candidateId}/confirmation`을 호출한다.
 - 같은 후보 재확정은 멱등하지만 다른 후보가 이미 확정된 `409`에서는 현재 확정 결과를 다시 조회한다.
 - 확정 결과는 참여자 모두 `GET /api/rooms/{inviteCode}/result`로 조회한다.
@@ -114,4 +114,11 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - `ANALYZING` Polling부터 `READY`, `READY_WITH_WARNINGS`, `NO_MATCH`, `ANALYSIS_DELAYED`, `CONFIRMED` 화면을 각각 검증한다.
 - 실제 배포 Origin에서 credential CORS와 `Secure HttpOnly` cookie가 동작하는지 확인한다.
 - prototype HTML은 시각·상호작용 참고 자료이며, 데이터 계약은 Swagger와 이 문서를 따른다.
+
+### 자연어 전환의 배포 호환
+
+- 현 서버와 신 웹의 자연어 전용 요청·응답은 운영 GET과 baseline 로컬 fixture로 확인하고, 가능하면 웹 선배포·실제 확인 후 서버를 배포한다. 운영 쓰기 테스트는 하지 않는다.
+- 신 서버는 구 웹의 nonempty 수동 요청을 400으로 거부하며 detail에 페이지 새로고침 후 자연어 재입력을 명시한다. 조용히 무시하지 않는다.
+- 캐시와 오래 열린 구 번들은 순서만으로 해결되지 않는다. 구 화면 잔존과 오류 문구를 별도로 확인한다.
+- 신 웹은 전송 전에 ECMAScript trim을 적용한다. 현 서버의 Kotlin trim과 다른 U+001C~001F 처리 등은 전환 중 호환 차이로 분리 보고하며 계약을 임의로 바꾸지 않는다.
 

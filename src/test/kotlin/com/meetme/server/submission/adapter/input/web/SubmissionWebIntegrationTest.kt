@@ -1,6 +1,5 @@
 package com.meetme.server.submission.adapter.input.web
 
-import com.meetme.server.meetingroom.application.service.CollectionClosureService
 import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -50,7 +49,7 @@ class SubmissionWebIntegrationTest {
     }
 
     @Test
-    fun `본인 제출을 저장 수정 조회하고 주간 가능 시간을 병합한다`() {
+    fun `본인 자연어 제출을 저장 수정 조회하며 새 수동 시간은 저장하지 않는다`() {
         val room = createRoom(expectedParticipants = null, manualOnly = true)
 
         mockMvc
@@ -66,19 +65,14 @@ class SubmissionWebIntegrationTest {
                     """
                     {
                       "raw_text":"  월요일 저녁에 학교 근처  ",
-                      "manual_available_times":[
-                        {"kind":"WEEKLY","day_of_week":"MONDAY","start_time":"19:00","end_time":"21:00"},
-                        {"kind":"WEEKLY","day_of_week":"MONDAY","start_time":"18:00","end_time":"20:00"}
-                      ]
+                      "manual_available_times":[]
                     }
                     """.trimIndent(),
                 ),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.revision").value(1))
             .andExpect(jsonPath("$.raw_text").value("월요일 저녁에 학교 근처"))
-            .andExpect(jsonPath("$.manual_available_times.length()").value(1))
-            .andExpect(jsonPath("$.manual_available_times[0].start_time").value("18:00:00"))
-            .andExpect(jsonPath("$.manual_available_times[0].end_time").value("21:00:00"))
+            .andExpect(jsonPath("$.manual_available_times").isEmpty)
 
         mockMvc
             .perform(save(room, """{"raw_text":"화요일 가능","manual_available_times":[]}"""))
@@ -93,6 +87,7 @@ class SubmissionWebIntegrationTest {
             .andExpect(jsonPath("$.raw_text").value("화요일 가능"))
         assertEquals(2, count("submission_versions"))
         assertEquals(1, count("submission_heads"))
+        assertEquals(0, count("manual_availability_intervals"))
     }
 
     @Test
@@ -117,20 +112,27 @@ class SubmissionWebIntegrationTest {
     }
 
     @Test
-    fun `전원이 수동 시간만 제출하면 Gemini 없이 매칭 Outbox로 전이한다`() {
+    fun `수동 시간만 제출하면 거부하며 배치와 Outbox를 만들지 않는다`() {
         val host = createRoom(expectedParticipants = 2, manualOnly = false)
         val manual =
             """{"manual_available_times":[{"kind":"WEEKLY","day_of_week":"MONDAY","start_time":"18:00","end_time":"20:00"}]}"""
-        mockMvc.perform(save(host, manual)).andExpect(status().isOk)
+        mockMvc
+            .perform(save(host, manual))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.code").value("SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED"))
         val member = join(host.inviteCode, "참여자")
-        mockMvc.perform(save(member, manual)).andExpect(status().isOk)
+        mockMvc
+            .perform(save(member, manual))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.code").value("SUBMISSION_MANUAL_AVAILABILITY_UNSUPPORTED"))
 
-        assertEquals("MATCHING", jdbcTemplate.queryForObject("SELECT status FROM coordination_runs", String::class.java))
-        assertEquals(1, count("outbox_events"))
-        assertEquals(
-            CollectionClosureService.MATCHING_REQUESTED,
-            jdbcTemplate.queryForObject("SELECT event_type FROM outbox_events", String::class.java),
-        )
+        assertEquals("COLLECTING", jdbcTemplate.queryForObject("SELECT collection_status FROM meeting_rooms", String::class.java))
+        assertEquals(0, count("submission_heads"))
+        assertEquals(0, count("submission_versions"))
+        assertEquals(0, count("manual_availability_intervals"))
+        assertEquals(0, count("submission_batches"))
+        assertEquals(0, count("coordination_runs"))
+        assertEquals(0, count("outbox_events"))
     }
 
     @Test

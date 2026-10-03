@@ -47,7 +47,7 @@ class CollectionClosureService(
                 at,
             )
         var run = CoordinationRun.queued(CoordinationRunId(idGenerator.next()), batch)
-        val hasNaturalLanguage = submissions.any { !it.latest.rawText.isNullOrBlank() }
+        val hasNaturalLanguage = submissions.any { it.latest.rawText != null }
         if (!hasNaturalLanguage) run = run.startMatching()
         coordinationRunRepository.insert(run)
         val eventId = OutboxEventId(idGenerator.next())

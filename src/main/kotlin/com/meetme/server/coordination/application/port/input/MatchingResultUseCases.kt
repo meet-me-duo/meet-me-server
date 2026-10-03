@@ -36,7 +36,7 @@ data class CandidateListView(
 
 data class UnappliedInputView(
     val participantDisplayName: String,
-    val rawText: String,
+    val rawText: String?,
     val reason: String,
 )
 

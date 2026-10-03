@@ -115,8 +115,8 @@ data class UnappliedInputResponse(
     @field:Schema(description = "입력을 제출한 참여자의 표시 이름")
     val participantDisplayName: String,
     @field:JsonProperty("raw_text")
-    @field:Schema(description = "후보에 반영되지 않은 원문")
-    val rawText: String,
+    @field:Schema(description = "후보에 반영되지 않은 원문. 구 슬롯 전용 입력은 null", nullable = true)
+    val rawText: String?,
     @field:Schema(description = "언어 중립 미반영 사유 코드")
     val reason: String,
 ) {
