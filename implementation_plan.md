@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-09-29
+> **최종 갱신:** 2026-10-03
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -37,14 +37,15 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** Issue #74 운영 복구 완료 — RDS 관리형 비밀번호 회전 후 앱 자격 증명 자동 갱신을 배포·검증했다.
+- **현재 단계:** Issue #83 구현·로컬 검증·독립 리뷰 완료 후 직접 사용자 승인에 따라 commit·push·develop 대상 draft PR·Linux CI를 진행한다. source/resources/tests 152개와 실제 OpenAPI 지문을 유지한다. Issue #74 운영 복구 완료 상태는 유지한다.
+- **최종 검증:** 공유·독립·결함 복구 전체 게이트 각각 288 tests/실패 0/skip 1, synthetic hook exit 0·증거 포함 hook unittest 12개 통과. OpenAPI와 웹 snapshot SHA-256은 `72ade61680b6f2e245eab9216ec168806d196e6bebb8774fc160a606e7e87c46`이다.
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 시간·장소 그룹 구조화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 제출 MVP는 지도 API와 좌표 없이 장소 호환 그룹을 사용한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** Issue #74의 구현·운영 적용에는 남은 차단 사항이 없다. 실제 RDS 비밀번호를 강제로 회전시키는 E2E 검증은 수행하지 않았다.
-- **현재 사용자 개입:** Issue #74의 커밋·push·PR, `develop`·`main` 병합과 운영 적용은 사용자가 한 번에 위임했다. 새 비밀값 입력은 필요하지 않았다.
+- **현재 차단 사항:** 구현·검증 및 commit·push·draft PR의 승인 차단은 해소됐다. merge·deploy는 웹 선배포와 실제 공개 새 번들 검증 후 조율자의 별도 신호까지 대기한다. 현재 원격 CI는 게시 후 확인 예정이며 운영 배포는 실행하지 않았다.
+- **현재 사용자 개입:** 직접 role=user 승인은 이번 자연어 전용 변경에만 적용한다. 새 로그인·비밀값·권한·신뢰·인프라·비용 변경은 금지하며 merge·deploy 순서는 조율자가 웹 검증 후 별도 지시한다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
-- **자율 실행 위임:** 사용자가 후속 구현의 커밋·push·PR 생성까지 별도 승인 대기 없이 진행하도록 명시적으로 위임했다. Issue #70과 #74는 `develop`·`main` 병합과 자동 운영 배포 확인까지 추가 위임했다. 결제와 비밀정보 입력은 위임에 포함하지 않는다.
+- **자율 실행 위임:** Issue #83의 검증된 변경·문서·TDD JSON만 commit·push·draft PR·CI 확인까지 진행한다. merge·deploy는 별도 신호 대기다. 과거 위임은 이번 범위를 확장하지 않으며 원시 로그·비밀값·로컬 인계 기록은 게시하지 않는다.
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **고위험 검증:** 트랜잭션·동시성·외부 Adapter의 의도적 결함 주입은 `.tdd/verification/<work-item>.json`에 최종 source·test 지문과 탐지 결과를 추적하고 전체 출력은 로컬 로그로 분리한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
@@ -68,9 +69,30 @@
 - **후보 탐색 범위:** 주최자가 지역 날짜 범위를 선택하며, 생략하면 프론트엔드가 안내한 방 생성일 포함 14일을 서버가 적용·저장한다.
 - **시간 결과:** 탐색 범위에서 자연어 조건을 실제 날짜별 구간으로 확장하고 후보별 포함 참여자의 Calendar 불가 시간을 차감한다. 별도 소요 시간으로 자르거나 제외하지 않고 남은 모든 연속 가능 구간과 MessageSource 템플릿 자연어 요약을 함께 반환하며 실제 날짜·시간 공지는 주최자가 담당한다.
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축한다. 명시 날짜는 날짜별 시간 구간 목록이 같으면 연속 범위를 `매일`, 비연속 날짜를 `·`, 한 날짜 복수 시간을 `또는`으로 손실 없이 묶는다.
-- **시간 입력:** 자연어가 주 입력이고 격자는 강조하지 않는 선택적 부가 기능이다. `MANUAL_AVAILABILITY`는 자연어 또는 하나 이상의 수동 가능 시간 중 하나만 있어도 제출할 수 있으며, 빈 슬롯은 `가능 시간 없음`이 아니라 부가 제약 없음이다. Calendar 연동 사용자는 방에서 ON했을 때 공급자 불가 시간과 선택적 추가 불가 시간을 사용하며 자연어는 선택 사항이다. 정형 시간은 LLM을 거치지 않으며 명시 날짜 범위에서는 실제 날짜형, 기본 14일 방에서는 7일 주간 반복형 구간으로 계산한다.
+- **시간 입력:** 제출 MVP는 ECMAScript trim 후 필수 자연어만 저장한다. 수동 요청은 생략·[]·null shim만 허용하며 nonempty 배열은 400과 새로고침·자연어 재입력을 안내한다. 수동 응답은 deprecated 항상 []다. legacy 슬롯 전용은 빈 가능 구간·미반영이며 원본·배치·인원·저장 결과는 보존한다. 내부 수동 호환 인자는 계산에 사용하지 않는다. Calendar는 Post-MVP다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** Issue #74의 회전 이벤트·5분 재확인·배포 직렬화·앱 health 검증을 `main` 배포와 운영 Terraform에 반영했다. 주기 SSM 명령 성공, 공개 OpenAPI 200, Terraform plan 0변경을 확인했다. API·DB 스키마·Gemini·프론트엔드 계약은 변경하지 않았다.
+- **현재 작업:** `feature/83-natural-language-only-submission`의 커밋 준비 단계다. origin fetch 후 origin/develop은 기준 `ab7917e048fab75868c2be2417785facc1c29a4a`와 동일하며 origin/main은 병합 이력 16개 앞서지만 파일 차이는 없다. 기존 feature PR은 없다. 다음 동작은 의도한 변경만 stage→commit guard→commit→push→develop 대상 draft PR→Linux CI 확인이다. 검증 증거는 `.tdd/verification/issue-83-natural-language-only.json`을 따른다.
+
+## 자연어 조건 제출 통일 — Issue #83
+
+이 작업에서는 기존 실행 순서의 포괄적인 출판 위임 대신 다음 순서를 적용한다. 기존 인프라·파이프라인만 사용하며 신규 비용·자격 증명·권한·신뢰 설정 및 파괴적 데이터 변경은 수행하지 않는다.
+
+- [x] `[AGENT]` PUT/GET 호환 shim, ECMAScript trim, legacy 안전 미반영과 결과 보존 계약을 조율자·웹과 합의한다.
+- [x] `[AGENT]` 공개 Issue #83을 게시·재조회하고 깨끗한 최신 develop에서 작업 브랜치를 생성한다.
+- [x] `[AGENT]` Herdr `w1:p6`의 `submission-test-designer` Codex 1개를 구성했다. 설계자는 테스트·RED 증거만 맡고 추가 에이전트를 만들지 않는다. 기존 서버 Codex는 구현, 외부 조율자는 독립 검토를 맡는다.
+- [x] `[AGENT]` 합성 회귀 테스트와 유효 RED 확정: 최신 신규 100개 중 assertion 실패 56개, 기존 계약 64개 중 1개. 준비 오류는 증거에서 제외했다.
+- [x] `[AGENT]` DTO·use case·검증·자연어 계산·미반영 집계·HOST nullable 원문 구현과 GREEN 확인. 과거 완료 결과를 getter에서 재분류하지 않는다.
+- [x] `[AGENT]` PRD·Architecture·ADR-045·handoff 및 실제 로컬 OpenAPI 동기화. HTTP 82개·opt-in export 통과와 실제 schema/service 일치를 검토했다.
+- [x] `[AGENT]` 공유 전체 ktlintCheck·assemble·test 288/실패 0/skip 1과 실제 checkout synthetic hook exit 0, 증거 포함 unittest 12개 통과.
+- [x] `[SHARED]` 독립 Temp 결함 3종 검출: 수동 배열 허용 25개 중 assertion 실패 10개, FEFF trim 누락 57개 중 2개, legacy 전체 기간 확대 10개 중 3개. 원본/복구 152개 byte SHA 일치와 복구 전체 게이트 288/실패 0/skip 1을 확인했다.
+- [x] `[SHARED]` 이번 기능만의 직접 사용자 출판 승인을 확인했다. 기존 게시 금지는 해당 범위에서 해제됐고 merge·deploy는 웹 검증 후 별도 신호 대기다.
+- [ ] `[AGENT]` 의도한 변경과 `.tdd` JSON만 stage하고 commit guard→commit→push→develop 대상 draft PR→Linux CI 확인을 진행한다. 실제 진행 상태는 ignored 로컬 인계 기록과 Git/PR 이력을 기준으로 확인한다.
+- [x] `[SHARED]` 독립 diff·테스트·실제 OpenAPI·결함 검출/복구·hook 검토 완료. 남은 blocking 구현 지적 없음.
+- [ ] `[SHARED]` 실제 원격 CI 통과 후 웹 공개 새 번들 검증과 서버 develop/main 승격 신호를 확인한다. 지금 merge·deploy는 실행하지 않는다.
+- [ ] `[SHARED]` 현 서버+신 웹의 raw_text-only·응답 호환과 trim·Unicode 경계 차이를 운영 GET·baseline 로컬 fixture로 확인한다. 호환 검증 후 웹 선배포→실제 확인→서버 develop→main·기존 자동 배포 순서를 따른다. 실제 운영 쓰기 검증은 하지 않는다.
+- [x] `[AGENT]` 구 웹 nonempty 요청은 명시 400과 페이지 새로고침 후 자연어 재입력을 안내한다. 캐시·구 번들 잔존을 배포 순서만으로 해결됐다고 표시하지 않는다. 실제 운영 전환은 웹 검증·조율 신호 대기다.
+
+**계약:** raw_text는 ECMAScript String.trim 문자집합으로 앞뒤만 제거한 1~500 Unicode 코드포인트이고 방 합계는 10,000이다. U+FEFF는 제거하고 U+0085는 제거하지 않는다. legacy 슬롯 전용 제출·배치·인원은 보존하되 새 계산의 가능 구간은 빈 목록이며 `LEGACY_MANUAL_ONLY_UNSUPPORTED`로 PARTIAL·미반영 집계에 반영한다. 후보가 없으면 NO_MATCH이고 HOST는 nullable 원문과 사유를 조회할 수 있다. 기존 저장 결과는 자동 재계산하지 않는다. 과거 Phase 5·6의 수동 입력 완료 기록은 당시 계약의 이력이며 신규 실행 계약은 이 작업과 ADR-045로 대체한다.
 
 ## 운영 DB 비밀번호 회전 복구 — Issue #74
 
@@ -811,3 +833,5 @@
 | 2026-09-29 | Issue #74 EventBridge 대상 입력 진단과 실제 SSM 전달 확인 | 임시 진단 대기열에서 중첩 `Parameters` 입력은 `INVALID_JSON`, 계정 범위 문서 ARN은 `InvalidDocument`로 확인. AWS 소유 문서 ARN과 직접 `commands` 입력으로 주기 명령 #3025f842 성공·앱 healthy를 확인하고 Terraform에 검증된 조합을 반영 | 동일 커밋 예정, #74 |
 | 2026-09-29 | Issue #74 검증된 EventBridge 설정 운영 반영 | Terraform 4개 갱신·생성/삭제 0개, 5분 재확인 SSM 명령 #6a6a27e·#6d42e5c 모두 성공·앱 healthy, 임시 진단 대기열 제거, 후속 Terraform plan 0변경 확인 | 동일 커밋 예정, #74 |
 | 2026-09-29 | Issue #74의 최종 `main` 승격과 자동 운영 배포 완료 | PR #75·#77·#79를 `develop`, PR #76·#78을 `main`에 병합. 최종 main CI run #36450090557과 Deploy Production run #36450384064 성공, 공개 OpenAPI 200, SSM 5분 명령 성공, Terraform 0변경·작업 트리 깨끗함을 확인 | 동일 커밋 예정, #80 |
+| 2026-10-03 | Issue #83 자연어 필수·수동 입력 종료, legacy 안전 미반영·기존 결과 보존과 ADR-045·실제 OpenAPI 동기화 완료 | 신규 100/56·기존 64/1 assertion RED, HTTP 82·export GREEN, 공유·독립·복구 전체 288/실패 0/skip 1, 결함 3종 assertion 실패 10·2·3 검출·152 byte SHA 복구, synthetic hook exit 0·unittest 12개 통과, 독립 blocking 지적 없음. 운영 쓰기·새 인프라·보안 변경 없음 | #83, commit/push/PR/merge/deploy 보류 |
+| 2026-10-03 | Issue #83 직접 사용자 승인 확인 후 출판 준비 재개 | source/resources/tests 152개·RED/결함 증거 지문 일치, origin/develop 기준 SHA 동일·origin/main과 파일 차이 없음, 검증된 변경만 stage·guard·commit·push·draft PR·Linux CI 순서 진행. merge·deploy는 웹 공개 새 번들 확인 후 별도 신호 대기 | 동일 커밋 예정, #83 |

@@ -83,9 +83,9 @@ class MatchingResultService(
         return submissions.mapNotNull { submission ->
             val result = structured[submission.latest.id] ?: return@mapNotNull null
             val reason = result.rejectionCode ?: placeFailures[submission.latest.id]?.firstOrNull()?.status?.name ?: return@mapNotNull null
-            val rawText = submission.latest.rawText ?: return@mapNotNull null
+            val rawText = submission.latest.rawText
             val owner = participantRepository.findById(submission.participantId) ?: return@mapNotNull null
-            UnappliedInputView(owner.displayName.value, rawText.toPlainText(), reason)
+            UnappliedInputView(owner.displayName.value, rawText?.toPlainText(), reason)
         }
     }
 

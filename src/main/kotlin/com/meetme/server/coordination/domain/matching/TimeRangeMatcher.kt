@@ -100,6 +100,8 @@ object TimeRangeMatcher {
             },
         )
 
+    // Preserve the archived call signature, but manual arguments cannot affect any calculation.
+    @Suppress("UNUSED_PARAMETER")
     fun calculateAvailability(
         naturalWindows: List<StructuredCondition.TimeWindow>,
         datedManualAvailability: List<DatedTimeRange>,
@@ -123,20 +125,7 @@ object TimeRangeMatcher {
                 zone,
             )
         val searchBoundary = searchBoundary(searchRange, zone)
-        var available = if (availableConditions.isEmpty()) listOf(searchBoundary) else naturalAvailable
-
-        val manual =
-            normalize(
-                datedManualAvailability
-                    .filter { it.date >= searchRange.startInclusive && it.date < searchRange.endExclusive }
-                    .map { it.time.resolveOn(it.date, zone) } +
-                    weeklyManualAvailability.flatMap { weekly ->
-                        datesFor(null, weekly.dayOfWeek, searchRange).map { weekly.time.resolveOn(it, zone) }
-                    },
-            )
-        if (datedManualAvailability.isNotEmpty() || weeklyManualAvailability.isNotEmpty()) {
-            available = intersect(available, manual)
-        }
+        val available = if (availableConditions.isEmpty()) listOf(searchBoundary) else naturalAvailable
 
         return subtract(intersect(available, listOf(searchBoundary)), naturalUnavailable + blocked)
     }

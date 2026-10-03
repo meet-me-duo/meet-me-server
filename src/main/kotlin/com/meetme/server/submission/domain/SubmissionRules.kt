@@ -12,6 +12,17 @@ object SubmissionRules {
     const val MAX_RAW_TEXT_CODE_POINTS = 500
     const val MAX_BATCH_TEXT_CODE_POINTS = 10_000
 
+    // ECMAScript String.trim, independent of Kotlin/JVM's broader whitespace predicate.
+    fun trimRawText(value: String): String =
+        value.trim { character ->
+            when (character.code) {
+                in 0x0009..0x000D, 0x0020, 0x00A0, 0x1680,
+                in 0x2000..0x200A, 0x2028, 0x2029, 0x202F, 0x205F, 0x3000, 0xFEFF,
+                -> true
+                else -> false
+            }
+        }
+
     fun normalizeAvailability(
         availability: List<ManualAvailability>,
         searchRange: SearchDateRange,
