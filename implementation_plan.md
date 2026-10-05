@@ -40,7 +40,7 @@
 - **현재 로컬 조사 (사용자요청2):** 후보 개수뿐 아니라 자연어 의도·Gemini 시간/장소 구조화·하드 배제·선호·모호성·후보 선택·결과 한국어 문구를 종단 평가한다. 시작 시 clean `main c43a30b`, `develop` fast-forward pull 후 `5d8c32e`를 확인했다. `chore/candidate-scenario-investigation`에서 재현을 시작하고 결함 수정 범위가 확정되어 `fix/candidate-semantics`로 rename했다. 별도 worktree는 만들지 않았으며 작업 경로는 `C:/Users/jinhy/Projects/meet-me/meet-me-server` 한 개다. 이번 변경은 main/develop에서 편집하지 않는다.
 - **계획/구현 경계:** 기존 A=전원 대면, B=전원 비대면, C=부분 참석 유형·유형별 최대 한 카드·시간 전체 묶음 계약을 유지한다. 합성 provider fixture 23개는 실제 adapter·매칭·result HTTP를 실행하되 repository는 mock이다. 기존 개발 키·고정 모델의 실제 호출은 전후 각 3건, 합계 6건으로 끝냈다. 실제 모델·parser/matcher/result service 검증을 PostgreSQL/Redis/브라우저 전체 E2E로 표시하지 않는다. 시간/장소 다양성 카드 재설계와 시간·장소 결합 지원 스키마는 결정 대기다.
 
-- **현재 단계:** Issue #83은 PR #84·#86으로 main `c43a30b`에 통합됐으며 해당 SHA의 CI run #37133227810·Deploy Production run #37133378148 성공을 2026-10-04 읽기 전용으로 확인했다. 사용자요청2의 로컬 구현·최종 회귀 검증·독립 리뷰 완료 후 2026-10-05 이 실행 대화의 직접 사용자 승인으로 Issue #87을 생성하고 commit·push·PR·원격 CI 준비를 재개했다. 서버 운영 승격·배포는 웹 companion 배포 검증 확인 전 보류한다. Issue #74 운영 복구 완료 상태는 유지한다.
+- **현재 단계:** Issue #83은 PR #84·#86으로 main `c43a30b`에 통합됐으며 해당 SHA의 CI run #37133227810·Deploy Production run #37133378148 성공을 2026-10-04 읽기 전용으로 확인했다. 사용자요청2는 2026-10-05 직접 승인 후 Issue #87을 생성하고 검증 커밋 `126cd8f`를 push해 develop 대상 PR #88을 게시했다. 원격 Linux CI를 확인하며 서버 운영 승격·배포는 웹 companion 배포 검증 확인 전 보류한다. Issue #74 운영 복구 완료 상태는 유지한다.
 - **최종 검증:** 사용자요청2의 합성 matrix 23건 전후 통과, 기존 개발 Gemini 전후 각 3건 성공, 독립 assertion RED·GREEN, 결함 주입 4종 탐지와 바이트 복구를 확인했다. 최종 hook의 `ktlintCheck`·`assemble`·전체 `test`는 exit 0, 329 tests/실패 0/errors 0/skip 2다. 별도 실제 OpenAPI export도 통과했다. 기존 웹 snapshot과 생성 OpenAPI의 parsed JSON이 완전히 같으며 DTO 필드/타입/enum을 바꾸지 않았다. 생성 파일 SHA-256 `697bf2aa065b57d480308dc1dc5f530f180ed817d43693b8092f129f9815daf2`는 기존 snapshot `72ade61680b6f2e245eab9216ec168806d196e6bebb8774fc160a606e7e87c46`와 직렬화 바이트가 달라 동일 지문으로 표시하지 않는다.
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 시간·장소 그룹 구조화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 제출 MVP는 지도 API와 좌표 없이 장소 호환 그룹을 사용한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
@@ -840,6 +840,7 @@
 | 2026-10-03 | Issue #83 직접 사용자 승인 확인 후 출판 준비 재개 | source/resources/tests 152개·RED/결함 증거 지문 일치, origin/develop 기준 SHA 동일·origin/main과 파일 차이 없음, 검증된 변경만 stage·guard·commit·push·draft PR·Linux CI 순서 진행. merge·deploy는 웹 공개 새 번들 확인 후 별도 신호 대기 | 동일 커밋 예정, #83 |
 | 2026-10-04 | 사용자요청2 자연어 의도·후보 감소 경로 재현 후 시간 요약·Gemini 조건 해석의 안전 개선 완료 | 합성23 전후, 실제Gemini3+3 성공, 독립17 사례·RED3종·결함4종 탐지와 SHA복구, hook 전체329/실패0/errors0/skip2, 별도OpenAPI export 및 웹snapshot parsed JSON 동일, 독립blocking없음. 안전제외·후보다양성·C정책충돌 한계 기록 | 로컬 `fix/candidate-semantics`; 자동 승인 검토의 Issue 게시 거절로 commit/push/PR/merge/배포 미실행 |
 | 2026-10-05 | 이 실행 대화의 직접 사용자 승인 후 Issue #87 생성·출판 준비 재개 | 변경 source3/test4 지문 일치, 원격 develop5d8c32e/mainc43a30b 기준 불변·중복Issue/PR없음 확인. 필수 commit gate·commit·push·develop PR·Linux CI 순서 진행. 웹 신규reason 한국어 안내 companion 배포 검증 확인 전 서버 운영 승격·배포 보류 | 동일 커밋 예정, #87 |
+| 2026-10-05 | Issue #87 검증 변경 commit·push·develop PR #88 게시 | 정확한 Bash/command hook 이벤트로 실제 전체 gate exit0·329/실패0/errors0/skip2 확인, stage18파일 독립리뷰 blocking없음, commit126cd8f·push성공. 초기 다른형식 hook 이벤트는 no-op여서 검증근거에서 제외. Linux CI는 PR head 기준 확인하고 웹 companion 배포 검증 전 병합·운영배포 보류 | 126cd8f, #87·PR #88 |
 
 ## 사용자요청2 Worklog — 추천 로직·결과 설명·Gemini 프롬프트 (2026-10-04 UTC)
 
@@ -852,7 +853,8 @@
 - [x] `[AGENT]` 독립 테스트 설계자와 구현자를 분리하고 assertion RED를 확인한 후 로컬 수정했다. 초기 15개/12실패, 요약 테스트의 문구 과제약 정합 수정 후 5개/5실패 재RED, 독립 리뷰 추가 발견의 mixed pattern 2개/2실패 RED를 별도로 보존했다.
 - [x] `[AGENT]` 최종 복구 전체 게이트 exit 0(329/실패0/errors0/skip2), 실제 OpenAPI export와 웹 snapshot 구조 동일, 독립 결함 검토의 blocking 없음 및 source/test 지문 일치를 확인했다.
 - [x] `[SHARED]` GitHub Issue: 최초 자동 승인 검토 거절 이후 중단했고, 2026-10-05 이 실행 대화의 직접 사용자 승인 후 Issue #87 생성 성공을 확인했다.
-- [ ] `[AGENT]` 필수 commit gate·commit·push·develop PR·원격 Linux CI를 완료한다.
+- [x] `[AGENT]` 실제 필수 commit gate exit0·전체329/실패0/errors0/skip2 확인 후 검증 변경을 commit126cd8f·push하고 develop PR #88을 게시했다.
+- [ ] `[AGENT]` PR #88 head 기준 원격 Linux CI·Issue 연결 검사를 확인한다.
 - [ ] `[SHARED]` 부모의 웹 companion 배포 검증 확인 후 develop/main 승격·기존 운영 배포 결과를 확인한다.
 
 브랜치-before-Issue 경위: 개발 규칙은 Issue 생성→clean develop pull→작업 브랜치 생성 순서를 요구한다. 처음에는 사용자가 원격 게시 없이 로컬 개선·테스트만 요청하여 Issue를 만들지 않고 조사 브랜치를 먼저 생성했다. 결함 수정으로 범위를 확정해 fix/candidate-semantics로 rename했다. 이후 부모가 직접 사용자 승인 원문을 전달했고 공개 이슈 중복 확인 후 생성 1회를 시도했으나 자동 검토가 현재 실행 스레드의 직접 승인 부재·최초 게시 금지를 이유로 거절했다. 같은 범위로 재시도하거나 다른 게시 도구로 우회하지 않았다. 정책 파일은 수정하지 않았다.
@@ -934,3 +936,5 @@
 서버 운영 승격·배포의 선행조건은 부모가 웹 신규 reason 두 개의 한국어 안내 companion 배포 검증을 확인하는 것이다. 이 신호 전에는 Issue·commit·push·develop PR·CI까지만 진행한다. 검증 source3/test4의 최종 지문7개와 원격 develop/main 기준이 기존 근거와 동일함을 재확인했다. 원시 로그와 로컬 인계 자료는 commit하지 않는다.
 
 출판 전 실제 commit 명령을 대상으로 필수 `.codex/hooks/tdd_guard.py`를 재실행해 exit 0을 확인했다. stage 범위는 이번 source·test·문서·최소 TDD metadata 18개 파일이며 정책/인프라/웹/로컬 원시 로그는 포함하지 않는다. 전체329/실패0/errors0/skip2의 검증 근거를 보존했고 commit·push·PR·CI 결과는 후속 단계에서 갱신한다.
+
+실행 근거는 `.codex/tdd-evidence/candidate-publication-verification.json`이다. hook이 실제로 받는 `tool_name=Bash`, `tool_input.command` 형식과 전체 XML329개를 확인했다. 앞선 exec_command/cmd 형식의 이벤트는 hook이 무시했으므로 그 exit0을 실제 게이트 성공으로 사용하지 않았다. 실제 전체 gate 이후 commit126cd8f·push·PR #88 생성은 성공했고 작업 브랜치의 검증 코드 지문은 유지한다. 웹 companion 검증 전 서버 병합·운영 배포는 아직 없다.
