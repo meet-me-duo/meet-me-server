@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-03
+> **최종 갱신:** 2026-10-05
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -37,15 +37,18 @@
 
 ## 현재 진행 요약
 
-- **현재 단계:** Issue #83 구현·로컬 검증·독립 리뷰 완료 후 직접 사용자 승인에 따라 commit·push·develop 대상 draft PR·Linux CI를 진행한다. source/resources/tests 152개와 실제 OpenAPI 지문을 유지한다. Issue #74 운영 복구 완료 상태는 유지한다.
-- **최종 검증:** 공유·독립·결함 복구 전체 게이트 각각 288 tests/실패 0/skip 1, synthetic hook exit 0·증거 포함 hook unittest 12개 통과. OpenAPI와 웹 snapshot SHA-256은 `72ade61680b6f2e245eab9216ec168806d196e6bebb8774fc160a606e7e87c46`이다.
+- **현재 로컬 조사 (사용자요청2):** 후보 개수뿐 아니라 자연어 의도·Gemini 시간/장소 구조화·하드 배제·선호·모호성·후보 선택·결과 한국어 문구를 종단 평가한다. 시작 시 clean `main c43a30b`, `develop` fast-forward pull 후 `5d8c32e`를 확인했다. `chore/candidate-scenario-investigation`에서 재현을 시작하고 결함 수정 범위가 확정되어 `fix/candidate-semantics`로 rename했다. 별도 worktree는 만들지 않았으며 작업 경로는 `C:/Users/jinhy/Projects/meet-me/meet-me-server` 한 개다. 이번 변경은 main/develop에서 편집하지 않는다.
+- **계획/구현 경계:** 기존 A=전원 대면, B=전원 비대면, C=부분 참석 유형·유형별 최대 한 카드·시간 전체 묶음 계약을 유지한다. 합성 provider fixture 23개는 실제 adapter·매칭·result HTTP를 실행하되 repository는 mock이다. 기존 개발 키·고정 모델의 실제 호출은 전후 각 3건, 합계 6건으로 끝냈다. 실제 모델·parser/matcher/result service 검증을 PostgreSQL/Redis/브라우저 전체 E2E로 표시하지 않는다. 시간/장소 다양성 카드 재설계와 시간·장소 결합 지원 스키마는 결정 대기다.
+
+- **현재 단계:** Issue #83은 PR #84·#86으로 main `c43a30b`에 통합됐으며 해당 SHA의 CI run #37133227810·Deploy Production run #37133378148 성공을 2026-10-04 읽기 전용으로 확인했다. 사용자요청2는 2026-10-05 직접 승인 후 Issue #87·검증 커밋 `126cd8f`·develop PR #88 게시를 완료했다. 코드 커밋 CI #37277475001과 기록 커밋 `c4a6b1d`의 CI #37277747962·Issue 연결 검사 모두 성공했다. 서버 운영 승격·배포는 웹 companion 배포 검증 확인 전 보류한다. Issue #74 운영 복구 완료 상태는 유지한다.
+- **최종 검증:** 사용자요청2의 합성 matrix 23건 전후 통과, 기존 개발 Gemini 전후 각 3건 성공, 독립 assertion RED·GREEN, 결함 주입 4종 탐지와 바이트 복구를 확인했다. 최종 hook의 `ktlintCheck`·`assemble`·전체 `test`는 exit 0, 329 tests/실패 0/errors 0/skip 2다. 별도 실제 OpenAPI export도 통과했다. 기존 웹 snapshot과 생성 OpenAPI의 parsed JSON이 완전히 같으며 DTO 필드/타입/enum을 바꾸지 않았다. 생성 파일 SHA-256 `697bf2aa065b57d480308dc1dc5f530f180ed817d43693b8092f129f9815daf2`는 기존 snapshot `72ade61680b6f2e245eab9216ec168806d196e6bebb8774fc160a606e7e87c46`와 직렬화 바이트가 달라 동일 지문으로 표시하지 않는다.
 - **제품 기능:** 익명 방 생명주기와 조건 제출·고정 배치·Gemini 시간·장소 그룹 구조화, Plan A/B/C·`NO_MATCH`·`PARTIAL`, 후보 조회와 멱등 확정까지 구현했다. 제출 MVP는 지도 API와 좌표 없이 장소 호환 그룹을 사용한다.
 - **출시 목표:** Wanted AI Champion 심사·투표를 위해 2026-09-21부터 로그인 없이 핵심 기능을 체험할 수 있는 제출 MVP를 배포한다. Google·Kakao 소셜 로그인과 Google Calendar는 Post-MVP로 미룬다.
-- **현재 차단 사항:** 구현·검증 및 commit·push·draft PR의 승인 차단은 해소됐다. merge·deploy는 웹 선배포와 실제 공개 새 번들 검증 후 조율자의 별도 신호까지 대기한다. 현재 원격 CI는 게시 후 확인 예정이며 운영 배포는 실행하지 않았다.
-- **현재 사용자 개입:** 직접 role=user 승인은 이번 자연어 전용 변경에만 적용한다. 새 로그인·비밀값·권한·신뢰·인프라·비용 변경은 금지하며 merge·deploy 순서는 조율자가 웹 검증 후 별도 지시한다.
+- **현재 차단 사항:** 최초 Issue 게시의 자동 검토 거절은 기록으로 보존한다. 2026-10-05 직접 사용자 승인 후 Issue #87 생성은 성공했다. 서버 운영 승격·배포는 부모가 웹 신규 reason의 한국어 안내 companion 배포 검증을 확인할 때까지 보류한다. 추가 자동 검토 거절이 발생하면 우회하지 않는다.
+- **현재 사용자 개입:** 이 실행 대화에서 Issue·commit·push·PR·지침상 develop/main 승격·기존 운영 배포의 직접 승인을 받았다. 웹 검증 신호 이후 승인 범위로 진행한다. 새 계정·모델·서비스·권한·비밀값·인프라 추가 없이 기존 개발 설정만 사용한다. 후보 다양성과 진짜 시간·장소 결합 지원은 별도 제품·API 결정 사항이다.
 - **프론트엔드 전달:** 프론트엔드는 별도 프로젝트에서 후속 구현한다. 사용자가 prototype HTML을 이미 준비했으며, 백엔드는 검증된 Swagger/OpenAPI와 필요한 화면 흐름·상태·cookie·Origin·Polling·오류 처리만 담은 `docs/FRONTEND_HANDOFF.md`를 제공한다. 별도 API 명세 문서와 prototype HTML은 이 저장소에서 만들지 않는다.
 - **개발 흐름:** 선택지 B 위험도 기반 TDD 확정. 일반 변경은 엄격한 Red-Green-Refactor, 고위험 변경은 테스트 설계·구현 역할 분리
-- **자율 실행 위임:** Issue #83의 검증된 변경·문서·TDD JSON만 commit·push·draft PR·CI 확인까지 진행한다. merge·deploy는 별도 신호 대기다. 과거 위임은 이번 범위를 확장하지 않으며 원시 로그·비밀값·로컬 인계 기록은 게시하지 않는다.
+- **자율 실행 위임:** 사용자요청2의 검증된 변경을 Issue #87에 연결해 commit·push·PR·원격 CI를 진행한다. 웹 companion 검증 신호 전 서버 운영 승격·배포를 보류하고, 확인 후 직접 승인된 지침상 develop/main 승격과 기존 운영 배포를 진행한다. 추가 거절은 우회하지 않으며 로컬 원시 로그·키·인계 기록은 게시하지 않는다.
 - **RED 증거:** 선택지 C 확정. Git에는 `.tdd/red/<work-item>.json`의 최소 메타데이터·테스트 지문만 추적하고 전체 실패 출력은 `.codex/tdd-evidence/<work-item>.log`에 로컬 전용으로 보관한다.
 - **고위험 검증:** 트랜잭션·동시성·외부 Adapter의 의도적 결함 주입은 `.tdd/verification/<work-item>.json`에 최종 source·test 지문과 탐지 결과를 추적하고 전체 출력은 로컬 로그로 분리한다.
 - **Mutation Testing:** 선택지 B로 조정. PIT는 initial commit과 Phase 1의 선행 조건에서 제외하고 시간 교집합·장소 영역·후보 점수 같은 핵심 결정론적 매칭 로직이 구현된 뒤 효과가 큰 패키지에만 선택 도입한다. 인증·트랜잭션·동시성·멱등성·외부 Adapter는 의도적 결함 주입 검증을 사용한다.
@@ -835,3 +838,106 @@
 | 2026-09-29 | Issue #74의 최종 `main` 승격과 자동 운영 배포 완료 | PR #75·#77·#79를 `develop`, PR #76·#78을 `main`에 병합. 최종 main CI run #36450090557과 Deploy Production run #36450384064 성공, 공개 OpenAPI 200, SSM 5분 명령 성공, Terraform 0변경·작업 트리 깨끗함을 확인 | 동일 커밋 예정, #80 |
 | 2026-10-03 | Issue #83 자연어 필수·수동 입력 종료, legacy 안전 미반영·기존 결과 보존과 ADR-045·실제 OpenAPI 동기화 완료 | 신규 100/56·기존 64/1 assertion RED, HTTP 82·export GREEN, 공유·독립·복구 전체 288/실패 0/skip 1, 결함 3종 assertion 실패 10·2·3 검출·152 byte SHA 복구, synthetic hook exit 0·unittest 12개 통과, 독립 blocking 지적 없음. 운영 쓰기·새 인프라·보안 변경 없음 | #83, commit/push/PR/merge/deploy 보류 |
 | 2026-10-03 | Issue #83 직접 사용자 승인 확인 후 출판 준비 재개 | source/resources/tests 152개·RED/결함 증거 지문 일치, origin/develop 기준 SHA 동일·origin/main과 파일 차이 없음, 검증된 변경만 stage·guard·commit·push·draft PR·Linux CI 순서 진행. merge·deploy는 웹 공개 새 번들 확인 후 별도 신호 대기 | 동일 커밋 예정, #83 |
+| 2026-10-04 | 사용자요청2 자연어 의도·후보 감소 경로 재현 후 시간 요약·Gemini 조건 해석의 안전 개선 완료 | 합성23 전후, 실제Gemini3+3 성공, 독립17 사례·RED3종·결함4종 탐지와 SHA복구, hook 전체329/실패0/errors0/skip2, 별도OpenAPI export 및 웹snapshot parsed JSON 동일, 독립blocking없음. 안전제외·후보다양성·C정책충돌 한계 기록 | 로컬 `fix/candidate-semantics`; 자동 승인 검토의 Issue 게시 거절로 commit/push/PR/merge/배포 미실행 |
+| 2026-10-05 | 이 실행 대화의 직접 사용자 승인 후 Issue #87 생성·출판 준비 재개 | 변경 source3/test4 지문 일치, 원격 develop5d8c32e/mainc43a30b 기준 불변·중복Issue/PR없음 확인. 필수 commit gate·commit·push·develop PR·Linux CI 순서 진행. 웹 신규reason 한국어 안내 companion 배포 검증 확인 전 서버 운영 승격·배포 보류 | 동일 커밋 예정, #87 |
+| 2026-10-05 | Issue #87 검증 변경 commit·push·develop PR #88 게시 | 정확한 Bash/command hook 이벤트로 실제 전체 gate exit0·329/실패0/errors0/skip2 확인, stage18파일 독립리뷰 blocking없음, commit126cd8f·push성공. 초기 다른형식 hook 이벤트는 no-op여서 검증근거에서 제외. Linux CI는 PR head 기준 확인하고 웹 companion 배포 검증 전 병합·운영배포 보류 | 126cd8f, #87·PR #88 |
+| 2026-10-05 | PR #88 Linux CI·Issue 연결 검사 성공과 서버 배포 대기 인계 | 코드head126cd8f CI #37277475001, 기록headc4a6b1d CI #37277747962 성공. Ubuntu 품질·배포정책·Compose secret fidelity·DB credential refresh·Nginx 검사 통과. 이후 기록 변경의 최종head검사도 게시PR에서 확인하며 서버 develop/main병합·운영배포는 웹companion검증신호 전 보류 | c4a6b1d, #87·PR #88 |
+
+## 사용자요청2 Worklog — 추천 로직·결과 설명·Gemini 프롬프트 (2026-10-04 UTC)
+
+### 계획 → 재현 → 구현 인계
+
+- [x] `[AGENT]` 필수 rules 6개, project-architecture skill, PRD/Architecture/ADR 및 기존 implementation_plan 진행 기록·Issue83 handoff를 먼저 확인했다.
+- [x] `[AGENT]` clean main c43a30b에서 develop ff-only pull 성공(5d8c32e) 후 로컬 조사 브랜치를 만들었다. main과 develop 기준점은 merge topology가 다르지만 이번 관련 source 내용은 같다.
+- [x] `[AGENT]` 후보 개수뿐 아니라 조건 해석·시간/공간 의도·결과 문구까지 범위 정정을 계획에 반영했다.
+- [x] `[AGENT]` 합성 matrix 23건과 실제 모델 대표 전후 3건을 구분해 실행하고 초기 발견·안전 수정 범위를 먼저 공유했다.
+- [x] `[AGENT]` 독립 테스트 설계자와 구현자를 분리하고 assertion RED를 확인한 후 로컬 수정했다. 초기 15개/12실패, 요약 테스트의 문구 과제약 정합 수정 후 5개/5실패 재RED, 독립 리뷰 추가 발견의 mixed pattern 2개/2실패 RED를 별도로 보존했다.
+- [x] `[AGENT]` 최종 복구 전체 게이트 exit 0(329/실패0/errors0/skip2), 실제 OpenAPI export와 웹 snapshot 구조 동일, 독립 결함 검토의 blocking 없음 및 source/test 지문 일치를 확인했다.
+- [x] `[SHARED]` GitHub Issue: 최초 자동 승인 검토 거절 이후 중단했고, 2026-10-05 이 실행 대화의 직접 사용자 승인 후 Issue #87 생성 성공을 확인했다.
+- [x] `[AGENT]` 실제 필수 commit gate exit0·전체329/실패0/errors0/skip2 확인 후 검증 변경을 commit126cd8f·push하고 develop PR #88을 게시했다.
+- [x] `[AGENT]` PR #88의 코드head126cd8f 및 기록headc4a6b1d 원격 Linux CI·Issue 연결 검사 성공을 확인했다. 후속 문서기록 head도 PR의 검사 성공 후에만 병합한다.
+- [ ] `[SHARED]` 부모의 웹 companion 배포 검증 확인 후 develop/main 승격·기존 운영 배포 결과를 확인한다.
+
+브랜치-before-Issue 경위: 개발 규칙은 Issue 생성→clean develop pull→작업 브랜치 생성 순서를 요구한다. 처음에는 사용자가 원격 게시 없이 로컬 개선·테스트만 요청하여 Issue를 만들지 않고 조사 브랜치를 먼저 생성했다. 결함 수정으로 범위를 확정해 fix/candidate-semantics로 rename했다. 이후 부모가 직접 사용자 승인 원문을 전달했고 공개 이슈 중복 확인 후 생성 1회를 시도했으나 자동 검토가 현재 실행 스레드의 직접 승인 부재·최초 게시 금지를 이유로 거절했다. 같은 범위로 재시도하거나 다른 게시 도구로 우회하지 않았다. 정책 파일은 수정하지 않았다.
+
+### 후보가 줄어드는 단계와 기존 정책
+
+- Gemini candidateCount(1)은 JSON 응답 후보 1개를 받는 공급자 설정이며 Plan 카드 수 제한이 아니다. 조건 최대 32개·응답256KiB·output32768 토큰은 검증 상한이고 이번 사례의 시간 대안을 잘라내지 않았다.
+- 입력 가능한 시간 대안은 합집합, UNAVAILABLE는 차감, 참여자 사이는 반개구간 교집합이다. 여러 구간은 하나의 카드 time_ranges에 전부 남는다.
+- 전원 대면 A, 전원 비대면 B, 실패 시 부분 참석 C 유형으로 분기한다. 전원 후보가 있으면 바로 반환하므로 현재 한 결과에 최대 A+B 두 유형이고 C는 함께 반환하지 않는다. 유효한 시간 하나만 있다고 3개로 복제하지 않는다.
+- 장소 대안은 참여자 안에서 합집합, 참여자 사이에 AREA_n 교집합을 계산하고 문자열 정렬의 첫 공통 키만 대표 지역으로 선택한다. 강남/홍대가 모두 유효해도 두 지역의 별도 A 카드를 만들지 않는다. 실제 거리·교통시간·선호 점수는 계산하지 않는다.
+- 부분 참석 C의 순서는 참석 인원→공통 총시간→이른 시작→안정 ID다. 시간·장소 다양성 topK나 선호 가중치는 없다. result service/DTO는 생성 후보를 그대로 노출하며 별도 후보 필터가 없다.
+- 웹 정적 읽기 확인: RoomPage는 candidates.map으로 전 항목을 표시하며 slice/filter로 후보를 줄이지 않는다. 이번 작업에서 웹 파일은 수정하지 않았고 브라우저 UI E2E는 실행하지 않았다.
+
+### 합성 검증 matrix (provider 응답은 fixture, 실제 parser/processor/result HTTP, repository는 mock)
+
+각 행의 전체 참여자 원문·provider 조건·파싱 조건 수·개별 availability·전원 시간/장소 교집합·최종 JSON은 `.codex/tdd-evidence/candidate-scenario-before.jsonl` 및 `candidate-scenario-after.jsonl`, 재현 fixture는 `CandidateScenarioMatrixTest.kt`에 있다. 첫 before의 학교 근처/UNRESOLVED 사례 표현은 독립 리뷰에서 부정확함을 확인해 최종 fixture/after를 중앙역으로 정합 수정했으며 학교 근처는 별도 travel 사례로 구분한다.
+
+| ID | 합성 원문 핵심 / 인원 | 결과 전→후 | 후보 감소 근거 |
+| --- | --- | --- | --- |
+| two-many-times-remote | 2명, 9/21 9~11·14~16·19~21시 강남역 | B 1장/구간3 유지 | 비대면 유형별 집계 |
+| three-many-times-either | 3명, 같은 3시간·강남역 | A+B/각구간3 유지 | 전원 A/B 반환 후 종료 |
+| two-one-time-offline | 2명, 9/21 19~21시 강남만 | A1/구간1 유지 | 유효한 한 시간 |
+| two-no-time | 2명, 오전9~11 vs 오후14~16 | 빈 목록 유지 | 시간 교집합 없음 |
+| three-partial-time | 3명, 두명19~21·한명9~11 | C1/참석2 유지 | 부분 참석 fallback |
+| three-no-pair | 3명, 아침·오후·저녁 분리 | 빈 목록 유지 | 최소2명 시간 없음 |
+| two-different-preferences | 2명, 9~11 또는19~21·선호는 서로 반대 | B1/구간2 유지 | 선호 점수 없음, 대안 보존 |
+| two-hard-exclusion | 2명, 9~16 가능·11~14 절대불가 | B1/9~11·14~16 유지 | 하드 제외 차감 |
+| two-wide-time | 2명, 9~18 vs10~13 | B1/10~13 유지 | 시간 교집합 축소 |
+| two-ambiguous-partial | 2명, generic 모호 미반영 vs19~21 | PARTIAL B1 유지 | 기존 generic neutral 정책; 신규 unsafe reason 테스트와 구분 |
+| two-midnight-boundary | 2명, 23시~자정 | B1/23~00 문구→23~24 | 실제 UTC 구간 동일, 종료 경계 표현 수정 |
+| two-cross-date | 2명, 21일23~22일02 vs22일00~02 | B1/22일00~02 유지 | 날짜 경계·서울 UTC 변환 |
+| two-nearby-stations | 2명, 봉천역 vs서울대입구역 | A1/관악구 북부 유지 | 같은 fixture 장소 그룹 |
+| two-separated-stations | 2명, 강남 vs홍대·EITHER | B1 유지 | 대면 장소 교집합 없음 |
+| two-place-unspecified | 2명, 한명 장소 없음·대면 | 빈 목록 유지 | 장소를 임의 생성하지 않음 |
+| two-multiple-common-stations | 2명, 강남 또는홍대·대면 | A1/강남 유지 | 첫 공통 그룹만 선택 |
+| two-same-time-different-places-either | 2명, 같은 시간·강남/홍대·온라인 | A+B 유지 | 장소 대안은 첫 그룹, 비대면 별도 유형 |
+| two-duplicate-conditions | 2명, 같은 시간/장소 반복 | A1/구간1 유지 | 시간 normalize·장소 distinct |
+| three-place-only-fallback | 3명, 같은 시간·강남2/홍대1·대면 | C1/참석2 유지 | 기존 Issue66 spatial fallback 테스트에 고정된 정책 |
+| two-unresolved-place | 2명, 중앙역 미확정 vs강남·EITHER | PARTIAL B1 유지 | 미확정 장소는 대면 제외 |
+| two-travel-constraint | 2명, 강남에서30분이내 vs강남 | B1 유지 | 이동 제약을 실제 장소로 가정하지 않음 |
+| two-only-exclusions | 2명, 0~9 불가 vs10~13 가능 | B1/10~13 유지 | AVAILABLE 없음 중립 기준·제외 차감 |
+| two-touching-boundaries | 2명, 9~11 vs11~14 | 빈 목록 유지 | 반개구간 경계는 겹치지 않음 |
+
+추가 독립 계약 테스트는 자정/익일/다일/월 경계, 반복+다른요일 및 반복 overnight, 프롬프트 의미 경계, unsafe reason 두명 NO_MATCH·세명 유효2 C·generic 기존 정책 유지까지 포함한다. 기존 전체 테스트의 IANA/DST 경계·인증·영속/비동기 회귀도 최종 게이트에서 확인한다.
+
+### 실제 Gemini 전후 근거 (동일 합성 원문, 기존 gemini-3.8-flash, 각 단계3회/재시도0)
+
+| 사례와 원문 | 수정 전 | 수정 후 |
+| --- | --- | --- |
+| 3명 모두 `2026년 9월 21일 오전 9~11시, 오후 2~4시, 저녁 7~9시 강남역 또는 홍대입구역에서 가능해요.` | COMPLETE A1, 시간3개 모두, 강남역 | COMPLETE A1, 동일 UTC3구간, 대표 지역 강남. 그룹명은 모델이 달리 표현할 수 있음 |
+| 2명 `9월21일 강남역 19시~자정 가능, 20~21시 절대불가` / `같은날19시~자정 가능` | UNAVAILABLE 차감은 정확, `19:00~20:00 또는 21:00~00:00` | 같은 UTC2구간, `19:00~20:00 또는 21:00~24:00` |
+| 2명 `9/21 9~11시는 강남역에서만, 19~21시는 홍대입구역에서만` / 같은 시간에 장소는 반대 | 평평한 시간2·장소2 목록으로 연결 소실, 참석 불가능한 강남A를 COMPLETE로 생성 | 양쪽 conditions=[]·UNSUPPORTED_CONDITIONAL_CONSTRAINT, PARTIAL·후보0. 진짜 결합 조건 지원 완료로 표시하지 않음 |
+
+실제 성공 trace는 before3/after3, failure행0을 XML·trace에서 직접 확인했다. input/output token 합계는 전1307/2446, 후2093/1453이다. 프롬프트가 길어 input token은 늘었으며 가격/청구 금액은 조회하지 않았고 무료 또는 비용0으로 주장하지 않는다. 실제 모델 결과 뒤에는 production parser/matcher/result service를 사용했지만 repository는 mock이며 운영 방·데이터는 만들지 않았다. 제출 MVP에는 지도 검색 API 호출이 없고 좌표/실매장/이동시간 검증을 완료한 것으로 표시하지 않는다.
+
+### 수정 내용과 설계 결정 경계
+
+- Renderer는 UTC 구간을 실제 지역 날짜 경계에서 나누고 24:00을 보존한다. dominant 반복 패턴에 속하지 않는 날짜가 있으면 실제 날짜별 표현으로 fallback해 유효 시간을 숨기지 않는다. 저장된 시간·후보·확정은 변경하지 않는다.
+- Gemini prompt는 하드 제외·명시 가능 대안·soft 선호·모호 시간·자정 넘김·장소 금지·입력의 data 경계와 final Plan/score 생성 금지를 구분한다. 현재 단일 prompt의 지시문을 보강하며 모델·SDK·schema·timeout·retry 설정은 유지한다.
+- 현재 스키마로 안전히 보존할 수 없는 시간/장소 결합은 UNSUPPORTED_CONDITIONAL_CONSTRAINT, 임의 경계가 필요한 모호 시간은 AMBIGUOUS_TIME_CONSTRAINT로 분류한다. MatchingProcessor는 이 신규 사유 두 개에만 empty availability를 적용한다. 미반영/전체 인원은 보존하고 유효한 최소2명만 C에 포함한다. 다른 검증 실패의 기존 중립 정책은 유지한다.
+- API DTO 필드/enum 변경은 없다. HOST 미반영 `reason`은 범용string이다. 기존 웹은 unknownreason를 원문코드로 노출하므로 타입 오류는 없으나 한국어 사유표시 추가는 웹 담당 조율 대상이다. PARTIAL·NO_MATCH 및 HOST만 미반영 원문 공개 계약은 유지한다.
+- 후보 다양성 선택지: (A) 현 정책 유지+유효 구간을 한 카드에 전부 표현하면 API 변경과 추가 모델비용이 없지만 지역 대안은 하나만 보인다. (B) 시간/장소별 실제 대안을 별도 카드로 만들면 비교는 쉬우나 유형별1장·확정 단위·rank/Plan 의미와 웹을 함께 재설계해야 한다. (C) 유형은 유지하고 카드 안 place_options/시간장소 연결 대안을 추가하면 표시 정보는 보존되나 DTO/저장/확정 계약이 늘어난다. 참석인원/하드조건을 우선하고 선호·다양성 점수의 가중치와 동률은 별도 합의해야 한다. 점수를 계산하지 않는 현 시스템에서 '선호 최적/가장 가까운 장소'라는 이유를 만들지 않는다.
+- 진짜 시간·장소 결합 지원은 participant별 허용 (시간, 장소그룹, 모임방식) 분기 OR를 보존하고, 같은 장소/방식에서만 참여자 사이 시간 교집합을 구한 뒤 후보·확정·UI가 그 연결을 유지해야 한다. Flat union을 카르테시안 곱으로 만드는 현 구조에서 프롬프트만으로 이를 지원했다고 볼 수 없다.
+- 남은 정책 충돌: PRD/Architecture의 C는 '전원 시간 교집합 없음'이라고 쓰지만 기존 Issue66 test/code는 전원시간이 있어도 장소만 불일치하면 subset C를 허용한다. 기존 동작을 임의 변경하지 않았으며 공간 불일치 fallback을 유지할지 문구/정책을 함께 결정해야 한다.
+- 모델은 새 지시를 항상 지킨다는 보장이 없고 이유코드 없이 반환한 평탄화 오류를 서버가 원문에서 독립 검출하지 못한다. 6회 실제 대표 검증은 모든 표현의 정확성을 보장하지 않는다. 미지원 입력을 안전 제외하는 대신 후보가 줄거나 NO_MATCH가 될 수 있으며 이 경우 COMPLETE로 과장하지 않는다.
+
+### 최종 로컬 검증·출판 인계
+
+- `.codex/hooks/tdd_guard.py`에 synthetic PreToolUse `git commit --dry-run` 이벤트를 입력해 실제 commit 없이 전체 게이트를 실행했다. hook exit 0, `ktlintCheck`·`assemble`·`test` 성공, 총329/실패0/errors0/skip2를 실제 XML에서 집계하고 `.codex/tdd-evidence/candidate-final-verification.json`과 보존 XML에 기록했다. skip은 기존 opt-in OpenAPI export와 새 opt-in 실제 Gemini probe이며, 각각 별도 실행에서 성공했다. 원격 Linux CI와 브라우저 E2E는 실행하지 않았다.
+- 최종 결함 주입은 summary baseline 복원5, unsafe-time guard 제거3, prompt baseline 복원4, mixed-pattern guard 제거2개의 assertion 실패를 탐지했다. 소스는 각 실행의 finally에서 원래 바이트로 복구하고 `.tdd/verification/candidate-semantics.json`의 source3/test4 지문을 모두 대조했다. 독립 리뷰의 blocking 지적은 모두 해소됐다.
+- 실제 OpenAPI 생성 검증은 `UnappliedInputResponse.reason`의 type=string·enum없음을 확인했다. 기존 웹 `openapi/meet-me.openapi.json`과 생성 JSON 전체를 파싱해 비교한 결과 동일, 차이 경로0이었다. 생성 바이트 SHA는 `697bf2aa065b57d480308dc1dc5f530f180ed817d43693b8092f129f9815daf2`이며 비교한 snapshot과 직렬화 바이트만 달랐다.
+- 로컬 전용 PR 제목/본문은 `.codex/tdd-evidence/candidate-pr-draft.md`, 게시·CI·배포 선행조건/차단범위/신규reason 한국어 안내와 합성 응답은 `.codex/tdd-evidence/candidate-deployment-handoff.md`에 남겼다. 실제 열린 Issue가 없으므로 가짜 `Closes` 번호를 만들거나 PR을 게시하지 않았다.
+- 자동 승인 검토는 GitHub Issue 생성을 현재 실행 스레드의 신뢰 가능한 직접 승인 부재·최초 원격 게시 금지를 이유로 거절했다. 부모의 이후 지시대로 원격 승인 재시도와 다른 게시 경로 우회는 하지 않는다. 로컬 검증 완료와 원격 게시/배포 완료를 구분한다.
+
+### 2026-10-05 직접 승인 후 출판 재개
+
+이 실행 대화에서 사용자가 직접 `승인`했다. 범위는 meet-me-duo/meet-me-server의 이번 추천 로직·결과 설명·Gemini 프롬프트 수정에 대한 Issue 생성·commit·push·PR 생성·지침상 develop/main 승격·기존 운영 배포다. 승인 전에는 읽기 전용으로 변경 보존과 최신 기준을 확인했고, 승인 후 중복 없는 실제 Issue #87을 생성했다. 이는 이전 거절의 우회가 아니라 새 직접 승인에 따른 출판 재개다. 추가 검토 거절은 우회하지 않는다.
+
+서버 운영 승격·배포의 선행조건은 부모가 웹 신규 reason 두 개의 한국어 안내 companion 배포 검증을 확인하는 것이다. 이 신호 전에는 Issue·commit·push·develop PR·CI까지만 진행한다. 검증 source3/test4의 최종 지문7개와 원격 develop/main 기준이 기존 근거와 동일함을 재확인했다. 원시 로그와 로컬 인계 자료는 commit하지 않는다.
+
+출판 전 실제 commit 명령을 대상으로 필수 `.codex/hooks/tdd_guard.py`를 재실행해 exit 0을 확인했다. stage 범위는 이번 source·test·문서·최소 TDD metadata 18개 파일이며 정책/인프라/웹/로컬 원시 로그는 포함하지 않는다. 전체329/실패0/errors0/skip2의 검증 근거를 보존했고 commit·push·PR·CI 결과는 후속 단계에서 갱신한다.
+
+실행 근거는 `.codex/tdd-evidence/candidate-publication-verification.json`이다. hook이 실제로 받는 `tool_name=Bash`, `tool_input.command` 형식과 전체 XML329개를 확인했다. 앞선 exec_command/cmd 형식의 이벤트는 hook이 무시했으므로 그 exit0을 실제 게이트 성공으로 사용하지 않았다. 실제 전체 gate 이후 commit126cd8f·push·PR #88 생성은 성공했고 작업 브랜치의 검증 코드 지문은 유지한다. 웹 companion 검증 전 서버 병합·운영 배포는 아직 없다.
+
+2026-10-05 PR #88의 codehead126cd8f Linux CI #37277475001와 기록headc4a6b1d CI #37277747962가 모두 성공했고 Issue 연결 검사도 성공했다. 원격 CI의 Ubuntu 품질 게이트와 배포 정책·Compose secret fidelity·DB credential refresh·Nginx 검증 단계가 전부 성공임을 확인했다. CI 기록만 추가한 최종 head도 GitHub 검사를 확인한 뒤에만 병합한다. 원격 develop5d8c32e/mainc43a30b는 유지하며 웹 companion 확인 전 서버 병합·배포하지 않는다.

@@ -107,7 +107,7 @@ class MatchingProcessor(
                 ParticipantMatchInput(
                     participantId = submission.participantId,
                     availableTimes =
-                        if (submission.latest.rawText == null) {
+                        if (submission.latest.rawText == null || structured[submission.latest.id]?.rejectionCode in UNSAFE_TIME_REASONS) {
                             emptyList()
                         } else {
                             com.meetme.server.coordination.domain.matching.TimeRangeMatcher.calculateAvailability(
@@ -153,6 +153,12 @@ class MatchingProcessor(
 
     private fun normalizeQuery(value: String): String =
         Normalizer.normalize(value, Normalizer.Form.NFKC).lowercase(Locale.ROOT).filterNot(Char::isWhitespace)
+
+    private companion object {
+        // These inputs contain time restrictions that the flat condition schema cannot preserve.
+        // Keeping them in the participant total while declining availability prevents invented attendance.
+        val UNSAFE_TIME_REASONS = setOf("UNSUPPORTED_CONDITIONAL_CONSTRAINT", "AMBIGUOUS_TIME_CONSTRAINT")
+    }
 }
 
 @Service

@@ -37,15 +37,9 @@ object CandidateSummaryRenderer {
         val occurrences =
             request.occurrences
                 .sortedBy { it.startInclusive }
-                .map {
-                    LocalOccurrence(
-                        it.startInclusive.atZone(request.timeZone).toLocalDate(),
-                        it.startInclusive.atZone(request.timeZone).toLocalTime(),
-                        it.endExclusive.atZone(request.timeZone).toLocalTime(),
-                    )
-                }
+                .flatMap { localDays(it, request.timeZone) }
         val pattern = request.recurringPattern
-        if (pattern == null) {
+        if (pattern == null || occurrences.any { it.date.dayOfWeek != pattern.dayOfWeek }) {
             return CandidateSummary(CandidateSummaryStrategy.EXPLICIT_OCCURRENCES, explicitText(occurrences, emptyList()))
         }
 
@@ -73,7 +67,7 @@ object CandidateSummaryRenderer {
                     append(' ')
                     append(pattern.startTime.hhmm())
                     append('~')
-                    append(pattern.endTime.hhmm())
+                    append(if (pattern.endTime == LocalTime.MIDNIGHT) "24:00" else pattern.endTime.hhmm())
                     if (exceptions.isNotEmpty()) {
                         append(", 예외: ")
                         append(exceptions.joinToString(", ") { it.text() })
@@ -102,7 +96,7 @@ object CandidateSummaryRenderer {
                     DailySchedule(
                         date,
                         dateOccurrences
-                            .map { TimeSlot(it.start, it.end) }
+                            .map { TimeSlot(it.start, it.end, it.endsAtNextDayStart) }
                             .distinct()
                             .sortedWith(compareBy(TimeSlot::start, TimeSlot::end)),
                     )
@@ -126,9 +120,30 @@ object CandidateSummaryRenderer {
                     }
                 }.sortedWith(compareBy(SummarySegment::firstDate, { it.timeSlots.firstOrNull()?.start }))
         return segments.joinToString(", ") { segment ->
-            "${segment.dateText} ${segment.timeSlots.joinToString(" 또는 ") { "${it.start.hhmm()}~${it.end.hhmm()}" }}"
+            "${segment.dateText} ${segment.timeSlots.joinToString(" 또는 ") { "${it.start.hhmm()}~${it.endText()}" }}"
         }
     }
+
+    private fun localDays(
+        range: InstantTimeRange,
+        zone: ZoneId,
+    ): List<LocalOccurrence> =
+        buildList {
+            var cursor = range.startInclusive.atZone(zone)
+            while (cursor.toInstant() < range.endExclusive) {
+                val nextDay = cursor.toLocalDate().plusDays(1).atStartOfDay(zone)
+                val end = minOf(range.endExclusive, nextDay.toInstant()).atZone(zone)
+                add(
+                    LocalOccurrence(
+                        cursor.toLocalDate(),
+                        cursor.toLocalTime(),
+                        end.toLocalTime(),
+                        end.toInstant() == nextDay.toInstant(),
+                    ),
+                )
+                cursor = end
+            }
+        }
 
     private fun consecutiveRuns(dates: List<LocalDate>): List<List<LocalDate>> {
         if (dates.isEmpty()) return emptyList()
@@ -148,12 +163,16 @@ object CandidateSummaryRenderer {
         val date: LocalDate,
         val start: LocalTime,
         val end: LocalTime,
+        val endsAtNextDayStart: Boolean,
     )
 
     private data class TimeSlot(
         val start: LocalTime,
         val end: LocalTime,
-    )
+        val endsAtNextDayStart: Boolean,
+    ) {
+        fun endText(): String = if (endsAtNextDayStart) "24:00" else end.hhmm()
+    }
 
     private data class DailySchedule(
         val date: LocalDate,
@@ -171,7 +190,9 @@ object CandidateSummaryRenderer {
         val occurrences: List<LocalOccurrence>?,
     ) {
         fun text(): String =
-            occurrences?.joinToString("/") { "${date.koreanDate()} ${it.start.hhmm()}~${it.end.hhmm()}" }
+            occurrences?.joinToString("/") {
+                "${date.koreanDate()} ${it.start.hhmm()}~${if (it.endsAtNextDayStart) "24:00" else it.end.hhmm()}"
+            }
                 ?: "${date.koreanDate()} 제외"
     }
 
