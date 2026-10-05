@@ -1,0 +1,88 @@
+{
+  "workItem": "candidate-semantics",
+  "sourceRevision": "5d8c32eaf7e1999a8cc752ca3890174764beb801",
+  "boundary": "Natural-language semantic rejection, deterministic attendance and lossless local-date summaries",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryRenderer.kt",
+      "sha256": "983548072715d6431ab44ca72b074271922bf26a8084e32df077fc02d378d3e8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "28e50d014d312439002fe1ab2725799d74eb99144f4cc8b2d3c6579c7f6358a3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "ec96097fafc38f8381c5b87a03f51e915cb929b9954a0c658f07a467f337545b"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryBoundaryContractTest.kt",
+      "sha256": "62b423069f22dbeecd9d9d825f8218511ed7e19c0fdc37e1ca7b4fa6af317187"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingUnrepresentableConstraintSafetyTest.kt",
+      "sha256": "80a9c7c0588044f359f443d094d33a41bbfbb46947ba331f7b6542c34b406157"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiSemanticInstructionContractTest.kt",
+      "sha256": "46b9558ae97509aa4173cd641880f4edc411eaebfaa9280d9c1490c604ab31d8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryMixedPatternContractTest.kt",
+      "sha256": "1071a77c97f1052080fdfa623618d298b49bd4c6ffe4bc7c7364efdfd25fa447"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Discard the local end date and next-day boundary when rendering summaries",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*CandidateSummaryBoundaryContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#overnight interval preserves the next local date and both clock endpoints(); com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#next midnight is displayed as end of day rather than same day midnight(); com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#overnight month boundary retains the destination month(); com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#continuous multi day availability includes every covered local date(); com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#different end dates with identical local clock values must not collapse()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Treat known unrepresentable time restrictions as neutral full-range availability",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*MatchingUnrepresentableConstraintSafetyTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest#ambiguous time restriction cannot become all day availability in either mode(); com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest#two remote participants cannot match when one has an unsupported conditional restriction(); com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest#three participants retain only the two valid participants in a partial Plan C()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove explicit hard-exclusion, ambiguity and conditional-association instructions",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GeminiSemanticInstructionContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#overnight windows and vague bounds are covered without fabricating times(); com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#hard time exclusions and soft preferences have distinct instructions(); com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#coupled time and place constraints cannot silently become a Cartesian product(); com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#forbidden locations and untrusted input have explicit boundaries()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Infer a dominant recurring weekday while hiding irregular and overnight next-day occurrences",
+      "command": [
+        ".\\gradlew.bat",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*CandidateSummaryMixedPatternContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest#recurring overnight occurrence preserves both Monday and Tuesday portions(); com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest#dominant Monday pattern cannot hide an additional Tuesday occurrence()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-04T17:32:03Z"
+}

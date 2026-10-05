@@ -1,0 +1,23 @@
+{
+  "workItem": "candidate-mixed-pattern-red",
+  "sourceRevision": "5d8c32eaf7e1999a8cc752ca3890174764beb801",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryMixedPatternContractTest.kt",
+      "sha256": "1071a77c97f1052080fdfa623618d298b49bd4c6ffe4bc7c7364efdfd25fa447"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*CandidateSummaryMixedPatternContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest#recurring overnight occurrence preserves both Monday and Tuesday portions()",
+    "com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest#dominant Monday pattern cannot hide an additional Tuesday occurrence()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-04T17:25:30Z"
+}

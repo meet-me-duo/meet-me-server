@@ -81,8 +81,10 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 
 - `READY` 또는 `READY_WITH_WARNINGS`에서 `GET /api/rooms/{inviteCode}/candidates`를 호출한다.
 - 후보는 Plan A/B/C 중 서버가 만든 항목만 표시하며 프론트엔드에서 다시 점수화하거나 정렬하지 않는다.
+- A는 전원 대면, B는 전원 비대면, C는 부분 참석 후보 유형이다. 각 유형은 최대 한 카드이며 가능한 시간이 여러 개여도 `time_ranges`와 `summary`에 모두 묶인다. 실제 후보가 한 개이면 한 카드만 표시한다. 요약의 `24:00`은 표시 날짜 다음날 자정의 배타적 끝점이다.
 - 대면 후보의 `place.display_name`은 Gemini가 구조화한 공통 근방명이다. 제출 MVP는 지도를 사용하지 않으므로 `latitude`와 `longitude`는 `null`이며 프론트엔드는 좌표나 핀을 요구하지 않는다.
 - READY_WITH_WARNINGS 또는 NO_MATCH의 HOST는 미반영 endpoint를 사용할 수 있다. legacy 슬롯 전용은 nullable raw_text와 LEGACY_MANUAL_ONLY_UNSUPPORTED로 표시하며 타인 정상 입력·수동 구간은 공개하지 않는다.
+- `UNSUPPORTED_CONDITIONAL_CONSTRAINT`는 시간별 장소처럼 현재 스키마로 반영할 수 없는 결합 조건, `AMBIGUOUS_TIME_CONSTRAINT`는 임의 시간 경계를 만들 수 없어 반영하지 않은 시간 조건이다. 기존 string `reason` 계약을 사용하며 새 필드는 없다. 서버는 해당 참여자를 전체 인원에 유지하고 가능 시간을 가정하지 않는다. 이 사유는 정상 반영이나 `COMPLETE`로 설명하지 않으며 기존 `PARTIAL`·HOST 미반영 조회 흐름을 사용한다. 웹에서 사유별 한국어 안내를 추가하는 작업은 별도 저장소 담당 범위다.
 - 후보 확정은 HOST만 `POST /api/rooms/{inviteCode}/candidates/{candidateId}/confirmation`을 호출한다.
 - 같은 후보 재확정은 멱등하지만 다른 후보가 이미 확정된 `409`에서는 현재 확정 결과를 다시 조회한다.
 - 확정 결과는 참여자 모두 `GET /api/rooms/{inviteCode}/result`로 조회한다.

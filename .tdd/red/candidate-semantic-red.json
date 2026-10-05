@@ -1,0 +1,37 @@
+{
+  "workItem": "candidate-semantic-red",
+  "sourceRevision": "5d8c32eaf7e1999a8cc752ca3890174764beb801",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiSemanticInstructionContractTest.kt",
+      "sha256": "46b9558ae97509aa4173cd641880f4edc411eaebfaa9280d9c1490c604ab31d8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingUnrepresentableConstraintSafetyTest.kt",
+      "sha256": "80a9c7c0588044f359f443d094d33a41bbfbb46947ba331f7b6542c34b406157"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiSemanticInstructionContractTest",
+    "--tests",
+    "*MatchingUnrepresentableConstraintSafetyTest",
+    "--tests",
+    "*CandidateSummaryBoundaryContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#coupled time and place constraints cannot silently become a Cartesian product()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#forbidden locations and untrusted input have explicit boundaries()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#hard time exclusions and soft preferences have distinct instructions()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest#overnight windows and vague bounds are covered without fabricating times()",
+    "com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest#ambiguous time restriction cannot become all day availability in either mode()",
+    "com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest#three participants retain only the two valid participants in a partial Plan C()",
+    "com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest#two remote participants cannot match when one has an unsupported conditional restriction()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-04T17:10:48Z"
+}
