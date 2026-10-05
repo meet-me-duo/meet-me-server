@@ -249,13 +249,14 @@ class MatchingNaturalLanguageOnlyTest {
 
 internal class NaturalLanguageOnlyFixture(
     texts: List<String?>,
+    mode: MeetingMode = MeetingMode.REMOTE,
 ) {
     val room =
         MeetingRoom.create(
             MeetingRoomId(UUID.randomUUID()),
             InviteCode.of("abcdefghijklmnopqrstuv"),
             "synthetic",
-            MeetingMode.REMOTE,
+            mode,
             MeetingTimeZone.of("Asia/Seoul"),
             SearchDateRange.explicit(DATE, DATE.plusDays(2)),
             ClosurePolicy.of(expectedParticipants = texts.size),

@@ -1,0 +1,26 @@
+{
+  "workItem": "candidate-summary-boundary-red",
+  "sourceRevision": "5d8c32eaf7e1999a8cc752ca3890174764beb801",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryBoundaryContractTest.kt",
+      "sha256": "62b423069f22dbeecd9d9d825f8218511ed7e19c0fdc37e1ca7b4fa6af317187"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*CandidateSummaryBoundaryContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#overnight interval preserves the next local date and both clock endpoints()",
+    "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#next midnight is displayed as end of day rather than same day midnight()",
+    "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#overnight month boundary retains the destination month()",
+    "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#continuous multi day availability includes every covered local date()",
+    "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest#different end dates with identical local clock values must not collapse()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-04T17:13:53Z"
+}
