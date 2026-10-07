@@ -1,0 +1,16 @@
+{
+  "workItem": "issue-99-built-image",
+  "sourceRevision": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+  "testFiles": [
+    {
+      "path": "deploy/tests/built-image-workflow.test.cjs",
+      "sha256": "da5084420a26eb203bb11b1d138ad72b6b9b0273d1f5dab73f276c33bd421643"
+    }
+  ],
+  "command": "node --test --test-reporter=tap deploy/tests/built-image-workflow.test.cjs",
+  "failedTests": [
+    "the image job disables implicit Docker build records and build summaries"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T12:07:02.266183+00:00"
+}

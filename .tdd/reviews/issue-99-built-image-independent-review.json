@@ -1,0 +1,357 @@
+{
+  "workItem": "issue-99-built-image-independent-review",
+  "reviewer": "/root/independent_review",
+  "role": "Independent read-only source/security/evidence reviewer; workflow author and verification/test author separate",
+  "recordedAt": "2026-10-07T12:00:31.224335+00:00",
+  "baseline": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+  "authority": "Approved isolated ARM64 CI image build/load verification only. No registry push/login, AWS/id-token/production environment, auth/permission changes, application/migration/provider/model startup, or operational actions. Reviewer runs no Node/Docker/Gradle/AWS and edits only this review record.",
+  "helperReviewVerdict": "PASS independent source review of immutable-ID isolated 28 probes",
+  "testReviewVerdict": "PASS original10 byte-preserved plus independent appended11th implicit Docker build artifact/summary contract",
+  "checks": [
+    "Inspect only config identity/OS/arch/User/Entrypoint; validate ARM64+10001:10001+expected entrypoint then pin immutable local config ID for every run",
+    "One runner for28 cases uses --pull never, network none, read-only root, cap drop ALL/no-new-privileges/private tmpfs; own names and cleanup",
+    "Actual UID/group, nonempty packaged JAR/file ownership, entrypoint mode/non-symlink/SHA vs checked-out source validated",
+    "Legacy absent/explicit and valid required synthetic key invoke actual packaged JRE17 only; no Spring/JAR startup",
+    "Invalid keys/modes call packaged entrypoint for server/migrate/custom through private Java sentinel PATH; even guard defects cannot start product JVM or migration",
+    "Captures stdout/stderr privately, validates exact fixed errors, never publishes key/outputs; JSON only source/config image/entrypoint digests and declared probe metadata",
+    "28 cases = file1 + actual JRE3 + 3commands*(missing1+unsafe5+invalidMode2)",
+    "Config ID is a local build identity, not ECR deployment manifest digest or release approval"
+  ],
+  "blockingFindings": [],
+  "pending": [
+    "New exact HEAD remote CI real ARM64 build and28probe execution",
+    "User-reported registration only; actual parameter metadata/currentruntime authorization/keydelivery/provider-auth remain unverified"
+  ],
+  "fingerprints": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "edace35687859389e8764b431d6431bfe7ed03d3ff8d81866075d2e7f95c874c",
+      "currentSha256ExactMatch": true
+    },
+    {
+      "path": "deploy/scripts/verify-built-image.sh",
+      "sha256": "5e1eaeab26273ffd436c9c7b4cd8008dd464dd3dfc2b88dea5b2e95b6337642c",
+      "currentSha256ExactMatch": true
+    },
+    {
+      "path": "deploy/tests/built-image-workflow.test.cjs",
+      "sha256": "da5084420a26eb203bb11b1d138ad72b6b9b0273d1f5dab73f276c33bd421643",
+      "currentSha256ExactMatch": true
+    }
+  ],
+  "execution": {
+    "reviewerNode": 0,
+    "reviewerDocker": 0,
+    "reviewerGradle": 0,
+    "operationalAws": 0,
+    "realKeyReads": 0,
+    "paidModels": 0,
+    "productionSourceTestEdits": 0
+  },
+  "finalVerdict": "PASS independent final exact-restored source/test/security/artifact/fault/docs/mandatorygate review; actual ARM64 image execution pending exactHEADCI, no operational/deployment approval",
+  "updatedAt": "2026-10-07T12:09:03.913895+00:00",
+  "workflowReviewVerdict": "PASS independent exact-source/authority/time-budget review",
+  "workflowChecks": [
+    "Exact PR headSHA fallbackgithub.sha checkout and localtag; persisted credentialsfalse",
+    "contents:read only, no id-token/secrets/production environment/AWS/login/registry push",
+    "Existing approved hosted CI QEMU@v3 ARM64/setupbuildx@v3/buildpush@v6 pattern, linux/arm64 loadtrue pushfalse",
+    "Independent30minute job; existing quality20minutes and existing checks preserved, source-contract added",
+    "Sanitized proof JSON only artifact retention3; no raw logs/env/key/container outputs",
+    "Hosted runner emulation is approved CI context; no local OS/binfmt installation or operational authority"
+  ],
+  "actualVerification": {
+    "executionOwner": "/root; reviewer reads raw logs only",
+    "red": {
+      "log": ".codex/tdd-evidence/issue-99-built-image-red.log",
+      "tests": 10,
+      "pass": 5,
+      "fail": 5,
+      "skipped": 0
+    },
+    "green": {
+      "log": ".codex/tdd-evidence/issue-99-built-image-green.log",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    },
+    "boundary": "Node tests validate source contracts, not actual ARM64 image execution; fresh exactHEAD hosted CI will build/probe restored code",
+    "faultVerification": {
+      "evidence": ".tdd/verification/issue-99-built-image.json",
+      "detected": 8,
+      "totalAssertionFailures": 8,
+      "compileOrSetupFailures": 0,
+      "items": [
+        {
+          "fault": "registry-push",
+          "exitCode": 1,
+          "failedTests": [
+            "CI builds and loads an ARM64 local tag using the existing QEMU pattern"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-registry-push.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "wrong-checkout",
+          "exitCode": 1,
+          "failedTests": [
+            "image CI checks out the exact PR head and removes persisted credentials"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-wrong-checkout.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "persist-credentials",
+          "exitCode": 1,
+          "failedTests": [
+            "image CI checks out the exact PR head and removes persisted credentials"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-persist-credentials.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "mutable-image",
+          "exitCode": 1,
+          "failedTests": [
+            "every image execution uses an immutable local ID with network and privilege isolation"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-mutable-image.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "network-access",
+          "exitCode": 1,
+          "failedTests": [
+            "every image execution uses an immutable local ID with network and privilege isolation"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-network-access.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "missing-java-sentinel",
+          "exitCode": 1,
+          "failedTests": [
+            "valid legacy and required modes use real Java while rejected commands use a safe sentinel"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-missing-java-sentinel.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "implicit-build-record",
+          "exitCode": 1,
+          "failedTests": [
+            "the image job disables implicit Docker build records and build summaries"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-implicit-build-record.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "implicit-build-summary",
+          "exitCode": 1,
+          "failedTests": [
+            "the image job disables implicit Docker build records and build summaries"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-implicit-build-summary.log",
+          "actualTests": 11,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        }
+      ],
+      "exactRestorationIndependentlyVerified": true,
+      "boundary": "All8 mutants use Node source-contract tests only, never run workflow/image. Runtime mutation kill coverage not claimed."
+    },
+    "restoredGreen": {
+      "log": ".codex/tdd-evidence/issue-99-built-image-restored-green.log",
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "skipped": 0
+    },
+    "redSummaryNamesAndCurrentTestFingerprintVerified": true,
+    "original10FaultVerification": {
+      "evidence": ".tdd/verification/issue-99-built-image.json",
+      "detected": 6,
+      "totalAssertionFailures": 6,
+      "compileOrSetupFailures": 0,
+      "items": [
+        {
+          "fault": "registry-push",
+          "exitCode": 1,
+          "failedTests": [
+            "CI builds and loads an ARM64 local tag using the existing QEMU pattern"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-registry-push.log",
+          "actualTests": 10,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "wrong-checkout",
+          "exitCode": 1,
+          "failedTests": [
+            "image CI checks out the exact PR head and removes persisted credentials"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-wrong-checkout.log",
+          "actualTests": 10,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "persist-credentials",
+          "exitCode": 1,
+          "failedTests": [
+            "image CI checks out the exact PR head and removes persisted credentials"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-persist-credentials.log",
+          "actualTests": 10,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "mutable-image",
+          "exitCode": 1,
+          "failedTests": [
+            "every image execution uses an immutable local ID with network and privilege isolation"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-mutable-image.log",
+          "actualTests": 10,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "network-access",
+          "exitCode": 1,
+          "failedTests": [
+            "every image execution uses an immutable local ID with network and privilege isolation"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-network-access.log",
+          "actualTests": 10,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        },
+        {
+          "fault": "missing-java-sentinel",
+          "exitCode": 1,
+          "failedTests": [
+            "valid legacy and required modes use real Java while rejected commands use a safe sentinel"
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-missing-java-sentinel.log",
+          "actualTests": 10,
+          "actualAssertionFailures": 1,
+          "recordedNamesExactMatch": true
+        }
+      ],
+      "exactRestorationIndependentlyVerified": true,
+      "boundary": "Mutated workflow/helper source inspected by Node source-contract tests only; no mutated workflow or image execution. This does not establish runtime mutation kill coverage."
+    },
+    "appendedArtifactRegression": {
+      "red": {
+        "log": ".codex/tdd-evidence/issue-99-built-image-artifact-red.log",
+        "tests": 11,
+        "pass": 10,
+        "fail": 1,
+        "skipped": 0
+      },
+      "green": {
+        "log": ".codex/tdd-evidence/issue-99-built-image-final-green.log",
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "skipped": 0
+      },
+      "currentRedFingerprintAndDisplayNameVerified": true
+    },
+    "finalCombinedPolicy": {
+      "log": ".codex/tdd-evidence/issue-99-built-image-final-policy-green.log",
+      "tests": 63,
+      "pass": 63,
+      "fail": 0,
+      "skipped": 0,
+      "composition": "deployment13+preflight20+runtime19+image11; root execution/reviewer log inspection"
+    },
+    "firstMandatoryGuard": {
+      "parentReportedExitCode": 0,
+      "parentReportedDurationSeconds": 9.288,
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-guard.log",
+      "boundary": "Successful guard suppresses stdout; empty log is expected. Parent tool outcome supplies exit evidence. Unchanged product654 results reused, no new654 execution claim."
+    },
+    "finalMandatoryGuard": {
+      "evidence": ".codex/tdd-evidence/issue-99-built-image-final-guard.json",
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-guard.log",
+      "rootOutcome": {
+        "exitCode": 0,
+        "seconds": 9.07,
+        "unchangedGuard": true,
+        "paidCalls": 0,
+        "new654ExecutionClaim": false
+      },
+      "boundary": "Parent-owned unchanged mandatoryguard succeeds; existing654 up-to-date product results reused, no fresh654 assertion. Reviewer did not run guard."
+    }
+  },
+  "unchangedBoundary": {
+    "baseline": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+    "productApplicationTestsSqlIamDeploymentWorkflowDockerfileComposeGuardDiff": false
+  },
+  "operationalKeyEvidenceBoundary": {
+    "userReported": "Manual AWS key registration and own existing-profile PowerShell login; user-provided tagged instance reference",
+    "independentlyVerified": false,
+    "parameterNameTypeVersionVerified": false,
+    "currentAuthenticationDeliveryVerified": false,
+    "boundary": "Registration is user-reported only. Historical deploy/instance match is separate; no current key auth/metadata/permissions/runtime delivery or deployment assertion."
+  },
+  "artifactBoundaryReview": {
+    "verdict": "PASS",
+    "jobEnvironment": [
+      "DOCKER_BUILD_RECORD_UPLOAD=false",
+      "DOCKER_BUILD_SUMMARY=false"
+    ],
+    "reason": "docker build-push-action implicit build record and job summary disabled; explicit proof JSON only3day artifact",
+    "newTest": "the image job disables implicit Docker build records and build summaries",
+    "original10BytePrefix": {
+      "bytes": 7078,
+      "byteIdentical": true,
+      "sha256": "ff370f2db6a97dc64b45be5bcb77bf5aeca40cff0a95717038e7e3a5266ccd56"
+    },
+    "supersession": ".tdd/supersessions/issue-99-built-image.json",
+    "firstSixFaultManifestPreserved": ".tdd/history/issue-99-built-image/first-verification.json",
+    "boundary": "Build stdout remains ordinary builder logs; no secrets/build-args supplied. No implicit record/summary upload."
+  },
+  "documentationReview": {
+    "verdict": "PASS",
+    "files": [
+      {
+        "path": "docs/ISSUE_99_LUNA_RUNTIME_SETUP.md",
+        "sha256": "480424f6ba1c1d203ae2f68a606b5ae21d23ee132eb49427532c29d3b94550f7"
+      },
+      {
+        "path": "docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md",
+        "sha256": "bf4a81178e723e89ab757c777771461d37effe924d6c8d4270d137e8552e9c85"
+      },
+      {
+        "path": "implementation_plan.md",
+        "sha256": "f23cd84657537785e7c7db93dc66a16d6113277f7437a0fec86f7a05ccdf1a75"
+      }
+    ],
+    "checks": [
+      "User-reported key registration only, Name/Type/Version/currentpermissions/auth/runtime delivery explicitly unverified",
+      "Historical successful deploy target match separated from blocked current environment read and currenthost/Flyway/key metadata",
+      "Metadata preparation uses placeholders/name-type-version projections only, no secret decryption or commands executed",
+      "Source contract11/fault8 evidence separated from pending actual ARM64 build28probe",
+      "No config imageID treated as ECR digest/release approval; operating/deploy/security actions remain deferred"
+    ]
+  }
+}

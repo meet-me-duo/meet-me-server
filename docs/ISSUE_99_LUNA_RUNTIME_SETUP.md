@@ -10,9 +10,9 @@ required mode는 SSM JSON의 Type이 SecureString이고 Value가 비어 있지 �
 
 Compose의 기존 raw env_file 계약으로 변수 두 개를 전달한다. container entrypoint는 required mode에서 server/migrate 및 다른 command를 실행하기 전에 키를 같은 문자 계약으로 확인한다. 키가 없는 상태를 운영 fallback 준비로 취급하지 않는다. credential refresh는 현재 release의 같은 renderer/mode를 재사용하므로 새 코드 배포 이후 DB 비밀번호 갱신 때도 Luna 요구가 유지된다. 기존 release의 Gemini 단독 동작은 유지한다.
 
-## 사용자 등록과 확인 — 미완료
+## 사용자 등록 보고와 확인 — 운영 검증 미완료
 
-이 절차는 코드 검증 완료 및 운영 대상/기존 접근 확인 이후 사용자 단계다. 현재 parameter 존재·키 생성/등록·실제 전달/인증은 확인하지 않았다.
+사용자는 AWS에 키를 직접 등록했고 본인 PowerShell의 기존 배포 프로필 로그인도 완료했다고 보고했다. 선택 실행환경에서는 그 프로필에 접근할 수 없으며 parameter Name/Type/Version·실제 권한·전달/인증은 아직 확인하지 않았다. 등록 보고와 검증 완료를 구분한다.
 
 - `[USER]` 기존 운영 AWS 계정과 서울리전에서 위 정확한 이름의 SecureString을 직접 등록한다. 기존 Gemini와 같은 AWS 관리 SSM KMS 키를 사용한다. 다른 customer managed key/권한/유료 tier가 필요한 경우 자동 확대하지 않고 별도 보고한다. 실제 OpenAI 키는 사용자 본인이 생성·입력하며 시험환경에서 복사하지 않는다.
 - `[USER]` 공유할 완료 신호는 `등록 완료`, parameter 이름·Type·Version 같은 값 없는 metadata다. 실제 키·환경 파일·전체 AWS 출력은 채팅/Git/Issue/PR/로그에 넣지 않는다.
@@ -25,4 +25,6 @@ AWS 기준은 [Parameter Store](https://docs.aws.amazon.com/systems-manager/late
 
 실제 모델/웹 공동 평가의 고정 SHA는 서버6f7f54e·웹8e56fe0이며 [평가 기록](ISSUE_99_LIVE_EVALUATION.md)을 따른다. 이 후속은 배포 renderer/entrypoint·공개 mode·참조·검증만 변경하고 앱 Kotlin·시간 배분·SQL·공개 API는 바꾸지 않는다. 새 배포 이미지의 entrypoint 바이트는 달라지므로 제품 앱 소스가 같다는 이유로 이전 image digest를 재사용하지 않는다.
 
-기존 읽기 preflight37610286680은 GitHub production 환경이 PR merge ref를 거절하여 runner/step 실행0이었다. 운영 metadata는 아직 확인되지 않았고 집 PC 첫 연결도 AWS 명령 전 transport가 끊겼다는 부모 보고다. 이 코드 작업은 실제 AWS 조회·키 값 작업·운영 중단·자동화 중지·main/develop 병합을 수행하지 않는다. 시작 조건과 실행 인계는 [운영 preflight 인계](ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)를 따른다.
+운영키 코드82b8d2a의 CI37614973315와 Infrastructure37614973327은 성공했다. 이후 ARM64 이미지 검증은 AWS 권한 없는 CI에서 새 Dockerfile build/load와 격리된 entrypoint/JRE 검사로 진행한다. 합성 키만 쓰고 앱·migration·공급자 요청은 시작하지 않는다. 로컬 config image ID는 ECR manifest digest 승인이나 운영 전달 증거가 아니다.
+
+읽기 preflight37610286680·37614973475는 GitHub production 환경이 PR merge ref를 거절하여 runner/step 실행0이었다. 기존 성공 배포 로그의 대상은 사용자가 조회한 대상과 일치하지만 현재 환경 변수 직접 읽기는 차단됐고 실제 host/Flyway/key metadata 조회는 미완료다. 이 코드 작업은 실제 AWS 조회·키 값 작업·운영 중단·자동화 중지·main/develop 병합을 수행하지 않는다. 시작 조건과 실행 인계는 [운영 preflight 인계](ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)를 따른다.

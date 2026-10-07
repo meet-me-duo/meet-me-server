@@ -50,6 +50,9 @@ jobs:
       - name: Verify runtime provider key delivery
         run: node --test deploy/tests/runtime-provider-env.test.cjs
 
+      - name: Verify isolated built image workflow
+        run: node --test deploy/tests/built-image-workflow.test.cjs
+
       - name: Verify database credential refresh
         run: bash deploy/tests/refresh-database-credential.test.sh
 
@@ -58,3 +61,52 @@ jobs:
 
       - name: Verify production Nginx runtime
         run: bash deploy/scripts/verify-nginx-runtime.sh
+
+  built-image:
+    name: ARM64 Built Image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    env:
+      CI_SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      CI_IMAGE_TAG: meet-me-ci:${{ github.event.pull_request.head.sha || github.sha }}
+      DOCKER_BUILD_RECORD_UPLOAD: "false"
+      DOCKER_BUILD_SUMMARY: "false"
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.CI_SOURCE_SHA }}
+          persist-credentials: false
+
+      - name: Set up ARM64 emulation
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up image builder
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build isolated ARM64 image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          tags: ${{ env.CI_IMAGE_TAG }}
+          load: true
+          push: false
+          provenance: false
+          cache-from: type=gha,scope=arm64-verification
+          cache-to: type=gha,scope=arm64-verification,mode=max
+
+      - name: Verify packaged runtime
+        run: bash deploy/scripts/verify-built-image.sh "$CI_IMAGE_TAG" > built-image-verification.json
+
+      - name: Preserve sanitized image proof
+        uses: actions/upload-artifact@v7
+        with:
+          name: built-image-verification
+          path: built-image-verification.json
+          retention-days: 3
+          if-no-files-found: error

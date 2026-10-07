@@ -21,9 +21,9 @@
 **운영키 전달 후속 승인:** 현재 feature/PR100에서 SSM SecureString 참조·runtime env·Compose 전달·entrypoint 기동 조건을 무료 독립 검증한다. 실제 키 값 조회/등록/복사/출력·IAM/환경보호 변경·운영 명령·main merge·서비스 중단은 보류한다. 집 PC 접속은 운영 권한 확대 승인으로 취급하지 않는다.
 
 - [x] `[AGENT]` 새 release의 Luna required mode에서 키 누락/권한/타입/형식 오류가 환경파일 교체와 앱/migration 시작을 막고 기존 Gemini 단독 release는 OpenAI 조회 없이 유지되는 독립 RED/GREEN·결함 검증. 독립18의RED15→GREEN18 뒤 NUL blocker 추가RED1→GREEN19, 7fault/12assertion·9파일 exact 복원, 실제 로컬Compose 합성키/mode byte 보존을 확인했다.
-- [ ] `[AGENT]` 기존 IAM prefix 코드 검토·문서/guard·Draft PR100 새 정확 HEAD CI를 갱신한다. 새 source는 배포 계약만 바꾸며 앱 시간 배분·SQL·실제 평가 SHA는 별도 유지한다.
+- [x] `[AGENT]` 운영키82b8d2a의 기존 IAM prefix 검토·문서/guard·CI37614973315·Infrastructure37614973327 성공을 확인했다. 앱 시간 배분·SQL·실제 평가 SHA는 별도 유지한다.
 - [ ] `[USER]` 기존 AWS 인증의 값 없는 운영 metadata/읽기 접근 확인. 기존 preflight37610286680은 production 환경이 refs/pull/100/merge를 거부하여 runner/step 실행0이다. 반복 재실행과 정책 우회는 하지 않는다.
-- [ ] `[USER]` 서울리전 `/meet-me/production/secret/openai-api-key` SecureString 수동 등록과 비밀값 없는 완료 신호. 코드 전달 경로 완성 전 등록을 요청하지 않는다.
+- [x] `[USER]` AWS 수동 키 등록 완료 보고를 받았다. parameter Name/Type/Version·권한·실제 전달은 검증 전이므로 별도 미완료다.
 - [ ] `[SHARED]` 승인된 운영 시점에 실제 parameter→runtime→앱 전달/인증과 정확 digest/guard/drain 시작 조건 확인. 현재 코드/fixture 성공만으로 운영 Luna 준비를 완료 표시하지 않는다.
 
 
@@ -1214,3 +1214,13 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - `[AGENT]` IAM선언의SSM /meet-me/production/*는새path를포함하며Terraform에는수동등록name출력만추가했다. 새secret값/resource/IAM/KMS정책/권한은만들지않는다. TerraformCLI가선택환경에없어fmt/validate를실행했다고주장하지않으며값없는output/path를정적검토했다. 실제적용권한은미확인이다.
 - `[USER]` 수동키생성/SSM SecureString등록과실제전달확인은미완료다. docs/ISSUE_99_LUNA_RUNTIME_SETUP.md에책임/정확경로/완료신호/비밀공유금지를기록했다. 집PC의첫AWS시도는명령전transport연결실패로조회0이라는부모보고를기록하며재접속을권한확대승인으로취급하지않는다. 기존production환경의PRmerge-ref거부를우회하거나수동rerun하지않았다. main/develop병합·운영중단·배포·자동화/보안정책변경은보류한다.
 - Commit/PR: 동일커밋예정, 기존DraftPR100갱신. 새정확HEADCI는push후별도로확인하며기존48b8957 CI37610286399의성공을재사용하지않는다. 새코드는앱/시간배분을바꾸지않지만배포entrypoint/env계약은새source로구분한다.
+
+## Issue #99 Worklog — 격리 ARM64 이미지와 운영 대상 대조 (2026-10-07 UTC)
+
+- `[AGENT]` 운영키82b8d2a 정확 CI37614973315와 Infrastructure37614973327은 성공했다. Terraform fmt/init backend=false/validate 성공이며 production plan은 skip이다. 읽기 preflight37614973475는 기존 production 환경의 PR merge ref 거부로 runner/step0·AWS조회0이다.
+- `[USER]` 본인 PowerShell의 기존 AWS 프로필 로그인과 수동 키 등록을 보고했다. 별도 집PC 실행계정은 프로필 접근이 없어 자동 조회가 불가능하다. 마지막 성공 운영 배포37279832865의 SSM 대상과 사용자 전달 대상이 일치함을 로그로 확인했다. 현재 환경 변수 직접 읽기는403으로 차단됐으며 현재 설정·host·parameter 타입/버전·실제 권한/전달은 미검증이다. 비밀값/실제 대상ID는 공개 기록에 넣지 않는다.
+- `[AGENT]` 새 CI built-image job은 정확 PR HEAD checkout/persist-credentials=false·contents read만 사용한다. 기존 GHA QEMU/buildx로 linux/arm64 Dockerfile image를 build/load하되 registry push/login·AWS·production environment는 없다. 실제 UID/JAR/entrypoint SHA와 JRE17, required mode의24개 거부를 포함한28개 격리 probe는 network none·read-only·capdrop/no-new-privileges이며 Java sentinel로 guard 결함에도 Spring/migration이 시작되지 않는다. 합성 키만 사용하고 sanitized proof JSON만3일 보존한다. config image ID를 ECR 승인 digest로 취급하지 않는다.
+- `[AGENT]` 독립 source 계약10개의 최초RED5 assertion/pass5→GREEN10/skip0, 6fault를6assertion으로탐지하고3파일exact복원→GREEN10을 확인했다. 원본10/최초RED를byte보존한뒤implicitDockerartifact/summary차단test1을추가해11RED10pass/1assertion→두jobenvflags추가→GREEN11/skip0을확인했다. 최종11에서8fault/8assertion과3파일exact복원을재확인했다. 독립 reviewer/helper/test author 역할을 분리했다. 이것은 source 계약 근거이며 실제 ARM64 build/28probe 실행은 push 후 새 exactHEAD CI에서 확인한다.
+- `[AGENT]` 제품 Kotlin/SQL·runtime renderer/entrypoint·Compose·Dockerfile·IAM·deployment workflow·mandatoryguard는82b8d2a와 동일하다. 앱의 실제 paid/web 평가SHA는6f7f54e/8e56fe0 그대로이며 새 유료 호출0이다. 원격명령·main/develop병합·운영배포·DB적용·자동화/보안/인증설정변경0. 수동 metadata 준비 명령은 docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md에만 마련했다.
+- 변경없는최종mandatoryguardexit0(9.07초), 기존배포13/preflight20/runtime19/최종image11의combined63GREEN/skip0. 앱코드는동일하므로새654실행으로주장하지않는다.
+- Commit/PR: 기존DraftPR100의동일커밋예정. 새ARM64image/전체CI는push후별도로확인하며운영키82CI성공을새image성공으로재사용하지않는다.

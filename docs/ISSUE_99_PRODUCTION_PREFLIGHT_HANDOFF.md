@@ -26,6 +26,27 @@ Flyway는 현재 컨테이너의 기존 PG driver와 독립 Java reader로 읽�
 
 후속48b8957248a7357e9a4a04cd854d2be8bd4290e1의 [CI37610286399](https://github.com/meet-me-duo/meet-me-server/actions/runs/37610286399)는 성공했다. [Preflight37610286680](https://github.com/meet-me-duo/meet-me-server/actions/runs/37610286680)은 production 환경 보호규칙이 `refs/pull/100/merge`를 허용하지 않아 실패했다. runner_id0·steps0·artifact0으로 AWS 인증/조회 이전이며 코드 또는 AWS 권한 실패로 분류하지 않는다. 수동 재실행·보호규칙 변경은 하지 않았다. 부모는 집 PC의 기존 AWS 연결에서도 첫 명령 전 transport disconnected로 조회0을 보고했다. 현재 기존 권한으로 읽기 접근을 확인하는 사용자 단계와 실제 운영 target 확인이 남아 있다.
 
+## 현재 대상 대조와 수동 metadata 준비
+
+사용자는 본인 PowerShell의 기존 배포 프로필 로그인과 AWS 수동 키 등록을 보고했다. 집 PC의 별도 실행계정에서는 그 프로필을 발견하지 못하며, 선택 환경에서도 새 인증을 만들거나 복사하지 않는다. 마지막 성공 main 운영 배포 [37279832865](https://github.com/meet-me-duo/meet-me-server/actions/runs/37279832865)의 SSM 대상은 사용자 전달 대상과 일치한다. 저장소 workflow는 production.RUNTIME_INSTANCE_ID를 사용하므로 이 로그는 당시 변수의 실제 확장 근거다. 현재 환경 변수 직접 조회는403으로 차단되어 현재 값의 동일성까지 확인한 것은 아니다. 실제 ID/계정/권한 원시 출력은 공개 문서에 기록하지 않는다.
+
+다음은 기존 로그인된 사용자 터미널에서 수행할 metadata 명령의 준비 예시다. 이 작업에서는 실행하지 않았으며 원격 SSM 명령/배포/서비스 변경을 포함하지 않는다. profile과 instance는 사용자 확인값을 로컬에만 넣고 현재 환경 변수 값과 다르면 진행을 멈춘다.
+
+```powershell
+$profile = '<existing-profile>'
+$instanceId = '<confirmed-runtime-instance-id>'
+$region = 'ap-northeast-2'
+aws --profile $profile --region $region sts get-caller-identity --query Account --output text
+aws --profile $profile --region $region ec2 describe-instances --instance-ids $instanceId --query 'Reservations[].Instances[].{InstanceId:InstanceId,State:State.Name,Architecture:Architecture}' --output json
+aws --profile $profile --region $region ssm describe-instance-information --filters "Key=InstanceIds,Values=$instanceId" --query 'InstanceInformationList[].{InstanceId:InstanceId,PingStatus:PingStatus,PlatformType:PlatformType}' --output json
+aws --profile $profile --region $region ssm describe-parameters --parameter-filters 'Key=Name,Option=Equals,Values=/meet-me/production/secret/openai-api-key' --query 'Parameters[].{Name:Name,Type:Type,Version:Version}' --output json
+aws --profile $profile --region $region ssm list-commands --instance-id $instanceId --query 'Commands[?Status==`Pending` || Status==`InProgress` || Status==`Delayed`].{CommandId:CommandId,Status:Status,DocumentName:DocumentName}' --output json
+```
+
+키 값 get-parameter/복호화 조회는 이 준비 단계에 포함하지 않는다. Parameter metadata만으로 실제 runtime 전달이나 provider 인증을 판단하지 않는다. host guard/digest/Flyway history와 두 credential rule/target 상태는 대상과 시작 조건을 보고한 뒤 기존 검토된 읽기 경로에서 별도로 확인한다.
+
+운영키 후속82b8d2a의 [CI37614973315](https://github.com/meet-me-duo/meet-me-server/actions/runs/37614973315)와 [Infrastructure37614973327](https://github.com/meet-me-duo/meet-me-server/actions/runs/37614973327)은 성공했다. [Preflight37614973475](https://github.com/meet-me-duo/meet-me-server/actions/runs/37614973475)는 동일 환경 보호로 runner/step0이다. 새 ARM64 CI는 production 환경·AWS·registry push 없이 정확 PR HEAD의 이미지만 build/load한다. 28개 격리 검사는 실제 JRE17/UID/entrypoint 바이트와 required mode 차단을 확인하고 합성 키만 사용한다. config image ID는 registry digest나 배포 승인으로 재사용하지 않는다. 새 정확 HEAD의 실제 이미지 실행은 CI 결과로 별도 확인한다.
+
 조회가 성공해도 배포 준비 완료를 자동 판정하지 않는다. 실제 Flyway가 예상 V8 이하인지, 충돌 V9 invocation/예상 밖 migration이 없는지, 현재 digest와 guard/단위 상태, 두 rule의 실제 target/state, 진행 중 command와 key 위치를 확인한다. 예상 밖 migration은 즉시 중단·보고하며 repair/번호 변경하지 않는다.
 
 새 image digest는 build 후에만 확정된다. 현 CD는 build와 deploy 사이 독립 승인 단계가 없으므로 preflight·키 전달·정확 digest 승인 순서를 확정하기 전에 main을 merge하지 않는다. V9/V10 적용 후 오래된 V8 image 복구를 허용하지 않으며 policy의 호환 label만으로 새 migration 호환성을 보장하지 않는다. 서비스 중단/guard 설치/automation pause·drain/DB 적용은 부모의 실제 시작 보고 이후 단계다.
