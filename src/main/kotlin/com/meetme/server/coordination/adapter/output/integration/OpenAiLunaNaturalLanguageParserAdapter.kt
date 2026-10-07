@@ -1,6 +1,7 @@
 package com.meetme.server.coordination.adapter.output.integration
 
 import com.meetme.server.config.OpenAiProperties
+import com.meetme.server.coordination.application.port.output.AnalysisInvocationBudget
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchRequest
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchResult
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
@@ -52,7 +53,7 @@ class OpenAiLunaNaturalLanguageParserAdapter
                     .toSet()
                     .size == request.inputs.size,
             )
-            val budget = minOf(request.callTimeout, Duration.ofSeconds(15))
+            val budget = minOf(request.callTimeout, AnalysisInvocationBudget.LUNA_CALL_TIMEOUT)
             if (budget.toMillis() <= 0) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
             val deadline = System.nanoTime() + budget.toNanos()
             var pending: Call? = null

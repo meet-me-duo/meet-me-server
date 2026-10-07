@@ -10,6 +10,7 @@ import com.google.genai.types.HttpRetryOptions
 import com.google.genai.types.ThinkingConfig
 import com.google.genai.types.ThinkingLevel
 import com.meetme.server.config.GeminiProperties
+import com.meetme.server.coordination.application.port.output.AnalysisInvocationBudget
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchRequest
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchResult
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
@@ -171,7 +172,7 @@ class GeminiNaturalLanguageParserAdapter
         }
 
         companion object {
-            internal const val CALL_TIMEOUT_MILLIS = 15_000
+            internal val CALL_TIMEOUT_MILLIS = AnalysisInvocationBudget.GEMINI_CALL_TIMEOUT.toMillis().toInt()
             internal const val MAX_OUTPUT_TOKENS = 32_768
             internal val RESPONSE_SCHEMA: Map<String, Any> = NaturalLanguageProviderContract.RESPONSE_SCHEMA
             private val TRANSIENT_KINDS =

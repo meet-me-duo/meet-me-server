@@ -34,7 +34,6 @@ import com.meetme.server.submission.domain.StructuredSubmissionResult
 import com.meetme.server.submission.domain.Submission
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.EnumSource
 import org.mockito.Mockito
 import org.mockito.Mockito.doAnswer
@@ -55,7 +54,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-/** Issues #96 and #99: approved 30/27/3 budget, deterministic clock/fake parsers, zero external API calls. */
+/** Issue #96 accepted contract: deterministic clock/fake parsers, zero external API calls. */
 class BoundedProviderFallbackContractTest {
     @Test
     fun `four fast transient Gemini failures use Full Jitter then exactly one Luna call`() {
@@ -75,22 +74,22 @@ class BoundedProviderFallbackContractTest {
     }
 
     @Test
-    fun `timeouts exhaust Gemini 30 seconds then allow a valid twenty second Luna response within its 27 second budget`() {
+    fun `timeouts exhaust Gemini 42 seconds with only two retries and reserve Luna 15 seconds`() {
         val f = Fixture()
         f.geminiAction = { request ->
             f.advance(request.callTimeout)
             throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
         }
-        f.lunaAction = {
-            f.advance(Duration.ofSeconds(20))
+        f.lunaAction = { request ->
+            f.advance(request.callTimeout)
             f.success()
         }
 
         f.process()
 
-        assertEquals(listOf("GEMINI", "GEMINI", "LUNA"), f.calls.map { it.first })
-        assertEquals(listOf(15L, 15L, 27L), f.calls.map { it.second.callTimeout.seconds })
-        assertEquals(Duration.ofSeconds(50), f.elapsed)
+        assertEquals(listOf("GEMINI", "GEMINI", "GEMINI", "LUNA"), f.calls.map { it.first })
+        assertEquals(listOf(15L, 15L, 12L, 15L), f.calls.map { it.second.callTimeout.seconds })
+        assertEquals(Duration.ofSeconds(57), f.elapsed)
         assertEquals(1, f.published.size)
     }
 
@@ -107,7 +106,7 @@ class BoundedProviderFallbackContractTest {
         assertEquals(listOf("GEMINI", "LUNA"), f.calls.map { it.first })
         assertTrue(f.delays.isEmpty())
         assertEquals(
-            Duration.ofSeconds(27),
+            Duration.ofSeconds(15),
             f.calls
                 .last()
                 .second.callTimeout,
@@ -210,7 +209,7 @@ class BoundedProviderFallbackContractTest {
     fun `late Gemini success cannot publish and invokes Luna while reserve remains`() {
         val f = Fixture()
         f.geminiAction = {
-            f.advance(Duration.ofSeconds(31))
+            f.advance(Duration.ofSeconds(43))
             f.success()
         }
 
@@ -218,7 +217,7 @@ class BoundedProviderFallbackContractTest {
 
         assertEquals(listOf("GEMINI", "LUNA"), f.calls.map { it.first })
         assertEquals(
-            Duration.ofSeconds(26),
+            Duration.ofSeconds(14),
             f.calls
                 .last()
                 .second.callTimeout,
@@ -230,11 +229,11 @@ class BoundedProviderFallbackContractTest {
     fun `late Luna success cannot publish inside the completion reserve`() {
         val f = Fixture()
         f.geminiAction = {
-            f.advance(Duration.ofSeconds(30))
+            f.advance(Duration.ofSeconds(42))
             throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
         }
         f.lunaAction = {
-            f.advance(Duration.ofSeconds(28))
+            f.advance(Duration.ofSeconds(16))
             f.success()
         }
 
@@ -260,93 +259,12 @@ class BoundedProviderFallbackContractTest {
         verify(f.persistence).delay(f.run.startStructuring())
     }
 
-    @Test
-    fun `slow Gemini timeout and jitter leave a fourteen second second attempt before the exact thirty second transition`() {
-        val f = Fixture()
-        f.jitterValue = 1_000
-        f.geminiAction = { request ->
-            f.advance(request.callTimeout)
-            throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
-        }
-        f.lunaAction = {
-            f.advance(Duration.ofSeconds(20))
-            f.success()
-        }
-
-        f.process()
-
-        assertEquals(listOf("GEMINI", "GEMINI", "LUNA"), f.calls.map { it.first })
-        assertEquals(listOf(Duration.ofSeconds(15), Duration.ofSeconds(14), Duration.ofSeconds(27)), f.calls.map { it.second.callTimeout })
-        assertEquals(listOf(Duration.ZERO, Duration.ofSeconds(16), Duration.ofSeconds(30)), f.callStarts)
-        assertEquals(listOf(Duration.ofSeconds(1)), f.delays)
-        assertEquals(1, f.published.size)
-        assertEquals(Duration.ofSeconds(50), f.elapsed)
-    }
-
-    @ParameterizedTest
-    @CsvSource("20000,true", "26999,true", "27000,false", "28000,false")
-    fun `Luna receives 27 seconds and a successful callback must arrive strictly before its call timeout`(
-        responseMillis: Long,
-        accepted: Boolean,
-    ) {
-        val f = Fixture()
-        f.geminiAction = { throw NaturalLanguageParserException(ParserFailureKind.SERVER) }
-        f.lunaAction = {
-            f.advance(Duration.ofMillis(responseMillis))
-            f.success()
-        }
-
-        f.process()
-
-        assertEquals(listOf("GEMINI", "GEMINI", "GEMINI", "GEMINI", "LUNA"), f.calls.map { it.first })
-        assertEquals(
-            Duration.ofSeconds(27),
-            f.calls
-                .last()
-                .second.callTimeout,
-        )
-        assertEquals(if (accepted) 1 else 0, f.published.size)
-        if (accepted) {
-            verify(f.persistence, never()).delay(anyValue())
-        } else {
-            verify(f.persistence).delay(f.run.startStructuring())
-        }
-    }
-
-    @ParameterizedTest
-    @CsvSource("57000", "60000")
-    fun `late Luna completion at the reserved boundary or total deadline cannot publish`(completionMillis: Long) {
-        val f = Fixture()
-        f.geminiAction = {
-            f.advance(Duration.ofSeconds(30))
-            throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
-        }
-        f.lunaAction = {
-            f.advance(Duration.ofMillis(completionMillis - 30_000))
-            f.success()
-        }
-
-        f.process()
-
-        assertEquals(listOf("GEMINI", "LUNA"), f.calls.map { it.first })
-        assertEquals(
-            Duration.ofSeconds(27),
-            f.calls
-                .last()
-                .second.callTimeout,
-        )
-        assertEquals(Duration.ofMillis(completionMillis), f.elapsed)
-        assertTrue(f.published.isEmpty())
-        verify(f.persistence).delay(f.run.startStructuring())
-    }
-
     private class Fixture {
         var elapsed = Duration.ZERO
         var jitterValue = 0L
         val jitterBounds = mutableListOf<Long>()
         val delays = mutableListOf<Duration>()
         val calls = mutableListOf<Pair<String, NaturalLanguageBatchRequest>>()
-        val callStarts = mutableListOf<Duration>()
         val attempts = mutableListOf<CoordinationAttempt>()
         val published = mutableListOf<List<StructuredSubmissionResult>>()
         val room =
@@ -421,7 +339,6 @@ class BoundedProviderFallbackContractTest {
                 structuredRepository,
                 attemptRepository,
                 NaturalLanguageParserPort {
-                    callStarts += elapsed
                     calls += "GEMINI" to it
                     geminiAction(it)
                 },
@@ -445,7 +362,6 @@ class BoundedProviderFallbackContractTest {
                 persistence,
                 fallbackParser =
                     NaturalLanguageParserPort {
-                        callStarts += elapsed
                         calls += "LUNA" to it
                         lunaAction(it)
                     },

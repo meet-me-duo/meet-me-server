@@ -12,6 +12,13 @@
 
 ### Issue #99 현재 통합 범위 (2026-10-07 UTC)
 
+**추가 승인 — 시간 배분 조정:** PR100 통합 HEAD51a4c0d의 실제 평가에서 총56.975초, Gemini3회+Luna1회 모두 TIMEOUT·ANALYSIS_DELAYED·winner/후보0·late 미게시가 확인됐다. relay의 Luna HTTP200 저장19.795초는 네트워크·프록시·JSON/파일 저장 포함이며 모델 순수 지연이나 새 정책 성공률이 아니다. 사용자가 전체60초를 유지하며 Gemini최대30초/Luna최대27초/완료3초, 최대3재시도·부족시 조기 폴백을 승인했다. 기존 feature 브랜치·Issue99·PR100에서 독립 시간 경계 RED→구현→리뷰→전체guard/새HEADCI를 진행한다. 이 구현 세션의 유료 호출은 계속0이며 운영 설정·권한·DB 적용은 변경하지 않는다.
+
+- [x] `[AGENT]` processor와 Lunaadapter의15초고정캡을 공급자별15/27초로 일치시키고 single monotonic/durable60초 및 Gemini30/provider57/완료60 경계를 검증한다.
+- [x] `[AGENT]` 독립 mock·loopback/transport·실제Postgres로20초Luna성공·27/57/60late차단·lockwait·4+1·재전달noreset·원자추천rollback을 검증한다. 유료/운영 쓰기는0.
+- [ ] `[AGENT]` 문서·구현지문·guard전체test·PR100새HEADCI를 갱신하고 정확새SHA/검사결과를 부모에게 즉시 인계한다.
+
+
 - [x] `[AGENT]` 지정 PR97 HEAD518c612·PR98 HEAD9a4c4d5·PR94/93 의존, 최신 develop848b968과 규칙·인계를 확인했다. Issue99 생성 후 feature/integrate-recommendations-fallback에서만 조율한다.
 - [x] `[AGENT]` PR97 문서 HEAD CI37585734021 성공, 웹 PR20 정확 HEAD8e56fe0c37cef52e584ff569b97b46b60f28e517을 확인했다. 개별 PR CI를 통합 검증으로 재사용하지 않는다.
 - [x] `[AGENT]` 추천 V9·invocation V10 SQL의 원본 체크섬을 보존하고 ADR-047/048·Luna ADR-049를 합쳤다. 실제 PostgreSQL 빈 DB10버전 및 기존 V8 데이터 업그레이드2건 GREEN.
@@ -20,7 +27,7 @@
 - [x] `[AGENT]` 독립 최종 코드 리뷰 PASS·차단0, 고의 결함11/11 assertion 탐지·247개 정확 복구, native OpenAPI parsed JSON 완전 동일 확인. 직렬화 바이트/SHA는 다르므로 동일 SHA로 표시하지 않는다.
 - [x] `[AGENT]` 변경 없는 필수 guard exit0·ktlintCheck/assemble·109suite 전체631건/실패0/오류0/skip4, hook self-tests12 PASS. 첫 전체의 기존 schema 분기수 assertion은 독립 supersession과 focused12 GREEN으로 보완했다.
 - [x] `[AGENT]` Worklog 최종 갱신과 commit/push/Draft PR 준비. Commit/PR은 동일 커밋 예정이며 코드·현재 증거 지문과 완료 근거를 동기화했다.
-- [ ] `[AGENT]` commit/push·develop 대상 Draft PR 게시·정확 통합 HEAD CI 인계. 결과 URL/SHA/CI run은 Git 이력·PR 본문을 기준으로 확인한다.
+- [x] `[AGENT]` 최초 통합51a4c0d commit/push·develop 대상 Draft PR100 게시·CI37591069034 전 단계 성공을 확인했다. 후속 시간배분의 정확 HEAD CI는 별도로 확인한다.
 - [ ] `[SHARED]` 실제 유료 품질 검증은 전담01a114c3-02d3-7011-ab8f-19706bdda089에 통합 준비 뒤 인계. 이 구현/CI의 호출0.
 - [ ] `[USER]` 운영 V8guard/digest/드레인 승인. 코드 완료와 배포 준비를 구분하며 main/develop 병합·배포·운영 migration·보안/비밀정보/자동화 변경은 실행하지 않는다.
 
@@ -1171,3 +1178,12 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 실제 /v3/api-docs native export의 전체 parsed JSON은 PR97 OpenAPI와 동일하다. 직렬화 byte/SHA는 다르며 .tdd/reviews/issue-99-openapi-contract.json에 두 지문을 기록했다. 공개 diverse-time-v1 옵션/확정/legacy API·입력 UI는 유지했다. 웹 PR20 정확 HEAD8e56fe0c37cef52e584ff569b97b46b60f28e517을 원격 확인했지만 backend/browser 공동 실행은 주장하지 않는다.
 - 이 구현 세션의 유료 호출0이다. 실제 통합 품질은 전담01a114c3-02d3-7011-ab8f-19706bdda089만 검증한다. 기존 유료19/50 및 Luna7/8은 새 통합 품질 PASS로 재사용하지 않는다. 전담자는 기존 평가 하네스의 v2 체크·legacy matcher 연결을 v3·추천 repository 경로로 조율해야 한다. 무료 integration은 typed fake parser, provider 검증은 loopback/shared validator이며 실제 모델 lexical 정확성은 별도다. 웹 담당01a114d2-c535-7787-adca-69742f5cd08d와 부모를 통해 연계한다.
 - Commit/PR: 동일 커밋 예정, develop 대상 Draft PR. 정확 HEAD CI는 게시 후 PR 본문에 확인 결과를 기록한다. 코드 검증 완료와 운영 준비를 구분하며 V8guard/digest/드레인 승인은 미해결이다. main/develop 병합·배포·운영 DB 적용·운영 보안/비밀정보 변경·자동화 중지는 실행하지 않았다.
+
+## Issue #99 Worklog — 승인된 공급자 시간 배분 후속 (2026-10-07 UTC)
+
+- 전담 평가가 보고한 최초 통합 invocation56.975초/TIMEOUT·Luna relay HTTP200 저장19.795초를 시간 배분 문제로 분류했다. relay 측정은 네트워크·프록시·읽기·저장을 포함하며 취소 전파 한계가 있어 모델 순수 지연/새27초 성공률로 확대하지 않는다. 이 구현의 유료 호출0이다.
+- 사용자 승인에 따라 동일 feature/Issue99/PR100에서 단일60초, Gemini 호출15·단계30(백오프/claim 포함), Luna 최대27, 완료3을 공통 Application port로 맞췄다. 조기 fallback/claim 후 남은 cap과30/57/60 exclusive 경계를 검증했으며 기존 최대4+1·owner/noreset·frozen·ACK·원자 추천 rollback은 유지한다. 직접 request 기본15는 유지하므로 직접 Luna 평가 caller는27을 명시해야 한다.
+- 독립 테스트 저자2명과 read-only reviewer를 분리했다. 최종 RED48건/20 AssertionFailedError/오류0→집중 GREEN72건/실패0이다. 실제 PG에서20초Luna가51초에 winner/추천/room 완료,57/60 물리호출0,60초 게시 rollback 및 재전달noreset을 검증했다. 실제 OkHttp timeout 설정 검사는 무네트워크 interceptor로 시행했으며 실제27초 모델 성공을 주장하지 않는다. 기존 기대 변경은 before/RED byte archive와 승인 supersession으로 추적했다.
+- 고의 결함5/5 assertion 탐지·실패35·오류0, 전체250개 source/test 정확 복원을 독립 확인했다. 복원 후 변경 없는 필수 guard exit0·hook self-tests12·ktlintCheck/assemble·111suite 전체654tests/실패0/오류0/skip4, 배포 정적13 PASS다. 새 native OpenAPI 전체 parsed JSON은 기존 계약과 완전 동일이며 byte/SHA 차이를 별도 budget 증거로 기록했다. 기존 통합 evidence는 소급 덮어쓰지 않았다.
+- V1~V10 migration과 bounded-luna-v1 바이트/정책, 공개 API/UI는 유지한다. CI Quality 실행 한도15→20분만 조정해 기존 원격 CI의 약15분 검사와 추가PG회귀를 수용하며 product60초·hook/검사·권한·운영 deployment/concurrency는 유지한다.
+- Commit/PR: 동일 커밋 예정, 기존 Draft PR100 갱신. 새 정확 SHA와 로컬 검증은 push 즉시 부모에게 인계하고 해당 HEAD CI는 PR100 본문에 확정한다. 유료 통합 재평가는 전담 세션, 웹 공동 실행·운영 Flyway/V8guard/digest/드레인 승인은 별도이며 병합·배포·운영DB/보안/비밀/자동화 변경은 수행하지 않는다.

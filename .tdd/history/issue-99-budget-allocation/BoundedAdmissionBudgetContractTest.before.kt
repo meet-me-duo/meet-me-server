@@ -36,8 +36,6 @@ import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import com.meetme.server.submission.domain.Submission
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito
 import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.mock
@@ -93,49 +91,14 @@ class BoundedAdmissionBudgetContractTest {
     fun `Gemini admission that consumes its budget starts Luna with actual remaining time`() {
         val fixture = Fixture()
         fixture.onClaim = { provider, number ->
-            if (provider == AnalysisProvider.GEMINI && number == 2) fixture.elapsed = Duration.ofSeconds(31)
+            if (provider == AnalysisProvider.GEMINI && number == 2) fixture.elapsed = Duration.ofSeconds(43)
         }
 
         fixture.process()
 
         assertEquals(listOf(AnalysisProvider.GEMINI, AnalysisProvider.OPENAI), fixture.calls.map { it.first })
         assertEquals(
-            Duration.ofSeconds(26),
-            fixture.calls
-                .last()
-                .second.callTimeout,
-        )
-        assertTrue(fixture.updated.any { it.provider == AnalysisProvider.GEMINI && it.attemptNumber == 2 && it.failureKind == "TIMEOUT" })
-        assertEquals(1, fixture.published.size)
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = [57, 60])
-    fun `Luna admission at the completion boundary or total deadline never starts HTTP`(seconds: Long) {
-        val fixture = Fixture()
-        fixture.onClaim = { provider, _ -> if (provider == AnalysisProvider.OPENAI) fixture.elapsed = Duration.ofSeconds(seconds) }
-
-        fixture.process()
-
-        assertEquals(List(4) { AnalysisProvider.GEMINI }, fixture.calls.map { it.first })
-        assertTrue(fixture.published.isEmpty())
-        assertTrue(fixture.updated.any { it.provider == AnalysisProvider.OPENAI && it.failureKind == "TIMEOUT" && it.finishedAt != null })
-        verify(fixture.persistence).delayBounded(fixture.run, fixture.invocation)
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = [30, 31])
-    fun `Gemini admission at its budget boundary yields the remaining Luna budget without another Gemini call`(seconds: Long) {
-        val fixture = Fixture()
-        fixture.onClaim = { provider, number ->
-            if (provider == AnalysisProvider.GEMINI && number == 2) fixture.elapsed = Duration.ofSeconds(seconds)
-        }
-
-        fixture.process()
-
-        assertEquals(listOf(AnalysisProvider.GEMINI, AnalysisProvider.OPENAI), fixture.calls.map { it.first })
-        assertEquals(
-            Duration.ofSeconds(57 - seconds),
+            Duration.ofSeconds(14),
             fixture.calls
                 .last()
                 .second.callTimeout,

@@ -520,4 +520,6 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 
 **이유**: 공급자 일시 장애에서도 같은 입력·기준일로 한 번의 대체 구조화를 수행하면서 비용·시간 상한을 보존하기 위해서다. run version별 PostgreSQL invocation/attempt claim·owner·deadline·winner fencing은 Outbox 재전달과 프로세스 재시작의 상한 초기화 및 늦은 게시를 막는다. HOST의 명시적 지연 재시도만 새 논리 실행·비용 단위로 다루며 기존 #92 room→exact run·활성 pointer·OPEN 라운드·확정 보호를 유지한다.
 
+2026-10-07 후속 사용자 승인으로 시간 배분은 Gemini 단계 최대30초(호출별15초)·Luna 최대27초·완료3초로 조정한다. 단일60초와 최대4+1·재전달/승자 fencing을 유지하며 공통 Application 예산으로 reservation·durable admission·실제 transport cap을 일치시킨다. bounded-luna-v1 및 V10 SQL은 보존하고 배분 조정은 정확 source HEAD로 추적한다.
+
 **트레이드오프**: 최대 4회 Gemini를 모든 지연 상황에서 보장하지 않고 남은 예산에 맞춰 줄인다. 중단된 실행은 기존 예산 안에서 호출을 다시 시작하지 않고 deadline 만료 후 지연 상태로 보수적으로 종결한다. 공급자 exactly-once 및 전체 자연어 의미 정확성은 보장하지 않는다. Luna의 미확인 가격·usage는 null로 기록한다. 두 공급자가 모두 실패하면 PARTIAL로 복구하지 않고 입력·batch 보존과 ANALYSIS_DELAYED/후보 0/ACK를 유지한다. 추가 provider 원문 전달 고지·처리 조건과 운영 설정은 배포 전 별도 검토 대상이다. 기존 ADR-016/018의 Gemini 단독 장애 정책을 이 범위에서 대체하며 배포·병합 승인을 포함하지 않는다.

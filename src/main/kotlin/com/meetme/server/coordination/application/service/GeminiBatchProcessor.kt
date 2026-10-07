@@ -1,6 +1,7 @@
 package com.meetme.server.coordination.application.service
 
 import com.meetme.server.coordination.application.port.output.AnalysisInvocation
+import com.meetme.server.coordination.application.port.output.AnalysisInvocationBudget
 import com.meetme.server.coordination.application.port.output.AnalysisInvocationRepository
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
@@ -128,7 +129,12 @@ class GeminiBatchProcessor(
             }
             admittedAttempts++
             // Admission can wait on a database lock. Recalculate after it, before starting HTTP.
-            val timeout = remaining(providerDeadline).coerceAtMost(CALL_TIMEOUT)
+            val maximumCallTimeout =
+                when (provider) {
+                    AnalysisProvider.GEMINI -> CALL_TIMEOUT
+                    AnalysisProvider.OPENAI -> LUNA_TIMEOUT
+                }
+            val timeout = remaining(providerDeadline).coerceAtMost(maximumCallTimeout)
             if (timeout.toMillis() < 1) {
                 val failure = NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                 attemptRepository.update(attempt.complete(clock.instant(), ParserUsage(null, null, null), failure.kind.name))
@@ -138,7 +144,7 @@ class GeminiBatchProcessor(
             val callStarted = monotonicTime.nanoTime()
             return try {
                 val result = port.parse(request.copy(callTimeout = timeout))
-                if (monotonicTime.nanoTime() > providerDeadline || elapsed(callStarted) > timeout) {
+                if (monotonicTime.nanoTime() >= providerDeadline || elapsed(callStarted) >= timeout) {
                     val failure =
                         NaturalLanguageParserException(com.meetme.server.coordination.application.port.output.ParserFailureKind.TIMEOUT)
                     attemptRepository.update(attempt.complete(clock.instant(), result.usage, failure.kind.name))
@@ -158,7 +164,7 @@ class GeminiBatchProcessor(
         fun publish(outcome: CallOutcome): Boolean {
             val result = requireNotNull(outcome.result)
             val attempt = outcome.attempt.complete(clock.instant(), result.usage, null)
-            if (monotonicTime.nanoTime() > callDeadline) {
+            if (monotonicTime.nanoTime() >= callDeadline) {
                 attemptRepository.update(attempt.copy(failureKind = "TIMEOUT"))
                 return false
             }
@@ -267,10 +273,10 @@ class GeminiBatchProcessor(
 
     companion object {
         const val MAX_ATTEMPTS = 4
-        val CALL_TIMEOUT: Duration = Duration.ofSeconds(15)
-        val LUNA_TIMEOUT: Duration = Duration.ofSeconds(15)
-        val COMPLETION_RESERVE: Duration = Duration.ofSeconds(3)
-        val TOTAL_TIMEOUT: Duration = Duration.ofSeconds(60)
+        val CALL_TIMEOUT: Duration = AnalysisInvocationBudget.GEMINI_CALL_TIMEOUT
+        val LUNA_TIMEOUT: Duration = AnalysisInvocationBudget.LUNA_CALL_TIMEOUT
+        val COMPLETION_RESERVE: Duration = AnalysisInvocationBudget.COMPLETION_RESERVE
+        val TOTAL_TIMEOUT: Duration = AnalysisInvocationBudget.TOTAL_TIMEOUT
     }
 }
 
