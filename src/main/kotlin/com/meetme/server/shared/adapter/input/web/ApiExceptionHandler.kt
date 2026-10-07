@@ -14,6 +14,7 @@ import org.springframework.http.ProblemDetail
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import java.net.URI
@@ -101,6 +102,16 @@ class ApiExceptionHandler(
             problem(HttpStatus.BAD_REQUEST, RoomLifecycleErrorCode.VALIDATION_FAILED.name, request, locale),
         )
 
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun missingParameter(
+        @Suppress("UNUSED_PARAMETER") exception: MissingServletRequestParameterException,
+        request: HttpServletRequest,
+        locale: Locale,
+    ): ResponseEntity<ProblemDetail> =
+        ResponseEntity.badRequest().body(
+            problem(HttpStatus.BAD_REQUEST, RoomLifecycleErrorCode.VALIDATION_FAILED.name, request, locale),
+        )
+
     private fun problem(
         status: HttpStatus,
         code: String,
@@ -133,6 +144,8 @@ private fun MatchingResultErrorCode.status(): HttpStatus =
         -> HttpStatus.NOT_FOUND
         MatchingResultErrorCode.CANDIDATES_NOT_READY,
         MatchingResultErrorCode.CANDIDATE_ALREADY_CONFIRMED,
+        MatchingResultErrorCode.RECOMMENDATION_SELECTION_REQUIRED,
+        MatchingResultErrorCode.STALE_ANALYSIS,
         -> HttpStatus.CONFLICT
     }
 

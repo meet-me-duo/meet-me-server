@@ -4,15 +4,19 @@ import com.meetme.server.coordination.application.port.output.CoordinationRunRep
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
+import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.coordination.domain.CandidatePlace
 import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
 import com.meetme.server.coordination.domain.MeetingCandidate
+import com.meetme.server.coordination.domain.StoredRecommendationOption
 import com.meetme.server.coordination.domain.matching.CompatiblePlaceArea
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
 import com.meetme.server.coordination.domain.matching.ParticipantAllowedArea
 import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
+import com.meetme.server.coordination.domain.matching.RecommendationProjection
+import com.meetme.server.coordination.domain.matching.RecommendationProjector
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CandidateId
@@ -23,10 +27,12 @@ import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.nio.charset.StandardCharsets
 import java.text.Normalizer
 import java.time.Clock
 import java.time.Duration
 import java.util.Locale
+import java.util.UUID
 
 @Service
 class MatchingProcessor(
@@ -38,6 +44,7 @@ class MatchingProcessor(
     private val persistence: MatchingProcessingPersistenceService,
     private val metrics: ApplicationMetricsPort? = null,
     private val clock: Clock = Clock.systemUTC(),
+    private val recommendationRepository: RecommendationRepository? = null,
 ) {
     @Transactional
     fun process(batchId: SubmissionBatchId) {
@@ -146,7 +153,17 @@ class MatchingProcessor(
                 )
             }
         val completed = run.complete(if (hasUnappliedInput) CandidateQuality.PARTIAL else CandidateQuality.COMPLETE, candidates)
-        persistence.complete(completed, snapshots)
+        if (recommendationRepository == null) {
+            persistence.complete(completed, snapshots)
+        } else {
+            val projection =
+                RecommendationProjector.generate(
+                    room.mode,
+                    inputs,
+                    room.timeZone.value,
+                )
+            persistence.completeRecommendations(completed, snapshots, projection)
+        }
         metrics?.matching("COMPLETED", Duration.ofNanos(System.nanoTime() - startedNanos), candidates.size)
     }
 
@@ -165,6 +182,7 @@ class MatchingProcessingPersistenceService(
     private val roomRepository: com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository,
     private val runRepository: CoordinationRunRepository,
     private val normalizedPlaceRepository: NormalizedPlaceRepository,
+    private val recommendations: RecommendationRepository? = null,
 ) {
     fun room(id: com.meetme.server.shared.domain.MeetingRoomId) =
         requireNotNull(roomRepository.findById(id)) { "Room for coordination run does not exist" }
@@ -186,6 +204,44 @@ class MatchingProcessingPersistenceService(
         runRepository.update(run)
         roomRepository.update(room.transition())
     }
+
+    @Transactional
+    fun completeRecommendations(
+        run: CoordinationRun,
+        places: List<NormalizedPlace>,
+        projection: RecommendationProjection,
+    ) {
+        val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return
+        if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return
+        normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
+        runRepository.update(run)
+        val options =
+            projection.options.mapIndexed { index, option ->
+                val id = stableId("${run.id.value}|${option.window.startInclusive}|${option.window.endExclusive}")
+                StoredRecommendationOption(
+                    id,
+                    index,
+                    projection.primaryOptionIndexes
+                        .indexOf(index)
+                        .takeIf { it >= 0 }
+                        ?.plus(1),
+                    option,
+                    option.variants.map { variant ->
+                        stableId(
+                            "$id|${variant.meetingMode}|${variant.participantIds.joinToString(",") { it.value.toString() }}|" +
+                                "${variant.representativeArea?.key}|${variant.representativePlace}",
+                        )
+                    },
+                )
+            }
+        requireNotNull(recommendations).publish(
+            com.meetme.server.coordination.domain
+                .RecommendationAnalysis(run.id.value, room.id.value, options),
+        )
+        roomRepository.update(room.transition())
+    }
+
+    private fun stableId(value: String) = UUID.nameUUIDFromBytes(value.toByteArray(StandardCharsets.UTF_8))
 
     @Transactional
     fun delay(run: CoordinationRun) {

@@ -142,6 +142,8 @@ class RateLimitFilter(
         val PARTICIPANTS = Regex("^/api/rooms/[^/]+/participants$")
         val SUBMISSION = Regex("^/api/rooms/[^/]+/submission$")
         val HOST_COMMAND =
-            Regex("^/api/rooms/[^/]+/(close|reopen|analysis|analysis/retry|candidates/[^/]+/confirmation)$")
+            Regex(
+                "^/api/rooms/[^/]+/(close|reopen|analysis|analysis/retry|candidates/[^/]+/confirmation|recommendations/[^/]+/confirmation)$",
+            )
     }
 }

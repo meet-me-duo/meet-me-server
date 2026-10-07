@@ -487,3 +487,17 @@ meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, c
 **기존 웹 호환의 한계**: 새 웹+구 서버는 recovery capability가 없으면 관련 동작을 숨긴다. 구 웹+새 서버의 OPEN 라운드는 공개 COLLECTING으로 보이지만 round/revision 없는 PUT은 409이고 기존 close는 200 no-op이다. 이는 입력과 배치를 보호하는 계약이며 수정 UX의 양방향 호환 성공은 아니다. 웹 선배포도 기존 탭·캐시의 구 웹 제거를 보장하지 않는다. 정확한 구/신 번들 합성 브라우저 검증에서 구 PUT409는 draft를 유지하지만 reload가 미저장 draft를 잃게 함을 확인했다. 운영자는 먼저 원문을 복사하고 새로고침한 뒤 새 웹에 다시 입력·명시적 저장·결과 확인하는 안내와 지원 경로를 제공해야 한다. 이 운영 절차와 실제 cross-version backend 검증은 별도 선행조건이다.
 
 **읽기 전용 배포 후 확인**: 로컬/격리 staging에서는 합성 방·합성 증명으로 room/본인 submission/candidates GET의 metadata와 권한 경계를 검사한다. 운영 실행이 별도 승인된 뒤에는 `/healthz`, 앱 내부 `127.0.0.1:9090/actuator/health`, `/v3/api-docs`의 계약을 확인한다. 사용자 방·운영 원문·다른 참여자 입력을 탐색하지 않으며 운영 POST/PUT·재분석·확정은 smoke에 포함하지 않는다. credential·cookie·원문은 로그나 인계 자료에 출력하지 않는다. 합성 쓰기 흐름과 구 캐시 화면은 운영 데이터 없이 staging에서 검증한다. ADR-042의 main 병합은 자동 CD를 시작하므로 위 lifecycle guard·migration·웹·operator 조건이 충족되기 전에는 Draft PR/CI 완료와 배포 준비 완료를 구분한다.
+
+
+### ADR-047: 시간별 추천 projection과 실제 시각 typed selection
+
+**상태**: Accepted (명시 선호 집계 D2는 별도 TBD)
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인 #95에 따라 날짜·시간 추천의 의미를 기존 방식별 Plan 종류와 분리한다. N/N-1/N-2 전체 조합을 최소2명 조건으로 평가하고 동일 절대 창을 한 option, 방식·장소·참석 집합을 variant로 보존한다. primary 최대3 이외 전체 대안도 분석에 고정해 cursor로 제공한다. 소요시간 설정이나 임의 고정 길이를 만들지 않으며 HOST가 단일 창 안에서 실제 시작·종료를 고른다. 새 projection은 legacy 결과 완료와 원자 게시하고 typed 선택은 candidate FK와 분리해 저장한다. 전체 분석/option/variant/시각 튜플만 멱등이며 active run·CLOSED·OPEN round·기존 확정·frozen version을 검증한다.
+
+ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분석에서 이 결정으로 대체한다. 기존 candidate API·다중 time_ranges·과거 final_confirmations와 기존 matcher는 호환 경로로 보존한다. 새 분석의 candidate-only 확정은 거부한다. ADR-035 시간대, ADR-045 입력 안전 제외와 ADR-046 입력 보존·활성 분석·동결 배치·수정 제한·CLOSED 보존은 유지하며 확정 보호는 두 선택 타입에 적용한다. D2 집계·강도·AND/OR를 이 ADR로 확정하지 않는다.
+
+**이유**: 방식별 한 카드에 모든 시간이 묶이면 서로 다른 날짜·시간을 비교하기 어렵고 실제 모임 시각이 확정되지 않는다. 별도 immutable projection과 typed 선택은 기존 확정 FK를 오용하거나 과거 결과를 재작성하지 않고 새 제품 동작을 표현한다.
+
+**트레이드오프**: 새로운 migration·조회·원자 게시·경합·혼합 버전 검증과 companion 웹이 필요하다. 전체 조합은 데이터량을 늘리므로 조회·게시 비용을 확인해야 한다. 새 웹은 정확히 지원하는 protocol에서만 실제 시각 확정을 활성화한다. 구 웹은 legacy 읽기를 유지하지만 신규 protocol의 구 확정은409로 거부된다. 구 V8 writer 읽기·운영 lifecycle은 호환되지 않으므로 앱 전체 중지와 V9 호환 release 검토가 운영 선행조건이다. 구 V8 digest 승인 목록을 자동 확대하거나 운영 guard를 이 구현에서 바꾸지 않는다.

@@ -180,6 +180,9 @@ data class RoomResponse(
     val remainingCorrectionAnalyses: Int,
     @field:JsonProperty("state_version")
     @field:Schema(description = "방의 조율 상태를 정렬하는 단조 증가 버전", minimum = "0") val stateVersion: Long,
+    @field:JsonProperty("recommendation_protocol")
+    @field:Schema(description = "활성 분석의 실제 시각 선택 protocol; legacy 또는 분석 전에는 null", nullable = true)
+    val recommendationProtocol: String? = null,
 ) {
     companion object {
         fun from(view: RoomView) =
@@ -206,6 +209,7 @@ data class RoomResponse(
                 RoomCapabilitiesResponse.from(view.capabilities),
                 view.remainingCorrectionAnalyses,
                 view.stateVersion,
+                view.recommendationProtocol,
             )
     }
 }

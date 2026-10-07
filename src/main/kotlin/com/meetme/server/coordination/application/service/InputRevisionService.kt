@@ -74,8 +74,8 @@ class InputRevisionService(
         val source = runs.findByIdForUpdate(CoordinationRunId(command.sourceAnalysisId)) ?: conflict()
         if (source.roomId != room.id ||
             source.status != CoordinationStatus.COMPLETED ||
-            source.confirmedCandidateId != null ||
-            (source.candidates.isNotEmpty() && source.quality != CandidateQuality.PARTIAL)
+            source.isConfirmed ||
+            (source.hasSelectableResult && source.quality != CandidateQuality.PARTIAL)
         ) {
             conflict()
         }
@@ -116,7 +116,7 @@ class InputRevisionService(
             conflict()
         }
         val source = runs.findByIdForUpdate(CoordinationRunId(round.sourceRunId)) ?: conflict()
-        if (source.roomId != room.id || source.status != CoordinationStatus.COMPLETED || source.confirmedCandidateId != null) conflict()
+        if (source.roomId != room.id || source.status != CoordinationStatus.COMPLETED || source.isConfirmed) conflict()
         val original = FrozenSubmissionReader.read(submissions, source.batch)
         val ownerIds = original.map { it.participantId }.toSet()
         val current = submissions.findLatestByRoom(room.id).filter { it.participantId in ownerIds }.sortedBy { it.participantId.value }

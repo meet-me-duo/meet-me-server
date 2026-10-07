@@ -29,6 +29,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.postgresql.PostgreSQLContainer
 import java.nio.file.Files
@@ -309,9 +310,69 @@ class CorrectionMeetingScenarioPostgresTest : CorrectionRoundPostgresFixture() {
                 post("/api/rooms/{code}/candidates/{id}/confirmation", fixture.host.code, candidate["candidate_id"])
                     .header("Origin", CorrectionRoundPostgresFixture.ORIGIN)
                     .cookie(fixture.host.cookie()),
-            ).andExpect(status().isOk)
+            ).andExpect(status().isConflict)
+            .andExpect(jsonPath("$.code").value("RECOMMENDATION_SELECTION_REQUIRED"))
+        val recommendations =
+            document(
+                mvc
+                    .perform(get("/api/rooms/{code}/recommendations", fixture.host.code).cookie(fixture.host.cookie()))
+                    .andExpect(status().isOk)
+                    .andReturn()
+                    .response,
+            )
+        assertEquals("diverse-time-v1", recommendations["protocol"])
+        val option = child(mapOf("first" to (recommendations.getValue("options") as List<*>).single()), "first")
+        val variant =
+            (option.getValue("variants") as List<*>)
+                .map { child(mapOf("variant" to it), "variant") }
+                .first { it["attendance_count"] == candidate["attendance_count"] && it["meeting_mode"] == candidate["meeting_mode"] }
+        val range = child(option, "time_range")
+        val body =
+            mapOf(
+                "analysis_id" to recommendations["analysis_id"],
+                "variant_id" to variant["variant_id"],
+                "start_at" to range["start_at"],
+                "end_at" to range["end_at"],
+            )
+        val confirmed =
+            document(
+                mvc
+                    .perform(
+                        post("/api/rooms/{code}/recommendations/{id}/confirmation", fixture.host.code, option["option_id"])
+                            .header("Origin", CorrectionRoundPostgresFixture.ORIGIN)
+                            .cookie(fixture.host.cookie())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(body)),
+                    ).andExpect(status().isOk)
+                    .andReturn()
+                    .response,
+            )
+        val selected = child(confirmed, "selection")
+        assertEquals("diverse-time-v1", selected["protocol"])
+        assertEquals(recommendations["analysis_id"], selected["analysis_id"])
+        assertEquals(option["option_id"], selected["option_id"])
+        assertEquals(variant["variant_id"], selected["variant_id"])
+        assertEquals(range["start_at"], selected["start_at"])
+        assertEquals(range["end_at"], selected["end_at"])
+        val confirmedCandidate = child(confirmed, "candidate")
+        assertEquals(listOf(range), confirmedCandidate["time_ranges"])
+        assertEquals(null, confirmedCandidate["candidate_id"])
+        for (field in listOf("plan_type", "meeting_mode", "attendance_count", "total_participants")) {
+            assertEquals(candidate[field], confirmedCandidate[field], field)
+        }
+        val result =
+            document(
+                mvc
+                    .perform(get("/api/rooms/{code}/result", fixture.host.code).cookie(fixture.member.cookie()))
+                    .andExpect(status().isOk)
+                    .andReturn()
+                    .response,
+            )
+        assertEquals(confirmed, result)
+        assertEquals("CONFIRMED", room(fixture.host)["public_status"])
         val source = activeRun(fixture.host)
         mvc.perform(reopen(fixture, generation = 1, source = source)).andExpect(status().isConflict)
+        trace["confirmed_result"] = confirmed
         trace["confirmed_protection"] = "409"
     }
 

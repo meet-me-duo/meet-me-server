@@ -37,6 +37,8 @@
 
 ## 현재 진행 요약
 
+- **현재 작업 — Issue #95 (2026-10-07 UTC):** PR #94 `bf4edff`를 포함한 독립 feature에서 재구성 계약과 실제 native OpenAPI를 준비했다. 독립 도메인18·HTTP/동시성15·DB6·게시3·retention1·리뷰3·binding4 총50개 GREEN을 확인했다. 최신 독립 HTTP 테스트의 PR94 baseline15 assertion RED, DB/정밀도7 assertion RED, 삭제 순서1 assertion RED 및 파일 지문을 기록했다. 신규 temporal option/variant·전체 대안·실제 시각 typed selection·legacy 호환·frozen/revision/confirmed 보호를 구현했다. D2 명시 선호 집계는 사용자 결정 대기이며 해당 종속 기능은 미완료다. 첫 계약 인계 커밋 뒤 결함 주입·최종 리뷰·Draft PR/해당 HEAD CI를 이어간다. 모델 호출0이며 병합·운영 배포·권한 변경은 수행하지 않는다.
+
 - **클라우드 #91/#92·웹 #17 최신 상태 (2026-10-07):** 서버 Draft PR #94의 `06bc741`와 웹 Draft PR #18의 `3c403a2` 정확 SHA CI는 성공했다. 후속 최소 수정은 SSM 압축 해제 시 CI 실행자의 소유권과 넓은 권한을 복원하지 않도록 `umask 027`·`--no-same-owner`·`--no-same-permissions`를 적용하고 독립 정적 검사를 CI에 연결한다. 가드·Kotlin·SQL·기존 테스트는 변경하지 않는다. 실제 모델 원문 해석 9번째 호출은 HTTP200·10.1초로 기대한 5개 날짜 구간/COMPLETE/Plan B/요약과 일치했으나, 10번째 실제 HTTP·DB 배치는503으로 미완료이고 변형 문장은 미검증이다. 운영 설치·병합·배포는 진행하지 않았다.
 
 - **현재 작업 — Issue #91:** 독립 클라우드 환경의 `/workspace/meet-me-server-91`, `feature/91-language-time-context`에서 자연어 시간 문맥 상속과 상대 날짜 기준일을 개선한다. 기준은 2026-10-07 원격 확인 및 `develop` fast-forward pull을 마친 `848b9688451551781769799ff7d27485ea5a5445`다. 기존 서버·웹의 `work` checkout과 Windows 미커밋 원본은 보존한다. 아래 사용자요청2 기록은 기존 작업의 이력이다.
@@ -1078,3 +1080,18 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 기존 가드·deploy·기존 정적 검사 및 기능196개는 `06bc741`과 바이트 동일하다. 과거 선택210개 복원 증거는 `06bc741`의 당시 범위로 보존하고, workflow2개가 달라진 현재 전체210개와 동일하다고 표시하지 않는다. 별도 후속 근거는 `.tdd/deployment/issue-92-release-extraction.json`으로 추적한다.
 - 실제 모델 평가는 부모가 별도 환경에서 총10/50회 진행했다. 9번째 원문 해석200 성공과 10번째 실제 HTTP·DB 배치503 미완료를 합성 검사와 구분한다. 이 구현·검증 작업의 공급자 호출 및 평가 도구 변경은0이다.
 - Commit/PR: 동일 커밋 예정, 기존 Draft PR #94 업데이트. 정확 새 head CI는 push 이후 확인하며 운영 host 설치·설정·migration·배포·main/develop 병합은 미실행이다.
+
+
+## Issue #95 Worklog — 다양한 날짜·시간 추천 (2026-10-07 UTC)
+
+- [x] `[AGENT]` 이슈95, AGENTS/rules/project-architecture와 PRD/Architecture/ADR·기존 Worklog를 먼저 읽었다. 최신 develop848b968 clean pull 후 독립 feature에 PR94bf4edff를 fast-forward하고 PR93 포함을 확인했다.
+- [x] `[AGENT]` [재구성 계약](docs/ISSUE_95_CONTRACT.md), [웹 인계](docs/ISSUE_95_WEB_HANDOFF.md)와 실제 OpenAPI를 작성했다. option/variant는 candidate와 별도이며 protocol은 diverse-time-v1이다. 확정의 실제 구간을 기존 result 표현과 typed selection에 함께 담는다.
+- [x] `[AGENT]` 독립 테스트 저자의 총50개 대상 테스트 GREEN을 확인했다. 수정 라운드의 원frozen version id/raw_text/created_at을 보존하고 최신 방 state_version만 증가하는 계약도 검증했다. V1~V8·기존 배포 guard·권한 정책은 변경하지 않았다.
+- [x] `[AGENT]` 독립 리뷰의 초/마이크로초 요약, 새 nullable schema와 variant2값enum, typedconfirmed 방 retention 순서 문제를 수정했다. V9는 구candidate writer와 확정 뒤 run/room/revision 변경을 DB에서도 거부한다. 구V8 reader 호환/운영rollback은 별도 대응이 필요하다.
+- [x] `[AGENT]` 원격 계약 인계 첫 commit 전 필수 변경 없는 tdd_guard를 통과했다. ktlintCheck/assemble/전체 test488개 중484PASS·기존 opt-in 평가4SKIP·실패0, hook self-testsPASS다. Commit/PR: 동일 커밋 예정.
+- [ ] `[AGENT]` 독립 결함 주입과 최종 리뷰, Draft PR·해당 HEAD CI.
+- [ ] `[USER]` D2 명시 선호 집계 결정. 현재 AVAILABLE을 선호로 추정하지 않고 preferenceCount=0이다. 선호 구현·검증이나 전체95완료로 보고하지 않는다.
+- `[AGENT]` 전체 대안을 임의 저장 상한으로 자르지 않는다. N=50·많은 창에서 조합/membership 규모가 커지므로 primary최대3·대안limit+1·선택option만 DB에서 조회하고 membership을500행 batch로 게시하도록 개선했다. 전체 조합 저장 규모와 대량 variant 응답의 실측/참석집합 정규화는 후속 평가 범위다.
+
+- `[AGENT]` 필수 쿼리 누락400을 기존 RFC9457 VALIDATION_FAILED로 통일했다. 독립 binding4사례에서 누락만유효RED(다른UUID/정수형식3사례는기존전역handlerGREEN), 수정후4GREEN. 기존5파일은독립저자가V9와새프로토콜의우회409/typed성공계약에맞췄고PR94baseline69개중5assertRED 및결과문서8개중1assertRED를별도로기록했다. 기대값약화없는독립재리뷰를완료했다.
+- `[AGENT]` 기존 CI 보조검사: 배포정책Node13PASS, Compose비밀값보존PASS, 자격증명갱신fixturePASS, V8releaseguard37PASS. Nginx는선택환경checkout0600/700과Dockerclientproxy로기존runtime검사실패를확인한뒤 원본과byte-identical한로컬읽기fixture와빈Dockerclientconfig에서변경없는runtime스크립트PASS를확인했다. 저장소파일권한·운영정책은변경하지않았고정확원격HEAD CI를별도로확인한다.

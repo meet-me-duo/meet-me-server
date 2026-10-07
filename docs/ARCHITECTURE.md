@@ -506,3 +506,16 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 9. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
 10. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX
 11. Post-MVP 실제 좌표·이동시간 검증을 위한 지도 공급자, 결제 방식과 Gemini 그룹 보정 정책
+
+
+### 다양한 시간 추천 projection과 typed selection (#95, ADR-047)
+
+기존 legacy matcher·candidates·final_confirmations와 별개로 결정론적 RecommendationProjector가 N/N-1/N-2 전체 조합의 실제 연속 창과 mode/장소/참석 variant를 만든다. primary는 최대 세 시간안이며 전체 대안은 손실 없는 cursor로 조회한다. 신규 분석의 legacy 결과와 recommendation_analyses/options/variants/참석 관계는 방→run 잠금 아래 하나의 PostgreSQL 트랜잭션으로 게시한다. Redis·LLM은 추천 순위나 최종 시각을 결정하지 않는다. V1~V8은 수정하지 않고 V9를 추가한다.
+
+D2 명시 선호 집계는 [계약](ISSUE_95_CONTRACT.md)의 TBD다. 기존 AVAILABLE을 선호로 추정하지 않으며 해당 종속 구현은 승인 전 보류한다. 자정의 인접 구간은 연속 창으로 보존한다. 신규 A/B/C는 primary 표시 순서이고 기존 plan_type은 legacy 의미를 보존한다.
+
+`GET recommendations`, `GET recommendations/alternatives`, `POST recommendations/{optionId}/confirmation`은 기존 참여·HOST·Origin·호출 제한 정책을 재사용한다. 방 응답 recommendation_protocol과 추천 envelope protocol의 정확한 지원 값은 diverse-time-v1이며 legacy는 null이다. typed 선택은 candidate FK와 분리한 recommendation_selections에 전체 분석/option/variant/start/end 튜플로 저장한다. 같은 방·분석·variant FK, 단일 창 containment, active analysis·CLOSED·OPEN round 없음과 구 확정 없음 검사를 적용한다. 결과는 실제 선택 시간과 별도 selection을 제공하며 신규 candidate_id는 null이다. 기존 candidates 읽기와 과거 확정은 유지하지만 신규 protocol의 구 candidate-only 확정은409로 거부한다.
+
+CONFIRMED·capability·입력 수정·worker 보호는 두 확정 타입을 모두 인식한다. DB도 구 writer의 신규 분석 확정·확정 run/방 pointer 변경·수정 round 삽입을 거부한다. 보존기간 정리는 선택 관계를 먼저 제거한 뒤 pointer·run을 기존 순서로 삭제하며 분석 하위 관계는 cascade로 정리한다. 이는 구 V8 애플리케이션의 읽기나 lifecycle 호환을 보장하지 않는다. V9 migration 전에 앱 전체 writer/worker/retention을 중지하고 V9 호환 정확 digest만 허용하는 운영 검토가 필요하다. 기존 V8 guard의 호환 manifest나 기존 배포 승인을 V9로 자동 확대하지 않으며 이번 작업에서 운영 guard·권한·배포를 변경하지 않는다.
+
+- #95 조회는 분석 전체 option을 hydrate하지 않고 primary최대3, 대안은 ordinal cursor의 limit+1, 확정/결과는 단일option을 SQL로 조회한다. total_options/has_alternatives는 분석 metadata count를 유지한다. 해당 option의 variant와 참석 membership만 읽고500행씩 게시하며 별도 option FK 조회 인덱스를 둔다.

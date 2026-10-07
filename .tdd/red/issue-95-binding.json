@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-95-binding",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationBindingPostgresTest.kt",
+      "sha256": "d9a561e9cca486fc5c3a56e6581b0029fb32cc83b750077f997ebe9176a7d750"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPostgresFixture.kt",
+      "sha256": "b165fe1f4b8c8ce5e1a3b68a4dea962c4598649209cd1bba0b36bd42838f07f6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RecommendationBindingPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationBindingPostgresTest.invalid alternative binding \"MISSING_ANALYSIS\" returns the documented problem without mutation"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:23:00.408467Z"
+}

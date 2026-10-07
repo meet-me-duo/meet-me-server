@@ -259,11 +259,11 @@ class RoomLifecycleService(
                 false
             }
         val completed = run?.status == com.meetme.server.coordination.domain.CoordinationStatus.COMPLETED
-        val unconfirmed = run != null && run.confirmedCandidateId == null
+        val unconfirmed = run != null && !run.isConfirmed
         val recoveryResult =
             completed &&
                 unconfirmed &&
-                (run.candidates.isEmpty() || run.quality == com.meetme.server.coordination.domain.CandidateQuality.PARTIAL)
+                (!run.hasSelectableResult || run.quality == com.meetme.server.coordination.domain.CandidateQuality.PARTIAL)
         return RoomView(
             inviteCode = inviteCode.value,
             purpose = purpose,
@@ -295,11 +295,12 @@ class RoomLifecycleService(
                     canEditOwnSubmission = viewer != null && (collectionStatus == CollectionStatus.COLLECTING || sourceCohort),
                     canOpenRevision = host && round == null && recoveryResult,
                     canAnalyzeRevision = host && round != null,
-                    canConfirm = host && round == null && completed && unconfirmed && run.candidates.isNotEmpty(),
+                    canConfirm = host && round == null && completed && unconfirmed && run.hasSelectableResult,
                     canForceReparse = host && round != null && correctionAnalysisCount < 3,
                 ),
             remainingCorrectionAnalyses = 3 - correctionAnalysisCount,
             stateVersion = version,
+            recommendationProtocol = run?.recommendationProtocol,
         )
     }
 
@@ -307,14 +308,14 @@ class RoomLifecycleService(
         if (collectionStatus == CollectionStatus.COLLECTING) return PublicRoomStatus.COLLECTING
         if (submittedParticipants < 2) return PublicRoomStatus.INSUFFICIENT_PARTICIPANTS
         val run = coordinationRunRepository.findLatestByRoom(id) ?: return PublicRoomStatus.ANALYZING
-        if (run.confirmedCandidateId != null) return PublicRoomStatus.CONFIRMED
+        if (run.isConfirmed) return PublicRoomStatus.CONFIRMED
         return when (run.status) {
             com.meetme.server.coordination.domain.CoordinationStatus.ANALYSIS_DELAYED,
             com.meetme.server.coordination.domain.CoordinationStatus.DEAD_LETTERED,
             -> PublicRoomStatus.ANALYSIS_DELAYED
             com.meetme.server.coordination.domain.CoordinationStatus.COMPLETED ->
                 when {
-                    run.candidates.isEmpty() -> PublicRoomStatus.NO_MATCH
+                    !run.hasSelectableResult -> PublicRoomStatus.NO_MATCH
                     run.quality == com.meetme.server.coordination.domain.CandidateQuality.PARTIAL ->
                         PublicRoomStatus.READY_WITH_WARNINGS
                     else -> PublicRoomStatus.READY

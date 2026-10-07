@@ -15,6 +15,7 @@ internal object ActiveRunLock {
         val room = rooms.findByIdForUpdate(requested.roomId) ?: return null
         if (room.activeRunId != requested.id.value || room.activeRevisionRoundId != null) return null
         val current = runs.findByIdForUpdate(requested.id) ?: return null
+        if (current.isConfirmed) return null
         check(current.roomId == room.id && current.batch.id == requested.batch.id) { "Active run identity is invalid" }
         return room to current
     }

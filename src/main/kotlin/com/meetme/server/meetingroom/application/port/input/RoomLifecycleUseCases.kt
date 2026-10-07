@@ -91,6 +91,7 @@ data class RoomView(
     val capabilities: RoomCapabilities = RoomCapabilities(),
     val remainingCorrectionAnalyses: Int = 3,
     val stateVersion: Long = 0,
+    val recommendationProtocol: String? = null,
 )
 
 data class RoomAccessResult(

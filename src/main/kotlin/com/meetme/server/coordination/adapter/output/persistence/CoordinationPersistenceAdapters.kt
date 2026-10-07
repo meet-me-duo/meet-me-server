@@ -9,6 +9,7 @@ import com.meetme.server.coordination.application.port.output.NormalizedPlaceSta
 import com.meetme.server.coordination.application.port.output.OutboxEvent
 import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
+import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.location.GeoCoordinate
 import com.meetme.server.shared.domain.CoordinationRunId
@@ -30,6 +31,7 @@ import java.util.UUID
 class KomapperCoordinationRunRepository(
     private val database: JdbcDatabase,
     private val jdbcTemplate: JdbcTemplate,
+    private val recommendations: RecommendationRepository? = null,
 ) : CoordinationRunRepository {
     override fun insert(run: CoordinationRun) {
         val records = PersistenceMappers.toRecords(run)
@@ -105,8 +107,29 @@ class KomapperCoordinationRunRepository(
                     .where { Meta.finalConfirmationRecord.coordinationRunId eq run.id }
                     .firstOrNull()
             }
+        val metadata =
+            jdbcTemplate
+                .query(
+                    "SELECT protocol, (SELECT count(*) FROM recommendation_options " +
+                        "WHERE coordination_run_id = a.coordination_run_id) AS option_count " +
+                        "FROM recommendation_analyses a WHERE coordination_run_id = ?",
+                    { rs, _ -> rs.getString("protocol") to rs.getInt("option_count") },
+                    run.id,
+                ).firstOrNull()
+        val selection = recommendations?.findSelection(run.id)
         return PersistenceMappers.toDomain(
-            CoordinationRecords(batch, batchItems, run, candidates, candidateParticipants, ranges, confirmation),
+            CoordinationRecords(
+                batch,
+                batchItems,
+                run,
+                candidates,
+                candidateParticipants,
+                ranges,
+                confirmation,
+                metadata?.first,
+                metadata?.second,
+                selection,
+            ),
         )
     }
 
@@ -167,6 +190,7 @@ class KomapperCoordinationRunRepository(
                 check(existingCandidateId == confirmation.candidateId) { "A different candidate is already confirmed" }
             }
         }
+        run.recommendationSelection?.let { requireNotNull(recommendations).insertSelection(it) }
     }
 
     override fun findByIdForUpdate(id: CoordinationRunId): CoordinationRun? {
