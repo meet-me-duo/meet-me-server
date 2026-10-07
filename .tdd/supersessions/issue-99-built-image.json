@@ -1,0 +1,22 @@
+{
+  "workItem": "issue-99-built-image",
+  "reason": "Independent appended12 explicit ARM64 runner test after real CI build/load success and isolated file-check failure; previous11 byte-preserved",
+  "previousTests": 11,
+  "currentTests": 12,
+  "history": ".tdd/history/issue-99-built-image",
+  "oldSha256": "da5084420a26eb203bb11b1d138ad72b6b9b0273d1f5dab73f276c33bd421643",
+  "currentSha256": "c96e4106fe6c8b8725abfd358c5dc155a1081a29adfc76998a189e32ed37b660",
+  "platformReviewRed": {
+    "tests": 12,
+    "pass": 11,
+    "fail": 1,
+    "assertion": true
+  },
+  "newActualArmImageChecks": "PENDING_NEXT_EXACT_HEAD_CI",
+  "finalGreen": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "skip": 0
+  }
+}

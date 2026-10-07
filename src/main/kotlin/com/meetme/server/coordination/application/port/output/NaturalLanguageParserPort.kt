@@ -1,6 +1,7 @@
 package com.meetme.server.coordination.application.port.output
 
 import com.meetme.server.submission.domain.StructuredSubmissionResult
+import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Locale
@@ -9,6 +10,7 @@ data class NaturalLanguageInput(
     val inputRef: String,
     val rawText: String,
     val locale: Locale,
+    val referenceDate: LocalDate,
 )
 
 data class NaturalLanguageBatchRequest(
@@ -16,6 +18,7 @@ data class NaturalLanguageBatchRequest(
     val searchStartDate: LocalDate,
     val searchEndDate: LocalDate,
     val inputs: List<NaturalLanguageInput>,
+    val callTimeout: Duration = Duration.ofSeconds(15),
 )
 
 data class ParserUsage(
@@ -36,6 +39,11 @@ enum class ParserFailureKind {
     SERVER,
     INVALID_RESPONSE,
     CONFIGURATION,
+    AUTHENTICATION,
+    PERMISSION,
+    BILLING,
+    QUOTA,
+    INVALID_REQUEST,
 }
 
 class NaturalLanguageParserException(

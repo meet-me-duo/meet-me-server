@@ -1,0 +1,277 @@
+{
+  "workItem": "issue-99-integrated-d2-independent-review",
+  "reviewer": "/root/independent_review",
+  "role": "Independent read-only test and final source reviewer; no production/test implementation authored and no Gradle invocation",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "sourceRevisionScope": "Git revision identifies accepted PR97 baseline; sourceFiles and test-review fingerprints identify actual final uncommitted integration bytes reviewed. No main/develop merge or remote HEAD CI signoff is implied.",
+  "recordedAt": "2026-10-07T07:56:58.308204+00:00",
+  "codeAndEvidenceVerdict": "PASS",
+  "blockingFindings": [],
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt",
+      "sha256": "af23494b2de0e62ed933343e7761dc6a5d712b05ff7e4980bf343545dc4d4a64"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/SubmissionPersistenceAdapters.kt",
+      "sha256": "50db6ad18c97b2abda9cf93cb79afdde10b8def5267b68410349f7b8e8f0b381"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
+      "sha256": "ef4c3adc7cdd72853aacf7a1348bc65eb15eef59f00540f385f7170b9af51b93"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjector.kt",
+      "sha256": "af27573bbbac11df940420464c9b8214c84050e072fee85fa21c22b181174eb3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "40321fbd6060a05a289f28fc6807d8053fbb3eae51fcb7b0f99378d47a7a96be"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt",
+      "sha256": "24c165bfbf25057c29c89be29fad6a90df504024fe13255360efc32d0a46ebf8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/OpenAiLunaNaturalLanguageParserAdapter.kt",
+      "sha256": "1dc83e608bde54d2195df2ceb513c3c10dea0c564f27e399e6c59fe10d5f0905"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d6ef45e14b1ae9ca28b13497c047cdfbd6555ecd8c19c407ff6e3b109549b7d6"
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__add_time_recommendations.sql",
+      "sha256": "a6fc046611fb3cafa96d51f87de09687b3fdecc403988d211b7d86c4fad0585d"
+    },
+    {
+      "path": "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql",
+      "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab"
+    }
+  ],
+  "testDesignReview": ".tdd/reviews/issue-99-independent-test-review.json",
+  "closedFindings": [
+    {
+      "finding": "Dropped invalid preference dimension could become a satisfied single-dimension preference and award a false AND score.",
+      "resolution": "Frozen result rejection disables canScore while retained valid hard availability and meaningful preference subwindows remain.",
+      "evidence": "D2RejectedPreferencePostgresTest2 initial assertions RED, final safety GREEN, score-rejected-preferences mutant2 assertions."
+    },
+    {
+      "finding": "Rejected v3 hard TIME_WINDOW could disappear, turning remaining preferences/places into neutral full-search availability or ignoring a lost UNAVAILABLE condition.",
+      "resolution": "All caught parsing failures of raw v3 TIME_WINDOW mark AMBIGUOUS_TIME_CONSTRAINT ahead of supplied generic rejection; valid typed conditions persist and existing unsafe-time matching boundary excludes attendance. Preference-only rejection remains generic partial, v1/v2 compatibility stays unchanged.",
+      "evidence": "D2UnsafeHardTimeContractTest and D2UnsafeHardTimePostgresTest fresh RED/GREEN and forget-unsafe-hard-time mutant5 assertions."
+    },
+    {
+      "finding": "Hard condition unknown-null/missing nullable keys could be erased before validation.",
+      "resolution": "Raw v3 exact declared keys are validated before null filtering, with declared shape preserved for every condition type.",
+      "evidence": "D2HardConditionShapeContractTest and discard-unknown-null-keys mutant4 assertions."
+    }
+  ],
+  "reviewedBoundaries": [
+    "Domain types remain provider neutral and framework independent; adapter/application dependencies point inward.",
+    "Availability/exclusions remain hard, preferences remain separate; per-attendee one point, same-dimension union/OR and cross-dimension AND.",
+    "Explicit preference presence survives empty search expansion; remote does not fulfill a preferred physical area.",
+    "Original hard windows, clipped preference windows and pairwise shared intersections preserve all meaningful finite windows; no padding or manufactured place compatibility.",
+    "Variant/order quality precedes established date/clock/absolute diversity, deterministic stable ids and unchanged legacy Plan matcher.",
+    "Common live v3 schema/prompt/validator and Luna format name match; input refs, strict nullable fields, AREA names,32-condition and262144-byte limits retained.",
+    "JSON roundtrip preserves hard/soft role and24:00; frozen batch input/version restored without reading mutable latest input.",
+    "Matching bounded publication uses exact room/run/version locks, candidate/place/projection/room writes in one transaction and postpublication monotonic/durable guard with fresh delay after rollback.",
+    "PR97 public RecommendationController/DTO and V9 migration bytes unchanged relative to accepted baseline; V10 additive invocation migration retains SQL content; no deployed checksum repair claimed."
+  ],
+  "verification": {
+    "firstFocusedGreen": {
+      "tests": 73,
+      "suites": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlDirectory": ".codex/tdd-evidence/issue-99-first-green-xml"
+    },
+    "safetyFreshRed": {
+      "tests": 14,
+      "assertionFailures": 9,
+      "errors": 0,
+      "xmlDirectory": ".codex/tdd-evidence/issue-99-safety-final-red-xml"
+    },
+    "safetyGreen": {
+      "tests": 61,
+      "suites": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlDirectory": ".codex/tdd-evidence/issue-99-safety-green-xml"
+    },
+    "countsOverlap": "Focused and safety runs overlap; totals must not be added to claim unique test count.",
+    "reviewerGradleRuns": 0
+  },
+  "faultVerification": {
+    "rawResults": {
+      "path": ".codex/tdd-evidence/issue-99-faults-results.json",
+      "sha256": "a8a10655363e386d07b58bc622e3deccb1cf21f9802da83edbc3056885ca74b9"
+    },
+    "mutations": [
+      {
+        "name": "and-to-or",
+        "assertionFailures": 9,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "multiple-votes",
+        "assertionFailures": 9,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "partial-overlap",
+        "assertionFailures": 3,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "drop-subwindows",
+        "assertionFailures": 3,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "forget-explicit-empty-dimension",
+        "assertionFailures": 2,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "score-rejected-preferences",
+        "assertionFailures": 2,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "ignore-hard-exclusion",
+        "assertionFailures": 1,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "luna-format-drift",
+        "assertionFailures": 1,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "discard-unknown-null-keys",
+        "assertionFailures": 4,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "forget-unsafe-hard-time",
+        "assertionFailures": 5,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      },
+      {
+        "name": "skip-postprojection-deadline",
+        "assertionFailures": 2,
+        "exitCode": 1,
+        "exactFailureNamesIndependentlyMatchXml": true
+      }
+    ],
+    "detectedMutants": 11,
+    "assertionFailures": 41,
+    "compilerOrSetupFailureCountedAsDetection": false,
+    "frozenFileCount": 247,
+    "currentManifestMatchesFrozenBytesIndependently": true,
+    "rootReportedAllMutantsRestored": true,
+    "executionOwner": "/root"
+  },
+  "limitations": [
+    "Domain/scope RED confirmed from raw log; its RED XML was not archived. No XML-backed domain RED claim is made.",
+    "Mocked or loopback provider outputs establish wire contracts and deterministic restoration; no fresh paid language-quality evaluation was performed.",
+    "Large projection test proves actual publication rollback/ACK after deadline; it does not establish a wall-clock performance benchmark or remote model cancellation guarantee.",
+    "Historical legacy provider fixture/JSON behavior is preserved; no old analysis backfill or automatic reanalysis is claimed.",
+    "Mandatory guard/full suite/native OpenAPI export and precise draft PR HEAD CI are parent-owned remaining completion gates at this review snapshot.",
+    "Operations V8 guard/digest/drain approval, deployment, production migrations, security and secrets remain outside code signoff."
+  ],
+  "authorizationBoundaries": {
+    "paidCalls": 0,
+    "sourceOrTestEditsByReviewer": 0,
+    "secretValuesReadOrWritten": false,
+    "mergeOrDeploy": false
+  },
+  "postGuardContractSupersessionReview": {
+    "verdict": "PASS",
+    "reviewer": "/root/independent_review",
+    "currentTestFile": {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "8f2d0f18fa5fcbb6e0f95b8459b4b3b620e101d64f6fed4d770ecfa07d4413b6"
+    },
+    "supersession": {
+      "path": ".tdd/supersessions/issue-99-schema-preference-expansion.json",
+      "sha256": "afa687b61732bf499db7195369bb45f62f2361ca379fb0132f82022b43a72654"
+    },
+    "beforeArchivedHashMatches": true,
+    "fiveHistoricalRedArchivesMatchOriginalAcceptedGitBytes": true,
+    "historicalRevisionsAndCommandsUnchanged": true,
+    "actualGuardObservationExpected5Actual8IndependentlyMatchesArchivedXml": true,
+    "classification": "CONTRACT_SUPERSEDED; not initial missing-behavior RED",
+    "scope": "Only independently amended schema-shape method and DayOfWeek import; remaining methods byte-equivalent. Exact hard5 plus preferred3 preserves hard roles and strengthens required/property key, strictness, date/recurrence scope and HH:mm/no-offset checks.",
+    "focusedGreen": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "xmlDirectory": ".codex/tdd-evidence/issue-99-schema-preference-expansion-green-xml"
+    },
+    "currentTrackedFingerprintCount": 247,
+    "currentTrackedFingerprintMismatches": [],
+    "historicalFaultManifestCurrentDifferences": [
+      "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt"
+    ],
+    "productionSourceUnchangedSinceFaultBaseline": true,
+    "historicalFaultProofPolicy": "Original11mutation/41assertion/247byte-restoration proof remains unchanged and valid for original mutation baseline; subsequent non-injected test supersession is separately fingerprinted and not represented as re-running faults.",
+    "evidenceScope": "Issue99 current evidence only; unrelated unchanged historical RED records are not retrospectively repaired or certified."
+  },
+  "finalDocumentReview": {
+    "verdict": "PASS",
+    "files": [
+      {
+        "path": "docs/ADR.md",
+        "sha256": "5b2bbc51e7cbc53a43089d6409e8d9f4f82ff13d96b20ed920d1f7451a5214a5"
+      },
+      {
+        "path": "docs/ARCHITECTURE.md",
+        "sha256": "8a962471b707c3dd881b6cfd96450e8e2814ed9a06c70c8b5e22fcf3696d442b"
+      },
+      {
+        "path": "docs/ISSUE_99_INTEGRATION.md",
+        "sha256": "7c594896bac11df5bd2732e98734549342fe357e0256ce832f9f74304a373054"
+      }
+    ],
+    "closedFindings": [
+      "Architecture now distinguishes malformed v3 hard TIME_WINDOW unsafe rejection from generic preference/other partial validation.",
+      "Issue99 now explicitly calls integrated fallback parser typed fake and requires actual common parser connection in dedicated live D2 evaluation."
+    ],
+    "productAndDeploymentCompletionSeparated": true,
+    "paidEvaluationHarnessLimitationsExplicit": true
+  },
+  "nativeOpenApiReview": {
+    "verdict": "PASS",
+    "evidence": {
+      "path": ".tdd/reviews/issue-99-openapi-contract.json",
+      "sha256": "91f0946c77f301369b6a89a6af51d958ab60aca98c655bf206e2d5c7dfa81ef0"
+    },
+    "baseline": {
+      "path": "docs/openapi/issue-95.openapi.json",
+      "sha256": "56a8ddfa3bc7bd1c562ddb31a6ea8c39806abb86eef727381992678f2e9b42f2"
+    },
+    "nativeExport": {
+      "path": ".codex/tdd-evidence/issue-99.openapi.json",
+      "sha256": "2681d3f2b5ece9b37aee4bae393dd6b03a1b1285172a754b3f75dee99e24501d"
+    },
+    "independentlyParsedJsonEqual": true,
+    "byteEqual": false,
+    "publicApiChanges": false,
+    "browserJointValidationClaimed": false
+  }
+}

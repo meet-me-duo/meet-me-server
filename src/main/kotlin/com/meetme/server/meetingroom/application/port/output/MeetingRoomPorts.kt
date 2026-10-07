@@ -18,6 +18,8 @@ interface MeetingRoomRepository {
 
     fun findById(id: MeetingRoomId): MeetingRoom?
 
+    fun findByIdForUpdate(id: MeetingRoomId): MeetingRoom?
+
     fun findByInviteCode(inviteCode: InviteCode): MeetingRoom?
 
     fun findByInviteCodeForUpdate(inviteCode: InviteCode): MeetingRoom?

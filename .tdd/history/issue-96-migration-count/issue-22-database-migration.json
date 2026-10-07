@@ -1,0 +1,23 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-22-database-migration",
+  "sourceRevision": "a9c334eeba5f7ea8e4dfad7eab2938f15fdd55a6",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "ef452fcb24ed28954d1f0a05d8218419ef0760e135b61813ad316e5037f4da02"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*DatabaseMigrationRunnerTest"
+  ],
+  "failedTests": [
+    "DatabaseMigrationRunnerTest - 운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-09-20T06:39:24.8824599Z"
+}

@@ -41,6 +41,9 @@ class CandidateScenarioMatrixTest {
                             .toString(),
                         scenario.texts[index],
                         Locale.KOREAN,
+                        submission.latest.createdAt
+                            .atZone(ZoneId.of("Asia/Seoul"))
+                            .toLocalDate(),
                     )
                 },
             )

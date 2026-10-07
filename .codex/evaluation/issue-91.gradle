@@ -1,0 +1,25 @@
+allprojects { p ->
+    p.pluginManager.withPlugin('org.jetbrains.kotlin.jvm') {
+        p.tasks.register('meetmeGeminiEvaluation', JavaExec) {
+            dependsOn p.tasks.named('testClasses')
+            classpath = p.sourceSets.test.runtimeClasspath
+            mainClass = 'com.meetme.server.coordination.adapter.output.integration.evaluation.BoundedGeminiEvaluation'
+            args p.file('src/test/resources/evaluation/issue-91/cases.json').absolutePath,
+                 p.providers.gradleProperty('meetmeEvalOutput').get(),
+                 p.providers.gradleProperty('meetmeEvalSha').get()
+            environment 'MEETME_LIVE_EVAL_AUTHORIZED', p.providers.gradleProperty('meetmeLiveEval').getOrElse('false')
+            environment 'MEETME_LIVE_COST_BOUND_VERIFIED', p.providers.gradleProperty('meetmeCostBoundVerified').getOrElse('false')
+            environment 'MEETME_EVAL_EXTENSION_FILE',
+                p.providers.gradleProperty('meetmeEvalExtension').getOrElse('false') == 'true' ?
+                p.file('src/test/resources/evaluation/issue-91/extension.json').absolutePath : ''
+            environment 'MEETME_EVAL_REPLAY_DIRECTORY', p.providers.gradleProperty('meetmeReplayDirectory').getOrElse('')
+            environment 'MEETME_EVAL_APPROVAL_ID', p.providers.gradleProperty('meetmeEvalApprovalId').getOrElse('')
+            environment 'MEETME_EVAL_LEDGER_DIRECTORY', p.providers.gradleProperty('meetmeEvalLedgerDirectory').getOrElse('')
+            def trustStore = p.providers.gradleProperty('meetmeEvalTrustStore')
+                .orElse(p.providers.systemProperty('javax.net.ssl.trustStore'))
+            if (trustStore.isPresent()) {
+                systemProperty 'javax.net.ssl.trustStore', trustStore.get()
+            }
+        }
+    }
+}

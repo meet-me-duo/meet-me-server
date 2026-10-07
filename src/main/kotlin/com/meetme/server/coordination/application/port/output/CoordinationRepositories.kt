@@ -15,8 +15,11 @@ interface CoordinationRunRepository {
 
     fun findById(id: CoordinationRunId): CoordinationRun?
 
+    fun findByIdForUpdate(id: CoordinationRunId): CoordinationRun?
+
     fun update(run: CoordinationRun)
 
+    /** Compatibility name: resolves only meeting_rooms.active_run_id, never timestamp order. */
     fun findLatestByRoom(roomId: MeetingRoomId): CoordinationRun?
 
     fun findLatestByRoomForUpdate(roomId: MeetingRoomId): CoordinationRun?
@@ -62,6 +65,10 @@ data class CoordinationAttempt(
     val outputTokens: Long?,
     val responseBytes: Int?,
     val estimatedCostUsd: java.math.BigDecimal?,
+    val provider: AnalysisProvider = AnalysisProvider.GEMINI,
+    val model: String = "gemini-3.8-flash",
+    val policyVersion: String = "gemini-v1",
+    val invocationId: UUID? = null,
 )
 
 interface CoordinationAttemptRepository {

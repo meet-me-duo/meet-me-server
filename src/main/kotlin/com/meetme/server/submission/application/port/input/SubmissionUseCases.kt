@@ -9,6 +9,8 @@ data class SaveSubmissionCommand(
     val rawCredential: String?,
     val rawText: String?,
     val locale: Locale,
+    val revisionRoundId: java.util.UUID? = null,
+    val expectedRevision: Int? = null,
 )
 
 data class SubmissionView(
@@ -18,6 +20,8 @@ data class SubmissionView(
     val locale: String,
     val createdAt: Instant,
     val editable: Boolean,
+    val revisionRoundId: java.util.UUID? = null,
+    val stateVersion: Long = 0,
 )
 
 interface SaveSubmissionUseCase {

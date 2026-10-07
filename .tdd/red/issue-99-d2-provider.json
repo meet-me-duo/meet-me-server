@@ -1,0 +1,44 @@
+{
+  "workItem": "issue-99-d2-provider",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2PreferenceProviderContractTest.kt",
+      "sha256": "dbe0bc2c3295ab38370ac6f9657577aa463b28cbf68b241c57a50ab3be1a5692"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*RecommendationProjectorD2ContractTest",
+    "--tests",
+    "*D2PreferenceProviderContractTest",
+    "--tests",
+    "*D2PreferenceJsonMapperTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.invalid preference cannot silently disappear while the valid hard condition is retained()",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.hard exclusion polarity is never reinterpreted as preference()",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.unsupported conditional rejection cannot be changed to a usable preference-only result()",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.both live adapters transmit the same strict v3 schema and restore independent hard and preferred conditions()",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.hard and preferred places with the same area key must agree on one display name()",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.[2] version = \"2\"",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.dated recurring and next day preferred boundaries remain typed without availability polarity()",
+    "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.preferred conditions share the existing 32 condition ceiling and repeated alternatives stay separate()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:23:51.284062Z"
+}

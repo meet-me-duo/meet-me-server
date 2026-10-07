@@ -73,7 +73,52 @@ data class ViewerParticipationResponse(
     val displayName: String?,
     @field:Schema(description = "현재 세션 참여자의 역할", nullable = true)
     val role: ParticipantRole?,
+    @field:JsonProperty("context_id")
+    @field:Schema(
+        description = "현재 세션의 본인 room-scoped opaque 참여자 UUID. 자기 원문 캐시 분리 hint이며 권한 증명은 아님",
+        nullable = true,
+        format = "uuid",
+    )
+    val contextId: java.util.UUID? = null,
 )
+
+@Schema(description = "조건 수정 라운드. 과거 operation 결과와 현재 활성 라운드는 별개")
+data class RevisionRoundResponse(
+    @field:Schema(description = "수정 라운드 UUID", format = "uuid", requiredMode = Schema.RequiredMode.REQUIRED) val id: java.util.UUID,
+    @field:Schema(description = "방의 단조 증가 라운드 번호", minimum = "1", requiredMode = Schema.RequiredMode.REQUIRED) val generation: Long,
+    @field:Schema(description = "OPEN 또는 CONSUMED", requiredMode = Schema.RequiredMode.REQUIRED) val status:
+        com.meetme.server.coordination.domain.RevisionRoundStatus,
+) {
+    companion object {
+        fun from(view: com.meetme.server.meetingroom.application.port.input.RevisionRoundView) =
+            RevisionRoundResponse(view.id, view.generation, view.status)
+    }
+}
+
+@Schema(description = "현재 익명 세션의 명령 권한")
+data class RoomCapabilitiesResponse(
+    @field:JsonProperty("can_edit_own_submission")
+    @field:Schema(description = "자기 입력 수정 가능") val canEditOwnSubmission: Boolean,
+    @field:JsonProperty("can_open_revision")
+    @field:Schema(description = "주최자가 수정 라운드를 열 수 있음") val canOpenRevision: Boolean,
+    @field:JsonProperty("can_analyze_revision")
+    @field:Schema(description = "주최자가 현재 라운드를 다시 조율할 수 있음") val canAnalyzeRevision: Boolean,
+    @field:JsonProperty("can_confirm")
+    @field:Schema(description = "현재 결과 후보 확정 가능") val canConfirm: Boolean,
+    @field:JsonProperty("can_force_reparse")
+    @field:Schema(description = "변경 없는 입력도 새 분석 실행으로 처리할 수 있음") val canForceReparse: Boolean,
+) {
+    companion object {
+        fun from(view: com.meetme.server.meetingroom.application.port.input.RoomCapabilities) =
+            RoomCapabilitiesResponse(
+                view.canEditOwnSubmission,
+                view.canOpenRevision,
+                view.canAnalyzeRevision,
+                view.canConfirm,
+                view.canForceReparse,
+            )
+    }
+}
 
 @Schema(description = "민감 식별자를 제외한 공개 방 정보")
 data class RoomResponse(
@@ -123,6 +168,21 @@ data class RoomResponse(
     @field:JsonProperty("input_disclosure_policy")
     @field:Schema(description = "부분 결과에서 미반영 원문을 공개하는 범위")
     val inputDisclosurePolicy: InputDisclosurePolicy,
+    @field:JsonProperty("analysis_id")
+    @field:Schema(description = "현재 활성 분석 UUID", nullable = true, format = "uuid") val analysisId: java.util.UUID?,
+    @field:JsonProperty("revision_generation")
+    @field:Schema(description = "지금까지 열린 수정 라운드 번호", minimum = "0") val revisionGeneration: Long,
+    @field:JsonProperty("revision_round")
+    @field:Schema(description = "현재 OPEN 수정 라운드", nullable = true) val revisionRound: RevisionRoundResponse?,
+    @field:Schema(description = "현재 세션 권한") val capabilities: RoomCapabilitiesResponse,
+    @field:JsonProperty("remaining_correction_analyses")
+    @field:Schema(description = "새 수정 분석 실행의 남은 횟수. 방 수명 동안 총 3회", minimum = "0", maximum = "3")
+    val remainingCorrectionAnalyses: Int,
+    @field:JsonProperty("state_version")
+    @field:Schema(description = "방의 조율 상태를 정렬하는 단조 증가 버전", minimum = "0") val stateVersion: Long,
+    @field:JsonProperty("recommendation_protocol")
+    @field:Schema(description = "활성 분석의 실제 시각 선택 protocol; legacy 또는 분석 전에는 null", nullable = true)
+    val recommendationProtocol: String? = null,
 ) {
     companion object {
         fun from(view: RoomView) =
@@ -141,8 +201,15 @@ data class RoomResponse(
                 view.closureReason,
                 view.closedAt,
                 view.publicStatus,
-                ViewerParticipationResponse(view.viewer.joined, view.viewer.displayName, view.viewer.role),
+                ViewerParticipationResponse(view.viewer.joined, view.viewer.displayName, view.viewer.role, view.viewer.contextId),
                 view.inputDisclosurePolicy,
+                view.analysisId,
+                view.revisionGeneration,
+                view.revisionRound?.let(RevisionRoundResponse::from),
+                RoomCapabilitiesResponse.from(view.capabilities),
+                view.remainingCorrectionAnalyses,
+                view.stateVersion,
+                view.recommendationProtocol,
             )
     }
 }

@@ -208,7 +208,7 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 9. Gemini 성공 시 유효 조건·조건별 미반영 사유를 저장하고 매칭한다. MatchingProcessor는 legacy 슬롯 전용 미반영을 구조화 결과로 기록하며 사유·run·후보 변경을 Application 트랜잭션으로 묶는다.
 10. 기술적 재시도가 소진되면 입력과 고정 배치를 유지한 채 방을 `ANALYSIS_DELAYED`로 전이하고 매칭을 시작하지 않는다. 주최자의 방 단위 재요청은 같은 배치를 대상으로 새 Outbox 이벤트를 멱등하게 발행한다.
 
-입력 수집이 열려 있으면 참여자는 자신의 제출을 수정할 수 있다. 각 수정은 새 불변 버전과 최신 버전 참조를 만든다. Calendar ON 수정에만 새 Calendar 조회가 발생하며 참가자별 Gemini 작업은 만들지 않는다. 종료 시점의 배치 스냅샷에 포함되지 않은 구버전은 구조화하거나 매칭에 사용하지 않는다.
+입력 수집이 열려 있거나 ADR-046의 별도 수정 라운드에서 원래 배치에 포함된 참여자이면 자신의 제출을 수정할 수 있다. 정규화한 원문이 기존 원문과 같으면 revision·시각·locale을 유지하며, 내용이 바뀐 수정은 새 불변 버전과 최신 버전 참조를 만든다. Calendar ON 수정에만 새 Calendar 조회가 발생하며 참가자별 Gemini 작업은 만들지 않는다. 종료 시점의 배치 스냅샷에 포함되지 않은 구버전은 구조화하거나 매칭에 사용하지 않는다.
 
 신규 입력 경로의 수동 DTO 변환·정규화·저장은 종료한다. 기존 ManualAvailability·Record·Mapper는 구 데이터 복원 경계로 유지한다. 구 수동 테이블·불변 버전은 보존하며 collecting 중 본인 자연어 수정은 새 버전으로 저장한다.
 
@@ -259,7 +259,7 @@ Gemini 프롬프트는 AVAILABLE/UNAVAILABLE·명시 대안·하드 제외·부�
 
 | 책임 | 기준 상태 | 의미 |
 | --- | --- | --- |
-| 방 입력 수집 | `COLLECTING`, `CLOSED` | 제출·수정 가능 여부의 기준이다. `CLOSED`가 되면 다시 열리지 않는다. |
+| 방 입력 수집 | `COLLECTING`, `CLOSED` | 최초 입력 수집의 기준이다. `CLOSED`는 불변이며 별도 OPEN 수정 라운드의 cohort만 자기 입력을 수정할 수 있다. |
 | 마감 원인 | `EXPECTED_PARTICIPANTS`, `DEADLINE`, `MANUAL` | 가장 먼저 수집을 종료한 원인을 `closed_at`과 함께 기록한다. |
 | 고정 배치 조율 작업 | `QUEUED`, `STRUCTURING`, `MATCHING`, `COMPLETED`, `ANALYSIS_DELAYED`, `DEAD_LETTERED` | Redis 전달과 무관하게 PostgreSQL이 작업 진행과 실패의 기준이다. 자연어가 없는 배치는 `STRUCTURING`을 건너뛴다. |
 | 후보 집합 품질 | `COMPLETE`, `PARTIAL` | 후보가 모든 유효 입력을 반영했는지, 일부 자연어 조건이 미반영되었는지를 나타낸다. |
@@ -276,6 +276,18 @@ Gemini 프롬프트는 AVAILABLE/UNAVAILABLE·명시 대안·하드 제외·부�
 7. 그 밖의 종료 후 대기·구조화·매칭 구간은 `ANALYZING`이다.
 
 입력 수집 종료 트랜잭션은 `CLOSED`, 마감 원인, 종료 시점의 최신 제출 배치와 필요한 Outbox 이벤트를 원자적으로 기록한다. 예상 참여 인원·데드라인·수동 마감이 경합해도 하나의 종료만 성공해야 한다. 재분석은 같은 불변 배치를 사용하여 조율 작업과 시도 이력만 갱신하고 입력 수집 상태를 변경하지 않는다. `PARTIAL`은 분석 작업 실패 상태가 아니라 생성된 후보 집합의 품질이므로 `ANALYSIS_DELAYED`와 동시에 성립하지 않는다.
+
+### 입력 보존 수정 라운드 (ADR-046)
+
+- `input_revision_rounds`는 최초 마감과 분리된 OPEN/CONSUMED 상태와 영속 request ID·원래 payload·operation 결과를 저장한다. `meeting_rooms.active_run_id`가 현재 결과를 지정하며 timestamp/UUID 정렬은 마이그레이션 backfill에만 사용한다. same-room 복합 FK와 하나의 OPEN round unique index로 다른 방 참조와 중복 활성 라운드를 막는다.
+- `POST /api/rooms/{inviteCode}/reopen`은 HOST의 미확정 completed NO_MATCH/PARTIAL 결과에서만 라운드를 연다. 방·초대·참가자·입력·설정·최초 closed_at을 유지한다. 새 참가자나 최초 배치에 없는 제출은 받지 않는다. `POST /api/rooms/{inviteCode}/analysis`는 현재 라운드를 소비한다. source batch와 최신 cohort version 집합이 같으면 REUSED이며 작업을 생성하지 않는다. 변경 또는 명시적 force_reparse는 독립 새 batch/run/Outbox를 원자적으로 생성한다.
+- 이번 복구 API는 본인 원문과 기존 언어 중립 미반영 사유를 사용한다. 불확실한 특정 구절이나 LLM 해석 미리보기는 현재 응답에 없으므로 해당 안내를 만들려면 별도 API 계약 확장이 필요하다.
+- correction PUT은 round UUID와 읽은 자기 revision을 요구하며 소유권·현재 상태를 검증한 다음 no-op를 판단한다. owner GET은 마감 이후에도 원문을 반환한다. 수정 저장은 AI를 호출하지 않는다. 역사 버전 복원은 요청된 정확한 version ID만 사용하며 새 head로 대신하지 않는다.
+- 모든 상태 writer는 room → exact run 순으로 잠근다. OPEN 라운드 또는 활성 pointer와 다른 run의 후보 조회·확정·worker 게시·재시도는 허용하지 않는다. 오래된 worker는 새로운 외부 호출 없이 no-op 처리된다. 확정 결과는 보호한다.
+- 공개 room 응답의 viewer.context_id는 현재 세션이 소유한 방 참여자의 opaque UUID이며, 미참여·익명·만료 세션은 null이다. 같은 이름·역할인 다른 세션의 자기 원문 캐시를 구별하는 hint로 사용하고 권한 증명으로 사용하지 않는다. raw credential, guest-session ID나 다른 참여자의 ID는 추가하지 않는다. viewer identity 전환과 401/403은 state_version과 별도로 캐시를 정리해야 하며, 이 field가 없는 구 응답만으로는 같은 이름·역할의 세션 교체를 안전하게 구별할 수 없다.
+- 공개 room/candidates/owner 응답은 REPEATABLE_READ snapshot을 사용하고 room.version을 state_version으로 반환한다. 라운드 generation은 라운드를 식별하고 state_version은 같은 generation 안의 open/consume/publish/confirm도 정렬한다. owner 원문의 별도 revision 및 세션별 cache scope가 함께 필요하다.
+- 새 논리 correction run은 방 수명 동안 3회로 제한한다. replay·REUSED·rollback은 소비하지 않으며 기술 실패로 환불하지 않는다. 기존 지연 분석 retry의 물리 호출은 별도이므로 이 한도는 USD/물리 호출 상한이 아니다. 3회 후에도 OPEN/저장은 가능하며 변경 없는 REUSED는 허용하지만 새 run은 409이다. 새 HOST 경로는 기존 Redis 429/503 fail-closed 제한을 적용한다.
+- 기존 close는 CLOSED 200 no-op, analysis/retry는 delayed-only를 유지한다. 복구 쓰기는 새 클라이언트만 지원하며 rollout은 roll-forward를 전제로 한다. retention은 최초 closed_at의 기존 30일을 유지하고 active pointer와 round를 먼저 지운 뒤 run/batch를 지운다.
 
 ## 7. 데이터 저장 원칙
 
@@ -360,10 +372,14 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 자연어 파싱 결과는 추가 속성을 금지한 JSON Schema 기반 Structured Output으로 제한한다. 입력별 최대 32개 조건과 전체 UTF-8 응답 256KiB를 서버에서도 재검증한다.
 - AI에는 `raw_text`만 전달하며 Calendar 불가 시간, 방 전용 가능 시간과 추가 불가 시간 격자 입력을 전달하거나 칸 단위로 재구성하게 하지 않는다.
 - AI Adapter는 방 전체 제출 배치에서 비어 있지 않은 최신 `raw_text`만 배치 내부 불투명 참조값으로 구분하고, 각 입력 locale과 방 Time Zone ID를 파싱 문맥으로 전달한다. 자연어가 없는 참여자는 AI 요청에서 제외하며 결과는 요청한 입력 참조값별 언어 중립 서버 스키마와 지역 날짜·시간 값으로 변환한다.
+- 입력별 `referenceDate`는 고정 제출 버전의 `createdAt`을 방 시간대로 변환한 지역 날짜다. Worker 시각·탐색 시작일과 분리하여 같은 버전의 재시도·재분석에서도 보존한다. 상대 주는 이 기준일을 포함하는 월요일~일요일이며 특정 날짜 예외를 매주 반복하는 요일 조건으로 바꾸지 않는다.
+- 자연어 전체의 부모 시간·날짜 예외·정정·부정·독립 장소 해석은 Gemini Structured Output의 책임이다. Adapter는 원문 정규식을 두 번째 의미 판정기로 사용하거나 유효한 공급자 SUCCESS 조건을 다른 시간으로 덮어쓰지 않는다. 공급자 `AMBIGUOUS_TIME_CONSTRAINT`도 원문 패턴으로 SUCCESS로 복구하지 않는다. Prompt는 일반 부모 구간·명시 오전/오후·24시간·정오/자정과 시작만 있는 호환 자식의 종료 상속을 안내한다.
+- Matcher는 AVAILABLE 합집합에서 UNAVAILABLE을 차감한다. 따라서 특정 날짜 시작 예외는 반복 기본과 해당 날짜의 제외 prefix로 구조화하도록 요청한다. 이 중첩은 정상적인 축소 표현이며 구조적 모순이 아니다. 참조값·결과 개수·32조건·날짜 유효성/요일 일치·시간 경계·조건 필드·배치 area_key/area_name 일관성 검증은 서버에 유지한다. 독립 시간·장소 조건의 공존 자체로 조건 결합을 추정하지 않는다.
+- Prompt는 원문 전체의 정정·부정과 표현 가능한 조건을 보존하고, 종료를 특정할 수 없는 모호성이나 flat schema로 표현할 수 없는 시간·장소 결합에는 미반영 사유를 반환하도록 요구한다. 구조적으로 유효한 모델 출력이 원문 조건을 누락했는지는 서버 구조 검증만으로 보장하지 못한다. 합성 provider fixture는 결과 보존과 결정론적 매칭 검증이며 실제 모델의 자연어 정확성 근거는 고정 기대값에 대한 별도 실제 평가로 보고한다.
 - 참가자 제출·수정에는 파싱 작업을 생성하지 않는다. 입력 수집 종료 시 고정한 방 전체 제출 배치에 자연어가 하나 이상 있을 때만 하나의 논리 파싱 작업을 생성한다. 자연어가 전혀 없으면 Gemini를 건너뛰고 정형 일정 입력으로 결정론적 매칭을 시작한다.
 - 신규 원문은 ECMAScript trim 후 필수 1~500 Unicode 코드포인트이고 방 합계는 10,000이다. legacy null은 복원 전용으로 Gemini에 전달하지 않으며 초과 원문은 자르지 않는다.
-- 논리 파싱 작업은 최초 호출 1회와 최대 3회의 재시도로 구성한다. 네트워크 오류, timeout, HTTP 429와 공급자 5xx에만 재시도하고 의미 파싱 또는 스키마·도메인 검증 실패에는 같은 배치를 자동 재호출하지 않는다.
-- 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 15초이고 논리 작업 전체 timeout은 60초다.
+- 논리 파싱 작업은 Gemini 최초 1회와 최대 3회 기술 재시도 뒤 OpenAI `gpt-6-luna` 폴백 1회로 제한한다. NETWORK/TIMEOUT/명시적 일시 RATE_LIMIT/SERVER만 재시도·폴백한다. typed 오류 code/status가 문자열보다 우선하며 단순 429/RESOURCE_EXHAUSTED는 quota로 보수적으로 구분한다. 인증·권한·결제·비일시 quota·잘못된 요청·설정·응답 검증 오류는 재시도하지 않는다. 성공한 PARTIAL/NO_MATCH/AMBIGUOUS는 기술 오류가 아니다.
+- 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 Gemini 최대 15초·Luna 최대 27초를 admission 뒤 실제 남은 예산으로 줄인다. Worker 진입 시 단일 monotonic 60초 deadline을 시작하며 Luna 27초·완료 3초를 먼저 예약해 Gemini 단계는 backoff/claim 대기를 포함해 최대 30초다. Application port의 AnalysisInvocationBudget을 processor와 두 adapter가 공유하고 durable Gemini admission도 같은 예약값을 사용한다. 시작 기준 Gemini admission 30초·공급자 완료 57초·최종 게시 60초 경계는 도달 시 거부한다. 4회×15초와 backoff를 모두 보장하지 않는다. 공급자 HTTP와 결과 게시 경계에서 deadline을 검사하며 SDK 중첩 retry와 연결 재전송을 끈다.
 - 응답은 자연어가 있어 요청에 포함된 불투명 참조값의 개수와 집합이 일치해야 하며 참가자별 항목을 독립적으로 검증한다. 배치 전체의 기술적 재시도가 소진되면 입력과 고정 배치를 보존하고 `ANALYSIS_DELAYED`로 전이하며 매칭하지 않는다.
 - 조건은 `TIME_WINDOW`, `SPECIFIC_PLACE`, `TRAVEL_CONSTRAINT`, `UNRESOLVED_PLACE` 유니온으로 저장한다. `SPECIFIC_PLACE`는 `query`, 배치 내부 `area_key`, 공통 `area_name`을 포함한다. 좌표는 스키마에 포함하지 않으며 조건 단위 검증 실패는 유효 조건과 분리해 미반영 사유로 보존한다.
 - `TIME_WINDOW`의 시작과 일반 종료는 offset 없는 `HH:mm`을 사용하고, 종료에 한해서만 `24:00`을 다음 지역 날짜 시작의 배타적 경계로 허용한다. 날짜·시간 파싱 실패는 해당 조건의 검증 실패로 격리하고 방 전체 응답 실패로 승격하지 않는다.
@@ -395,11 +411,15 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 운영 PostgreSQL은 private subnet의 RDS PostgreSQL 18 `db.t4g.micro` Single-AZ로 시작한다.
 - Redis Streams·호출 제한·DLQ는 ElastiCache Serverless for Valkey에 두고 EC2 수명주기와 분리한다.
 - Terraform state는 versioning·암호화를 활성화한 전용 S3 backend와 native lock file로 관리한다. 환경은 별도 state key로 분리한다.
-- RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다. Kakao Local key는 제출 MVP 런타임에서 사용하지 않는다.
+- RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini·OpenAI API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다. 기본 운영 prefix는 `/meet-me/production`이며 OpenAI 이름은 `/meet-me/production/secret/openai-api-key`, 앱 변수는 `OPENAI_API_KEY`다. GitHub production Environment Secrets에서 앱 키를 가져오는 경로는 사용하지 않는다. Kakao Local key는 제출 MVP 런타임에서 사용하지 않는다.
+- Luna 통합 release는 공개 `runtime-provider-mode` 파일의 `gemini-luna-required`를 포함한다. release 자체의 renderer가 mode를 읽고 SecureString의 타입·비어 있지 않은 단일행 printable ASCII 값을 검증한 뒤 mode와 키를0600 환경 파일에 원자 교체한다. 실패하면 기존 파일을 유지하며 신규 OpenAI 조회·검증 경로의 키 값과 AWS 오류 본문은 출력하지 않는다. Compose raw env_file로 전달하고 container entrypoint도 server/migrate 시작 전에 required mode의 유효한 키를 요구한다. mode 파일이 없는 기존 release와 명시 `gemini-only`는 OpenAI를 조회하지 않는다. DB credential refresh는 현재 release의 동일 mode와 renderer를 사용한다.
+- 이 전달 코드는 parameter 존재·실제 권한·유효 공급자 인증을 증명하지 않는다. 사용자 수동 등록과 운영 전달 확인은 별도 미완료 항목이다. 현재 runtime IAM 선언의 SSM prefix는 새 이름을 포함하지만 실제 적용은 조회 전 미확정이며 IAM/Environment 보호 정책을 자동 변경하지 않는다.
 - RDS master password의 `AWSCURRENT` 버전이 바뀌면 EventBridge가 SSM Run Command로 EC2의 자격 증명 갱신 작업을 실행한다. 동일 작업을 5분마다 재확인해 이벤트 누락이나 일시 실패를 복구한다. 작업은 현재 release의 secret 값과 앱 컨테이너 설정을 비교하고 변경 시 `render-runtime-env.sh`로 환경 파일을 다시 만든 뒤 앱만 교체한다. 배포·롤백과 같은 파일 잠금을 사용하며, 비밀번호 값은 Terraform state·명령 출력·로그에 넣지 않는다. 앱 health가 정상일 때만 갱신 완료로 간주한다.
 - 로컬 관리 작업은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용한다. GitHub Actions는 장기 Access Key 없이 OIDC로 환경별 최소 권한 role을 사용한다.
-- 배포는 ECR image digest 고정, 동일 이미지의 Flyway 선실행, 애플리케이션 교체 순서로 수행한다. 실패 시 이전 image digest로 애플리케이션만 되돌리고 적용된 Flyway migration은 자동 downgrade하지 않는다.
-- `main` 병합은 운영 배포 승인으로 간주한다. `main` push로 시작된 CI가 성공하면 별도의 권한 있는 Production workflow가 `workflow_run`의 정확한 `head_sha`를 배포하고, PR·`develop`·수동 CI와 실패한 CI는 자동 배포하지 않는다. 운영 배포는 하나씩 실행하되 대기 실행을 취소하지 않으며, `workflow_dispatch`는 `main`의 장애 복구·재배포 수단으로 유지한다.
+- V8 배포는 설치된 `/opt/meet-me/guard/host-release-guard.sh`가 관리한다. deploy·호환 rollback·credential refresh·boot restart가 공통 잠금과 root 소유의 영속 manifest·선행조건·정확한 digest 승인 TSV를 검증한다. 모든 저장 release의 진입 script를 wrapper로 교체하고 구 파일 inode를 hard-link로 보존하여 열린 구 Bash FD가 있으면 중단한다. cmdline·credential은 검사 출력에 포함하지 않는다.
+- 앱 전체를 중지하고 Docker 자동 재시작을 비활성화한 뒤 `V8_STARTED`와 sticky `input_revision_v8` marker를 원자적으로 영속화한다. 승인된 동일 이미지로 Flyway 실행·앱 교체·실제 Docker image와 health 확인을 완료해야 `current`와 `READY`를 기록한다. 실패 시 점검 상태를 유지하고 승인된 digest의 deploy로 roll-forward한다. Flyway downgrade·구 image 자동 fallback은 제공하지 않는다.
+- Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [INPUT_REVISION_ROLLOUT.md](INPUT_REVISION_ROLLOUT.md)를 따른다.
+- `main` push CI의 정확 `head_sha`로 image와 run/attempt별 불변 release manifest를 게시한다. ADR-050에 따라 첫 V8→V9/V10 전환과 SQL/guard 실행 bundle 변경은 명시 승인으로 분리한다. main 읽기 preflight/deploy는 기존 게시물을 소비하고 다시 build하지 않는다. 성공 후 실제 Flyway history·READY·현재 digest·SQL/guard 지문을 root record에 저장하며, 같은 계약의 후속 main CI는 실제 상태를 재확인한 뒤 자동 배포한다. PR·`develop`·수동 CI와 실패한 CI는 자동 게시/배포하지 않는다. 기존 production 역할·보호규칙과 직렬화(cancel=false)는 유지한다.
 
 ### 제출 MVP 토폴로지 선택 근거
 
@@ -488,3 +508,27 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 9. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
 10. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX
 11. Post-MVP 실제 좌표·이동시간 검증을 위한 지도 공급자, 결제 방식과 Gemini 그룹 보정 정책
+
+
+### 다양한 시간 추천 projection과 typed selection (#95, ADR-047)
+
+기존 legacy matcher·candidates·final_confirmations와 별개로 결정론적 RecommendationProjector가 N/N-1/N-2 전체 조합의 실제 연속 창과 mode/장소/참석 variant를 만든다. primary는 최대 세 시간안이며 전체 대안은 손실 없는 cursor로 조회한다. 신규 분석의 legacy 결과와 recommendation_analyses/options/variants/참석 관계는 방→run 잠금 아래 하나의 PostgreSQL 트랜잭션으로 게시한다. Redis·LLM은 추천 순위나 최종 시각을 결정하지 않는다. V1~V8은 수정하지 않고 추천 V9와 invocation V10을 추가한다. 두 원본 SQL 바이트는 보존했다. 운영 Flyway 이력을 이 구현에서 조회·repair하지 않았다.
+
+D2 명시 선호 집계는 2026-10-07 사용자 승인된 [계약](ISSUE_95_CONTRACT.md)과 ADR-048을 따른다. 자연어 구조화에서 필수 제약과 선호를 분리하고 서버가 참석자별 최대1점·같은 차원 OR·여러 차원 AND·창 전체 충족을 계산한다. #99 통합에서 공통 live schema_version 3에 PREFERRED_TIME_WINDOW/PREFERRED_PLACE를 추가하고 두 공급자 prompt/validator와 조건 JSON 저장·복원을 함께 확장했다. v1/v2 저장 결과·비strict fixture는 선호 없음으로 복원하고 AVAILABLE은 하드 가능 조건으로 유지한다. 선호 시간 합집합을 실제 가능 창에 교차하고 두 선호 구간의 교집합으로 모든 의미 있는 공통 하위 창을 보존한다. 명시 선호 차원은 검색 범위에서 비어도 사라지지 않는다. 일부 조건 거부가 있는 참가자는 유효 조건과 선호 하위 창을 보존하되 선호 득점을 제외한다. live v3의 잘못된 하드 시간 조건은 AMBIGUOUS_TIME_CONSTRAINT로 안전 제외하여 불가 조건 누락으로 가능 범위를 넓히지 않는다. 현재 AVAILABLE을 선호로 추정하지 않고 공개 option/variant/confirmation API를 유지한다. 자정의 인접 구간은 연속 창으로 보존한다. 신규 A/B/C는 primary 표시 순서이고 기존 plan_type은 legacy 의미를 보존한다.
+
+`GET recommendations`, `GET recommendations/alternatives`, `POST recommendations/{optionId}/confirmation`은 기존 참여·HOST·Origin·호출 제한 정책을 재사용한다. 방 응답 recommendation_protocol과 추천 envelope protocol의 정확한 지원 값은 diverse-time-v1이며 legacy는 null이다. typed 선택은 candidate FK와 분리한 recommendation_selections에 전체 분석/option/variant/start/end 튜플로 저장한다. 같은 방·분석·variant FK, 단일 창 containment, active analysis·CLOSED·OPEN round 없음과 구 확정 없음 검사를 적용한다. 결과는 실제 선택 시간과 별도 selection을 제공하며 신규 candidate_id는 null이다. 기존 candidates 읽기와 과거 확정은 유지하지만 신규 protocol의 구 candidate-only 확정은409로 거부한다.
+
+CONFIRMED·capability·입력 수정·worker 보호는 두 확정 타입을 모두 인식한다. DB도 구 writer의 신규 분석 확정·확정 run/방 pointer 변경·수정 round 삽입을 거부한다. 보존기간 정리는 선택 관계를 먼저 제거한 뒤 pointer·run을 기존 순서로 삭제하며 분석 하위 관계는 cascade로 정리한다. 이는 구 V8 애플리케이션의 읽기나 lifecycle 호환을 보장하지 않는다. V9 migration 전에 앱 전체 writer/worker/retention을 중지하고 V9 호환 정확 digest만 허용하는 운영 검토가 필요하다. 기존 V8 guard의 호환 manifest나 기존 배포 승인을 V9로 자동 확대하지 않으며 이번 작업에서 운영 guard·권한·배포를 변경하지 않는다.
+
+- #95 조회는 분석 전체 option을 hydrate하지 않고 primary최대3, 대안은 ordinal cursor의 limit+1, 확정/결과는 단일option을 SQL로 조회한다. total_options/has_alternatives는 분석 metadata count를 유지한다. 해당 option의 variant와 참석 membership만 읽고500행씩 게시하며 별도 option FK 조회 인덱스를 둔다.
+### 제한된 Luna 폴백과 durable 실행 (ADR-049)
+
+Gemini와 OpenAI Responses API의 outbound adapter는 동일 `NaturalLanguageBatchRequest`와 공통 prompt/schema/domain validator를 사용한다. OpenAI strict 형식은 nullable `rejection_code`를 required로 지정하고 null을 허용한다. 두 live 공급자는 같은 v3 required/nullable·추가 키 거부 계약을 사용한다. nullable/omitted 키의 기존 허용은 비strict v1/v2 fixture 호환 경로에서 유지한다. 거부·잘림·참조 누락/중복·크기 초과는 INVALID_RESPONSE로 처리한다. 선호·기타 개별 조건의 잘못된 enum·날짜·시간은 CONDITION_VALIDATION_FAILED/PARTIAL로 구분한다. live v3의 잘못된 하드 TIME_WINDOW는 AMBIGUOUS_TIME_CONSTRAINT로 구분하여 availability 계산에서 안전 제외한다. 두 공급자의 결과를 부분 혼합하거나 #93에서 삭제한 원문 lexical resolver·SUCCESS 덮어쓰기·AMBIGUOUS 복구를 재도입하지 않는다.
+
+`analysis_invocations`는 run ID와 STRUCTURING version별로 owner token·최초 deadline·공급자별 호출 카운터·승자를 보존한다. room→exact run 잠금 아래 실행 및 시도 claim과 attempt 이력을 함께 커밋하고 동일 실행의 재전달은 새 공급자 호출을 시작하지 않는다. 프로세스 장애로 중단된 실행은 원래 deadline 만료 후 복구 scheduler가 입력과 batch를 보존하여 ANALYSIS_DELAYED로 종결한다. 결과는 활성 pointer·run version·수정 라운드·owner·admitted attempt·deadline 검사를 통과한 한 승자만 게시한다. matching의 legacy 후보·추천 projection·방 transition을 같은 트랜잭션과 deadline으로 제한한다. 조합·선호 하위 창 계산도 취소를 확인하며 게시 후 deadline 검사 실패는 후보와 projection 모두 롤백한다. 공급자 HTTP는 두 어댑터 모두 명시적 재시도·redirect 없는 OkHttp 전체 호출 timeout으로 본문 읽기까지 제한하며, timeout 또는 실패 시 연결을 취소한다. DB 저장 중 deadline 초과는 typed 예외로 트랜잭션을 롤백한 뒤 새 트랜잭션에서 지연 상태를 기록한다. HOST 지연 재시도는 새 run version의 별도 실행이며 공급자 exactly-once는 보장하지 않는다.
+
+2026-10-07 사용자 승인된 30/27/3 배분은 기존 bounded-luna-v1의 단일60초·최대4+1·owner/noreset 계약 안의 조정이며 V10 SQL과 정책 identity를 유지한다. 상세 배분은 정확 HEAD와 평가 manifest로 추적한다. NaturalLanguageBatchRequest의 기존 direct-call 기본15초는 보존하고 production processor가 Luna에 명시적 남은27초 이하 값을 전달한다. 직접 adapter 평가도 의도한 caller timeout을 명시해야 한다.
+
+Attempt에 provider/model/policy/invocation별 usage를 구분한다. 알 수 없는 usage 또는 가격은 null이며 Luna에는 Gemini 단가를 적용하지 않는다. 유효한 범위 밖 날짜 조건은 validator에서 보존하고 결정론적 matcher가 검색 기간에만 펼친다. AVAILABLE 여부는 조건을 버리기 전에 판단하므로 범위 밖 AVAILABLE-only가 전체 가능으로 바뀌지 않는다.
+
+설정에는 `OPENAI_API_KEY` 변수 참조만 추가한다. 실제 비밀값과 운영 설정은 이 구현에서 읽거나 등록하지 않는다. 새 공급자로 원문을 전달하는 사용자 고지·처리 조건 검토와 운영 자격 증명 등록은 배포 준비의 별도 작업이며 개인 보관함 연결·별도 품질 평가를 운영 배포 승인으로 확대하지 않는다.

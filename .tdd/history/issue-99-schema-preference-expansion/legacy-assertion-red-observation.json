@@ -1,0 +1,59 @@
+{
+  "workItem": "issue-99-schema-preference-expansion",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "classification": "CONTRACT_SUPERSEDED",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "b1b176f28d54db087d6fb5fed0f48ea30c810d6d80c93bd79231cee5f8ecff22"
+    }
+  ],
+  "outerCommand": [
+    "python",
+    ".codex/hooks/tdd_guard.py"
+  ],
+  "stdin": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git commit --dry-run"
+    },
+    "cwd": "/workspace/meet-me-server"
+  },
+  "innerCommand": [
+    "sh",
+    "/workspace/meet-me-server/gradlew",
+    "--no-daemon",
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "environment": {
+    "JAVA_HOME": "/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME": "/workspace/gradle-user-home",
+    "MEETME_CANDIDATE_LIVE_PROBE": "false",
+    "MEETME_LIVE_EVAL_AUTHORIZED": "false",
+    "MEETME_ISSUE95_OPENAPI_EXPORT": "/tmp/meetme-issue99.openapi.json"
+  },
+  "unsetEnvironment": [
+    "GEMINI_API_KEY",
+    "OPENAI_API_KEY"
+  ],
+  "failedTests": [
+    {
+      "name": "com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest.타입별 필수 조건과 offset 없는 지역 시각 schema를 제공한다()",
+      "type": "org.opentest4j.AssertionFailedError",
+      "message": "org.opentest4j.AssertionFailedError: expected: <5> but was: <8>"
+    }
+  ],
+  "actualWholeGuardResult": {
+    "tests": 631,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 4
+  },
+  "rawLog": ".codex/tdd-evidence/issue-99-schema-preference-expansion/guard.log",
+  "xml": ".codex/tdd-evidence/issue-99-schema-preference-expansion/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest.xml",
+  "recordedAt": "2026-10-07T07:53:43.529490Z",
+  "meaning": "Actual old expectation failure expected5 actual8. Approved live v3 adds dated+recurring preferred times and preferred place to existing five schemas. This is not a new missing-behavior RED claim."
+}

@@ -1,0 +1,501 @@
+{
+  "version": 1,
+  "work_item": "issue-92-v8-release-guard",
+  "verified_at": "2026-10-07T04:00:10Z",
+  "baseline_feature_revision": "83a29f60537b5df883cc608d0e8e920747e447a2",
+  "accepted_scope": "ADR-046 minimum V8 lifecycle guard; no new product API/authorization architecture",
+  "roles": {
+    "tests": "independent test designer",
+    "production": "separate production writer",
+    "review": "independent design/source reviewer",
+    "execution_and_mutation": "root verifier"
+  },
+  "production_files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "d8eeee7e10a977c46556d821cf04b7e6e23376c4736ce68ad70eb2dd8362780e"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "5c1a7b3d77c80db969c977f27085731833a61307a79df7f22ad11e3c021dba9a"
+    },
+    {
+      "path": "deploy/compose.guard.yml",
+      "sha256": "e7ce7a742f7c207ab9329c66d6de917259db7d08868bf9f6291a72a631dffceb"
+    },
+    {
+      "path": "deploy/compose.production.yml",
+      "sha256": "d4def0b6a88cc7d1ddfe5b549b4a46da6c949fe5bbfb503e187be59f2c76bde7"
+    },
+    {
+      "path": "deploy/container-entrypoint.sh",
+      "sha256": "7cd2a1023229ded5131729c6d4898f4d99dcdbd42c1cb8d22fca2a27b74fb751"
+    },
+    {
+      "path": "deploy/meet-me-guarded-restart.service",
+      "sha256": "e939efacc89d2456541d48cefbf5050354da8e0d9ba8d441ecb974b753b6bfbb"
+    },
+    {
+      "path": "deploy/nginx/nginx.conf",
+      "sha256": "77c336eb4f08d15787aff54cf9d681a7a21f87a9b0622e5a242f36ca0fd2a594"
+    },
+    {
+      "path": "deploy/scripts/deploy-release.sh",
+      "sha256": "01fcf7a94f7e1f07b4e4bd4fc15d3151405f2019906ad78d88ded326a11adbcd"
+    },
+    {
+      "path": "deploy/scripts/export-certificate.sh",
+      "sha256": "626cd228e1b8f5ed701b5760d260624650148b761435aecdac54d4c4fcf96a84"
+    },
+    {
+      "path": "deploy/scripts/host-release-guard.sh",
+      "sha256": "57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f"
+    },
+    {
+      "path": "deploy/scripts/install-host-release-guard.sh",
+      "sha256": "3ee4718626ef2725503486e5ca635eff7a5d95b173d6b3aba64f34cdfab5b1d1"
+    },
+    {
+      "path": "deploy/scripts/refresh-database-credential.sh",
+      "sha256": "b1d221dcad8e70522dcfdac6ad9d42d931e3c6e5a9525f2147cf741e532c38c7"
+    },
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "3cda13fae64c5073ef0551d12fba5c4c827562b405022dbc3c6f7f43770af74e"
+    },
+    {
+      "path": "deploy/scripts/rollback-release.sh",
+      "sha256": "20f60fb5705158cfb60e6d4cb8010b56a54401b761d3ffcebb4fa4289fbc6bad"
+    },
+    {
+      "path": "deploy/scripts/verify-compose-secret-fidelity.sh",
+      "sha256": "652b67aad3384bd357d8765483aeb154b1e101509b777d82352c1abce111d739"
+    },
+    {
+      "path": "deploy/scripts/verify-nginx-runtime.sh",
+      "sha256": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368"
+    }
+  ],
+  "detector_files": [
+    {
+      "path": ".github/scripts/deploy-guard-contract.test.cjs",
+      "sha256": "6c4021b88fca679d665a84f2492347d04ed2ac1fcb47093b368cb855f24a46e1"
+    },
+    {
+      "path": ".github/scripts/deploy-workflow.test.cjs",
+      "sha256": "89f0df600147514cbb8190f14c14ce6fff7522e891900b67857a89ea726c11f7"
+    },
+    {
+      "path": ".github/scripts/issue-links.test.cjs",
+      "sha256": "ed71b3066d9df0b2a3359b4cadef9ecb251afb878e0e601f62faa4beab60c2eb"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/compose.production.yml",
+      "sha256": "3141d7be8c4c3b5b41552d89911e637cbb3b6a06d11aa36faf285f760c5d7ff6"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/deploy-release.sh",
+      "sha256": "fabf3c8781e2ab1c7b7883fc1574d908754464975e63179cd491efc15359c6b4"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/refresh-database-credential.sh",
+      "sha256": "a733d6b0cfae30fded20e38d6f89139a9d4c5b49f97e699284f276704d0160ad"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/rollback-release.sh",
+      "sha256": "7eefb8b736aebcf67018b23dbcf72299cbdc5a1c6de32954601b62dc7d55b7d4"
+    },
+    {
+      "path": "deploy/tests/refresh-database-credential.test.sh",
+      "sha256": "b615a17ac59275042c17a31c1f2516c4152a2420d835da649b582c3a99821b1d"
+    },
+    {
+      "path": "deploy/tests/refresh_guard_fixture.py",
+      "sha256": "06d75a05d47f41e67ce9e367b117082f7b51ec5208dc5418f554324c750597a5"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard.py",
+      "sha256": "3eb1658c24a46431d81df0f99fabf5bbf44e5d0d5324fa3f2fe664de118d0905"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_additional.py",
+      "sha256": "9225e3641229e83d2e8290c81bb37b7d8d06e0a704847898117202236d77c1b8"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_detectors.py",
+      "sha256": "460a91ff743b45c86d3917718ae1796932b46f79cf651d0c8a0768f73c71a8a1"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_installer_boundaries.py",
+      "sha256": "4143dabd344cdf0560ea25e1a9e2209a4f8d6c2b18c80cf260322fe695034a1d"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_review_boundaries.py",
+      "sha256": "fc2c048cf95a68c14300345a2f04ee567a21924f6c430fc8d4e4c0af6ea687f3"
+    }
+  ],
+  "red_evidence": [
+    ".tdd/deployment/issue-92-v8-guard-red.json",
+    ".tdd/deployment/issue-92-v8-guard-review-red.json",
+    ".tdd/deployment/issue-92-v8-fd-installer-red.json"
+  ],
+  "fresh_isolated_tests": {
+    "tests": 37,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 381.325,
+    "raw_log_sha256": "6b7e21d4898a255ba21e23f5e973757fcd7dcd666bca736a3852d1b910ee4fff"
+  },
+  "faults": [
+    {
+      "id": "approved-digest",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_old_deploy_rollback_refresh_and_restart_dispatch_deny_after_transition",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "AssertionError: 0 == 0",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_old_deploy_rollback_refresh_and_restart_dispatch_deny_after_transition",
+        "-v"
+      ],
+      "elapsed_seconds": 17.825,
+      "raw_log_sha256": "7cbab924eefbbdcebc385f428e7013a120e0f6901d38140d67fae9e1afb52f77",
+      "mutated_source_sha256": "b5078c659b9caac2ebc0063d75489aad452230bb616092df0b06b3a0762e08da",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "all-writer-quiesce",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_quiesce_and_sticky_marker_precede_real_migration_command",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Existing app writers/workers must stop before migration",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_quiesce_and_sticky_marker_precede_real_migration_command",
+        "-v"
+      ],
+      "elapsed_seconds": 7.642,
+      "raw_log_sha256": "07d9bfaf788a6c7af79cdfbb15182908747921d400bb3fc57e358d8db6dc1c27",
+      "mutated_source_sha256": "c3d05c2a3f0e9dd73ad0414d507b479a1c38ee8fc51eb8fb5aea8cafe6269a3f",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "sticky-marker-before-migrate",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_migration_failure_preserves_marker_and_never_starts_an_app",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Attempted migration requires durable sticky marker",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_migration_failure_preserves_marker_and_never_starts_an_app",
+        "-v"
+      ],
+      "elapsed_seconds": 7.931,
+      "raw_log_sha256": "dafbc5f655454eed6fd168b1a9f4f84bb239401aa10d76fb612c23418977d7c0",
+      "mutated_source_sha256": "c6eb06ec624a4cb5294d35d34cc71cf055463974614aac241299434afc732eee",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "no-incompatible-health-fallback",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_health_failure_never_revives_previous_incompatible_image",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Health failure must not fall back to old app",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_health_failure_never_revives_previous_incompatible_image",
+        "-v"
+      ],
+      "elapsed_seconds": 7.645,
+      "raw_log_sha256": "b5f793d8118b2ac7ba8be7be2200774e08a088a75ec4dadefa1ca7e253a942e8",
+      "mutated_source_sha256": "f430df379bbef005087131180a6afbcef644da4c68e666360e7a5413566c5243",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "retired-open-inode",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_old_open_inode_waiting_real_lock_refuses_install_then_drain_permits_it",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "AssertionError: 0 == 0",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_old_open_inode_waiting_real_lock_refuses_install_then_drain_permits_it",
+        "-v"
+      ],
+      "elapsed_seconds": 4.496,
+      "raw_log_sha256": "a0a9dbe8c5b78a6268ce273fb4d5e072d6d10e8f65738cad16a59eb3f3539160",
+      "mutated_source_sha256": "3874765d85872cac3946c75dd82a926decc0fc2ceaef2bc04945daf7d0c57a6c",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "stored-wrapper-attestation",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_new_unregistered_legacy_release_source_blocks_runtime_until_guarded",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "AssertionError: 0 == 0",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_new_unregistered_legacy_release_source_blocks_runtime_until_guarded",
+        "-v"
+      ],
+      "elapsed_seconds": 7.941,
+      "raw_log_sha256": "483a893a626f5d3ffb7a40e4c33415ec3349bd62c19df6d9310a3bacc730e4cc",
+      "mutated_source_sha256": "91459935a0809124347bcbbf38620d520d684e3af94a11214c170125ae37d178",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "started-deploy-only",
+      "test": "test_v8_release_guard_detectors.V8ReleaseGuardDetectorsTest.test_started_phase_blocks_non_deploy_with_approved_matching_current_image",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "V8_STARTED must deny non-deploy",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_detectors.V8ReleaseGuardDetectorsTest.test_started_phase_blocks_non_deploy_with_approved_matching_current_image",
+        "-v"
+      ],
+      "elapsed_seconds": 17.091,
+      "raw_log_sha256": "5384c2c473931fe941906d98aa6e7b2d41aef253b5dfc4cc1a7e1291ed27555d",
+      "mutated_source_sha256": "e60b0e621f9fea055145d939cef3f94c9763153d3ff8b857e495e860327c4be7",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "actual-launched-image",
+      "test": "test_v8_release_guard_additional.V8ReleaseGuardAdditionalTest.test_wrong_image_after_health_check_stops_app_and_keeps_marker_without_old_fallback",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "AssertionError: 0 == 0",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_additional.V8ReleaseGuardAdditionalTest.test_wrong_image_after_health_check_stops_app_and_keeps_marker_without_old_fallback",
+        "-v"
+      ],
+      "elapsed_seconds": 7.536,
+      "raw_log_sha256": "b21e2bfc21a63c58089a677232ead1c1f75df6397c21d09ecd1fbea8c7544237",
+      "mutated_source_sha256": "624458e0b6db3e190cc7519ca7dcf1856cd05624c51e0504a1d0ae2bad36a9e0",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "prelaunch-compose-override",
+      "test": "test_v8_release_guard_detectors.V8ReleaseGuardDetectorsTest.test_prelaunch_override_never_starts_old_literal_image_even_if_action_later_fails",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "No incompatible literal image may start",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_detectors.V8ReleaseGuardDetectorsTest.test_prelaunch_override_never_starts_old_literal_image_even_if_action_later_fails",
+        "-v"
+      ],
+      "elapsed_seconds": 10.675,
+      "raw_log_sha256": "5e22fa6dd3864b57b7c4004f900e0182c6b519d20afc0536d6abe4f2c16ae92b",
+      "mutated_source_sha256": "e755829fb37c6ce98717e051746b50b5ab12bdb84debb5503f352faec13ba862",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "artifact-permission",
+      "test": "test_v8_release_guard.V8ReleaseGuardTest.test_missing_phase_or_manifest_and_writable_policy_cannot_restart",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "AssertionError: 0 == 0",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard.V8ReleaseGuardTest.test_missing_phase_or_manifest_and_writable_policy_cannot_restart",
+        "-v"
+      ],
+      "elapsed_seconds": 14.063,
+      "raw_log_sha256": "bb38453177e0c169414a609057ee1887f17056767c914dff816f0909bb8adbb4",
+      "mutated_source_sha256": "852b7cdf395b79d97acc040e3e8e03d82ba0ad4440729ea974e63d75a1669570",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "durable-state-failure",
+      "test": "test_v8_release_guard_additional.V8ReleaseGuardAdditionalTest.test_failed_atomic_phase_or_marker_write_never_runs_migration_or_launch",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "AssertionError: 0 == 0",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_additional.V8ReleaseGuardAdditionalTest.test_failed_atomic_phase_or_marker_write_never_runs_migration_or_launch",
+        "-v"
+      ],
+      "elapsed_seconds": 15.25,
+      "raw_log_sha256": "50ac2e91b08776b8906eeae88b85b892f32e56d7b5ade0160a7b4487ed6cad06",
+      "mutated_source_sha256": "306a68fc39bc4f336cc06a843bde02774492d7a97790a87fe83bcfcbab27ac92",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "live-fd-visibility",
+      "test": "test_v8_release_guard_detectors.V8ReleaseGuardDetectorsTest.test_known_live_retired_fd_with_access_denied_projection_rejects_before_mutation",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Known live FD with visible symlink and denied metadata must fail closed",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_detectors.V8ReleaseGuardDetectorsTest.test_known_live_retired_fd_with_access_denied_projection_rejects_before_mutation",
+        "-v"
+      ],
+      "elapsed_seconds": 10.628,
+      "raw_log_sha256": "9c47ffbf2ed757055ab89e209237c887f348b696aea0afb09e7dbb0fece680c5",
+      "mutated_source_sha256": "eff0d06f1ebbff8b1d516a55e6000834b952bd9314af669536796024593963f4",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "unattested-installer-artifact",
+      "test": "test_v8_release_guard_installer_boundaries.V8ReleaseGuardInstallerBoundariesTest.test_unknown_preexisting_guard_rejects_before_rewriting_legacy_entrypoints",
+      "target": "deploy/scripts/install-host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Unknown guard must reject before rewriting|Unattested preexisting guard",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_installer_boundaries.V8ReleaseGuardInstallerBoundariesTest.test_unknown_preexisting_guard_rejects_before_rewriting_legacy_entrypoints",
+        "-v"
+      ],
+      "elapsed_seconds": 10.558,
+      "raw_log_sha256": "baad906538f3cccf5720298cb42a31263ac0fac658ee7310e1c5031266a20e05",
+      "mutated_source_sha256": "9bc1639e9ea39df6ec945ca0d6c5d73630572bc469b088fc05e98de0d67edb70",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "exact-policy-fields",
+      "test": "test_v8_release_guard_review_boundaries.V8ReleaseGuardReviewBoundariesTest.test_policy_rejects_extra_empty_tab_fields_before_external_mutation",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Approval policy must reject an extra empty TAB field",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_review_boundaries.V8ReleaseGuardReviewBoundariesTest.test_policy_rejects_extra_empty_tab_fields_before_external_mutation",
+        "-v"
+      ],
+      "elapsed_seconds": 41.645,
+      "raw_log_sha256": "7b367bb339c08aba6462ba21a0402f57f4994b4e815b247ea9454b65d01fedfc",
+      "mutated_source_sha256": "85cfc4e06ed0eeea10831dc4549ffe310ce34022d1a84d8b4fbb1deb3e579eb1",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    },
+    {
+      "id": "approved-current",
+      "test": "test_v8_release_guard_review_boundaries.V8ReleaseGuardReviewBoundariesTest.test_rollback_denies_unapproved_current_even_with_an_approved_target",
+      "target": "deploy/scripts/host-release-guard.sh",
+      "exit_code": 1,
+      "result": "DETECTED",
+      "expected_named_assertion": "Non-deploy rollback must reject an unapproved current image",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "test_v8_release_guard_review_boundaries.V8ReleaseGuardReviewBoundariesTest.test_rollback_denies_unapproved_current_even_with_an_approved_target",
+        "-v"
+      ],
+      "elapsed_seconds": 11.133,
+      "raw_log_sha256": "0d42952c80777f234359aaeae4d20502605e3fe521db7ea6a5ac5c37958c73a3",
+      "mutated_source_sha256": "5dfca9f9b6a1e4dde339f3ad38d1e1a48b4cb0b43cd60bb88778d7e5fdb46b7d",
+      "exact_frozen_bytes_restored": true,
+      "independent_selected_test_body_traceback_verified": true
+    }
+  ],
+  "restoration": {
+    "selected_files": 210,
+    "scope": "Exact all Kotlin source/tests, deployment production/test artifacts and selected CI/static test files. Docs and evidence summaries excluded. Byte restoration, not operating host state.",
+    "all_selected_bytes_restored": true,
+    "all196_src_main_test_files_byte_identical_to_83a": true
+  },
+  "mandatory_jvm_guard": {
+    "started_at": "2026-10-07T03:58:52.952486+00:00",
+    "finished_at": "2026-10-07T03:59:01.535679+00:00",
+    "guard_exit_code": 0,
+    "hook": "unchanged .codex/hooks/tdd_guard.py",
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "provider_calls_by_this_task": 0,
+    "full_test_totals": {
+      "suites": 78,
+      "tests": 438,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    "execution_scope": "Unchanged hook freshly invoked; Gradle reused up-to-date outputs because all196 feature source/test/resource files exactly unchanged. 438 retained fresh local XML was produced03:32\u201303:34 and exact83a GitHub CI separately succeeded."
+  },
+  "additional_checks": {
+    "static_deployment_contract_tests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "credential_refresh": "PASS final b615 fixture; stricter failed-refresh recovery uses explicit approved deploy then refresh, original assertions/count6 retained",
+    "compose_secret_fidelity": "PASS using isolated real Docker fixture",
+    "nginx": "Original cloud mode600 attempt failed; byte-identical readable-copy default health context timed out; same copy with blank inherited proxy variables in transient docker exec passed. Exact83a GitHub original Nginx step also passed. Source/config/operating settings unchanged."
+  },
+  "limitations": [
+    "Docker/AWS and root ownership are logical/offline stubs in guard tests; original root checks remain strict in production",
+    "Real Linux flock/process FD/inode/hardlink/bytes/mode are exercised; denied-FD namespace case simulates visibility, not real host root permissions",
+    "Actual installer/systemd enable/external automation pause/drain/host proc observability/digest-policy approval/migration/deployment not executed",
+    "Actual Gemini evaluation belongs to parent:7/50,tiny200OK,reported raw503/no output; raw accuracy and actual-model HTTP/DB unverified"
+  ],
+  "independent_final_review": {
+    "status": "PASS",
+    "sha256": "a1b0c29cd85cb24bf103fd89468086a68a70d1925bf9ec94dcbe1811270a1e5c",
+    "selected_named_body_assertions_independently_verified": 15,
+    "actual_operating_readiness": "NOT_ESTABLISHED"
+  },
+  "exact_new_head_ci": "PENDING after commit/push",
+  "provider_calls_by_root": 0,
+  "operating_changes_by_root": 0
+}

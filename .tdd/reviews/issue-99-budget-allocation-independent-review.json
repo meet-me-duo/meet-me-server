@@ -1,0 +1,305 @@
+{
+  "workItem": "issue-99-budget-allocation-review",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "reviewer": "/root/independent_review",
+  "role": "independent read-only test/source reviewer; no test or production implementation authored and no Gradle execution",
+  "recordedAt": "2026-10-07T08:58:52.039344+00:00",
+  "authority": "New explicit user-approved PR100 follow-up: Gemini per-call15 and family total30 including backoff/admission; Luna call/family maximum27; completion3; single total60. Parent confirmed exclusive provider/call/57 and final60 boundaries.",
+  "testDesignVerdict": "PASS",
+  "blockingFindings": [],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "fd24189036694c24aac3a5eccc3c8b078bfc9a2036580b0e2f5070b6615c1fc0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "sha256": "2b0e86dc495da654c9b32381b2943c50f781fad4a59e4126f4ca3e51bbce3791"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaExtendedTransportBudgetContractTest.kt",
+      "sha256": "3b0ddefac253a22a1e7dfa508f4dd660abd58e41dda41b42518f7d3566284923"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ApprovedProviderBudgetPostgresTest.kt",
+      "sha256": "22d9733e1eb2b3b0ce641824e611748ec16894229e2ed9c7429c26d2fbfdbde5"
+    }
+  ],
+  "testAuthors": [
+    "/root/d2_provider_tests",
+    "/root/integration_tests"
+  ],
+  "reviewedExpectations": [
+    "15-second Gemini timeout plus1-second jitter plus14-second Gemini timeout reaches30 cutoff then Luna receives27.",
+    "Early fallback receives at most27, not all57 remaining; valid20-second and26.999-second responses pass while exactly27 and28 are rejected.",
+    "Gemini admission clock29.9 leaves100ms; boundary30 starts no extra Gemini and leaves27,31 leaves26 for Luna.",
+    "Luna admission56 leaves1 second,57/60 no HTTP both before durable admission and after already admitted cost unit.",
+    "Real PostgreSQL admitted cost counters, owner/deadline identity and4+1 maxima are never reset by stale snapshots or delivery.",
+    "Twenty-second Luna success after admission31 publishes one winner and recommendations at51 with frozen input and ACK; projection finishing60 rolls back candidates/projection with prior provider winner retained.",
+    "Actual OkHttp Call.timeout inspected at27 seconds and capped27 for60-second request; short350ms caller remains respected. Synthetic interceptor does not proceed to any network."
+  ],
+  "policyReview": {
+    "policyVersionRecommendation": "Retain bounded-luna-v1; internal timing allocation tuning tracked by exact source HEAD and documentation.",
+    "migrationRecommendation": "Keep V10 exact bytes/checksum: existing60seconds and4+1/policy identity checks remain valid; no schema/repair required.",
+    "genericDefaultRecommendation": "Keep NaturalLanguageBatchRequest default15 for existing generic callers; production explicitly supplies Luna remaining<=27; dedicated direct evaluation must set explicit timeout.",
+    "deadlineRecommendation": "Synchronize monotonic and durable Gemini stage cutoff30, no-call cutoff57 and atomic postpublication cutoff60; use actual remaining time after admission.",
+    "authoritativeConstantLocation": "Application port AnalysisInvocationBudget shared by processor/persistence/adapters keeps dependencies inward; retain legacy exposed constants as aliases."
+  },
+  "limitations": [
+    "Observed Luna19.795 includes relay/network/parser/save and does not establish pure model latency,27-second success probability or relay cancellation propagation.",
+    "Injected transport timeout inspection proves configuration and caller cap, not a real27-second successful call or remote provider cancellation guarantee.",
+    "PG wrong-owner negative occurs after4+1 counters exhausted; this assertion alone does not isolate ownership mutation sensitivity. Existing durable ownership contracts remain relevant.",
+    "Existing core11fault/247-restoration evidence and reviews are historical unchanged artifacts; this new work item does not overwrite them.",
+    "New exactHEAD remote CI, dedicated paid integration re-evaluation and browser joint execution remain outside this local independent review; operational deployment approvals remain unresolved."
+  ],
+  "authorizationBoundaries": {
+    "paidCalls": 0,
+    "sourceOrTestEditsByReviewer": 0,
+    "reviewerGradleRuns": 0,
+    "mergeOrDeployment": false
+  },
+  "supersessionArchiveChecks": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "archivedBeforeMatchesBaseline": true,
+      "beforeHashMatches": true,
+      "currentHashMatches": true
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "archivedBeforeMatchesBaseline": true,
+      "beforeHashMatches": true,
+      "currentHashMatches": true
+    },
+    {
+      "path": ".tdd/red/issue-96-publication-admission.json",
+      "archivedBeforeMatchesBaseline": true,
+      "beforeHashMatches": true
+    }
+  ],
+  "sourceReview": {
+    "verdict": "PASS",
+    "blockers": [],
+    "files": [
+      {
+        "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/AnalysisInvocationBudget.kt",
+        "sha256": "1d044cb40e5a21a3875c8c2c9be99146c538a1cf9a43e11e70fcde4409616141"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+        "sha256": "0f4484723f43c444eb974a1690ff99aa198736e5addb0798de7d4713995602e8"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+        "sha256": "d85e91664412cf79b4a696bf952fdb627770a41070a697e838b650d517bf958f"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/OpenAiLunaNaturalLanguageParserAdapter.kt",
+        "sha256": "ddaa78c7845963abeee5c9df299b9b50c5ad60a4d71fd4b3ce0bb049847c3142"
+      }
+    ],
+    "reason": "Shared inward duration authority60/15/27/3; provider-specific cap recalculated after admission; strict >= provider/call/57 acceptance boundary; durable Gemini admission inherits27+3 reserve giving30; strict global60 atomic publication guards unchanged. No retry counter/owner/deadline reset, API default15 retained, V10 SQL and policy constant byte-identical to baseline. Legacy optional no-fallback seam is unchanged."
+  },
+  "redVerification": {
+    "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-final-red-xml",
+    "tests": 48,
+    "assertionFailures": 20,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 5,
+    "verdict": "PASS actual behavior RED, no setup/compilation failures",
+    "ownedFailures": {
+      "fallback": 11,
+      "admission": 3,
+      "transport": 2,
+      "postgres": 4
+    },
+    "failureType": "org.opentest4j.AssertionFailedError"
+  },
+  "greenVerification": {
+    "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-first-green-xml",
+    "tests": 72,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 8,
+    "verdict": "PASS"
+  },
+  "migrationVerification": {
+    "path": "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql",
+    "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab",
+    "baselineBytesIdentical": true,
+    "policyVersion": "bounded-luna-v1"
+  },
+  "ciReview": {
+    "verdict": "PASS",
+    "onlyWorkflowDiff": "quality timeout-minutes15→20; other workflow behavior unchanged",
+    "productionBehaviorChange": false
+  },
+  "plannedFaultReview": {
+    "verdict": "PASS",
+    "mutants": [
+      "processor Luna cap15",
+      "adapter Luna cap15",
+      "durable Gemini cutoff42 drift",
+      "call/provider/publish boundary > instead >=",
+      "shared completion reserve3→0"
+    ],
+    "notes": [
+      "Completion-reserve mutant shifts Gemini30→33 and no-call57→60; literal stage/admission/control expectations should detect.",
+      "Bundled exclusive-boundary mutant detects call/provider equality; publish inequality alone may be masked by earlier call guard.",
+      "Unmodified owner/deadline no-reset logic covered by existing Durable12 and new stale4+1 controls; no new reset mutant claimed. PG wrong-owner negative alone is masked by full cap as documented.",
+      "Fault execution and exact-restoration/final guard remain parent-owned pending evidence."
+    ]
+  },
+  "updatedAt": "2026-10-07T09:13:08.253172+00:00",
+  "faultVerification": {
+    "verdict": "PASS",
+    "rawEvidence": ".codex/tdd-evidence/issue-99-budget-faults-results.json",
+    "trackedEvidence": ".tdd/verification/issue-99-budget-allocation.json",
+    "schemaPass": true,
+    "detectedMutants": 5,
+    "totalAssertionFailures": 35,
+    "items": [
+      {
+        "fault": "processor-luna-cap15",
+        "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-fault-processor-luna-cap15-xml",
+        "tests": 34,
+        "assertionFailures": 13,
+        "errors": 0,
+        "skipped": 0,
+        "recordedFailureNamesExactMatch": true,
+        "exitCode": 1
+      },
+      {
+        "fault": "adapter-luna-cap15",
+        "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-fault-adapter-luna-cap15-xml",
+        "tests": 3,
+        "assertionFailures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "recordedFailureNamesExactMatch": true,
+        "exitCode": 1
+      },
+      {
+        "fault": "durable-gemini-cutoff42",
+        "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-fault-durable-gemini-cutoff42-xml",
+        "tests": 1,
+        "assertionFailures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "recordedFailureNamesExactMatch": true,
+        "exitCode": 1
+      },
+      {
+        "fault": "allow-cutoff-equality",
+        "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-fault-allow-cutoff-equality-xml",
+        "tests": 27,
+        "assertionFailures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "recordedFailureNamesExactMatch": true,
+        "exitCode": 1
+      },
+      {
+        "fault": "drop-completion-reserve",
+        "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-fault-drop-completion-reserve-xml",
+        "tests": 43,
+        "assertionFailures": 17,
+        "errors": 0,
+        "skipped": 0,
+        "recordedFailureNamesExactMatch": true,
+        "exitCode": 1
+      }
+    ],
+    "restoration": {
+      "entireCurrentSourceAndTestFileSetMatchesFrozenManifest": true,
+      "sourceCount": 131,
+      "testCount": 119,
+      "totalFiles": 250,
+      "trackedFingerprintsEqualRawManifest": true
+    },
+    "limitations": [
+      "Exclusive equality mutation relaxes redundant post-call/provider/publish guards together; publish-only distinction is not claimed.",
+      "No new reset mutation; unchanged no-reset source backed by original durable suite and current controls."
+    ]
+  },
+  "documentationReview": {
+    "verdict": "PASS",
+    "blockers": [],
+    "files": [
+      {
+        "path": "docs/PRD.md",
+        "sha256": "6b10508c0bba7175983ba47112eff3bf3b87c2e6fdd0a7e445ed29e01dc4d558"
+      },
+      {
+        "path": "docs/ARCHITECTURE.md",
+        "sha256": "d9bbbe1162c4f2b930128a0502125d2af4e8fedb9b1747bdd0499cbf55f0c373"
+      },
+      {
+        "path": "docs/ADR.md",
+        "sha256": "6909c87f020336bdb558ab605bd4b58e7073a66e6f694902d09ba10f51ee2c84"
+      },
+      {
+        "path": "docs/ISSUE_99_INTEGRATION.md",
+        "sha256": "d501fe1f15d8c833470747a78bbb776a2835122f953a228ea4de59c1c59feba1"
+      },
+      {
+        "path": "implementation_plan.md",
+        "sha256": "4f7b5b770fab352f403f3c8555ab02fcc91caa71b41bc7e12f274a2891849fc0"
+      }
+    ],
+    "reviewedClaims": [
+      "Approved Gemini percall15/stage30, Luna cap27, completion3 and single60 agree with production bounded path.",
+      "Early fallback is capped27; postadmission remaining may be lower; call and provider deadline equality rejected.",
+      "Default15 directcaller behavior remains and explicit27 directevaluation warning stated.",
+      "bounded-luna-v1 and unchanged V10 retained; sourceHEAD/manifest tracks tuning.",
+      "Relay19.795 measurement includes network/proxy/read/save; no puremodel latency/success/cancel propagation guarantee. Actual paid observation originates from dedicated evaluator report, not independent reviewer execution.",
+      "CI Quality timeout20 only runner budget; deployment workflow/permissions/concurrency unchanged.",
+      "Original integration HEAD51a4 section separated from new allocation; new fullguard/exactHEADCI remain future checks.",
+      "Final integration doc and Issue99 Worklog accurately report654/0/0/4 in111suites, faults5/35 and250 restoration; exact new HEADCI and paid/browser/operations remain separate pending work."
+    ]
+  },
+  "historicalEvidenceVerification": {
+    "baseline": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+    "byteUnchanged": [
+      ".tdd/verification/issue-99-integration.json",
+      ".tdd/reviews/issue-99-independent-source-review.json",
+      ".tdd/reviews/issue-99-independent-test-review.json"
+    ]
+  },
+  "finalGateVerification": {
+    "verdict": "PASS",
+    "qualityEvidence": ".tdd/reviews/issue-99-budget-final-quality.json",
+    "guardReportedExitCode": 0,
+    "guardUnchangedSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+    "guardTasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "selfTests": 12,
+    "xmlIndependentTotals": {
+      "suites": 111,
+      "tests": 654,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    "skippedNamesMatchQualityEvidence": true,
+    "sourceTest250FingerprintsStillMatchFaultFrozenManifest": true,
+    "evidenceBoundary": "XML counts and restored source fingerprints independently verified. Guard exit0/tasks/selfTests are parent execution outcome corroborated by same guard source; zero-byte guard log expected because successful subprocess stdout is captured and intentionally suppressed. Reviewer ran no Gradle."
+  },
+  "openApiVerification": {
+    "verdict": "PASS",
+    "evidence": ".tdd/reviews/issue-99-budget-openapi-contract.json",
+    "nativeExportSha256": "13fd95bff8ce7ca3623ca86315089735909a0f603f0ce6015aa3e3f739b176dd",
+    "baselineSha256": "56a8ddfa3bc7bd1c562ddb31a6ea8c39806abb86eef727381992678f2e9b42f2",
+    "independentlyParsedJsonEqual": true,
+    "nativeExportBytesEqualTempExport": true,
+    "apiChanged": false,
+    "browserJointValidationClaimed": false
+  },
+  "finalVerdict": "PASS independent local source/test/fault/restoration/docs/OpenAPI evidence review; no blocking findings",
+  "remoteCi": "Pending same-branch publication; no new HEAD CI success claimed"
+}

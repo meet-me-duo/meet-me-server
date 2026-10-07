@@ -1,0 +1,34 @@
+{
+  "workItem": "issue-96-provider-contract",
+  "reason": "Independent author fixes to test helpers discovered during first GREEN; expectations unchanged",
+  "priorEvidence": "issue-96-provider-contract.json",
+  "repairs": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaProviderContractTest.kt",
+      "priorSha256": "9b57529d827214687bc1720f6b99ddac1b750c7ce1c30702ec381c6b99154dfd",
+      "repairedSha256": "45fdb37df7b281734fa6b274347deca3eaccc5b53a9e6517fb1f8a1d7e48a8ea",
+      "reason": "Jackson 3 JsonNode.asText throws for nullable type arrays. Inspect type only when isString, then asString; strict required/additionalProperties assertions and nullable expectations are preserved. Root-authorized per-client retry-off OkHttp replaces JDK HTTP transport; constructor-only fixture client changes to OkHttpClient.Builder().build(), leaving transport retry policy to the adapter."
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "priorSha256": "19c6d24a6bc9d4b79df1c2291e0e092971a468de2407ab8e5a6a155c49aae24f",
+      "repairedSha256": "f9abaa99c94bfcaa78b9237bba7ca2505fd867e5a1e6ded7d5ed978e754ddf85",
+      "reason": "Mockito anyValue null unboxes inline SubmissionBatchId before verification and contaminates subsequent cases. verifyNoInteractions is stronger than never.replaceForBatch and preserves the no structured publication expectation."
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SearchScopeProviderResponseContractTest.kt",
+      "priorSha256": "7076a05df7c81505ef21e0d71f3aca30ecc1a30c9160153ea869ef22132959a9",
+      "repairedSha256": "34791fc27cca44d59d7fba9811f2baabb3106df71582362f258f308b97190473",
+      "reason": "Correct class KDoc to distinguish authored synthetic fixtures from the parent-supplied stored Luna response; inputs and assertions unchanged."
+    }
+  ],
+  "newRedRequired": false,
+  "renewal": {
+    "summary": ".tdd/red/issue-96-provider-contract.json",
+    "tests": 72,
+    "failures": 17,
+    "errors": 0,
+    "restoredByteForByte": true,
+    "initialUnchangedSummary": ".tdd/red/issue-96-provider-initial-unchanged.json"
+  }
+}

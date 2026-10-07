@@ -1,0 +1,23 @@
+{
+  "workItem": "issue-92-request-presence-schema",
+  "sourceRevision": "1ddbd26747936a56a0f6f2f380d1ef066fb41ed7",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundRequestPresencePostgresTest.kt",
+      "sha256": "ffc5e54d48836376efb0ff2ae9bc6263323cc0bfdaa8dd948b26e41663590ad3"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*CorrectionRoundRequestPresencePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest.generated schema declares expected generation required nonnull integer and UUID preconditions required()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T02:27:00.870604Z"
+}

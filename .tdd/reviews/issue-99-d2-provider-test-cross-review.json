@@ -1,0 +1,36 @@
+{
+  "workItem": "issue-99-d2-provider-persistence-tests",
+  "reviewer": "/root/d2_domain_tests",
+  "role": "independent read-only test review; no source edits or Gradle execution",
+  "verdict": "PASS",
+  "recordedAt": "2026-10-07T07:22:15.014387Z",
+  "specBasis": [
+    "docs/ISSUE_95_CONTRACT.md: approved D2 hard/soft distinction",
+    "docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md: common provider, strict safety, legacy restoration boundaries"
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2PreferenceProviderContractTest.kt",
+      "sha256": "dbe0bc2c3295ab38370ac6f9657577aa463b28cbf68b241c57a50ab3be1a5692"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/D2PreferenceJsonMapperTest.kt",
+      "sha256": "fe507b2c5f93e08336835b66b3cc4533ae5247bc7ca2d0acfdd99e13ca8efcec"
+    }
+  ],
+  "blockingFindings": [],
+  "coveredBoundaries": [
+    "Identical Gemini/Luna live strict v3 schema and prompt payload, synthetic loopback only",
+    "Legacy v1/v2 nonstrict path restores hard-only inputs and cannot introduce D2 types",
+    "Time preference has null polarity; place preference has null radius; hard availability/exclusion remain typed",
+    "Date/weekday exclusive scope, 24:00 next-day boundary, illegal roles/unknown:null/missing:null/AREA/query length rejected",
+    "Envelope exact refs/results/rejection codes, shared 32 condition and byte ceilings remain intact",
+    "JSON byte round-trip preserves hard and preferred types, dated/recurring midnight and all legacy condition kinds"
+  ],
+  "limitations": [
+    "Prompt assertions check shared bytes and preferred-type tokens; final source reviewer must check semantic instructions rather than treating tokens as live language quality proof",
+    "Mapper test is real JSON round-trip, not real database upgrade/frozen cohort verification; actual PostgreSQL test owner covers that boundary",
+    "Schema v3 and PREFERRED type wire shapes are agreed implementation seam, not additional product decisions",
+    "No RED/GREEN or paid/live provider results inferred from read-only review"
+  ]
+}

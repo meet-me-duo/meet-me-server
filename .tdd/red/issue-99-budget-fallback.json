@@ -1,0 +1,48 @@
+{
+  "workItem": "issue-99-budget-fallback",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "fd24189036694c24aac3a5eccc3c8b078bfc9a2036580b0e2f5070b6615c1fc0"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*BoundedProviderFallbackContractTest",
+    "--tests",
+    "*BoundedAdmissionBudgetContractTest",
+    "--tests",
+    "*LunaExtendedTransportBudgetContractTest",
+    "--tests",
+    "*LunaTransportNoReplayContractTest",
+    "--tests",
+    "*ApprovedProviderBudgetPostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.timeouts exhaust Gemini 30 seconds then allow a valid twenty second Luna response within its 27 second budget()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.late Gemini success cannot publish and invokes Luna while reserve remains()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.late Luna success cannot publish inside the completion reserve()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.retry-after that cannot fit Gemini budget skips sleep and preserves fallback reserve()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[1] completionMillis = \"57000\"",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[2] completionMillis = \"60000\"",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.slow Gemini timeout and jitter leave a fourteen second second attempt before the exact thirty second transition()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[1] responseMillis = \"20000\", accepted = \"true\"",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[2] responseMillis = \"26999\", accepted = \"true\"",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[3] responseMillis = \"27000\", accepted = \"false\"",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[4] responseMillis = \"28000\", accepted = \"false\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T08:59:40.639881Z"
+}

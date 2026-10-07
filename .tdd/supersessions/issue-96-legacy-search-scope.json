@@ -1,0 +1,43 @@
+{
+  "workItem": "issue-96-legacy-search-scope",
+  "recordedAt": "2026-10-07T06:13:00.650762Z",
+  "authority": "Explicit Issue #96 user instruction to separate validity from applying search range overrides the former Issue #91 scope-as-validation expectations; no approval needed",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "scope": "Exactly three existing test behaviors updated in two files; invalid date/day, coordinates, unrelated non-null query and provider AMBIGUOUS rejection remain authoritative",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "beforeSha256": "d798f7a782686bc324c1247e725670a055079963d6198b132dbf84a0d11c2619",
+      "afterSha256": "8473df2afbe4a4245089b981312b6f31b4a682d2d482d45a069072d0d593dc27",
+      "archivedBeforePath": ".tdd/history/issue-96-legacy-search-scope/GeminiProviderAuthorityContractTest.before.kt",
+      "changes": [
+        "Valid date at searchEndDate is preserved with null rejection; matcher availability remains empty",
+        "Contradictory date/day and coordinate metadata still fail condition validation"
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "beforeSha256": "843cfefca69e5b422e600b87ed0b6f5919cc971003dbdbd8104a3bead45f3e1c",
+      "afterSha256": "36c549fd78381d7994509fcc514587a363fe0bf3154adcead09fd378cf64a681",
+      "archivedBeforePath": ".tdd/history/issue-96-legacy-search-scope/GeminiTimeContextContractTest.before.kt",
+      "changes": [
+        "Valid date outside range is removed from invalidConditions but tested explicitly; provider AMBIGUOUS_TIME_CONSTRAINT remains unchanged and condition preserved",
+        "AVAILABLE-only outside range has null rejection, preserved condition and empty matcher availability"
+      ]
+    }
+  ],
+  "preservedHistoricalRed": [
+    ".tdd/history/issue-96-legacy-search-scope/issue-91-provider-authority.json",
+    ".tdd/history/issue-96-legacy-search-scope/issue-91-provider-authority-migration.json"
+  ],
+  "newRedDriver": "/workspace/issue96-legacy-scope-red.py",
+  "verification": "Root-only source-regression RED:23tests,3expected assertion failures,0errors; current source restored byte-for-byte with no concurrent edits. Root GREEN and full suite verification follow.",
+  "providerCalls": 0,
+  "behavioralRed": ".tdd/red/issue-96-legacy-search-scope.json",
+  "sourceRestoration": {
+    "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt",
+    "originalSha256": "ad6b1ef0c024be953f8baee54d8c81a180f11fe88390c36e3aa747b43e067263",
+    "restoredByteForByte": true,
+    "concurrentEditsObserved": false
+  }
+}

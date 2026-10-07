@@ -75,5 +75,6 @@ class GeminiPlaceGroupingContractTest {
         assertThrows<NaturalLanguageParserException> { adapter.parseProviderResponse(response, request) }
     }
 
-    private fun input(rawText: String) = NaturalLanguageInput(UUID.randomUUID().toString(), rawText, Locale.forLanguageTag("ko-KR"))
+    private fun input(rawText: String) =
+        NaturalLanguageInput(UUID.randomUUID().toString(), rawText, Locale.forLanguageTag("ko-KR"), LocalDate.of(2026, 9, 20))
 }

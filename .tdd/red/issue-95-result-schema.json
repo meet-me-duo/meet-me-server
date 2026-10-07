@@ -1,0 +1,24 @@
+{
+  "workItem": "issue-95-result-schema",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultWebIntegrationTest.kt",
+      "sha256": "b540f7795b3f4a030ab400116186951c2e189851dafda4cc4bd0a57ae33d6956"
+    }
+  ],
+  "command": [
+    "/workspace/issue95-red-baseline/gradlew",
+    "-p",
+    "/workspace/issue95-red-baseline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MatchingResultWebIntegrationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.MatchingResultWebIntegrationTest.public result endpoints document success and failure responses and DTO fields()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:20:34.000370Z"
+}

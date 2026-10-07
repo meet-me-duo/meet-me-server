@@ -1,0 +1,44 @@
+{
+  "workItem": "issue-99-live-provider-v3",
+  "recordedAt": "2026-10-07T07:18:58.423261+00:00",
+  "authority": "Approved D2 handoff requires shared preference schema and explicit live/legacy version boundary; root selected live v3, v1/v2 compatibility only.",
+  "scope": "Two actual live provider fixtures adopt v3. Legacy nonstrict Gemini fixtures and stored Luna observed v2 fixture remain byte unchanged.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaProviderContractTest.kt",
+      "beforeSha256": "45fdb37df7b281734fa6b274347deca3eaccc5b53a9e6517fb1f8a1d7e48a8ea",
+      "afterSha256": "cb994a15678f571d5603c0591f69ed47633800c19574cddc4f4e55e55eded89a",
+      "archivedBeforePath": ".tdd/history/issue-99-live-provider-v3/LunaProviderContractTest.before.kt",
+      "changes": [
+        "Live-only successful response fixture schema_version 2 -> 3; all transport, failure, timeout, strict object, usage, and provider equivalence assertions unchanged."
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTransportBudgetContractTest.kt",
+      "beforeSha256": "fd3ff9b884fcedcb4cc03b4f6c88918e94df87bbf21f23b0eabe48508e1964d2",
+      "afterSha256": "68640367bf03e56522cb2772331e2576ac4152f933a203c66e9ca15839e08adb",
+      "archivedBeforePath": ".tdd/history/issue-99-live-provider-v3/GeminiTransportBudgetContractTest.before.kt",
+      "changes": [
+        "Live-only successful response fixture schema_version 2 -> 3; all transport, failure, timeout, strict object, usage, and provider equivalence assertions unchanged."
+      ]
+    }
+  ],
+  "verification": "Actual root focused first RED: 50 tests, 23 failures, 0 errors. Live fixture group: 3 expected schema-version failures; provider group: 8 expected failures; JSON mapper: 2 TODO failures. Exact names/hashes in split summaries. Original full raw log copied unchanged per workItem.",
+  "providerCalls": 0,
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-96-provider-contract.json",
+      "archived_path": ".tdd/history/issue-99-live-provider-v3/issue-96-provider-contract.json",
+      "sha256": "322a1792df4aff23dee4b068c2729f8c6a3b8d51cf6c8a4ac0fd8343a51b497f",
+      "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d"
+    },
+    {
+      "path": ".tdd/red/issue-96-provider-initial-unchanged.json",
+      "archived_path": ".tdd/history/issue-99-live-provider-v3/issue-96-provider-initial-unchanged.json",
+      "sha256": "3445c0b413c55d5da742d222ea7e298f6434caf5d9bd2a2823679faf62c26e32",
+      "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d"
+    }
+  ],
+  "historicalEvidencePolicy": "Entire affected RED summaries archived byte-for-byte; neither old test hashes nor original sourceRevision/commands/failures are rewritten. Parent will record new actual schema3 RED after formatting. Existing issue96 review and mutation summaries remain historical evidence, and new issue99 independent review is required.",
+  "replacementRed": ".tdd/red/issue-99-live-provider-v3.json"
+}

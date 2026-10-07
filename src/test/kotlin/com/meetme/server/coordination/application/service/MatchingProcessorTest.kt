@@ -51,7 +51,9 @@ class MatchingProcessorTest {
         val submissions = listOf(submission(1), submission(2))
         val batch = SubmissionBatch(SubmissionBatchId(uuid(19)), room.id, submissions.map { it.latest.id }, NOW)
         runRepository.current = CoordinationRun.queued(CoordinationRunId(uuid(18)), batch).startMatching()
-        `when`(roomRepository.findById(room.id)).thenReturn(room)
+        val activeRoom = room.transition(activeRunId = requireNotNull(runRepository.current).id.value)
+        `when`(roomRepository.findById(room.id)).thenReturn(activeRoom)
+        `when`(roomRepository.findByIdForUpdate(room.id)).thenReturn(activeRoom)
         `when`(submissionRepository.findLatestByRoom(room.id)).thenReturn(submissions)
         `when`(structuredRepository.findByBatch(batch.id)).thenReturn(
             submissions.map {
@@ -104,7 +106,9 @@ class MatchingProcessorTest {
             )
         val run = CoordinationRun.queued(CoordinationRunId(uuid(21)), batch).startMatching()
         runRepository.current = run
-        `when`(roomRepository.findById(room.id)).thenReturn(room)
+        val activeRoom = room.transition(activeRunId = requireNotNull(runRepository.current).id.value)
+        `when`(roomRepository.findById(room.id)).thenReturn(activeRoom)
+        `when`(roomRepository.findByIdForUpdate(room.id)).thenReturn(activeRoom)
         `when`(submissionRepository.findLatestByRoom(room.id)).thenReturn(submissions)
         `when`(structuredRepository.findByBatch(batch.id)).thenReturn(
             listOf(
@@ -191,6 +195,8 @@ class MatchingProcessorTest {
         }
 
         override fun findById(id: CoordinationRunId): CoordinationRun? = current?.takeIf { it.id == id }
+
+        override fun findByIdForUpdate(id: CoordinationRunId): CoordinationRun? = findById(id)
 
         override fun update(run: CoordinationRun) {
             current = run

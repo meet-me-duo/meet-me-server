@@ -49,6 +49,9 @@ class CandidateScenarioLiveProbeTest {
                                 .toString(),
                             texts[index],
                             Locale.forLanguageTag("ko-KR"),
+                            submission.latest.createdAt
+                                .atZone(ZoneId.of("Asia/Seoul"))
+                                .toLocalDate(),
                         )
                     },
                 )

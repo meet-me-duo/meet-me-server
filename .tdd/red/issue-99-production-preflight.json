@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-99-production-preflight",
+  "sourceRevision": "6f7f54e46846c690a8374aa7dc1898bee21d873f",
+  "testFiles": [
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "21d29f8fb799176c196dc7d6fd2dc240486605d1bd57e6bddcc0b3b0f6f4663c"
+    }
+  ],
+  "command": "env JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1 node --test .github/scripts/production-preflight-contract.test.cjs",
+  "failedTests": [
+    "fork wrong PR branch base author actor repository SHA and malformed SHA are rejected before any production authority",
+    "production preflight has PR-only triggers and explicitly gates same repository PR100 trusted author and branch",
+    "arbitrary approved-image values malformed digests review IDs and contract names cannot enter sanitized metadata",
+    "only eight declared file paths and strict file metadata types may cross the output boundary",
+    "container before and after reject unknown nested values mistyped state and arbitrary image health or restart policy",
+    "service release phase and minimum contract metadata reject unrecognized fields and arbitrary text"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T10:43:05.025633+00:00"
+}

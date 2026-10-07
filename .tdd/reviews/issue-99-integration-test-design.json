@@ -1,0 +1,110 @@
+{
+  "workItem": "issue-99-integration-tests",
+  "recordedAt": "2026-10-07T07:22:27.736972Z",
+  "testAuthor": "/root/integration_tests",
+  "implementationAuthor": "/root and delegated implementation agents",
+  "testAuthorSourceChanges": false,
+  "paidProviderCalls": 0,
+  "specSources": [
+    "docs/ISSUE_95_CONTRACT.md",
+    "docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md",
+    "docs/ISSUE_95_96_INTEGRATION_HANDOFF.md",
+    ".agents/rules/development.md"
+  ],
+  "sourceRevisions": [
+    "518c612f4be9627427f61a56c982b496342f0a28",
+    "9a4c4d5463e578829baed12cfebad16fb0bf33a4"
+  ],
+  "testFiles": [
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/IntegratedRecommendationFallbackPostgresTest.kt",
+    "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt"
+  ],
+  "contractAssertions": [
+    "Four Gemini admission failures then one synthetic Luna success preserve frozen versions and storage-roundtrip explicit preference, publish original hard availability plus preferred subwindow, rank two satisfied people above zero, typed actual subwindow confirmation idempotent and closed to reopen/redelivery, public privacy",
+    "Simultaneous fresh processors share durable owner, original deadline and physical admission budget, publish one analysis",
+    "Prepublication callback cancellation leaves zero result rows and fresh ANALYSIS_DELAYED preserves input and structured preferences",
+    "Actual projection write followed by callback cancellation rolls back candidates, every recommendation table and room transition",
+    "Actual projection write followed by original durable invocation deadline has same rollback even when callback remains true",
+    "Hard UNAVAILABLE gap is subtracted before preferred projection, fragments retain two satisfied people, gap cannot be confirmed",
+    "Eight frozen people and five windows reach real storage then postprojection deadline crosses; rollback all results, ACK, redelivery repeats no calls",
+    "Empty real PostgreSQL migrates exactly ten versions and validates recommendation/invocation schemas",
+    "Separate V8 database fixture confirms all preexisting row JSON (raw text, microsecond created/fixed timestamps, cohort, attempt usage, legacy candidate/confirmation, OPEN+CONSUMED rounds) unchanged; legacy attempts gain correct GEMINI defaults without historical backfill"
+  ],
+  "redStatus": "Valid fresh run: 9 tests, 6 contract assertion failures for missing bounded recommendation publication, 3 passes (both migration tests and prepublication cancellation); no setup errors",
+  "greenStatus": "Original seven integration tests and two migration tests all passed in root first-GREEN run, no failures/skips; assertions unchanged after final RED",
+  "reviewStatus": "Independent /root/independent_review reviewed seven integration expectations; no contract blockers, before runtime verification",
+  "limitations": [
+    "Controlled deadline crossing for eight people/five windows proves transactional budget enforcement; it is not a wall-clock throughput benchmark.",
+    "Full mandatory guard, entire suite, OpenAPI and deployment readiness are root-owned completion checks."
+  ],
+  "initialRun": {
+    "command": "Root-controlled test filters *IntegratedRecommendationFallbackPostgresTest and *IntegratedLegacyUpgradePostgresTest",
+    "tests": 9,
+    "passed": 2,
+    "failed": 7,
+    "migrationStatus": "Both blank V1-V10 validate and existing V8 row-preservation upgrade passed on real PostgreSQL",
+    "integrationStatus": "Five pending preference mapper TODO failures and two invalid Mockito setup failures; do not claim publication RED",
+    "fixtureRepair": "Non-null anyAnalysis matcher fallback prevents Kotlin NPE and leaked Mockito pending answer onto next find(UUID) invocation",
+    "rawLog": ".codex/tdd-evidence/issue-99-initial-integration.log",
+    "archivedXmlDirectory": ".codex/tdd-evidence/issue-99-initial-integration-xml"
+  },
+  "redEvidence": ".tdd/red/issue-99-integration.json",
+  "redXmlDirectory": ".codex/tdd-evidence/issue-99-integration-final-red-xml",
+  "greenEvidence": {
+    "rawLog": ".codex/tdd-evidence/issue-99-first-green.log",
+    "xmlDirectory": ".codex/tdd-evidence/issue-99-integration-first-green-xml",
+    "tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0
+  },
+  "additionalReviewRegression": {
+    "testFile": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2RejectedPreferencePostgresTest.kt",
+    "reason": "A failed explicit preference dimension cannot turn AND into a score for only the retained valid dimension",
+    "tests": 2,
+    "status": "Final formatted name-only replacement tests both GREEN after fresh expected score RED; original source/RED retained in issue-99-rejected-preference-name history",
+    "redEvidence": ".tdd/red/issue-99-rejected-preference.json",
+    "greenEvidence": {
+      "rawLog": ".codex/tdd-evidence/issue-99-safety-green.log",
+      "xmlDirectory": ".codex/tdd-evidence/issue-99-safety-green-xml",
+      "rejectedPreferenceTests": 2,
+      "unsafeHardTimePostgresTests": 2,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "finalTestFingerprints": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/IntegratedRecommendationFallbackPostgresTest.kt",
+      "sha256": "a5042ae6ee8552852af7d6788deae7bec4a4a36cf314d2b86955da1928fad58a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "472038c576f79442492aa9de254f62179dabf9362a2d3fa986e1b5221757ab55"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2RejectedPreferencePostgresTest.kt",
+      "sha256": "29c45572b69b84186dc14487beee9b6448aa19b9cf188ab405ab522ca3522526"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2UnsafeHardTimePostgresTest.kt",
+      "sha256": "87bd7c31531a815bf111f32011cf7cf1264d535d48c38078720fb564349df67e"
+    }
+  ],
+  "unsafeHardTimeReviewRegression": {
+    "testFile": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2UnsafeHardTimePostgresTest.kt",
+    "tests": 2,
+    "reason": "Dropping malformed explicit hard time restrictions cannot make a participant available over the whole search range or ignore an explicit prohibition",
+    "status": "Both actual provider→PostgreSQL→matching unsafe hard-time cases GREEN with no failures/skips after valid RED; unsafe metadata and typed valid conditions preserved, zero invented candidate/recommendation",
+    "redEvidence": ".tdd/red/issue-99-unsafe-hard-time-postgres.json",
+    "review": "Independent reviewer confirmed scope and required live SPECIFIC_PLACE fixture to omit radius_meters; fixture corrected before valid RED",
+    "greenEvidence": {
+      "rawLog": ".codex/tdd-evidence/issue-99-safety-green.log",
+      "xmlDirectory": ".codex/tdd-evidence/issue-99-safety-green-xml",
+      "rejectedPreferenceTests": 2,
+      "unsafeHardTimePostgresTests": 2,
+      "failed": 0,
+      "skipped": 0
+    }
+  }
+}

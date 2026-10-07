@@ -51,6 +51,7 @@ class RoomLifecycleService(
     private val idGenerator: IdGenerator,
     private val closureService: CollectionClosureService,
     private val clock: Clock,
+    private val revisionRoundRepository: com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository,
 ) : CreateRoomUseCase,
     GetRoomUseCase,
     JoinRoomUseCase,
@@ -100,6 +101,7 @@ class RoomLifecycleService(
         return RoomAccessResult(room.toView(host, 0), session.newCredential, true)
     }
 
+    @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     override fun get(
         inviteCode: String,
         rawCredential: String?,
@@ -243,8 +245,26 @@ class RoomLifecycleService(
     private fun MeetingRoom.toView(
         viewer: Participant?,
         submittedParticipants: Int,
-    ): RoomView =
-        RoomView(
+    ): RoomView {
+        val run = coordinationRunRepository.findLatestByRoom(id)
+        val round = activeRevisionRoundId?.let { revisionRoundRepository.findById(id, it) }
+        check(activeRevisionRoundId == null || round?.status == com.meetme.server.coordination.domain.RevisionRoundStatus.OPEN)
+        val host = viewer?.role == ParticipantRole.HOST
+        val sourceCohort =
+            if (round != null && run != null) {
+                com.meetme.server.coordination.application.service.FrozenSubmissionReader
+                    .read(submissionRepository, run.batch)
+                    .any { it.participantId == viewer?.id }
+            } else {
+                false
+            }
+        val completed = run?.status == com.meetme.server.coordination.domain.CoordinationStatus.COMPLETED
+        val unconfirmed = run != null && !run.isConfirmed
+        val recoveryResult =
+            completed &&
+                unconfirmed &&
+                (!run.hasSelectableResult || run.quality == com.meetme.server.coordination.domain.CandidateQuality.PARTIAL)
+        return RoomView(
             inviteCode = inviteCode.value,
             purpose = purpose,
             meetingMode = mode,
@@ -258,22 +278,44 @@ class RoomLifecycleService(
             collectionStatus = collectionStatus,
             closureReason = closureReason,
             closedAt = closedAt,
-            publicStatus = publicStatus(submittedParticipants),
-            viewer = ViewerParticipation(viewer != null, viewer?.displayName?.value, viewer?.role),
+            publicStatus = if (round != null) PublicRoomStatus.COLLECTING else publicStatus(submittedParticipants),
+            viewer = ViewerParticipation(viewer != null, viewer?.displayName?.value, viewer?.role, viewer?.id?.value),
+            analysisId = run?.id?.value,
+            revisionGeneration = revisionGeneration,
+            revisionRound =
+                round?.let {
+                    com.meetme.server.meetingroom.application.port.input.RevisionRoundView(
+                        it.id,
+                        it.generation,
+                        it.status,
+                    )
+                },
+            capabilities =
+                com.meetme.server.meetingroom.application.port.input.RoomCapabilities(
+                    canEditOwnSubmission = viewer != null && (collectionStatus == CollectionStatus.COLLECTING || sourceCohort),
+                    canOpenRevision = host && round == null && recoveryResult,
+                    canAnalyzeRevision = host && round != null,
+                    canConfirm = host && round == null && completed && unconfirmed && run.hasSelectableResult,
+                    canForceReparse = host && round != null && correctionAnalysisCount < 3,
+                ),
+            remainingCorrectionAnalyses = 3 - correctionAnalysisCount,
+            stateVersion = version,
+            recommendationProtocol = run?.recommendationProtocol,
         )
+    }
 
     private fun MeetingRoom.publicStatus(submittedParticipants: Int): PublicRoomStatus {
         if (collectionStatus == CollectionStatus.COLLECTING) return PublicRoomStatus.COLLECTING
         if (submittedParticipants < 2) return PublicRoomStatus.INSUFFICIENT_PARTICIPANTS
         val run = coordinationRunRepository.findLatestByRoom(id) ?: return PublicRoomStatus.ANALYZING
-        if (run.confirmedCandidateId != null) return PublicRoomStatus.CONFIRMED
+        if (run.isConfirmed) return PublicRoomStatus.CONFIRMED
         return when (run.status) {
             com.meetme.server.coordination.domain.CoordinationStatus.ANALYSIS_DELAYED,
             com.meetme.server.coordination.domain.CoordinationStatus.DEAD_LETTERED,
             -> PublicRoomStatus.ANALYSIS_DELAYED
             com.meetme.server.coordination.domain.CoordinationStatus.COMPLETED ->
                 when {
-                    run.candidates.isEmpty() -> PublicRoomStatus.NO_MATCH
+                    !run.hasSelectableResult -> PublicRoomStatus.NO_MATCH
                     run.quality == com.meetme.server.coordination.domain.CandidateQuality.PARTIAL ->
                         PublicRoomStatus.READY_WITH_WARNINGS
                     else -> PublicRoomStatus.READY

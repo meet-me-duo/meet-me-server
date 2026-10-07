@@ -1,0 +1,59 @@
+{
+  "workItem": "issue-99-budget-allocation",
+  "recordedAt": "2026-10-07T08:55:20.929845Z",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "authority": "New explicit user approval: Gemini total30seconds, Luna maximum27seconds, completion3seconds, total60seconds; 4+1 maximum attempts, frozen inputs and durable admission/deadline behavior remain required.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "beforeSha256": "f9abaa99c94bfcaa78b9237bba7ca2505fd867e5a1e6ded7d5ed978e754ddf85",
+      "archivedBeforePath": ".tdd/history/issue-99-budget-allocation/BoundedProviderFallbackContractTest.before.kt",
+      "afterSha256": "fd24189036694c24aac3a5eccc3c8b078bfc9a2036580b0e2f5070b6615c1fc0",
+      "changes": [
+        "Approved42/15/3 → 30/27/3 literal expectations; retain4+1 maximum attempts, transient/permanent distinction, frozen input assertions, durable accounting and total60 deadline.",
+        "Exact27 per-call and57 completion boundaries are exclusive, matching actual transport deadline and existing durable >=57 admission semantics; old mock equal42+15success expectation superseded explicitly.",
+        "New deterministic assertions:15timeout+1jitter+14timeout→Luna at30; twenty-second valid Luna;27minus1ms accepted,27and28 rejected;56 admissionone second;57/60 no physical fallback;30/31 Gemini admission rollover27/26."
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "beforeSha256": "77e130f5f3e84ed3bd5804cedd21e40dba4bdfe7dc83c09ccd621397bd3f4cc1",
+      "archivedBeforePath": ".tdd/history/issue-99-budget-allocation/BoundedAdmissionBudgetContractTest.before.kt",
+      "afterSha256": "2b0e86dc495da654c9b32381b2943c50f781fad4a59e4126f4ca3e51bbce3791",
+      "changes": [
+        "Approved42/15/3 → 30/27/3 literal expectations; retain4+1 maximum attempts, transient/permanent distinction, frozen input assertions, durable accounting and total60 deadline.",
+        "Exact27 per-call and57 completion boundaries are exclusive, matching actual transport deadline and existing durable >=57 admission semantics; old mock equal42+15success expectation superseded explicitly.",
+        "New deterministic assertions:15timeout+1jitter+14timeout→Luna at30; twenty-second valid Luna;27minus1ms accepted,27and28 rejected;56 admissionone second;57/60 no physical fallback;30/31 Gemini admission rollover27/26."
+      ]
+    }
+  ],
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-96-publication-admission.json",
+      "archived_path": ".tdd/history/issue-99-budget-allocation/issue-96-publication-admission.json",
+      "sha256": "c27fe3c05c54b9117e2ce7cd165f6997e3fd13445e3f7813acbd2416daf60288",
+      "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d"
+    }
+  ],
+  "historicalEvidencePolicy": "Before files and affected active RED summaries preserved byte-for-byte. Earlier issue96 fallback RED summaries already archived under issue99 live-provider-v3 remain unchanged. New tests require actual root first RED before production changes.",
+  "verification": "Actual root final formatted fresh RED:48 tests/20 assertion failures/0errors/0skips on unchanged production source HEAD51a4c0d. Owned suites: fallback27/11, admission7/3, extended transport3/2; unchanged Luna no-replay2/0; PG owner9/4. Exact final XML names and current formatted hashes recorded in split RED summaries; full run raw log copied unchanged per workItem.",
+  "providerCalls": 0,
+  "newTestFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaExtendedTransportBudgetContractTest.kt",
+      "sha256": "3b0ddefac253a22a1e7dfa508f4dd660abd58e41dda41b42518f7d3566284923",
+      "scope": "Actual adapter Call.timeout observed inside injected OkHttp interceptor;27/60sec caller cap27 and350mscaller remains<=350ms; syntheticresponse only,no chain.proceed/no network,no paidcalls."
+    }
+  ],
+  "replacementRed": [
+    ".tdd/red/issue-99-budget-fallback.json",
+    ".tdd/red/issue-99-budget-admission.json",
+    ".tdd/red/issue-99-budget-transport.json"
+  ],
+  "rawEvidence": {
+    "firstProviderRun": ".codex/tdd-evidence/issue-99-budget-provider-first-red.log",
+    "firstProviderXml": ".codex/tdd-evidence/issue-99-budget-provider-first-red-xml",
+    "finalFormattedRun": ".codex/tdd-evidence/issue-99-budget-final-red.log",
+    "finalFormattedXml": ".codex/tdd-evidence/issue-99-budget-final-red-xml"
+  }
+}

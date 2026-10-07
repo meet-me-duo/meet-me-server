@@ -1,0 +1,269 @@
+{
+  "workItem": "issue-96-bounded-fallback",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "reviewer": "/root/fault_review",
+  "codeAndEvidenceVerdict": "PASS",
+  "blockingFindings": [],
+  "sourceRevisionScope": "The accepted baseline revision identifies the parent commit. sourceFiles and testFiles fingerprint the final uncommitted implementation actually reviewed and exercised; the clean parent bytes are not claimed to be the mutation baseline.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/OpenAiConfiguration.kt",
+      "sha256": "f6344187a9d39b9fa5ae73a06fd3b08025f6ed3bf4c41f96c1b38fed353a01c1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d6ef45e14b1ae9ca28b13497c047cdfbd6555ecd8c19c407ff6e3b109549b7d6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt",
+      "sha256": "ad6b1ef0c024be953f8baee54d8c81a180f11fe88390c36e3aa747b43e067263"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/OpenAiLunaNaturalLanguageParserAdapter.kt",
+      "sha256": "c0f7ac47b005bcd6de3dd04094d59e94a2b524af763df8a82605a5cc844f744a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ProviderFailureClassifier.kt",
+      "sha256": "424c5f263dc4b4b501e811cb2d6af409ad9e6b371010eba7f1901d8f775f0cd6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/CoordinationPersistenceAdapters.kt",
+      "sha256": "3fa55b6762f46ec14d9f530ff33962390709775bb26430851f59547dada90853"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcAnalysisInvocationRepository.kt",
+      "sha256": "4a757c9d48b9c7a2401eb750ff9e159dff3801cc47a2fc9437a02de9e182937c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/AnalysisInvocationRepository.kt",
+      "sha256": "a754c17fa4cf90196e096eecfabf701a13404acd5a5ecda89bd37870bb30431e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/CoordinationRepositories.kt",
+      "sha256": "7eb2ebbc40cc49554f8c663d2be96ba577afb779904439f532ad50f274e1c076"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/NaturalLanguageParserPort.kt",
+      "sha256": "6bc9da59614f37886aefa28cf993647063ca015e4035d2219fae89f60336f0a4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/ActiveRunLock.kt",
+      "sha256": "c22eda03253fc62d518a5703b2e46e3d51c0c6a80106f139e337b7cafde7b8cd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/AnalysisDeadlineExceededException.kt",
+      "sha256": "c89ed3e1b35f22517dbb96177d00eb722755a676291287596c9471eb93b7d35c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/AnalysisInvocationRecovery.kt",
+      "sha256": "83fe4b7a64cdecb0fe36a06d865b40e62152bc2380c95706bbaf5947babf98fa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "57f6787741894c650673988775587c46fac8af1314b270f441f2701a51898349"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "c168a880b672664d57f8dce7d19275ad198ef4383a469d8f4162819e6120e78a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcher.kt",
+      "sha256": "b88fe817b0d283db7bb1c2ad033f3f3033f1248e7112435c92d262defdb719e3"
+    },
+    {
+      "path": "src/main/resources/application.yml",
+      "sha256": "aac00f1a9f79209d8dbafa1b9dd82ff673f73648075284ea8ebd72aacf54a00b"
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__add_bounded_analysis_invocations.sql",
+      "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AnalysisInvocationAdmissionDeadlinePostgresTest.kt",
+      "sha256": "fdf9a9bd7de0ceccb63c7e8d8dc69659a679ee454cdb89855707b74059a22a7a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/BoundedExecutionLifecyclePostgresTest.kt",
+      "sha256": "b7c47d6de8503b33630487afff3102f4194365a8f5f0462b61e788b411b7c29f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/BoundedPublicationRollbackPostgresTest.kt",
+      "sha256": "bbfab6d6e866777514f88c3e00f049891b6e32e8ede4636835a08f88b0552926"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/DurableAnalysisInvocationPostgresTest.kt",
+      "sha256": "c9e01bd3b6325ccc8af6ade66f07ed59adc0bfadd8b7d0b3cc360cb43bd70874"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiHighDemandBoundaryTest.kt",
+      "sha256": "db6eac992170a8ccd111b16b609fc4d4d253b51f4d41c750047e108571e0066f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "b1b176f28d54db087d6fb5fed0f48ea30c810d6d80c93bd79231cee5f8ecff22"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "sha256": "8473df2afbe4a4245089b981312b6f31b4a682d2d482d45a069072d0d593dc27"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderFailureContractTest.kt",
+      "sha256": "f0bf977ef5a93eda1bae5218c2fdcbbac33293bd5762293e45c7c620632c93d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "sha256": "36c549fd78381d7994509fcc514587a363fe0bf3154adcead09fd378cf64a681"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTransportBudgetContractTest.kt",
+      "sha256": "fd3ff9b884fcedcb4cc03b4f6c88918e94df87bbf21f23b0eabe48508e1964d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaProviderContractTest.kt",
+      "sha256": "45fdb37df7b281734fa6b274347deca3eaccc5b53a9e6517fb1f8a1d7e48a8ea"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaTransportNoReplayContractTest.kt",
+      "sha256": "f3ad9302dec7ba2dc1f2b06c96c6ab1e9c7afc6ddcc2588fc416037b1d5933bf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SearchScopeProviderResponseContractTest.kt",
+      "sha256": "34791fc27cca44d59d7fba9811f2baabb3106df71582362f258f308b97190473"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "sha256": "77e130f5f3e84ed3bd5804cedd21e40dba4bdfe7dc83c09ccd621397bd3f4cc1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "f9abaa99c94bfcaa78b9237bba7ca2505fd867e5a1e6ded7d5ed978e754ddf85"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/RejectedAdmissionFallbackContractTest.kt",
+      "sha256": "2e09150a7c9bcc58832a3948ca6ac9e16d99a7d12670813674c1b541ec65d05c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "d392b1b06315919ff6cb3365b95949fe37047a953550ad7d50cfd3e8ac563b85"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "48ee2cdb9ebbc238d9d26cfb71fbf280b1aa2d5aa7ce4f269a2f5d99f8b63228"
+    },
+    {
+      "path": "src/test/resources/issue-96/luna-search-scope-observed.json",
+      "sha256": "f825d68d464723278476fdea1e969a24ced4a40dca9c569ad4d28b94b592413a"
+    }
+  ],
+  "closedFindings": [
+    {
+      "finding": "Luna transport needed an explicit per-client ban on hidden retry and redirects, with body reads included in the actual call budget.",
+      "resolution": "OkHttp client clone disables connection retry and redirects, applies remaining call timeout at execution, bounds full-body read and cancels/closes failed calls.",
+      "evidence": "LunaTransportNoReplayContractTest observes one physical connection/request and cancellation of an unfinished response; original JDK raw tests were GREEN and no duplicate was observed."
+    },
+    {
+      "finding": "Publication deadline expiry after writes could leave worker retries or a rollback-only enclosing matching transaction.",
+      "resolution": "Typed AnalysisDeadlineExceededException rolls back the atomic bounded publication; processors publish ANALYSIS_DELAYED in a fresh transaction, and bounded matching has no enclosing transaction.",
+      "evidence": "BoundedPublicationRollbackPostgresTest covers structured rows, matching places/candidates, worker ACK and preserved prior winner."
+    },
+    {
+      "finding": "Durable admission could consume the provider budget after the timeout had already been chosen.",
+      "resolution": "Recompute remaining time after admission; record admitted timeout without starting HTTP when exhausted.",
+      "evidence": "BoundedAdmissionBudgetContractTest asserts Luna 1s at t56, no HTTP at t58 and TIMEOUT admission, and Gemini to Luna reserve behavior at t43."
+    },
+    {
+      "finding": "A rejected second Gemini admission after reserve exhaustion discarded eligible fallback.",
+      "resolution": "Only a prior retryable Gemini failure plus exhausted Gemini window can continue toward Luna; fresh ownership/current-run checks still apply.",
+      "evidence": "RejectedAdmissionFallbackContractTest real RED contained one assertion failure; t43 receives Luna14 while early and stale rejections never fallback."
+    },
+    {
+      "finding": "Claim lock wait could create a new deadline after acquiring the room lock.",
+      "resolution": "Capture original admission start/deadline before lock wait and expire when the original budget is exhausted.",
+      "evidence": "AnalysisInvocationAdmissionDeadlinePostgresTest uses actual PostgreSQL blocking proof, preserves original deadline and forbids invocation/provider calls after exhaustion."
+    }
+  ],
+  "reviewedBoundaries": [
+    "Shared provider schema, common structural validator and deterministic postprocessing; strict required nullable rejection_code.",
+    "Typed status/network/timeouts; only retryable infrastructure failures enter bounded full-jitter retries or fallback; permanent/invalid responses remain distinct.",
+    "Physical provider attempt limits and deadline reserve, cancellation around transport, actual remaining-time rechecks after durable admission.",
+    "Durable database owner, exact version, active run and open revision fences; persisted counters; atomic winner plus matching; conservative expiry recovery after crash.",
+    "Search scope is applied after valid provider conditions are preserved; outside AVAILABLE-only cannot become unrestricted availability."
+  ],
+  "faultVerification": {
+    "summary": ".tdd/verification/issue-96-bounded-fallback.json",
+    "rawResults": ".codex/tdd-evidence/issue-96-faults/results.json",
+    "rawResultsSha256": "1d2fe9bd91a4c109a7a2934c1d8396148cf4bba703271f06f126f44d0b6e1a43",
+    "baselineManifest": ".codex/tdd-evidence/issue-96-faults/baseline-manifest.json",
+    "baselineManifestSha256": "60bf7504d9a194b60d9ac9834c27ee28f176ec9e288f57ff1f9b9c0363d70e61",
+    "frozenFileCount": 218,
+    "detectedMutants": 15,
+    "assertionDetections": 36,
+    "allMutantsRestoredExactFrozenBytes": true,
+    "finalCurrentFileManifestEqualsFrozenManifest": true,
+    "executionOwner": "/root",
+    "compilerOrSetupFailureCountedAsDetection": false,
+    "currentFileManifestEqualityRecheckedAfterMandatoryGuard": true
+  },
+  "verification": {
+    "focusedTransportAndContracts": {
+      "log": ".codex/tdd-evidence/issue-96-focused-green.log",
+      "tests": 98,
+      "suites": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "finalBoundaryContracts": {
+      "log": ".codex/tdd-evidence/issue-96-final-boundary-green.log",
+      "tests": 46,
+      "note": "Root reported 7 final boundary classes passing; these overlap the focused run."
+    },
+    "legacySupersessionGreen": {
+      "tests": 23,
+      "note": "Root reported legacy scoped GREEN plus ktlintCheck; these overlap the full suite.",
+      "log": ".codex/tdd-evidence/issue-96-legacy-scope-green.log"
+    },
+    "mandatoryGuard": {
+      "status": "PASS",
+      "hook": "unmodified .codex/hooks/tdd_guard.py",
+      "exitCode": 0,
+      "elapsedSeconds": 130.077,
+      "log": ".codex/tdd-evidence/issue-96-mandatory-guard.log",
+      "result": ".codex/tdd-evidence/issue-96-final-gate.json",
+      "resultSha256": "be83e487cf8de82a216617bc26c58b1ba5ac3e2f1ca63da75cb14bb020bc7b05",
+      "suites": 90,
+      "tests": 526,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4,
+      "independentCurrentXmlCountMatchesRootReport": true,
+      "providerCalls": 0
+    },
+    "countsAreOverlapping": "Focused, boundary and legacy runs are separate validations and must not be summed into a unique test total."
+  },
+  "capturedFixture": {
+    "path": "src/test/resources/issue-96/luna-search-scope-observed.json",
+    "fileSha256": "f825d68d464723278476fdea1e969a24ced4a40dca9c569ad4d28b94b592413a",
+    "canonicalSha256": "03bb35860232477203710071cb736c185e9c211f418da886dc2bd5d74cc2c6bf",
+    "originEvaluationSession": "01a114c3-02d3-7011-ab8f-19706bdda089",
+    "claim": "Actual parent-supplied saved response, replayed locally through shared validation and matching; no response was fabricated or generated in this implementation session."
+  },
+  "limitations": [
+    "Captured-response replay establishes preservation and deterministic matching. It does not establish fresh model language quality; the parent owns the separately completed paid evaluation.",
+    "All implementation verification here is free fixtures, mocks, raw loopback TCP and PostgreSQL. Paid provider calls in this implementation session: zero.",
+    "Cancellation/deadline tests cover local transport and bounded publication. They do not guarantee a remote provider did not perform work before cancellation.",
+    "Durable recovery deliberately expires interrupted invocations without replaying an admitted physical call; no model-side exactly-once promise is made.",
+    "Original transport raw tests were GREEN on JDK; the migration followed an independently reviewed policy gap, not an invented duplicate-request RED.",
+    "Original review RED had 14 tests and 11 failures (6 reviewer publication/admission, 5 lifecycle). Raw transport 2 were GREEN; lifecycle XML was not archived, with honest log-only provenance retained.",
+    "Draft PR, remote HEAD CI, merge and deployment are outside this reviewer work item and remain owned by the parent."
+  ],
+  "authorizationBoundaries": {
+    "paidCalls": 0,
+    "secretValuesReadOrWritten": false,
+    "operationsRegistrationOrPermissionChanges": false,
+    "mergeOrDeploy": false
+  },
+  "recordedAt": "2026-10-07T06:27:54.621765Z"
+}

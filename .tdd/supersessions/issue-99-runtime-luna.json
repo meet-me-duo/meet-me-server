@@ -1,0 +1,12 @@
+{
+  "workItem": "issue-99-runtime-luna",
+  "reason": "Independent review found Bash command substitution strips embedded/trailing NUL marker bytes; append one regression without altering original18 tests",
+  "beforeTestSha256": "d4f6750494c386ee4be34cefa26f1699eea2dc00dacefe7605034675561d0ad4",
+  "afterTestSha256": "d928ef8e8687417865b556d1bba13856f195d25aece8d545ca39cd96316140df",
+  "beforeTestArchive": ".tdd/history/issue-99-runtime-luna/runtime-contract.before-review.cjs",
+  "beforeRedArchive": ".tdd/history/issue-99-runtime-luna/runtime-first-red.json",
+  "original18ByteIdentical": true,
+  "additionalRedFailures": [
+    "release mode markers containing embedded or trailing NUL bytes are rejected before environment replacement"
+  ]
+}

@@ -1,6 +1,7 @@
 package com.meetme.server.meetingroom.application.service
 
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository
 import com.meetme.server.meetingroom.application.port.input.CreateRoomCommand
 import com.meetme.server.meetingroom.application.port.output.InviteCodeGenerator
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
@@ -56,6 +57,7 @@ class RoomLifecycleServiceTest {
                 idGenerator,
                 closureService,
                 Clock.fixed(NOW, ZoneOffset.UTC),
+                mock(InputRevisionRoundRepository::class.java),
             )
 
         val result =

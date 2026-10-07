@@ -34,20 +34,51 @@ class SubmissionService(
     private val idGenerator: IdGenerator,
     private val closureService: CollectionClosureService,
     private val clock: Clock,
+    private val revisionRoundRepository: com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository,
+    private val runRepository: com.meetme.server.coordination.application.port.output.CoordinationRunRepository,
 ) : SaveSubmissionUseCase,
     GetOwnSubmissionUseCase {
     @Transactional
     override fun save(command: SaveSubmissionCommand): SubmissionView {
         val room = findRoom(command.inviteCode, lock = true)
-        if (room.collectionStatus == CollectionStatus.CLOSED) {
-            throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
-                com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.ROOM_CLOSED,
-            )
-        }
         val participant = requireParticipant(room.id, command.rawCredential)
-        val rawText = normalizeText(command.rawText)
-
         val existing = submissionRepository.findByParticipant(participant.id)
+        val correction = room.collectionStatus == CollectionStatus.CLOSED
+        if (correction) {
+            val roundId = room.activeRevisionRoundId
+            if (roundId == null) {
+                throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
+                    com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.ROOM_CLOSED,
+                )
+            }
+            val round = revisionRoundRepository.findById(room.id, roundId)
+            val source =
+                round?.let {
+                    runRepository.findById(
+                        com.meetme.server.shared.domain
+                            .CoordinationRunId(it.sourceRunId),
+                    )
+                }
+            if (round?.status != com.meetme.server.coordination.domain.RevisionRoundStatus.OPEN ||
+                command.revisionRoundId != roundId ||
+                source == null ||
+                room.activeRunId != source.id.value
+            ) {
+                revisionConflict()
+            }
+            if (com.meetme.server.coordination.application.service.FrozenSubmissionReader
+                    .read(submissionRepository, source.batch)
+                    .none { it.participantId == participant.id }
+            ) {
+                throw SubmissionException(SubmissionErrorCode.PARTICIPANT_REQUIRED)
+            }
+            if (command.expectedRevision == null || existing?.latest?.revision != command.expectedRevision) revisionConflict()
+        }
+        val rawText = normalizeText(command.rawText)
+        if (existing != null && existing.latest.rawText == rawText) {
+            return existing.toView(true, room.activeRevisionRoundId, room.version)
+        }
+
         val otherTextLength =
             submissionRepository
                 .findLatestByRoom(room.id)
@@ -75,12 +106,20 @@ class SubmissionService(
                 )
         submissionRepository.save(submission)
         val submitted = submissionRepository.countSubmittedParticipants(room.id)
-        if (room.automaticClosureReason(now, submitted) == ClosureReason.EXPECTED_PARTICIPANTS) {
-            closureService.close(room, ClosureReason.EXPECTED_PARTICIPANTS, submitted, now)
-        }
-        return submission.toView(editable = submitted < (room.closurePolicy.expectedParticipants ?: Int.MAX_VALUE))
+        val currentRoom =
+            if (!correction && room.automaticClosureReason(now, submitted) == ClosureReason.EXPECTED_PARTICIPANTS) {
+                closureService.close(room, ClosureReason.EXPECTED_PARTICIPANTS, submitted, now)
+            } else {
+                room
+            }
+        return submission.toView(
+            editable = correction || submitted < (room.closurePolicy.expectedParticipants ?: Int.MAX_VALUE),
+            roundId = currentRoom.activeRevisionRoundId,
+            stateVersion = currentRoom.version,
+        )
     }
 
+    @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     override fun get(
         inviteCode: String,
         rawCredential: String?,
@@ -90,7 +129,26 @@ class SubmissionService(
         val submission =
             submissionRepository.findByParticipant(participant.id)
                 ?: throw SubmissionException(SubmissionErrorCode.SUBMISSION_NOT_FOUND)
-        return submission.toView(room.collectionStatus == CollectionStatus.COLLECTING)
+        val round = room.activeRevisionRoundId?.let { revisionRoundRepository.findById(room.id, it) }
+        val source =
+            round?.let {
+                runRepository.findById(
+                    com.meetme.server.shared.domain
+                        .CoordinationRunId(it.sourceRunId),
+                )
+            }
+        val correctionEditable =
+            round?.status == com.meetme.server.coordination.domain.RevisionRoundStatus.OPEN &&
+                source != null &&
+                room.activeRunId == source.id.value &&
+                com.meetme.server.coordination.application.service.FrozenSubmissionReader
+                    .read(submissionRepository, source.batch)
+                    .any { it.participantId == participant.id }
+        return submission.toView(
+            room.collectionStatus == CollectionStatus.COLLECTING || correctionEditable,
+            room.activeRevisionRoundId,
+            room.version,
+        )
     }
 
     private fun normalizeText(rawText: String?): String {
@@ -140,13 +198,23 @@ class SubmissionService(
             ?: throw SubmissionException(SubmissionErrorCode.PARTICIPANT_REQUIRED)
     }
 
-    private fun Submission.toView(editable: Boolean) =
-        SubmissionView(
-            latest.revision,
-            latest.rawText,
-            latest.manualAvailability,
-            latest.locale.toLanguageTag(),
-            latest.createdAt,
-            editable,
+    private fun revisionConflict(): Nothing =
+        throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
+            com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.REVISION_CONFLICT,
         )
+
+    private fun Submission.toView(
+        editable: Boolean,
+        roundId: java.util.UUID? = null,
+        stateVersion: Long = 0,
+    ) = SubmissionView(
+        latest.revision,
+        latest.rawText,
+        latest.manualAvailability,
+        latest.locale.toLanguageTag(),
+        latest.createdAt,
+        editable,
+        roundId,
+        stateVersion,
+    )
 }

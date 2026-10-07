@@ -58,13 +58,18 @@ class KomapperMeetingRoomRepository(
             jdbcTemplate.update(
                 """
                 UPDATE meeting_rooms
-                SET collection_status = ?, closure_reason = ?, closed_at = ?, version = ?
+                SET collection_status = ?, closure_reason = ?, closed_at = ?, version = ?,
+                    active_run_id = ?, revision_generation = ?, active_revision_round_id = ?, correction_analysis_count = ?
                 WHERE id = ? AND version = ?
                 """.trimIndent(),
                 room.collectionStatus.name,
                 room.closureReason?.name,
                 room.closedAt?.atOffset(java.time.ZoneOffset.UTC),
                 room.version,
+                room.activeRunId,
+                room.revisionGeneration,
+                room.activeRevisionRoundId,
+                room.correctionAnalysisCount,
                 room.id.value,
                 room.version - 1,
             )
@@ -98,6 +103,17 @@ class KomapperMeetingRoomRepository(
                     inviteCode.value,
                 ).firstOrNull() ?: return null
         return findById(MeetingRoomId(id))
+    }
+
+    override fun findByIdForUpdate(id: MeetingRoomId): MeetingRoom? {
+        val found =
+            jdbcTemplate
+                .query(
+                    "SELECT id FROM meeting_rooms WHERE id = ? FOR UPDATE",
+                    { rs, _ -> MeetingRoomId(rs.getObject("id", UUID::class.java)) },
+                    id.value,
+                ).firstOrNull() ?: return null
+        return findById(found)
     }
 
     override fun existsByInviteCode(inviteCode: InviteCode): Boolean = findByInviteCode(inviteCode) != null

@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-10-07T03:05:23.424043Z",
+  "scope": "Metadata narrowing after independent legacy fixture compatibility review; no alteration of original failed provider test bytes/failedTests/time/command/sourceRevision/log. Original evidence is historical behavioral proof, not current dependency-closure RED. Changed reference-date file was a nonfailed GREEN sidecar; shared NaturalLanguageOnlyFixture dependencies changed only active/exact-read setup. New compatibility behavior verified79GREEN. Fault9 detectors+their helper and allproduction bytes unchanged; fresh195 restoration remains historical-time assertion and current ledger fingerprints actual5detector/helper files. Issue92 phase1 compatibility RED also included nonfailed MatchingProcessor legacy GREEN sidecar; remove only its stale fingerprint after preserving original record/bytes. All17actual HTTP/concurrency assertion failures and exactsource/test/hash/log unchanged.",
+  "archived_evidence": [
+    {
+      "archived_path": ".tdd/history/issue-92-legacy-fixture-compatibility/issue-91-provider-authority-migration.json",
+      "sha256": "5d50bba041142c5712e4090632e4da4d1bfc5684c86122ef9a2eb5fecec75c8d"
+    },
+    {
+      "archived_path": ".tdd/history/issue-92-legacy-fixture-compatibility/issue-92-recovery-boundaries.json",
+      "sha256": "265c280d2f74f0698896f22edbc4123c618d183dccc82f16992b6b453ecc753c"
+    },
+    {
+      "archived_path": ".tdd/history/issue-92-legacy-fixture-compatibility/GeminiTimeReferenceDateTest.before.kt",
+      "sha256": "e74bb3ec82e541284d8575e834cc725c3d2ec0e710b1f6b2570b22879f2247f9"
+    },
+    {
+      "archived_path": ".tdd/history/issue-92-legacy-fixture-compatibility/issue-92-correction-round-compatibility.json",
+      "sha256": "ffa3a51651f21f62ebb36ca642183987821b51804e3c3bae2ab5d79442f6f9bd"
+    },
+    {
+      "archived_path": ".tdd/history/issue-92-legacy-fixture-compatibility/MatchingProcessorTest.before.kt",
+      "sha256": "45273a653d2825e2620ffc70191e4cfad9b6a3304fbfbff539c8fabc84137eff"
+    }
+  ],
+  "independent_review": "server92_design_review; issue-92-legacy-red-scope-review.json",
+  "new_green": {
+    "tests": 79,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "removed_nonfailed_sidecar": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
+      "sha256": "e74bb3ec82e541284d8575e834cc725c3d2ec0e710b1f6b2570b22879f2247f9"
+    }
+  ],
+  "fault_test_scope_files": [
+    "CorrectionRoundAdditionalPostgresTest.kt",
+    "CorrectionRoundHttpPostgresTest.kt",
+    "CorrectionRoundPostgresFixture.kt",
+    "FrozenSubmissionBoundaryTest.kt",
+    "WorkerPublicationBoundaryTest.kt"
+  ],
+  "removed_nonfailed_92_sidecar": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingProcessorTest.kt",
+      "sha256": "45273a653d2825e2620ffc70191e4cfad9b6a3304fbfbff539c8fabc84137eff"
+    }
+  ]
+}

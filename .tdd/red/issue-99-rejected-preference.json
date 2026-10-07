@@ -1,0 +1,48 @@
+{
+  "workItem": "issue-99-rejected-preference",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2UnsafeHardTimeContractTest.kt",
+      "sha256": "2c66a12019e708eefbebbbf7e10ef4bdd0d04a98517fa43d73a67395a5125905"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2UnsafeHardTimePostgresTest.kt",
+      "sha256": "87bd7c31531a815bf111f32011cf7cf1264d535d48c38078720fb564349df67e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2HardConditionShapeContractTest.kt",
+      "sha256": "6544d5ea5e760fc642456fe6f53d085a1ea0086307ab6bc6c4da8945c032859e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2RejectedPreferencePostgresTest.kt",
+      "sha256": "29c45572b69b84186dc14487beee9b6448aa19b9cf188ab405ab522ca3522526"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*D2UnsafeHardTimeContractTest",
+    "--tests",
+    "*D2UnsafeHardTimePostgresTest",
+    "--tests",
+    "*D2HardConditionShapeContractTest",
+    "--tests",
+    "*D2RejectedPreferencePostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest.rejected time preference with retained place preference preserves hard availability but awards no preference score()",
+    "com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest.rejected place preference retains hard availability and time subwindow without awarding a preference score()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:41:32.943414Z"
+}

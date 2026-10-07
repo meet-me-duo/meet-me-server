@@ -1,0 +1,59 @@
+{
+  "workItem": "issue-96-provider-contract",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SearchScopeProviderResponseContractTest.kt",
+      "sha256": "34791fc27cca44d59d7fba9811f2baabb3106df71582362f258f308b97190473"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "f9abaa99c94bfcaa78b9237bba7ca2505fd867e5a1e6ded7d5ed978e754ddf85"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaProviderContractTest.kt",
+      "sha256": "45fdb37df7b281734fa6b274347deca3eaccc5b53a9e6517fb1f8a1d7e48a8ea"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderFailureContractTest.kt",
+      "sha256": "f0bf977ef5a93eda1bae5218c2fdcbbac33293bd5762293e45c7c620632c93d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTransportBudgetContractTest.kt",
+      "sha256": "fd3ff9b884fcedcb4cc03b4f6c88918e94df87bbf21f23b0eabe48508e1964d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "b1b176f28d54db087d6fb5fed0f48ea30c810d6d80c93bd79231cee5f8ecff22"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiHighDemandBoundaryTest.kt",
+      "sha256": "db6eac992170a8ccd111b16b609fc4d4d253b51f4d41c750047e108571e0066f"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/repaired-provider-red.py"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest.stored Luna evaluation response preserves all valid conditions and COMPLETE three evening ranges()",
+    "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest.AVAILABLE-only outside search remains empty availability and COMPLETE NO_MATCH()",
+    "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest.valid exception outside search preserves COMPLETE weekday intersections()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.late Gemini success cannot publish and invokes Luna while reserve remains()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.late Luna success cannot publish inside the completion reserve()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.retry-after that cannot fit Gemini budget skips sleep and preserves fallback reserve()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.two provider failures retain batch and never publish structured data or candidates()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.timeouts exhaust Gemini 42 seconds with only two retries and reserve Luna 15 seconds()",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[1] kind = NETWORK",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[2] kind = TIMEOUT",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[3] kind = RATE_LIMIT",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.[4] kind = SERVER",
+    "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.four fast transient Gemini failures use Full Jitter then exactly one Luna call()",
+    "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest.OpenAI strict result requires explicit nullable rejection code()",
+    "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest.strict nullable schema has required rejection code and every object property is required()",
+    "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest.Responses API sends pinned Luna model strict common schema and one HTTP request()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest.Issue 96 유효한 탐색 범위 밖 날짜 조건도 보존한다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:02:07.285489Z"
+}

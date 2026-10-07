@@ -11,6 +11,7 @@ import com.meetme.server.coordination.domain.SubmissionBatch
 import com.meetme.server.coordination.domain.matching.PlanType
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.ClosurePolicy
+import com.meetme.server.meetingroom.domain.ClosureReason
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.meetingroom.domain.MeetingRoom
@@ -251,7 +252,7 @@ internal class NaturalLanguageOnlyFixture(
     texts: List<String?>,
     mode: MeetingMode = MeetingMode.REMOTE,
 ) {
-    val room =
+    var room =
         MeetingRoom.create(
             MeetingRoomId(UUID.randomUUID()),
             InviteCode.of("abcdefghijklmnopqrstuv"),
@@ -267,11 +268,11 @@ internal class NaturalLanguageOnlyFixture(
             ManualAvailability.Dated(DatedTimeRange(DATE, LocalTimeRange.of(LocalTime.of(18, 0), LocalTime.of(20, 0)))),
         )
     val submissions =
-        texts.map { text ->
+        texts.mapIndexed { index, text ->
             Submission.restore(
                 SubmissionId(UUID.randomUUID()),
                 room.id,
-                ParticipantId(UUID.randomUUID()),
+                ParticipantId(UUID(0, index.toLong() + 1)),
                 SubmissionVersion(SubmissionVersionId(UUID.randomUUID()), 7, text, archivedSlots, Locale.KOREAN, NOW),
             )
         }
@@ -298,10 +299,14 @@ internal class NaturalLanguageOnlyFixture(
     val normalizedRepository = mock(NormalizedPlaceRepository::class.java)
 
     init {
+        room = room.close(ClosureReason.EXPECTED_PARTICIPANTS, NOW, submissions.size).transition(activeRunId = run.id.value)
         `when`(roomRepository.findById(room.id)).thenReturn(room)
+        `when`(roomRepository.findByIdForUpdate(room.id)).thenReturn(room)
         `when`(roomRepository.findByInviteCode(room.inviteCode)).thenReturn(room)
         `when`(submissionRepository.findLatestByRoom(room.id)).thenReturn(submissions)
         `when`(runRepository.findByBatchId(batch.id)).thenAnswer { run }
+        `when`(runRepository.findById(run.id)).thenAnswer { run }
+        `when`(runRepository.findByIdForUpdate(run.id)).thenAnswer { run }
         `when`(runRepository.findLatestByRoom(room.id)).thenAnswer { run }
         `when`(runRepository.findLatestByRoomForUpdate(room.id)).thenAnswer { run }
         doAnswer {

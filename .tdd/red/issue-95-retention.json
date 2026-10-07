@@ -1,0 +1,22 @@
+{
+  "workItem": "issue-95-retention",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationRetentionPostgresTest.kt",
+      "sha256": "52abf95b960b03e3318383d8adb2a05d8a6f76643bfe3d88885250fb12ac1def"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RecommendationRetentionPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationRetentionPostgresTest.expired typed confirmed room is deleted without leftovers and recently closed room remains intact()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T05:59:48.518271Z"
+}

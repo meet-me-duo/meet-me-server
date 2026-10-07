@@ -1,0 +1,58 @@
+{
+  "workItem": "issue-99-approved-provider-budget-postgres",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "recordedAt": "2026-10-07T08:58:56.360452Z",
+  "testAuthor": "/root/integration_tests",
+  "implementationAuthor": "/root and delegated implementation agents",
+  "paidProviderCalls": 0,
+  "testAuthorProductionChanges": false,
+  "testFile": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ApprovedProviderBudgetPostgresTest.kt",
+  "approvedContract": {
+    "geminiStageSeconds": 30,
+    "geminiPerCallMaxSeconds": 15,
+    "lunaPerCallMaxSeconds": 27,
+    "completionReserveSeconds": 3,
+    "totalSeconds": 60,
+    "maxGeminiAttempts": 4,
+    "maxLunaAttempts": 1,
+    "durableInvocationOwnerAndDeadline": "Unchanged; redelivery cannot reset cost unit or total deadline"
+  },
+  "cases": 9,
+  "expectations": [
+    "Actual Gemini claim at29.999seconds succeeds, at30seconds rejects without admitting a second attempt",
+    "Actual durable admissions retain60second deadline,owner and4+1budget across stale snapshots and redelivery claim",
+    "Actual Gemini admission at29.9seconds leaves100ms physical call timeout",
+    "Actual Luna admission at31seconds receives26seconds; fake20second result wins and publishes structured/preferences/candidates/recommendations/room before51seconds, ACK and redelivery repeat no calls",
+    "Luna actual admission at57or60 rejects with no physicalcall, no outputs, delayedACK, originalfrozeninput retained",
+    "Luna admission which already consumed a durable cost unit but returns at57or60 cannot startHTTP and recordsTIMEOUT without a winner",
+    "Luna20second result reaching projection then60seconddeadline rolls back allprojection/candidates/roomcompletion, retains providerwinner/structured and ACKs delayed"
+  ],
+  "review": {
+    "reviewer": "/root/independent_review",
+    "status": "Expected contracts PASS before runtime RED",
+    "limitations": [
+      "The new wrong-owner check occurs after4+1caps, so its rejection does not independently identify an owner mutation; existing durable ownership tests provide independent coverage.",
+      "Controlled clocks prove budget enforcement and rollback rather than wall-clock performance.",
+      "Existing56second positive one-second-budget tests supplement new31positive and57/60negative realPG cases."
+    ]
+  },
+  "redStatus": "Valid RED on baseline51a4: 9 realPG cases, 4 expected assertion failures and 5 passing controls, zero setup errors/skips. Failurepoints: Gemini30 admission accepted, Gem29.9remaining12.1s instead100ms, Luna31timeout15s instead26s, fake20second successful result never reaches actual projection.",
+  "greenStatus": "All nine authored real PostgreSQL cases passed in root first-GREEN run, zero failures/errors/skips; test assertions unchanged from final RED.",
+  "redEvidence": ".tdd/red/issue-99-budget-postgres.json",
+  "redXmlDirectory": ".codex/tdd-evidence/issue-99-budget-final-red-xml",
+  "sourceBeforeManifest": ".codex/tdd-evidence/issue-99-budget-source-before.json",
+  "greenEvidence": {
+    "rawLog": ".codex/tdd-evidence/issue-99-budget-first-green.log",
+    "xmlDirectory": ".codex/tdd-evidence/issue-99-budget-postgres-first-green-xml",
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "finalRedFingerprintStatus": "All five executed Kotlin test hashes still match after first GREEN; JSON schema validation passed.",
+  "remainingRootChecks": [
+    "Independent final source review and intentional fault injection",
+    "Unchanged mandatory guard and full test suite",
+    "Precise new HEAD CI and draft PR update"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "workItem": "issue-99-integration",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/IntegratedRecommendationFallbackPostgresTest.kt",
+      "sha256": "a5042ae6ee8552852af7d6788deae7bec4a4a36cf314d2b86955da1928fad58a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "472038c576f79442492aa9de254f62179dabf9362a2d3fa986e1b5221757ab55"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*IntegratedRecommendationFallbackPostgresTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.stored hard exclusion is subtracted before preferred subwindow and cannot be confirmed through preference()",
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.durable invocation deadline crossed after actual projection rolls back every recommendation and candidate row()",
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.cancellation after actual projection rolls back legacy candidates projection and room transition()",
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.concurrent duplicate processors share one physical fallback budget and one recommendation publication()",
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.eight frozen participants and five preference windows roll back at original deadline and ACK without repeating providers()",
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.Luna fallback persists frozen preferences publishes subwindow and confirms actual selection without repeating calls()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:27:17.164594Z"
+}

@@ -1,0 +1,100 @@
+{
+  "workItem": "issue-95-boundaries",
+  "sourceRevision": "fcde6ca716357cfc923786669c944ca3fc48d734",
+  "boundary": "N/N-1/N-2 eligibility, place intersection, attendance before diversity, legacy writer bypass, full selection tuple precision",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjector.kt",
+      "sha256": "1b61edf711773ebfd4b5667033671f8bc06ce080692b1fd5810ea5f8a7bd575f"
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__add_time_recommendations.sql",
+      "sha256": "a6fc046611fb3cafa96d51f87de09687b3fdecc403988d211b7d86c4fad0585d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt",
+      "sha256": "0ff28acc741e58721130f9beba5c4c44e5294998182770098e76db684ced8f7d"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjectorContractTest.kt",
+      "sha256": "5243f068e6cd51d8e825afb096d0e3a0ec8b62f1a976d165f3d9c2d1a75c9817"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationDatabaseGuardPostgresTest.kt",
+      "sha256": "230a06a871e73e13d476b158ac5b88b8b5676f566f5f9d8cff6f82e50f5cfbeb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationHttpPostgresTest.kt",
+      "sha256": "01887266632cf8d44032d3591ef5fc9cc9dd713096b0794ad2959c364e26a455"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPostgresFixture.kt",
+      "sha256": "b165fe1f4b8c8ce5e1a3b68a4dea962c4598649209cd1bba0b36bd42838f07f6"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "domain-m01",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*RecommendationProjectorContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D04 five participant room cannot lower eligibility to two attendees()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "domain-m02",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*RecommendationProjectorContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D12 absent or incompatible places remove in-person variants but retain remote alternatives()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "domain-m03",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*RecommendationProjectorContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D08 attendance quality outranks the appeal of another date()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "database-m01",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*RecommendationDatabaseGuardPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.old candidate writer remains valid for a legacy analysis and is rejected for new protocol()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "selection-m01",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*RecommendationHttpPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.submicrosecond selection is rejected and cannot replay a different tuple as identical()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-07T06:30:52.109493Z"
+}

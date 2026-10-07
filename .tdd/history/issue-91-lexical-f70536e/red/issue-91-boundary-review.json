@@ -1,0 +1,24 @@
+{
+  "workItem": "issue-91-boundary-review",
+  "sourceRevision": "848b9688451551781769799ff7d27485ea5a5445",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextBoundaryReviewTest.kt",
+      "sha256": "80d25173ef3eea3ef616fa36aca4183f121764446057eb77461da29b6f80810b"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiTimeContextBoundaryReviewTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextBoundaryReviewTest#provider area name conflicts remain invalid before unsafe input conditions are discarded()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextBoundaryReviewTest#explicit noon parent is authoritative before conventional contextual inference()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T00:54:09Z"
+}

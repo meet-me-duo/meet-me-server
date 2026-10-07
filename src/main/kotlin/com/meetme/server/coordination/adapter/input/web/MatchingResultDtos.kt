@@ -31,18 +31,22 @@ data class CandidatePlaceResponse(
 @Schema(description = "후보의 실제 UTC 시간 구간")
 data class CandidateTimeRangeResponse(
     @field:JsonProperty("start_at")
-    @field:Schema(description = "포함 시작 절대 시각")
+    @field:Schema(description = "포함 시작 절대 시각", requiredMode = Schema.RequiredMode.REQUIRED)
     val startAt: Instant,
     @field:JsonProperty("end_at")
-    @field:Schema(description = "배타적 종료 절대 시각")
+    @field:Schema(description = "배타적 종료 절대 시각", requiredMode = Schema.RequiredMode.REQUIRED)
     val endAt: Instant,
 )
 
 @Schema(description = "결정론적으로 계산된 모임 후보")
 data class CandidateResponse(
     @field:JsonProperty("candidate_id")
-    @field:Schema(description = "후보 식별자")
-    val candidateId: UUID,
+    @field:Schema(
+        description = "legacy 후보 식별자; 실제 시각 선택 확정에는 null",
+        nullable = true,
+        requiredMode = Schema.RequiredMode.REQUIRED,
+    )
+    val candidateId: UUID?,
     @field:JsonProperty("plan_type")
     @field:Schema(description = "후보 플랜 A, B 또는 C")
     val planType: PlanType,
@@ -96,6 +100,11 @@ data class CandidateListResponse(
     val unappliedInputs: Int,
     @field:Schema(description = "0개일 수 있는 우선순위 후보 배열")
     val candidates: List<CandidateResponse>,
+    @field:JsonProperty("analysis_id")
+    @field:Schema(description = "목록을 생성한 활성 분석 UUID", format = "uuid", requiredMode = Schema.RequiredMode.REQUIRED)
+    val analysisId: UUID,
+    @field:JsonProperty("state_version")
+    @field:Schema(description = "후보 응답의 방 조율 상태 snapshot 버전", minimum = "0") val stateVersion: Long,
 ) {
     companion object {
         fun from(view: CandidateListView) =
@@ -105,6 +114,8 @@ data class CandidateListResponse(
                 view.totalSubmissions,
                 view.unappliedInputs,
                 view.candidates.map(CandidateResponse::from),
+                requireNotNull(view.analysisId),
+                view.stateVersion,
             )
     }
 }
@@ -127,13 +138,33 @@ data class UnappliedInputResponse(
 
 @Schema(description = "주최자가 확정한 최종 결과")
 data class ConfirmedResultResponse(
-    @field:Schema(description = "확정 후보")
+    @field:Schema(description = "확정 후보", requiredMode = Schema.RequiredMode.REQUIRED)
     val candidate: CandidateResponse,
     @field:JsonProperty("confirmed_at")
-    @field:Schema(description = "확정 시각")
+    @field:Schema(description = "확정 시각", requiredMode = Schema.RequiredMode.REQUIRED)
     val confirmedAt: Instant,
+    @field:Schema(
+        description = "실제 시각 확정 선택; legacy 확정은 null",
+        nullable = true,
+        requiredMode = Schema.RequiredMode.REQUIRED,
+    )
+    val selection: RecommendationSelectionResponse? = null,
 ) {
     companion object {
-        fun from(view: ConfirmedResultView) = ConfirmedResultResponse(CandidateResponse.from(view.candidate), view.confirmedAt)
+        fun from(view: ConfirmedResultView) =
+            ConfirmedResultResponse(
+                CandidateResponse.from(view.candidate),
+                view.confirmedAt,
+                view.selection?.let {
+                    RecommendationSelectionResponse(
+                        com.meetme.server.coordination.domain.RECOMMENDATION_PROTOCOL,
+                        it.analysisId,
+                        it.optionId,
+                        it.variantId,
+                        it.selectedWindow.startInclusive,
+                        it.selectedWindow.endExclusive,
+                    )
+                },
+            )
     }
 }

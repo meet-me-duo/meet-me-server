@@ -1,0 +1,13 @@
+[Unit]
+Description=Meet me approved image restart through persistent V8 guard
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/meet-me/guard/host-release-guard.sh restart
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,273 @@
+{
+  "status": "EXPECTED_RESULTS_FIXED_BEFORE_PROVIDER_CALLS",
+  "provider_calls_observed": 0,
+  "baseline_existing_cases_sha256": "44a02c180a852bdd5cb0757c9e13cc1a8d64c5d32642a6dd256de068cbad9fe1",
+  "baseline_existing_cases_unchanged": true,
+  "additional_cases": [
+    {
+      "id": "general-weekday-6-9",
+      "locale": "ko-KR",
+      "room_timezone": "Asia/Seoul",
+      "reference_date": "2026-10-07",
+      "search_start_inclusive": "2026-10-07",
+      "search_end_exclusive": "2026-10-12",
+      "participants": [
+        "평일은 6시부터 9시까지 가능해요. 이번주는 목요일만 8시부터 돼요. 주말은 2시부터 7시까지 가능해요.",
+        "매일 00:00부터 24:00까지 가능해요."
+      ],
+      "expected": {
+        "exact_utc_intervals": [
+          [
+            "2026-10-07T09:00:00Z",
+            "2026-10-07T12:00:00Z"
+          ],
+          [
+            "2026-10-08T11:00:00Z",
+            "2026-10-08T12:00:00Z"
+          ],
+          [
+            "2026-10-09T09:00:00Z",
+            "2026-10-09T12:00:00Z"
+          ],
+          [
+            "2026-10-10T05:00:00Z",
+            "2026-10-10T10:00:00Z"
+          ],
+          [
+            "2026-10-11T05:00:00Z",
+            "2026-10-11T10:00:00Z"
+          ]
+        ],
+        "participant_count": 2,
+        "rejection_code": null,
+        "quality": "COMPLETE",
+        "candidate_count": 1,
+        "candidate_participant_indices": [
+          0,
+          1
+        ],
+        "candidate_attendance_count": 2,
+        "total_participants": 2,
+        "applied_submissions": 2,
+        "unapplied_inputs": 0,
+        "candidate_plan_type": "B",
+        "meeting_mode": "REMOTE",
+        "summary_ko_KR": "10월 7일·9일 18:00~21:00, 10월 8일 20:00~21:00, 10월 10일부터 11일까지 매일 14:00~19:00"
+      },
+      "acceptance_notes": "Fixed before any actual provider response. Provider SUCCESS must retain valid structured windows; general parent inheritance is not restricted to7-9/2-7. Independent place is uncoupled; meeting mode stays REMOTE."
+    },
+    {
+      "id": "general-weekday-7-10",
+      "locale": "ko-KR",
+      "room_timezone": "Asia/Seoul",
+      "reference_date": "2026-10-07",
+      "search_start_inclusive": "2026-10-07",
+      "search_end_exclusive": "2026-10-12",
+      "participants": [
+        "평일은 7시부터 10시까지 가능해요. 이번주는 목요일만 8시부터 돼요. 주말은 2시부터 7시까지 가능해요.",
+        "매일 00:00부터 24:00까지 가능해요."
+      ],
+      "expected": {
+        "exact_utc_intervals": [
+          [
+            "2026-10-07T10:00:00Z",
+            "2026-10-07T13:00:00Z"
+          ],
+          [
+            "2026-10-08T11:00:00Z",
+            "2026-10-08T13:00:00Z"
+          ],
+          [
+            "2026-10-09T10:00:00Z",
+            "2026-10-09T13:00:00Z"
+          ],
+          [
+            "2026-10-10T05:00:00Z",
+            "2026-10-10T10:00:00Z"
+          ],
+          [
+            "2026-10-11T05:00:00Z",
+            "2026-10-11T10:00:00Z"
+          ]
+        ],
+        "participant_count": 2,
+        "rejection_code": null,
+        "quality": "COMPLETE",
+        "candidate_count": 1,
+        "candidate_participant_indices": [
+          0,
+          1
+        ],
+        "candidate_attendance_count": 2,
+        "total_participants": 2,
+        "applied_submissions": 2,
+        "unapplied_inputs": 0,
+        "candidate_plan_type": "B",
+        "meeting_mode": "REMOTE",
+        "summary_ko_KR": "10월 7일·9일 19:00~22:00, 10월 8일 20:00~22:00, 10월 10일부터 11일까지 매일 14:00~19:00"
+      },
+      "acceptance_notes": "Fixed before any actual provider response. Provider SUCCESS must retain valid structured windows; general parent inheritance is not restricted to7-9/2-7. Independent place is uncoupled; meeting mode stays REMOTE."
+    },
+    {
+      "id": "general-weekend-1-6",
+      "locale": "ko-KR",
+      "room_timezone": "Asia/Seoul",
+      "reference_date": "2026-10-07",
+      "search_start_inclusive": "2026-10-07",
+      "search_end_exclusive": "2026-10-12",
+      "participants": [
+        "평일은 7시부터 9시까지 가능해요. 이번주는 목요일만 8시부터 돼요. 주말은 1시부터 6시까지 가능해요.",
+        "매일 00:00부터 24:00까지 가능해요."
+      ],
+      "expected": {
+        "exact_utc_intervals": [
+          [
+            "2026-10-07T10:00:00Z",
+            "2026-10-07T12:00:00Z"
+          ],
+          [
+            "2026-10-08T11:00:00Z",
+            "2026-10-08T12:00:00Z"
+          ],
+          [
+            "2026-10-09T10:00:00Z",
+            "2026-10-09T12:00:00Z"
+          ],
+          [
+            "2026-10-10T04:00:00Z",
+            "2026-10-10T09:00:00Z"
+          ],
+          [
+            "2026-10-11T04:00:00Z",
+            "2026-10-11T09:00:00Z"
+          ]
+        ],
+        "participant_count": 2,
+        "rejection_code": null,
+        "quality": "COMPLETE",
+        "candidate_count": 1,
+        "candidate_participant_indices": [
+          0,
+          1
+        ],
+        "candidate_attendance_count": 2,
+        "total_participants": 2,
+        "applied_submissions": 2,
+        "unapplied_inputs": 0,
+        "candidate_plan_type": "B",
+        "meeting_mode": "REMOTE",
+        "summary_ko_KR": "10월 7일·9일 19:00~21:00, 10월 8일 20:00~21:00, 10월 10일부터 11일까지 매일 13:00~18:00"
+      },
+      "acceptance_notes": "Fixed before any actual provider response. Provider SUCCESS must retain valid structured windows; general parent inheritance is not restricted to7-9/2-7. Independent place is uncoupled; meeting mode stays REMOTE."
+    },
+    {
+      "id": "general-explicit-am-parent",
+      "locale": "ko-KR",
+      "room_timezone": "Asia/Seoul",
+      "reference_date": "2026-10-07",
+      "search_start_inclusive": "2026-10-07",
+      "search_end_exclusive": "2026-10-12",
+      "participants": [
+        "평일은 오전 6시부터 9시까지 가능해요. 이번주는 목요일만 오전 8시부터 돼요. 주말은 오후 1시부터 6시까지 가능해요.",
+        "매일 00:00부터 24:00까지 가능해요."
+      ],
+      "expected": {
+        "exact_utc_intervals": [
+          [
+            "2026-10-06T21:00:00Z",
+            "2026-10-07T00:00:00Z"
+          ],
+          [
+            "2026-10-07T23:00:00Z",
+            "2026-10-08T00:00:00Z"
+          ],
+          [
+            "2026-10-08T21:00:00Z",
+            "2026-10-09T00:00:00Z"
+          ],
+          [
+            "2026-10-10T04:00:00Z",
+            "2026-10-10T09:00:00Z"
+          ],
+          [
+            "2026-10-11T04:00:00Z",
+            "2026-10-11T09:00:00Z"
+          ]
+        ],
+        "participant_count": 2,
+        "rejection_code": null,
+        "quality": "COMPLETE",
+        "candidate_count": 1,
+        "candidate_participant_indices": [
+          0,
+          1
+        ],
+        "candidate_attendance_count": 2,
+        "total_participants": 2,
+        "applied_submissions": 2,
+        "unapplied_inputs": 0,
+        "candidate_plan_type": "B",
+        "meeting_mode": "REMOTE",
+        "summary_ko_KR": "10월 7일·9일 06:00~09:00, 10월 8일 08:00~09:00, 10월 10일부터 11일까지 매일 13:00~18:00"
+      },
+      "acceptance_notes": "Fixed before any actual provider response. Provider SUCCESS must retain valid structured windows; general parent inheritance is not restricted to7-9/2-7. Independent place is uncoupled; meeting mode stays REMOTE."
+    },
+    {
+      "id": "general-explicit-am-independent-place",
+      "locale": "ko-KR",
+      "room_timezone": "Asia/Seoul",
+      "reference_date": "2026-10-07",
+      "search_start_inclusive": "2026-10-07",
+      "search_end_exclusive": "2026-10-12",
+      "participants": [
+        "평일은 오전 6시부터 9시까지 가능해요. 이번주는 목요일만 오전 8시부터 돼요. 주말은 오후 1시부터 6시까지 가능해요. 장소는 안양역이면 좋아요.",
+        "매일 00:00부터 24:00까지 가능해요. 장소는 안양역이 좋아요."
+      ],
+      "expected": {
+        "exact_utc_intervals": [
+          [
+            "2026-10-06T21:00:00Z",
+            "2026-10-07T00:00:00Z"
+          ],
+          [
+            "2026-10-07T23:00:00Z",
+            "2026-10-08T00:00:00Z"
+          ],
+          [
+            "2026-10-08T21:00:00Z",
+            "2026-10-09T00:00:00Z"
+          ],
+          [
+            "2026-10-10T04:00:00Z",
+            "2026-10-10T09:00:00Z"
+          ],
+          [
+            "2026-10-11T04:00:00Z",
+            "2026-10-11T09:00:00Z"
+          ]
+        ],
+        "participant_count": 2,
+        "rejection_code": null,
+        "quality": "COMPLETE",
+        "candidate_count": 1,
+        "candidate_participant_indices": [
+          0,
+          1
+        ],
+        "candidate_attendance_count": 2,
+        "total_participants": 2,
+        "applied_submissions": 2,
+        "unapplied_inputs": 0,
+        "candidate_plan_type": "B",
+        "meeting_mode": "REMOTE",
+        "summary_ko_KR": "10월 7일·9일 06:00~09:00, 10월 8일 08:00~09:00, 10월 10일부터 11일까지 매일 13:00~18:00"
+      },
+      "acceptance_notes": "Fixed before any actual provider response. Provider SUCCESS must retain valid structured windows; general parent inheritance is not restricted to7-9/2-7. Independent place is uncoupled; meeting mode stays REMOTE."
+    }
+  ],
+  "combined_original_case_count": 28,
+  "with_two_original_filler_repeats": 30,
+  "maximum_paid_calls": 25,
+  "budget_note": "Existing cumulativeUSD0.30 approval applies. Cases beyond call/cost budget must remainUNRUN; no quota increase or retry implied.",
+  "contract_note": "20bd baseline still contains lexical parser; baselineFAIL may precede later LLM-authority rerun under separately accounted budget."
+}

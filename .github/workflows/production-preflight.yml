@@ -1,0 +1,54 @@
+name: Production Read-only Preflight
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: >-
+      github.repository == 'meet-me-duo/meet-me-server' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SOURCE_SHA: ${{ github.sha }}
+      AWS_MAX_ATTEMPTS: "1"
+      AWS_RETRY_MODE: standard
+      RUNTIME_INSTANCE_ID: ${{ vars.RUNTIME_INSTANCE_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+          sparse-checkout: |
+            deploy/preflight
+      - name: Validate main target before production authority
+        run: python3 deploy/preflight/run-preflight.py --main --validate
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Compile reviewed standalone metadata reader
+        run: javac -d deploy/preflight/compiled deploy/preflight/ReadOnlyFlywayProbe.java
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-duration-seconds: 900
+      - name: Read existing production metadata
+        run: python3 deploy/preflight/run-preflight.py --main
+      - name: Preserve sanitized metadata
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-preflight-${{ github.run_id }}-${{ github.run_attempt }}
+          path: production-preflight-summary.json
+          if-no-files-found: warn
+          retention-days: 3

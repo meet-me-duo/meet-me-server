@@ -1,0 +1,39 @@
+{
+  "workItem": "issue-96-publication-admission",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/BoundedPublicationRollbackPostgresTest.kt",
+      "sha256": "bbfab6d6e866777514f88c3e00f049891b6e32e8ede4636835a08f88b0552926"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "sha256": "77e130f5f3e84ed3bd5804cedd21e40dba4bdfe7dc83c09ccd621397bd3f4cc1"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/run-meetme-gradle.py",
+    "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-review-red.log",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*BoundedAdmissionBudgetContractTest",
+    "--tests",
+    "*BoundedPublicationRollbackPostgresTest",
+    "--tests",
+    "*LunaTransportNoReplayContractTest",
+    "--tests",
+    "*BoundedExecutionLifecyclePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest.deadline crossing after structured writes throws typed cancellation and rolls back all publication()",
+    "com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest.processor converts publication deadline rollback into delayed ACK without another physical call()",
+    "com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest.matching storage deadline rollback ends delayed in a fresh transaction with no candidates()",
+    "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.Luna claim waiting until second 58 records timeout and delays without starting a physical call()",
+    "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.Luna claim waiting until second 56 receives only one completion safe second()",
+    "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.Gemini admission that consumes its budget starts Luna with actual remaining time()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T05:57:38.117000Z"
+}

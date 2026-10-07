@@ -14,6 +14,7 @@ import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.matching.PlanType
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.adapter.input.web.ApiExceptionHandler
+import com.meetme.server.shared.adapter.input.web.ApiProblemSchema
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -179,7 +180,19 @@ class MatchingResultWebIntegrationTest {
         assertEquals(setOf("200", "401", "403", "404", "409"), responseCodes.getValue("candidates"))
         assertEquals(setOf("200", "401", "403", "404", "409"), responseCodes.getValue("unappliedInputs"))
         assertEquals(setOf("200", "401", "403", "404", "409", "429", "503"), responseCodes.getValue("confirm"))
-        assertEquals(setOf("200", "401", "403", "404"), responseCodes.getValue("result"))
+        assertEquals(setOf("200", "401", "403", "404", "409"), responseCodes.getValue("result"))
+        val resultConflict =
+            MatchingResultController::class.java.declaredMethods
+                .single { it.name == "result" }
+                .getAnnotation(ApiResponses::class.java)
+                .value
+                .single { it.responseCode == "409" }
+        assertEquals(
+            ApiProblemSchema::class,
+            resultConflict.content
+                .single()
+                .schema.implementation,
+        )
         listOf(
             CandidateListResponse::class.java,
             CandidateResponse::class.java,
@@ -222,6 +235,8 @@ class MatchingResultWebIntegrationTest {
                 totalSubmissions = 2,
                 unappliedInputs = 1,
                 candidates = listOf(candidate(CANDIDATE_A), candidate(CANDIDATE_B, rank = 2)),
+                analysisId = UUID(0, 100),
+                stateVersion = 0,
             )
         private var confirmed: UUID? = null
 

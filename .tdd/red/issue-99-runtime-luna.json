@@ -1,0 +1,16 @@
+{
+  "workItem": "issue-99-runtime-luna",
+  "sourceRevision": "48b8957248a7357e9a4a04cd854d2be8bd4290e1",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-provider-env.test.cjs",
+      "sha256": "d928ef8e8687417865b556d1bba13856f195d25aece8d545ca39cd96316140df"
+    }
+  ],
+  "command": "node --test --test-reporter=tap deploy/tests/runtime-provider-env.test.cjs",
+  "failedTests": [
+    "release mode markers containing embedded or trailing NUL bytes are rejected before environment replacement"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T11:26:33.880657+00:00"
+}

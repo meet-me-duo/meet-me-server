@@ -1,0 +1,35 @@
+{
+  "workItem": "issue-99-d2-preference-scope",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationPreferenceScopeContractTest.kt",
+      "sha256": "0ed229be29dbf3cff467b7ad6bf205f3f523f874ae2784c86ad81dd83a83ee43"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*RecommendationProjectorD2ContractTest",
+    "--tests",
+    "*RecommendationPreferenceScopeContractTest",
+    "--tests",
+    "*D2PreferenceProviderContractTest",
+    "--tests",
+    "*D2PreferenceJsonMapperTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest.99-D2-17 an explicit empty time preference is unsatisfied for every meeting mode()",
+    "com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest.99-D2-18 an explicit empty place preference cannot turn into a satisfied time-only preference()",
+    "com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest.99-D2-16 an explicit empty time preference cannot turn into a satisfied place-only preference()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:27:20.757825Z"
+}

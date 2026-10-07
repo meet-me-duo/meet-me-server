@@ -1,0 +1,39 @@
+{
+  "workItem": "issue-95-projection",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjectorContractTest.kt",
+      "sha256": "5243f068e6cd51d8e825afb096d0e3a0ec8b62f1a976d165f3d9c2d1a75c9817"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RecommendationProjectorContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D06 all common place alternatives remain independent variants without multiplying cards()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D09 equal new dates prefer greater local clock distance before absolute distance()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D08 attendance quality outranks the appeal of another date()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D04 five participant room cannot lower eligibility to two attendees()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D11 removed unavailable gap is never bridged by projection()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D07 participant range and area input order cannot change projection or primary selection()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D09 equal quality chooses a new local start date before same-day distant clock time()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D12 absent or incompatible places remove in-person variants but retain remote alternatives()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D03 full attendance does not hide other partial attendance windows()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D03 same full window retains every N N-minus-one and N-minus-two participant set()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D02 fewer than two attendees produce no option()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D10 exact fifteen-minute and two-hour-thirty-seven-minute windows are preserved()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D14 nonapplicable participant stays outside variants while N-minus-one remains eligible()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D16 DST overlap windows with same local clock remain distinct absolute options()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D13 room mode filters variants rather than silently changing meeting mode()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D15 adjacent midnight parser ranges normalize to one continuous option()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D05 same absolute window has remote and in-person variants in one option()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.95-D01 zero through four actual windows never fabricate three cards()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T05:34:48.717335Z"
+}

@@ -28,6 +28,28 @@ sealed interface StructuredCondition {
         }
     }
 
+    data class PreferredTimeWindow(
+        val date: LocalDate?,
+        val dayOfWeek: DayOfWeek?,
+        val startTime: LocalTime,
+        val endTime: LocalTime,
+        val endsAtNextDayStart: Boolean = false,
+    ) : StructuredCondition {
+        init {
+            TimeWindow(TimePolarity.AVAILABLE, date, dayOfWeek, startTime, endTime, endsAtNextDayStart)
+        }
+    }
+
+    data class PreferredPlace(
+        val query: String,
+        val areaKey: String,
+        val areaName: String,
+    ) : StructuredCondition {
+        init {
+            SpecificPlace(query = query, areaKey = areaKey, areaName = areaName)
+        }
+    }
+
     data class SpecificPlace(
         val query: String,
         val radiusMeters: Int = 1_000,

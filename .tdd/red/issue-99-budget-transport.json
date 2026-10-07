@@ -1,0 +1,39 @@
+{
+  "workItem": "issue-99-budget-transport",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaExtendedTransportBudgetContractTest.kt",
+      "sha256": "3b0ddefac253a22a1e7dfa508f4dd660abd58e41dda41b42518f7d3566284923"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*BoundedProviderFallbackContractTest",
+    "--tests",
+    "*BoundedAdmissionBudgetContractTest",
+    "--tests",
+    "*LunaExtendedTransportBudgetContractTest",
+    "--tests",
+    "*LunaTransportNoReplayContractTest",
+    "--tests",
+    "*ApprovedProviderBudgetPostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.LunaExtendedTransportBudgetContractTest.[1] requestedMillis = \"27000\", maximumMillis = \"27000\"",
+    "com.meetme.server.coordination.adapter.output.integration.LunaExtendedTransportBudgetContractTest.[2] requestedMillis = \"60000\", maximumMillis = \"27000\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T08:59:40.641802Z"
+}

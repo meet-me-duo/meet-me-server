@@ -1,0 +1,615 @@
+{
+  "workItem": "issue-92-recovery-boundaries",
+  "sourceRevision": "1ddbd26747936a56a0f6f2f380d1ef066fb41ed7",
+  "boundary": "Frozen immutable input/cohort; durable replay; active-run and room lock publication; normalized no-op; atomic Outbox; HOST permission; original-close retention; correction quota",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/MeetMeServerApplication.kt",
+      "sha256": "3fcc6effd31f5dac70f330820d2e56cc93c76701b44d2749afebda747075fbab"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/AnonymousAccessConfiguration.kt",
+      "sha256": "b2b9accdb87a7ccb9b6a4c115ed1ab8754ccd47f8199cc7cd9e9481a0d128bc9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/AnonymousWebSecurityConfiguration.kt",
+      "sha256": "d8731964ec7d0c9a2b6095fcb0c7a8252f18654a14173bf393e3fc1a17ae8813"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/DataRetentionConfiguration.kt",
+      "sha256": "69c8632b9d377bc7296f0b618cf14091b28f89469ebf1b51cf8e42fbf67ebb97"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/GeminiConfiguration.kt",
+      "sha256": "d68ea93b2ca023fdd39db618728c4272b1e1f282abd0694d20dec36a956efd39"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/LocaleConfiguration.kt",
+      "sha256": "426138035b300c79454ce5199636b78ee373c3222648a19f5f764bdf5bfdc363"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/RateLimitConfiguration.kt",
+      "sha256": "b61afc536df828ba88b8d9c80b858bd306cee1fa4ed0cd024648cf0703cc2510"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/ReliabilityConfiguration.kt",
+      "sha256": "f6befc76516cf3e876e24672e82f868de3a1a87ec391471f7c0b3b4cf2a8ec7c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/RetryConfiguration.kt",
+      "sha256": "d55307e9b28cf8b8dcf682ba91bd6bc20d17a39ef77639d9d44688fae843d144"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/AnalysisController.kt",
+      "sha256": "2b28dcce69da1e35eafe036ae43d6ccdf0a1ac1cd7280050dfff68ffb29ce144"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/InputRevisionController.kt",
+      "sha256": "c458d6377d297bdf2fa91e98841345ba46a1deeb6d2e7360f5477f31987ae37b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultController.kt",
+      "sha256": "60e85c03b91ffb3b743f18fb0688314aded52a705ba877c3a4f36f3ac8a76820"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultDtos.kt",
+      "sha256": "5d56fa00aeeb6f5dccced8a6eaf73f6823909c9447b8785d3e25bcab1933cf5f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/KakaoLocalPlaceAdapter.kt",
+      "sha256": "5a92f2789a543d5b2a8247abe852c0851a365bbf3747c070261b8c22d4495de9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/CoordinationPersistenceAdapters.kt",
+      "sha256": "1652f8fbdf7228db44d6645488d4906cd9cf65795f1fdb45764e7d2e308c8e1c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcInputRevisionRoundRepository.kt",
+      "sha256": "cb53699ba9c279b67918ba20d7c7c92f21508d94e59d1eaec99987fd654a43ce"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JsonPayloadType.kt",
+      "sha256": "21555a4fd3db0d3d671a847846b882f47c5599832e1ef7032ac4372a2846befc"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/PersistenceMappers.kt",
+      "sha256": "f6ce42989b0bb21701015ae264bdd3afbb0e91ccf2bd62ee3a43b6da6cd74ef2"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/Records.kt",
+      "sha256": "ecff7848d4acf8b0b36d7c8afea5a856a67f7a11c2fc62cc0ed65603b385f0f2"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/redis/RedisCoordinationWorkQueue.kt",
+      "sha256": "c69b2b6c56a00ab5aa2e170bc5bc2f528e43657b6d9c814953efd8ef4a8ce028"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/input/InputRevisionUseCases.kt",
+      "sha256": "c8a5be09fb3ea127112f6163f09d0ea28fdc6a0f2ef753036fd9206d899eb146"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/input/MatchingResultUseCases.kt",
+      "sha256": "b9c9be39960bb677cb9534aab94772c4de4ab865c2b5eeb6b01012a7f6040157"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/input/RetryAnalysisUseCase.kt",
+      "sha256": "4626a0b6cae7a366823c5a3dda62cf9b1325532f754e83374a3dda1d2eabf901"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/CoordinationRepositories.kt",
+      "sha256": "c1e4e3964b09212b53dbd33e9ce91ea4b4e103e75b311fb99304e0425e0034bc"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/CoordinationWorkQueuePort.kt",
+      "sha256": "d954cb470b78ee51d0b45b48fbf3d675fa3051763f9d411413f8b7855642995a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/InputRevisionRoundRepository.kt",
+      "sha256": "a91539d3a1daa8f4eaee16586550fbd113797f8c19d254363ae5728d1f92bb58"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/NaturalLanguageParserPort.kt",
+      "sha256": "5dbb5d3e6e31c9b727cbee08f02f94c25d2068dd431220000f44e5014078cec6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/PlaceSearchPort.kt",
+      "sha256": "af5fc6c8a6ec8113527d563597eff338cb15e0361b8db86e61d98d824d434c8f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/ProcessingPorts.kt",
+      "sha256": "f2b05df3295cfc0599958de43837e930377661f0a892578501f3e3c627ee9ec0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/ActiveRunLock.kt",
+      "sha256": "c22eda03253fc62d518a5703b2e46e3d51c0c6a80106f139e337b7cafde7b8cd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryRenderer.kt",
+      "sha256": "908067d0b24ad798d6494367e9c21e6499863a4498367fa03ded1253e664867d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationPersistenceService.kt",
+      "sha256": "643f9fc27c595c91715cb4561e0da226f4d4644a86fb250478784b648f0a14f7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationWorkServices.kt",
+      "sha256": "711b90012676a5246d4b2c3c33db29bc44651d4f388d1fb63969e172ceccd086"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationWorker.kt",
+      "sha256": "cdc806bc2283f38507b86d8c9e2c21824f8885e3b0552a3b5534650d8641c645"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/DeadLetterReplayService.kt",
+      "sha256": "08c358d082a17f1bde8e38317aafc0a0a63184bf06e818e36b26e04cbef5163a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/FrozenSubmissionReader.kt",
+      "sha256": "6f7f92f0b4c62f95c63aa433fbe05a76f450d186ac634599822c526b648645e7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "3d71e76fcabbaa77fd645a48b7c40508ddebb068c7dfce82c6ba2b31afc64a34"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/InputRevisionService.kt",
+      "sha256": "58753db66c0ed2211cbc617d7fd0ed8ed39951168b1837c7e0a4262d0f734418"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "dec0cfabf20e527ea6635dbe8f113d3f7459baaf53c91084f64c1c8bd14ce17c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt",
+      "sha256": "91eb14a95324398983b642de03b1782154a4b7d483e83202a9219f1816fe4c83"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/OutboxRelay.kt",
+      "sha256": "682284977c5854c56f32c4b206abedb6ec0063699987c4da8176d0595b7b94aa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/RetryAnalysisService.kt",
+      "sha256": "12796f40fedff999575e928d62523ec8bae8ed7ed19ed15d57954f0577c7785f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/CoordinationRun.kt",
+      "sha256": "7ff112a603c495a7d4e3cbcf31db793fcdbe8b905f96f74f59035d2e31a5f8c5"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/InputRevisionRound.kt",
+      "sha256": "5c2eacc159ed2187f10e23d435c87863f59ce85c08c7852725acd77ca82eb7f2"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/location/GeoCoordinate.kt",
+      "sha256": "ff8a40832b7d8aeaa78f948dcd84dc44147ba893fc9d49aca465650e55cf10ab"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
+      "sha256": "27c31b763bf80f0f993a9b486814e72e47cfe264f4b1c63c482b868463f64106"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/GeoMatcher.kt",
+      "sha256": "95eaed0dae2d01d6b0daab83be57333b1e3d53e79ebf0bce92fa29aedaf86869"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcher.kt",
+      "sha256": "b88fe817b0d283db7bb1c2ad033f3f3033f1248e7112435c92d262defdb719e3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleController.kt",
+      "sha256": "fecf4117525f0ee0ffeaaf7a632d8e846f4233587830606ff2df004387efe90e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleDtos.kt",
+      "sha256": "1063587fcfa8638d8a46a8c03d6fa68b66ff2b082d65798718544a388335cf35"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOpenApiConfiguration.kt",
+      "sha256": "f73138d5e603836ae197b91fa80126c14a08978d957979a1315601599b935eda"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/KomapperMeetingRoomRepository.kt",
+      "sha256": "463d85533d2bd51739bdd4f130b5ac644907d5dcdb80e77fb0607d90b53345b9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/PersistenceMappers.kt",
+      "sha256": "b6694e1eb2fd412806ea977423c3651d0922913599055c00b1140653e3597e1b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/Records.kt",
+      "sha256": "75c5f442e2c553591d5f482671d4edcbf69772b2962e47ec67c21b33e8d6a7a7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/RoomDataRetentionRepository.kt",
+      "sha256": "1d000459100d687f85cfff74bdcf01819d169c44dd4ab55b4e0ed3bcbee5fd75"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/security/SecureInviteCodeGenerator.kt",
+      "sha256": "04992bd269b4af30529b9b32c96f15b744d969288b60f2322e0d50a4ab0d3c4a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomLifecycleUseCases.kt",
+      "sha256": "0f140e50a5e466dd148f5df3fbc2168d5eba4274f3f6f08c3b3de67eedaed781"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/MeetingRoomPorts.kt",
+      "sha256": "1d8611f54174a9e3d2a21f49b227eeac22958be8c2566b029c223a4c077196ba"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/RoomDataRetentionPort.kt",
+      "sha256": "64fcbcd0287c671574411cf04984e6b4313bbe2015850af95583947255a5d043"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/CollectionClosureService.kt",
+      "sha256": "66aa02ad9c2a68de333405dacea8093e144899f64b1386a4d5e529b4ba8a1df7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/DeadlineClosureScheduler.kt",
+      "sha256": "0925ead07a2373305de4ddd74f60ac75dd730acbdb70b87b3e291e871cd94bc3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt",
+      "sha256": "0aae9613c4da660589947bea2d064a896e911b5ba545410cd43e37c3bc2aa8db"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/domain/InviteCode.kt",
+      "sha256": "86717649129bd68d497a82a7b1c7531e0a33aea21f9f33ef916148eeaa7525bd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/domain/MeetingRoom.kt",
+      "sha256": "d94a65ee7642d70ee02424ed59e72c770549e75e1a637d614b66618aadaa3958"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/KomapperParticipantRepositories.kt",
+      "sha256": "36eb21a05e0e76d0bd6b1ca6418051a3fcc6eeb174d834b6253135afbce2ab26"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/PersistenceMappers.kt",
+      "sha256": "0821bf989835576096803e22524f0d50465801ae406d23b4ab56337fccd5c824"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/Records.kt",
+      "sha256": "80cc2b78555c71a48b7eabf9e74ae6943743d428427b69f2aa3b0eee16dad0aa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestCredentialService.kt",
+      "sha256": "49db93ebd6dcfec8cbcc7e7161b4dad8083ec746b922a32638bed1f2feb8e59a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/ParticipantPorts.kt",
+      "sha256": "3f54de30a8face0f9ee16ac094c65584ca2155acdaaa7fd8d24220ebecfb099a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/domain/Participant.kt",
+      "sha256": "782d0386e5ec27296e65571316d1e1c2b71b0628853dfe9a84dccf33290d930b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/domain/ParticipantDisplayName.kt",
+      "sha256": "31176fd5f5daefd49febc531ce11c3649cd2dc64217d61915e23788b181617a4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/ApiContracts.kt",
+      "sha256": "b72152855f815a95e4622faa0a9366b736a41487cdf0573c3f155a23ae62017a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/ApiExceptionHandler.kt",
+      "sha256": "cea827c48ea8d3c958c55c4841940671c315d9274e9087d7387953b0d8f1e7c4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/CorrelationLoggingFilter.kt",
+      "sha256": "5d9df4a3d360fcb99947fb1b3eb4d4f6f2fe87e37f91357ddcd753b1540f2c32"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/RateLimitFilter.kt",
+      "sha256": "78166d6425af702b431b44ddf47c3cdeec906bfc03a7241ff52267098b2f78c3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/observability/MicrometerApplicationMetrics.kt",
+      "sha256": "59fe8c82f4b318044dd7a53b9dbde341e83710d030ad1eaf28fb9bb6f14674ae"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/observability/ReliabilityGaugeCollector.kt",
+      "sha256": "39115ef041fc4d501505ea438f4547b929c0e4ed29a5099298ea92137f9e11d9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunner.kt",
+      "sha256": "2ec54da61003084f51ecf42e2f17443260005f138a78adc9d4b9579189cfbee9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/redis/RedisRateLimiter.kt",
+      "sha256": "92cbb92b662c6cf413786af02cefe28ac898916bfd6f57e25f39a3821e4775c6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/security/SystemIdGenerator.kt",
+      "sha256": "ca0a1a0e6e08b4c54b04e10d0937d69f7a002dc64ad6931b7a2b7b7a0f74bfdf"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/ApplicationMetricsPort.kt",
+      "sha256": "67348d1ae43acee4a3748e6b738cd3779e61d4b24f382f39d0eaf0d0dd13a0eb"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/IdGenerator.kt",
+      "sha256": "c0edf17506d99d265715bc964f4c241d02d67b31fc63a06e7f562daf7ad6394d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/RateLimitPort.kt",
+      "sha256": "935337fa94aca2c223c1ff71cc2da72c2ceeb34d68b45a416b8a3022403cc5f7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/DomainIds.kt",
+      "sha256": "1e1fb70ffd0285c506f6cdae57ca9803eb92b2e4882c7d70d92b62d1847328c9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/time/TimeModels.kt",
+      "sha256": "5bdf62ebd0f76d41523c08f15fda6d37f13c226f58c0ec604229a2dbed954565"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionController.kt",
+      "sha256": "d9c71c82174d27260e6deaaa8f3154826f4577f3d55fbca025d988947e040a9b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionDtos.kt",
+      "sha256": "a95ddf5b6c42ad3df30445b8d5fbef871108ab1403838d50c1f93b2ae8ab1471"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionOpenApiConfiguration.kt",
+      "sha256": "5be75be7a8259d360caef713fa210bb85249c6f96ef51bfe22571a3af831c36b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/PersistenceMappers.kt",
+      "sha256": "89af55edd3de8bb70d119320926107d38636719b9682afb1d95b24b1bdffb068"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/Records.kt",
+      "sha256": "43c0b6200bb5c3d0f4dfcb5f410beb338f76b8802654687a2b067b763b525814"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/SubmissionPersistenceAdapters.kt",
+      "sha256": "a1a6fd83f726b16b24b15e3d7724e6dc32902ea42da295923489cbe343c6e050"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/port/input/SubmissionUseCases.kt",
+      "sha256": "6b350b62197ef91fae9d2d51f5984386bf33661fd917c07a241024843571bd3b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/port/output/SubmissionRepositories.kt",
+      "sha256": "c92e4fd12f40a8a58fb9f371888560c28cf5915abe1efd9c128ff51c4bff8421"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "ef9787fa213e144e8efc5c921491070ff51ba2d27e220d8177dbb72bc9fb733e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt",
+      "sha256": "297663bfcefb8e88ed1b4b28cab8c837211959226eefe390d94af2569843425c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/Submission.kt",
+      "sha256": "43b3d8387c5286c5de9db8415578f089240620629f45b40b074aa10ba85d99e5"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/SubmissionRules.kt",
+      "sha256": "a1d21e4de11eb396b6da04940457feea841c24d12ecde046e011a3280dbfecca"
+    },
+    {
+      "path": "src/main/resources/META-INF/services/org.komapper.jdbc.spi.JdbcUserDefinedDataType",
+      "sha256": "6440724383d80409e495eaf1763f6c1b4cebd588db706f650ccc33f57152f24e"
+    },
+    {
+      "path": "src/main/resources/application-local.yml",
+      "sha256": "f41ec983a37577979d1542a148657b1a99864cb6f38e0ce893f8f369fca4c235"
+    },
+    {
+      "path": "src/main/resources/application-prod.yml",
+      "sha256": "12ac7f73b2ba8ef11f13fca0de2cfe27452fd99581910cf1f42ae78fa195e73a"
+    },
+    {
+      "path": "src/main/resources/application.yml",
+      "sha256": "3c31ff994db6a0f8614471fda7561d87e7d191a0b2018ff1757fc9409f862c68"
+    },
+    {
+      "path": "src/main/resources/db/migration/V1__create_core_domain.sql",
+      "sha256": "f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515"
+    },
+    {
+      "path": "src/main/resources/db/migration/V2__add_anonymous_room_lifecycle.sql",
+      "sha256": "75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7"
+    },
+    {
+      "path": "src/main/resources/db/migration/V3__add_submission_gemini_pipeline.sql",
+      "sha256": "a1d7723e2461dbc6e483040f24fe9df8efc5d088b9ddc00ffaf1cdc842f12371"
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__add_matching_results.sql",
+      "sha256": "14f90ca0642a4ee02242d334ebe542503907b509ee1a4fdfcc45f6c33905fe9d"
+    },
+    {
+      "path": "src/main/resources/db/migration/V5__remove_meeting_duration.sql",
+      "sha256": "7127e1ccc1284865cc3b0ea38be3582a1870f7d3ec05e3700d4577d1084c3146"
+    },
+    {
+      "path": "src/main/resources/db/migration/V6__add_reliable_outbox_processing.sql",
+      "sha256": "526c1cca68d23c1ee9fe4fad6c7cf0937eb53df5e306ee75b327223855f8af7a"
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__resume_delayed_matching_from_structuring.sql",
+      "sha256": "d252715c33435f88498e8e0131ea5b35e6e081e63fdc91fab67b7f1b6235c747"
+    },
+    {
+      "path": "src/main/resources/db/migration/V8__add_input_revision_rounds.sql",
+      "sha256": "04ac022f09473e4d95128c765b2e274b7d1d1abb0fee4b722f56119638d22a92"
+    },
+    {
+      "path": "src/main/resources/messages.properties",
+      "sha256": "7f84152918d5cd310d977190905bc9a9423d265804926d18626d432bf1299373"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundAdditionalPostgresTest.kt",
+      "sha256": "4ad7829ce70bdd5265b299b4eae762f0f15a100e131cb0a72176d2c1c5a6154c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundHttpPostgresTest.kt",
+      "sha256": "59c14551f651b1cc587d19efd7ff5da5d4b9450902f36886179ed69bd47ccd96"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundPostgresFixture.kt",
+      "sha256": "5f3ed1f0f7cb10eca53bd9b7c57b48aa91104f598c100091a96b3fffee6fd20e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/FrozenSubmissionBoundaryTest.kt",
+      "sha256": "ca5f639c5b35715d29818a419afebaa04fa4b6c59c5741c1945bcdd13ff82169"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/WorkerPublicationBoundaryTest.kt",
+      "sha256": "d250fc034eab33f068e5693ba900477fb2d241b95bbba6da5e03542fe688ef2a"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Immutable historical input fidelity",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.application.service.FrozenSubmissionBoundaryTest.historical version returns original text and date while changed latest head is ignored"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.FrozenSubmissionBoundaryTest#historical version returns original text and date while changed latest head is ignored",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Durable request replay across newer correction generation",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.late analyze replay preserves current open round and changed request payload conflicts"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest#late analyze replay preserves current open round and changed request payload conflicts",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Stale worker cannot publish to replaced active analysis",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest.replaced active run prevents stale Gemini start complete delay and current check"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest#replaced active run prevents stale Gemini start complete delay and current check",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Normalized no-op retains original immutable version and date",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.normalized no-op preserves revision version and original reference date"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest#normalized no-op preserves revision version and original reference date",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Atomic correction batch/run/outbox transaction on insertion failure",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest.Outbox insertion failure rolls back batch run pointer quota and round consumption"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest#Outbox insertion failure rolls back batch run pointer quota and round consumption",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Only HOST may open and analyze correction",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.member cannot reopen or analyze but can edit own source-cohort submission"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest#member cannot reopen or analyze but can edit own source-cohort submission",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Original closed_at retention anchor",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest.retention uses original closed anchor and removes open rounds and all run histories"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest#retention uses original closed anchor and removes open rounds and all run histories",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Committed correction runs consume permanent quota exactly once",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.three committed correction runs exhaust permanent room quota and fourth changes no data"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest#three committed correction runs exhaust permanent room quota and fourth changes no data",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Worker must acquire room lock before exact run",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest.active worker locks room before exact run and never chooses latest by timestamp"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest#active worker locks room before exact run and never chooses latest by timestamp",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-07T02:54:34.833248Z"
+}
