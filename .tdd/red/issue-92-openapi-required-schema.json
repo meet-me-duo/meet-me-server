@@ -1,0 +1,22 @@
+{
+  "workItem": "issue-92-openapi-required-schema",
+  "sourceRevision": "1ddbd26747936a56a0f6f2f380d1ef066fb41ed7",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue92OpenApiExportIntegrationTest.kt",
+      "sha256": "53299683edb8d0a2faff53e19583339479e1db899b70c40a228e3075edb21dd4"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*Issue92OpenApiExportIntegrationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest.verify correction public schemas then export actual native OpenAPI JSON()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T02:22:03.436798Z"
+}

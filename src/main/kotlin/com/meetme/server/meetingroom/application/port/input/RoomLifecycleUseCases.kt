@@ -36,6 +36,7 @@ data class ViewerParticipation(
     val joined: Boolean,
     val displayName: String?,
     val role: ParticipantRole?,
+    val contextId: java.util.UUID? = null,
 )
 
 enum class PublicRoomStatus {
@@ -52,6 +53,20 @@ enum class PublicRoomStatus {
 enum class InputDisclosurePolicy {
     HOST_ON_PARTIAL_RESULT,
 }
+
+data class RevisionRoundView(
+    val id: java.util.UUID,
+    val generation: Long,
+    val status: com.meetme.server.coordination.domain.RevisionRoundStatus,
+)
+
+data class RoomCapabilities(
+    val canEditOwnSubmission: Boolean = false,
+    val canOpenRevision: Boolean = false,
+    val canAnalyzeRevision: Boolean = false,
+    val canConfirm: Boolean = false,
+    val canForceReparse: Boolean = false,
+)
 
 data class RoomView(
     val inviteCode: String,
@@ -70,6 +85,12 @@ data class RoomView(
     val publicStatus: PublicRoomStatus,
     val viewer: ViewerParticipation,
     val inputDisclosurePolicy: InputDisclosurePolicy = InputDisclosurePolicy.HOST_ON_PARTIAL_RESULT,
+    val analysisId: java.util.UUID? = null,
+    val revisionGeneration: Long = 0,
+    val revisionRound: RevisionRoundView? = null,
+    val capabilities: RoomCapabilities = RoomCapabilities(),
+    val remainingCorrectionAnalyses: Int = 3,
+    val stateVersion: Long = 0,
 )
 
 data class RoomAccessResult(
@@ -98,6 +119,8 @@ interface CloseRoomUseCase {
 }
 
 enum class RoomLifecycleErrorCode {
+    REVISION_CONFLICT,
+    CORRECTION_ANALYSIS_LIMIT_REACHED,
     ROOM_NOT_FOUND,
     ROOM_CLOSED,
     GUEST_SESSION_REQUIRED,

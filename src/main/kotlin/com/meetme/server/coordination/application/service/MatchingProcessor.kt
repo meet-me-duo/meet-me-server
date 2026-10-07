@@ -42,12 +42,11 @@ class MatchingProcessor(
     @Transactional
     fun process(batchId: SubmissionBatchId) {
         val startedNanos = System.nanoTime()
-        val run = coordinationRunRepository.findByBatchId(batchId) ?: return
+        val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
+        val run = persistence.start(initial) ?: return
         if (run.status != CoordinationStatus.MATCHING) return
         val room = persistence.room(run.roomId)
-        val frozenIds = run.batch.submissionVersionIds.toSet()
-        val submissions = submissionRepository.findLatestByRoom(run.roomId).filter { it.latest.id in frozenIds }
-        check(submissions.size == frozenIds.size) { "Frozen submission batch is incomplete" }
+        val submissions = FrozenSubmissionReader.read(submissionRepository, run.batch)
         val existingStructured = structuredSubmissionRepository.findByBatch(batchId)
         val legacyResults =
             submissions.filter { it.latest.rawText == null }.map {
@@ -171,16 +170,28 @@ class MatchingProcessingPersistenceService(
         requireNotNull(roomRepository.findById(id)) { "Room for coordination run does not exist" }
 
     @Transactional
+    fun start(run: CoordinationRun): CoordinationRun? {
+        val (_, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return null
+        return current.takeIf { it.version == run.version && it.status == CoordinationStatus.MATCHING }
+    }
+
+    @Transactional
     fun complete(
         run: CoordinationRun,
         places: List<NormalizedPlace>,
     ) {
+        val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return
+        if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return
         normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
         runRepository.update(run)
+        roomRepository.update(room.transition())
     }
 
     @Transactional
     fun delay(run: CoordinationRun) {
-        runRepository.update(run.delayAnalysis())
+        val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return
+        if (current.status != CoordinationStatus.MATCHING || current.version != run.version) return
+        runRepository.update(current.delayAnalysis())
+        roomRepository.update(room.transition())
     }
 }

@@ -208,7 +208,7 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 9. Gemini 성공 시 유효 조건·조건별 미반영 사유를 저장하고 매칭한다. MatchingProcessor는 legacy 슬롯 전용 미반영을 구조화 결과로 기록하며 사유·run·후보 변경을 Application 트랜잭션으로 묶는다.
 10. 기술적 재시도가 소진되면 입력과 고정 배치를 유지한 채 방을 `ANALYSIS_DELAYED`로 전이하고 매칭을 시작하지 않는다. 주최자의 방 단위 재요청은 같은 배치를 대상으로 새 Outbox 이벤트를 멱등하게 발행한다.
 
-입력 수집이 열려 있으면 참여자는 자신의 제출을 수정할 수 있다. 각 수정은 새 불변 버전과 최신 버전 참조를 만든다. Calendar ON 수정에만 새 Calendar 조회가 발생하며 참가자별 Gemini 작업은 만들지 않는다. 종료 시점의 배치 스냅샷에 포함되지 않은 구버전은 구조화하거나 매칭에 사용하지 않는다.
+입력 수집이 열려 있거나 ADR-046의 별도 수정 라운드에서 원래 배치에 포함된 참여자이면 자신의 제출을 수정할 수 있다. 정규화한 원문이 기존 원문과 같으면 revision·시각·locale을 유지하며, 내용이 바뀐 수정은 새 불변 버전과 최신 버전 참조를 만든다. Calendar ON 수정에만 새 Calendar 조회가 발생하며 참가자별 Gemini 작업은 만들지 않는다. 종료 시점의 배치 스냅샷에 포함되지 않은 구버전은 구조화하거나 매칭에 사용하지 않는다.
 
 신규 입력 경로의 수동 DTO 변환·정규화·저장은 종료한다. 기존 ManualAvailability·Record·Mapper는 구 데이터 복원 경계로 유지한다. 구 수동 테이블·불변 버전은 보존하며 collecting 중 본인 자연어 수정은 새 버전으로 저장한다.
 
@@ -259,7 +259,7 @@ Gemini 프롬프트는 AVAILABLE/UNAVAILABLE·명시 대안·하드 제외·부�
 
 | 책임 | 기준 상태 | 의미 |
 | --- | --- | --- |
-| 방 입력 수집 | `COLLECTING`, `CLOSED` | 제출·수정 가능 여부의 기준이다. `CLOSED`가 되면 다시 열리지 않는다. |
+| 방 입력 수집 | `COLLECTING`, `CLOSED` | 최초 입력 수집의 기준이다. `CLOSED`는 불변이며 별도 OPEN 수정 라운드의 cohort만 자기 입력을 수정할 수 있다. |
 | 마감 원인 | `EXPECTED_PARTICIPANTS`, `DEADLINE`, `MANUAL` | 가장 먼저 수집을 종료한 원인을 `closed_at`과 함께 기록한다. |
 | 고정 배치 조율 작업 | `QUEUED`, `STRUCTURING`, `MATCHING`, `COMPLETED`, `ANALYSIS_DELAYED`, `DEAD_LETTERED` | Redis 전달과 무관하게 PostgreSQL이 작업 진행과 실패의 기준이다. 자연어가 없는 배치는 `STRUCTURING`을 건너뛴다. |
 | 후보 집합 품질 | `COMPLETE`, `PARTIAL` | 후보가 모든 유효 입력을 반영했는지, 일부 자연어 조건이 미반영되었는지를 나타낸다. |
@@ -276,6 +276,18 @@ Gemini 프롬프트는 AVAILABLE/UNAVAILABLE·명시 대안·하드 제외·부�
 7. 그 밖의 종료 후 대기·구조화·매칭 구간은 `ANALYZING`이다.
 
 입력 수집 종료 트랜잭션은 `CLOSED`, 마감 원인, 종료 시점의 최신 제출 배치와 필요한 Outbox 이벤트를 원자적으로 기록한다. 예상 참여 인원·데드라인·수동 마감이 경합해도 하나의 종료만 성공해야 한다. 재분석은 같은 불변 배치를 사용하여 조율 작업과 시도 이력만 갱신하고 입력 수집 상태를 변경하지 않는다. `PARTIAL`은 분석 작업 실패 상태가 아니라 생성된 후보 집합의 품질이므로 `ANALYSIS_DELAYED`와 동시에 성립하지 않는다.
+
+### 입력 보존 수정 라운드 (ADR-046)
+
+- `input_revision_rounds`는 최초 마감과 분리된 OPEN/CONSUMED 상태와 영속 request ID·원래 payload·operation 결과를 저장한다. `meeting_rooms.active_run_id`가 현재 결과를 지정하며 timestamp/UUID 정렬은 마이그레이션 backfill에만 사용한다. same-room 복합 FK와 하나의 OPEN round unique index로 다른 방 참조와 중복 활성 라운드를 막는다.
+- `POST /api/rooms/{inviteCode}/reopen`은 HOST의 미확정 completed NO_MATCH/PARTIAL 결과에서만 라운드를 연다. 방·초대·참가자·입력·설정·최초 closed_at을 유지한다. 새 참가자나 최초 배치에 없는 제출은 받지 않는다. `POST /api/rooms/{inviteCode}/analysis`는 현재 라운드를 소비한다. source batch와 최신 cohort version 집합이 같으면 REUSED이며 작업을 생성하지 않는다. 변경 또는 명시적 force_reparse는 독립 새 batch/run/Outbox를 원자적으로 생성한다.
+- 이번 복구 API는 본인 원문과 기존 언어 중립 미반영 사유를 사용한다. 불확실한 특정 구절이나 LLM 해석 미리보기는 현재 응답에 없으므로 해당 안내를 만들려면 별도 API 계약 확장이 필요하다.
+- correction PUT은 round UUID와 읽은 자기 revision을 요구하며 소유권·현재 상태를 검증한 다음 no-op를 판단한다. owner GET은 마감 이후에도 원문을 반환한다. 수정 저장은 AI를 호출하지 않는다. 역사 버전 복원은 요청된 정확한 version ID만 사용하며 새 head로 대신하지 않는다.
+- 모든 상태 writer는 room → exact run 순으로 잠근다. OPEN 라운드 또는 활성 pointer와 다른 run의 후보 조회·확정·worker 게시·재시도는 허용하지 않는다. 오래된 worker는 새로운 외부 호출 없이 no-op 처리된다. 확정 결과는 보호한다.
+- 공개 room 응답의 viewer.context_id는 현재 세션이 소유한 방 참여자의 opaque UUID이며, 미참여·익명·만료 세션은 null이다. 같은 이름·역할인 다른 세션의 자기 원문 캐시를 구별하는 hint로 사용하고 권한 증명으로 사용하지 않는다. raw credential, guest-session ID나 다른 참여자의 ID는 추가하지 않는다. viewer identity 전환과 401/403은 state_version과 별도로 캐시를 정리해야 하며, 이 field가 없는 구 응답만으로는 같은 이름·역할의 세션 교체를 안전하게 구별할 수 없다.
+- 공개 room/candidates/owner 응답은 REPEATABLE_READ snapshot을 사용하고 room.version을 state_version으로 반환한다. 라운드 generation은 라운드를 식별하고 state_version은 같은 generation 안의 open/consume/publish/confirm도 정렬한다. owner 원문의 별도 revision 및 세션별 cache scope가 함께 필요하다.
+- 새 논리 correction run은 방 수명 동안 3회로 제한한다. replay·REUSED·rollback은 소비하지 않으며 기술 실패로 환불하지 않는다. 기존 지연 분석 retry의 물리 호출은 별도이므로 이 한도는 USD/물리 호출 상한이 아니다. 3회 후에도 OPEN/저장은 가능하며 변경 없는 REUSED는 허용하지만 새 run은 409이다. 새 HOST 경로는 기존 Redis 429/503 fail-closed 제한을 적용한다.
+- 기존 close는 CLOSED 200 no-op, analysis/retry는 delayed-only를 유지한다. 복구 쓰기는 새 클라이언트만 지원하며 rollout은 roll-forward를 전제로 한다. retention은 최초 closed_at의 기존 30일을 유지하고 active pointer와 round를 먼저 지운 뒤 run/batch를 지운다.
 
 ## 7. 데이터 저장 원칙
 

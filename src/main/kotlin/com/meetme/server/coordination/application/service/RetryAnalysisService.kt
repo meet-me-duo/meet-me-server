@@ -55,8 +55,9 @@ class RetryAnalysisService(
                 ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_INVALID)
         val participant = participantRepository.findByRoomAndGuestSession(room.id, session.id)
         if (participant?.role != ParticipantRole.HOST) throw RoomLifecycleException(RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED)
+        if (room.activeRevisionRoundId != null) throw SubmissionException(SubmissionErrorCode.ANALYSIS_NOT_DELAYED)
         val run =
-            coordinationRunRepository.findLatestByRoom(room.id)
+            coordinationRunRepository.findLatestByRoomForUpdate(room.id)
                 ?: throw SubmissionException(SubmissionErrorCode.ANALYSIS_NOT_DELAYED)
         val hasPending =
             outboxRepository.existsPending(run.id.value, CollectionClosureService.STRUCTURING_REQUESTED) ||
@@ -70,6 +71,7 @@ class RetryAnalysisService(
         if (!hasPending) {
             val retried = run.retryAnalysis()
             coordinationRunRepository.update(retried)
+            roomRepository.update(room.transition())
             val eventId = OutboxEventId(idGenerator.next())
             val eventType =
                 if (retried.status == CoordinationStatus.MATCHING) {

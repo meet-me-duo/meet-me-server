@@ -19,6 +19,11 @@ interface SubmissionRepository {
 
     fun findLatestByRoom(roomId: MeetingRoomId): List<Submission>
 
+    fun findFrozenByVersionIds(
+        roomId: MeetingRoomId,
+        versionIds: List<com.meetme.server.shared.domain.SubmissionVersionId>,
+    ): List<Submission>
+
     fun countSubmittedParticipants(roomId: MeetingRoomId): Int
 }
 

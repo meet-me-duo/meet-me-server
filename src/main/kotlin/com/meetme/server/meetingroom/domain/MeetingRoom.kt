@@ -60,6 +60,10 @@ data class MeetingRoom private constructor(
     val closedAt: Instant?,
     val createdAt: Instant,
     val version: Long,
+    val activeRunId: java.util.UUID? = null,
+    val revisionGeneration: Long = 0,
+    val activeRevisionRoundId: java.util.UUID? = null,
+    val correctionAnalysisCount: Int = 0,
 ) {
     companion object {
         fun create(
@@ -105,6 +109,10 @@ data class MeetingRoom private constructor(
             closedAt: Instant?,
             createdAt: Instant,
             version: Long,
+            activeRunId: java.util.UUID? = null,
+            revisionGeneration: Long = 0,
+            activeRevisionRoundId: java.util.UUID? = null,
+            correctionAnalysisCount: Int = 0,
         ): MeetingRoom =
             MeetingRoom(
                 id,
@@ -119,7 +127,28 @@ data class MeetingRoom private constructor(
                 closedAt,
                 createdAt,
                 version,
+                activeRunId,
+                revisionGeneration,
+                activeRevisionRoundId,
+                correctionAnalysisCount,
             )
+    }
+
+    fun transition(
+        activeRunId: java.util.UUID? = this.activeRunId,
+        revisionGeneration: Long = this.revisionGeneration,
+        activeRevisionRoundId: java.util.UUID? = this.activeRevisionRoundId,
+        correctionAnalysisCount: Int = this.correctionAnalysisCount,
+    ): MeetingRoom {
+        require(revisionGeneration >= this.revisionGeneration)
+        require(correctionAnalysisCount in this.correctionAnalysisCount..3)
+        return copy(
+            activeRunId = activeRunId,
+            revisionGeneration = revisionGeneration,
+            activeRevisionRoundId = activeRevisionRoundId,
+            correctionAnalysisCount = correctionAnalysisCount,
+            version = version + 1,
+        )
     }
 
     fun close(

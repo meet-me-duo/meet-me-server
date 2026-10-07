@@ -53,7 +53,7 @@ class MatchingResultService(
     GetUnappliedInputsUseCase,
     ConfirmCandidateUseCase,
     GetConfirmedResultUseCase {
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     override fun getCandidates(
         inviteCode: String,
         rawCredential: String?,
@@ -61,10 +61,10 @@ class MatchingResultService(
     ): CandidateListView {
         val room = room(inviteCode)
         participant(room.id, rawCredential)
-        return candidateList(completedRun(room.id), room, locale)
+        return candidateList(completedRun(room), room, locale)
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     override fun getUnappliedInputs(
         inviteCode: String,
         rawCredential: String?,
@@ -72,7 +72,7 @@ class MatchingResultService(
         val room = room(inviteCode)
         val viewer = participant(room.id, rawCredential)
         if (viewer.role != ParticipantRole.HOST) fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
-        val run = completedRun(room.id)
+        val run = completedRun(room)
         val submissions = frozenSubmissions(run)
         val structured = structuredSubmissionRepository.findByBatch(run.batch.id).associateBy { it.submissionVersionId }
         val placeFailures =
@@ -96,9 +96,10 @@ class MatchingResultService(
         rawCredential: String?,
         locale: Locale,
     ): ConfirmedResultView {
-        val room = room(inviteCode)
+        val room = room(inviteCode, lock = true)
         val viewer = participant(room.id, rawCredential)
         if (viewer.role != ParticipantRole.HOST) fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
+        if (room.activeRevisionRoundId != null) fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
         val run =
             coordinationRunRepository.findLatestByRoomForUpdate(room.id)
                 ?: fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
@@ -109,11 +110,19 @@ class MatchingResultService(
         val candidate =
             run.candidates.firstOrNull { it.id == requested }
                 ?: fail(MatchingResultErrorCode.CANDIDATE_NOT_FOUND)
-        val confirmed = if (existing == requested) run else run.confirm(requested, clock.instant()).also(coordinationRunRepository::update)
+        val confirmed =
+            if (existing == requested) {
+                run
+            } else {
+                val next = run.confirm(requested, clock.instant())
+                coordinationRunRepository.update(next)
+                roomRepository.update(room.transition())
+                next
+            }
         return ConfirmedResultView(candidate.toView(room, locale), requireNotNull(confirmed.confirmedAt))
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
     override fun getConfirmed(
         inviteCode: String,
         rawCredential: String?,
@@ -121,7 +130,7 @@ class MatchingResultService(
     ): ConfirmedResultView {
         val room = room(inviteCode)
         participant(room.id, rawCredential)
-        val run = completedRun(room.id)
+        val run = completedRun(room)
         val id = run.confirmedCandidateId ?: fail(MatchingResultErrorCode.RESULT_NOT_CONFIRMED)
         val candidate = run.candidates.firstOrNull { it.id == id } ?: fail(MatchingResultErrorCode.CANDIDATE_NOT_FOUND)
         return ConfirmedResultView(candidate.toView(room, locale), requireNotNull(run.confirmedAt))
@@ -145,6 +154,8 @@ class MatchingResultService(
             totalSubmissions = run.batch.submissionVersionIds.size,
             unappliedInputs = rejected,
             candidates = run.candidates.map { it.toView(room, locale) },
+            analysisId = run.id.value,
+            stateVersion = room.version,
         )
     }
 
@@ -199,9 +210,13 @@ class MatchingResultService(
         return dominant?.takeIf { it.value >= 2 }?.key
     }
 
-    private fun room(rawInviteCode: String): MeetingRoom {
+    private fun room(
+        rawInviteCode: String,
+        lock: Boolean = false,
+    ): MeetingRoom {
         val code = runCatching { InviteCode.of(rawInviteCode) }.getOrNull() ?: fail(MatchingResultErrorCode.ROOM_NOT_FOUND)
-        return roomRepository.findByInviteCode(code) ?: fail(MatchingResultErrorCode.ROOM_NOT_FOUND)
+        return (if (lock) roomRepository.findByInviteCodeForUpdate(code) else roomRepository.findByInviteCode(code))
+            ?: fail(MatchingResultErrorCode.ROOM_NOT_FOUND)
     }
 
     private fun participant(
@@ -218,14 +233,14 @@ class MatchingResultService(
             ?: fail(MatchingResultErrorCode.PARTICIPANT_REQUIRED)
     }
 
-    private fun completedRun(roomId: MeetingRoomId): CoordinationRun {
-        val run = coordinationRunRepository.findLatestByRoom(roomId) ?: fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
+    private fun completedRun(room: MeetingRoom): CoordinationRun {
+        if (room.activeRevisionRoundId != null) fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
+        val run = coordinationRunRepository.findLatestByRoom(room.id) ?: fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
         if (run.status != CoordinationStatus.COMPLETED) fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
         return run
     }
 
-    private fun frozenSubmissions(run: CoordinationRun) =
-        submissionRepository.findLatestByRoom(run.roomId).filter { it.latest.id in run.batch.submissionVersionIds.toSet() }
+    private fun frozenSubmissions(run: CoordinationRun) = FrozenSubmissionReader.read(submissionRepository, run.batch)
 
     private fun String.toPlainText(): String = filter { it == '\n' || it == '\t' || !it.isISOControl() }
 

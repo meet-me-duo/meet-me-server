@@ -1,0 +1,23 @@
+{
+  "workItem": "issue-92-nullable-round-schema",
+  "sourceRevision": "1ddbd26747936a56a0f6f2f380d1ef066fb41ed7",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundNullableSchemaPostgresTest.kt",
+      "sha256": "342d386efee05fc849d1f8ef68491cd381e5555819d2e4a795e60a907dee57ae"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*CorrectionRoundNullableSchemaPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullableSchemaPostgresTest.native revision round schema admits actual closed null and open object without contradictory ref sibling()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T02:39:37.640806Z"
+}

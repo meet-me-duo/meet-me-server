@@ -21,10 +21,6 @@
     {
       "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextSafetyReviewTest.kt",
       "sha256": "bba78e74669e506d653bc89cf5f64e4c7e975536528ac87a1817f8811867c0c0"
-    },
-    {
-      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
-      "sha256": "e74bb3ec82e541284d8575e834cc725c3d2ec0e710b1f6b2570b22879f2247f9"
     }
   ],
   "command": [

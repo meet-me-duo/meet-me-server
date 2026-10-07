@@ -1,0 +1,30 @@
+{
+  "workItem": "issue-92-viewer-context",
+  "sourceRevision": "f70536e26c588487edb1e18e09fb8d34e6e6c504",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundViewerContextPostgresTest.kt",
+      "sha256": "9ccda6e169056db8c16edf9e0a41ed9698cf90410f64458c8d62bfa0438d8b1a"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*CorrectionRoundHttpPostgresTest",
+    "--tests",
+    "*CorrectionRoundConcurrencyPostgresTest",
+    "--tests",
+    "*CorrectionRoundNullOutcomePostgresTest",
+    "--tests",
+    "*CorrectionRoundViewerContextPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.two MEMBER sessions with same display name have distinct context and access only own raw()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.anonymous room view explicitly has null context and cannot inherit authenticated member hint()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.expired guest session room view has no self context()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T02:06:51.191340Z"
+}

@@ -47,6 +47,8 @@ class RoomDataRetentionRepository(
     }
 
     private fun deleteRoom(roomId: UUID) {
+        execute("UPDATE meeting_rooms SET active_run_id = NULL, active_revision_round_id = NULL WHERE id = ?", roomId)
+        execute("DELETE FROM input_revision_rounds WHERE room_id = ?", roomId)
         execute(
             """
             DELETE FROM coordination_worker_failures

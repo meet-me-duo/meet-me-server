@@ -143,6 +143,8 @@ private fun RoomLifecycleErrorCode.status(): HttpStatus =
         -> HttpStatus.UNAUTHORIZED
         RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED -> HttpStatus.FORBIDDEN
         RoomLifecycleErrorCode.ROOM_NOT_FOUND -> HttpStatus.NOT_FOUND
+        RoomLifecycleErrorCode.REVISION_CONFLICT,
+        RoomLifecycleErrorCode.CORRECTION_ANALYSIS_LIMIT_REACHED,
         RoomLifecycleErrorCode.ROOM_CLOSED,
         RoomLifecycleErrorCode.EARLY_CLOSE_CONFIRMATION_REQUIRED,
         RoomLifecycleErrorCode.ROOM_PARTICIPANT_LIMIT_REACHED,

@@ -19,6 +19,7 @@ import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.SubmissionBatch
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.ClosurePolicy
+import com.meetme.server.meetingroom.domain.ClosureReason
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.meetingroom.domain.MeetingRoom
@@ -180,7 +181,7 @@ class GeminiTimeReferenceDateTest {
         createdAt: List<Instant>,
         texts: List<String>,
     ) {
-        val room =
+        var room =
             MeetingRoom.create(
                 MeetingRoomId(UUID.randomUUID()),
                 InviteCode.of("abcdefghijklmnopqrstuv"),
@@ -196,7 +197,7 @@ class GeminiTimeReferenceDateTest {
                 Submission.start(
                     SubmissionId(UUID.randomUUID()),
                     room.id,
-                    ParticipantId(UUID.randomUUID()),
+                    ParticipantId(UUID(0, index.toLong() + 1)),
                     SubmissionVersionId(UUID.randomUUID()),
                     texts[index],
                     emptyList(),
@@ -228,11 +229,15 @@ class GeminiTimeReferenceDateTest {
         private val adapter = GeminiNaturalLanguageParserAdapter(GeminiProperties(), JsonMapper.builder().build())
 
         init {
+            room = room.close(ClosureReason.EXPECTED_PARTICIPANTS, WORKER_NOW, submissions.size).transition(activeRunId = run.id.value)
             `when`(runRepository.findByBatchId(batch.id)).thenAnswer { run }
+            `when`(runRepository.findByIdForUpdate(run.id)).thenAnswer { run }
             `when`(submissionsRepository.findLatestByRoom(room.id)).thenReturn(submissions)
             `when`(processingPersistence.start(anyValue())).thenAnswer { run.startStructuring().also { run = it } }
             `when`(processingPersistence.room(room.id)).thenReturn(room)
+            `when`(processingPersistence.isCurrent(anyValue())).thenAnswer { it.getArgument<CoordinationRun>(0) == run }
             `when`(rooms.findById(room.id)).thenReturn(room)
+            `when`(rooms.findByIdForUpdate(room.id)).thenReturn(room)
             `when`(attempts.countByRun(run.id)).thenReturn(0)
             Mockito
                 .doAnswer {

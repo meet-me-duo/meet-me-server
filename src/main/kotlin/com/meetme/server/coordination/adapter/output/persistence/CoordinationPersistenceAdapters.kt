@@ -169,11 +169,22 @@ class KomapperCoordinationRunRepository(
         }
     }
 
+    override fun findByIdForUpdate(id: CoordinationRunId): CoordinationRun? {
+        val found =
+            jdbcTemplate
+                .query(
+                    "SELECT id FROM coordination_runs WHERE id = ? FOR UPDATE",
+                    { rs, _ -> CoordinationRunId(rs.getObject("id", UUID::class.java)) },
+                    id.value,
+                ).firstOrNull() ?: return null
+        return findById(found)
+    }
+
     override fun findLatestByRoom(roomId: MeetingRoomId): CoordinationRun? {
         val id =
             jdbcTemplate
                 .query(
-                    "SELECT id FROM coordination_runs WHERE room_id = ? ORDER BY created_at DESC, id DESC LIMIT 1",
+                    "SELECT r.id FROM coordination_runs r JOIN meeting_rooms m ON m.active_run_id = r.id AND m.id = r.room_id WHERE m.id = ?",
                     { rs, _ -> CoordinationRunId(rs.getObject("id", UUID::class.java)) },
                     roomId.value,
                 ).firstOrNull() ?: return null
@@ -185,10 +196,9 @@ class KomapperCoordinationRunRepository(
             jdbcTemplate
                 .query(
                     """
-                    SELECT id FROM coordination_runs
-                    WHERE room_id = ?
-                    ORDER BY created_at DESC, id DESC
-                    LIMIT 1 FOR UPDATE
+                    SELECT r.id FROM coordination_runs r
+                    JOIN meeting_rooms m ON m.active_run_id = r.id AND m.id = r.room_id
+                    WHERE m.id = ? FOR UPDATE OF r
                     """.trimIndent(),
                     { rs, _ -> CoordinationRunId(rs.getObject("id", UUID::class.java)) },
                     roomId.value,

@@ -222,6 +222,8 @@ class MatchingResultWebIntegrationTest {
                 totalSubmissions = 2,
                 unappliedInputs = 1,
                 candidates = listOf(candidate(CANDIDATE_A), candidate(CANDIDATE_B, rank = 2)),
+                analysisId = UUID(0, 100),
+                stateVersion = 0,
             )
         private var confirmed: UUID? = null
 

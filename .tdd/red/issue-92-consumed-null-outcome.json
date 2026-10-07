@@ -1,0 +1,27 @@
+{
+  "workItem": "issue-92-consumed-null-outcome",
+  "sourceRevision": "f70536e26c588487edb1e18e09fb8d34e6e6c504",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundNullOutcomePostgresTest.kt",
+      "sha256": "efdd4e25e67e2a431f8341602f83a6e450f39c10fb3ff90dca7d88640bb13e03"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m -Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts",
+    "-Dorg.gradle.workers.max=2",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*CorrectionRoundNullOutcomePostgresTest",
+    "--tests",
+    "*CorrectionRoundViewerContextPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullOutcomePostgresTest.consumed round cannot lose persisted outcome through SQL NULL semantics()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T02:17:30.274460Z"
+}

@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-92-correction-round-compatibility",
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-92-correction-round-phase1.json",
+      "archived_path": ".tdd/history/issue-92-port-and-rollback-compatibility/issue-92-correction-round-phase1.json",
+      "sha256": "855dc129b76622338848e18cc2fce6dd3e7035ab5b2b98a65e8efce4031da664"
+    },
+    {
+      "path": ".tdd/red/issue-83-existing-contracts.json",
+      "archived_path": ".tdd/history/issue-92-port-and-rollback-compatibility/issue-83-existing-contracts.json",
+      "sha256": "0d379ecab77ac7374c49b0c254b64e56bd101abbbf7d51bffbd82947710b65d4"
+    }
+  ],
+  "isolatedBaseline": "/workspace/meet-me-server-92-baseline-red",
+  "skeletonOnly": [
+    "CoordinationRunRepository TODO default for new lock port",
+    "RoomLifecycleService unused final constructor dependency",
+    "Empty round repository type and bean for dependency injection"
+  ],
+  "reason": "Preserve existing assertions while adding new port/constructor fixtures and rolling back expected rejected HTTP requests in the external test transaction. Original records are not rewritten.",
+  "newRED": ".tdd/red/issue-92-correction-round-compatibility.json",
+  "newEndpointAssertionFailures": 17,
+  "existingCompatibilitySuitesGreen": 3,
+  "limitations": "Skeleton proves compilation and missing endpoint RED only, not lock behavior. Live PostgreSQL race and other boundary checks are separate."
+}

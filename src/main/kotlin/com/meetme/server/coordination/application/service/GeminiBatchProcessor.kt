@@ -45,10 +45,8 @@ class GeminiBatchProcessor(
         val processingStarted = monotonicTime.nanoTime()
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
         if (initial.status !in setOf(CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING)) return
-        val run = if (initial.status == CoordinationStatus.QUEUED) persistence.start(initial) else initial
-        val ids = run.batch.submissionVersionIds.toSet()
-        val submissions = submissionRepository.findLatestByRoom(run.roomId).filter { it.latest.id in ids }
-        check(submissions.size == ids.size) { "Frozen submission batch is incomplete" }
+        val run = persistence.start(initial) ?: return
+        val submissions = FrozenSubmissionReader.read(submissionRepository, run.batch)
         val room = persistence.room(run.roomId)
         val naturalInputs =
             submissions.mapNotNull { submission ->
@@ -75,6 +73,7 @@ class GeminiBatchProcessor(
         val startingAttempt = attemptRepository.countByRun(run.id)
         val deadlineNanos = monotonicTime.nanoTime() + TOTAL_TIMEOUT.toNanos()
         repeat(MAX_ATTEMPTS) { index ->
+            if (!persistence.isCurrent(run)) return
             if (monotonicTime.nanoTime() >= deadlineNanos) {
                 persistence.delay(run)
                 metrics?.geminiBatch("ANALYSIS_DELAYED", elapsed(processingStarted), index, null)
@@ -170,7 +169,25 @@ class GeminiProcessingPersistenceService(
         requireNotNull(roomRepository.findById(id)) { "Room for coordination run does not exist" }
 
     @Transactional
-    fun start(run: CoordinationRun): CoordinationRun = run.startStructuring().also(coordinationRunRepository::update)
+    fun start(run: CoordinationRun): CoordinationRun? {
+        val (room, current) = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run) ?: return null
+        if (current.version != run.version ||
+            current.status !in setOf(CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING)
+        ) {
+            return null
+        }
+        if (current.status == CoordinationStatus.STRUCTURING) return current
+        val next = current.startStructuring()
+        coordinationRunRepository.update(next)
+        roomRepository.update(room.transition())
+        return next
+    }
+
+    @Transactional
+    fun isCurrent(run: CoordinationRun): Boolean {
+        val (_, current) = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run) ?: return false
+        return current.version == run.version && current.status == CoordinationStatus.STRUCTURING
+    }
 
     @Transactional
     fun complete(
@@ -178,15 +195,19 @@ class GeminiProcessingPersistenceService(
         results: List<com.meetme.server.submission.domain.StructuredSubmissionResult>,
         attempt: CoordinationAttempt,
     ) {
-        structuredSubmissionRepository.replaceForBatch(run.batch.id, results, clock.instant())
+        val (room, current) = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run) ?: return
+        if (current.version != run.version || current.status != CoordinationStatus.STRUCTURING) return
         attemptRepository.update(attempt)
-        val structuring = if (run.status == CoordinationStatus.QUEUED) run.startStructuring() else run
-        coordinationRunRepository.update(structuring.finishStructuring())
+        structuredSubmissionRepository.replaceForBatch(current.batch.id, results, clock.instant())
+        coordinationRunRepository.update(current.finishStructuring())
+        roomRepository.update(room.transition())
     }
 
     @Transactional
     fun delay(run: CoordinationRun) {
-        val active = if (run.status == CoordinationStatus.QUEUED) run.startStructuring() else run
-        coordinationRunRepository.update(active.delayAnalysis())
+        val (room, current) = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run) ?: return
+        if (current.version != run.version || current.status !in setOf(CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING)) return
+        coordinationRunRepository.update(current.delayAnalysis())
+        roomRepository.update(room.transition())
     }
 }

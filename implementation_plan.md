@@ -992,3 +992,72 @@
 - 새 경계 최종 검증: authority15+보존provider14+reference5가 GREEN이며 새 결함7개(lexical복귀,상수덮어쓰기,모호성성공변환,worker기준일,ref검증누락,날짜/요일검증누락,area명검증누락)를 모두 assertion으로 탐지했다. 실제 소스를 복구하고 독립 reviewer가 source3/test6/삭제resolver/archive8의 지문을 다시 확인했다. 리뷰 기록은 `.tdd/reviews/issue-91-provider-authority.json`, 새 결함 기록은 `.tdd/verification/issue-91-provider-authority.json`이다.
 - 2026-10-07 01:57 UTC 변경하지 않은 mandatory tdd_guard는 exit0, ktlintCheck/assemble/test 모두 성공했다. XML62suite/369건/실패0/오류0/기존skip2다. 새6개 offline 공유원장 테스트가 잠금·누적25회/USD0.30·미정산예약·중복·정책변경을 검사한다. 기본25/확장30 dryrun은 모두 UNRUN/호출0, synthetic replay는 예상PASS1/foreignrefFAIL1/UNRUN28이며 실제 공급자 응답이나 새prompt 모델 정확성 근거가 아니다.
 - 최종 feature commit/push 및 Draft PR #93의 설명을 현재 LLM 중심 경계로 갱신한다. 커밋 해시는 Git 이력으로 추적한다. 실제 모델 평가의 input100k 예약 하드 상한은 아직 별도 확인이 필요하고 live 기본flagfalse다. 새 outputdir이 승인을 초기화하지 않도록 approvalID+sharedledgerdir를 필수로 하며 미정산 예약은 전체 비용을 유지한 채 중단한다. 실제 모델·운영 데이터·병합·배포 호출0. #92 생산 컴파일 성공과 웹 mock검증은 별도이며 실제 PostgreSQL 확장 경계/OpenAPI/native연결 최종gate는 미완료다.
+
+## 2026-10-07 — Issue #92 입력 보존 수정 라운드
+
+- [x] 별도 develop 기반 feature worktree와 #91 의존 commit 보존, 독립 설계 검토 및 보수적 계약 승인.
+- [x] ADR-046으로 CLOSED 불변·수정 cohort·명시적 분석·영속 멱등·활성 pointer·3회 논리 분석 한도 확정.
+- [x] 독립 PostgreSQL/HTTP/실제 잠금 테스트 17개 컴파일 후 missing reopen endpoint 404 assertion RED 확인·지문 고정 (`.tdd/red/issue-92-correction-round-compatibility.json`). 앞선 compile 오류는 RED에서 제외했다.
+- [x] immutable version 복원·migration·라운드 API·owner 수정·worker 활성 상태·확정 경쟁 기능 구현 및 실제 경계 검증.
+- [x] 최종 독립 결함 주입9개 전체 탐지와 동결195개 파일 원본 복원.
+- [x] 결함 완료 후 최종 독립 리뷰 PASS 및 source/test 동결 지문 일치.
+- [x] 변경하지 않은 전체 필수 guard: 78suite·438test·실패0·오류0·opt-in skip4.
+- [x] 실제 native OpenAPI 생성과 웹 #17 최초 RecoveryPanel 연결, draft/auth/cache/늦은 응답 검증.
+- [ ] 웹 후속 unit176 회귀와 최종 browser 검증·최종 head 확인.
+- [ ] root의 서버 로컬 feature commit 및 정확한 SHA 기록.
+- [ ] 서버 push·Draft PR·정확한 head CI: 최초 명시적 금지의 철회가 확인되지 않아 차단. 우회·자동 승인 재시도 없음. main/develop 병합과 배포는 보류.
+
+#91의 최신 LLM 중심 구현 `1ddbd26747936a56a0f6f2f380d1ef066fb41ed7`을 #92 feature에 통합했다. #92 생산 기능과 native API 계약은 아래 실제 검증을 통과했다. 실제 공급자 호출과 운영 데이터 접근은 0이다. 논리 분석 한도를 물리 API 호출 또는 USD 상한으로 보고하지 않는다.
+
+### 현재 #92 검증·출판 상태
+
+아래 상태가 뒤의 초기 진행 기록과 미완료 표현을 대체한다. 과거 RED·수정 과정은 이력으로 보존한다.
+
+- 통합 전후 최초 경계 44개 GREEN 이후, 최종 기능·migration·Redis·권한·6개 모임·native schema selector는 총66개/실행65개 PASS/diagnostic capture1skip/실패0/오류0이다. root 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-final66-native.json`이다. skip은 진단용 schema capture이며 검증 assertion을 생략한 성공으로 계산하지 않는다.
+- 실제 OpenAPI SHA-256은 `22225ba0db80bf9afb31fa641f8edc385a2dda69abf83f0c063fb18741890ce0`이다. 필수 request5/round3, 기본 false, revision_round anyOf(object ref,null)를 native JSON에서 확인했다. 독립 JSON Schema와 실제 TypeScript 생성 결과도 `RevisionRoundResponse | null`을 보존한다. generated JSON/타입을 손으로 고치지 않았다.
+- root의 신규 worker fixture에서 정확한 stub6개를 보강한 detector baseline35개 GREEN 뒤 최종 결함9개를 모두 DETECTED로 확인했다. 각 실행 당시 동결195개 파일 원본 바이트를 복원했으며, 앞선 fault3 SURVIVED는 탐지 성공으로 계산하지 않는다. `.tdd/verification/issue-92-recovery-boundaries.json`은 현재 실제 detector/helper5개와 source112개 지문을 추적한다. 이후 추가 테스트를 포함한 새196개 파일 전체를 다시 결함 주입·복원했다는 주장은 하지 않는다. 독립 리뷰는 production39개·source112개 불변과 실제 detector5개·결함9개 이력을 확인했고 source blocker0이다.
+- 첫 전체 guard의435개 중55개 fixture 실패 뒤 독립 저자가 활성 포트/정확한 버전 조회 등 fixture 정합을 보완하여 legacy79개 GREEN을 확인했다. RED 근거의 비실패 sidecar 지문만 좁힌 이유·원본 이력은 [.tdd/supersessions/issue-92-legacy-fixture-compatibility.json](.tdd/supersessions/issue-92-legacy-fixture-compatibility.json) 및 `.tdd/history/issue-92-legacy-fixture-compatibility/`에 보존한다. 원래 실제 실패 테스트의 기대·실패·sourceRevision·실행 명령·로그는 바꾸지 않았으며, 이 과거 근거를 현재 의존 전체의 신규 RED로 과장하지 않는다.
+- root는2026-10-07 03:09:19 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`의 최종 exit0을 확인했다. `ktlintCheck assemble test`는78suite/438test/실패0/오류0/opt-in skip4이고 guard 단위 검증12개도 통과했다. legacy HOST/auth/idempotency/worker 기존 테스트와 신규503 회귀3개가 이 전체 GREEN에 포함된다. source112개와 adapter `d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17`은 불변이다. 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-full-guard.json`이며 문서 owner의 source/test/harness 변경·Gradle·모델 호출은0이다.
+- 웹 #17의 unit174·browser329·결함7/native 완료와 push head `059f049a4832effb2e2cc844d33f4cdd50b5dc1e`는 앞 단계의 이력이다. 현재 후속 unit176·최종 browser 검증이 진행 중이라059f를 현재 최종 head로 보고하지 않으며, 완료 후 최종 SHA를 갱신한다. 이 웹 결과를 서버 CI·운영 배포 완료로 사용하지 않는다.
+- 구 웹 정확한 source `68c41f7619e7f1a28b2b597cb56867e4d3e852bc` 재빌드 bundle과 최초 baseline의 바이트 동일성을 확인한 뒤 구/신 실제 bundle 격리 브라우저6검사가 모두 PASS했다. 구 PUT409는 draft·revision1을 유지하고 close200은 OPEN/no analysis이며 hosting 교체만으로 구 탭은 바뀌지 않았다. 명시적 reload 후 신 UI는 현재 round/revision으로 저장하고 구 Join은 ROOM_CLOSED·신 Join은 숨김이다. 신 웹+신규 필드 없는 구 계약은 raw-only 저장/HOST close를 유지한다. 실제 backend/model/운영 호출0인 합성 HTTP 검증이며 real cross-version backend/운영 Origin 검증과 구분한다. 새로고침은 미저장 구 draft를 잃게 하므로 먼저 복사하고 신 웹에서 다시 입력·명시적 저장·결과 확인하는 안내·지원 및 운영 갱신 gate는 아직 미구현/미실행이다. 상세6검사와 잔여 조건은 [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 기록했다.
+- 합성 모임6개의 기대 시간·참석자·실제 결과·검증 범위는 [ISSUE_92_SCENARIO_RESULTS.md](docs/ISSUE_92_SCENARIO_RESULTS.md)에 추적한다. 실제 PostgreSQL/HTTP/application processor/matcher이며 자연어 port는 mock, Redis consumer end-to-end와 실제 모델 정확도 증거는 아니다.
+- 자동 승인 검토가 PR 생성 작업을 거절했다. 사유는 이번 turn 최초 게시 금지 지시의 명확한 철회가 확인되지 않았다는 것이다. 다른 경로로 우회하거나 승인 재시도를 하지 않았다. 전체 gate 후 root의 로컬 서버 feature commit은 준비 중이며 아직 SHA를 기록하지 않았다. 서버 push/Draft PR/정확한 head CI는 계속 차단되어 미실행이고 과거 웹 push와 구분한다.
+- 배포 lifecycle guard는 아직 구현하지 않았다. [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)는 차단 명령·구 writer quiesce·호환 roll-forward·구 refresh/rollback 경로·캐시 구 웹 안내·별도 승인 후 읽기 전용 smoke의 준비안이다. 운영 guard 설치·migration·서버/웹 배포·운영 smoke·develop/main 병합은 미실행이다. main CI 이후 자동 CD 경계를 유지하며 배포 준비 완료로 보고하지 않는다.
+
+### 초기 구현·검증 진행 이력
+
+
+- #92 구현 역할은 `/root/server92_implementation`, 테스트 설계는 `/root/issue91_test_design`로 분리한다. 기존 17개 frozen test는 변경하지 않았다. Gradle은 shared cache 충돌을 막기 위해 root만 순차 실행한다. 첫 compile/targeted GREEN, 추가 worker/confirmation/retention/rollback RED·fault injection·OpenAPI export·독립 review는 아직 확인하지 않았다. 외부 모델/운영 접근 0.
+- 알려진 승인 계약의 제약: quota0에서도 OPEN/저장은 허용하지만 새 version 저장 후 REUSED가 불가능하여 새 분석409 뒤 OPEN이 유지될 수 있다. 별도 cancel API를 임의 추가하지 않았고 사용자 UI와 최종 보고에서 이 제한을 명시한다.
+- 첫 production compile 성공. 첫 phase1 17개 중 16개 통과, analyze-first의 늦은 PUT는 올바른409 후 테스트 외부 TransactionTemplate의 UnexpectedRollbackException을 확인하여 독립 저자가 rollback-aware wrapper를 보완한다. 해당 변경 파일의 RED 지문은 다시 기록한다. production lock/state를 완화하지 않았다.
+- 독립 review에서 V8 CONSUMED outcome NULL을 PostgreSQL CHECK UNKNOWN으로 허용하는 결함을 발견했다. 실제 PostgreSQL에서 UPDATE 성공1/expected exception 없음의 assertion RED를 확인 (`.tdd/red/issue-92-consumed-null-outcome.json`), 최소 IS NOT NULL 제약을 추가했다. 새 테스트의 frozen 지문은 유지되며 GREEN 재검증 대기다.
+- 추가 승인한 viewer.context_id는 같은 이름·역할의 세션 교체에서 자기 원문 cache를 분리하는 본인 participant opaque UUID hint다. credential/session ID와 다른 참여자 ID를 노출하거나 권한 증명으로 사용하지 않는다. 독립 실제 HTTP 회귀 3개 RED를 먼저 확인한 뒤 additive DTO mapping과 native OpenAPI에 반영한다.
+- 후속 실제 PostgreSQL 검증: 수정된 rollback-aware fixture를 포함한 phase1 17개와 NULL outcome 1개가 모두 GREEN. viewer.context_id 독립 HTTP 3개는 컴파일·setup 성공 후 예상 assertion RED (`.tdd/red/issue-92-viewer-context.json`)를 고정하고 ViewerParticipation→RoomLifecycle→Web DTO에 본인 opaque UUID 최소 mapping을 추가했다. 21개 재GREEN 및 worker/역사 버전/확정 경쟁/rollback/retention·OpenAPI·최종 guard는 대기다.
+
+
+### #92 기존 클라이언트·배포·읽기 전용 확인 인계
+
+- 현재 deploy script는 V8 적용 중 구 writer/worker를 유지하고 health 실패 시 previous image로 돌아간다. explicit rollback과 정기/이벤트 DB credential refresh도 구 앱을 실행할 수 있다. 실제 운영에 접근하지 않고 저장소 script만 읽어 확인했으며 ADR-046에 경로·위험·최소 변경 설계를 기록했다. 현재 배포 준비 완료가 아니다.
+- 후속 배포 gate: 공통 잠금과 지속적인 최소 호환 release guard를 모든 재시작 경로/기존 설치 script에 먼저 적용 → 앱 전체(writer/worker/relay/retention) quiesce → breaking marker → V8 migration → 호환 새 서버 health/조회 계약 → native schema 웹/capability → 합성 확인 → 접근/credential refresh 재개. marker 이후 이전 image 자동 복귀 금지와 호환 roll-forward/점검 유지가 필요하다. 스크립트 구현에는 독립 high-risk 테스트 RED·fault/review가 선행하며 현재 설계만 준비했다.
+- 구 웹+새 서버 OPEN의 COLLECTING·round 없는 PUT409·close200 no-op은 데이터 보호이며 수정 UX 호환 완료가 아니다. 웹 선배포도 기존 탭/캐시를 없애지 못한다. 잔여 구 화면 한계를 operator gate에 남기고 새로고침/업데이트 웹에서 본인 입력 확인 안내를 준비한다. 원문 draft를 강제로 지우거나 저장 성공으로 오인하지 않는다.
+- 배포 후 읽기 전용 확인은 승인 이후 healthz/내부 actuator health/native OpenAPI, 격리 합성 fixture의 GET room/own submission/candidates metadata·권한만 대상으로 한다. 운영 원문/증명 출력·다른 참여자 접근·POST/PUT/재분석/확정은 포함하지 않는다. 배포/인프라 변경/실제 운영 smoke는 실행하지 않았다.
+- source format은 root가 완료했으며 format으로 변경된 독립 테스트의 정확한 지문 RED 재확인은 root/독립 저자가 담당한다. 생산 구현 owner는 테스트·평가 도구를 변경하지 않으며 현재 source 쓰기를 멈추고 target21·boundary23·native OpenAPI 검증 결과를 기다린다.
+
+- #91 최신 feature fast-forward와 #92 변경 재적용 뒤 PRD FR-008D는 LLM 중심 해석 계약을 유지하고 FR-008E 수정 라운드를 함께 보존했다. Worklog의 최신 #91 기록과 #92 기록을 모두 유지하여 충돌을 해결했다. ARCHITECTURE 자동 병합은 최신 provider SUCCESS/AMBIGUOUS 경계와 #92 round/viewer context 추가를 함께 확인했다. 평가 도구·source·test는 문서 소유자가 수정하지 않았다.
+- 잠금 해석 보완: coordination/run 상태 writer는 room→정확한 run을 잠근다. correction 제출 head-only 저장은 room lock 아래 immutable source를 조회하여 같은 coordination writer와 직렬화되며 run 상태를 변경하지 않는다. 같은 cohort의 원문 수정은 공개 room 상태를 바꾸지 않아 room state_version을 증가시키지 않으며 자기 입력의 revision과 viewer.context_id로 private cache 순서를 구분한다.
+
+- #91 통합 전후 실제 targeted boundary 집계는 각각 44개 GREEN이다(phase1 17 + NULL1 + viewer3 + additional9 + confirm2 + frozen5 + worker7). 추가 boundary는 23개이며 초기 대화의 24/45 집계를 정정한다. 실제 OpenAPI exporter 1개는 필수 요청 property required 목록 assertion에서 실패했으므로 native schema export 완료가 아니다. 독립 runtime 누락/null 거절 회귀를 먼저 고정한 뒤 field-local 검증과 required schema를 보완한다. 근거 요약은 root가 작성한 저장소 밖 `/workspace/scratch/meet-me-bootstrap/issue-92-all-boundaries-green.json`을 따른다.
+
+- 독립 runtime 요청 검증은 omitted/null expected_generation 모두400이며 DB 변화가 없음을 확인했다. 런타임 타입 변경은 불필요하여 nonnull Long/UUID와 force_reparse=false를 유지하고 request 필수5·round response 필수3의 OpenAPI requiredMode만 명시했다. 독립 presence8/schema1 RED 이후 native export 재검증을 기다린다.
+- PR에서 검토 가능한 배포 준비안은 [docs/INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 추적했다. 실제 차단 명령과 quiesce/compatible roll-forward/기존 refresh 경로/구 캐시 안내/읽기 전용 smoke를 분리해 기록했으며 승인·구현·운영 실행 완료로 표시하지 않는다.
+
+- 후속 요청·migration·Redis·권한·legacy 검증과 native export의 root 집계는 총65개(64실행 성공, debug capture1skip)였다. 웹 실제 생성기 검증에서 RoomResponse.revision_round가 OpenAPI3.1의 object ref와 type:null을 같은 schema에 둔 모순을 발견했다. 별도 독립 실제HTTP/null-schema test1의 assertion RED (`.tdd/red/issue-92-nullable-round-schema.json`) 후 해당 신규 property만 anyOf(object ref, null)로 교체하는 RoomOpenApiConfiguration을 추가했다. 다른 nullable enum·DTO·실제 응답·generated JSON은 수정하지 않는다. root format·66개 재검증 및 native 생성기의 object|null 확인은 대기다.
+
+
+### 공급자 503 High Demand의 기존 보존 경로 읽기 검토
+
+- 공개 parser 경로의 신규 독립 HighDemand 회귀3개가 기존 production에서 모두 GREEN이다. 숫자503은 SERVER/retryable이고 Retry-After초→2000ms·retryDelay소수초→1500ms를 확인했다. SDK factory에서 합성 예외를 던져 공급자 네트워크 호출은0이다. renderer/JSON/repr의 중첩 escaping을 실제 source와 혼동한 과도한 escaping 의심은 문자 개수(각regex token앞sourcebackslash2개,5xx행총8개)와 실제 테스트로 반박되어 정정한다. adapter 패턴·prompt·SDK·timeout은 수정하지 않았으며 이 실행은 RED가 아니다. 기존 `AMBIGUOUS_TIME_CONSTRAINT`는 공급자 성공 JSON의 rejection_code에서만 저장되어503과 구분된다.
+- processor는 올바르게 분류된 retryable SERVER 등 기술 실패에 최대4회, Retry-After 우선 또는 Full Jitter 1/2/4초 범위로 재시도한다. 소진 시 기존 run·고정 batch를 ANALYSIS_DELAYED로 보존하고 새 structured result·candidate·head를 쓰지 않는다. worker는 정상 종결로 Outbox PROCESSED/ACK하며 DLQ 또는 자동 무한 재시도를 만들지 않는다. 최대4회 기술 시도는 수동 HOST retry마다 다시 적용되고3회 correction 논리 한도와 별개다.
+- authenticated HOST의 명시적 retry는 room→active pointer의 정확한 run 잠금 뒤 delayed-only로 수행한다. 동일 batch/run을 유지하고 attempt count 다음 번호부터 기록한다. QUEUED+PENDING 반복은 no-op이며 pending 이후 진행 상태의 재요청은 새 분석을 만들지 않고 거절한다. 새 수정 라운드가 열려 있으면 retry도 거절한다. worker start/isCurrent/complete/delay의 활성 pointer·round·exact run version 검사가 오래된 분석을 막는다.
+- 신규 `GeminiHighDemandBoundaryTest`3개는 public SDK factory의 합성503→classifier와 실제 processor/영속화 서비스의 fixture 경로를 통과했다. 최대4회 실패에서 SERVER ledger1..4·같은 frozen input/batch·ANALYSIS_DELAYED·구조화/후보/AMBIGUOUS 생성0, 명시적 domain retry에서 ledger5..8을 확인했다. 이 신규 회귀는 실제 PostgreSQL/HTTP HOST retry를 연결한 검사가 아니다. 기존 `GeminiBatchProcessorTest`는 기술 실패 후 최대4회·jitter·delay, `SubmissionWebIntegrationTest`는 HOST retry2회/samebatch1/PENDING1, `CoordinationWorkerTest`는 중복 이벤트 한 번 실행·지연 ACK/DLQ0, `WorkerPublicationBoundaryTest`는 stale publication 차단을 별도로 검증한다. 기존 HTTP HOST/auth/idempotency와 worker baseline은 위 최종 전체 guard438개 GREEN에 포함되어 통과했다. 신규5033개의 domain/fixture 검증 범위를 실제503 HTTP 통합으로 확대해 해석하지 않는다.
+- 60초는 현재 call 시작·backoff 전에 검사하는 monotonic deadline이다. 개별15초 호출 timeout을 남은 budget으로 줄이지 않으므로 마지막 in-flight 호출까지 포함한 엄격한 벽시계60초 상한은 코드상 보장하지 않는다. 이 읽기 검토에서는 timeout·새 자동 retry 정책·공급자 API·평가 하네스를 변경하지 않았다. 검토 작업의 실제 모델 호출과 운영 접근은0이며 별도 평가 작업의 HTTP503 결과를 이 구현의 모델 성공/AMBIGUOUS 근거로 사용하지 않는다.

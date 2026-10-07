@@ -32,6 +32,8 @@ data class CandidateListView(
     val totalSubmissions: Int,
     val unappliedInputs: Int,
     val candidates: List<CandidateView>,
+    val analysisId: UUID? = null,
+    val stateVersion: Long = 0,
 )
 
 data class UnappliedInputView(

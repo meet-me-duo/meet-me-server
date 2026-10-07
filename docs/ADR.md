@@ -446,3 +446,38 @@ ADR-023의 수동 가능 선택·교집합과 ADR-024의 슬롯 전용 신규 �
 **이유**: 자연어 아래 격자가 혼란을 주고 입력 결합·충돌이 복잡하다. 구 웹의 배열 접근은 유지하면서 수동 선택이 반영된다는 오해를 명시 오류로 막는다. 원문 없는 구 제출을 전체 기간 가능으로 확대하지 않아 거짓 참석을 방지한다.
 
 **트레이드오프**: legacy 슬롯 전용은 원본 보존에도 새 계산에서 후보가 줄거나 NO_MATCH가 될 수 있다. collecting 본인 자연어 수정은 허용하지만 닫힌 배치 재입력은 요구하지 않는다. HOST nullable 원문·NO_MATCH 설명 UX가 필요하다. deprecated 응답의 완전 제거는 후속 호환 결정이다. 신규 인프라·삭제·일괄 재계산은 필요하지 않다.
+
+
+### ADR-046: 종료 상태를 유지하는 입력 수정 라운드와 명시적 활성 분석
+
+**상태**: Accepted
+**날짜**: 2026-10-07
+
+**결정**: ADR-027의 입력 수집 CLOSED와 최초 closed_at은 수정 라운드에서도 유지한다. 미확정 완료 NO_MATCH 또는 PARTIAL의 HOST만 별도 OPEN 라운드를 열며, 공개 화면은 COLLECTING으로 표시한다. 원본 배치에 제출한 참여자만 본인 최신 입력을 수정할 수 있다. 방·초대·설정·원본 배치·참여자와 게스트 증명을 보존하며 새로운 참여나 최초 미제출자의 추가 제출은 허용하지 않는다. 저장은 분석과 자동 마감을 실행하지 않는다. ECMAScript trim 후 같은 원문은 기존 revision·version ID·locale·created_at을 유지한다. 수정 라운드는 방의 30일 closed_at 보존 기준과 게스트 세션의 독립 만료를 갱신하지 않는다.
+
+HOST 명시적 분석은 방 잠금 아래 현재 cohort의 정확한 immutable version ID를 비교한다. 변경 없는 입력은 라운드를 CONSUMED로 기록하고 source 결과를 REUSED한다. 변경 또는 force_reparse=true는 새 batch/run/Outbox를 함께 생성하고 QUEUED로 기록한다. 강제 재분석도 원본 결과를 덮어쓰지 않는다. 방 수명 동안 커밋된 새 수정 분석은 최대 3회이며, 반복 요청·변경 없는 재사용·롤백은 차감하지 않고 기술 실패는 차감을 환불하지 않는다. 한도가 없어도 라운드 열기와 본인 저장은 가능하지만 새 분석은 409 CORRECTION_ANALYSIS_LIMIT_REACHED로 거절한다. 이 한도는 논리 분석 수이며 물리 API 호출 수나 USD 비용 상한이 아니다. 기존 최대 4회/60초 기술 재시도와 지연 분석의 명시적 재시도는 유지한다.
+
+POST reopen은 request_id/source_analysis_id/expected_generation을, POST analysis는 request_id/revision_round_id/force_reparse를 받는다. correction PUT은 revision_round_id와 expected_revision을 함께 요구한다. 같은 요청 ID와 payload는 처음 기록한 operation outcome과 현재 room snapshot을 반환하고, 다른 payload 또는 오래된 라운드·revision은 409 REVISION_CONFLICT다. 멱등 조회와 변경 없는 재사용 판단을 한도 검사보다 먼저 수행한다. 기존 close는 CLOSED에서 200 no-op, analysis/retry는 지연 분석 전용을 유지한다. 새 HOST 명령도 기존 Redis 비용 명령 제한의 429 Retry-After와 503 fail-closed를 적용한다.
+
+meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, correction_analysis_count를 영속화한다. 같은 방 FK, generation·request uniqueness와 단일 OPEN 제약을 둔다. 기존 데이터는 확정 결과를 우선하는 명시적 backfill을 하며 복수의 서로 다른 확정 결과는 migration 전에 실패한다. 모든 쓰기는 room→정확한 run 순서로 잠그고 worker start/complete/delay/DLQ가 활성 분석을 재확인한다. 오래된 전달은 현재 결과를 덮어쓰거나 새 공급자 호출을 만들지 않는다. 조회는 일관된 snapshot으로 공개 상태를 구성하고 state_version을 모든 공개 상태 전이에서 증가시켜 같은 generation의 지연 응답도 식별한다. 고정 배치는 최신 head가 아닌 정확한 immutable version으로 복원한다. 보존기간 삭제는 pointer와 round를 참조된 run보다 먼저 정리한다.
+
+**이유**: 수집 상태를 다시 열면 최초 마감 조건과 지연 요청이 새 수정 내용을 자동 분석할 수 있다. 별도 라운드와 영속 멱등 결과는 같은 결과를 재사용한 뒤 다시 수정하는 경우에도 늦은 요청을 구분한다. 명시적 활성 분석과 같은 잠금 순서는 재수정·확정·worker 완료 경쟁에서 과거 후보와 과거 배치가 현재 결과가 되는 것을 막는다.
+
+**트레이드오프**: 추가 마이그레이션·영속 상태·트랜잭션 검증이 필요하다. 구 클라이언트는 원본 API 읽기를 유지하지만 새 수정 흐름을 완료할 수 없으므로 새 웹이 필요하다. 수정 데이터 작성 후 기존 backend로 rollback하면 활성 pointer와 라운드를 무시하므로 roll-forward를 기본 복구로 사용한다. 세 번의 논리 분석 한도는 기술 재시도 비용을 제한하지 않으며 한도 소진 뒤 저장된 수정 내용을 새로 분석할 수 없다. 한도 소진 후 입력을 새 버전으로 저장하면 원래 version 집합과 달라 REUSED도 불가능하며 라운드는 OPEN으로 남는다. 원문을 되돌려 저장해도 새 version ID이므로 재사용 조건을 충족하지 않는다. 별도 라운드 취소 명령은 이번 계약에 없고 웹은 이 제한을 명확히 안내해야 한다. 구조화 결과가 다른 입력을 잘못 해석한 경우는 별도 모델 평가로 확인해야 한다.
+
+
+**배포 전제와 복구 경계**: V8부터 구 서버의 동시 쓰기를 허용하지 않는다. 구 서버는 migration 뒤 신규 방/분석의 active pointer를 기록하지 않고 기존 retention이 round FK를 정리하지 않으므로, 기존 writer·worker·Outbox relay·retention을 모두 중지한 뒤 migration해야 한다. HTTP 요청만 막거나 웹을 먼저 배포하는 것으로 이 경계를 충족하지 않는다. migration 후에는 V8 호환 서버만 실행한다. 이 범위에서는 ADR-041의 이전 image 자동 rollback을 대체하고 roll-forward를 사용한다.
+
+현재 `deploy/scripts/deploy-release.sh`는 구 앱이 실행된 채 migrate하고 health 실패 시 previous image를 자동 실행하므로 이 결정과 호환되지 않는다. `rollback-release.sh`와 ADR-044의 `refresh-database-credential.sh`도 이전 release image를 실행할 수 있다. 특히 health 실패 뒤 current symlink가 이전 release를 가리키면 정기/이벤트 credential refresh가 배포 잠금 해제 후 구 앱을 재기동할 수 있다. 따라서 현재 스크립트 그대로의 main 병합·자동 배포는 승인 조건을 충족하지 않는다.
+
+후속 최소 변경 설계는 다음 순서를 따른다. 운영 실행은 별도 승인 대상이며 아직 구현·배포 검증 완료를 뜻하지 않는다.
+
+1. 공통 release 잠금 아래 모든 앱 재기동 경로(deploy health fallback, explicit rollback, credential refresh)에 지속적인 최소 호환 release 검사를 먼저 설치·검증한다. 이전 release 폴더에 남은 script도 검사하도록 공통 host launcher 또는 사전 갱신된 guard를 사용한다. 새 폴더의 marker만으로 이전 script를 보호했다고 간주하지 않는다. 정기·이벤트 refresh의 이미 대기 중인 실행, 수동 배포 dispatch, host 재부팅/Compose 재시작과 운영자의 직접 구 image 실행도 함께 통제한다. schema 숫자 또는 image label만으로 호환성을 허가하지 않고 검증된 compatible image digest와 계약 근거를 사용한다.
+2. V8 이미지·웹 native schema·합성 이전 데이터 migration 검사·호환 roll-forward digest를 확정한다. 기존 앱 전체를 중지하고 실행 중 작업 종료를 확인한다. Redis의 미처리 참조는 삭제하지 않고 신 서버가 PostgreSQL 활성 상태를 재검증하게 한다. 서비스는 이 기간 점검 상태로 유지한다.
+3. migration 직전에 지속적인 breaking-release marker를 원자적으로 기록한다. marker 이후 구 image 재기동은 health 실패·migration 실패·refresh·수동 rollback 경로 모두 fail closed한다. V8이 적용되지 않았음을 별도 검증하기 전 marker를 자동 해제하지 않는다. 쓰기와 worker가 중지된 상태에서 새 이미지로 migrate한다.
+4. V8 호환 서버를 시작하고 health·native OpenAPI·additive 조회 계약을 확인한다. 실패하면 구 서버를 재기동하지 않고 호환 image로 roll-forward하거나 점검 상태를 유지한다. 호환 서버의 current release 선택과 credential refresh 재개 순서는 구 image 부활이 불가능하도록 검사한다.
+5. 생성 schema를 사용한 웹을 배포하고 capability가 있을 때만 수정 흐름을 노출한다. 별도 합성 검증 후 서비스 접근을 재개한다. 정기 credential refresh도 호환 release만 대상으로 재개한다.
+
+**기존 웹 호환의 한계**: 새 웹+구 서버는 recovery capability가 없으면 관련 동작을 숨긴다. 구 웹+새 서버의 OPEN 라운드는 공개 COLLECTING으로 보이지만 round/revision 없는 PUT은 409이고 기존 close는 200 no-op이다. 이는 입력과 배치를 보호하는 계약이며 수정 UX의 양방향 호환 성공은 아니다. 웹 선배포도 기존 탭·캐시의 구 웹 제거를 보장하지 않는다. 운영자는 이 잔여 한계를 승인하고 새로고침·업데이트된 웹에서 본인 입력을 확인하라는 안내를 제공해야 한다. 구 웹이 새 서버의 OPEN을 일반 최초 수집으로 표시하는 경로와 저장 draft 보존은 합성 검증 대상으로 남긴다.
+
+**읽기 전용 배포 후 확인**: 로컬/격리 staging에서는 합성 방·합성 증명으로 room/본인 submission/candidates GET의 metadata와 권한 경계를 검사한다. 운영 실행이 별도 승인된 뒤에는 `/healthz`, 앱 내부 `127.0.0.1:9090/actuator/health`, `/v3/api-docs`의 계약을 확인한다. 사용자 방·운영 원문·다른 참여자 입력을 탐색하지 않으며 운영 POST/PUT·재분석·확정은 smoke에 포함하지 않는다. credential·cookie·원문은 로그나 인계 자료에 출력하지 않는다. 합성 쓰기 흐름과 구 캐시 화면은 운영 데이터 없이 staging에서 검증한다. ADR-042의 main 병합은 자동 CD를 시작하므로 위 lifecycle guard·migration·웹·operator 조건이 충족되기 전에는 Draft PR/CI 완료와 배포 준비 완료를 구분한다.

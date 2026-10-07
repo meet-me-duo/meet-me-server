@@ -50,7 +50,7 @@ class SubmissionController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "입력 수집 종료 또는 배치 상한 초과",
+            description = "입력 수집 종료, 배치 상한 초과 또는 수정 라운드·revision 충돌(REVISION_CONFLICT)",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
         ApiResponse(
@@ -72,6 +72,8 @@ class SubmissionController(
                     credential,
                     request.naturalText(),
                     locale,
+                    request.revisionRoundId,
+                    request.expectedRevision,
                 ),
             ),
         )

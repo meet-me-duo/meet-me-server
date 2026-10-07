@@ -66,6 +66,7 @@ class GeminiBatchProcessorTest {
 
         `when`(runRepository.findByBatchId(fixture.run.batch.id)).thenReturn(fixture.run)
         `when`(persistence.start(fixture.run)).thenReturn(fixture.run.startStructuring())
+        `when`(persistence.isCurrent(fixture.run.startStructuring())).thenReturn(true)
         `when`(persistence.room(fixture.room.id)).thenReturn(fixture.room)
         `when`(submissionRepository.findLatestByRoom(fixture.room.id)).thenReturn(fixture.submissions)
         `when`(attempts.countByRun(fixture.run.id)).thenReturn(0)
@@ -139,6 +140,7 @@ class GeminiBatchProcessorTest {
         val submissionRepository = mock(SubmissionRepository::class.java)
         `when`(runRepository.findByBatchId(fixture.run.batch.id)).thenReturn(fixture.run)
         `when`(persistence.start(fixture.run)).thenReturn(fixture.run.startStructuring())
+        `when`(persistence.isCurrent(fixture.run.startStructuring())).thenReturn(true)
         `when`(persistence.room(fixture.room.id)).thenReturn(fixture.room)
         `when`(submissionRepository.findLatestByRoom(fixture.room.id)).thenReturn(fixture.submissions)
         `when`(attempts.countByRun(fixture.run.id)).thenReturn(0)
@@ -174,6 +176,7 @@ class GeminiBatchProcessorTest {
         val submissionRepository = mock(SubmissionRepository::class.java)
         `when`(runRepository.findByBatchId(fixture.run.batch.id)).thenReturn(fixture.run)
         `when`(persistence.start(fixture.run)).thenReturn(fixture.run.startStructuring())
+        `when`(persistence.isCurrent(fixture.run.startStructuring())).thenReturn(true)
         `when`(persistence.room(fixture.room.id)).thenReturn(fixture.room)
         `when`(submissionRepository.findLatestByRoom(fixture.room.id)).thenReturn(fixture.submissions)
         `when`(attempts.countByRun(fixture.run.id)).thenReturn(0)

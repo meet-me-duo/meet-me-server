@@ -112,6 +112,45 @@ class KomapperSubmissionRepository(
         return PersistenceMappers.toDomain(SubmissionRecords(head, version, intervals))
     }
 
+    override fun findFrozenByVersionIds(
+        roomId: MeetingRoomId,
+        versionIds: List<SubmissionVersionId>,
+    ): List<Submission> {
+        if (versionIds.isEmpty()) return emptyList()
+        require(versionIds.distinct().size == versionIds.size)
+        val marks = versionIds.joinToString(",") { "?" }
+        val found =
+            jdbcTemplate.query(
+                "SELECT v.id, v.submission_id FROM submission_versions v " +
+                    "JOIN submission_heads h ON h.id = v.submission_id WHERE h.room_id = ? AND v.id IN ($marks)",
+                { rs, _ -> rs.getObject("id", UUID::class.java) to rs.getObject("submission_id", UUID::class.java) },
+                roomId.value,
+                *versionIds.map { it.value }.toTypedArray(),
+            )
+        return found.map { (versionId, submissionId) ->
+            val head =
+                requireNotNull(
+                    database.runQuery {
+                        QueryDsl.from(Meta.submissionHeadRecord).where { Meta.submissionHeadRecord.id eq submissionId }.firstOrNull()
+                    },
+                )
+            val version =
+                requireNotNull(
+                    database.runQuery {
+                        QueryDsl.from(Meta.submissionVersionRecord).where { Meta.submissionVersionRecord.id eq versionId }.firstOrNull()
+                    },
+                )
+            val intervals =
+                database.runQuery {
+                    QueryDsl
+                        .from(Meta.manualAvailabilityRecord)
+                        .where { Meta.manualAvailabilityRecord.submissionVersionId eq versionId }
+                        .orderBy(Meta.manualAvailabilityRecord.intervalOrder)
+                }
+            PersistenceMappers.toDomain(SubmissionRecords(head.copy(latestVersionId = versionId), version, intervals))
+        }
+    }
+
     override fun countSubmittedParticipants(roomId: MeetingRoomId): Int =
         requireNotNull(
             jdbcTemplate.queryForObject(

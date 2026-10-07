@@ -25,6 +25,10 @@ data class MeetingRoomRecord(
     val closedAt: OffsetDateTime?,
     val createdAt: OffsetDateTime,
     val version: Long,
+    val activeRunId: UUID? = null,
+    val revisionGeneration: Long = 0,
+    val activeRevisionRoundId: UUID? = null,
+    val correctionAnalysisCount: Int = 0,
 )
 
 @KomapperEntityDef(MeetingRoomRecord::class)

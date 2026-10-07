@@ -96,6 +96,11 @@ data class CandidateListResponse(
     val unappliedInputs: Int,
     @field:Schema(description = "0개일 수 있는 우선순위 후보 배열")
     val candidates: List<CandidateResponse>,
+    @field:JsonProperty("analysis_id")
+    @field:Schema(description = "목록을 생성한 활성 분석 UUID", format = "uuid", requiredMode = Schema.RequiredMode.REQUIRED)
+    val analysisId: UUID,
+    @field:JsonProperty("state_version")
+    @field:Schema(description = "후보 응답의 방 조율 상태 snapshot 버전", minimum = "0") val stateVersion: Long,
 ) {
     companion object {
         fun from(view: CandidateListView) =
@@ -105,6 +110,8 @@ data class CandidateListResponse(
                 view.totalSubmissions,
                 view.unappliedInputs,
                 view.candidates.map(CandidateResponse::from),
+                requireNotNull(view.analysisId),
+                view.stateVersion,
             )
     }
 }

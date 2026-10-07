@@ -15,8 +15,11 @@ interface CoordinationRunRepository {
 
     fun findById(id: CoordinationRunId): CoordinationRun?
 
+    fun findByIdForUpdate(id: CoordinationRunId): CoordinationRun?
+
     fun update(run: CoordinationRun)
 
+    /** Compatibility name: resolves only meeting_rooms.active_run_id, never timestamp order. */
     fun findLatestByRoom(roomId: MeetingRoomId): CoordinationRun?
 
     fun findLatestByRoomForUpdate(roomId: MeetingRoomId): CoordinationRun?
