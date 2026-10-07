@@ -1,0 +1,116 @@
+{
+  "workItem": "issue-99-approved-release-pipeline-independent-review",
+  "reviewer": "/root/independent_review",
+  "role": "Independent read-only source/test/security reviewer; testauthor/implementers separate; reviewer edits onlythisJSON",
+  "recordedAt": "2026-10-07T13:39:03.937954+00:00",
+  "baseline": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+  "authority": "User approved feature-only GitHub build/publication->first explicit transition gate->subsequent unchanged SQL+guard contract mainCI automatic releases with same production environment/OIDC/IAM; no actualoperating actions/auth changes/models or reviewer testexecution",
+  "testExpectationReview": {
+    "verdict": "PASS final6 after two independent reviewer corrections",
+    "sha256": "a78db4c4374c3a0ce55b5544a325ddd246d7a5af7dfc602f8405cfef103f5ff7",
+    "resolvedFindings": [
+      "Wrong existinginstaller name corrected to install-host-release-guard.sh, scoped to deployfunction",
+      "Permanentmanual workflow couldPASS; successful workflow_run+build_publishsuccess+automatic action expected explicitly"
+    ],
+    "checks": [
+      "Functional actualsource publisher10knownFlyway CRC32/migrationhash/archiveSHA derivation",
+      "Functional pureevent trust and archivepath/link/specialtype denial",
+      "Strict source/run/attempt/repo/digest/archive/catalog metadata",
+      "First approval requires disabled2rules/drained0commands/successful historyprefix7..10; samecontract AUTO_READY keeps enabledrules automatic",
+      "Existinglegacytests superseded with bytearchives and historicalRED retained;18otherpreflightbehaviorbodies unchanged"
+    ],
+    "boundary": "Existing 39 pure/source/legacy tests are the authorized verification scope. Proposed new six host orchestration fixtures were canceled before execution on the user instruction to avoid further verification expansion; host orchestration has read-only source review, not independent runtime evidence."
+  },
+  "sourcePassingChecks": [
+    "14-file guardbundle includesallsecurityexecution helpers, SQLcatalog+knownFlywaychecksum bind release",
+    "Strict root/no-symlink trustedfiles/ancestors and duplicateJSONkey denial",
+    "Narrow defaultlifecyclelock supports rootsticky1777 /run/lock with root/var/locksymlink exactmapping; O_NOFOLLOW+postopenfstat denies untrustedprecreation; generic pathsstrict",
+    "No nestedlifecycleflock acrossinstaller/launcher; atomicpolicy/prereqs/record; independenthelper serializationlock",
+    "Firstinstaller/unitsetup onlyTRANSITION_APPROVED, subsequentsamecontract auto calls existingguard withoutinstaller/systemdsetup",
+    "V9/V10policy removesoldV8approval first, keepsnew+current compatible subsequent; no oldimage rollback/reset",
+    "RecordonlyafterpostactualREADY/currentdigest/exacthistory/currentrelease/14bundle/schema proof, postproof mismatchskiprecord",
+    "Currentmainmanual preflight replacesPRproductionautoruns while existing protection/role permissions retained",
+    "Trusted publisher run ID and attempt fetched from fixed public GitHub endpoint; exact deploy.yml/main/repo identity and current automatic in-progress or completed publication; separate successful CI origin verification. A completed publication run may have failed later consumption, and that does not invalidate already immutable published bytes.",
+    "Fresh two supported active-command queries fail closed on unknown target scopes or truncation, preventing undelivered Pending omission in a node-scoped query.",
+    "Readstate two-file transport and general60KiB SSMcommandcap; no AWS response body, Command.Parameters or secrets in sanitized summaries.",
+    "Approved workflow30min and bounded remote1440/SSM1500/poll1560; host subprocess processgroup TERM/KILL/wait on timeout/interrupt. No remote cancellation or Docker daemon cleanup execution proof claimed."
+  ],
+  "findings": [
+    {
+      "id": "PIPELINE-CLI-ACTIVE-COMMANDS",
+      "status": "RESOLVED_SOURCE_REVIEW",
+      "finding": "Driver ListCommands unsupported --max-results, forbidden instanceID+Pending filter and unsupported Delayed/Cancelling commandstatus filters; actualAWS canfail regardlessof currentstate",
+      "officialSources": [
+        "https://docs.aws.amazon.com/cli/latest/reference/ssm/list-commands.html",
+        "https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_CommandFilter.html"
+      ],
+      "resolution": "RESOLVED_SOURCE_REVIEW: supported global Status=Pending and ExecutionStage=Executing filters, page-size/max-items50, truncation denial; typed explicit instance targets, local exacttarget filtering and command-ID dedup; unknown tag/group targets fail closed. No raw Parameters logged or preserved. Official CLI/API documents reconfirmed, actual AWS0."
+    },
+    {
+      "id": "PIPELINE-EXECUTION-BUDGET",
+      "status": "RESOLVED_SOURCE_REVIEW",
+      "finding": "ApprovedRelease job20min shorterthanSSMdeploy1500s+poll60; remotewrapper1440 andhostguard1500 pluslocks/installer/reader inconsistent",
+      "resolution": "RESOLVED_SOURCE_REVIEW: job30min, remote outer1440s with TERM/KILL, SSM1500s+poll60, installer180/launcher900/lock120. Host timeout/interrupt terminates child process group then KILL/wait. This bounds operations and adds normal preparation margin, not a guarantee all worstcase phases finish within the job."
+    },
+    {
+      "id": "PIPELINE-STATE-PAYLOAD",
+      "status": "RESOLVED_SOURCE_REVIEW",
+      "finding": "State bootstrap5files raw50994bytes evenbeforecompiledclass; base64+manifest/bootstrap exceeds64KB documentrisk",
+      "officialSource": "https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_SendCommand.html",
+      "resolution": "RESOLVED_SOURCE_REVIEW: readstate transports only host+pure two required files; all SSM shellcommands capped at60KiB encoded UTF-8 before SendCommand."
+    }
+  ],
+  "verificationPending": [
+    "Root frozen39 GREEN/fault/exactrestore and mandatorygate evidence final reread",
+    "Future exactHEADCI; actualproductionpermissions/host/history/firsttransition notverified"
+  ],
+  "reviewerExecution": {
+    "sourceTestEdits": 0,
+    "Node": 0,
+    "Docker": 0,
+    "Gradle": 0,
+    "Aws": 0,
+    "PaidModels": 0,
+    "RealKeyReads": 0
+  },
+  "currentReadFingerprints": [
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "a78db4c4374c3a0ce55b5544a325ddd246d7a5af7dfc602f8405cfef103f5ff7"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "3a8e57ddbb93fbb511af18aa125b36b519abaeb1a659a78fd9db2788591e4dce"
+    },
+    {
+      "path": ".github/workflows/production-preflight.yml",
+      "sha256": "5c2aea34864f5669bdef663b6a34e470d24498249e309354c8c3cedc73b33ea1"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "63701e34dfc5e94dda22844344e26876ecbf8fb77625a7a1ccad51e71a8389fe"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "1827431b7efd0ed36c86af8b0d80392abff681c1b08aa639757ed6cb22feb226"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "3dbd26a81e5b0a00e0ffc7c6e16a501b64e5c895699ce16f7b36ee638d41e798"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "811df8004ea116d15fe6bb3844417fbf51d09b41b10b276520d56491e939de16"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "14d78425e11775a8adb55177c1eea6716ca9d053b3b458d600d8061fa52b3eaa"
+    }
+  ],
+  "finalVerdict": "SOURCE_PASS; final root frozen evidence/mandatory gate and new exactHEADCI pending. Independent host runtime orchestration not executed.",
+  "scopeDecision": {
+    "newHostFixtures": "Canceled/deleted before execution, per latest explicit user instruction for minimal implementation and no additional verification expansion",
+    "reviewerHostExecution": 0,
+    "remainingAuthority": "Feature code only; same production Environment/OIDC/IAM, no actual production actions, permission/protection changes, models, real keys or reviewer test execution"
+  }
+}

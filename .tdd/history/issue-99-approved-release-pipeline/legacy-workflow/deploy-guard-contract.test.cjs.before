@@ -7,21 +7,17 @@ const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 
 test("release package includes durable guard, private Compose override and staged boot unit", () => {
   const workflow = read(".github/workflows/deploy.yml");
-  const start = workflow.indexOf("tar -czf release.tar.gz");
-  const end = workflow.indexOf("aws s3api put-object", start);
-  assert.ok(start >= 0 && end > start, "The full guard package must precede immutable S3 publication");
-  const packageBlock = workflow.slice(start, end);
+  const packageBlock = workflow.slice(workflow.indexOf("tar -czf release.tar.gz"), workflow.indexOf("aws s3 cp release.tar.gz"));
   for (const artifact of ["compose.production.yml", "compose.guard.yml", "meet-me-guarded-restart.service", "scripts"]) {
     assert.ok(packageBlock.includes(artifact), `Missing packaged artifact: ${artifact}`);
   }
 });
 
-test("SSM deployment dispatch uses fixed installed host authority through the validated host driver", () => {
-  const source = read("deploy/pipeline/host-approved-release.py");
-  assert.ok(source.includes("/opt/meet-me/guard/host-release-guard.sh"));
-  assert.match(source, /["']deploy["']/);
-  assert.match(source, /validate_deploy_facts/);
-  assert.doesNotMatch(source, /release_directory\/scripts\/deploy-release\.sh|\[.*deploy-release\.sh/);
+test("SSM deployment dispatch uses fixed installed host authority", () => {
+  const source = read(".github/workflows/deploy.yml");
+  assert.ok(source.includes("test -x /opt/meet-me/guard/host-release-guard.sh"));
+  assert.ok(source.includes("/opt/meet-me/guard/host-release-guard.sh deploy $release_directory"));
+  assert.ok(!source.includes("$release_directory/scripts/deploy-release.sh"));
 });
 
 test("all canonical lifecycle wrappers delegate to the same installed guard", () => {

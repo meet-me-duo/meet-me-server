@@ -62,13 +62,14 @@ test('fork wrong PR branch base author actor repository SHA and malformed SHA ar
   }
 });
 
-test('production preflight has manual main-only entry and validates its exact target before production authority', () => {
+test('production preflight has PR-only triggers and explicitly gates same repository PR100 trusted author and branch', () => {
   const workflow = read('.github/workflows/production-preflight.yml');
-  assert.match(workflow, /workflow_dispatch:/);
-  assert.doesNotMatch(workflow, /^\s+(?:push|workflow_run|pull_request|pull_request_target):/m);
-  assert.match(workflow, /github\.ref == 'refs\/heads\/main'/);
-  assert.match(workflow, /run-preflight\.py --main --validate/);
-  const validation = workflow.indexOf('run-preflight.py --main --validate');
+  assert.match(workflow, /pull_request:/);
+  assert.doesNotMatch(workflow, /^\s+(?:push|workflow_run|workflow_dispatch|pull_request_target):/m);
+  for (const value of ['100', 'feature/integrate-recommendations-fallback', 'jinhyeongpark', 'head.repo.full_name', 'github.repository', 'github.triggering_actor']) {
+    assert.ok(workflow.includes(value), 'The production-authority job must explicitly bind the approved PR identity');
+  }
+  const validation = workflow.indexOf('validate_target');
   const credentials = workflow.indexOf('configure-aws-credentials');
   assert.ok(validation >= 0 && credentials >= 0 && validation < credentials, 'Target validation must precede AWS credential acquisition');
 });
@@ -82,11 +83,10 @@ test('preflight reuses only existing production OIDC role and does not introduce
   assert.doesNotMatch(workflow, /(?:contents|pull-requests|actions|deployments):\s*write|secrets\.|aws-access-key-id|aws-secret-access-key/);
 });
 
-test('checkout pins the exact approved main SHA and sparsely fetches only preflight helpers without persisting credentials', () => {
+test('checkout pins the exact approved PR head and sparsely fetches only preflight helpers without persisting credentials', () => {
   const workflow = read('.github/workflows/production-preflight.yml');
   assert.match(workflow, /uses:\s*actions\/checkout@/);
-  assert.match(workflow, /SOURCE_SHA:\s*\$\{\{\s*github\.sha\s*}}/);
-  assert.match(workflow, /ref:\s*\$\{\{\s*env\.SOURCE_SHA\s*}}/);
+  assert.match(workflow, /ref:.*(?:pull_request\.head\.sha|env\.(?:SOURCE_SHA|HEAD_SHA))/);
   assert.match(workflow, /sparse-checkout:[\s\S]*deploy\/preflight/);
   assert.match(workflow, /persist-credentials:\s*false/);
   assert.doesNotMatch(workflow, /ref:\s*(?:main|develop|feature\/)|fetch-depth:\s*0/);

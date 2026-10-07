@@ -1,0 +1,47 @@
+{
+  "workItem": "issue-99-approved-release-pipeline",
+  "sourceRevision": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+  "testFiles": [
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "a78db4c4374c3a0ce55b5544a325ddd246d7a5af7dfc602f8405cfef103f5ff7"
+    },
+    {
+      "path": ".github/scripts/deploy-workflow.test.cjs",
+      "sha256": "ed0aedbf402983701ebdd09b14112e80018adbd4d7db0e66e8226e4d5681210a"
+    },
+    {
+      "path": ".github/scripts/deploy-guard-contract.test.cjs",
+      "sha256": "38ef7bd21e031f991f7ada1c427e3d37bc46efddb6c77a4fa5418bdd75122c6f"
+    },
+    {
+      "path": ".github/scripts/deploy-extraction-contract.test.cjs",
+      "sha256": "98a6338bff4f274342ed4e18f7eefac88bf154244d0286a584f9bcdeee13c75b"
+    },
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "6bb9b63d7e0c5ea59a137275caba9478ebb4aff32489efc999931e5c9c74ee12"
+    }
+  ],
+  "command": "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1 node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs .github/scripts/production-preflight-contract.test.cjs",
+  "failedTests": [
+    "immutable main release metadata binds run attempt SHA digest repository archive and exact migration catalog",
+    "a trusted unchanged schema and guard contract permits automatic image updates while mismatches request transition",
+    "first transition needs explicit approval observed disabled rules drained commands and an exact successful history prefix",
+    "main success publishes automatically while manual actions consume a validated existing run and attempt without rebuild",
+    "the driver verifies archive bytes before restricted host extraction and guard mutation follows observed approval",
+    "publication is immutable and manual read-only preflight preserves existing production authority without pause writes",
+    "SSM applies restrictive umask before creating and extracting release files",
+    "SSM extraction keeps invoking root ownership rather than archived CI owner",
+    "SSM extraction honors restrictive umask instead of restoring archived modes",
+    "release package includes durable guard, private Compose override and staged boot unit",
+    "SSM deployment dispatch uses fixed installed host authority through the validated host driver",
+    "main push CI \uc131\uacf5\ub9cc \uc790\ub3d9 release publication\uc744 \uc2dc\uc791\ud55c\ub2e4",
+    "\uc790\ub3d9 publication\uc740 \uc131\uacf5\ud55c CI\uc758 \uc815\ud655\ud55c commit SHA\uc640 run attempt\ub97c \uc0ac\uc6a9\ud55c\ub2e4",
+    "\uc218\ub3d9 \ubcf5\uad6c \ubc30\ud3ec\ub294 main ref\uc5d0\uc11c\ub9cc \ud5c8\uc6a9\ud55c\ub2e4",
+    "production preflight has manual main-only entry and validates its exact target before production authority",
+    "checkout pins the exact approved main SHA and sparsely fetches only preflight helpers without persisting credentials"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T13:18:26.212627+00:00"
+}

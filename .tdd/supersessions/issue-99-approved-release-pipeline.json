@@ -1,0 +1,31 @@
+{
+  "workItem": "issue-99-approved-release-pipeline",
+  "sourceRevision": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+  "authority": "Explicit parent user approval: normal main CI retains build publication; existing immutable run+attempt manifest gates first transition and subsequent same-contract automatic consumption; manual main preflight has no PR authority.",
+  "reason": "Workflow orchestration and extraction move into validated Python driver/host. Preserve restrictive extraction and fixed installed guard invariants; replace old PR-only workflow expectations with exact manual-main workflow context. The historical PR target validator and eighteen preflight behavior test bodies remain unchanged.",
+  "beforeArchive": ".tdd/history/issue-99-approved-release-pipeline/legacy-workflow",
+  "testFiles": [
+    {
+      "path": ".github/scripts/deploy-workflow.test.cjs",
+      "beforeSha256": "89f0df600147514cbb8190f14c14ce6fff7522e891900b67857a89ea726c11f7",
+      "afterSha256": "ed0aedbf402983701ebdd09b14112e80018adbd4d7db0e66e8226e4d5681210a"
+    },
+    {
+      "path": ".github/scripts/deploy-guard-contract.test.cjs",
+      "beforeSha256": "6c4021b88fca679d665a84f2492347d04ed2ac1fcb47093b368cb855f24a46e1",
+      "afterSha256": "38ef7bd21e031f991f7ada1c427e3d37bc46efddb6c77a4fa5418bdd75122c6f"
+    },
+    {
+      "path": ".github/scripts/deploy-extraction-contract.test.cjs",
+      "beforeSha256": "2e571d29f48a2d9fa3e2fcb4b5c608e53e8dc774e140e81c708a07de748d9f1e",
+      "afterSha256": "98a6338bff4f274342ed4e18f7eefac88bf154244d0286a584f9bcdeee13c75b"
+    },
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "beforeSha256": "21d29f8fb799176c196dc7d6fd2dc240486605d1bd57e6bddcc0b3b0f6f4663c",
+      "afterSha256": "6bb9b63d7e0c5ea59a137275caba9478ebb4aff32489efc999931e5c9c74ee12"
+    }
+  ],
+  "historicalEvidence": "Original tracked production-preflight RED/supersession bytes archived without changing historical source provenance. Other static workflow tests had no tracked RED. Actual current RED is to be executed by root on these frozen fingerprints.",
+  "newSixReviewCorrection": "Original5bcd test+actualRED archived under reviewer-auto-path. Additional functional driver/publisher tables and explicit same-contract automatic workflow connection preserve six cases; installer ordering now scoped to actual deploy function."
+}

@@ -525,3 +525,18 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 운영키 전달 후속은 ADR-041의 사용자 등록 SSM SecureString 패턴을 확장한다. OpenAI를 기존 운영 prefix의 `secret/openai-api-key`에서 `OPENAI_API_KEY`로 전달하며 release의 `gemini-luna-required` 모드에서는 키가 없거나 읽기/형식 검증에 실패하면 서버·migration 기동을 거부한다. 기존 mode 없는 release/명시 Gemini 단독은 OpenAI 권한을 요구하지 않는다. 키 값은 Terraform·GitHub·명령 로그에 저장하지 않고 실제 사용자 등록·운영 전달 확인은 코드 검증과 분리한다. 시간 예산·앱/DB 계약과 운영 승인 경계는 유지한다.
 
 **트레이드오프**: 최대 4회 Gemini를 모든 지연 상황에서 보장하지 않고 남은 예산에 맞춰 줄인다. 중단된 실행은 기존 예산 안에서 호출을 다시 시작하지 않고 deadline 만료 후 지연 상태로 보수적으로 종결한다. 공급자 exactly-once 및 전체 자연어 의미 정확성은 보장하지 않는다. Luna의 미확인 가격·usage는 null로 기록한다. 두 공급자가 모두 실패하면 PARTIAL로 복구하지 않고 입력·batch 보존과 ANALYSIS_DELAYED/후보 0/ACK를 유지한다. 추가 provider 원문 전달 고지·처리 조건과 운영 설정은 배포 전 별도 검토 대상이다. 기존 ADR-016/018의 Gemini 단독 장애 정책을 이 범위에서 대체하며 배포·병합 승인을 포함하지 않는다.
+
+### ADR-050: 첫 breaking migration의 승인과 이후 같은 계약의 자동 배포
+
+**상태**: Accepted (실제 운영 실행은 별도 승인)
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인에 따라 ADR-042의 main CI 자동 배포는 같은 migration·guard 계약에서 유지하고, 첫 V8→V9/V10 전환만 독립 승인으로 분리한다. 기존 production Environment·OIDC 역할·S3/ECR/SSM 경로를 재사용하며 IAM·보호규칙을 변경하지 않는다. 성공한 main push CI의 정확 SHA로 image를 한 번 게시하고 run/attempt별 불변 manifest와 archive를 저장한다. main 수동 preflight/deploy는 그 게시물의 origin·tar SHA·ECR digest를 검증하며 다시 build하지 않는다.
+
+최초 record가 없거나 SQL catalog·guard 실행 bundle이 달라지면 자동 흐름은 읽기 결과와 전환 필요 상태만 기록한다. 명시 승인된 첫 deploy는 실제 두 refresh rule 중지·대기 SSM 없음·정확한 성공 Flyway prefix를 확인하고, 구 V8 digest를 승인 목록에서 제거한 뒤 기존 installer·고정 launcher로 진행한다. installer의 실제 retired-FD 검사를 운영자 진술과 구분한다. post-migration의 정확 history·READY·실제 선택 image를 확인한 뒤 root 소유·비쓰기·regular-file record를 원자 저장한다. 실패 시 구 image fallback·phase 초기화는 하지 않는다.
+
+이후 main CI는 실제 history·현재 image·phase·guard 신뢰와 record의 SQL/guard 지문을 매번 다시 확인한다. 같은 계약일 때는 새 신뢰 main 게시물과 같은 계약의 현재 image만 승인하고 자동 deploy한다. helper/reader/validator/producer를 포함한 실행 bundle이나 migration이 바뀌면 다시 명시 전환 승인이 필요하다. 첫 전환 외 일반 main 배포를 영구 수동화하는 정책은 채택하지 않는다. EventBridge 사용자 중지는 실제 유지보수 시작 시점에만 요청하며 preflight에서는 실행하지 않는다.
+
+**이유**: main 병합 직후 구 writer가 살아 있는 상태로 V8/V9를 적용하는 경로를 막고, 실제로 확인한 schema 계약을 후속 자동 배포의 기준으로 사용하기 위해서다. build와 deploy를 분리해야 생성 뒤 확정되는 registry digest를 승인 전에 검토할 수 있다.
+
+**트레이드오프**: 첫 전환과 SQL/guard 계약 변경은 명시 승인이 필요하다. 실패한 설치·준비는 fail closed 상태에서 별도 복구 검토가 필요하며 read-only probe도 임시 파일·짧은 JVM/DB 연결을 사용한다. 후속 자동 배포의 신뢰는 기존 main CI·branch protection·production 역할에 의존하며 root의 임의 운영 명령을 통제하지 않는다. 저장소 CI 성공은 실제 parameter 전달·운영 상태·최종 배포 승인을 대체하지 않는다.

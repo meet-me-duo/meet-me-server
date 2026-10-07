@@ -44,6 +44,9 @@ jobs:
       - name: Verify read-only production preflight contract
         run: node --test .github/scripts/production-preflight-contract.test.cjs
 
+      - name: Verify first transition and subsequent automatic release contract
+        run: node --test .github/scripts/approved-release-pipeline.test.cjs
+
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
 

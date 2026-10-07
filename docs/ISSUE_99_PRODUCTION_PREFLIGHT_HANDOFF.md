@@ -10,7 +10,7 @@
 
 선택 실행환경의 직접 GitHub REST는 프록시403으로 차단됐고 연결 도구에는 workflow dispatch가 없다. AWS CLI/직접 AWS 자격증명도 없다. 저장소에는 기존 production OIDC 역할의 ReadOnlyAccess와 특정 runtime instance의 AWS-RunShellScript 권한이 선언되어 있지만 실제 적용은 아직 확인하지 않았다.
 
-기존 Issue99/Draft PR100의 `feature/integrate-recommendations-fallback`에서 `.github/workflows/production-preflight.yml`을 준비했다. 동일 저장소 PR100·develop base·고정 feature·기존 작성자/실행자/재실행자만 허용하고 현재 PR SHA를 AWS 권한 취득 전에 검증한다. production 환경과 기존 역할/instance 변수를 사용한다. 브랜치 push의 PR 이벤트로 실행하며 권한 거부나 환경 승인은 우회하지 않는다.
+최초 PR100 조회 workflow는 PR identity를 검증했으나 production 환경이 PR ref를 거부하여 실행되지 않았다. 아래 과거 실행 기록은 그 시점의 근거다. 후속 사용자 승인으로 현재 source는 main 전용 수동 읽기 진입점과 분리된 release pipeline을 제공한다. 기존 production 환경·역할·instance 변수와 보호규칙을 유지하며 아직 main 병합·운영 실행은 하지 않았다.
 
 조회는 EC2/RDS metadata, 두 credential refresh EventBridge rule/target, 진행 중 SSM command, 현재 image digest/guard 정책·파일 신뢰/phase/unit, Flyway history 및 공개 health/OpenAPI HTTP 상태로 제한한다. 운영 OpenAI 위치는 기존 prefix의 `/meet-me/production/secret/openai-api-key`이며 ParameterStore Name/Type/Version만 확인한다. 존재 여부는 아직 미확정이다. 값은 사용자 보안 입력이며 시험환경에서 복사하지 않는다. [운영키 전달 후속](ISSUE_99_LUNA_RUNTIME_SETUP.md)은 renderer·required mode·entrypoint·Compose 모의 검증을 준비하며 parameter 존재만으로 Luna 준비 완료를 선언하지 않는다.
 
@@ -33,14 +33,14 @@ Flyway는 현재 컨테이너의 기존 PG driver와 독립 Java reader로 읽�
 다음은 기존 로그인된 사용자 터미널에서 수행할 metadata 명령의 선택 가능한 준비 예시다. 로컬 CLI를 필수 배포 경로로 요구하지 않는다. 실제 배포는 기존 GitHub Actions가 수행한다. 이 작업에서는 명령을 실행하지 않았으며 원격 SSM 명령/배포/서비스 변경을 포함하지 않는다. profile과 instance는 사용자 확인값을 로컬에만 넣고 현재 환경 변수 값과 다르면 진행을 멈춘다.
 
 ```powershell
-$profile = '<existing-profile>'
-$instanceId = '<confirmed-runtime-instance-id>'
-$region = 'ap-northeast-2'
-aws --profile $profile --region $region sts get-caller-identity --query Account --output text
-aws --profile $profile --region $region ec2 describe-instances --instance-ids $instanceId --query 'Reservations[].Instances[].{InstanceId:InstanceId,State:State.Name,Architecture:Architecture}' --output json
-aws --profile $profile --region $region ssm describe-instance-information --filters "Key=InstanceIds,Values=$instanceId" --query 'InstanceInformationList[].{InstanceId:InstanceId,PingStatus:PingStatus,PlatformType:PlatformType}' --output json
-aws --profile $profile --region $region ssm describe-parameters --parameter-filters 'Key=Name,Option=Equals,Values=/meet-me/production/secret/openai-api-key' --query 'Parameters[].{Name:Name,Type:Type,Version:Version}' --output json
-aws --profile $profile --region $region ssm list-commands --instance-id $instanceId --query 'Commands[?Status==`Pending` || Status==`InProgress` || Status==`Delayed`].{CommandId:CommandId,Status:Status,DocumentName:DocumentName}' --output json
+$MeetMeAwsProfile = '<existing-profile>'
+$MeetMeRuntimeInstanceId = '<confirmed-runtime-instance-id>'
+$MeetMeAwsRegion = 'ap-northeast-2'
+aws --profile $MeetMeAwsProfile --region $MeetMeAwsRegion sts get-caller-identity --query Account --output text
+aws --profile $MeetMeAwsProfile --region $MeetMeAwsRegion ec2 describe-instances --instance-ids $MeetMeRuntimeInstanceId --query 'Reservations[].Instances[].{InstanceId:InstanceId,State:State.Name,Architecture:Architecture}' --output json
+aws --profile $MeetMeAwsProfile --region $MeetMeAwsRegion ssm describe-instance-information --filters "Key=InstanceIds,Values=$MeetMeRuntimeInstanceId" --query 'InstanceInformationList[].{InstanceId:InstanceId,PingStatus:PingStatus,PlatformType:PlatformType}' --output json
+aws --profile $MeetMeAwsProfile --region $MeetMeAwsRegion ssm describe-parameters --parameter-filters 'Key=Name,Option=Equals,Values=/meet-me/production/secret/openai-api-key' --query 'Parameters[].{Name:Name,Type:Type,Version:Version}' --output json
+aws --profile $MeetMeAwsProfile --region $MeetMeAwsRegion ssm list-commands --instance-id $MeetMeRuntimeInstanceId --query 'Commands[?Status==`Pending` || Status==`InProgress` || Status==`Delayed`].{CommandId:CommandId,Status:Status,DocumentName:DocumentName}' --output json
 ```
 
 키 값 get-parameter/복호화 조회는 이 준비 단계에 포함하지 않는다. Parameter metadata만으로 실제 runtime 전달이나 provider 인증을 판단하지 않는다. host guard/digest/Flyway history와 두 credential rule/target 상태는 대상과 시작 조건을 보고한 뒤 기존 검토된 읽기 경로에서 별도로 확인한다.
@@ -49,18 +49,33 @@ aws --profile $profile --region $region ssm list-commands --instance-id $instanc
 
 조회가 성공해도 배포 준비 완료를 자동 판정하지 않는다. 실제 Flyway가 예상 V8 이하인지, 충돌 V9 invocation/예상 밖 migration이 없는지, 현재 digest와 guard/단위 상태, 두 rule의 실제 target/state, 진행 중 command와 key 위치를 확인한다. 예상 밖 migration은 즉시 중단·보고하며 repair/번호 변경하지 않는다.
 
-## 기존 CD 검사와 첫 V8 이후 운영 조건
+## 변경 전 CD 관측과 첫 V8 이후 운영 조건
 
-현재 main5e8faab의 workflow 목록은 CI/Deploy Production/Infrastructure/Issue Lifecycle이며 읽기 preflight는 없다. Deploy Production의 workflow_dispatch는 ECR build/push·S3 release 업로드·SSM 배포·migration을 수행하고 읽기 모드를 제공하지 않는다. 조회용으로 수동 배포를 실행하지 않으며 PR 환경 거절을 우회하지 않는다.
+변경 전 관측 기준 main5e8faab의 workflow 목록은 CI/Deploy Production/Infrastructure/Issue Lifecycle이며 읽기 preflight는 없다. Deploy Production의 workflow_dispatch는 ECR build/push·S3 release 업로드·SSM 배포·migration을 수행하고 읽기 모드를 제공하지 않는다. 조회용으로 수동 배포를 실행하지 않으며 PR 환경 거절을 우회하지 않는다.
 
 기존 CD는 digest 형식·release 잠금·runtime renderer·Flyway migration·컨테이너 health·SSM 성공·공개 health/OpenAPI를 확인한다. 실제 DB history 확인은 같은 migration을 다시 실행하기 위한 검사가 아니라 예상 밖 V9/V10/체크섬·실패 이력과 복구 가능성을 사전에 판단하는 근거다. main source의 migration은 V1~V7이며 이것은 운영 history 관측값이 아니다.
 
 기존 main deploy-release.sh는 구 writer가 실행 중일 때 migrate를 실행하고 health 실패 시 previous image를 재기동할 수 있다. ADR의 V8 이후 계약은 구 writer·worker·retention 동시 실행과 구 image 복구를 금지한다. PR100의 host-release-guard.sh는 실제 설치 manifest/phase/승인 digest/legacy process를 확인하고 writer를 중지한 뒤 migration을 수행한다. 이 호스트 선행조건은 저장소 source/CI 성공만으로 확인되지 않으며 기존 health 검사와 중복되지 않는다.
 
-구조·보호규칙·인증을 바꾸지 않는 현재 범위에서는 기존 승인된 운영 읽기 경로로 실제 상태를 확인하고, guard/drain 및 정확 registry digest 승인 순서를 확정한 뒤 GitHub Actions 서버 배포와 웹 연계를 진행하는 기준을 유지한다. 현재 CD는 build와 deploy가 한 job에 있고 중간 독립 digest 승인 단계가 없으므로 첫 V8 이후 자동 배포 시작 순서는 미해결이다. CI의 local config image ID를 승인 digest로 치환하거나 main 병합을 먼저 실행하지 않는다.
+구조·보호규칙·인증을 바꾸지 않는 현재 범위에서는 기존 승인된 운영 읽기 경로로 실제 상태를 확인하고, guard/drain 및 정확 registry digest 승인 순서를 확정한 뒤 GitHub Actions 서버 배포와 웹 연계를 진행하는 기준을 유지한다. 변경 전 CD는 build와 deploy가 한 job에 있어 첫 전환의 독립 승인 순서가 미해결이었다. 후속 source는 아래 분리 경로로 이 문제를 처리한다. CI의 local config image ID를 승인 digest로 치환하거나 main 병합을 먼저 실행하지 않는다.
 
 후속 host/DB SSM 읽기 명령은 별도로 내용을 보고한 뒤 승인 경계에 따라 실행한다. 준비된 host-preflight.sh는 선택한 Docker/systemd/guard metadata를 읽고, 기존 컨테이너의 private /tmp에 임시 reader class/properties를 만든 뒤 최대15초·heap32MB의 독립 JVM으로 READ ONLY transaction에서 Flyway history만 조회하고 rollback한다. 짧은 DB 연결·JVM 자원·임시 파일 생성/정리의 부작용이 있으며 앱/컨테이너/서비스 재시작·migration·DB 쓰기·키 값 출력은 포함하지 않는다. 이 세션에서는 원격 명령을 실행하지 않았다.
 
-새 image digest는 build 후에만 확정된다. 현 CD는 build와 deploy 사이 독립 승인 단계가 없으므로 preflight·키 전달·정확 digest 승인 순서를 확정하기 전에 main을 merge하지 않는다. V9/V10 적용 후 오래된 V8 image 복구를 허용하지 않으며 policy의 호환 label만으로 새 migration 호환성을 보장하지 않는다. 서비스 중단/guard 설치/automation pause·drain/DB 적용은 부모의 실제 시작 보고 이후 단계다.
+새 image digest는 build 후에만 확정된다. 후속 source는 build와 deploy를 분리하지만 실제 preflight·키 전달·정확 digest 승인은 별도 미완료다. main 병합과 운영 실행은 각각 승인된 시점에만 진행한다. V9/V10 적용 후 오래된 V8 image 복구를 허용하지 않으며 policy의 호환 label만으로 새 migration 호환성을 보장하지 않는다. 서비스 중단/guard 설치/automation pause·drain/DB 적용은 부모의 실제 시작 보고 이후 단계다.
 
 새 공개 Issue 생성은 내부 운영 접근 metadata 공개를 사용자가 승인하지 않았다는 자동 승인 검토로 거절됐다. Issue는 생성되지 않았고 재시도하지 않았다. 이 인계는 이미 승인된 기존 Issue99/PR100의 코드·문서 범위에서 비밀값 없이 유지한다.
+
+
+## 현재 승인된 분리 경로와 실제 시작 조건
+
+ADR-050에 따라 `Deploy Production`의 `build-publish`는 성공한 main push CI의 정확 SHA로 ARM64 image를 게시하고, `releases/builds/<run>/<attempt>/`에 tar와 manifest를 조건부 최초 저장한다. manifest는 CI 출처·publisher run/attempt·source SHA·ECR digest·tar SHA·원본 SQL catalog·14개 guard 실행 파일의 지문을 묶는다. 수동 소비는 다시 build하지 않는다. 일반 앱 변경의 후속 main 배포는 같은 SQL/guard 계약의 실제 READY·history·현재 image를 확인한 뒤 자동 진행한다. 전체 main 배포를 영구 수동화하지 않는다.
+
+main 전용 `Production Read-only Preflight`의 workflow_dispatch는 게시물 입력 없이 기존 metadata를 읽는다. `Deploy Production`의 수동 `action=preflight`는 게시된 `build_run_id`와 `build_run_attempt`를 지정해 release와 실제 상태를 함께 확인한다. 둘 다 기존 production 보호규칙과 역할을 사용하며 서비스·policy·runtime env·DB 변경을 하지 않는다. 임시 reader/JVM·DB 읽기 연결은 사용한다. 새 main 진입점은 아직 병합·실행되지 않았으므로 운영 접근이나 실제 데이터 이력을 확인한 근거가 아니다.
+
+첫 record가 없거나 SQL/guard 계약이 다르면 자동 소비는 `TRANSITION_REQUIRED`로 끝나고 설치·중지·migration을 수행하지 않는다. 사용자에게 main 병합 뒤 확정된 publisher run/attempt·source SHA·완전한 ECR digest와 tar 지문, 실제 preflight 결과를 먼저 보고한다. CI의 config image ID나 이전 V8 승인 digest를 이 승인값으로 대체하지 않는다.
+
+실제 유지보수 시작을 승인받은 뒤에만 두 credential refresh rule의 사용자 중지·대기 작업 드레인을 안내한다. 지금 rule 중지를 요청하거나 실행하지 않는다. 첫 `action=deploy`는 같은 게시물 ID와 명시적 `approve_first_transition=true`를 사용하고 실제 두 rule DISABLED·대기 명령0·정확한 성공 V1~V7 이상 prefix를 재확인한다. 충돌 V9 invocation·실패/체크섬 불일치·알 수 없는 history나 guard 상태는 중단하며 repair하지 않는다. 전달 전 Pending을 놓치지 않도록 지원되는 전역 active command 조회에서 명시 target을 판별하고, 대상이 불명확하거나 응답이 잘리면 fail closed한다. command 본문·Parameters는 로그/요약에 남기지 않는다.
+
+명시 첫 경로만 기존 installer의 실제 retired-FD 검사·구 writer 중지와 검토된 boot unit 설치/enable을 수행한다. 구 V8 digest를 policy에서 제거하고 고정 launcher로 migrate·교체한다. 성공한 실제 history10·READY·선택 image·SQL/guard 바이트를 확인한 뒤 root 소유 record를 원자 저장한다. 동일 계약의 다음 자동 배포는 installer/unit 설정을 반복하지 않는다. 중단된 준비/불확실한 timeout·post-proof 실패는 별도 복구 검토 대상으로 남기며 구 image 복구·phase 초기화를 하지 않는다.
+
+저장소 검증은 동결39개 계약·기존 테스트와 독립 소스 리뷰다. 사용자 범위 지시에 따라 추가 host orchestration fixture는 실행하지 않고 폐기했다. 이 코드는 실제 호스트 설치·Docker daemon cleanup·IAM 접근·운영 history를 검증한 증거가 아니다. 최종 guard/결함 복구 근거는 `.tdd/verification/issue-99-approved-release-pipeline.json`, 최종 독립 리뷰와 새 정확 HEAD CI 결과는 Draft PR100에서 구분한다. API·Kotlin·V1~V10 SQL·키 renderer/entrypoint는 이전 검증 source와 동일하며 유료 호출은 추가하지 않는다.

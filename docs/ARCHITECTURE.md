@@ -419,7 +419,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - V8 배포는 설치된 `/opt/meet-me/guard/host-release-guard.sh`가 관리한다. deploy·호환 rollback·credential refresh·boot restart가 공통 잠금과 root 소유의 영속 manifest·선행조건·정확한 digest 승인 TSV를 검증한다. 모든 저장 release의 진입 script를 wrapper로 교체하고 구 파일 inode를 hard-link로 보존하여 열린 구 Bash FD가 있으면 중단한다. cmdline·credential은 검사 출력에 포함하지 않는다.
 - 앱 전체를 중지하고 Docker 자동 재시작을 비활성화한 뒤 `V8_STARTED`와 sticky `input_revision_v8` marker를 원자적으로 영속화한다. 승인된 동일 이미지로 Flyway 실행·앱 교체·실제 Docker image와 health 확인을 완료해야 `current`와 `READY`를 기록한다. 실패 시 점검 상태를 유지하고 승인된 digest의 deploy로 roll-forward한다. Flyway downgrade·구 image 자동 fallback은 제공하지 않는다.
 - Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [INPUT_REVISION_ROLLOUT.md](INPUT_REVISION_ROLLOUT.md)를 따른다.
-- `main` 병합은 운영 배포 승인으로 간주한다. `main` push로 시작된 CI가 성공하면 별도의 권한 있는 Production workflow가 `workflow_run`의 정확한 `head_sha`를 배포하고, PR·`develop`·수동 CI와 실패한 CI는 자동 배포하지 않는다. 운영 배포는 하나씩 실행하되 대기 실행을 취소하지 않으며, `workflow_dispatch`는 `main`의 장애 복구·재배포 수단으로 유지한다.
+- `main` push CI의 정확 `head_sha`로 image와 run/attempt별 불변 release manifest를 게시한다. ADR-050에 따라 첫 V8→V9/V10 전환과 SQL/guard 실행 bundle 변경은 명시 승인으로 분리한다. main 읽기 preflight/deploy는 기존 게시물을 소비하고 다시 build하지 않는다. 성공 후 실제 Flyway history·READY·현재 digest·SQL/guard 지문을 root record에 저장하며, 같은 계약의 후속 main CI는 실제 상태를 재확인한 뒤 자동 배포한다. PR·`develop`·수동 CI와 실패한 CI는 자동 게시/배포하지 않는다. 기존 production 역할·보호규칙과 직렬화(cancel=false)는 유지한다.
 
 ### 제출 MVP 토폴로지 선택 근거
 

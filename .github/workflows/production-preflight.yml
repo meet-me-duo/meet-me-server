@@ -1,27 +1,16 @@
 name: Production Read-only Preflight
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - ".github/workflows/production-preflight.yml"
-      - "deploy/preflight/**"
-      - ".github/scripts/production-preflight-contract.test.cjs"
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: production-readonly-preflight
+  group: production-deploy
   cancel-in-progress: false
 jobs:
   preflight:
     if: >-
       github.repository == 'meet-me-duo/meet-me-server' &&
-      github.event.pull_request.number == 100 &&
-      github.event.pull_request.head.repo.full_name == github.repository &&
-      github.event.pull_request.head.ref == 'feature/integrate-recommendations-fallback' &&
-      github.event.pull_request.base.ref == 'develop' &&
-      github.event.pull_request.user.login == 'jinhyeongpark' &&
-      github.actor == 'jinhyeongpark' &&
-      github.triggering_actor == 'jinhyeongpark'
+      github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     environment: production
@@ -29,19 +18,20 @@ jobs:
       contents: read
       id-token: write
     env:
+      SOURCE_SHA: ${{ github.sha }}
       AWS_MAX_ATTEMPTS: "1"
       AWS_RETRY_MODE: standard
       RUNTIME_INSTANCE_ID: ${{ vars.RUNTIME_INSTANCE_ID }}
     steps:
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ env.SOURCE_SHA }}
           persist-credentials: false
           sparse-checkout: |
             deploy/preflight
-      - name: Validate approved target before production authority
-        run: python3 deploy/preflight/run-preflight.py --validate # validate_target
-      - uses: actions/setup-java@v4
+      - name: Validate main target before production authority
+        run: python3 deploy/preflight/run-preflight.py --main --validate
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "17"
@@ -53,12 +43,12 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
           role-duration-seconds: 900
       - name: Read existing production metadata
-        run: python3 deploy/preflight/run-preflight.py
+        run: python3 deploy/preflight/run-preflight.py --main
       - name: Preserve sanitized metadata
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
-          name: production-preflight-${{ github.run_id }}
+          name: production-preflight-${{ github.run_id }}-${{ github.run_attempt }}
           path: production-preflight-summary.json
           if-no-files-found: warn
           retention-days: 3

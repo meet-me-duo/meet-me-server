@@ -95,7 +95,7 @@ def _validate_host(host):
     if "currentRelease" in host:
         _require(isinstance(host["currentRelease"], str) and (
             host["currentRelease"] == "UNAVAILABLE" or re.fullmatch(
-                r"/opt/meet-me/releases/[0-9a-f]{40}-[0-9]{1,20}", host["currentRelease"])))
+                r"/opt/meet-me/releases/[0-9a-f]{40}-[0-9]{1,20}(?:-[0-9]{1,20})?", host["currentRelease"])))
     if "phase" in host:
         _require(host["phase"] in ("PRE_V8", "V8_STARTED", "READY"))
     if "minimum-contract" in host:
@@ -172,6 +172,21 @@ def event_target():
     return sha
 
 
+def main_target():
+    event = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text())
+    sha = os.environ.get("SOURCE_SHA", "")
+    if not (
+        os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+        and os.environ.get("GITHUB_REPOSITORY") == REPOSITORY
+        and os.environ.get("GITHUB_REF") == "refs/heads/main"
+        and event.get("repository", {}).get("full_name") == REPOSITORY
+        and sha == os.environ.get("GITHUB_SHA")
+        and re.fullmatch(r"[0-9a-f]{40}", sha)
+    ):
+        raise ValueError("UNTRUSTED_TARGET")
+    return sha
+
+
 def aws_call(service, operation, *args):
     command = ["aws", "--region", os.environ["AWS_REGION"], "--output", "json", service, operation, *args]
     try:
@@ -193,11 +208,14 @@ def project(call, mapper):
 
 
 def main():
-    sha = event_target()
-    if sys.argv[1:] == ["--validate"]:
-        print("Approved PR100 head identity validated.")
+    arguments = sys.argv[1:]
+    main_entry = arguments in (["--main"], ["--main", "--validate"])
+    target = main_target if main_entry else event_target
+    sha = target()
+    if arguments in (["--validate"], ["--main", "--validate"]):
+        print("Approved source identity validated.")
         return
-    if sys.argv[1:]:
+    if arguments not in ([], ["--main"]):
         raise ValueError("UNTRUSTED_TARGET")
     instance = os.environ["RUNTIME_INSTANCE_ID"]
     if not re.fullmatch(r"i-[0-9a-f]{8,17}", instance):
@@ -207,6 +225,10 @@ def main():
     reads["instance"] = project(aws_call("ec2", "describe-instances", "--instance-ids", instance),
         lambda d: {k: d["Reservations"][0]["Instances"][0].get(k)
                    for k in ("InstanceId", "State", "InstanceType", "IamInstanceProfile")})
+    reads["ssmInstance"] = project(aws_call("ssm", "describe-instance-information", "--filters",
+        "Key=InstanceIds,Values=" + instance),
+        lambda d: [{k: item.get(k) for k in ("InstanceId", "PingStatus", "PlatformType")}
+                   for item in d["InstanceInformationList"]])
     reads["rds"] = project(aws_call("rds", "describe-db-instances", "--db-instance-identifier", "meet-me-production"),
         lambda d: {k: d["DBInstances"][0].get(k) for k in
                    ("DBInstanceIdentifier", "DBInstanceStatus", "Engine", "EngineVersion", "Endpoint",
@@ -230,7 +252,7 @@ def main():
     if len(payload) > 32768:
         raise ValueError("UNTRUSTED_TARGET")
     # Recheck exact head immediately before the single configured-instance call.
-    if event_target() != sha:
+    if target() != sha:
         raise ValueError("UNTRUSTED_TARGET")
     script = base.joinpath("host-preflight.sh").read_text()
     parameters = json.dumps({"commands": ["bash -s -- " + payload + " <<'MEETME_READONLY_SCRIPT'\n"

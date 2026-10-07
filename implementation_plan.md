@@ -12,6 +12,13 @@
 
 ### Issue #99 현재 통합 범위 (2026-10-07 UTC)
 
+**추가 승인 — 첫 V8→V9/V10 전환 pipeline:** 기존 GitHub production 역할·보호규칙 안에서 build/publish와 preflight/deploy를 분리한다. 첫 전환은 게시된 정확 run/attempt·tar SHA·ECR digest와 실제 읽기 결과를 검토하고 명시 승인한 뒤에만 실행한다. 성공한 실제 history·guard 계약을 root 소유 record로 저장하며, 같은 SQL/guard 계약의 후속 main CI 배포는 기존 자동 경로를 유지한다. 모든 main 배포의 영구 수동화·IAM/환경 보호 변경은 승인하지 않았다. 두 EventBridge rule의 사용자 중지는 실제 유지보수 시작 시점에 묶고 지금 요청하거나 실행하지 않는다.
+
+- [x] `[AGENT]` 첫 전환 gate와 같은 계약의 후속 자동 배포를 구분하는 독립 설계 검토. immutable run/attempt 게시·실제 history/READY/current digest 재확인·구 V8 승인 제거·기존 lock 중첩 금지 경계를 확정했다.
+- [x] `[AGENT]` 독립 assertion RED16→동결39 GREEN/skip0. 분리 pipeline·normal-main 읽기 preflight·기존 host guard 연계와7fault/8assertion 탐지·303파일 정확 복원. 사용자 지시대로 추가 host fixture는 실행 없이 폐기했다.
+- [ ] `[AGENT]` 독립 소스 리뷰·변경 없는 mandatory guard·정확 새 HEAD CI와 Draft PR100 기록.
+- [ ] `[SHARED]` 정확 배포 대상/run/attempt/digest·실제 preflight 결과·유지보수 시작 조건의 최종 승인. main/develop 병합·원격 변경·migration·rule 중지는 아직 실행하지 않는다.
+
 **추가 승인 — 시간 배분 조정:** PR100 통합 HEAD51a4c0d의 실제 평가에서 총56.975초, Gemini3회+Luna1회 모두 TIMEOUT·ANALYSIS_DELAYED·winner/후보0·late 미게시가 확인됐다. relay의 Luna HTTP200 저장19.795초는 네트워크·프록시·JSON/파일 저장 포함이며 모델 순수 지연이나 새 정책 성공률이 아니다. 사용자가 전체60초를 유지하며 Gemini최대30초/Luna최대27초/완료3초, 최대3재시도·부족시 조기 폴백을 승인했다. 기존 feature 브랜치·Issue99·PR100에서 독립 시간 경계 RED→구현→리뷰→전체guard/새HEADCI를 진행한다. 이 구현 세션의 유료 호출은 계속0이며 운영 설정·권한·DB 적용은 변경하지 않는다.
 
 - [x] `[AGENT]` processor와 Lunaadapter의15초고정캡을 공급자별15/27초로 일치시키고 single monotonic/durable60초 및 Gemini30/provider57/완료60 경계를 검증한다.
@@ -1233,3 +1240,12 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 사용자정정에따라실제배포는기존GitHubActions로진행하는기준을유지한다. 현재main5e8faab의workflow는CI/DeployProduction/Infrastructure/IssueLifecycle이며read-onlypreflight는없고manualdeploy는실제ECRpush/SSM/migration을수행한다. main의V1~7source는운영history증거가아니다. 기존migration/health/OpenAPI검증과새V8+의실제guard/digest/drain확인을구분한다. 사용자로컬CLI는필수경로로단정하지않으며새권한/보호규칙/인증은추가하지않는다. 기존CD의build→deploy사이독립digest승인단계가없는시작순서미해결도구분한다.
 - platform보완후12GREEN/skip0, 최종9fault/9assertion·3파일exact복원, combined64/0/skip0을확인했다. 변경없는필수guardexit0(9.302초)는기존654품질결과를재사용하며새654실행으로주장하지않는다. 독립최종리뷰와후속새HEADCI는구분한다.
 - 후속commit/새HEADCI는helper/계약/evidence수정후진행한다. 유료호출·원격SSM명령·운영변경은계속0이다.
+
+
+### 2026-10-07 Issue99 첫 전환 gate와 동일 계약 main 자동 배포 후속
+
+- 사용자 명시 승인대로 기존 GitHub production 역할·보호규칙 안에서 build-publish와 approved-release를 분리했다. 첫 V8→V9/V10 또는 SQL/guard 계약 변경은 immutable run/attempt 게시물의 source/CI/publisher·archiveSHA·ECR digest·실제 history와 명시 승인을 요구한다. 같은 계약의 후속 main CI는 실제 READY·history/current image/root record를 확인하고 자동 배포한다. 영구 수동화·IAM/protection 변경은 없다.
+- source SQL10과14파일 실행 계약을 묶고, 실제 rule 상태/target·Online·지원되는 active command 조회·SecureString Name/Type/Version을 확인한다. 두파일 readstate 전송/60KiB command 상한, host1440/SSM1500/poll1560/job30분, rootsticky defaultlock 및 중첩 lifecycle lock 회피를 독립 리뷰했다. 실제 rule 중지는 유지보수 시작 승인 시에만 안내하며 지금 요청/실행하지 않았다.
+- 독립 동결6 신규+기존33의 유효 RED16/23PASS 뒤 최종39 PASS/실패0/skip0, 실제 Flyway12.4.0 checksum10 일치와7fault/8assertion 탐지·303 source/test 파일 exact복원을 확인했다. 테스트 기대를 구현자가 바꾸지 않았고 과거 workflow/RED를 history에 보존했다. 추가 host orchestration fixture는 최신 사용자 범위 지시로 실행 없이 폐기했으므로 독립 host runtime proof를 주장하지 않는다.
+- 변경 없는 필수 tdd_guard SHA07c4f974…exit0/8.639초로 hook self-tests·ktlintCheck·assemble·test를 확인했다. Gradle cached654 결과 재사용이며 새 로컬654 실행으로 집계하지 않는다. 제품 Kotlin/API/V1~V10 SQL/runtime renderer/entrypoint·기존guard/installer는369c5ff와 동일하다. 새 정확HEAD CI는 게시 후 PR100에서 별도로 확인한다.
+- 현재 실제AWS조회/운영명령/서비스중단/DB쓰기/main·develop병합/유료모델호출0. 운영 source/digest와 실제preflight를 보고한 뒤 최종배포승인을 받아야 한다. 구현/문서/검증 후속 Commit/PR: 동일 커밋 예정, 기존Draft PR100 유지.
