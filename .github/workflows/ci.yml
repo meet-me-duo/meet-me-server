@@ -41,6 +41,9 @@ jobs:
       - name: Verify production deployment policy
         run: node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs
 
+      - name: Verify read-only production preflight contract
+        run: node --test .github/scripts/production-preflight-contract.test.cjs
+
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
 

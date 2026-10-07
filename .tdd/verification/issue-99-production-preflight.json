@@ -1,0 +1,64 @@
+{
+  "workItem": "issue-99-production-preflight",
+  "recordedAt": "2026-10-07T10:45:40.182200+00:00",
+  "sourceRevision": "6f7f54e46846c690a8374aa7dc1898bee21d873f",
+  "restoredFiles": [
+    {
+      "path": "deploy/preflight/ReadOnlyFlywayProbe.java",
+      "sha256": "ab7c9cb140ee51f82a5433768061999a905e3beb08fb46831cea51fb96044794"
+    },
+    {
+      "path": "deploy/preflight/host-preflight.sh",
+      "sha256": "b44200421088120caf4b59ab7d81be286e38e9aad514eb0ecdb00f01550ac43c"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "f3de205b6051d6c3df470de76dd3dee885379d83201553510eb86ca029cdcf18"
+    },
+    {
+      "path": ".github/workflows/production-preflight.yml",
+      "sha256": "cc6618471bf341f178ad677c2f72a7a93cc2821cdc1958be4bbd7fd242b30098"
+    },
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "21d29f8fb799176c196dc7d6fd2dc240486605d1bd57e6bddcc0b3b0f6f4663c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "75afbbca3faf18d40f0b8f0f4cfd2f3907bb05caf368950fad129beb4b894c2b"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "missing-rollback",
+      "exitCode": 1,
+      "failedTests": [
+        "actual standalone JDBC probe uses read-only transaction bounded statements and rollback with only Flyway metadata",
+        "JDBC permission denial still rolls back and reports only SQLState without credential exception text"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-preflight-fault-missing-rollback.log"
+    },
+    {
+      "fault": "missing-output-schema",
+      "exitCode": 1,
+      "failedTests": [
+        "arbitrary approved-image values malformed digests review IDs and contract names cannot enter sanitized metadata",
+        "only eight declared file paths and strict file metadata types may cross the output boundary",
+        "container before and after reject unknown nested values mistyped state and arbitrary image health or restart policy",
+        "service release phase and minimum contract metadata reject unrecognized fields and arbitrary text"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-preflight-fault-missing-output-schema.log"
+    },
+    {
+      "fault": "missing-rerun-actor",
+      "exitCode": 1,
+      "failedTests": [
+        "fork wrong PR branch base author actor repository SHA and malformed SHA are rejected before any production authority"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-preflight-fault-missing-rerun-actor.log"
+    }
+  ],
+  "exactRestoration": true,
+  "operationalCommands": 0,
+  "paidCalls": 0
+}

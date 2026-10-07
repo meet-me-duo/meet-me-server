@@ -1187,3 +1187,12 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 고의 결함5/5 assertion 탐지·실패35·오류0, 전체250개 source/test 정확 복원을 독립 확인했다. 복원 후 변경 없는 필수 guard exit0·hook self-tests12·ktlintCheck/assemble·111suite 전체654tests/실패0/오류0/skip4, 배포 정적13 PASS다. 새 native OpenAPI 전체 parsed JSON은 기존 계약과 완전 동일이며 byte/SHA 차이를 별도 budget 증거로 기록했다. 기존 통합 evidence는 소급 덮어쓰지 않았다.
 - V1~V10 migration과 bounded-luna-v1 바이트/정책, 공개 API/UI는 유지한다. CI Quality 실행 한도15→20분만 조정해 기존 원격 CI의 약15분 검사와 추가PG회귀를 수용하며 product60초·hook/검사·권한·운영 deployment/concurrency는 유지한다.
 - Commit/PR: 동일 커밋 예정, 기존 Draft PR100 갱신. 새 정확 SHA와 로컬 검증은 push 즉시 부모에게 인계하고 해당 HEAD CI는 PR100 본문에 확정한다. 유료 통합 재평가는 전담 세션, 웹 공동 실행·운영 Flyway/V8guard/digest/드레인 승인은 별도이며 병합·배포·운영DB/보안/비밀/자동화 변경은 수행하지 않는다.
+
+## Issue #99 Worklog — 실제 평가 인계와 운영 읽기 preflight (2026-10-07 UTC)
+
+- 사용자 승인으로 기존 GHA production 역할/SSM의 읽기 preflight를 준비한다. 새 IAM/토큰/OS 설정은 하지 않는다. 서비스 중단은 실제 대상·시작 조건을 부모에게 먼저 보고한 뒤 별도로 진행한다. main merge 자동CD는 preflight·운영키·digest 순서 확정 전 실행하지 않는다.
+- 기존 gh 인증이 있으나 실행환경 프록시가 직접 GitHub REST를403으로 차단하고 연결 도구에는 workflow dispatch가 없다. 기존 bootstrap에는 production OIDC 역할의 ReadOnlyAccess와 특정instance AWS-RunShellScript 권한이 선언돼 있으나 실제 적용은 조회 전 미확정이다. 새 공개Issue는 내부운영metadata 공개 위험으로 자동승인검토가거절해생성하지않았다. 기존Issue99/PR100 feature 안에서 비밀값 없는 조회코드와독립검증을준비한다.
+- [실제 평가 기록](docs/ISSUE_99_LIVE_EVALUATION.md)은 전담이 보고한 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS, 추가18생성·누적41/50 및추정/미확정비용을구분한다. 기록/운영조회작업의 유료호출0이며 이후문서/조회코드 HEAD를 새로운 실제평가대상으로 혼동하지않는다.
+- 현재 조회 구현/독립 RED·리뷰·원격 실행은 진행 중이다. 운영OpenAI 값은 사용자 보안입력이며 시험환경에서 복사/출력하지않는다. 조회거부·예상밖migration·새비용/권한은 확대하지않고보고한다.
+- 읽기 전용 조회의 독립20검사는 RED6 assertion→GREEN20/skip0이며 결함3개를 assertion7개로 탐지하고 관련6파일 exact 복원을 확인했다. 독립 최종 리뷰 PASS·차단0, 기존 배포정책13 PASS다. 실제 격리PG18.6/current bootJar PropertiesLauncher reader smoke는 운영 조회와 구분한다. 변경 없는 mandatory guard exit0(8.725초)는 기존654건의 Gradle up-to-date 결과를 재사용하며 새654 실행으로 주장하지 않는다. 제품 src/main·src/test/V1~V10 및 guard는6f7f54e와 동일하다.
+- [실행 인계](docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)에 승인 경계·조회 방법·키 위치·digest/CD 순서·남은 시작 조건을 정리했다. 기존Draft PR100 feature에서 조회workflow와 평가기록을 commit/push하며 새 정확HEAD CI와 실제 AWS 접근은 원격 실행 결과로 별도 보고한다. 이 기록 시점의 실제 운영조회 성공0·서비스중단0·유료호출0이다.

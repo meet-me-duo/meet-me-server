@@ -1,0 +1,28 @@
+{
+  "workItem": "issue-99-production-preflight",
+  "sourceRevision": "6f7f54e46846c690a8374aa7dc1898bee21d873f",
+  "testFiles": [
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "19d8653e7029fd379be5150c64328781531602cfb5070a07dcaab1ad6d34ecaf"
+    }
+  ],
+  "command": "env JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1 node --test .github/scripts/production-preflight-contract.test.cjs",
+  "failedTests": [
+    "PR100 same repository author branch base and exact head SHA are the only trusted target",
+    "fork wrong PR branch base author actor repository SHA and malformed SHA are rejected before any production authority",
+    "production preflight has PR-only triggers and explicitly gates same repository PR100 trusted author and branch",
+    "preflight reuses only existing production OIDC role and does not introduce stored credentials or write permissions",
+    "checkout pins the exact approved PR head and sparsely fetches only preflight helpers without persisting credentials",
+    "successful SSM output preserves accurate API denial status without promoting it to HTTP success",
+    "all non-success SSM statuses reject stdout and stderr rather than claiming completed read checks",
+    "malformed duplicate JSON wrong protocol and untrusted top-level credential fields cannot cross output boundary",
+    "nested credential token datasource and provider configuration fields are rejected rather than emitted",
+    "actual standalone JDBC probe uses read-only transaction bounded statements and rollback with only Flyway metadata",
+    "JDBC permission denial still rolls back and reports only SQLState without credential exception text",
+    "SSM orchestration never prints raw command response or captured stderr on success or denial",
+    "parameter checks read metadata only and host JVM starts with a cleared environment"
+  ],
+  "expectedFailureCategory": "ASSERTION_FAILURE",
+  "recordedAt": "2026-10-07T10:30:29.659590+00:00"
+}
