@@ -37,7 +37,7 @@
 
 ## 현재 진행 요약
 
-- **현재 작업 — Issue #95 (2026-10-07 UTC):** PR #94 `bf4edff`를 포함한 독립 feature에서 재구성 계약과 실제 native OpenAPI를 준비했다. 독립 도메인18·HTTP/동시성15·DB6·게시3·retention1·리뷰3·binding4 총50개 GREEN을 확인했다. 최신 독립 HTTP 테스트의 PR94 baseline15 assertion RED, DB/정밀도7 assertion RED, 삭제 순서1 assertion RED 및 파일 지문을 기록했다. 신규 temporal option/variant·전체 대안·실제 시각 typed selection·legacy 호환·frozen/revision/confirmed 보호를 구현했다. D2 명시 선호 집계는 사용자 결정 대기이며 해당 종속 기능은 미완료다. 원격 계약 commitfcde6ca와 Draft PR97을 공개했고 독립 최종 리뷰 및 결함 주입5/5탐지를 완료했다. 원본source/test지문을정확복구했다. 최종필수guard·해당HEAD CI를확인중이다. 모델 호출0이며 병합·운영 배포·권한 변경은 수행하지 않는다.
+- **현재 작업 — Issue #95 (2026-10-07 UTC):** PR #94 `bf4edff`를 포함한 독립 feature에서 재구성 계약과 실제 native OpenAPI를 준비했다. 독립 도메인18·HTTP/동시성15·DB6·게시3·retention1·리뷰3·binding4 총50개 GREEN을 확인했다. 최신 독립 HTTP 테스트의 PR94 baseline15 assertion RED, DB/정밀도7 assertion RED, 삭제 순서1 assertion RED 및 파일 지문을 기록했다. 신규 temporal option/variant·전체 대안·실제 시각 typed selection·legacy 호환·frozen/revision/confirmed 보호를 구현했다. D2 명시 선호 집계는 사용자 직접 승인으로 확정됐으며 제품 구현·검증은 새 세션에 인계한다. 원격 계약 commitfcde6ca와 Draft PR97을 공개했고 독립 최종 리뷰 및 결함 주입5/5탐지를 완료했다. 원본source/test지문을정확복구했다. 최종필수guard와 HEAD627e0b7의 CI37582706551 전 단계 성공을 확인했다. 이번 문서 후속 HEAD의 CI는 별도로 추적한다. 모델 호출0이며 병합·운영 배포·권한 변경은 수행하지 않는다.
 
 - **클라우드 #91/#92·웹 #17 최신 상태 (2026-10-07):** 서버 Draft PR #94의 `06bc741`와 웹 Draft PR #18의 `3c403a2` 정확 SHA CI는 성공했다. 후속 최소 수정은 SSM 압축 해제 시 CI 실행자의 소유권과 넓은 권한을 복원하지 않도록 `umask 027`·`--no-same-owner`·`--no-same-permissions`를 적용하고 독립 정적 검사를 CI에 연결한다. 가드·Kotlin·SQL·기존 테스트는 변경하지 않는다. 실제 모델 원문 해석 9번째 호출은 HTTP200·10.1초로 기대한 5개 날짜 구간/COMPLETE/Plan B/요약과 일치했으나, 10번째 실제 HTTP·DB 배치는503으로 미완료이고 변형 문장은 미검증이다. 운영 설치·병합·배포는 진행하지 않았다.
 
@@ -1091,8 +1091,9 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] `[AGENT]` 원격 계약 인계 첫 commit 전 필수 변경 없는 tdd_guard를 통과했다. ktlintCheck/assemble/전체 test488개 중484PASS·기존 옵션형 live probe·디버그/스키마 export4SKIP·실패0, hook self-testsPASS다. Commit/PR: 동일 커밋 예정.
 - [x] `[AGENT]` 독립 결함 주입5/5 DETECTED와 원본bytes/SHA복구, 최종독립리뷰 blocking없음, [Draft PR97](https://github.com/meet-me-duo/meet-me-server/pull/97) 공개. [결함주입증거](.tdd/verification/issue-95-boundaries.json).
 - [x] `[AGENT]` mutation정확복구후 변경없는최종필수guard 재통과: lint/assemble/test488개·실패0/오류0·기존live probe/디버그/export4SKIP, hook self-testsPASS.
-- [ ] `[AGENT]` 원격최종HEAD CI. Commit/PR: 동일 커밋 예정 / Draft PR97.
-- [ ] `[USER]` D2 명시 선호 집계 결정. 현재 AVAILABLE을 선호로 추정하지 않고 preferenceCount=0이다. 선호 구현·검증이나 전체95완료로 보고하지 않는다.
+- [x] `[AGENT]` 구현 HEAD627e0b717a7f4f72dfc27b2ff580b2ed9f46c24a의 CI37582706551 전 단계 성공·Issue Lifecycle 성공을 확인했다. Draft PR97 본문에도 실제 결과를 기록했다.
+- [x] `[USER]` D2 제안에 사용자 직접 승인 “Meet me는 네 제안대로 진행해”를 확인했다. 동일 차원 OR·여러 차원 AND·참석자별 최대1점·창 전체 충족·선호 하위 창 보존·필수 제약 우선·자연어 입력 유지가 확정됐다.
+- [ ] `[AGENT]` D2 제품 구현·독립 RED/GREEN·저장 복원·공통 provider validator/schema·#96 통합 검증. 현재 코드의 preferenceCount=0은 미구현 상태이며 전체95완료로 보고하지 않는다.
 - `[AGENT]` 전체 대안을 임의 저장 상한으로 자르지 않는다. N=50·많은 창에서 조합/membership 규모가 커지므로 primary최대3·대안limit+1·선택option만 DB에서 조회하고 membership을500행 batch로 게시하도록 개선했다. 전체 조합 저장 규모와 대량 variant 응답의 실측/참석집합 정규화는 후속 평가 범위다.
 
 - `[AGENT]` 필수 쿼리 누락400을 기존 RFC9457 VALIDATION_FAILED로 통일했다. 독립 binding4사례에서 누락만유효RED(다른UUID/정수형식3사례는기존전역handlerGREEN), 수정후4GREEN. 기존5파일은독립저자가V9와새프로토콜의우회409/typed성공계약에맞췄고PR94baseline69개중5assertRED 및결과문서8개중1assertRED를별도로기록했다. 기대값약화없는독립재리뷰를완료했다.
@@ -1102,3 +1103,13 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - `[AGENT]` 고의결함5종(N하한·장소union·낮은인원다양성·DBlegacywriter우회·마이크로초체크우회)은정확한namedassertion실패로모두탐지했다. mutation마다finally로원본복구후source/testSHA검증을통과했다. sourceRevision은첫원격구현commitfcde6ca다. rawlog는Git제외로컬codex evidence에보존한다.
 
 - `[AGENT]` 사용자추가인계에따라 PR98 HEAD9a4c4d5의V9 invocation schema를read-only확인했다. #95의추천V9와같은version충돌이며단독GREEN/CI로배포준비완료를선언하지않는다. [통합인계](docs/ISSUE_95_96_INTEGRATION_HANDOFF.md)에별도브랜치·#96V9/#95V10제안·bounded게시와projection원자성·빈DB/기존V8데이터및전체통합HEAD검증순서를기록했다. feature번호변경/운영적용/병합은수행하지않았다.
+
+
+### D2 승인과 새 구현 세션 인계 (2026-10-07 UTC)
+
+- 사용자 직접 승인으로 계약·PRD·Architecture·ADR-048·웹/통합 인계를 갱신했다. 승인 전 기록과 독립 리뷰의 당시 판단은 이력으로 보존한다.
+- #96 HEAD9a4c4d5463e578829baed12cfebad16fb0bf33a4를 read-only 확인했다. 두 live adapter가 공통 NaturalLanguageProviderContract의 strict validator/schema/prompt를 사용하며 기존 fixture helper의 비strict v1/v2 경로와 영속 JSON mapper도 함께 검토해야 한다.
+- [D2 구현 인계](docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md)에 승인 예시·정확한 baseline·공유 파일·필수 회귀/결함 주입·통합 deadline/rollback·공개 API 유지와 0유료호출 범위를 기록했다.
+- 이 후속은 문서만 변경한다. src/main·src/test·native OpenAPI·migration·guard·권한/배포 정책은 구현 baseline627e0b7과 바이트 동일하게 유지한다. Commit/PR: 동일 커밋 예정 / 기존 Draft PR97. 새 문서 HEAD CI는 push 이후 확인하며 baseline CI 성공을 재사용해 새 HEAD 성공으로 표시하지 않는다.
+
+- 문서 후속 검증(2026-10-07 UTC): 공통 #96 validator/schema와 영속 mapper를 고정 SHA에서 독립 읽기 전용 대조한 리뷰 PASS·blocking 없음. 계약 키워드/로컬 링크 확인과 git diff --check PASS, source/test/native API/guard 바이트 불변 확인. 변경 없는 필수 tdd_guard exit0는 docs-only source의 기존 Gradle up-to-date 결과를 재사용했으며 새488건 실행으로 주장하지 않는다. 새 문서 HEAD CI는 원격 push 이후 별도 확인해야 한다.

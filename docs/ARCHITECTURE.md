@@ -512,7 +512,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 
 기존 legacy matcher·candidates·final_confirmations와 별개로 결정론적 RecommendationProjector가 N/N-1/N-2 전체 조합의 실제 연속 창과 mode/장소/참석 variant를 만든다. primary는 최대 세 시간안이며 전체 대안은 손실 없는 cursor로 조회한다. 신규 분석의 legacy 결과와 recommendation_analyses/options/variants/참석 관계는 방→run 잠금 아래 하나의 PostgreSQL 트랜잭션으로 게시한다. Redis·LLM은 추천 순위나 최종 시각을 결정하지 않는다. V1~V8은 수정하지 않고 V9를 추가한다.
 
-D2 명시 선호 집계는 [계약](ISSUE_95_CONTRACT.md)의 TBD다. 기존 AVAILABLE을 선호로 추정하지 않으며 해당 종속 구현은 승인 전 보류한다. 자정의 인접 구간은 연속 창으로 보존한다. 신규 A/B/C는 primary 표시 순서이고 기존 plan_type은 legacy 의미를 보존한다.
+D2 명시 선호 집계는 2026-10-07 사용자 승인된 [계약](ISSUE_95_CONTRACT.md)과 ADR-048을 따른다. 자연어 구조화에서 필수 제약과 선호를 분리하고 서버가 참석자별 최대1점·같은 차원 OR·여러 차원 AND·창 전체 충족을 계산한다. #96의 두 공급자 공통 prompt/schema/validator와 조건 JSON 저장·복원을 함께 확장해야 하며 구현은 새 세션에 인계한다. 현재 AVAILABLE을 선호로 추정하지 않고 공개 option/variant/confirmation API를 유지한다. 자정의 인접 구간은 연속 창으로 보존한다. 신규 A/B/C는 primary 표시 순서이고 기존 plan_type은 legacy 의미를 보존한다.
 
 `GET recommendations`, `GET recommendations/alternatives`, `POST recommendations/{optionId}/confirmation`은 기존 참여·HOST·Origin·호출 제한 정책을 재사용한다. 방 응답 recommendation_protocol과 추천 envelope protocol의 정확한 지원 값은 diverse-time-v1이며 legacy는 null이다. typed 선택은 candidate FK와 분리한 recommendation_selections에 전체 분석/option/variant/start/end 튜플로 저장한다. 같은 방·분석·variant FK, 단일 창 containment, active analysis·CLOSED·OPEN round 없음과 구 확정 없음 검사를 적용한다. 결과는 실제 선택 시간과 별도 selection을 제공하며 신규 candidate_id는 null이다. 기존 candidates 읽기와 과거 확정은 유지하지만 신규 protocol의 구 candidate-only 확정은409로 거부한다.
 
