@@ -98,10 +98,11 @@ jobs:
             --arg region "${{ vars.AWS_REGION }}" \
             '{commands:[
               "set -euo pipefail",
+              "umask 027",
               "release_directory=/opt/meet-me/releases/" + $release,
               "install -d -m 0750 $release_directory",
               "aws s3 cp s3://" + $bucket + "/releases/" + $release + "/release.tar.gz /tmp/meet-me-release.tar.gz",
-              "tar -xzf /tmp/meet-me-release.tar.gz -C $release_directory",
+              "tar -xzf /tmp/meet-me-release.tar.gz --no-same-owner --no-same-permissions -C $release_directory",
               "test -x /opt/meet-me/guard/host-release-guard.sh",
               "AWS_REGION=" + $region + " /opt/meet-me/guard/host-release-guard.sh deploy $release_directory " + $image
             ]}')
