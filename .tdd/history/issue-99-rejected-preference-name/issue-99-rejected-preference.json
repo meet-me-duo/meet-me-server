@@ -1,0 +1,30 @@
+{
+  "workItem": "issue-99-rejected-preference",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2RejectedPreferencePostgresTest.kt",
+      "sha256": "0b1c49e8e4d6538b7c2ce26c91e0ddf63f7684db4dd1ad693216952380e6b321"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*D2RejectedPreferencePostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest.rejected time preference with retained place preference preserves hard availability but awards no preference score()",
+    "com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest.rejected place preference with retained time preference preserves both availability and meaningful subwindow without awarding a score()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:33:52.755558Z"
+}

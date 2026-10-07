@@ -1,0 +1,31 @@
+{
+  "workItem": "issue-99-migration-count",
+  "recordedAt": "2026-10-07T07:17:22.914354Z",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "scope": "Integrated schema version count only; prior source/RED archives unchanged, V1-V8 targeted upgrade fixtures unchanged. Exact checks retained.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "beforeSha256": "48ee2cdb9ebbc238d9d26cfb71fbf280b1aa2d5aa7ce4f269a2f5d99f8b63228",
+      "afterSha256": "983b912a2938b233c4c9589e44182aad9cf3a8306d4dc523f19038dffcb197a1",
+      "archivedBeforePath": ".tdd/history/issue-99-migration-count/DatabaseMigrationRunnerTest.before.kt",
+      "changes": [
+        "Integrated additive recommendation V9 and bounded invocation V10: exact migration count/current version 9 -> 10"
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "beforeSha256": "d392b1b06315919ff6cb3365b95949fe37047a953550ad7d50cfd3e8ac563b85",
+      "afterSha256": "c41e2b2a4f73c4d741e1fc9261999ddd38a466e6299bfd0a0b62e689ca1aa359",
+      "archivedBeforePath": ".tdd/history/issue-99-migration-count/CorePersistenceIntegrationTest.before.kt",
+      "changes": [
+        "Integrated additive recommendation V9 and bounded invocation V10: exact migration count/current version 9 -> 10"
+      ]
+    }
+  ],
+  "preservedHistoricalEvidence": [
+    ".tdd/supersessions/issue-96-migration-count.json",
+    ".tdd/history/issue-96-migration-count/issue-22-database-migration.json"
+  ],
+  "providerCalls": 0
+}

@@ -1,0 +1,20 @@
+{
+  "workItem": "issue-99-built-image",
+  "sourceRevision": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+  "testFiles": [
+    {
+      "path": "deploy/tests/built-image-workflow.test.cjs",
+      "sha256": "ff370f2db6a97dc64b45be5bcb77bf5aeca40cff0a95717038e7e3a5266ccd56"
+    }
+  ],
+  "command": "node --test --test-reporter=tap deploy/tests/built-image-workflow.test.cjs",
+  "failedTests": [
+    "image CI checks out the exact PR head and removes persisted credentials",
+    "image CI has read-only repository permissions without production authority",
+    "CI builds and loads an ARM64 local tag using the existing QEMU pattern",
+    "CI verifies the loaded image and uploads only short-lived sanitized proof",
+    "the normal CI quality gate runs the independent image workflow contract"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T12:03:17.974709+00:00"
+}

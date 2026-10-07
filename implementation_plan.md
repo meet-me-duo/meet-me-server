@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-05
+> **최종 갱신:** 2026-10-07
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -9,6 +9,57 @@
 기준으로 한다. 이 문서가 기준 문서와 충돌하면 기준 문서를 우선하고 이 계획을 갱신한다.
 
 ## 운영 규칙
+
+### Issue #99 현재 통합 범위 (2026-10-07 UTC)
+
+**추가 승인 — 첫 V8→V9/V10 전환 pipeline:** 기존 GitHub production 역할·보호규칙 안에서 build/publish와 preflight/deploy를 분리한다. 첫 전환은 게시된 정확 run/attempt·tar SHA·ECR digest와 실제 읽기 결과를 검토하고 명시 승인한 뒤에만 실행한다. 성공한 실제 history·guard 계약을 root 소유 record로 저장하며, 같은 SQL/guard 계약의 후속 main CI 배포는 기존 자동 경로를 유지한다. 모든 main 배포의 영구 수동화·IAM/환경 보호 변경은 승인하지 않았다. 두 EventBridge rule의 사용자 중지는 실제 유지보수 시작 시점에 묶고 지금 요청하거나 실행하지 않는다.
+
+- [x] `[AGENT]` 첫 전환 gate와 같은 계약의 후속 자동 배포를 구분하는 독립 설계 검토. immutable run/attempt 게시·실제 history/READY/current digest 재확인·구 V8 승인 제거·기존 lock 중첩 금지 경계를 확정했다.
+- [x] `[AGENT]` 독립 assertion RED16→동결39 GREEN/skip0. 분리 pipeline·normal-main 읽기 preflight·기존 host guard 연계와7fault/8assertion 탐지·303파일 정확 복원. 사용자 지시대로 추가 host fixture는 실행 없이 폐기했다.
+- [ ] `[AGENT]` 독립 소스 리뷰·변경 없는 mandatory guard·정확 새 HEAD CI와 Draft PR100 기록.
+- [ ] `[SHARED]` 정확 배포 대상/run/attempt/digest·실제 preflight 결과·유지보수 시작 조건의 최종 승인. main/develop 병합·원격 변경·migration·rule 중지는 아직 실행하지 않는다.
+
+**추가 승인 — 시간 배분 조정:** PR100 통합 HEAD51a4c0d의 실제 평가에서 총56.975초, Gemini3회+Luna1회 모두 TIMEOUT·ANALYSIS_DELAYED·winner/후보0·late 미게시가 확인됐다. relay의 Luna HTTP200 저장19.795초는 네트워크·프록시·JSON/파일 저장 포함이며 모델 순수 지연이나 새 정책 성공률이 아니다. 사용자가 전체60초를 유지하며 Gemini최대30초/Luna최대27초/완료3초, 최대3재시도·부족시 조기 폴백을 승인했다. 기존 feature 브랜치·Issue99·PR100에서 독립 시간 경계 RED→구현→리뷰→전체guard/새HEADCI를 진행한다. 이 구현 세션의 유료 호출은 계속0이며 운영 설정·권한·DB 적용은 변경하지 않는다.
+
+- [x] `[AGENT]` processor와 Lunaadapter의15초고정캡을 공급자별15/27초로 일치시키고 single monotonic/durable60초 및 Gemini30/provider57/완료60 경계를 검증한다.
+- [x] `[AGENT]` 독립 mock·loopback/transport·실제Postgres로20초Luna성공·27/57/60late차단·lockwait·4+1·재전달noreset·원자추천rollback을 검증한다. 유료/운영 쓰기는0.
+- [x] `[AGENT]` 시간 배분 후속6f7f54e의 guard654건·CI37599130138 성공 및 전담 평가3시나리오/4분석PASS를 인계했다. 문서/읽기 조회48b8957의CI37610286399도 성공이며 평가 SHA와 제품 바이트 동일성을 구분한다.
+
+**운영키 전달 후속 승인:** 현재 feature/PR100에서 SSM SecureString 참조·runtime env·Compose 전달·entrypoint 기동 조건을 무료 독립 검증한다. 실제 키 값 조회/등록/복사/출력·IAM/환경보호 변경·운영 명령·main merge·서비스 중단은 보류한다. 집 PC 접속은 운영 권한 확대 승인으로 취급하지 않는다.
+
+- [x] `[AGENT]` 새 release의 Luna required mode에서 키 누락/권한/타입/형식 오류가 환경파일 교체와 앱/migration 시작을 막고 기존 Gemini 단독 release는 OpenAI 조회 없이 유지되는 독립 RED/GREEN·결함 검증. 독립18의RED15→GREEN18 뒤 NUL blocker 추가RED1→GREEN19, 7fault/12assertion·9파일 exact 복원, 실제 로컬Compose 합성키/mode byte 보존을 확인했다.
+- [x] `[AGENT]` 운영키82b8d2a의 기존 IAM prefix 검토·문서/guard·CI37614973315·Infrastructure37614973327 성공을 확인했다. 앱 시간 배분·SQL·실제 평가 SHA는 별도 유지한다.
+- [ ] `[USER]` 기존 AWS 인증의 값 없는 운영 metadata/읽기 접근 확인. 기존 preflight37610286680은 production 환경이 refs/pull/100/merge를 거부하여 runner/step 실행0이다. 반복 재실행과 정책 우회는 하지 않는다.
+- [x] `[USER]` AWS 수동 키 등록 완료 보고를 받았다. parameter Name/Type/Version·권한·실제 전달은 검증 전이므로 별도 미완료다.
+- [ ] `[SHARED]` 승인된 운영 시점에 실제 parameter→runtime→앱 전달/인증과 정확 digest/guard/drain 시작 조건 확인. 현재 코드/fixture 성공만으로 운영 Luna 준비를 완료 표시하지 않는다.
+
+
+- [x] `[AGENT]` 지정 PR97 HEAD518c612·PR98 HEAD9a4c4d5·PR94/93 의존, 최신 develop848b968과 규칙·인계를 확인했다. Issue99 생성 후 feature/integrate-recommendations-fallback에서만 조율한다.
+- [x] `[AGENT]` PR97 문서 HEAD CI37585734021 성공, 웹 PR20 정확 HEAD8e56fe0c37cef52e584ff569b97b46b60f28e517을 확인했다. 개별 PR CI를 통합 검증으로 재사용하지 않는다.
+- [x] `[AGENT]` 추천 V9·invocation V10 SQL의 원본 체크섬을 보존하고 ADR-047/048·Luna ADR-049를 합쳤다. 실제 PostgreSQL 빈 DB10버전 및 기존 V8 데이터 업그레이드2건 GREEN.
+- [x] `[AGENT]` 독립 provider/JSON 및 live fixture RED→공통 v3·저장 복원35건 GREEN, 독립 도메인18건 중13 assertion RED, 통합7건 중6 assertion RED를 기록했다. 초기 환경·compile·Mockito fixture 실패는 기능 RED에서 제외했다.
+- [x] `[AGENT]` D2·bounded 추천 원자 게시 구현. 첫 집중73건 및 안전성61건은 각각 실패0·skip0이며 중복 합산하지 않는다. 독립 리뷰의 부분 거부 선호 과점수·잘못된 필수 시간 조건 안전성 문제를 추가 assertion RED→GREEN으로 해결했다.
+- [x] `[AGENT]` 독립 최종 코드 리뷰 PASS·차단0, 고의 결함11/11 assertion 탐지·247개 정확 복구, native OpenAPI parsed JSON 완전 동일 확인. 직렬화 바이트/SHA는 다르므로 동일 SHA로 표시하지 않는다.
+- [x] `[AGENT]` 변경 없는 필수 guard exit0·ktlintCheck/assemble·109suite 전체631건/실패0/오류0/skip4, hook self-tests12 PASS. 첫 전체의 기존 schema 분기수 assertion은 독립 supersession과 focused12 GREEN으로 보완했다.
+- [x] `[AGENT]` Worklog 최종 갱신과 commit/push/Draft PR 준비. Commit/PR은 동일 커밋 예정이며 코드·현재 증거 지문과 완료 근거를 동기화했다.
+- [x] `[AGENT]` 최초 통합51a4c0d commit/push·develop 대상 Draft PR100 게시·CI37591069034 전 단계 성공을 확인했다. 후속 시간배분의 정확 HEAD CI는 별도로 확인한다.
+- [x] `[SHARED]` 전담 실제 평가 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS를 docs/ISSUE_99_LIVE_EVALUATION.md에 기록했다. 구현/CI 호출0, 평가추가18·누적41/50을 구분하며 새entrypoint/운영키의 실제 전달은 미완료다.
+- [ ] `[USER]` 운영 V8guard/digest/드레인 승인. 코드 완료와 배포 준비를 구분하며 main/develop 병합·배포·운영 migration·보안/비밀정보/자동화 변경은 실행하지 않는다.
+
+
+### Issue #96 독립 구현 기록 (2026-10-07 UTC 인계 시점)
+
+- [x] `[AGENT]` Issue #96·#95, PR #93, 지침 6개, project-architecture skill과 기존 Worklog를 확인했다. 깨끗한 `develop` 848b968에서 ff-only pull 후 독립 `feature/96-bounded-luna-fallback`에 검증된 PR #94 기준 bf4edff를 fast-forward했다. 이 기준은 #93 provider-authority를 이미 포함한다.
+- [x] `[AGENT]` 부모가 제공한 저장 Luna 응답 fixture의 canonical SHA-256 `03bb35860232477203710071cb736c185e9c211f418da886dc2bd5d74cc2c6bf`를 확인했다. 원래 sourceHead·모델·입력 참조·referenceDate·검색 배타적 끝·schemaVersion을 보존한다. 직접 모델 호출은 0이며 부모의 평가 횟수·비용을 이 작업의 검증으로 집계하지 않는다.
+- [x] `[AGENT]` 독립 계약 테스트 → 구현 → 독립 결함 리뷰 순서로 제한 폴백, 공통 검증, durable 실행·시도 claim·승자 게시·시간 경계를 검증했다. 실제 assertion으로 결함15개를 탐지하고218개 소스·테스트의 바이트 복원을 확인했다.
+- [x] `[AGENT]` 실제 PostgreSQL, 무료 저장 응답 재생, 합성 HTTP timeout/취소 및 변경하지 않은 필수 hook의 전체526건/실패0/오류0/skip4를 확인했다.
+- [ ] `[AGENT]` push 후 draft PR의 정확 HEAD CI를 확인하고 PR 본문에 실행 링크를 기록한다.
+- [ ] `[AGENT]` 검증 후 commit·push·develop 대상 draft PR을 게시한다. 사용자가 이 범위를 명시적으로 위임했으므로 추가 생성 승인 대기는 없다.
+- [ ] `[SHARED]` #95와 신규 migration 번호 및 최소 통합 계약을 조율한다. 기존 V1~V8을 수정하지 않으며 #95 추천·확정 모델을 이 브랜치에 구현하지 않는다.
+
+승인 계약은 Gemini 최초 1회 + 최대 3회 지수 백오프 Full Jitter 기술 재시도 뒤 OpenAI `gpt-6-luna` 1회다. 60초 전체 예산에 Luna 호출과 완료 시간을 남기며 실제 남은 시간에 맞춰 Gemini 재시도 수와 호출 timeout을 줄인다. 구현 예산안은 Gemini 최대 42초, Luna 최대 15초, 완료 예약 3초다. 성공한 PARTIAL/NO_MATCH/AMBIGUOUS는 기술 실패가 아니다. NETWORK/TIMEOUT/명시적인 일시 rate-limit/SERVER만 폴백하며 인증·권한·결제·quota·잘못된 요청·설정·응답 검증은 구분한다. 두 공급자는 같은 frozen 입력·스키마·공통 validator와 후처리를 사용하고 결과를 혼합하지 않는다. 두 공급자 기술 실패는 입력·배치 보존과 `ANALYSIS_DELAYED`/후보 0/정상 ACK를 유지한다.
+
+동일 Outbox 재전달·프로세스 재시작은 기존 논리 실행의 deadline·호출 상한을 초기화하지 않는다. 명시적 HOST 재시도는 같은 batch/run의 새 version에 해당하는 별도 논리 실행·비용 단위다. 공급자 exactly-once는 보장하지 않는다. 알 수 없는 usage/비용은 null이며 Luna에 Gemini 단가를 적용하지 않는다. 설정은 코드의 변수 참조만 추가하고 비밀값·운영 설정·권한을 읽거나 변경하지 않는다. 운영 배포·병합·유료 API 호출은 이 작업 범위에 없다.
 
 - `[x]`는 구현, 관련 테스트, 문서 검토와 검증이 모두 끝난 작업만 표시한다.
 - `[ ]`는 미착수, 진행 중, 사용자 선택 대기 또는 검증 미완료 상태를 포함한다.
@@ -36,6 +87,14 @@
 - 사용자 개입이 필요하면 `.agents/rules/user-intervention.md`의 `[USER ACTION REQUIRED]` 형식으로 서비스 위치와 단계별 행동까지 종속 작업 전에 안내한다.
 
 ## 현재 진행 요약
+
+- **현재 작업 — Issue #95 (2026-10-07 UTC):** PR #94 `bf4edff`를 포함한 독립 feature에서 재구성 계약과 실제 native OpenAPI를 준비했다. 독립 도메인18·HTTP/동시성15·DB6·게시3·retention1·리뷰3·binding4 총50개 GREEN을 확인했다. 최신 독립 HTTP 테스트의 PR94 baseline15 assertion RED, DB/정밀도7 assertion RED, 삭제 순서1 assertion RED 및 파일 지문을 기록했다. 신규 temporal option/variant·전체 대안·실제 시각 typed selection·legacy 호환·frozen/revision/confirmed 보호를 구현했다. D2 명시 선호 집계는 사용자 직접 승인으로 확정됐으며 제품 구현·검증은 새 세션에 인계한다. 원격 계약 commitfcde6ca와 Draft PR97을 공개했고 독립 최종 리뷰 및 결함 주입5/5탐지를 완료했다. 원본source/test지문을정확복구했다. 최종필수guard와 HEAD627e0b7의 CI37582706551 전 단계 성공을 확인했다. 이번 문서 후속 HEAD의 CI는 별도로 추적한다. 모델 호출0이며 병합·운영 배포·권한 변경은 수행하지 않는다.
+
+- **클라우드 #91/#92·웹 #17 최신 상태 (2026-10-07):** 서버 Draft PR #94의 `06bc741`와 웹 Draft PR #18의 `3c403a2` 정확 SHA CI는 성공했다. 후속 최소 수정은 SSM 압축 해제 시 CI 실행자의 소유권과 넓은 권한을 복원하지 않도록 `umask 027`·`--no-same-owner`·`--no-same-permissions`를 적용하고 독립 정적 검사를 CI에 연결한다. 가드·Kotlin·SQL·기존 테스트는 변경하지 않는다. 실제 모델 원문 해석 9번째 호출은 HTTP200·10.1초로 기대한 5개 날짜 구간/COMPLETE/Plan B/요약과 일치했으나, 10번째 실제 HTTP·DB 배치는503으로 미완료이고 변형 문장은 미검증이다. 운영 설치·병합·배포는 진행하지 않았다.
+
+- **현재 작업 — Issue #91:** 독립 클라우드 환경의 `/workspace/meet-me-server-91`, `feature/91-language-time-context`에서 자연어 시간 문맥 상속과 상대 날짜 기준일을 개선한다. 기준은 2026-10-07 원격 확인 및 `develop` fast-forward pull을 마친 `848b9688451551781769799ff7d27485ea5a5445`다. 기존 서버·웹의 `work` checkout과 Windows 미커밋 원본은 보존한다. 아래 사용자요청2 기록은 기존 작업의 이력이다.
+- **#91 확정 계약:** 상대 날짜는 고정 제출 버전의 `createdAt`을 방 시간대로 변환한 입력별 지역 날짜에 고정한다. 평일 19~21시·이번 주 목요일 20시부터·주말 14~19시 예시는 부모 종료 21시를 상속하고 해당 목요일의 19~20시를 제외한다. 명시적 오전·오후·불가·부정·충돌을 우선하며, 부모 없는 열린 경계는 임의로 완성하지 않는다. 공개 API·DB·matcher 계약을 유지하고 입력별 기준일과 prompt를 전달한다. 원문 전체를 안전하게 해석할 수 있는 제한된 시간 표현만 adapter 내부에서 문맥 처리하고, 공급자 schema/ref/조건 검증 실패를 복구 성공으로 숨기지 않는다.
+- **#91 검증 및 승인 범위:** 독립 테스트 설계, RED/GREEN, 원문 문맥 처리·합성 provider fixture와 실제 결정론적 매칭, 주 경계·서울 자정·재시도/재분석 기준일, 의도적 결함 주입, 독립 리뷰와 필수 guard를 실행한다. 합성 fixture는 유료 Gemini·운영 데이터 접근 없이 검증한다. 추가 사용자 요청에 따라 같은 모델·설정의 실제 평가도 필요하며, 기존 테스트 키와 평가 비용 상한 확인 전 호출하지 않는다. fixture 결과를 실제 모델 정확성으로 표시하지 않는다. Draft PR까지 준비하고 병합·운영 배포는 최종 승인 게이트를 유지한다. #92/웹 #17은 별도 텍스트 인계와 미확정 계약 검토 후 분리한다.
 
 - **현재 로컬 조사 (사용자요청2):** 후보 개수뿐 아니라 자연어 의도·Gemini 시간/장소 구조화·하드 배제·선호·모호성·후보 선택·결과 한국어 문구를 종단 평가한다. 시작 시 clean `main c43a30b`, `develop` fast-forward pull 후 `5d8c32e`를 확인했다. `chore/candidate-scenario-investigation`에서 재현을 시작하고 결함 수정 범위가 확정되어 `fix/candidate-semantics`로 rename했다. 별도 worktree는 만들지 않았으며 작업 경로는 `C:/Users/jinhy/Projects/meet-me/meet-me-server` 한 개다. 이번 변경은 main/develop에서 편집하지 않는다.
 - **계획/구현 경계:** 기존 A=전원 대면, B=전원 비대면, C=부분 참석 유형·유형별 최대 한 카드·시간 전체 묶음 계약을 유지한다. 합성 provider fixture 23개는 실제 adapter·매칭·result HTTP를 실행하되 repository는 mock이다. 기존 개발 키·고정 모델의 실제 호출은 전후 각 3건, 합계 6건으로 끝냈다. 실제 모델·parser/matcher/result service 검증을 PostgreSQL/Redis/브라우저 전체 E2E로 표시하지 않는다. 시간/장소 다양성 카드 재설계와 시간·장소 결합 지원 스키마는 결정 대기다.
@@ -941,3 +1000,252 @@
 실행 근거는 `.codex/tdd-evidence/candidate-publication-verification.json`이다. hook이 실제로 받는 `tool_name=Bash`, `tool_input.command` 형식과 전체 XML329개를 확인했다. 앞선 exec_command/cmd 형식의 이벤트는 hook이 무시했으므로 그 exit0을 실제 게이트 성공으로 사용하지 않았다. 실제 전체 gate 이후 commit126cd8f·push·PR #88 생성은 성공했고 작업 브랜치의 검증 코드 지문은 유지한다. 웹 companion 검증 전 서버 병합·운영 배포는 아직 없다.
 
 2026-10-05 PR #88의 codehead126cd8f Linux CI #37277475001와 기록headc4a6b1d CI #37277747962가 모두 성공했고 Issue 연결 검사도 성공했다. 원격 CI의 Ubuntu 품질 게이트와 배포 정책·Compose secret fidelity·DB credential refresh·Nginx 검증 단계가 전부 성공임을 확인했다. CI 기록만 추가한 최종 head도 GitHub 검사를 확인한 뒤에만 병합한다. 원격 develop5d8c32e/mainc43a30b는 유지하며 웹 companion 확인 전 서버 병합·배포하지 않는다.
+
+## 2026-10-07 — Issue #91 독립 클라우드 구현 시작
+
+- [x] `[AGENT]` 공식 환경 도구 준비와 baseline 검증: JDK 17·체크섬 검증 Gradle 9.7.1, 서버 gate 329건/실패0/skip2, 웹 unit94/E2E257+skip1. 유료 모델·운영 데이터 접근 없음.
+- [x] `[AGENT]` 열린 Issue #91과 최신 develop `848b968` 확인, 깨끗한 별도 develop worktree에서 fast-forward pull 후 지정 feature 브랜치 생성. 원본 서버·웹 work checkout 보존.
+- [x] `[AGENT]` 독립 계약 테스트와 유효한 assertion/TODO RED 근거 수집. 7개 RED 기록의 테스트 지문을 고정했다.
+- [x] `[AGENT]` 입력별 immutable referenceDate·문맥 상속 구현 및 원문 전체 의미/유일 부모/부정·명시 시각·32조건 한도 검증. 독립 설계한 37개 대상 테스트 GREEN과 지원 범위 내 독립 코드 리뷰 PASS를 확인했다.
+- [x] `[AGENT]` 실제 processor/result·합성 adapter/matcher 회귀, 독립 리뷰·의도적 결함 주입 6/6 탐지와 필수 guard 통과. 최종 전체 테스트 366건/실패0/오류0/기존 skip2.
+- [x] `[AGENT]` 검증·한계·정확한 SHA를 기록하고 #91 Draft PR 및 후속 인계 준비.
+- [x] `[AGENT]` 사용자 후속 요구에 따라 제한적인 정규식 의미 게이트를 LLM 중심 해석으로 교체하고 새 독립 RED·결함 주입·리뷰를 완료한다.
+
+확정 범위는 #91이며 #92/웹 #17의 미확정 수정 라운드·비용·멱등 계약은 별도 결정 대상으로 유지한다. 서버 production 코드는 로컬에서 아직 변경되지 않았음을 텍스트 인계로 확인했다. Library ZIP 전송은 공식 경로 두 번 실패 후 중단했고 원본 파일 덮어쓰기는 하지 않았다. 실제 Gemini 성공이나 운영 복구 완료를 합성 fixture 결과로 단정하지 않는다.
+
+### 후속 설계 전환 및 평가 실행기 인계
+
+- 기존 제한 문맥 구현 `f70536e`는 Draft PR #93으로 보존했다. 해당 SHA의 CI #37556137445와 Issue Lifecycle #37556137512는 성공했다. 병합·배포는 실행하지 않았다.
+- 독립 아키텍처 검토에서 유효한 공급자 SUCCESS도 원문 정규식으로 거부하거나 덮어쓰는 문제가 확인됐다. 사용자 후속 요구에 따라 LLM 중심 prompt·immutable referenceDate·구조 검증을 유지하는 설계로 전환한다. 기존 제한 문법의 GREEN을 일반 자연어 정확성 근거로 사용하지 않는다. 기존 테스트·근거의 대체 이유와 새 독립 검증을 기록한 뒤 PR 내용을 갱신한다.
+- 별도 평가 작업이 저장소에서 가져올 수 있도록 `.codex/evaluation/issue-91.gradle`과 JUnit 자동 실행이 없는 실행기를 추가했다. 고정 23사례와 원문 반복 2회, 이전 예상 결과 지문을 유지했다. 비용 없는 저장소 dry run은 호출0·모든 사례 UNRUN·NOT_EXPLICITLY_ARMED를 확인했다.
+- 실제 실행은 별도 평가 작업의 단일 소유다. 이 구현 작업의 공급자 호출은 countTokens 포함0이다. 합산 output 상한 검증 보고와 달리 input100k 예약의 하드 상한 근거는 아직 없으므로 비용 확인 플래그 기본false를 유지한다. 평가 결과·키·원시 로그는 커밋하지 않는다.
+- #92의 별도 수정 라운드와 웹 #17 연결은 후속 승인 범위이며 독립 테스트 작성 중이다. #91 설계 전환과 실제 모델 평가를 우선하고, 기존 미확정 결과 입력 보존 계약을 별도 검증한다.
+
+### 2026-10-07 #91 독립 테스트 및 웹 인계 상태
+
+- 독립 문맥·기준일 테스트 18개: 컴파일 후 예상 RED 11개를 고정하고 첫 GREEN을 확인했다. 독립 검토에서 공급자 AVAILABLE 합집합 보정과 명시 오전 종료 상속 누락을 발견했고 별도 회귀 4개 중 3개 assertion RED를 고정했다. 사용자 정확한 filler 원문 회귀를 포함한 총 22개 대상 테스트가 수정 후 모두 통과했다.
+- 제출 버전 생성 시각의 방 지역 날짜를 parser 입력에 전달하고, prompt 및 adapter 내부 전체 입력 제한 문법으로 부모 종료와 날짜별 배제를 처리한다. 공급자 schema/ref/condition 검증 실패, 다른 rejection과 장소 조건은 복구로 덮지 않는다. 최종 전체 guard·결함 주입·Draft PR은 아직 미완료다.
+- 웹 #17 인계 ZIP은 6개 청크와 전체 SHA-256, 7파일 SHA-256을 모두 검증해 저장소 밖의 안전한 인계 폴더에 보존했다. 기존 웹 checkout 덮어쓰기와 legacy 코드 배포는 하지 않았다.
+- 실제 평가 계획은 합성 23사례 + 원문 반복 2회, 최대 25호출이다. 고정 gemini-3.8-flash/LOW/15초/32768출력/1attempt를 유지한다. 현재 GEMINI_API_KEY 없음, 실제 호출 0회, 사용자가 최대 25회·총 USD0.30 비용 상한을 승인했으며 secure 키 설정은 별도 대기다. 기존 방당 10원 설정을 평가 승인으로 사용하지 않는다. 승인된 USD0.30 상한은 매 호출 최대 출력 비용 예약 시 일부 사례를 미실행으로 남길 수 있다.
+
+- 2026-10-07 추가 진행: provider 성공 응답이 원문 충돌·부정·조건부 장소를 숨기는 회귀 10개를 독립 설계해 7개 assertion RED를 고정했다. 제한 문맥을 NotApplicable/Resolved/Rejected로 구분하고 성공 조건에도 전체 원문 안전 검사를 적용 중이다. 일반 시간·장소와 안양역 보존을 검사한다. 추가 경계 검토는 정오 상속과 변환 전 공급자 area-name 전체 배치 검증을 확인한다.
+- 웹 별도 `feature/17-analysis-recovery-cloud` worktree에서 인계 코드 API/lint/typecheck/build, 단위121개, E2E305개/skip1/실패0 검증을 완료했다. RecoveryPanel의 #92 API 연결은 아직 미구현이다. #92의 no-op 재사용·라운드 generation/request ID·구 클라이언트/rollback 계약은 독립 설계 인계에서 결정 항목으로 유지한다.
+- 최종 독립 회귀는 총 37개이며 모두 GREEN이다. 정오·전체 배치 장소 이름 검증·종료가 명시된 시간과 장소 보존 3개 중 2개 assertion RED, 야간 날짜 모호성과 밤 12시 자정 2개 assertion RED를 추가로 고정했다. `밤 1~6시`는 모호하여 미반영하고 `밤 12시`는 자정으로 처리한다. 6개 RED 기록의 테스트 파일 해시는 변경되지 않았다. 결함 주입과 전체 guard는 별도 실행 중이며 실제 모델 정확성은 아직 미검증이다.
+- 현재 작업의 키 boolean 확인은 `exists=false/nonempty=false`다. 다른 새 환경의 키 존재 확인을 현재 작업의 인증 성공으로 사용하지 않으며 키를 환경 간 복사하지 않는다. 실제 평가 하네스는 별도 scratch에 준비했고 공급자 비용 경계 검증 전 실제 호출을 차단한다. 고정 23사례+원문 반복 2회 계획에 새 야간 fixture 2개를 자동 대체하지 않는다.
+- 첫 전체 guard는 366건 중 기존 prompt 원문 행 보존 계약 1건이 실패했다. 기존 테스트를 변경하지 않고 assertion RED를 별도 고정한 뒤 `reference_date → ref → locale → rawText` 한 행으로 수정했다. 기존 `ref → locale → rawText` 연결과 새 기준일 연결을 함께 보존하며, 기존 6개와 새 37개 총 43개 대상 GREEN·ktlintCheck 통과 및 독립 format 리뷰 PASS를 확인했다. 최종 source 지문으로 결함 주입과 전체 guard를 다시 검증한다.
+- 최종 지문의 결함 주입 6개를 다시 실행해 모두 assertion 실패로 탐지했고 원본 바이트를 복구했다. 2026-10-07 01:12 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`가 종료 코드0으로 통과했다. `ktlintCheck assemble test`는 61개 suite/366건/실패0/오류0/skip2이며 기존 유료 live probe와 OpenAPI export opt-in만 skip했다. 독립 리뷰 역할은 `/root/issue91_test_design`, 판정은 지원 범위 내 PASS다. 고정 테스트 7개 기록과 최종 소스·결함 검증 지문은 `.tdd/red/issue-91-*.json` 및 `.tdd/verification/issue-91-time-context.json`을 따른다. 원시 로그는 ignored `.codex/tdd-evidence/`에만 보존한다. 새 작업 인계를 위해 검증한 소스·테스트·문서·요약을 별도 feature 커밋으로 보존하며 SHA는 Git 이력으로 추적한다. 실제 Gemini 평가·#92 연결·Draft PR·병합·운영 배포 완료를 의미하지 않는다.
+
+
+### #91 LLM 중심 계약 전환 (2026-10-07)
+
+- 사용자 후속 요구와 독립 아키텍처 검토에 따라 `KoreanTimeContextResolver`와 adapter 원문 semantic gate를 제거했다. 유효한 provider SUCCESS의 시간·장소를 보존하고 AMBIGUOUS를 합성 성공으로 복구하지 않는다. Prompt는 일반 부모/자식 시각과 AVAILABLE union minus UNAVAILABLE, immutable reference_date를 안내한다. API·모델·SDK·재시도 설정은 변경하지 않는다.
+- 독립 신규 authority15개는 기존 `20bd3b4` 코드에서 컴파일 후 예상 assertion7개 RED를 확인했다. 기존37개를 행별 검토해 raw lexical 기대18개를 대체했고 구조/provider14개와 기준일5개를 보존했다. 기준일의 성공 pipeline은 명시적 provider SUCCESS fixture로 바꾸고 정확한 five-window 기대값은 유지했다. 변경된 테스트의 34개 migration 묶음도 기존 코드를 복원해 assertion7개 RED를 재확인한 뒤 지문을 고정했다. 원문 로그는 ignored `.codex/tdd-evidence/`에만 있다.
+- 이전7RED·6결함 근거를 `.tdd/history/issue-91-lexical-f70536e/`로 바이트 그대로 옮기고 `.tdd/supersessions/issue-91-llm-boundary.json`에 대체 사유와 보존 본문 지문을 기록했다. 이전 커밋과 성공366건은 당시 제한 문법 계약의 이력이며 새 설계의 검증 근거로 재사용하지 않는다. 원문 행 보존의 기존 prompt 계약은 테스트 바이트가 같아 해당 RED 근거를 활성 트리에도 그대로 유지한다.
+- 추가 실제 평가5사례는 실제 응답 관측 전에 독립 작성자가 고정했다. 평일6–9/7–10·주말1–6·명시AM부모·독립안양역의 정확한 구간·참가자·COMPLETE·요약을 유지하며 모델 결과에 맞춰 변경하지 않는다. 공급자 호출은 별도 부모 지정 평가 작업만 수행한다. 구현 작업의 실제 호출은0이다.
+- #92 서버 production과 웹 #17 연결은 별도 worktree와 담당자로 병렬 진행한다. 실제 OpenAPI 생성과 서버 Gradle은 공유 캐시 충돌을 피하도록 root가 순차 실행한다. 새로운 분석 라운드와 비용 상한은 별도 계약이며 모델 의미 미리보기 API를 추정하여 구현하지 않는다.
+
+- 새 경계 최종 검증: authority15+보존provider14+reference5가 GREEN이며 새 결함7개(lexical복귀,상수덮어쓰기,모호성성공변환,worker기준일,ref검증누락,날짜/요일검증누락,area명검증누락)를 모두 assertion으로 탐지했다. 실제 소스를 복구하고 독립 reviewer가 source3/test6/삭제resolver/archive8의 지문을 다시 확인했다. 리뷰 기록은 `.tdd/reviews/issue-91-provider-authority.json`, 새 결함 기록은 `.tdd/verification/issue-91-provider-authority.json`이다.
+- 2026-10-07 01:57 UTC 변경하지 않은 mandatory tdd_guard는 exit0, ktlintCheck/assemble/test 모두 성공했다. XML62suite/369건/실패0/오류0/기존skip2다. 새6개 offline 공유원장 테스트가 잠금·누적25회/USD0.30·미정산예약·중복·정책변경을 검사한다. 기본25/확장30 dryrun은 모두 UNRUN/호출0, synthetic replay는 예상PASS1/foreignrefFAIL1/UNRUN28이며 실제 공급자 응답이나 새prompt 모델 정확성 근거가 아니다.
+- 최종 feature commit/push 및 Draft PR #93의 설명을 현재 LLM 중심 경계로 갱신한다. 커밋 해시는 Git 이력으로 추적한다. 실제 모델 평가의 input100k 예약 하드 상한은 아직 별도 확인이 필요하고 live 기본flagfalse다. 새 outputdir이 승인을 초기화하지 않도록 approvalID+sharedledgerdir를 필수로 하며 미정산 예약은 전체 비용을 유지한 채 중단한다. 실제 모델·운영 데이터·병합·배포 호출0. #92 생산 컴파일 성공과 웹 mock검증은 별도이며 실제 PostgreSQL 확장 경계/OpenAPI/native연결 최종gate는 미완료다.
+
+## 2026-10-07 — Issue #92 입력 보존 수정 라운드
+
+- [x] 별도 develop 기반 feature worktree와 #91 의존 commit 보존, 독립 설계 검토 및 보수적 계약 승인.
+- [x] ADR-046으로 CLOSED 불변·수정 cohort·명시적 분석·영속 멱등·활성 pointer·3회 논리 분석 한도 확정.
+- [x] 독립 PostgreSQL/HTTP/실제 잠금 테스트 17개 컴파일 후 missing reopen endpoint 404 assertion RED 확인·지문 고정 (`.tdd/red/issue-92-correction-round-compatibility.json`). 앞선 compile 오류는 RED에서 제외했다.
+- [x] immutable version 복원·migration·라운드 API·owner 수정·worker 활성 상태·확정 경쟁 기능 구현 및 실제 경계 검증.
+- [x] 최종 독립 결함 주입9개 전체 탐지와 동결195개 파일 원본 복원.
+- [x] 결함 완료 후 최종 독립 리뷰 PASS 및 source/test 동결 지문 일치.
+- [x] 변경하지 않은 전체 필수 guard: 78suite·438test·실패0·오류0·opt-in skip4.
+- [x] 실제 native OpenAPI 생성과 웹 #17 최초 RecoveryPanel 연결, draft/auth/cache/늦은 응답 검증.
+- [x] 웹 후속 unit176·browser329 PASS/기존 skip1·flaky0와 최종 head `3c403a2667d4a3921ba8a661fb2a4e9758b220ed` 확인.
+- [x] root의 서버 로컬 feature commit·push `bf367bee46bbb2cc78b15f1f418c8e09efc29d0e` 및 Draft PR #94 게시.
+- [x] 서버 이식성 checkpoint `83a29f60537b5df883cc608d0e8e920747e447a2`의 정확한 head CI #37567631982 전체8단계 성공. 후속 guard commit의 CI는 별도 확인하며 main/develop 병합과 운영 배포는 보류.
+- [x] 별도 승인된 V8 lifecycle guard: 독립 계약·유효 assertion RED → 생산 script 구현 → 최종37검사 PASS·strict15결함 전체 탐지·selected210 정확 복원 및 기존196src 바이트 불변 확인.
+- [ ] guard 최종 독립 리뷰·복원 뒤 JVM gate invocation·동일 feature commit/push·정확한 새 head CI. 실제 호스트 설치는 별도 운영 조건이며 미실행이다.
+
+#91의 최신 LLM 중심 구현 `1ddbd26747936a56a0f6f2f380d1ef066fb41ed7`을 #92 feature에 통합했다. #92 생산 기능과 native API 계약은 아래 실제 검증을 통과했다. 구현·테스트 담당자의 실제 공급자 호출과 운영 데이터 접근은 0이며 별도 평가 담당자의 공급자 관측은 아래에 분리한다. 논리 분석 한도를 물리 API 호출 또는 USD 상한으로 보고하지 않는다.
+
+### 현재 #92 검증·출판 상태
+
+아래 상태가 뒤의 초기 진행 기록과 미완료 표현을 대체한다. 과거 RED·수정 과정은 이력으로 보존한다.
+
+- 통합 전후 최초 경계 44개 GREEN 이후, 최종 기능·migration·Redis·권한·6개 모임·native schema selector는 총66개/실행65개 PASS/diagnostic capture1skip/실패0/오류0이다. root 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-final66-native.json`이다. skip은 진단용 schema capture이며 검증 assertion을 생략한 성공으로 계산하지 않는다.
+- 실제 OpenAPI SHA-256은 `22225ba0db80bf9afb31fa641f8edc385a2dda69abf83f0c063fb18741890ce0`이다. 필수 request5/round3, 기본 false, revision_round anyOf(object ref,null)를 native JSON에서 확인했다. 독립 JSON Schema와 실제 TypeScript 생성 결과도 `RevisionRoundResponse | null`을 보존한다. generated JSON/타입을 손으로 고치지 않았다.
+- root의 신규 worker fixture에서 정확한 stub6개를 보강한 detector baseline35개 GREEN 뒤 최종 결함9개를 모두 DETECTED로 확인했다. 각 실행 당시 동결195개 파일 원본 바이트를 복원했으며, 앞선 fault3 SURVIVED는 탐지 성공으로 계산하지 않는다. `.tdd/verification/issue-92-recovery-boundaries.json`은 현재 실제 detector/helper5개와 source112개 지문을 추적한다. 이후 추가 테스트를 포함한 새196개 파일 전체를 다시 결함 주입·복원했다는 주장은 하지 않는다. 독립 리뷰는 production39개·source112개 불변과 실제 detector5개·결함9개 이력을 확인했고 source blocker0이다.
+- 첫 전체 guard의435개 중55개 fixture 실패 뒤 독립 저자가 활성 포트/정확한 버전 조회 등 fixture 정합을 보완하여 legacy79개 GREEN을 확인했다. RED 근거의 비실패 sidecar 지문만 좁힌 이유·원본 이력은 [.tdd/supersessions/issue-92-legacy-fixture-compatibility.json](.tdd/supersessions/issue-92-legacy-fixture-compatibility.json) 및 `.tdd/history/issue-92-legacy-fixture-compatibility/`에 보존한다. 원래 실제 실패 테스트의 기대·실패·sourceRevision·실행 명령·로그는 바꾸지 않았으며, 이 과거 근거를 현재 의존 전체의 신규 RED로 과장하지 않는다.
+- root는2026-10-07 03:09:19 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`의 최종 exit0을 확인했다. `ktlintCheck assemble test`는78suite/438test/실패0/오류0/opt-in skip4이고 guard 단위 검증12개도 통과했다. legacy HOST/auth/idempotency/worker 기존 테스트와 신규503 회귀3개가 이 전체 GREEN에 포함된다. source112개와 adapter `d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17`은 불변이다. 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-full-guard.json`이며 문서 owner의 source/test/harness 변경·Gradle·모델 호출은0이다.
+- 웹 #17의 unit174·결함7과 push head `059f049a4832effb2e2cc844d33f4cdd50b5dc1e`는 앞 단계의 이력이다. 최종 head는 `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`이며 unit176 PASS·browser329 PASS/기존 skip1/flaky0·오류0, 결함8 탐지/정확한 원본 복원과 구/신 번들 합성6검사를 완료했다. native22225 지문은 동일하다. 이 웹 결과를 서버 CI·운영 배포 완료로 사용하지 않는다.
+- 구 웹 정확한 source `68c41f7619e7f1a28b2b597cb56867e4d3e852bc` 재빌드 bundle과 최초 baseline의 바이트 동일성을 확인한 뒤 구/신 실제 bundle 격리 브라우저6검사가 모두 PASS했다. 구 PUT409는 draft·revision1을 유지하고 close200은 OPEN/no analysis이며 hosting 교체만으로 구 탭은 바뀌지 않았다. 명시적 reload 후 신 UI는 현재 round/revision으로 저장하고 구 Join은 ROOM_CLOSED·신 Join은 숨김이다. 신 웹+신규 필드 없는 구 계약은 raw-only 저장/HOST close를 유지한다. 실제 backend/model/운영 호출0인 합성 HTTP 검증이며 real cross-version backend/운영 Origin 검증과 구분한다. 새로고침은 미저장 구 draft를 잃게 하므로 먼저 복사하고 신 웹에서 다시 입력·명시적 저장·결과 확인하는 안내·지원 및 운영 갱신 gate는 아직 미구현/미실행이다. 상세6검사와 잔여 조건은 [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 기록했다.
+- 합성 모임6개의 기대 시간·참석자·실제 결과·검증 범위는 [ISSUE_92_SCENARIO_RESULTS.md](docs/ISSUE_92_SCENARIO_RESULTS.md)에 추적한다. 실제 PostgreSQL/HTTP/application processor/matcher이며 자연어 port는 mock, Redis consumer end-to-end와 실제 모델 정확도 증거는 아니다.
+- 앞선 PR 생성 거절은 최초 게시 금지의 명확한 철회가 없었던 시점의 이력이다. 이후 사용자가 직접 게시를 명확히 승인하여 root가 서버 `bf367bee46bbb2cc78b15f1f418c8e09efc29d0e`를 push하고 [서버 Draft PR #94](https://github.com/meet-me-duo/meet-me-server/pull/94)(base develop)와 [웹 Draft PR #18](https://github.com/meet-me-duo/meet-me-web/pull/18)(base main)을 게시했다. 이는 새 직접 승인에 따른 재개이며 이전 거절을 우회하지 않았다. 웹의 정확한 head `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`의 CI #37566261043은 unit176·browser329/기존 skip1 검사를 포함해 성공했다. 서버 최초 head bf367의 CI #37566280630은 합성 모임6개 결과 기록의 `/workspace` 경로 권한 때문에 실패했다. 독립 저자의 이식성 수정 뒤 해당6개 검사는 통과했고 root의 변경하지 않은 전체438 gate는 2026-10-07 03:34:18 UTC에78suite/438test/실패0/오류0/opt-in skip4로 다시 통과했다. 독립 리뷰 PASS 뒤 이식성 수정·검증·기록3파일을 checkpoint `83a29f60537b5df883cc608d0e8e920747e447a2`로 commit/push했고 정확한 새 head의 CI #37567631982는 전체8단계가 성공했다. 별도 guard 생산 파일은 이 이식성 checkpoint에 포함하지 않는다. 기능 기대·운영 정책·평가 도구를 완화하지 않았으며, 이 CI 실패를 기능 GREEN 또는 전체 CI 성공으로 기록하지 않는다. 병합·운영 배포는 실행하지 않았다.
+- 사용자가 별도로 승인한 V8 lifecycle guard는 독립 실제 script의 세 assertion RED(writer가 실행 중인 migration·구 image fallback·sticky marker 부재)를 확인한 뒤 생산 source를 구현했다. 첫 독립31검사와 설치된 READY guard를 사용하는 기존 credential-refresh 검사를 통과했다. 후속 리뷰 경계의 실제 TSV extra empty TAB·미승인 current에서 승인 target rollback·신규 static CI 연결 assertion RED를 확인하고 최소 수정 뒤 해당 runtime2개와 static9개 GREEN을 확인했다. FD 관측 실패·manifest 없는 기존 설치 artifact의 조기 거절도 별도 assertion RED 뒤 최소 수정했다. 최종 현재 source의37개 검사는381.325초/실패0/오류0으로 통과했다. source hash는 launcher `57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f`, installer `3ee4718626ef2725503486e5ca635eff7a5d95b173d6b3aba64f34cdfab5b1d1`다.15개 strict 결함은 모두 DETECTED이며 각 실행 뒤 선택한210개(99main Kotlin·81test Kotlin·25deploy·5CI) SHA를 정확히 복원했다. 이 선택 집합은 resources를 제외하므로 기존 source/test 전부 동결했다고 확대하지 않는다. 별도로 tracked src main/test196개를 이식성83a checkpoint와 비교하여 resources를 포함한 바이트 불변도 확인했다. 최종 독립 리뷰·복원 뒤 JVM gate invocation·새 head CI는 확인 대기다. source·독립 테스트·문서·근거는 같은 후속 feature commit으로 보존할 예정이며 아직 새 commit/push/CI 성공을 기록하지 않는다. 새 guard 전체 완료로 표시하지 않으며 이식성 checkpoint에는 guard 생산 코드와 테스트가 포함되지 않는다. [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)는 root 호스트 선행조건·operator 설치·직접 관리자 실행의 잔여 경계·캐시 구 웹 안내·읽기 전용 smoke를 기록한다. 실제 host guard/unit 설치·automation pause/drain·migration·서버/웹 배포·운영 smoke·develop/main 병합은 미실행이다. main CI 이후 자동 CD 경계를 유지하며 배포 준비 완료로 보고하지 않는다.
+
+- 부모 단독 실제 Gemini 평가는 7/50회에서 작은 연결 확인 요청(6번째)200·OK, 제보 원문 요청(7번째)503·UNAVAILABLE/출력 없음으로 보고됐다. 실제 원문 정확도와 실제 모델 HTTP·DB 검증은 미확인이며 합성 모임6개 결과와 구분한다. 이 root의 공급자 호출·평가 도구 변경은0이다.
+- root의 변경하지 않은 JVM 필수 guard invocation은2026-10-07 03:48:09 UTC에 exit0(약9초)으로 통과했다. Gradle은 up-to-date/incremental이며 이 시각438개를 새로 실행한 결과가 아니다. 유지한 실제 XML은03:32–03:34의 fresh 이식성 검증78suite/438test/실패0/오류0/skip4이고 Kotlin source는 동일하다. 새 배포 guard의 최종37검사 PASS와15결함 전체 탐지는 위 별도 근거를 따른다. Compose secret fidelity는 통과했다. 로컬 Nginx 검사는 최초600 config의 EACCES, 바이트 동일644 fixture의 health timeout을 성공으로 계산하지 않는다. 같은 fixture에서 테스트 프로세스의 proxy 변수만 비운 후 통과했으며 원본 script/config 바이트·권한·운영 설정은 변경하지 않았다. 상세 이력은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-v8-nginx-check/manifest.json`이고 정확한83a CI의 원본 Nginx 단계도 성공했다. 이 결과가 실제 호스트 설치·운영 smoke를 의미하지 않는다.
+
+### 초기 구현·검증 진행 이력
+
+
+- #92 구현 역할은 `/root/server92_implementation`, 테스트 설계는 `/root/issue91_test_design`로 분리한다. 기존 17개 frozen test는 변경하지 않았다. Gradle은 shared cache 충돌을 막기 위해 root만 순차 실행한다. 첫 compile/targeted GREEN, 추가 worker/confirmation/retention/rollback RED·fault injection·OpenAPI export·독립 review는 아직 확인하지 않았다. 외부 모델/운영 접근 0.
+- 알려진 승인 계약의 제약: quota0에서도 OPEN/저장은 허용하지만 새 version 저장 후 REUSED가 불가능하여 새 분석409 뒤 OPEN이 유지될 수 있다. 별도 cancel API를 임의 추가하지 않았고 사용자 UI와 최종 보고에서 이 제한을 명시한다.
+- 첫 production compile 성공. 첫 phase1 17개 중 16개 통과, analyze-first의 늦은 PUT는 올바른409 후 테스트 외부 TransactionTemplate의 UnexpectedRollbackException을 확인하여 독립 저자가 rollback-aware wrapper를 보완한다. 해당 변경 파일의 RED 지문은 다시 기록한다. production lock/state를 완화하지 않았다.
+- 독립 review에서 V8 CONSUMED outcome NULL을 PostgreSQL CHECK UNKNOWN으로 허용하는 결함을 발견했다. 실제 PostgreSQL에서 UPDATE 성공1/expected exception 없음의 assertion RED를 확인 (`.tdd/red/issue-92-consumed-null-outcome.json`), 최소 IS NOT NULL 제약을 추가했다. 새 테스트의 frozen 지문은 유지되며 GREEN 재검증 대기다.
+- 추가 승인한 viewer.context_id는 같은 이름·역할의 세션 교체에서 자기 원문 cache를 분리하는 본인 participant opaque UUID hint다. credential/session ID와 다른 참여자 ID를 노출하거나 권한 증명으로 사용하지 않는다. 독립 실제 HTTP 회귀 3개 RED를 먼저 확인한 뒤 additive DTO mapping과 native OpenAPI에 반영한다.
+- 후속 실제 PostgreSQL 검증: 수정된 rollback-aware fixture를 포함한 phase1 17개와 NULL outcome 1개가 모두 GREEN. viewer.context_id 독립 HTTP 3개는 컴파일·setup 성공 후 예상 assertion RED (`.tdd/red/issue-92-viewer-context.json`)를 고정하고 ViewerParticipation→RoomLifecycle→Web DTO에 본인 opaque UUID 최소 mapping을 추가했다. 21개 재GREEN 및 worker/역사 버전/확정 경쟁/rollback/retention·OpenAPI·최종 guard는 대기다.
+
+
+### #92 기존 클라이언트·배포·읽기 전용 확인 인계
+
+- 현재 deploy script는 V8 적용 중 구 writer/worker를 유지하고 health 실패 시 previous image로 돌아간다. explicit rollback과 정기/이벤트 DB credential refresh도 구 앱을 실행할 수 있다. 실제 운영에 접근하지 않고 저장소 script만 읽어 확인했으며 ADR-046에 경로·위험·최소 변경 설계를 기록했다. 현재 배포 준비 완료가 아니다.
+- 후속 배포 gate: 공통 잠금과 지속적인 최소 호환 release guard를 모든 재시작 경로/기존 설치 script에 먼저 적용 → 앱 전체(writer/worker/relay/retention) quiesce → breaking marker → V8 migration → 호환 새 서버 health/조회 계약 → native schema 웹/capability → 합성 확인 → 접근/credential refresh 재개. marker 이후 이전 image 자동 복귀 금지와 호환 roll-forward/점검 유지가 필요하다. 스크립트 구현에는 독립 high-risk 테스트 RED·fault/review가 선행하며 현재 설계만 준비했다.
+- 구 웹+새 서버 OPEN의 COLLECTING·round 없는 PUT409·close200 no-op은 데이터 보호이며 수정 UX 호환 완료가 아니다. 웹 선배포도 기존 탭/캐시를 없애지 못한다. 잔여 구 화면 한계를 operator gate에 남기고 새로고침/업데이트 웹에서 본인 입력 확인 안내를 준비한다. 원문 draft를 강제로 지우거나 저장 성공으로 오인하지 않는다.
+- 배포 후 읽기 전용 확인은 승인 이후 healthz/내부 actuator health/native OpenAPI, 격리 합성 fixture의 GET room/own submission/candidates metadata·권한만 대상으로 한다. 운영 원문/증명 출력·다른 참여자 접근·POST/PUT/재분석/확정은 포함하지 않는다. 배포/인프라 변경/실제 운영 smoke는 실행하지 않았다.
+- source format은 root가 완료했으며 format으로 변경된 독립 테스트의 정확한 지문 RED 재확인은 root/독립 저자가 담당한다. 생산 구현 owner는 테스트·평가 도구를 변경하지 않으며 현재 source 쓰기를 멈추고 target21·boundary23·native OpenAPI 검증 결과를 기다린다.
+
+- #91 최신 feature fast-forward와 #92 변경 재적용 뒤 PRD FR-008D는 LLM 중심 해석 계약을 유지하고 FR-008E 수정 라운드를 함께 보존했다. Worklog의 최신 #91 기록과 #92 기록을 모두 유지하여 충돌을 해결했다. ARCHITECTURE 자동 병합은 최신 provider SUCCESS/AMBIGUOUS 경계와 #92 round/viewer context 추가를 함께 확인했다. 평가 도구·source·test는 문서 소유자가 수정하지 않았다.
+- 잠금 해석 보완: coordination/run 상태 writer는 room→정확한 run을 잠근다. correction 제출 head-only 저장은 room lock 아래 immutable source를 조회하여 같은 coordination writer와 직렬화되며 run 상태를 변경하지 않는다. 같은 cohort의 원문 수정은 공개 room 상태를 바꾸지 않아 room state_version을 증가시키지 않으며 자기 입력의 revision과 viewer.context_id로 private cache 순서를 구분한다.
+
+- #91 통합 전후 실제 targeted boundary 집계는 각각 44개 GREEN이다(phase1 17 + NULL1 + viewer3 + additional9 + confirm2 + frozen5 + worker7). 추가 boundary는 23개이며 초기 대화의 24/45 집계를 정정한다. 실제 OpenAPI exporter 1개는 필수 요청 property required 목록 assertion에서 실패했으므로 native schema export 완료가 아니다. 독립 runtime 누락/null 거절 회귀를 먼저 고정한 뒤 field-local 검증과 required schema를 보완한다. 근거 요약은 root가 작성한 저장소 밖 `/workspace/scratch/meet-me-bootstrap/issue-92-all-boundaries-green.json`을 따른다.
+
+- 독립 runtime 요청 검증은 omitted/null expected_generation 모두400이며 DB 변화가 없음을 확인했다. 런타임 타입 변경은 불필요하여 nonnull Long/UUID와 force_reparse=false를 유지하고 request 필수5·round response 필수3의 OpenAPI requiredMode만 명시했다. 독립 presence8/schema1 RED 이후 native export 재검증을 기다린다.
+- PR에서 검토 가능한 배포 준비안은 [docs/INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 추적했다. 실제 차단 명령과 quiesce/compatible roll-forward/기존 refresh 경로/구 캐시 안내/읽기 전용 smoke를 분리해 기록했으며 승인·구현·운영 실행 완료로 표시하지 않는다.
+
+- 후속 요청·migration·Redis·권한·legacy 검증과 native export의 root 집계는 총65개(64실행 성공, debug capture1skip)였다. 웹 실제 생성기 검증에서 RoomResponse.revision_round가 OpenAPI3.1의 object ref와 type:null을 같은 schema에 둔 모순을 발견했다. 별도 독립 실제HTTP/null-schema test1의 assertion RED (`.tdd/red/issue-92-nullable-round-schema.json`) 후 해당 신규 property만 anyOf(object ref, null)로 교체하는 RoomOpenApiConfiguration을 추가했다. 다른 nullable enum·DTO·실제 응답·generated JSON은 수정하지 않는다. root format·66개 재검증 및 native 생성기의 object|null 확인은 대기다.
+
+
+### 공급자 503 High Demand의 기존 보존 경로 읽기 검토
+
+- 공개 parser 경로의 신규 독립 HighDemand 회귀3개가 기존 production에서 모두 GREEN이다. 숫자503은 SERVER/retryable이고 Retry-After초→2000ms·retryDelay소수초→1500ms를 확인했다. SDK factory에서 합성 예외를 던져 공급자 네트워크 호출은0이다. renderer/JSON/repr의 중첩 escaping을 실제 source와 혼동한 과도한 escaping 의심은 문자 개수(각regex token앞sourcebackslash2개,5xx행총8개)와 실제 테스트로 반박되어 정정한다. adapter 패턴·prompt·SDK·timeout은 수정하지 않았으며 이 실행은 RED가 아니다. 기존 `AMBIGUOUS_TIME_CONSTRAINT`는 공급자 성공 JSON의 rejection_code에서만 저장되어503과 구분된다.
+- processor는 올바르게 분류된 retryable SERVER 등 기술 실패에 최대4회, Retry-After 우선 또는 Full Jitter 1/2/4초 범위로 재시도한다. 소진 시 기존 run·고정 batch를 ANALYSIS_DELAYED로 보존하고 새 structured result·candidate·head를 쓰지 않는다. worker는 정상 종결로 Outbox PROCESSED/ACK하며 DLQ 또는 자동 무한 재시도를 만들지 않는다. 최대4회 기술 시도는 수동 HOST retry마다 다시 적용되고3회 correction 논리 한도와 별개다.
+- authenticated HOST의 명시적 retry는 room→active pointer의 정확한 run 잠금 뒤 delayed-only로 수행한다. 동일 batch/run을 유지하고 attempt count 다음 번호부터 기록한다. QUEUED+PENDING 반복은 no-op이며 pending 이후 진행 상태의 재요청은 새 분석을 만들지 않고 거절한다. 새 수정 라운드가 열려 있으면 retry도 거절한다. worker start/isCurrent/complete/delay의 활성 pointer·round·exact run version 검사가 오래된 분석을 막는다.
+- 신규 `GeminiHighDemandBoundaryTest`3개는 public SDK factory의 합성503→classifier와 실제 processor/영속화 서비스의 fixture 경로를 통과했다. 최대4회 실패에서 SERVER ledger1..4·같은 frozen input/batch·ANALYSIS_DELAYED·구조화/후보/AMBIGUOUS 생성0, 명시적 domain retry에서 ledger5..8을 확인했다. 이 신규 회귀는 실제 PostgreSQL/HTTP HOST retry를 연결한 검사가 아니다. 기존 `GeminiBatchProcessorTest`는 기술 실패 후 최대4회·jitter·delay, `SubmissionWebIntegrationTest`는 HOST retry2회/samebatch1/PENDING1, `CoordinationWorkerTest`는 중복 이벤트 한 번 실행·지연 ACK/DLQ0, `WorkerPublicationBoundaryTest`는 stale publication 차단을 별도로 검증한다. 기존 HTTP HOST/auth/idempotency와 worker baseline은 위 최종 전체 guard438개 GREEN에 포함되어 통과했다. 신규5033개의 domain/fixture 검증 범위를 실제503 HTTP 통합으로 확대해 해석하지 않는다.
+- 60초는 현재 call 시작·backoff 전에 검사하는 monotonic deadline이다. 개별15초 호출 timeout을 남은 budget으로 줄이지 않으므로 마지막 in-flight 호출까지 포함한 엄격한 벽시계60초 상한은 코드상 보장하지 않는다. 이 읽기 검토에서는 timeout·새 자동 retry 정책·공급자 API·평가 하네스를 변경하지 않았다. 검토 작업의 실제 모델 호출과 운영 접근은0이며 별도 평가 작업의 HTTP503 결과를 이 구현의 모델 성공/AMBIGUOUS 근거로 사용하지 않는다.
+
+V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3ee471…), 결함15개의 실제 selected test 본체 assertion·선택210개 정확 복원·기존196개83a 동일을 확인했다. 2026-10-07 03:59:01 UTC의 변경하지 않은 mandatory hook exit0는 동일 Kotlin/SQL의 up-to-date 출력(앞선 새 실행438/실패0/오류0/skip4)을 재사용했다. guard37개는 별도로 실제 새 실행했으며 실패0이다. 구현·독립 테스트·검증 기록·문서는 동일 커밋 예정, push 후 새 정확 head CI는 대기다. main/develop 병합과 실제 운영 설치·설정·migration·배포는 미실행이다.
+
+### 클라우드 배포 압축 해제 후속 검증 (2026-10-07 UTC)
+
+- `06bc741` CI #37569594968는 JVM gate·정적9·Compose fidelity·credential refresh·가드37·Nginx를 모두 통과했다. 위 기록의 CI 대기는 이 완료 상태로 갱신한다.
+- 별도 독립 저자가 추가한 압축 해제 계약4개는 기존 `06bc741` 설정에서 모두 실제 본체 assertion RED였다. 구현자는 workflow2개만 변경했고 정적13개 GREEN, 옵션/umask/CI 연결 누락 결함4개 탐지와 workflow 정확 복원을 확인했다. 실제 GNU tar의 일반 사용자 fixture는 외부 UID/GID·0777 archive에서 실행 사용자 소유권·0750 추출을 확인했으며 root/SSM 운영 실행 증명이 아니다.
+- 기존 가드·deploy·기존 정적 검사 및 기능196개는 `06bc741`과 바이트 동일하다. 과거 선택210개 복원 증거는 `06bc741`의 당시 범위로 보존하고, workflow2개가 달라진 현재 전체210개와 동일하다고 표시하지 않는다. 별도 후속 근거는 `.tdd/deployment/issue-92-release-extraction.json`으로 추적한다.
+- 실제 모델 평가는 부모가 별도 환경에서 총10/50회 진행했다. 9번째 원문 해석200 성공과 10번째 실제 HTTP·DB 배치503 미완료를 합성 검사와 구분한다. 이 구현·검증 작업의 공급자 호출 및 평가 도구 변경은0이다.
+- Commit/PR: 동일 커밋 예정, 기존 Draft PR #94 업데이트. 정확 새 head CI는 push 이후 확인하며 운영 host 설치·설정·migration·배포·main/develop 병합은 미실행이다.
+
+
+## Issue #95 Worklog — 다양한 날짜·시간 추천 (2026-10-07 UTC)
+
+- [x] `[AGENT]` 이슈95, AGENTS/rules/project-architecture와 PRD/Architecture/ADR·기존 Worklog를 먼저 읽었다. 최신 develop848b968 clean pull 후 독립 feature에 PR94bf4edff를 fast-forward하고 PR93 포함을 확인했다.
+- [x] `[AGENT]` [재구성 계약](docs/ISSUE_95_CONTRACT.md), [웹 인계](docs/ISSUE_95_WEB_HANDOFF.md)와 실제 OpenAPI를 작성했다. option/variant는 candidate와 별도이며 protocol은 diverse-time-v1이다. 확정의 실제 구간을 기존 result 표현과 typed selection에 함께 담는다.
+- [x] `[AGENT]` 독립 테스트 저자의 총50개 대상 테스트 GREEN을 확인했다. 수정 라운드의 원frozen version id/raw_text/created_at을 보존하고 최신 방 state_version만 증가하는 계약도 검증했다. V1~V8·기존 배포 guard·권한 정책은 변경하지 않았다.
+- [x] `[AGENT]` 독립 리뷰의 초/마이크로초 요약, 새 nullable schema와 variant2값enum, typedconfirmed 방 retention 순서 문제를 수정했다. V9는 구candidate writer와 확정 뒤 run/room/revision 변경을 DB에서도 거부한다. 구V8 reader 호환/운영rollback은 별도 대응이 필요하다.
+- [x] `[AGENT]` 원격 계약 인계 첫 commit 전 필수 변경 없는 tdd_guard를 통과했다. ktlintCheck/assemble/전체 test488개 중484PASS·기존 옵션형 live probe·디버그/스키마 export4SKIP·실패0, hook self-testsPASS다. Commit/PR: 동일 커밋 예정.
+- [x] `[AGENT]` 독립 결함 주입5/5 DETECTED와 원본bytes/SHA복구, 최종독립리뷰 blocking없음, [Draft PR97](https://github.com/meet-me-duo/meet-me-server/pull/97) 공개. [결함주입증거](.tdd/verification/issue-95-boundaries.json).
+- [x] `[AGENT]` mutation정확복구후 변경없는최종필수guard 재통과: lint/assemble/test488개·실패0/오류0·기존live probe/디버그/export4SKIP, hook self-testsPASS.
+- [x] `[AGENT]` 구현 HEAD627e0b717a7f4f72dfc27b2ff580b2ed9f46c24a의 CI37582706551 전 단계 성공·Issue Lifecycle 성공을 확인했다. Draft PR97 본문에도 실제 결과를 기록했다.
+- [x] `[USER]` D2 제안에 사용자 직접 승인 “Meet me는 네 제안대로 진행해”를 확인했다. 동일 차원 OR·여러 차원 AND·참석자별 최대1점·창 전체 충족·선호 하위 창 보존·필수 제약 우선·자연어 입력 유지가 확정됐다.
+- [ ] `[AGENT]` D2 제품 구현·독립 RED/GREEN·저장 복원·공통 provider validator/schema·#96 통합 검증. 현재 코드의 preferenceCount=0은 미구현 상태이며 전체95완료로 보고하지 않는다.
+- `[AGENT]` 전체 대안을 임의 저장 상한으로 자르지 않는다. N=50·많은 창에서 조합/membership 규모가 커지므로 primary최대3·대안limit+1·선택option만 DB에서 조회하고 membership을500행 batch로 게시하도록 개선했다. 전체 조합 저장 규모와 대량 variant 응답의 실측/참석집합 정규화는 후속 평가 범위다.
+
+- `[AGENT]` 필수 쿼리 누락400을 기존 RFC9457 VALIDATION_FAILED로 통일했다. 독립 binding4사례에서 누락만유효RED(다른UUID/정수형식3사례는기존전역handlerGREEN), 수정후4GREEN. 기존5파일은독립저자가V9와새프로토콜의우회409/typed성공계약에맞췄고PR94baseline69개중5assertRED 및결과문서8개중1assertRED를별도로기록했다. 기대값약화없는독립재리뷰를완료했다.
+- `[AGENT]` 기존 CI 보조검사: 배포정책Node13PASS, Compose비밀값보존PASS, 자격증명갱신fixturePASS, V8releaseguard37PASS. Nginx는선택환경checkout0600/700과Dockerclientproxy로기존runtime검사실패를확인한뒤 원본과byte-identical한로컬읽기fixture와빈Dockerclientconfig에서변경없는runtime스크립트PASS를확인했다. 저장소파일권한·운영정책은변경하지않았고정확원격HEAD CI를별도로확인한다.
+
+- `[AGENT]` 2026-10-07 UTC 첫 API/구현commit `fcde6ca716357cfc923786669c944ca3fc48d734`를원격feature에push하고구현전체완료전부모/웹에게nativeOpenAPI·DTO·protocol/confirm/errors/cursorURL을즉시인계했다. DraftPR97 base는develop848b968이며PR94/93의존을본문에명시했다. D2대기는동일하다.
+- `[AGENT]` 고의결함5종(N하한·장소union·낮은인원다양성·DBlegacywriter우회·마이크로초체크우회)은정확한namedassertion실패로모두탐지했다. mutation마다finally로원본복구후source/testSHA검증을통과했다. sourceRevision은첫원격구현commitfcde6ca다. rawlog는Git제외로컬codex evidence에보존한다.
+
+- `[AGENT]` 사용자추가인계에따라 PR98 HEAD9a4c4d5의V9 invocation schema를read-only확인했다. #95의추천V9와같은version충돌이며단독GREEN/CI로배포준비완료를선언하지않는다. [통합인계](docs/ISSUE_95_96_INTEGRATION_HANDOFF.md)에별도브랜치·#96V9/#95V10제안·bounded게시와projection원자성·빈DB/기존V8데이터및전체통합HEAD검증순서를기록했다. feature번호변경/운영적용/병합은수행하지않았다.
+
+
+### D2 승인과 새 구현 세션 인계 (2026-10-07 UTC)
+
+- 사용자 직접 승인으로 계약·PRD·Architecture·ADR-048·웹/통합 인계를 갱신했다. 승인 전 기록과 독립 리뷰의 당시 판단은 이력으로 보존한다.
+- #96 HEAD9a4c4d5463e578829baed12cfebad16fb0bf33a4를 read-only 확인했다. 두 live adapter가 공통 NaturalLanguageProviderContract의 strict validator/schema/prompt를 사용하며 기존 fixture helper의 비strict v1/v2 경로와 영속 JSON mapper도 함께 검토해야 한다.
+- [D2 구현 인계](docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md)에 승인 예시·정확한 baseline·공유 파일·필수 회귀/결함 주입·통합 deadline/rollback·공개 API 유지와 0유료호출 범위를 기록했다.
+- 이 후속은 문서만 변경한다. src/main·src/test·native OpenAPI·migration·guard·권한/배포 정책은 구현 baseline627e0b7과 바이트 동일하게 유지한다. Commit/PR: 동일 커밋 예정 / 기존 Draft PR97. 새 문서 HEAD CI는 push 이후 확인하며 baseline CI 성공을 재사용해 새 HEAD 성공으로 표시하지 않는다.
+
+- 문서 후속 검증(2026-10-07 UTC): 공통 #96 validator/schema와 영속 mapper를 고정 SHA에서 독립 읽기 전용 대조한 리뷰 PASS·blocking 없음. 계약 키워드/로컬 링크 확인과 git diff --check PASS, source/test/native API/guard 바이트 불변 확인. 변경 없는 필수 tdd_guard exit0는 docs-only source의 기존 Gradle up-to-date 결과를 재사용했으며 새488건 실행으로 주장하지 않는다. 새 문서 HEAD CI는 원격 push 이후 별도 확인해야 한다.
+### Issue #96 제한된 Luna 폴백 구현·검증 (2026-10-07 UTC)
+
+- Gemini 최초 1회와 Full Jitter 최대 3회 기술 재시도 뒤 Luna 1회를 구현했다. 전체 60초의 초기 배분은 Gemini 42초, Luna 15초, 완료 3초이며 DB admission 대기 뒤 실제 남은 시간으로 timeout을 다시 계산한다. 저장 중 deadline 초과는 typed 예외로 롤백하고 별도 트랜잭션에서 ANALYSIS_DELAYED로 종결한다. 호출하지 못한 admission도 보수적으로 슬롯을 소비하며 physical-call metrics와 구분한다.
+- 두 어댑터는 공통 prompt/schema/validator를 사용한다. OpenAI strict nullable rejection_code는 required+null을 허용한다. 두 HTTP transport의 retry와 redirect를 명시적으로 끄고 본문 읽기 전체 timeout·취소를 검증한다. typed 인증/권한/결제/quota/잘못된 요청과 일시 NETWORK/TIMEOUT/RATE_LIMIT/SERVER를 구분하며 성공 PARTIAL/AMBIGUOUS/NO_MATCH는 폴백하지 않는다.
+- V9는 run ID+STRUCTURING version별 원래 deadline·owner·4+1 admission·승자를 영속화한다. 기존 V1~V8과 #95의 추천·확정 모델을 바꾸지 않는다. 재전달·재시작은 예산을 초기화하거나 자동 유료 재호출하지 않고 원래 deadline 만료 복구로 지연 처리한다. HOST 명시적 retry는 같은 frozen batch/run의 새 version을 사용한다. 공급자 exactly-once와 운영 배포 완료를 주장하지 않는다.
+- 독립 테스트 설계는 contract_tests와 durable_tests, 공급자 구현은 provider_adapter, 독립 리뷰·결함 설계는 fault_review가 담당했다. 최초 RED, 보조 코드 수리 후 재확인, 기존 검색 범위 계약의 #96 supersession을 각 .tdd/red·history·supersessions에 보존한다. 일부 lifecycle 원본 XML은 덮어써졌으므로 원본 실패 로그를 증거로 사용하며 XML을 재작성하지 않는다.
+- 저장 Luna fixture는 부모 평가 세션의 실제 응답이며 canonical SHA-256 03bb35860232477203710071cb736c185e9c211f418da886dc2bd5d74cc2c6bf를 보존했다. 10/15의 유효한 UNAVAILABLE 조건은 validator에서 유지하고 matcher가 검색 기간에 적용한다. 기대 10/7·8·9 19–21 COMPLETE와 범위 밖 AVAILABLE-only의 빈 가능 구간을 무료 재생으로 검증한다. 공급자 원문 lexical 해석·SUCCESS 덮어쓰기·AMBIGUOUS 복구는 재도입하지 않는다.
+- 첫 대상 98건은 모두 GREEN이다. 첫 전체 524건은 오류0/skip4이며 실패3건은 범위 밖 날짜를 잘못된 조건으로 취급하던 기존 계약이다. 사용자 #96 요구에 따라 독립 저자가 해당 조건 검증과 검색 적용을 분리하고 기존 잘못된 enum·요일·좌표·참조 거절을 유지하여 새 RED를 확인한다. 최종 GREEN·결함 주입·mandatory hook·정확 HEAD CI의 최종 집계는 아래 완료 근거를 따른다.
+- 배포 정적13개·Compose fidelity·합성 credential refresh·V8 release guard37개는 통과했다. Nginx 원본 로컬 실행은 workspace의0600 bind file 및 주입 proxy403 환경 문제로 실패했고, 동일 공개 config의 읽기 가능한 임시 fixture와 컨테이너 로컬 HTTP proxy 제거로 health를 확인했다. 저장소 파일 권한·운영 권한·deployment script는 변경하지 않았으며 정확 HEAD CI에서 원본 script를 확인한다.
+- 이 구현 세션의 유료 모델 호출·운영 접근·비밀값 읽기/출력/저장·운영 등록·권한 변경은0이다. 부모의 Gemini10+Luna9 실제 품질 평가를 이 세션의 호출 또는 새 transport 실검증으로 집계하지 않는다. 개인 OPENAI 연결은 운영 설정·배포 승인과 별개이며 코드에는 변수 참조만 추가했다.
+- Commit/PR: 동일 커밋 예정, develop 대상 독립 draft PR. #94 bf4edff 기준과 #93 포함, #95 migration 번호 예약은 통합 담당 조율 항목이다. 운영 배포·병합은 미실행이다.
+
+**#96 최종 로컬 완료 근거**: 변경하지 않은 .codex/hooks/tdd_guard.py가 exit0(130.077초)로 ktlintCheck·assemble·test 및 guard self-tests를 통과했다. 실제90suite/526건/실패0/오류0/skip4이며 기존 유료 live probe·export/debug opt-in만 skip했다. 독립 source/test SHA 검토 PASS와 결함15개 assertion 탐지·전체218개 바이트 복원을 .tdd/reviews/issue-96-independent-review.json 및 .tdd/verification/issue-96-bounded-fallback.json으로 추적한다. 모든 #96 RED8개 요약의 JSON Schema와 최종 테스트 지문이 일치한다. 원시 로그·XML은 ignored .codex/tdd-evidence에만 보존한다. 커밋·draft PR 생성과 정확 HEAD CI는 이 검증 지문을 사용하며 결과 URL·head SHA는 PR 본문과 Git 이력에서 확인한다. 운영 배포·main/develop 병합 및 유료 호출은0이다.
+
+
+## Issue #99 Worklog — 추천·Luna 폴백 통합과 D2 (2026-10-07 UTC)
+
+- Issue99 생성 뒤 clean develop848b968 pull 기준 feature/integrate-recommendations-fallback에서 지정 PR97 HEAD518c612와 PR98 HEAD9a4c4d5를 통합했다. 두 merge parent와 PR94bf4edff·PR93 의존을 보존하며 main/develop 직접 수정·병합은 실행하지 않았다. PR97 문서 HEAD CI37585734021·PR98 CI37581751054의 성공을 원격 확인했으며 통합 CI로 재사용하지 않는다.
+- 추천 V9와 invocation V10의 SQL 내용 체크섬, 기존 V1~V8 및 unchanged tdd_guard를 보존했다. ADR-047 추천·ADR-048 D2·ADR-049 Luna로 충돌을 조율했다. 실제 PostgreSQL18의 빈 DB10migration/validate와 기존 V8 CONFIRMED·OPEN·CONSUMED/원문·createdAt·frozen cohort·과거 후보/확정/attempt 전체 행 보존을 검증했다. 운영 Flyway 적용 여부는 조회하지 않았으며 미적용을 확정하지 않는다.
+- 참석 인원→명시 선호 충족 사람수→동률 다양성, 참석자별 최대1점, 같은 차원 OR·다른 차원 AND, 시간 선호 합집합의 전체 창 포함을 구현했다. 원래 하드 가능 창·선호 교차 하위 창·다자 공통 선호 창을 보존하며 불가·예외·기존 공통 장소조건을 먼저 적용한다. 명시 차원의 존재는 검색 확장 결과가 비어도 유지한다.
+- 선호 전용 도메인 타입과 공통 live v3 Gemini/Luna prompt/schema/validator·JSON 저장/복원을 일치시켰다. 구 v1/v2 비strict 결과는 선호 없음으로 유지한다. raw 키 exact validation/nullable required/정확 refs/32조건/256KiB/AREA 이름 경계를 유지하며 잘못된 하드 시간은 기존 unsafe reason으로 안전 제외한다. 부분 거부 참가자의 유효 가능 조건과 선호 하위 창은 보존하되 선호 득점은 제외한다.
+- bounded matching은 계산 중 취소를 확인하고 room→run 잠금/version/durable deadline 아래 legacy 후보·추천 projection·room 완료를 한 transaction으로 게시한다. 게시 뒤 deadline 초과는 전체 rollback 뒤 fresh delay/ANALYSIS_DELAYED·ACK로 처리한다. 8명/5개 창의 controlled deadline 사례와 duplicate-worker·재전달·이미 확정 결과 보존을 실제 PostgreSQL로 검증했다. 이를 운영 성능 벤치마크나 최대50명 부하 보장으로 표시하지 않는다.
+- 독립 도메인·provider/mapper·통합 테스트와 별도 구현·리뷰 역할을 분리했다. 유효 assertion RED→첫73 focused GREEN→안전성61 GREEN을 보존하되 overlap 합산하지 않는다. 초기 compile/환경/Mockito fixture 실패는 행동 RED에서 제외했다. 일부 도메인 RED XML은 다음 실행에 덮어써졌으므로 원시 실패 로그만 보존하고 XML을 재작성하지 않았다. 부분 거부 과점수·하드 시간 안전성 지적은 추가 RED로 해결했다.
+- 첫 전체631건의 실패1은 기존 schema5 분기 검사가 승인된 hard5+preferred3 확장을 반영하지 못한 assertion이었다. 독립 저자가 기존 하드 검사와 다른 테스트 본문을 유지하고 exact 타입/required/null/날짜·반복/HH:mm 검사를 강화했다. before 테스트·관련 과거 RED5개를 byte 보존하고 CONTRACT_SUPERSEDED 관측을 history에 기록했으며 focused12 GREEN·후속 독립 리뷰 PASS다. 범위밖 과거 증거를 소급 수정하지 않는다.
+- 의도적 결함11/11은 assertion 실패41개로 탐지했고 당시 동결247개 source/test의 정확 복구를 독립 확인했다. 후속 schema 검사 강화는 non-injected 테스트1개만 바꾸고 production 모두는 그대로이며 final247 지문은 verification/review에서 갱신해 검증했다. .tdd/red Issue99 10개와 fault verification1개 schema/currenthash PASS, supersession before/afterhash PASS, 독립 최종 코드/테스트/문서 리뷰 PASS·차단0이다.
+- 변경하지 않은 필수 guard exit0, ktlintCheck·assemble·109suite 전체631tests/실패0/오류0/skip4, hook self-tests12 PASS다. 배포 정적13·Compose fidelity·합성 credential refresh·V8guard37·동일 공개 config Nginx 임시 fixture PASS다. Nginx 원본 script는 정확 HEAD CI에서 확인하며 저장소 권한·운영 설정은 변경하지 않았다. 원시 로그/XML은 ignored .codex/tdd-evidence에만 보관한다.
+- 실제 /v3/api-docs native export의 전체 parsed JSON은 PR97 OpenAPI와 동일하다. 직렬화 byte/SHA는 다르며 .tdd/reviews/issue-99-openapi-contract.json에 두 지문을 기록했다. 공개 diverse-time-v1 옵션/확정/legacy API·입력 UI는 유지했다. 웹 PR20 정확 HEAD8e56fe0c37cef52e584ff569b97b46b60f28e517을 원격 확인했지만 backend/browser 공동 실행은 주장하지 않는다.
+- 이 구현 세션의 유료 호출0이다. 실제 통합 품질은 전담01a114c3-02d3-7011-ab8f-19706bdda089만 검증한다. 기존 유료19/50 및 Luna7/8은 새 통합 품질 PASS로 재사용하지 않는다. 전담자는 기존 평가 하네스의 v2 체크·legacy matcher 연결을 v3·추천 repository 경로로 조율해야 한다. 무료 integration은 typed fake parser, provider 검증은 loopback/shared validator이며 실제 모델 lexical 정확성은 별도다. 웹 담당01a114d2-c535-7787-adca-69742f5cd08d와 부모를 통해 연계한다.
+- Commit/PR: 동일 커밋 예정, develop 대상 Draft PR. 정확 HEAD CI는 게시 후 PR 본문에 확인 결과를 기록한다. 코드 검증 완료와 운영 준비를 구분하며 V8guard/digest/드레인 승인은 미해결이다. main/develop 병합·배포·운영 DB 적용·운영 보안/비밀정보 변경·자동화 중지는 실행하지 않았다.
+
+## Issue #99 Worklog — 승인된 공급자 시간 배분 후속 (2026-10-07 UTC)
+
+- 전담 평가가 보고한 최초 통합 invocation56.975초/TIMEOUT·Luna relay HTTP200 저장19.795초를 시간 배분 문제로 분류했다. relay 측정은 네트워크·프록시·읽기·저장을 포함하며 취소 전파 한계가 있어 모델 순수 지연/새27초 성공률로 확대하지 않는다. 이 구현의 유료 호출0이다.
+- 사용자 승인에 따라 동일 feature/Issue99/PR100에서 단일60초, Gemini 호출15·단계30(백오프/claim 포함), Luna 최대27, 완료3을 공통 Application port로 맞췄다. 조기 fallback/claim 후 남은 cap과30/57/60 exclusive 경계를 검증했으며 기존 최대4+1·owner/noreset·frozen·ACK·원자 추천 rollback은 유지한다. 직접 request 기본15는 유지하므로 직접 Luna 평가 caller는27을 명시해야 한다.
+- 독립 테스트 저자2명과 read-only reviewer를 분리했다. 최종 RED48건/20 AssertionFailedError/오류0→집중 GREEN72건/실패0이다. 실제 PG에서20초Luna가51초에 winner/추천/room 완료,57/60 물리호출0,60초 게시 rollback 및 재전달noreset을 검증했다. 실제 OkHttp timeout 설정 검사는 무네트워크 interceptor로 시행했으며 실제27초 모델 성공을 주장하지 않는다. 기존 기대 변경은 before/RED byte archive와 승인 supersession으로 추적했다.
+- 고의 결함5/5 assertion 탐지·실패35·오류0, 전체250개 source/test 정확 복원을 독립 확인했다. 복원 후 변경 없는 필수 guard exit0·hook self-tests12·ktlintCheck/assemble·111suite 전체654tests/실패0/오류0/skip4, 배포 정적13 PASS다. 새 native OpenAPI 전체 parsed JSON은 기존 계약과 완전 동일이며 byte/SHA 차이를 별도 budget 증거로 기록했다. 기존 통합 evidence는 소급 덮어쓰지 않았다.
+- V1~V10 migration과 bounded-luna-v1 바이트/정책, 공개 API/UI는 유지한다. CI Quality 실행 한도15→20분만 조정해 기존 원격 CI의 약15분 검사와 추가PG회귀를 수용하며 product60초·hook/검사·권한·운영 deployment/concurrency는 유지한다.
+- Commit/PR: 동일 커밋 예정, 기존 Draft PR100 갱신. 새 정확 SHA와 로컬 검증은 push 즉시 부모에게 인계하고 해당 HEAD CI는 PR100 본문에 확정한다. 유료 통합 재평가는 전담 세션, 웹 공동 실행·운영 Flyway/V8guard/digest/드레인 승인은 별도이며 병합·배포·운영DB/보안/비밀/자동화 변경은 수행하지 않는다.
+
+## Issue #99 Worklog — 실제 평가 인계와 운영 읽기 preflight (2026-10-07 UTC)
+
+- 사용자 승인으로 기존 GHA production 역할/SSM의 읽기 preflight를 준비한다. 새 IAM/토큰/OS 설정은 하지 않는다. 서비스 중단은 실제 대상·시작 조건을 부모에게 먼저 보고한 뒤 별도로 진행한다. main merge 자동CD는 preflight·운영키·digest 순서 확정 전 실행하지 않는다.
+- 기존 gh 인증이 있으나 실행환경 프록시가 직접 GitHub REST를403으로 차단하고 연결 도구에는 workflow dispatch가 없다. 기존 bootstrap에는 production OIDC 역할의 ReadOnlyAccess와 특정instance AWS-RunShellScript 권한이 선언돼 있으나 실제 적용은 조회 전 미확정이다. 새 공개Issue는 내부운영metadata 공개 위험으로 자동승인검토가거절해생성하지않았다. 기존Issue99/PR100 feature 안에서 비밀값 없는 조회코드와독립검증을준비한다.
+- [실제 평가 기록](docs/ISSUE_99_LIVE_EVALUATION.md)은 전담이 보고한 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS, 추가18생성·누적41/50 및추정/미확정비용을구분한다. 기록/운영조회작업의 유료호출0이며 이후문서/조회코드 HEAD를 새로운 실제평가대상으로 혼동하지않는다.
+- 현재 조회 구현/독립 RED·리뷰·원격 실행은 진행 중이다. 운영OpenAI 값은 사용자 보안입력이며 시험환경에서 복사/출력하지않는다. 조회거부·예상밖migration·새비용/권한은 확대하지않고보고한다.
+- 읽기 전용 조회의 독립20검사는 RED6 assertion→GREEN20/skip0이며 결함3개를 assertion7개로 탐지하고 관련6파일 exact 복원을 확인했다. 독립 최종 리뷰 PASS·차단0, 기존 배포정책13 PASS다. 실제 격리PG18.6/current bootJar PropertiesLauncher reader smoke는 운영 조회와 구분한다. 변경 없는 mandatory guard exit0(8.725초)는 기존654건의 Gradle up-to-date 결과를 재사용하며 새654 실행으로 주장하지 않는다. 제품 src/main·src/test/V1~V10 및 guard는6f7f54e와 동일하다.
+- [실행 인계](docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)에 승인 경계·조회 방법·키 위치·digest/CD 순서·남은 시작 조건을 정리했다. 기존Draft PR100 feature에서 조회workflow와 평가기록을 commit/push하며 새 정확HEAD CI와 실제 AWS 접근은 원격 실행 결과로 별도 보고한다. 이 기록 시점의 실제 운영조회 성공0·서비스중단0·유료호출0이다.
+
+## Issue #99 Worklog — Luna 운영키 전달 후속 (2026-10-07 UTC)
+
+- `[AGENT]` 사용자 승인으로 기존feature/PR100에서 공개release mode gemini-luna-required, SSM SecureString→OPENAI_API_KEY/MEETME_RUNTIME_PROVIDER_MODE→raw Compose→entrypoint pre-server/migrate/customcommand 검사 경로를 추가했다. ownrelease marker exactenum±LF 검증, SecureString 타입/ASCII33~126 rawJSON 검증, OpenAI 값/AWS진단 비출력, 같은dir0600 임시file→atomic rename과 unsafe destination 거부를 구현했다. mode없는/명시gemini-only는 OpenAI조회0이며 기존release의mode로DBrefresh에도요구를 유지한다.
+- `[AGENT]` 독립testauthor는18 frozen검사를작성했고 최초RED15 assertion/pass3→GREEN18을확인했다. reviewer가 발견한 BashNUL marker 우회는원본18/RED byte archive를보존한뒤별도추가test1의19RED18pass/1assertion→rawjq수정→GREEN19/skip0로해결했다. 새19의원본18prefix는byte-identical이다.
+- `[AGENT]` 7fault(type/rawASCII/startupguard/atomicrename/legacyOpenAIquery/rawmode/packagemode누락)를 assertion12개로탐지했고9source/testfileexact복원후19GREEN을재확인했다. 별도독립reviewJSON으로추적하며배포13+preflight20 combined33GREEN/skip0, 실제localAlpine rawCompose의합성DB/OpenAI키와mode byte보존을확인했다. 실제secret/운영AWS/모델 호출은0이다.
+- `[AGENT]` 변경없는mandatoryguardexit0(9.556초)는기존654건의Gradleup-to-date결과를재사용한다. 새654실행으로주장하지않는다. src/main·src/test·V1~V10·시간배분·nativeAPI·hostguard·runtimeIAM은실제평가6f7f54e와동일하다. image에포함되는entrypoint는변경되므로이전image digest를새배포에재사용하지않는다.
+- `[AGENT]` IAM선언의SSM /meet-me/production/*는새path를포함하며Terraform에는수동등록name출력만추가했다. 새secret값/resource/IAM/KMS정책/권한은만들지않는다. TerraformCLI가선택환경에없어fmt/validate를실행했다고주장하지않으며값없는output/path를정적검토했다. 실제적용권한은미확인이다.
+- `[USER]` 수동키생성/SSM SecureString등록과실제전달확인은미완료다. docs/ISSUE_99_LUNA_RUNTIME_SETUP.md에책임/정확경로/완료신호/비밀공유금지를기록했다. 집PC의첫AWS시도는명령전transport연결실패로조회0이라는부모보고를기록하며재접속을권한확대승인으로취급하지않는다. 기존production환경의PRmerge-ref거부를우회하거나수동rerun하지않았다. main/develop병합·운영중단·배포·자동화/보안정책변경은보류한다.
+- Commit/PR: 동일커밋예정, 기존DraftPR100갱신. 새정확HEADCI는push후별도로확인하며기존48b8957 CI37610286399의성공을재사용하지않는다. 새코드는앱/시간배분을바꾸지않지만배포entrypoint/env계약은새source로구분한다.
+
+## Issue #99 Worklog — 격리 ARM64 이미지와 운영 대상 대조 (2026-10-07 UTC)
+
+- `[AGENT]` 운영키82b8d2a 정확 CI37614973315와 Infrastructure37614973327은 성공했다. Terraform fmt/init backend=false/validate 성공이며 production plan은 skip이다. 읽기 preflight37614973475는 기존 production 환경의 PR merge ref 거부로 runner/step0·AWS조회0이다.
+- `[USER]` 본인 PowerShell의 기존 AWS 프로필 로그인과 수동 키 등록을 보고했다. 별도 집PC 실행계정은 프로필 접근이 없어 자동 조회가 불가능하다. 마지막 성공 운영 배포37279832865의 SSM 대상과 사용자 전달 대상이 일치함을 로그로 확인했다. 현재 환경 변수 직접 읽기는403으로 차단됐으며 현재 설정·host·parameter 타입/버전·실제 권한/전달은 미검증이다. 비밀값/실제 대상ID는 공개 기록에 넣지 않는다.
+- `[AGENT]` 새 CI built-image job은 정확 PR HEAD checkout/persist-credentials=false·contents read만 사용한다. 기존 GHA QEMU/buildx로 linux/arm64 Dockerfile image를 build/load하되 registry push/login·AWS·production environment는 없다. 실제 UID/JAR/entrypoint SHA와 JRE17, required mode의24개 거부를 포함한28개 격리 probe는 network none·read-only·capdrop/no-new-privileges이며 Java sentinel로 guard 결함에도 Spring/migration이 시작되지 않는다. 합성 키만 사용하고 sanitized proof JSON만3일 보존한다. config image ID를 ECR 승인 digest로 취급하지 않는다.
+- `[AGENT]` 독립 source 계약10개의 최초RED5 assertion/pass5→GREEN10/skip0, 6fault를6assertion으로탐지하고3파일exact복원→GREEN10을 확인했다. 원본10/최초RED를byte보존한뒤implicitDockerartifact/summary차단test1을추가해11RED10pass/1assertion→두jobenvflags추가→GREEN11/skip0을확인했다. 최종11에서8fault/8assertion과3파일exact복원을재확인했다. 독립 reviewer/helper/test author 역할을 분리했다. 이것은 source 계약 근거이며 실제 ARM64 build/28probe 실행은 push 후 새 exactHEAD CI에서 확인한다.
+- `[AGENT]` 제품 Kotlin/SQL·runtime renderer/entrypoint·Compose·Dockerfile·IAM·deployment workflow·mandatoryguard는82b8d2a와 동일하다. 앱의 실제 paid/web 평가SHA는6f7f54e/8e56fe0 그대로이며 새 유료 호출0이다. 원격명령·main/develop병합·운영배포·DB적용·자동화/보안/인증설정변경0. 수동 metadata 준비 명령은 docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md에만 마련했다.
+- 변경없는최종mandatoryguardexit0(9.07초), 기존배포13/preflight20/runtime19/최종image11의combined63GREEN/skip0. 앱코드는동일하므로새654실행으로주장하지않는다.
+- Commit/PR: 기존DraftPR100의동일커밋예정. 새ARM64image/전체CI는push후별도로확인하며운영키82CI성공을새image성공으로재사용하지않는다.
+
+### ARM64 실제 실행 후속 (2026-10-07 UTC)
+
+- 새정확HEAD04c6b16363984488b60cee52faf21b8303161a55를commit/push하고CI37619050758을실행했다. ARM64build/load는성공했으나첫격리helper검사가약380ms뒤실패해28probe/proof성공을선언하지않는다. amd64runner에서platform미명시Docker경고가첫fileprobe의무출력검사와충돌했을가능성을공식Docker/Moby동작과source로검토했다. 실제stderr는출력/보존하지않아원인확정으로기록하지않는다.
+- 독립testauthor가원본11/RED/history를보존하고12번째sharedrunner의explicitplatform계약을추가했다. 새12RED11pass/1assertion을확인했다. helper의platform선택과고정phase/숫자probe진단만보완하며오류본문/키/argv출력이나무출력조건완화는하지않는다. 앱/runtime/IAM/Dockerfile/SQL/deployworkflow는그대로다.
+- Infrastructure37619050888은fmt/bootstrap·productionvalidate성공,productionplan skip이다. Preflight37619050603은동일production환경보호로runner0/steps0이다. 기존정책을바꾸거나manualrerun하지않았다.
+- 사용자정정에따라실제배포는기존GitHubActions로진행하는기준을유지한다. 현재main5e8faab의workflow는CI/DeployProduction/Infrastructure/IssueLifecycle이며read-onlypreflight는없고manualdeploy는실제ECRpush/SSM/migration을수행한다. main의V1~7source는운영history증거가아니다. 기존migration/health/OpenAPI검증과새V8+의실제guard/digest/drain확인을구분한다. 사용자로컬CLI는필수경로로단정하지않으며새권한/보호규칙/인증은추가하지않는다. 기존CD의build→deploy사이독립digest승인단계가없는시작순서미해결도구분한다.
+- platform보완후12GREEN/skip0, 최종9fault/9assertion·3파일exact복원, combined64/0/skip0을확인했다. 변경없는필수guardexit0(9.302초)는기존654품질결과를재사용하며새654실행으로주장하지않는다. 독립최종리뷰와후속새HEADCI는구분한다.
+- 후속commit/새HEADCI는helper/계약/evidence수정후진행한다. 유료호출·원격SSM명령·운영변경은계속0이다.
+
+
+### 2026-10-07 Issue99 첫 전환 gate와 동일 계약 main 자동 배포 후속
+
+- 사용자 명시 승인대로 기존 GitHub production 역할·보호규칙 안에서 build-publish와 approved-release를 분리했다. 첫 V8→V9/V10 또는 SQL/guard 계약 변경은 immutable run/attempt 게시물의 source/CI/publisher·archiveSHA·ECR digest·실제 history와 명시 승인을 요구한다. 같은 계약의 후속 main CI는 실제 READY·history/current image/root record를 확인하고 자동 배포한다. 영구 수동화·IAM/protection 변경은 없다.
+- source SQL10과14파일 실행 계약을 묶고, 실제 rule 상태/target·Online·지원되는 active command 조회·SecureString Name/Type/Version을 확인한다. 두파일 readstate 전송/60KiB command 상한, host1440/SSM1500/poll1560/job30분, rootsticky defaultlock 및 중첩 lifecycle lock 회피를 독립 리뷰했다. 실제 rule 중지는 유지보수 시작 승인 시에만 안내하며 지금 요청/실행하지 않았다.
+- 독립 동결6 신규+기존33의 유효 RED16/23PASS 뒤 최종39 PASS/실패0/skip0, 실제 Flyway12.4.0 checksum10 일치와7fault/8assertion 탐지·303 source/test 파일 exact복원을 확인했다. 테스트 기대를 구현자가 바꾸지 않았고 과거 workflow/RED를 history에 보존했다. 추가 host orchestration fixture는 최신 사용자 범위 지시로 실행 없이 폐기했으므로 독립 host runtime proof를 주장하지 않는다.
+- 변경 없는 필수 tdd_guard SHA07c4f974…exit0/8.639초로 hook self-tests·ktlintCheck·assemble·test를 확인했다. Gradle cached654 결과 재사용이며 새 로컬654 실행으로 집계하지 않는다. 제품 Kotlin/API/V1~V10 SQL/runtime renderer/entrypoint·기존guard/installer는369c5ff와 동일하다. 새 정확HEAD CI는 게시 후 PR100에서 별도로 확인한다.
+- 현재 실제AWS조회/운영명령/서비스중단/DB쓰기/main·develop병합/유료모델호출0. 운영 source/digest와 실제preflight를 보고한 뒤 최종배포승인을 받아야 한다. 구현/문서/검증 후속 Commit/PR: 동일 커밋 예정, 기존Draft PR100 유지.

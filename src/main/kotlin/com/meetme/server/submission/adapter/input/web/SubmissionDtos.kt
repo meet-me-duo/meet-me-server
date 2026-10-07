@@ -36,6 +36,12 @@ data class SaveSubmissionRequest(
         maxItems = 0,
     )
     val manualAvailableTimes: JsonNode? = null,
+    @field:JsonProperty("revision_round_id")
+    @field:Schema(description = "조건 수정 중 필수인 현재 라운드 UUID", nullable = true, format = "uuid")
+    val revisionRoundId: java.util.UUID? = null,
+    @field:JsonProperty("expected_revision")
+    @field:Schema(description = "조건 수정 중 필수인 읽은 자기 입력 revision", nullable = true, minimum = "1")
+    val expectedRevision: Int? = null,
 ) {
     fun naturalText(): String? {
         val manual = manualAvailableTimes
@@ -74,6 +80,12 @@ data class SubmissionResponse(
     val createdAt: Instant,
     @field:Schema(description = "현재 입력 수집 상태에서 수정 가능한지 여부")
     val editable: Boolean,
+    @field:JsonProperty("revision_round_id")
+    @field:Schema(description = "수정 가능할 때의 현재 조건 수정 라운드", nullable = true, format = "uuid")
+    val revisionRoundId: java.util.UUID? = null,
+    @field:JsonProperty("state_version")
+    @field:Schema(description = "응답 snapshot의 방 조율 상태 버전", minimum = "0")
+    val stateVersion: Long = 0,
 ) {
     companion object {
         fun from(view: SubmissionView) =
@@ -84,6 +96,8 @@ data class SubmissionResponse(
                 view.locale,
                 view.createdAt,
                 view.editable,
+                view.revisionRoundId,
+                view.stateVersion,
             )
     }
 }
@@ -105,6 +119,12 @@ data class SavedSubmissionResponse(
     val createdAt: Instant,
     @field:Schema(description = "현재 입력 수집 상태에서 수정 가능한지 여부")
     val editable: Boolean,
+    @field:JsonProperty("revision_round_id")
+    @field:Schema(description = "수정 가능할 때의 현재 조건 수정 라운드", nullable = true, format = "uuid")
+    val revisionRoundId: java.util.UUID? = null,
+    @field:JsonProperty("state_version")
+    @field:Schema(description = "응답 snapshot의 방 조율 상태 버전", minimum = "0")
+    val stateVersion: Long = 0,
 ) {
     companion object {
         fun from(view: SubmissionView) =
@@ -115,6 +135,8 @@ data class SavedSubmissionResponse(
                 view.locale,
                 view.createdAt,
                 view.editable,
+                view.revisionRoundId,
+                view.stateVersion,
             )
     }
 }

@@ -1,0 +1,26 @@
+{
+  "status": "VALID_POST_FORMAT_ABSENT_BEHAVIOR_RED",
+  "started_at": "2026-10-07T02:16:11.787520+00:00",
+  "failed_assertions": {
+    "CorrectionRoundNullOutcomePostgresTest": [
+      "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullOutcomePostgresTest.consumed round cannot lose persisted outcome through SQL NULL semantics()"
+    ],
+    "CorrectionRoundViewerContextPostgresTest": [
+      "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.two MEMBER sessions with same display name have distinct context and access only own raw()",
+      "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.anonymous room view explicitly has null context and cannot inherit authenticated member hint()",
+      "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.expired guest session room view has no self context()"
+    ]
+  },
+  "archived_evidence": [
+    {
+      "archived_path": ".tdd/history/issue-92-before-format/issue-92-consumed-null-outcome.json",
+      "sha256": "926d41ff81c0c875bd643c056115bb3c5e1d58798f3000999b8474b5abd39af3"
+    },
+    {
+      "archived_path": ".tdd/history/issue-92-before-format/issue-92-viewer-context.json",
+      "sha256": "3d8de01e999c07974f8850edc9cce09387904c545178a460fd3f5bf98b27bc5e"
+    }
+  ],
+  "semantic_test_changes": false,
+  "provider_calls": 0
+}

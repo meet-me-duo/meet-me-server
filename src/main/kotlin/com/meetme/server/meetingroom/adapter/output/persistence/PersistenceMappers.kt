@@ -31,6 +31,10 @@ object PersistenceMappers {
             closedAt = domain.closedAt?.atOffset(ZoneOffset.UTC),
             createdAt = domain.createdAt.atOffset(ZoneOffset.UTC),
             version = domain.version,
+            correctionAnalysisCount = domain.correctionAnalysisCount,
+            activeRevisionRoundId = domain.activeRevisionRoundId,
+            revisionGeneration = domain.revisionGeneration,
+            activeRunId = domain.activeRunId,
         )
 
     fun toDomain(record: MeetingRoomRecord): MeetingRoom =
@@ -57,5 +61,9 @@ object PersistenceMappers {
             closedAt = record.closedAt?.toInstant(),
             createdAt = record.createdAt.toInstant(),
             version = record.version,
+            correctionAnalysisCount = record.correctionAnalysisCount,
+            activeRevisionRoundId = record.activeRevisionRoundId,
+            revisionGeneration = record.revisionGeneration,
+            activeRunId = record.activeRunId,
         )
 }

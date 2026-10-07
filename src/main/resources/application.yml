@@ -39,6 +39,10 @@ meetme:
     api-key: ${GEMINI_API_KEY:}
     model: gemini-3.8-flash
     max-response-bytes: 262144
+  openai:
+    api-key: ${OPENAI_API_KEY:}
+    model: gpt-6-luna
+    max-response-bytes: 262144
   reliability:
     enabled: ${RELIABILITY_ENABLED:true}
     consumer-name: ${REDIS_CONSUMER_NAME:meet-me-local}

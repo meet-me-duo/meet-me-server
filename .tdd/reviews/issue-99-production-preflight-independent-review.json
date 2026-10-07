@@ -1,0 +1,181 @@
+{
+  "workItem": "issue-99-production-preflight-independent-review",
+  "reviewer": "/root/independent_review",
+  "role": "Independent read-only security/contract reviewer; no source/test edits, Gradle or operational execution",
+  "recordedAt": "2026-10-07T10:25:56.077189+00:00",
+  "authority": "Parent reports explicit user-approved read-only production preflight workflow preparation using existing production OIDC/SSM permissions; denied reads report UNKNOWN. No new IAM/token/OS settings, models, service stop, migration or deployment authorized. Existing Issue99/PR100 feature reused per explicit instruction. Parent clarified user explicitly authorizes trusted same-repository PR100-only autoevent because manual dispatch is unavailable; audited exactHEAD helper code only, author/actor/branch/base/SHA gates before existing authority and before SSM.",
+  "designVerdict": "PASS clarified PR100-only autoevent authorized",
+  "contractChecks": [
+    "User-approved PR100-only automatic event allowed with production environment and existing OIDC role; repository/headrepo/PRnumber/headbranch/base/author/originalactor/triggeringactor/currentSHA gate before authority and before exact configured instance SSM; no discovery broadening/permission repair/credential fallback.",
+    "AWS response allowlists; Parameter describe metadata Name/Type/Version only; no get-parameter even without decryption, no SecretsManager values, no command Parameters or EventBridge Input/transformer contents.",
+    "Host reads stat/hash only of explicit public release/guard/compose files; no runtime env/tls/secrets or full docker inspect/logs. Report image/state/restart/health with narrow selectors.",
+    "Temporary unique owned paths for class/script, constrained cleanup only; helper resource/execution time bounded; product container remains running.",
+    "PropertiesLauncher explicit helper main/path/classpath, missing helper fails closed; no product bootstrap, migration runner, loader.main fallback or external loader/JVM injection.",
+    "Existing DB credentials inherited only inside container; never command arguments/stdout/stderr/environment dump/SSM payload.",
+    "Fixed SQL SET TRANSACTION READ ONLY after autoCommit=false; verify transaction_read_only before fixed Flyway metadata SELECT; finally rollback; connection/socket/statement/lock bounds. Driver read-only hint alone insufficient if URL readOnlyMode ignores it.",
+    "Output SQLState/classified errors only, no exception message/stacktrace/JDBC URL/password; do not turn denied/unavailable reads into healthy/safe-to-deploy claims.",
+    "Public tracked evidence must omit private account/host/endpoints/ARNs/runtime values; actual restricted report distinct from public generic metadata.",
+    "DB query reports observed Flyway versions/checksums/success only; does not approve operating migrations/V8guard/digest/drain or mutate data."
+  ],
+  "officialReferences": [
+    {
+      "title": "PostgreSQL SET TRANSACTION",
+      "url": "https://www.postgresql.org/docs/current/sql-set-transaction.html"
+    },
+    {
+      "title": "pgJDBC connection properties",
+      "url": "https://jdbc.postgresql.org/documentation/use/"
+    },
+    {
+      "title": "Spring Boot PropertiesLauncher",
+      "url": "https://docs.spring.io/spring-boot/api/java/org/springframework/boot/loader/launch/PropertiesLauncher.html"
+    },
+    {
+      "title": "AWS describe-parameters",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/ssm/describe-parameters.html"
+    },
+    {
+      "title": "AWS list-commands",
+      "url": "https://docs.aws.amazon.com/cli/latest/reference/ssm/list-commands.html"
+    },
+    {
+      "title": "GitHub rerun actor privileges",
+      "url": "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs"
+    }
+  ],
+  "blockingFindings": [
+    {
+      "id": "PF-NESTED-OUTPUT",
+      "status": "RESOLVED",
+      "finding": "Only top-level host allowlist is checked; nested approvedImages arbitrary strings/files unexpected paths/container arbitrary keys accepted and retained in artifact. Key blacklist does not stop confidential string values.",
+      "reproduced": "Read-only import summarize_invocation with synthetic host approvedImages arbitrary text, files unexpected-path harmlessName arbitrary text, containerBefore arbitraryValue arbitrary text all returned success; no cloud/host/network.",
+      "required": "Exact recursive allowlist and bounded typed/enum/digest/path/value schemas before retaining host data.",
+      "resolution": "_validate_host enforces exact paths/keys and bounded typed metadata/enum/release/imagepolicy schemas; independently repeated arbitrary values now reject."
+    },
+    {
+      "id": "PF-PARENT-READ",
+      "status": "RESOLVED",
+      "finding": "safe_file now checks root and descendants; ancestor /opt and / not checked, so earlier-component symlink/unsafeownership is not excluded. Current release and approvedImages need strict value format before artifact.",
+      "required": "Root-owned non-writable no-symlink ancestors through /; fixed public file allowlist; strict image-policy digest/contract/evidence parsing.",
+      "resolution": "safe_file walks no-symlink root-owned non-group/world-writable ancestors through /, hashes only eight declared public paths. Output also constrains current release/image policy."
+    },
+    {
+      "id": "PF-RERUN-ACTOR",
+      "status": "RESOLVED",
+      "finding": "github.actor retains original actor during rerun; different triggering_actor can rerun approved event despite intended other-actor execution0.",
+      "required": "Check github.triggering_actor/GITHUB_TRIGGERING_ACTOR as well as original actor.",
+      "resolution": "Job gate and Python context both require approved triggering_actor as well as original actor before OIDC and before SSM."
+    }
+  ],
+  "pending": [
+    "Parent mandatory full guard after current preflight verification, before publication",
+    "Exact new HEAD CI and authorized actual read-only production target report; no remote success claimed"
+  ],
+  "paidCalls": 0,
+  "sourceTestEdits": 0,
+  "reviewerGradleRuns": 0,
+  "operationalExecutions": 0,
+  "implementationPassingChecks": [
+    "Java SQL fixed SET TRANSACTION READ ONLY and SHOW verification, autoCommitfalse, stmt5s/lock2s/login/connect/socket5s, rollback/close finally and sanitized SQLState output.",
+    "Standalone class uses java.sql only; explicitloader main/home/path/empty config, env-i keeps only needed JDBC values, 15-second process bound and32MiB heap; no product bootstrap/migration API.",
+    "SSM exact instance only, class/hostscript payload contains no secret; no AWS metadata raw response printed; readonly service show/container inspect field-specific.",
+    "Current repository/author/actor/branch/base/exactSHA checks before OIDC and SSM; sparsecheckout exactPRhead+persistcredentialsfalse.",
+    "Existing production role/bootstrap ReadOnlyAccess source declaration observed; actual remotely applied permission unconfirmed, denies reported with no repair."
+  ],
+  "testDesignReview": {
+    "existing15CaseVerdict": "PASS limited synthetic contract tests; gaps independently found require additive regressions",
+    "missingRegressions": [
+      "Ancestor trust chain is source-reviewed; no isolated real-host filesystem mutation test claimed."
+    ],
+    "boundary": "Fake JDBC and stub/local subprocess tests execute actual helper code but do not establish operational DB privileges/trust/cancellation or actual AWS permissions.",
+    "expanded20CaseVerdict": "PASS independent typed positive/absence controls and unknown nested/type/arbitrary value negatives; rerun context regression"
+  },
+  "updatedAt": "2026-10-07T10:49:04.072178+00:00",
+  "sourceReviewVerdict": "PASS no remaining blocking findings",
+  "sourceFiles": [
+    {
+      "path": "deploy/preflight/ReadOnlyFlywayProbe.java",
+      "sha256": "ab7c9cb140ee51f82a5433768061999a905e3beb08fb46831cea51fb96044794"
+    },
+    {
+      "path": "deploy/preflight/host-preflight.sh",
+      "sha256": "b44200421088120caf4b59ab7d81be286e38e9aad514eb0ecdb00f01550ac43c"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "f3de205b6051d6c3df470de76dd3dee885379d83201553510eb86ca029cdcf18"
+    },
+    {
+      "path": ".github/workflows/production-preflight.yml",
+      "sha256": "cc6618471bf341f178ad677c2f72a7a93cc2821cdc1958be4bbd7fd242b30098"
+    },
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "21d29f8fb799176c196dc7d6fd2dc240486605d1bd57e6bddcc0b3b0f6f4663c"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "75afbbca3faf18d40f0b8f0f4cfd2f3907bb05caf368950fad129beb4b894c2b"
+    }
+  ],
+  "actualVerification": {
+    "originalCycle": "15tests/13assertionRED→15GREEN; before test and initial summary byte archived",
+    "reviewCycle": "20tests/6assertionRED→20GREEN; exact current test fingerprint agrees with active RED and supersession",
+    "restoredGreen": {
+      "log": ".codex/tdd-evidence/issue-99-preflight-restored-green.log",
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "skipped": 0
+    },
+    "faults": {
+      "evidence": ".tdd/verification/issue-99-production-preflight.json",
+      "mutants": 3,
+      "assertionFailures": 7,
+      "items": [
+        {
+          "name": "missing-rollback",
+          "failedTests": 2,
+          "rawLog": ".codex/tdd-evidence/issue-99-preflight-fault-missing-rollback.log",
+          "recordedFailureNamesMatchRawLog": true
+        },
+        {
+          "name": "missing-output-schema",
+          "failedTests": 4,
+          "rawLog": ".codex/tdd-evidence/issue-99-preflight-fault-missing-output-schema.log",
+          "recordedFailureNamesMatchRawLog": true
+        },
+        {
+          "name": "missing-rerun-actor",
+          "failedTests": 1,
+          "rawLog": ".codex/tdd-evidence/issue-99-preflight-fault-missing-rerun-actor.log",
+          "recordedFailureNamesMatchRawLog": true
+        }
+      ],
+      "restoredSixCurrentFilesMatch": true
+    },
+    "deploymentPolicy": "13tests/13PASS from issue-99-preflight-policy.log",
+    "localNativeJdbc": {
+      "evidence": ".codex/tdd-evidence/issue-99-preflight-native-jdbc.json",
+      "isolatedPostgres": true,
+      "currentJarPropertiesLauncher": true,
+      "fixtureFlywayVersion": "8",
+      "secretOutput": false,
+      "boundary": "Parent-owned local isolated smoke; not operational DB evidence."
+    },
+    "productSourceAndTestsChanged": false,
+    "ciDelta": "Add independent preflight Node contract step only; existing checks unchanged"
+  },
+  "nonblockingNotes": [
+    {
+      "finding": "Absent container equality uses Python dict equality, allowing present:0 to compare equal to present:false; synthetic import reproduced.",
+      "impact": "Number0 contains no private data or executable text, so resolved privacy blockers remain closed; strict boolean schema has a small uncovered coercion.",
+      "recommendation": "Use exact present key and identity `is False` plus additive regression if source changed. Parent informed before final review."
+    },
+    {
+      "finding": "SSM transport-success status can coexist with flyway unavailable or API403; metadata preserves those denials.",
+      "impact": "Completed read protocol must be interpreted separately from operational readiness; no deploy/migration/stop approval inferred."
+    }
+  ],
+  "finalVerdict": "PASS independent local source/test/security review with nonblocking absent-container typing note; actual AWS/operational DB state remains unverified"
+}

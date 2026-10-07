@@ -1,0 +1,55 @@
+{
+  "workItem": "issue-99-final-quality",
+  "recordedAt": "2026-10-07T08:00:47Z",
+  "sourceFingerprintEvidence": ".tdd/verification/issue-99-integration.json",
+  "guardPath": ".codex/hooks/tdd_guard.py",
+  "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+  "guardInvocation": {
+    "command": [
+      "python",
+      ".codex/hooks/tdd_guard.py"
+    ],
+    "hookEvent": {
+      "hook_event_name": "PreToolUse",
+      "tool_name": "Bash",
+      "tool_input": {
+        "command": "git commit --dry-run"
+      },
+      "cwd": "/workspace/meet-me-server"
+    },
+    "exitCode": 0,
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "selfTests": 12
+  },
+  "gradleResult": {
+    "suites": 109,
+    "tests": 631,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "skippedTests": [
+      "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest.capture actual native schema for debugging explicitly marked unvalidated()",
+      "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest.bounded live Gemini semantic probe()",
+      "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest.export actual generated OpenAPI JSON after Issue 83 GREEN()",
+      "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest.verify correction public schemas then export actual native OpenAPI JSON()"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue-99-restored-final-guard.log",
+    "xmlDirectory": ".codex/tdd-evidence/issue-99-restored-final-xml"
+  },
+  "deploymentFixtures": {
+    "nodeTests": 13,
+    "v8GuardTests": 37,
+    "composeSecretFidelity": "PASS",
+    "databaseCredentialRefresh": "PASS",
+    "nginxRuntime": "PASS byte-identical public-config temporary fixture; repository scripts/permissions unchanged; exact HEAD CI will run original"
+  },
+  "openApi": ".tdd/reviews/issue-99-openapi-contract.json",
+  "paidModelCalls": 0,
+  "operationalDbAccess": false,
+  "mergeOrDeployment": false,
+  "remoteCi": "Pending publication; exact HEAD result to be recorded in Draft PR body"
+}

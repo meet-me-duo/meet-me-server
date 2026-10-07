@@ -1,0 +1,355 @@
+{
+  "verified_at": "2026-10-07T02:44:01.192238+00:00",
+  "implementation_basis": "1ddbd267 + uncommitted92; committed with this report",
+  "llm": "EXPLICIT_MOCK_PORT",
+  "external_model_calls": 0,
+  "results": [
+    {
+      "scenario": "two-person-count",
+      "status": "PASS",
+      "participant_count": 2,
+      "closure": "EXPECTED_PARTICIPANTS",
+      "inputs": [
+        {
+          "name": "host",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member1",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        }
+      ],
+      "correction": null,
+      "expected_final": {
+        "quality": "COMPLETE",
+        "utc_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "participants": [
+          "host",
+          "member1"
+        ]
+      },
+      "actual_final": {
+        "quality": "COMPLETE",
+        "time_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "attendees": [
+          "host",
+          "member1"
+        ]
+      },
+      "original_result": null,
+      "confirmation_protection": null,
+      "raw_report_sha256": "7e6c57210329f4395cee4c7f1b4594a244e0bf2cbbb72029a06804d6f1634736",
+      "local_raw_report": ".codex/tdd-evidence/issue-92-meeting-scenarios-final66/two-person-count.json"
+    },
+    {
+      "scenario": "three-person-count",
+      "status": "PASS",
+      "participant_count": 3,
+      "closure": "EXPECTED_PARTICIPANTS",
+      "inputs": [
+        {
+          "name": "host",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member1",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member2",
+          "raw": "2026년10월8일 오후8시부터10시까지 가능해요",
+          "mocked_structured_hours": "20-22"
+        }
+      ],
+      "correction": null,
+      "expected_final": {
+        "quality": "COMPLETE",
+        "utc_ranges": [
+          {
+            "start_at": "2026-10-08T11:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "participants": [
+          "host",
+          "member1",
+          "member2"
+        ]
+      },
+      "actual_final": {
+        "quality": "COMPLETE",
+        "time_ranges": [
+          {
+            "start_at": "2026-10-08T11:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "attendees": [
+          "host",
+          "member1",
+          "member2"
+        ]
+      },
+      "original_result": null,
+      "confirmation_protection": null,
+      "raw_report_sha256": "530ed243ccb5081ba4143d6ededd4f98723d7f4ecc37a4a2e911464d23021a2e",
+      "local_raw_report": ".codex/tdd-evidence/issue-92-meeting-scenarios-final66/three-person-count.json"
+    },
+    {
+      "scenario": "time-deadline",
+      "status": "PASS",
+      "participant_count": 2,
+      "closure": "DEADLINE",
+      "inputs": [
+        {
+          "name": "host",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member1",
+          "raw": "2026년10월8일 오후8시부터10시까지 가능해요",
+          "mocked_structured_hours": "20-22"
+        }
+      ],
+      "correction": null,
+      "expected_final": {
+        "quality": "COMPLETE",
+        "utc_ranges": [
+          {
+            "start_at": "2026-10-08T11:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "participants": [
+          "host",
+          "member1"
+        ]
+      },
+      "actual_final": {
+        "quality": "COMPLETE",
+        "time_ranges": [
+          {
+            "start_at": "2026-10-08T11:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "attendees": [
+          "host",
+          "member1"
+        ]
+      },
+      "original_result": null,
+      "confirmation_protection": null,
+      "raw_report_sha256": "8fddeecaf1370e016b1b0f12ae72114b450ec1d33401a91bb539276911c0d15d",
+      "local_raw_report": ".codex/tdd-evidence/issue-92-meeting-scenarios-final66/time-deadline.json"
+    },
+    {
+      "scenario": "manual-close",
+      "status": "PASS",
+      "participant_count": 2,
+      "closure": "MANUAL",
+      "inputs": [
+        {
+          "name": "host",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member1",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        }
+      ],
+      "correction": null,
+      "expected_final": {
+        "quality": "COMPLETE",
+        "utc_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "participants": [
+          "host",
+          "member1"
+        ]
+      },
+      "actual_final": {
+        "quality": "COMPLETE",
+        "time_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "attendees": [
+          "host",
+          "member1"
+        ]
+      },
+      "original_result": null,
+      "confirmation_protection": null,
+      "raw_report_sha256": "96a9d021110a47baad85ee818a1c31bd683fb3685d2f467ef668260cc2b4126d",
+      "local_raw_report": ".codex/tdd-evidence/issue-92-meeting-scenarios-final66/manual-close.json"
+    },
+    {
+      "scenario": "no-match-correction",
+      "status": "PASS",
+      "participant_count": 2,
+      "closure": "MANUAL",
+      "inputs": [
+        {
+          "name": "host",
+          "raw": "2026년10월8일 오후7시부터8시까지 가능해요",
+          "mocked_structured_hours": "19-20"
+        },
+        {
+          "name": "member1",
+          "raw": "2026년10월8일 오후9시부터10시까지 가능해요",
+          "mocked_structured_hours": "21-22"
+        }
+      ],
+      "correction": {
+        "name": "member1",
+        "raw": "2026년10월8일 오후7시부터8시까지 가능해요"
+      },
+      "expected_final": {
+        "quality": "COMPLETE",
+        "utc_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T11:00:00Z"
+          }
+        ],
+        "participants": [
+          "host",
+          "member1"
+        ]
+      },
+      "actual_final": {
+        "quality": "COMPLETE",
+        "time_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T11:00:00Z"
+          }
+        ],
+        "attendees": [
+          "host",
+          "member1"
+        ]
+      },
+      "original_result": {
+        "quality": "COMPLETE",
+        "applied_submissions": 2,
+        "total_submissions": 2,
+        "unapplied_inputs": 0,
+        "candidates": [],
+        "analysis_id": "57c911bd-5b30-4cac-8e4d-2cace8299672",
+        "state_version": 5
+      },
+      "confirmation_protection": "409",
+      "raw_report_sha256": "d8a2acf1d1b639549a1481f1ad69d331889a1673659e25354c2c7c01464692ea",
+      "local_raw_report": ".codex/tdd-evidence/issue-92-meeting-scenarios-final66/no-match-correction.json"
+    },
+    {
+      "scenario": "partial-correction",
+      "status": "PASS",
+      "participant_count": 3,
+      "closure": "MANUAL",
+      "inputs": [
+        {
+          "name": "host",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member1",
+          "raw": "2026년10월8일 오후7시부터9시까지 가능해요",
+          "mocked_structured_hours": "19-21"
+        },
+        {
+          "name": "member2",
+          "raw": "미확정 시간 입력",
+          "mocked_structured_hours": "AMBIG"
+        }
+      ],
+      "correction": {
+        "name": "member2",
+        "raw": "2026년10월8일 오후7시부터9시까지 가능해요"
+      },
+      "expected_final": {
+        "quality": "COMPLETE",
+        "utc_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "participants": [
+          "host",
+          "member1",
+          "member2"
+        ]
+      },
+      "actual_final": {
+        "quality": "COMPLETE",
+        "time_ranges": [
+          {
+            "start_at": "2026-10-08T10:00:00Z",
+            "end_at": "2026-10-08T12:00:00Z"
+          }
+        ],
+        "attendees": [
+          "host",
+          "member1",
+          "member2"
+        ]
+      },
+      "original_result": {
+        "quality": "PARTIAL",
+        "applied_submissions": 2,
+        "total_submissions": 3,
+        "unapplied_inputs": 1,
+        "candidates": [
+          {
+            "candidate_id": "33433286-9ee7-45ed-b7e7-d32f776fbebc",
+            "plan_type": "C",
+            "meeting_mode": "REMOTE",
+            "rank": 1,
+            "attendance_count": 2,
+            "total_participants": 3,
+            "time_ranges": [
+              {
+                "start_at": "2026-10-08T10:00:00Z",
+                "end_at": "2026-10-08T12:00:00Z"
+              }
+            ],
+            "place": null,
+            "summary": "10월 8일 19:00~21:00"
+          }
+        ],
+        "analysis_id": "cf972fbe-c878-4f11-9c04-e22300037f93",
+        "state_version": 5
+      },
+      "confirmation_protection": "409",
+      "raw_report_sha256": "f4f3813c8cd23e5427c1d7324457f668f0bf851a4e91e7aa2740cb77326cd089",
+      "local_raw_report": ".codex/tdd-evidence/issue-92-meeting-scenarios-final66/partial-correction.json"
+    }
+  ]
+}

@@ -446,3 +446,97 @@ ADR-023의 수동 가능 선택·교집합과 ADR-024의 슬롯 전용 신규 �
 **이유**: 자연어 아래 격자가 혼란을 주고 입력 결합·충돌이 복잡하다. 구 웹의 배열 접근은 유지하면서 수동 선택이 반영된다는 오해를 명시 오류로 막는다. 원문 없는 구 제출을 전체 기간 가능으로 확대하지 않아 거짓 참석을 방지한다.
 
 **트레이드오프**: legacy 슬롯 전용은 원본 보존에도 새 계산에서 후보가 줄거나 NO_MATCH가 될 수 있다. collecting 본인 자연어 수정은 허용하지만 닫힌 배치 재입력은 요구하지 않는다. HOST nullable 원문·NO_MATCH 설명 UX가 필요하다. deprecated 응답의 완전 제거는 후속 호환 결정이다. 신규 인프라·삭제·일괄 재계산은 필요하지 않다.
+
+
+### ADR-046: 종료 상태를 유지하는 입력 수정 라운드와 명시적 활성 분석
+
+**상태**: Accepted
+**날짜**: 2026-10-07
+
+**결정**: ADR-027의 입력 수집 CLOSED와 최초 closed_at은 수정 라운드에서도 유지한다. 미확정 완료 NO_MATCH 또는 PARTIAL의 HOST만 별도 OPEN 라운드를 열며, 공개 화면은 COLLECTING으로 표시한다. 원본 배치에 제출한 참여자만 본인 최신 입력을 수정할 수 있다. 방·초대·설정·원본 배치·참여자와 게스트 증명을 보존하며 새로운 참여나 최초 미제출자의 추가 제출은 허용하지 않는다. 저장은 분석과 자동 마감을 실행하지 않는다. ECMAScript trim 후 같은 원문은 기존 revision·version ID·locale·created_at을 유지한다. 수정 라운드는 방의 30일 closed_at 보존 기준과 게스트 세션의 독립 만료를 갱신하지 않는다.
+
+HOST 명시적 분석은 방 잠금 아래 현재 cohort의 정확한 immutable version ID를 비교한다. 변경 없는 입력은 라운드를 CONSUMED로 기록하고 source 결과를 REUSED한다. 변경 또는 force_reparse=true는 새 batch/run/Outbox를 함께 생성하고 QUEUED로 기록한다. 강제 재분석도 원본 결과를 덮어쓰지 않는다. 방 수명 동안 커밋된 새 수정 분석은 최대 3회이며, 반복 요청·변경 없는 재사용·롤백은 차감하지 않고 기술 실패는 차감을 환불하지 않는다. 한도가 없어도 라운드 열기와 본인 저장은 가능하지만 새 분석은 409 CORRECTION_ANALYSIS_LIMIT_REACHED로 거절한다. 이 한도는 논리 분석 수이며 물리 API 호출 수나 USD 비용 상한이 아니다. 기존 최대 4회/60초 기술 재시도와 지연 분석의 명시적 재시도는 유지한다.
+
+POST reopen은 request_id/source_analysis_id/expected_generation을, POST analysis는 request_id/revision_round_id/force_reparse를 받는다. correction PUT은 revision_round_id와 expected_revision을 함께 요구한다. 같은 요청 ID와 payload는 처음 기록한 operation outcome과 현재 room snapshot을 반환하고, 다른 payload 또는 오래된 라운드·revision은 409 REVISION_CONFLICT다. 멱등 조회와 변경 없는 재사용 판단을 한도 검사보다 먼저 수행한다. 기존 close는 CLOSED에서 200 no-op, analysis/retry는 지연 분석 전용을 유지한다. 새 HOST 명령도 기존 Redis 비용 명령 제한의 429 Retry-After와 503 fail-closed를 적용한다.
+
+meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, correction_analysis_count를 영속화한다. 같은 방 FK, generation·request uniqueness와 단일 OPEN 제약을 둔다. 기존 데이터는 확정 결과를 우선하는 명시적 backfill을 하며 복수의 서로 다른 확정 결과는 migration 전에 실패한다. 모든 쓰기는 room→정확한 run 순서로 잠그고 worker start/complete/delay/DLQ가 활성 분석을 재확인한다. 오래된 전달은 현재 결과를 덮어쓰거나 새 공급자 호출을 만들지 않는다. 조회는 일관된 snapshot으로 공개 상태를 구성하고 state_version을 모든 공개 상태 전이에서 증가시켜 같은 generation의 지연 응답도 식별한다. 고정 배치는 최신 head가 아닌 정확한 immutable version으로 복원한다. 보존기간 삭제는 pointer와 round를 참조된 run보다 먼저 정리한다.
+
+**이유**: 수집 상태를 다시 열면 최초 마감 조건과 지연 요청이 새 수정 내용을 자동 분석할 수 있다. 별도 라운드와 영속 멱등 결과는 같은 결과를 재사용한 뒤 다시 수정하는 경우에도 늦은 요청을 구분한다. 명시적 활성 분석과 같은 잠금 순서는 재수정·확정·worker 완료 경쟁에서 과거 후보와 과거 배치가 현재 결과가 되는 것을 막는다.
+
+**트레이드오프**: 추가 마이그레이션·영속 상태·트랜잭션 검증이 필요하다. 구 클라이언트는 원본 API 읽기를 유지하지만 새 수정 흐름을 완료할 수 없으므로 새 웹이 필요하다. 수정 데이터 작성 후 기존 backend로 rollback하면 활성 pointer와 라운드를 무시하므로 roll-forward를 기본 복구로 사용한다. 세 번의 논리 분석 한도는 기술 재시도 비용을 제한하지 않으며 한도 소진 뒤 저장된 수정 내용을 새로 분석할 수 없다. 한도 소진 후 입력을 새 버전으로 저장하면 원래 version 집합과 달라 REUSED도 불가능하며 라운드는 OPEN으로 남는다. 원문을 되돌려 저장해도 새 version ID이므로 재사용 조건을 충족하지 않는다. 별도 라운드 취소 명령은 이번 계약에 없고 웹은 이 제한을 명확히 안내해야 한다. 구조화 결과가 다른 입력을 잘못 해석한 경우는 별도 모델 평가로 확인해야 한다.
+
+
+**배포 전제와 복구 경계**: V8부터 구 서버의 동시 쓰기를 허용하지 않는다. 구 서버는 migration 뒤 신규 방/분석의 active pointer를 기록하지 않고 기존 retention이 round FK를 정리하지 않으므로, 기존 writer·worker·Outbox relay·retention을 모두 중지한 뒤 migration해야 한다. HTTP 요청만 막거나 웹을 먼저 배포하는 것으로 이 경계를 충족하지 않는다. migration 후에는 V8 호환 서버만 실행한다. 이 범위에서는 ADR-041의 이전 image 자동 rollback을 대체하고 roll-forward를 사용한다.
+
+기존 배포 script의 migration 전 구 writer 유지·health 실패 뒤 previous image fallback과 explicit rollback/credential refresh의 구 image 재기동을 독립 assertion RED로 확인했다. 이를 대체하는 저장소 구현은 모든 관리 경로를 설치된 고정 host launcher로 연결한다. 실제 호스트에 기존 script가 남아 있거나 외부 선행조건을 완료하지 않았다면 main 병합·자동 배포는 여전히 승인 조건을 충족하지 않는다.
+
+확정한 lifecycle 계약은 다음과 같다. 생산 script 구현의 독립 검증과 실제 호스트 설치·운영 승인은 별도로 추적한다.
+
+- `state/compatible-images.tsv`의 완전한 image@sha256:64hex·`input_revision_v8`·review evidence hash만 실행을 허가한다. installer와 launcher는 요청 image를 자동 등록하지 않는다. root 소유·group/world 비쓰기·regular-file 상태, prerequisite·manifest·wrapper·launcher·고정 Compose override의 바이트를 검사한다.
+- 영속 phase는 `PRE_V8`/`V8_STARTED`/`READY`다. PRE_V8에는 marker가 없어야 하고 첫 승인 deploy만 가능하다. V8_STARTED와 READY에는 정확한 sticky marker가 필요하다. V8_STARTED도 승인 deploy만 가능하며 rollback/refresh/restart는 READY에서 승인된 digest만 사용한다. marker 뒤 phase가 없어지거나 깨지면 자동 초기화하지 않는다.
+- 설치기는 모든 저장 release의 구 진입 script를 같은 파일시스템의 archive에 hard-link로 고정하고 device/inode를 정밀도가 보존되는 문자열로 기록한다. 모든 설치·launch는 `/proc/<pid>/fd` metadata로 열린 구 inode를 확인한다. 살아 있는 프로세스의 관측 거부는 fail closed다. 구 cmdline을 읽거나 출력하지 않는다. 설치가 중단되면 유효한 pre-marker manifest/pin을 보존한 명시적 installer 재시도만 허용하며 launch가 missing phase를 정상 상태로 간주하지 않는다.
+- 앱 Compose 자동 재시작을 `no`로 바꾸고 모든 관리 Compose 호출의 마지막 고정 override가 승인 image와 restart 정책을 강제한다. guarded boot unit은 고정 restart를 호출한다. 저장된 구 Compose 파일에 다른 image/restart가 있어도 관리 실행이 이를 재사용하지 않는다.
+- 관리 대상은 단일 `meet-me-app`의 HTTP·worker·Outbox relay·retention과 알려진 진입 경로다. root의 직접 Docker/SSM 실행·임의 구 workflow·관리되지 않은 DB writer는 shell guard가 통제할 수 없으므로 운영자가 별도로 중지·권한 통제한다. prerequisite JSON의 boolean/evidence는 운영자 진술이며 실제 AWS pause·호스트 설치의 기계적 증명으로 보고하지 않는다.
+
+1. 공통 release 잠금 아래 모든 앱 재기동 경로(deploy health fallback, explicit rollback, credential refresh)에 지속적인 최소 호환 release 검사를 먼저 설치·검증한다. 이전 release 폴더에 남은 script도 검사하도록 공통 host launcher 또는 사전 갱신된 guard를 사용한다. 새 폴더의 marker만으로 이전 script를 보호했다고 간주하지 않는다. 정기·이벤트 refresh의 이미 대기 중인 실행, 수동 배포 dispatch, host 재부팅/Compose 재시작과 운영자의 직접 구 image 실행도 함께 통제한다. schema 숫자 또는 image label만으로 호환성을 허가하지 않고 검증된 compatible image digest와 계약 근거를 사용한다.
+2. V8 이미지·웹 native schema·합성 이전 데이터 migration 검사·호환 roll-forward digest를 확정한다. 기존 앱 전체를 중지하고 실행 중 작업 종료를 확인한다. Redis의 미처리 참조는 삭제하지 않고 신 서버가 PostgreSQL 활성 상태를 재검증하게 한다. 서비스는 이 기간 점검 상태로 유지한다.
+3. migration 직전에 지속적인 breaking-release marker를 원자적으로 기록한다. marker 이후 구 image 재기동은 health 실패·migration 실패·refresh·수동 rollback 경로 모두 fail closed한다. V8이 적용되지 않았음을 별도 검증하기 전 marker를 자동 해제하지 않는다. 쓰기와 worker가 중지된 상태에서 새 이미지로 migrate한다.
+4. V8 호환 서버를 시작하고 health·native OpenAPI·additive 조회 계약을 확인한다. 실패하면 구 서버를 재기동하지 않고 호환 image로 roll-forward하거나 점검 상태를 유지한다. 호환 서버의 current release 선택과 credential refresh 재개 순서는 구 image 부활이 불가능하도록 검사한다.
+5. 생성 schema를 사용한 웹을 배포하고 capability가 있을 때만 수정 흐름을 노출한다. 별도 합성 검증 후 서비스 접근을 재개한다. 정기 credential refresh도 호환 release만 대상으로 재개한다.
+
+**기존 웹 호환의 한계**: 새 웹+구 서버는 recovery capability가 없으면 관련 동작을 숨긴다. 구 웹+새 서버의 OPEN 라운드는 공개 COLLECTING으로 보이지만 round/revision 없는 PUT은 409이고 기존 close는 200 no-op이다. 이는 입력과 배치를 보호하는 계약이며 수정 UX의 양방향 호환 성공은 아니다. 웹 선배포도 기존 탭·캐시의 구 웹 제거를 보장하지 않는다. 정확한 구/신 번들 합성 브라우저 검증에서 구 PUT409는 draft를 유지하지만 reload가 미저장 draft를 잃게 함을 확인했다. 운영자는 먼저 원문을 복사하고 새로고침한 뒤 새 웹에 다시 입력·명시적 저장·결과 확인하는 안내와 지원 경로를 제공해야 한다. 이 운영 절차와 실제 cross-version backend 검증은 별도 선행조건이다.
+
+**읽기 전용 배포 후 확인**: 로컬/격리 staging에서는 합성 방·합성 증명으로 room/본인 submission/candidates GET의 metadata와 권한 경계를 검사한다. 운영 실행이 별도 승인된 뒤에는 `/healthz`, 앱 내부 `127.0.0.1:9090/actuator/health`, `/v3/api-docs`의 계약을 확인한다. 사용자 방·운영 원문·다른 참여자 입력을 탐색하지 않으며 운영 POST/PUT·재분석·확정은 smoke에 포함하지 않는다. credential·cookie·원문은 로그나 인계 자료에 출력하지 않는다. 합성 쓰기 흐름과 구 캐시 화면은 운영 데이터 없이 staging에서 검증한다. ADR-042의 main 병합은 자동 CD를 시작하므로 위 lifecycle guard·migration·웹·operator 조건이 충족되기 전에는 Draft PR/CI 완료와 배포 준비 완료를 구분한다.
+
+
+### ADR-047: 시간별 추천 projection과 실제 시각 typed selection
+
+**상태**: Accepted (D2는 ADR-048에서 확정)
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인 #95에 따라 날짜·시간 추천의 의미를 기존 방식별 Plan 종류와 분리한다. N/N-1/N-2 전체 조합을 최소2명 조건으로 평가하고 동일 절대 창을 한 option, 방식·장소·참석 집합을 variant로 보존한다. primary 최대3 이외 전체 대안도 분석에 고정해 cursor로 제공한다. 소요시간 설정이나 임의 고정 길이를 만들지 않으며 HOST가 단일 창 안에서 실제 시작·종료를 고른다. 새 projection은 legacy 결과 완료와 원자 게시하고 typed 선택은 candidate FK와 분리해 저장한다. 전체 분석/option/variant/시각 튜플만 멱등이며 active run·CLOSED·OPEN round·기존 확정·frozen version을 검증한다.
+
+ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분석에서 이 결정으로 대체한다. 기존 candidate API·다중 time_ranges·과거 final_confirmations와 기존 matcher는 호환 경로로 보존한다. 새 분석의 candidate-only 확정은 거부한다. ADR-035 시간대, ADR-045 입력 안전 제외와 ADR-046 입력 보존·활성 분석·동결 배치·수정 제한·CLOSED 보존은 유지하며 확정 보호는 두 선택 타입에 적용한다. D2 집계는 후속 ADR-048을 따른다.
+
+**이유**: 방식별 한 카드에 모든 시간이 묶이면 서로 다른 날짜·시간을 비교하기 어렵고 실제 모임 시각이 확정되지 않는다. 별도 immutable projection과 typed 선택은 기존 확정 FK를 오용하거나 과거 결과를 재작성하지 않고 새 제품 동작을 표현한다.
+
+**트레이드오프**: 새로운 migration·조회·원자 게시·경합·혼합 버전 검증과 companion 웹이 필요하다. 전체 조합은 데이터량을 늘리므로 조회·게시 비용을 확인해야 한다. 새 웹은 정확히 지원하는 protocol에서만 실제 시각 확정을 활성화한다. 구 웹은 legacy 읽기를 유지하지만 신규 protocol의 구 확정은409로 거부된다. 구 V8 writer 읽기·운영 lifecycle은 호환되지 않으므로 앱 전체 중지와 V9 호환 release 검토가 운영 선행조건이다. 구 V8 digest 승인 목록을 자동 확대하거나 운영 guard를 이 구현에서 바꾸지 않는다.
+
+### ADR-048: 자연어 명시 선호와 결정론적 선호 집계
+
+**상태**: Accepted (제품 구현·통합 검증은 #99에서 추적)
+**날짜**: 2026-10-07
+
+**결정**: 사용자 직접 승인에 따라 D2의 집계 의미를 확정한다. 참석 인원 다음으로 선호가 맞는 참석자 수를 비교하고 동등한 품질에서 날짜·시간 다양성을 적용한다. 참석자별 최대1점, 같은 차원 대안 OR·명시된 여러 차원 AND, 시간 창 전체 선호 충족을 적용한다. 선호 하위 창과 원래 가능한 대안을 보존하며 불가·예외·기존 장소조건을 우선한다. 새 UI 없이 기존 자연어를 AI가 구조화하고 서버가 계산한다. #96의 Gemini/Luna 공통 prompt·schema·validator 및 조건 저장·복원을 함께 확장한다. 공개 옵션 API와 frozen version·확정 보호를 유지한다. 이 결정은 ADR-047의 D2 TBD만 확정하며 다른 계약과 운영 승인 범위를 바꾸지 않는다.
+
+**이유**: 여러 문장을 쓴 사람이 더 큰 가중치를 갖거나 일부만 겹치는 큰 창이 선호를 전부 만족한다고 표시되는 것을 피한다. 자연어 입력 유지와 공통 검증은 공급자별 의미 차이와 입력 UI 추가를 줄인다. 선호를 필수 제약과 분리해야 기존의 가능한 대안을 잃지 않는다.
+
+**트레이드오프**: 여러 차원 AND는 시간만 또는 장소만 맞는 후보에 부분 점수를 주지 않는다. 선호 경계의 하위 창은 저장·조회 규모를 늘리므로 큰 N과 #96 완료 예산을 함께 검증해야 한다. 통합 #99의 live schema_version 3는 선호 시간·장소를 하드 제약과 별도 타입으로 보존하며 v1/v2 구 저장 결과는 선호 없음으로 복원한다. 명시 차원의 존재는 시간 확장 결과가 비어도 유지한다. 일부 조건이 거부된 참가자는 유효한 가능 조건과 선호 하위 창을 보존하되 선호 점수를 주지 않는다. 잘못된 하드 TIME_WINDOW는 AMBIGUOUS_TIME_CONSTRAINT로 안전 제외하고 기존 조건부 필수 제약의 안전 제외를 임의로 완화하지 않는다.
+### ADR-049: 제한된 Luna 구조화 폴백과 영속 실행 예산
+
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인 Issue #96에 따라 Gemini 최초 1회+최대 3회 Full Jitter 기술 재시도 뒤 OpenAI `gpt-6-luna` 구조화 폴백 1회를 사용한다. 실제 남은 60초 예산에 따라 Gemini 호출과 backoff를 줄이고 Luna·완료 시간을 예약한다. 동일 provider-independent schema/prompt/validator를 사용하며 성공 결과 전체를 한 공급자에서 선택한다. 검색 범위는 domain expansion에서 적용하고 유효 날짜 조건을 검증 실패로 바꾸지 않는다. SDK 내부 재시도와 transport 연결 재전송은 비활성화한다.
+
+**이유**: 공급자 일시 장애에서도 같은 입력·기준일로 한 번의 대체 구조화를 수행하면서 비용·시간 상한을 보존하기 위해서다. run version별 PostgreSQL invocation/attempt claim·owner·deadline·winner fencing은 Outbox 재전달과 프로세스 재시작의 상한 초기화 및 늦은 게시를 막는다. HOST의 명시적 지연 재시도만 새 논리 실행·비용 단위로 다루며 기존 #92 room→exact run·활성 pointer·OPEN 라운드·확정 보호를 유지한다.
+
+2026-10-07 후속 사용자 승인으로 시간 배분은 Gemini 단계 최대30초(호출별15초)·Luna 최대27초·완료3초로 조정한다. 단일60초와 최대4+1·재전달/승자 fencing을 유지하며 공통 Application 예산으로 reservation·durable admission·실제 transport cap을 일치시킨다. bounded-luna-v1 및 V10 SQL은 보존하고 배분 조정은 정확 source HEAD로 추적한다.
+
+운영키 전달 후속은 ADR-041의 사용자 등록 SSM SecureString 패턴을 확장한다. OpenAI를 기존 운영 prefix의 `secret/openai-api-key`에서 `OPENAI_API_KEY`로 전달하며 release의 `gemini-luna-required` 모드에서는 키가 없거나 읽기/형식 검증에 실패하면 서버·migration 기동을 거부한다. 기존 mode 없는 release/명시 Gemini 단독은 OpenAI 권한을 요구하지 않는다. 키 값은 Terraform·GitHub·명령 로그에 저장하지 않고 실제 사용자 등록·운영 전달 확인은 코드 검증과 분리한다. 시간 예산·앱/DB 계약과 운영 승인 경계는 유지한다.
+
+**트레이드오프**: 최대 4회 Gemini를 모든 지연 상황에서 보장하지 않고 남은 예산에 맞춰 줄인다. 중단된 실행은 기존 예산 안에서 호출을 다시 시작하지 않고 deadline 만료 후 지연 상태로 보수적으로 종결한다. 공급자 exactly-once 및 전체 자연어 의미 정확성은 보장하지 않는다. Luna의 미확인 가격·usage는 null로 기록한다. 두 공급자가 모두 실패하면 PARTIAL로 복구하지 않고 입력·batch 보존과 ANALYSIS_DELAYED/후보 0/ACK를 유지한다. 추가 provider 원문 전달 고지·처리 조건과 운영 설정은 배포 전 별도 검토 대상이다. 기존 ADR-016/018의 Gemini 단독 장애 정책을 이 범위에서 대체하며 배포·병합 승인을 포함하지 않는다.
+
+### ADR-050: 첫 breaking migration의 승인과 이후 같은 계약의 자동 배포
+
+**상태**: Accepted (실제 운영 실행은 별도 승인)
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인에 따라 ADR-042의 main CI 자동 배포는 같은 migration·guard 계약에서 유지하고, 첫 V8→V9/V10 전환만 독립 승인으로 분리한다. 기존 production Environment·OIDC 역할·S3/ECR/SSM 경로를 재사용하며 IAM·보호규칙을 변경하지 않는다. 성공한 main push CI의 정확 SHA로 image를 한 번 게시하고 run/attempt별 불변 manifest와 archive를 저장한다. main 수동 preflight/deploy는 그 게시물의 origin·tar SHA·ECR digest를 검증하며 다시 build하지 않는다.
+
+최초 record가 없거나 SQL catalog·guard 실행 bundle이 달라지면 자동 흐름은 읽기 결과와 전환 필요 상태만 기록한다. 명시 승인된 첫 deploy는 실제 두 refresh rule 중지·대기 SSM 없음·정확한 성공 Flyway prefix를 확인하고, 구 V8 digest를 승인 목록에서 제거한 뒤 기존 installer·고정 launcher로 진행한다. installer의 실제 retired-FD 검사를 운영자 진술과 구분한다. post-migration의 정확 history·READY·실제 선택 image를 확인한 뒤 root 소유·비쓰기·regular-file record를 원자 저장한다. 실패 시 구 image fallback·phase 초기화는 하지 않는다.
+
+이후 main CI는 실제 history·현재 image·phase·guard 신뢰와 record의 SQL/guard 지문을 매번 다시 확인한다. 같은 계약일 때는 새 신뢰 main 게시물과 같은 계약의 현재 image만 승인하고 자동 deploy한다. helper/reader/validator/producer를 포함한 실행 bundle이나 migration이 바뀌면 다시 명시 전환 승인이 필요하다. 첫 전환 외 일반 main 배포를 영구 수동화하는 정책은 채택하지 않는다. EventBridge 사용자 중지는 실제 유지보수 시작 시점에만 요청하며 preflight에서는 실행하지 않는다.
+
+**이유**: main 병합 직후 구 writer가 살아 있는 상태로 V8/V9를 적용하는 경로를 막고, 실제로 확인한 schema 계약을 후속 자동 배포의 기준으로 사용하기 위해서다. build와 deploy를 분리해야 생성 뒤 확정되는 registry digest를 승인 전에 검토할 수 있다.
+
+**트레이드오프**: 첫 전환과 SQL/guard 계약 변경은 명시 승인이 필요하다. 실패한 설치·준비는 fail closed 상태에서 별도 복구 검토가 필요하며 read-only probe도 임시 파일·짧은 JVM/DB 연결을 사용한다. 후속 자동 배포의 신뢰는 기존 main CI·branch protection·production 역할에 의존하며 root의 임의 운영 명령을 통제하지 않는다. 저장소 CI 성공은 실제 parameter 전달·운영 상태·최종 배포 승인을 대체하지 않는다.

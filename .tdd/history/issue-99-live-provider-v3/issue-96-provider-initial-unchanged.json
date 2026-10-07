@@ -1,0 +1,60 @@
+{
+  "workItem": "issue-96-provider-initial-unchanged",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderFailureContractTest.kt",
+      "sha256": "f0bf977ef5a93eda1bae5218c2fdcbbac33293bd5762293e45c7c620632c93d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTransportBudgetContractTest.kt",
+      "sha256": "fd3ff9b884fcedcb4cc03b4f6c88918e94df87bbf21f23b0eabe48508e1964d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "b1b176f28d54db087d6fb5fed0f48ea30c810d6d80c93bd79231cee5f8ecff22"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiHighDemandBoundaryTest.kt",
+      "sha256": "db6eac992170a8ccd111b16b609fc4d4d253b51f4d41c750047e108571e0066f"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/run-meetme-gradle.py",
+    ".codex/tdd-evidence/issue-96-contract-red.log",
+    "test",
+    "--tests",
+    "*SearchScopeProviderResponseContractTest",
+    "--tests",
+    "*BoundedProviderFallbackContractTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiProviderFailureContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest",
+    "--tests",
+    "*GeminiHighDemandBoundaryTest",
+    "--tests",
+    "*DurableAnalysisInvocationPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.untyped message mentioning server timeout or connection is not evidence of transient failure()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.[1] code = \"401\", status = \"UNAUTHENTICATED\", expected = \"AUTHENTICATION\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.[2] code = \"403\", status = \"PERMISSION_DENIED\", expected = \"PERMISSION\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.[3] code = \"402\", status = \"BILLING_ERROR\", expected = \"BILLING\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.[4] code = \"400\", status = \"INVALID_ARGUMENT\", expected = \"INVALID_REQUEST\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.[5] code = \"429\", status = \"RESOURCE_EXHAUSTED\", expected = \"QUOTA\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.[1] reason = \"MAX_TOKENS\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.[2] reason = \"SAFETY\"",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.503 sends one SDK request and has no hidden final retry sleep inside call budget()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.request timeout also bounds stalled Gemini response body()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.SDK success parses common response under requested timeout without nested retry()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest.Issue 96 유효한 탐색 범위 밖 날짜 조건도 보존한다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T05:40:16.639558Z"
+}

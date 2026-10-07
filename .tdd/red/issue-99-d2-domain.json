@@ -1,0 +1,42 @@
+{
+  "workItem": "issue-99-d2-domain",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjectorD2ContractTest.kt",
+      "sha256": "ec67005974e4dd561c28223a40e39ebd224edc2db796155bb682556703d753b7"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*RecommendationProjectorD2ContractTest",
+    "--tests",
+    "*RecommendationPreferenceScopeContractTest",
+    "--tests",
+    "*D2PreferenceProviderContractTest",
+    "--tests",
+    "*D2PreferenceJsonMapperTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-14 touching midnight preference ranges jointly cover continuous availability()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-02 repeated time and place alternatives still give one point per participant()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-01 attendance outranks preferences and date diversity()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-15 DST repeated local clock does not transfer preference to another instant()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-08 preference is clipped to actual availability and never extends it()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-06 a preference union with a gap cannot satisfy the whole window()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-12 preferences outrank diversity before equal quality date diversity()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-05 adjacent and overlapping preference union covers a whole window()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-07 preserve original each preference and their shared nonuniform window()",
+    "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.99-D2-03 same dimension alternatives are OR and time with place is AND()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:27:20.757502Z"
+}

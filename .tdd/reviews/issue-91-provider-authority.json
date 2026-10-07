@@ -1,0 +1,56 @@
+{
+  "workItem": "issue-91-provider-authority",
+  "sourceRevision": "20bd3b47fde81b506ab80474377fb1cef4ea3b63",
+  "reviewer": "/root/server92_design_review",
+  "codeAndEvidenceVerdict": "PASS",
+  "blockingFindings": [],
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "8eef4cf574d5ed98ede6e8392bba08821004de52469557773350f4db7a58367a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/NaturalLanguageParserPort.kt",
+      "sha256": "5dbb5d3e6e31c9b727cbee08f02f94c25d2068dd431220000f44e5014078cec6"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "sha256": "d798f7a782686bc324c1247e725670a055079963d6198b132dbf84a0d11c2619"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextBoundaryReviewTest.kt",
+      "sha256": "9fae0c4adef53efdf8876743ec717ac230fdb7517041842fe3456e06a7fbe6e3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "sha256": "843cfefca69e5b422e600b87ed0b6f5919cc971003dbdbd8104a3bead45f3e1c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextProviderSafetyTest.kt",
+      "sha256": "d8a9f7bd1487c088bf55c9b69bac62103cf08befd84089b3de5d6d18cd86f44d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextSafetyReviewTest.kt",
+      "sha256": "bba78e74669e506d653bc89cf5f64e4c7e975536528ac87a1817f8811867c0c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
+      "sha256": "e74bb3ec82e541284d8575e834cc725c3d2ec0e710b1f6b2570b22879f2247f9"
+    }
+  ],
+  "resolverDeleted": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/KoreanTimeContextResolver.kt",
+  "targetRestorationVerification": "PASS",
+  "archivedEvidenceByteMatches": 8,
+  "limitations": [
+    "Synthetic provider fixtures prove preservation and deterministic matching, not actual model language accuracy.",
+    "Schema-valid provider source-clause omissions cannot be independently guaranteed by server structure validation.",
+    "Actual provider evaluation and input billing bound remain separate gates."
+  ],
+  "recordedAt": "2026-10-07T01:57:04.090367+00:00"
+}

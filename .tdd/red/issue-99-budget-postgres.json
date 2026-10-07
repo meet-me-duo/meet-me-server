@@ -1,0 +1,59 @@
+{
+  "workItem": "issue-99-budget-postgres",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "fd24189036694c24aac3a5eccc3c8b078bfc9a2036580b0e2f5070b6615c1fc0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "sha256": "2b0e86dc495da654c9b32381b2943c50f781fad4a59e4126f4ca3e51bbce3791"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaExtendedTransportBudgetContractTest.kt",
+      "sha256": "3b0ddefac253a22a1e7dfa508f4dd660abd58e41dda41b42518f7d3566284923"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaTransportNoReplayContractTest.kt",
+      "sha256": "f3ad9302dec7ba2dc1f2b06c96c6ab1e9c7afc6ddcc2588fc416037b1d5933bf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ApprovedProviderBudgetPostgresTest.kt",
+      "sha256": "22d9733e1eb2b3b0ce641824e611748ec16894229e2ed9c7429c26d2fbfdbde5"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "MEETME_CANDIDATE_LIVE_PROBE=false",
+    "MEETME_LIVE_EVAL_AUTHORIZED=false",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*BoundedProviderFallbackContractTest",
+    "--tests",
+    "*BoundedAdmissionBudgetContractTest",
+    "--tests",
+    "*LunaExtendedTransportBudgetContractTest",
+    "--tests",
+    "*LunaTransportNoReplayContractTest",
+    "--tests",
+    "*ApprovedProviderBudgetPostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest.actual admission delay leaves Gemini one hundred milliseconds before its second 30 stage cutoff()",
+    "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest.Luna admitted at second 31 gets twenty six seconds and twenty second result completes recommendations atomically()",
+    "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest.twenty second Luna winner reaching total deadline during projection rolls back candidates and recommendations then ACKs()",
+    "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest.actual Gemini admission allows just before second 30 and rejects at second 30 without consuming budget()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T09:00:27.490957Z"
+}

@@ -1,0 +1,295 @@
+{
+  "workItem": "issue-99-runtime-luna-independent-review",
+  "reviewer": "/root/independent_review",
+  "role": "Independent read-only source/security/evidence reviewer; implementation/test authors separate",
+  "recordedAt": "2026-10-07T11:18:11.273205+00:00",
+  "authority": "Parent approved release-local runtime-provider-mode marker gemini-luna-required, optional absence preserving legacy gemini-only; secure OpenAI env delivery and startup guard preparation. No operational AWS/key access, model calls, Gradle, IAM changes, deployment, service stop or preflight protection bypass authorized for reviewer.",
+  "designVerdict": "PASS with implementation review pending",
+  "contract": [
+    "Renderer locates marker from its own release, not destination/caller environment; missing means legacygemini-only, explicit malformed/unreadable/symlink including dangling symlink fails.",
+    "New release package carries exact marker gemini-luna-required. Required marker enforces OpenAI SecureString/nonempty/singleline/control-safe validation before any environment publication.",
+    "GetParameter JSON validates raw Value and Type before Bash extraction so trailing LF/CR/NUL do not disappear. No real key ever output, including validation/cloud/parse failure; xtrace disabled before handling values.",
+    "Legacy gemini-only sends zero OpenAI parameter reads and succeeds without new OpenAI permissions; explicit unsupported mode rejects.",
+    "Temp environment in same directory0600 and atomic rename only after all successful reads/validation; any failure preserves existing destination bytes/mode and cleans temp; unsafe destination symlink/nonregular rejected.",
+    "Required entrypoint checks missing/empty/unsafe key before server/migrate Java startup; legacy default remains; no eval/source of env values.",
+    "Renderer and entrypoint use identical declared allowed/forbidden value rules; Compose raw key and provider-mode fidelity proves accepted dollar/text bytes unchanged without paid calls.",
+    "Existing guard and application Kotlin/SQL/time budget remain unchanged; runtime IAM source prefix grants declared but actual applied privilege/KMS still unverified.",
+    "Operational key creation/entry/security approval remains user-controlled; CI fixtures synthetic and must not change preflight protection or IAM."
+  ],
+  "suggestedFaults": [
+    "Ignore required mode / treat marker symlink or malformed bytes as absent → required failure fixtures detect",
+    "Skip Type check accepts String key → SecureString regression detects",
+    "Skip raw singleline/control validation permits newline or NUL injection → fixtures detect",
+    "Remove OpenAI startup guard → missing/invalid key server+migrate stubJava guards detect",
+    "Write destination before validations or replace via non-atomic truncation → existing environment preservation and rename seam detect",
+    "Force OpenAI read in legacy mode → exact0 invocation count control detects",
+    "Drop packaging marker or emitted mode → release/package and end-to-end synthetic fidelity detects"
+  ],
+  "officialReferences": [
+    {
+      "title": "AWS SecureString decryption permissions",
+      "url": "https://docs.aws.amazon.com/systems-manager/latest/userguide/ps-restrict-decryption.html"
+    },
+    {
+      "title": "Docker Compose raw envfile semantics",
+      "url": "https://docs.docker.com/reference/compose-file/services/"
+    }
+  ],
+  "blockingFindings": [
+    {
+      "id": "RL-MARKER-NUL",
+      "status": "RESOLVED",
+      "finding": "Bash cat command substitution discards NUL; length+1 optionalnewline check then accepts a single NUL embedded/trailing in otherwise valid marker enum.",
+      "contract": "Malformed marker must fail, includingNUL; single allowed finalbyte must beLF.",
+      "requiredFix": "Validate raw file exact enum or enum+LF before extracting, e.g jq rawslurp exact comparison; preserve existing environment on failure.",
+      "reviewerExecution": "Source reasoning only; root/testauthor own reproduction/RED.",
+      "resolution": "Fresh separate19th regression RED18pass/1failure, jq raw exactenum or enum+LF validates before Bash extraction then rtrimstr finalLF, final19GREEN; original18 tests untouched."
+    }
+  ],
+  "pending": [
+    "New exact HEAD remote CI after same-branch publication",
+    "User manual SecureString registration and approved operational parameter→runtime→provider-auth confirmation; actual key/runtime capability is unverified"
+  ],
+  "paidCalls": 0,
+  "operationalAwsCalls": 0,
+  "realKeyReads": 0,
+  "sourceTestEdits": 0,
+  "reviewerGradleRuns": 0,
+  "testDesignReview": {
+    "verdict": "PASS frozen18 approved expectations",
+    "testPath": "deploy/tests/runtime-provider-env.test.cjs",
+    "originalSha256": "d4f6750494c386ee4be34cefa26f1699eea2dc00dacefe7605034675561d0ad4",
+    "approvedValueRule": "ASCII33..126 nonempty, SecureString JSON before extraction; opaque dollar/quotes/backslash/hash preserved",
+    "markerRule": "enum with0or1 finalLF; all other bytes invalid",
+    "coverage": [
+      "own release marker vs caller/destination, custom SSM root",
+      "legacy absent/explicit enum readsOpenAI0",
+      "malformed/unreadable/symlink/dangling/nonregular marker",
+      "String/StringList/null/nonstring/empty/space/LF/CR/tab/NUL/nonASCII SecureString denial",
+      "quiet OpenAI AWS denial; existing environment bytes0600 unchanged",
+      "finalrenamefailure and unsafe destination without following",
+      "entrypoint server/migrate/customcmd fail before Java; validlegacy andrequired controls",
+      "required marker packaged; CI independent contract; rawCompose preserved"
+    ],
+    "limitations": [
+      "Rename-failure stub proves use of rename seam and existingfile preservation; source same-dir rename supplies atomicity reasoning, not powerfailure durability test.",
+      "Original18 lacks NUL marker regression; independently identified defect requires separate addition, originalfrozen18 and RED archived.",
+      "Entrypoint cannot receive NUL in OS environment; rawJSON renderer rejects before extraction."
+    ],
+    "expanded19Verdict": "PASS and original18 immutable byte prefix verified",
+    "expanded19Sha256": "d928ef8e8687417865b556d1bba13856f195d25aece8d545ca39cd96316140df",
+    "original18BytesEqualCurrentPrefix": true,
+    "addedCases": "One test with8 trailing/embedded NUL marker variants for both allowed enums, with/without finalLF; expect fail and existingenv0600bytes preserved",
+    "composeFidelityPeerReview": "PASS existing database literaldollar check and projectcleanup kept; capture/compare synthetic printable OpenAI punctuations and requiredmode via existing Compose raw envfile, fixederrors only; actual local Docker execution root-owned",
+    "composeFidelitySha256": "4ab6a30f2949421b3b79ccba2a7e2b8fa4eea9f843d428db76b214a372a5564f"
+  },
+  "sourcePassingChecks": [
+    "Current prototype SecureString/type/rawASCII/slurp1 verified before Bash extraction",
+    "Required startup graphASCII C locale guarded before server/migrate/customcmd; xtrace disabled",
+    "Own release marker location and destination symlink/nonregular fail guard",
+    "Existing legacy noOpenAIqueries and noOpenAI env output",
+    "Same-directory tempfile umask077/chmod0600 then mv -T replacement",
+    "New artifact marker/CI contract inclusion; product/guard/timebudget remain unaffected"
+  ],
+  "errorOutputScope": "Confirmed new OpenAI read/validation suppresses raw values and AWS diagnostics. Existing legacy DB/Gemini parameter function stderr behavior remains unchanged and documentation explicitly scopes guarantee.",
+  "actualVerificationSnapshot": {
+    "redLog": ".codex/tdd-evidence/issue-99-runtime-luna-red.log",
+    "originalRed": "18tests/15assertionfailures",
+    "initialGreen": "18tests/18PASS from issue-99-runtime-luna-green.log",
+    "boundary": "No final PASS yet because independent NUL marker blocker identified after initialGREEN."
+  },
+  "updatedAt": "2026-10-07T11:33:51.794318+00:00",
+  "activeBlockingFindings": [],
+  "sourceReviewVerdict": "PASS independent restored production source/security review",
+  "sourceFiles": [
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "903f4a9ca537d448dc5ec9c22ace186abe203aba6a13dde8ae141a26888653f2"
+    },
+    {
+      "path": "deploy/container-entrypoint.sh",
+      "sha256": "39c10e61398402c872cc740c8eff825848c62fba112b48cbfaab732fee4d5ad3"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "ad0056efb86d716932c228186f575b6de3dd5305a8e4151cad5a35703ad62441"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "5be89fd45127d5d64b9418c4a0276547bb874f7686cc853a51d0dd6a9343e71d"
+    },
+    {
+      "path": "deploy/runtime-provider-mode",
+      "sha256": "4883fb332ead07cc0f0e4047dd1fb28fc0b45ab56de36bc4ce44322620b974ff"
+    },
+    {
+      "path": "infra/production/outputs.tf",
+      "sha256": "e93a8fa8ed2561ad018d7864ac0aab1fce49494e227121de05b8f8e13985ad64"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "91c9be1f53b82db7ca5f25f4e2e0882b14bbeea65c9a0e7b2f4a7d6a4eda66a3"
+    },
+    {
+      "path": "deploy/scripts/verify-compose-secret-fidelity.sh",
+      "sha256": "4ab6a30f2949421b3b79ccba2a7e2b8fa4eea9f843d428db76b214a372a5564f"
+    },
+    {
+      "path": "deploy/tests/runtime-provider-env.test.cjs",
+      "sha256": "d928ef8e8687417865b556d1bba13856f195d25aece8d545ca39cd96316140df"
+    }
+  ],
+  "actualVerification": {
+    "original18Cycle": {
+      "tests": 18,
+      "assertionRedFailures": 15,
+      "greenPass": 18,
+      "history": ".tdd/history/issue-99-runtime-luna/runtime-first-red.json"
+    },
+    "nulRegressionCycle": {
+      "tests": 19,
+      "assertionRedFailures": 1,
+      "greenPass": 19,
+      "redLog": ".codex/tdd-evidence/issue-99-runtime-luna-review-red.log",
+      "greenLog": ".codex/tdd-evidence/issue-99-runtime-luna-final-green.log"
+    },
+    "restored19Cycle": {
+      "log": ".codex/tdd-evidence/issue-99-runtime-luna-restored-green.log",
+      "tests": 19,
+      "pass": 19,
+      "fail": 0,
+      "skipped": 0
+    },
+    "composeFidelity": {
+      "log": ".codex/tdd-evidence/issue-99-runtime-luna-compose.log",
+      "rootReportedExitCode": 0,
+      "realLocalDockerSyntheticFixture": true,
+      "fields": [
+        "DATABASE_PASSWORD",
+        "OPENAI_API_KEY",
+        "MEETME_RUNTIME_PROVIDER_MODE"
+      ],
+      "secretOrProviderCalls": false,
+      "boundary": "Root-owned isolated Compose run; captured synthetic outputs compared without printing values. Reviewer did not execute Docker."
+    },
+    "faultVerification": {
+      "evidence": ".tdd/verification/issue-99-runtime-luna.json",
+      "detected": 7,
+      "totalAssertionFailures": 12,
+      "setupFailures": 0,
+      "frozenFilesExactRestored": 9,
+      "currentSha256AllMatch": true,
+      "items": [
+        {
+          "name": "missing-secure-type",
+          "failedTests": 1,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-secure-type.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        },
+        {
+          "name": "missing-raw-ascii",
+          "failedTests": 1,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-raw-ascii.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        },
+        {
+          "name": "missing-entrypoint-guard",
+          "failedTests": 3,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-entrypoint-guard.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        },
+        {
+          "name": "missing-atomic-rename",
+          "failedTests": 1,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-atomic-rename.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        },
+        {
+          "name": "legacy-openai-query",
+          "failedTests": 3,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-legacy-openai-query.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        },
+        {
+          "name": "missing-raw-mode-check",
+          "failedTests": 2,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-raw-mode-check.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        },
+        {
+          "name": "missing-mode-package",
+          "failedTests": 1,
+          "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-mode-package.log",
+          "recordedFailedDisplayNamesExactMatch": true
+        }
+      ]
+    },
+    "finalMandatoryGate": {
+      "guardPath": ".codex/hooks/tdd_guard.py",
+      "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+      "parentReportedExitCode": 0,
+      "parentReportedDurationSeconds": 9.556,
+      "tasks": [
+        "ktlintCheck",
+        "assemble",
+        "test"
+      ],
+      "existingProductTests": 654,
+      "executionBoundary": "Existing unchanged product Gradle tasks/tests reused up-to-date; no fresh654 execution claimed. Runtime19 and deployment/preflight33 were fresh separate Node runs. Reviewer ran none.",
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-final-guard.log",
+      "stdoutBoundary": "Guard intentionally suppresses successful subprocess stdout; empty log does not independently show tasks/exit. Parent tool outcome is source of exit0 claim."
+    },
+    "deploymentAndPreflightRegression": {
+      "log": ".codex/tdd-evidence/issue-99-runtime-luna-policy.log",
+      "tests": 33,
+      "pass": 33,
+      "fail": 0,
+      "skipped": 0,
+      "composition": "Existing deployment13 plus independentpreflight20; no operational preflight rerun"
+    }
+  },
+  "documentationReview": {
+    "verdict": "PASS",
+    "files": [
+      {
+        "path": "docs/ADR.md",
+        "sha256": "5c4871bd7485d4564651e81a505e20275e7e52adcb77e1738aaa76165cb59082"
+      },
+      {
+        "path": "docs/ARCHITECTURE.md",
+        "sha256": "23fc53e638aebc71870ab6a75d4067c762442f0851400d6d66bb71d77189b8d0"
+      },
+      {
+        "path": "implementation_plan.md",
+        "sha256": "5ccf61ce7c349db9909b3ba2b5a474236985af62702893a0a8d5c690a15c9b9f"
+      }
+    ],
+    "checks": [
+      "SecureString name/envvar and release-required startup contract grounded in source",
+      "Legacy mode requires0OpenAIqueries and supports previous permission baseline",
+      "0600atomicrename/preservefailure aligns with source and mock/fidelity evidence",
+      "Raw value/error non-disclosure claim correctly scoped to new OpenAI path; legacy parameter diagnostic behavior unchanged",
+      "Real key/actualruntimeIAM/KMS/provider-auth unverified; user/manual registration and guarded operational delivery remain separate",
+      "No production Environment protection bypass/re-execution, IAM setting change or operational side effects approved by this review"
+    ]
+  },
+  "unchangedScopeVerification": {
+    "baseline": "48b8957248a7357e9a4a04cd854d2be8bd4290e1",
+    "guardBytesEqualBaseline": true,
+    "productionComposeBytesEqualBaseline": true,
+    "runtimeIamBytesEqualBaseline": true,
+    "productMainTestSqlTimeBudgetDiff": false,
+    "terraformChange": "outputs declares only parameter name; no value/state secret or permission modification",
+    "localExampleChange": "Blank OPENAI_API_KEY placeholder only",
+    "all250ProductSourceTestFingerprintsStillMatchBudgetEvidence": true
+  },
+  "finalVerdict": "PASS independent local restored source/test/security/fault/fidelity/docs/gate review; no remaining blockers. Operational registration, permission/auth, deployment approvals and newHEADCI remain separate.",
+  "terraformReview": {
+    "verdict": "PASS static path/output review only",
+    "change": "One OpenAI parameter name added to existing required_secure_parameters output; no resource/IAM/value changes",
+    "cliAvailable": false,
+    "terraformValidateExecuted": false,
+    "actualAppliedPermissionsVerified": false,
+    "defaultKmsReference": "AWS defaultaws/ssm behavior supported by official docs; customKMS/currentprivileges remain unverified operational concerns"
+  }
+}

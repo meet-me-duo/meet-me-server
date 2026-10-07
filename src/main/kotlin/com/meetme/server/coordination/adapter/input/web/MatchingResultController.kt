@@ -149,6 +149,11 @@ class MatchingResultController(
             description = "방 또는 확정 결과 없음",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
+        ApiResponse(
+            responseCode = "409",
+            description = "분석 준비 전 또는 수정 라운드 OPEN",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
     )
     fun result(
         @PathVariable inviteCode: String,

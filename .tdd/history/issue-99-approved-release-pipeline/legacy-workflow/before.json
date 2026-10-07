@@ -1,0 +1,27 @@
+{
+  "sourceRevision": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+  "authority": "Parent explicitly approved normal main publication and same-contract automatic deployment; first transition gated; standalone preflight moves from approved PR to manual main. Only moved workflow/driver source expectations will be superseded; pure target, output, JDBC, metadata and guard behavior tests remain unchanged.",
+  "testFiles": [
+    {
+      "path": ".github/scripts/deploy-workflow.test.cjs",
+      "sha256": "89f0df600147514cbb8190f14c14ce6fff7522e891900b67857a89ea726c11f7",
+      "archive": ".tdd/history/issue-99-approved-release-pipeline/legacy-workflow/deploy-workflow.test.cjs.before"
+    },
+    {
+      "path": ".github/scripts/deploy-guard-contract.test.cjs",
+      "sha256": "6c4021b88fca679d665a84f2492347d04ed2ac1fcb47093b368cb855f24a46e1",
+      "archive": ".tdd/history/issue-99-approved-release-pipeline/legacy-workflow/deploy-guard-contract.test.cjs.before"
+    },
+    {
+      "path": ".github/scripts/deploy-extraction-contract.test.cjs",
+      "sha256": "2e571d29f48a2d9fa3e2fcb4b5c608e53e8dc774e140e81c708a07de748d9f1e",
+      "archive": ".tdd/history/issue-99-approved-release-pipeline/legacy-workflow/deploy-extraction-contract.test.cjs.before"
+    },
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "21d29f8fb799176c196dc7d6fd2dc240486605d1bd57e6bddcc0b3b0f6f4663c",
+      "archive": ".tdd/history/issue-99-approved-release-pipeline/legacy-workflow/production-preflight-contract.test.cjs.before"
+    }
+  ],
+  "historicalRed": "Original production-preflight RED and supersession copied byte-identically; no tracked historical RED found for other three static workflow files."
+}

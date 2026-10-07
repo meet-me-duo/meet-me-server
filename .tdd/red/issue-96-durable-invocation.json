@@ -1,0 +1,50 @@
+{
+  "workItem": "issue-96-durable-invocation",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/DurableAnalysisInvocationPostgresTest.kt",
+      "sha256": "c9e01bd3b6325ccc8af6ade66f07ed59adc0bfadd8b7d0b3cc360cb43bd70874"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "-Dorg.gradle.jvmargs=-Xmx1536m -XX:MaxMetaspaceSize=512m",
+    "-Dorg.gradle.workers.max=2",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*SearchScopeProviderResponseContractTest",
+    "--tests",
+    "*BoundedProviderFallbackContractTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiProviderFailureContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--tests",
+    "*GeminiNaturalLanguageParserAdapterTest",
+    "--tests",
+    "*GeminiHighDemandBoundaryTest",
+    "--tests",
+    "*DurableAnalysisInvocationPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.admitted worker is fenced when run changes or revision opens before publication()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.persisted counters enforce four Gemini calls and one Luna across stale snapshots()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.simultaneous delivery has one durable owner and cannot extend original deadline()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.only one admitted attempt can win publication and cancellation leaves no results()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.stale version inactive pointer open revision and retained room cannot write()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.wrong owner and foreign attempt cannot consume calls or publish()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.transaction rollback removes invocation and attempt counters together()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.migration enforces one execution per version counters and cascade retention()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.publication storage failure rolls back run winner and results atomically()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.expired delivery and scheduler recovery delay original batch without reclaim or matching()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.host retry retains frozen input but starts a new durable execution and fresh budget()",
+    "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.deadline is rechecked after waiting for room lock before result publication()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T05:41:06.057814Z"
+}

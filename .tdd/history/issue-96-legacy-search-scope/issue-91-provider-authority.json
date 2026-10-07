@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-91-provider-authority",
+  "sourceRevision": "20bd3b47fde81b506ab80474377fb1cef4ea3b63",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "sha256": "d798f7a782686bc324c1247e725670a055079963d6198b132dbf84a0d11c2619"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiProviderAuthorityContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.weekday six to nine provider success reaches two participant matching unchanged()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.weekend one to six provider success is not restricted to the old two to seven template()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.valid dated provider windows are preserved instead of rewritten as recurring lexical windows()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.natural correction and polite suffix do not discard a valid complete provider success()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.independent additional place survives language interpretation and real offline matching()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.weekday seven to ten provider success preserves the inherited twenty two end()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.ambiguous provider rejection remains empty even when the old canonical regex could recover it()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T01:39:39.853761Z"
+}

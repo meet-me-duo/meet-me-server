@@ -50,6 +50,8 @@ class CollectionClosureService(
         val hasNaturalLanguage = submissions.any { it.latest.rawText != null }
         if (!hasNaturalLanguage) run = run.startMatching()
         coordinationRunRepository.insert(run)
+        val active = closed.transition(activeRunId = run.id.value)
+        roomRepository.update(active)
         val eventId = OutboxEventId(idGenerator.next())
         outboxRepository.insert(
             OutboxEvent(
@@ -61,7 +63,7 @@ class CollectionClosureService(
                 occurredAt = at,
             ),
         )
-        return closed
+        return active
     }
 
     companion object {

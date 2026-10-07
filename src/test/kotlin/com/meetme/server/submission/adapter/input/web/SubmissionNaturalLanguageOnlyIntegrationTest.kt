@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.postgresql.PostgreSQLContainer
+import tools.jackson.databind.ObjectMapper
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -51,6 +52,8 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
     @Autowired private lateinit var matcher: MatchingProcessor
 
     @Autowired private lateinit var structured: StructuredSubmissionRepository
+
+    @Autowired private lateinit var mapper: ObjectMapper
 
     @BeforeEach
     fun cleanDatabase() {
@@ -239,16 +242,78 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
                     post("/api/rooms/{code}/candidates/{id}/confirmation", host.code, id)
                         .header("Origin", ORIGIN)
                         .cookie(host.cookie()),
-                ).andExpect(status().isOk)
+                ).andExpect(status().isConflict)
+                .andExpect(jsonPath("$.code").value("RECOMMENDATION_SELECTION_REQUIRED"))
+        }
+        val recommendations =
+            mapper.readTree(
+                mvc
+                    .perform(get("/api/rooms/{code}/recommendations", host.code).cookie(host.cookie()))
+                    .andExpect(status().isOk)
+                    .andExpect(jsonPath("$.protocol").value("diverse-time-v1"))
+                    .andReturn()
+                    .response.contentAsByteArray,
+            )
+        val option = recommendations.path("options").path(0)
+        val variant = option.path("variants").path(0)
+        val analysisId = recommendations.path("analysis_id").stringValue()
+        val optionId = option.path("option_id").stringValue()
+        val variantId = variant.path("variant_id").stringValue()
+        val start = option.path("time_range").path("start_at").stringValue()
+        val end = option.path("time_range").path("end_at").stringValue()
+        val selectionBody =
+            mapper.writeValueAsString(
+                mapOf("analysis_id" to analysisId, "variant_id" to variantId, "start_at" to start, "end_at" to end),
+            )
+        var confirmed: tools.jackson.databind.JsonNode? = null
+        repeat(2) {
+            val response =
+                mvc
+                    .perform(
+                        post("/api/rooms/{code}/recommendations/{id}/confirmation", host.code, optionId)
+                            .header("Origin", ORIGIN)
+                            .cookie(host.cookie())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(selectionBody),
+                    ).andExpect(status().isOk)
+                    .andReturn()
+                    .response
+            val current = mapper.readTree(response.contentAsByteArray)
+            if (confirmed == null) confirmed = current else assertEquals(confirmed, current)
         }
         val before = snapshot()
+        val recommendationTables =
+            listOf(
+                "recommendation_analyses",
+                "recommendation_options",
+                "recommendation_variants",
+                "recommendation_variant_participants",
+                "recommendation_selections",
+            )
+        val recommendationBefore = recommendationTables.associateWith { jdbc.queryForList("SELECT * FROM $it").toSet() }
         matcher.process(batchId())
         assertEquals(before, snapshot())
-        mvc
-            .perform(get("/api/rooms/{code}/result", host.code).cookie(legacy.cookie()))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.candidate.candidate_id").value(id.toString()))
-            .andExpect(jsonPath("$.raw_text").doesNotExist())
+        assertEquals(recommendationBefore, recommendationTables.associateWith { jdbc.queryForList("SELECT * FROM $it").toSet() })
+        val result =
+            mvc
+                .perform(get("/api/rooms/{code}/result", host.code).cookie(legacy.cookie()))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.candidate.candidate_id").value(nullValue()))
+                .andExpect(jsonPath("$.candidate.plan_type").value("C"))
+                .andExpect(jsonPath("$.candidate.attendance_count").value(2))
+                .andExpect(jsonPath("$.candidate.total_participants").value(3))
+                .andExpect(jsonPath("$.candidate.time_ranges[0].start_at").value(start))
+                .andExpect(jsonPath("$.candidate.time_ranges[0].end_at").value(end))
+                .andExpect(jsonPath("$.selection.protocol").value("diverse-time-v1"))
+                .andExpect(jsonPath("$.selection.analysis_id").value(analysisId))
+                .andExpect(jsonPath("$.selection.option_id").value(optionId))
+                .andExpect(jsonPath("$.selection.variant_id").value(variantId))
+                .andExpect(jsonPath("$.selection.start_at").value(start))
+                .andExpect(jsonPath("$.selection.end_at").value(end))
+                .andExpect(jsonPath("$.raw_text").doesNotExist())
+                .andReturn()
+                .response
+        assertEquals(confirmed, mapper.readTree(result.contentAsByteArray))
         assertEquals(3, count("submission_batch_items"))
         assertEquals(1, count("manual_availability_intervals"))
     }

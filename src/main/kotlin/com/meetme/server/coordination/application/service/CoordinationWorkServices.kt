@@ -44,6 +44,7 @@ class CoordinationDeadLetterPersistence(
     private val coordinationRunRepository: CoordinationRunRepository,
     private val jdbcTemplate: JdbcTemplate,
     private val clock: Clock,
+    private val roomRepository: com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository,
 ) : DeadLetterPersistence,
     MalformedDeadLetterPersistence {
     @Transactional
@@ -57,8 +58,14 @@ class CoordinationDeadLetterPersistence(
             requireNotNull(coordinationRunRepository.findById(CoordinationRunId(event.aggregateId))) {
                 "Coordination run does not exist"
             }
-        coordinationRunRepository.update(run.deadLetter())
         val failedAt = clock.instant()
+        val locked = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run)
+        if (locked == null || locked.second.status !in ACTIVE_STATUSES) {
+            if (event.status == OutboxStatus.PUBLISHED) outboxRepository.markProcessed(eventId, failedAt)
+            return
+        }
+        coordinationRunRepository.update(locked.second.deadLetter())
+        roomRepository.update(locked.first.transition())
         outboxRepository.markDeadLettered(eventId, failedAt, failureKind)
         jdbcTemplate.update(
             """
@@ -91,7 +98,13 @@ class CoordinationDeadLetterPersistence(
             if (event?.status == OutboxStatus.PUBLISHED) {
                 val run = coordinationRunRepository.findById(CoordinationRunId(event.aggregateId))
                 if (run != null) {
-                    coordinationRunRepository.update(run.deadLetter())
+                    val locked = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run)
+                    if (locked == null || locked.second.status !in ACTIVE_STATUSES) {
+                        outboxRepository.markProcessed(eventId, failedAt)
+                        return
+                    }
+                    coordinationRunRepository.update(locked.second.deadLetter())
+                    roomRepository.update(locked.first.transition())
                     outboxRepository.markDeadLettered(eventId, failedAt, failureKind)
                     persistedBatchId = run.batch.id
                 }
@@ -111,6 +124,15 @@ class CoordinationDeadLetterPersistence(
             deliveryCount,
             failedAt.atOffset(ZoneOffset.UTC),
         )
+    }
+
+    private companion object {
+        val ACTIVE_STATUSES =
+            setOf(
+                com.meetme.server.coordination.domain.CoordinationStatus.QUEUED,
+                com.meetme.server.coordination.domain.CoordinationStatus.STRUCTURING,
+                com.meetme.server.coordination.domain.CoordinationStatus.MATCHING,
+            )
     }
 }
 

@@ -1,0 +1,43 @@
+{
+  "workItem": "issue-99-live-provider-v3",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaProviderContractTest.kt",
+      "sha256": "cb994a15678f571d5603c0591f69ed47633800c19574cddc4f4e55e55eded89a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTransportBudgetContractTest.kt",
+      "sha256": "68640367bf03e56522cb2772331e2576ac4152f933a203c66e9ca15839e08adb"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*RecommendationProjectorD2ContractTest",
+    "--tests",
+    "*D2PreferenceProviderContractTest",
+    "--tests",
+    "*D2PreferenceJsonMapperTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest.shared validators produce identical domain results for both provider surfaces()",
+    "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest.Responses API sends pinned Luna model strict common schema and one HTTP request()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.SDK success parses common response under requested timeout without nested retry()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:23:51.286279Z"
+}

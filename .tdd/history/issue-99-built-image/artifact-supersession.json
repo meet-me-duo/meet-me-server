@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-99-built-image",
+  "reason": "Independent appended test for implicit Docker build artifact/summary boundary; original10 byte-preserved",
+  "previousTests": 10,
+  "currentTests": 11,
+  "history": ".tdd/history/issue-99-built-image",
+  "oldSha256": "ff370f2db6a97dc64b45be5bcb77bf5aeca40cff0a95717038e7e3a5266ccd56",
+  "currentSha256": "da5084420a26eb203bb11b1d138ad72b6b9b0273d1f5dab73f276c33bd421643",
+  "artifactReviewRed": {
+    "tests": 11,
+    "pass": 10,
+    "fail": 1,
+    "assertion": true
+  },
+  "finalGreen": {
+    "tests": 11,
+    "pass": 11,
+    "fail": 0,
+    "skip": 0
+  }
+}

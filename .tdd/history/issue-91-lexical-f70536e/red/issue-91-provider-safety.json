@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-91-provider-safety",
+  "sourceRevision": "848b9688451551781769799ff7d27485ea5a5445",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextProviderSafetyTest.kt",
+      "sha256": "5c0a1d2eae6e11834e484bc6ac04783e945771920d7d54a8cbeb4177443219d6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiTimeContextProviderSafetyTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot admit afternoon child outside an explicit morning parent()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot admit a child that starts outside its compatible parent()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot silently ignore an unknown conditional or injection tail()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot erase negative or double negative residual clauses()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot invent an end for an orphan start-only context()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot choose one of conflicting parent ends()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest#provider success cannot flatten context coupled to a conditional place()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T00:50:20Z"
+}

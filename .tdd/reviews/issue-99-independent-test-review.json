@@ -1,0 +1,203 @@
+{
+  "workItem": "issue-99-independent-test-review",
+  "reviewer": "/root/independent_review",
+  "role": "independent read-only test/source reviewer; no test or product implementation authored",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "recordedAt": "2026-10-07T07:56:58.308930+00:00",
+  "specBasis": [
+    "docs/ISSUE_95_CONTRACT.md D2 approved",
+    "docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md",
+    "docs/PRD.md 3.4 FR-011 Rule 3",
+    ".agents/rules/development.md risk-based TDD"
+  ],
+  "verdict": "PASS_TEST_DESIGN_WITH_SCOPE_NOTES",
+  "blockingFindings": [],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjectorD2ContractTest.kt",
+      "sha256": "ec67005974e4dd561c28223a40e39ebd224edc2db796155bb682556703d753b7"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2PreferenceProviderContractTest.kt",
+      "sha256": "dbe0bc2c3295ab38370ac6f9657577aa463b28cbf68b241c57a50ab3be1a5692"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/D2PreferenceJsonMapperTest.kt",
+      "sha256": "528d4a2320764b73caf0839f4fc7188a5714325a1093cd5ef38879ec3d9166e3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "472038c576f79442492aa9de254f62179dabf9362a2d3fa986e1b5221757ab55"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/IntegratedRecommendationFallbackPostgresTest.kt",
+      "sha256": "a5042ae6ee8552852af7d6788deae7bec4a4a36cf314d2b86955da1928fad58a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2HardConditionShapeContractTest.kt",
+      "sha256": "6544d5ea5e760fc642456fe6f53d085a1ea0086307ab6bc6c4da8945c032859e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationPreferenceScopeContractTest.kt",
+      "sha256": "0ed229be29dbf3cff467b7ad6bf205f3f523f874ae2784c86ad81dd83a83ee43"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2RejectedPreferencePostgresTest.kt",
+      "sha256": "29c45572b69b84186dc14487beee9b6448aa19b9cf188ab405ab522ca3522526"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2UnsafeHardTimeContractTest.kt",
+      "sha256": "2c66a12019e708eefbebbbf7e10ef4bdd0d04a98517fa43d73a67395a5125905"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2UnsafeHardTimePostgresTest.kt",
+      "sha256": "87bd7c31531a815bf111f32011cf7cf1264d535d48c38078720fb564349df67e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "8f2d0f18fa5fcbb6e0f95b8459b4b3b620e101d64f6fed4d770ecfa07d4413b6"
+    }
+  ],
+  "reviewedExpectations": [
+    "Attendance precedes per-attendee preference score, which precedes established date/clock/absolute diversity.",
+    "No availability inference; same dimension alternatives OR and different dimensions AND; remote cannot satisfy explicit preferred place.",
+    "Whole-window coverage uses preference union, with gaps failing; meaningful own/intersection subwindows retain original availability.",
+    "Hard gaps at projector seam remain absent; preference does not manufacture places or extend availability.",
+    "Strict v3 shared transport schema and typed restored preference conditions are exercised on loopback by both real adapters.",
+    "Invalid preference retains valid hard conditions with explicit validation rejection; strict refs/envelope/AREA-name/condition and byte limits are retained.",
+    "JSON round-trip separates soft and hard conditions; legacy JSON restores no inferred preferences.",
+    "V8 real PostgreSQL upgrade snapshots business columns and verifies additive V9/V10/no backfill.",
+    "Integration suite real stored UNAVAILABLE window is subtracted before preferred fragments and blocked selection returns 400.",
+    "Actual recommendation publication precedes callback cancellation and durable deadline expiry; all legacy/projection rows roll back, frozen input and provider winner persist.",
+    "Eight attendees with five explicit hard/preferred windows reaches actual large publication then rolls back and worker ACKs without repeating providers.",
+    "Public D2 response excludes both synthetic original inputs and preference/structured/version fields; actual selection preserves legacy candidate_id null and idempotency/confirmed protection.",
+    "Added separate hard-condition schema regression requires strict v3 exact declared keys before null filtering, positive controls and preserved legacy nonstrict restoration; no original frozen tests changed.",
+    "Three explicit-empty-dimension scope tests preserve D2 AND even when a preferred date lies outside search expansion; positive controls distinguish explicit-but-empty from no preference.",
+    "Partially rejected preference regression retains hard possibility and valid preference subwindow, but cannot claim AND preference fulfillment from only remaining dimensions; frozen typed input stays PARTIAL and unchanged.",
+    "Malformed live v3 hard TIME_WINDOW is an unsafe time restriction even when valid typed preferences or AVAILABLE conditions remain; supplied generic rejection cannot override safe exclusion.",
+    "Malformed preference alone keeps generic partial rejection and valid hard availability, distinct from malformed hard restriction.",
+    "Actual shared validator to PostgreSQL restoration and matcher proves no fabricated attendance after malformed AVAILABLE, and no ignoring malformed UNAVAILABLE when valid AVAILABLE survives."
+  ],
+  "scopeNotes": [
+    "Actual UNAVAILABLE subtraction is covered by integration; Calendar exclusion behavior remains established prior seam/test scope.",
+    "The larger projection test proves budget rollback after publication; it is not a wall-clock throughput benchmark.",
+    "Unsupported-conditional provider test proves supplied rejection is preserved; mocked responses do not establish fresh natural-language generation quality.",
+    "Specific schema version and preferred DTO choices are permitted implementation decisions; no new product approval implied.",
+    "No Gradle was run by this reviewer; RED/GREEN execution remains parent-owned and is not claimed by this review.",
+    "Final integrated product source review and deliberate-fault evidence are pending; this file does not grant final source signoff.",
+    "D2HardConditionShapeContractTest starts on already-implemented validation; its GREEN plus deliberate fault will be regression sensitivity evidence, not initial missing-behavior RED.",
+    "Domain and explicit-empty-scope RED are independently confirmed from raw issue-99-domain-final-red.log and summaries; its XML directory is empty, so no XML-backed RED claim is made.",
+    "Hard-shape expectation changed for rejected TIME_WINDOW after safety finding: AMBIGUOUS_TIME_CONSTRAINT instead of generic CONDITION_VALIDATION_FAILED. Author archives earlier bytes and supersession; fresh RED required."
+  ],
+  "authorReviewSeparation": {
+    "domainTestAuthor": "/root/d2_domain_tests",
+    "providerTestAuthor": "/root/d2_provider_tests",
+    "reviewer": "/root/independent_review"
+  },
+  "paidProviderCalls": 0,
+  "redReview": {
+    "firstProviderAndJson": "Archive issue-99-first-red-xml independently read: expected v3 contract failures and explicit mapper TODO, no compile/setup failure counted.",
+    "integration": "Fresh issue-99-integration-final-red-xml independently read: 7 integration tests, 6 assertion failures for absent recommendation publication, pre-cancel PASS; migration2 PASS. Earlier any-null Mockito setup failure is not accepted RED.",
+    "scope": "Scope RED summary read: 3 expected assertion failures for lost explicit empty dimension; source inspected to validate semantic cause. No reviewer Gradle invocation."
+  },
+  "verification": {
+    "firstFocusedGreen": {
+      "suites": 10,
+      "tests": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suiteFiles": [
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.xml",
+          "sha256": "7b6d70aeb91112444b3087a0bc72f849b57fb6ca3b679f14a6bd71023db9ff88",
+          "tests": 15,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.xml",
+          "sha256": "35c6b975fe20e8692612ff06824983e87818923bc190942a70e10549c86b96b8",
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.xml",
+          "sha256": "2c549932ea5d3c7defae33c87fa5d5f1bb9904ea42c02bc5186f5ced8e8e7f64",
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.submission.adapter.output.persistence.D2PreferenceJsonMapperTest.xml",
+          "sha256": "fceb4faba6599e02b3805b6d123acc34b4a9e3d22bfccc971237552ad307c9a8",
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.xml",
+          "sha256": "2cac67c0605af21890c328e1b1c155e69783541e98c1f38aa83df2cc717e181e",
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest.xml",
+          "sha256": "4fb0186984abeb4570ddcf3bce8203f680378cc64ed378fca4b30e684a77ad47",
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.adapter.output.integration.D2HardConditionShapeContractTest.xml",
+          "sha256": "fc3c0cad86a7bd63754af40ea266fdbb346a3791c6047501e6a48be20a97c447",
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.xml",
+          "sha256": "790ba7d08aed08b8eb30ef7fd6db3b81b19581ab751ebda55f4de3a133d29931",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.xml",
+          "sha256": "f6a14470ed53d30d9bfdf7a0121d79db4d99f34eb0e5fa3137430a6607d0b421",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "path": ".codex/tdd-evidence/issue-99-first-green-xml/TEST-com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest.xml",
+          "sha256": "c3bd9808d6b3c52061b45c2452679b66ab6f62eb33ef6daf3de27a4256fe3a4f",
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    "reviewerGradleRuns": 0
+  },
+  "closedTestFixtureFindings": [
+    {
+      "finding": "Unsafe-hard-time PG fixture originally carried undeclared radius_meters on strict-v3 SPECIFIC_PLACE.",
+      "resolution": "Independent author removed radius_meters before fresh valid RED; remaining place fields match declared schema and retained-place assertion is now grounded."
+    }
+  ],
+  "finalTestDesignVerdict": "PASS",
+  "postGuardSchemaSupersessionVerdict": "PASS; exact hard5+preferred3 without weakening existing hard assertions; historical before/RED archives preserved and CONTRACT_SUPERSEDED distinct from new missing behavior RED"
+}

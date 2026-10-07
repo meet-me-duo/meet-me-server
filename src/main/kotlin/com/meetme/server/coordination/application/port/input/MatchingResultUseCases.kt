@@ -15,7 +15,7 @@ data class CandidatePlaceView(
 )
 
 data class CandidateView(
-    val candidateId: UUID,
+    val candidateId: UUID?,
     val planType: PlanType,
     val meetingMode: MeetingMode,
     val rank: Int,
@@ -32,6 +32,8 @@ data class CandidateListView(
     val totalSubmissions: Int,
     val unappliedInputs: Int,
     val candidates: List<CandidateView>,
+    val analysisId: UUID? = null,
+    val stateVersion: Long = 0,
 )
 
 data class UnappliedInputView(
@@ -43,6 +45,7 @@ data class UnappliedInputView(
 data class ConfirmedResultView(
     val candidate: CandidateView,
     val confirmedAt: Instant,
+    val selection: com.meetme.server.coordination.domain.RecommendationSelection? = null,
 )
 
 interface GetCandidatesUseCase {
@@ -87,6 +90,8 @@ enum class MatchingResultErrorCode {
     PARTICIPANT_REQUIRED,
     HOST_PERMISSION_REQUIRED,
     CANDIDATE_ALREADY_CONFIRMED,
+    RECOMMENDATION_SELECTION_REQUIRED,
+    STALE_ANALYSIS,
 }
 
 class MatchingResultException(

@@ -1,0 +1,40 @@
+{
+  "workItem": "issue-99-budget-admission",
+  "sourceRevision": "51a4c0dcb9797cd6daf605c50bef430af8cbdd67",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "sha256": "2b0e86dc495da654c9b32381b2943c50f781fad4a59e4126f4ca3e51bbce3791"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*BoundedProviderFallbackContractTest",
+    "--tests",
+    "*BoundedAdmissionBudgetContractTest",
+    "--tests",
+    "*LunaExtendedTransportBudgetContractTest",
+    "--tests",
+    "*LunaTransportNoReplayContractTest",
+    "--tests",
+    "*ApprovedProviderBudgetPostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.Gemini admission that consumes its budget starts Luna with actual remaining time()",
+    "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.[1] seconds = 30",
+    "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.[2] seconds = 31"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T08:59:40.640956Z"
+}

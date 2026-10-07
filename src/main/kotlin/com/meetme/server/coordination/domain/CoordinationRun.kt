@@ -65,7 +65,14 @@ data class CoordinationRun private constructor(
     val confirmedAt: Instant?,
     val resumeStage: ResumeStage?,
     val version: Long,
+    val recommendationProtocol: String? = null,
+    val recommendationOptionCount: Int? = null,
+    val recommendationSelection: RecommendationSelection? = null,
 ) {
+    val isConfirmed: Boolean get() = confirmedCandidateId != null || recommendationSelection != null
+
+    val hasSelectableResult: Boolean get() = (recommendationOptionCount ?: candidates.size) > 0
+
     companion object {
         private val ACTIVE_STATUSES =
             setOf(CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING, CoordinationStatus.MATCHING)
@@ -100,6 +107,9 @@ data class CoordinationRun private constructor(
             confirmedAt: Instant?,
             resumeStage: ResumeStage? = null,
             version: Long,
+            recommendationProtocol: String? = null,
+            recommendationOptionCount: Int? = null,
+            recommendationSelection: RecommendationSelection? = null,
         ): CoordinationRun =
             CoordinationRun(
                 id,
@@ -112,6 +122,9 @@ data class CoordinationRun private constructor(
                 confirmedAt,
                 resumeStage,
                 version,
+                recommendationProtocol,
+                recommendationOptionCount,
+                recommendationSelection,
             )
     }
 
@@ -192,10 +205,19 @@ data class CoordinationRun private constructor(
         at: Instant,
     ): CoordinationRun {
         requireStatus(CoordinationStatus.COMPLETED)
-        check(confirmedCandidateId == null) { "Candidate is already confirmed" }
+        check(!isConfirmed) { "Result is already confirmed" }
+        check(recommendationProtocol == null) { "Recommendation selection is required" }
         require(candidates.any { it.id == candidateId }) { "Candidate does not belong to this coordination run" }
         require(at >= batch.fixedAt) { "Confirmation cannot precede the fixed batch" }
         return copy(confirmedCandidateId = candidateId, confirmedAt = at, version = version + 1)
+    }
+
+    fun confirmSelection(selection: RecommendationSelection): CoordinationRun {
+        requireStatus(CoordinationStatus.COMPLETED)
+        check(!isConfirmed)
+        require(recommendationProtocol == RECOMMENDATION_PROTOCOL && selection.analysisId == id.value)
+        require(selection.confirmedAt >= batch.fixedAt)
+        return copy(recommendationSelection = selection, confirmedAt = selection.confirmedAt, version = version + 1)
     }
 
     private fun requireStatus(expected: CoordinationStatus) {

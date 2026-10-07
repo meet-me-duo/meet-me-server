@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-91-reference-date",
+  "sourceRevision": "848b9688451551781769799ff7d27485ea5a5445",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
+      "sha256": "8b6bc954ae9ee846dc7df89b222635598d1b11341d91cecc20670094c2ecc3f5"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiTimeContextContractTest",
+    "--tests",
+    "*GeminiTimeReferenceDateTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest#unsafe ambiguous and coupled inputs stay unapplied with no invented attendance in real matching processor()",
+    "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest#technical retries keep frozen reference dates despite worker time a week later()",
+    "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest#adapter context flows through the real batch and matching processors to a complete two person result()",
+    "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest#immutable submission creation instant becomes each rooms local reference date at KST midnight()",
+    "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest#new submission version uses its new creation date while older version stays immutable()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-07T00:38:03Z"
+}

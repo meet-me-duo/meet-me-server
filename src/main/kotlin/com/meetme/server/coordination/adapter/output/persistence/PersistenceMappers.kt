@@ -7,6 +7,7 @@ import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
 import com.meetme.server.coordination.domain.MeetingCandidate
+import com.meetme.server.coordination.domain.RecommendationSelection
 import com.meetme.server.coordination.domain.ResumeStage
 import com.meetme.server.coordination.domain.SubmissionBatch
 import com.meetme.server.coordination.domain.location.GeoCoordinate
@@ -129,9 +130,12 @@ object PersistenceMappers {
             quality = records.run.candidateQuality?.let(CandidateQuality::valueOf),
             candidates = candidates,
             confirmedCandidateId = records.confirmation?.let { CandidateId(it.candidateId) },
-            confirmedAt = records.confirmation?.confirmedAt?.toInstant(),
+            confirmedAt = records.confirmation?.confirmedAt?.toInstant() ?: records.recommendationSelection?.confirmedAt,
             resumeStage = records.run.resumeStage?.let(ResumeStage::valueOf),
             version = records.run.version,
+            recommendationProtocol = records.recommendationProtocol,
+            recommendationOptionCount = records.recommendationOptionCount,
+            recommendationSelection = records.recommendationSelection,
         )
     }
 
@@ -178,4 +182,7 @@ data class CoordinationRecords(
     val candidateParticipants: List<CandidateParticipantRecord>,
     val timeRanges: List<CandidateTimeRangeRecord>,
     val confirmation: FinalConfirmationRecord?,
+    val recommendationProtocol: String? = null,
+    val recommendationOptionCount: Int? = null,
+    val recommendationSelection: RecommendationSelection? = null,
 )

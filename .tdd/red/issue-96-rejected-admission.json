@@ -1,0 +1,24 @@
+{
+  "workItem": "issue-96-rejected-admission",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/RejectedAdmissionFallbackContractTest.kt",
+      "sha256": "2e09150a7c9bcc58832a3948ca6ac9e16d99a7d12670813674c1b541ec65d05c"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/run-meetme-gradle.py",
+    "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-rejected-admission-red.log",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*RejectedAdmissionFallbackContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.RejectedAdmissionFallbackContractTest.second Gemini admission rejected at second 43 starts Luna with fourteen remaining seconds()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:07:17.989819Z"
+}

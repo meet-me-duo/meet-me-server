@@ -1,0 +1,140 @@
+{
+  "work_item": "issue-92-release-extraction",
+  "baseline_commit": "06bc741c3c753d2303070582c74c5f8699285268",
+  "roles": {
+    "test_author": "independent_test_designer",
+    "implementation": "production_writer",
+    "review": "independent_design_reviewer",
+    "execution_and_mutation": "root_verifier"
+  },
+  "production_files": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "f0176a453bd597a8d9098a09d3041913ddcb6861dfb12ed82e257052049956b5"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "58dad06078ac0b774a3268c095d84c193039d52eef766a7abfeba46d1ad5fdbc"
+    }
+  ],
+  "test_file": {
+    "path": ".github/scripts/deploy-extraction-contract.test.cjs",
+    "sha256": "2e571d29f48a2d9fa3e2fcb4b5c608e53e8dc774e140e81c708a07de748d9f1e"
+  },
+  "red": {
+    "command": "node --test .github/scripts/deploy-extraction-contract.test.cjs",
+    "exit_code": 1,
+    "named_assertion_failures": [
+      "SSM applies restrictive umask before creating and extracting release files",
+      "SSM extraction keeps invoking root ownership rather than archived CI owner",
+      "SSM extraction honors restrictive umask instead of restoring archived modes",
+      "CI executes the independent deployment extraction contract"
+    ],
+    "failures": 4,
+    "setup_errors": 0,
+    "local_log_sha256": "cd35fc898fae6dbe04790ad6e6be6c657188b68677b624ab99ab93c349808518"
+  },
+  "green": {
+    "command": "node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs",
+    "passed": 13,
+    "failed": 0,
+    "local_log_sha256": "d7f446a7a40e65fa078ed23787db7e7e83dab2d0eb698ffdbb3845385f69df57"
+  },
+  "fault_injection": [
+    {
+      "name": "missing_umask",
+      "classification": "DETECTED_ASSERTION",
+      "selector": "restrictive umask",
+      "exit_code": 1,
+      "log_sha256": "46c4954e3d221bc75fec19b6ea083029fd0c5519f1455e439a8988bd0a713a68"
+    },
+    {
+      "name": "archived_owner",
+      "classification": "DETECTED_ASSERTION",
+      "selector": "root ownership",
+      "exit_code": 1,
+      "log_sha256": "35cd5de7bdad5c6fe250620f7471ba956980ac570b78982394ebd57d1ca6d7df"
+    },
+    {
+      "name": "archived_permissions",
+      "classification": "DETECTED_ASSERTION",
+      "selector": "restrictive umask instead",
+      "exit_code": 1,
+      "log_sha256": "c36089cd99e35d6286f345f13334edb24d0655ff497b78c26818442e02e3714f"
+    },
+    {
+      "name": "ci_omission",
+      "classification": "DETECTED_ASSERTION",
+      "selector": "CI executes",
+      "exit_code": 1,
+      "log_sha256": "83a0f3da2849efe2ae0fa61194404317b31b0f33b6aa8ebdf3c6a8ecdba46d8c"
+    }
+  ],
+  "workflow_files_restored": true,
+  "native_tar_positive_fixture": {
+    "invoking_uid": 1000,
+    "invoking_gid": 1000,
+    "archived_uid": 101000,
+    "archived_gid": 101000,
+    "result": "PASS",
+    "files": [
+      {
+        "path": "scripts",
+        "mode": "0750",
+        "owner_is_invoking_user": true
+      },
+      {
+        "path": "scripts/host-release-guard.sh",
+        "mode": "0750",
+        "owner_is_invoking_user": true
+      }
+    ],
+    "scope": "Native local GNU tar positive fixture; no privileged root/SSM/AWS runtime proof"
+  },
+  "closure": {
+    "unchanged_baseline_deploy_and_existing_detectors": true,
+    "feature_main_test_resource_files_unchanged_to_06bc741": 196,
+    "guard_sha256": "57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f",
+    "installer_sha256": "3ee4718626ef2725503486e5ca635eff7a5d95b173d6b3aba64f34cdfab5b1d1",
+    "historical210_scope": "Original 210-file restoration belongs to 06bc741; two workflows intentionally changed afterwards",
+    "historical37_and_fault15": "06bc741 and unchanged guard/test bytes; not re-executed locally for workflow-only follow-up",
+    "prior_ci": {
+      "commit": "06bc741c3c753d2303070582c74c5f8699285268",
+      "run": 37569594968,
+      "status": "SUCCESS"
+    }
+  },
+  "independent_review": {
+    "verdict": "PASS_TINY_EXTRACTION_SOURCE_STATIC13_AND_FOCUSED4FAULTS",
+    "local_record_sha256": "1d48a1e23d0f0cdf9104fee1e3c2d6572343c43b6a233af2830d9cb7f90bbe39"
+  },
+  "mandatory_hook": {
+    "started_at": "2026-10-07T04:23:08.932017+00:00",
+    "finished_at": "2026-10-07T04:23:17.216113+00:00",
+    "guard_exit_code": 0,
+    "hook": "unchanged .codex/hooks/tdd_guard.py",
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "provider_calls_by_this_task": 0,
+    "full_test_totals": {
+      "suites": 78,
+      "tests": 438,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    "execution_scope": "Unchanged hook executes self-tests and ktlintCheck/assemble/test; unchanged feature XML reused, not a fresh438 execution"
+  },
+  "new_exact_head_ci": "PENDING_AT_COMMIT",
+  "provider_calls_by_this_work": 0,
+  "evaluation_harness_changes": 0,
+  "unexecuted": [
+    "actual root SSM/host installation",
+    "migration",
+    "deployment",
+    "main/develop merge"
+  ]
+}

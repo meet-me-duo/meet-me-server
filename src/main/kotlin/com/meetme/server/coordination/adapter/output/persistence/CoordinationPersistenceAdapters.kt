@@ -9,6 +9,7 @@ import com.meetme.server.coordination.application.port.output.NormalizedPlaceSta
 import com.meetme.server.coordination.application.port.output.OutboxEvent
 import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
+import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.location.GeoCoordinate
 import com.meetme.server.shared.domain.CoordinationRunId
@@ -30,6 +31,7 @@ import java.util.UUID
 class KomapperCoordinationRunRepository(
     private val database: JdbcDatabase,
     private val jdbcTemplate: JdbcTemplate,
+    private val recommendations: RecommendationRepository? = null,
 ) : CoordinationRunRepository {
     override fun insert(run: CoordinationRun) {
         val records = PersistenceMappers.toRecords(run)
@@ -105,8 +107,29 @@ class KomapperCoordinationRunRepository(
                     .where { Meta.finalConfirmationRecord.coordinationRunId eq run.id }
                     .firstOrNull()
             }
+        val metadata =
+            jdbcTemplate
+                .query(
+                    "SELECT protocol, (SELECT count(*) FROM recommendation_options " +
+                        "WHERE coordination_run_id = a.coordination_run_id) AS option_count " +
+                        "FROM recommendation_analyses a WHERE coordination_run_id = ?",
+                    { rs, _ -> rs.getString("protocol") to rs.getInt("option_count") },
+                    run.id,
+                ).firstOrNull()
+        val selection = recommendations?.findSelection(run.id)
         return PersistenceMappers.toDomain(
-            CoordinationRecords(batch, batchItems, run, candidates, candidateParticipants, ranges, confirmation),
+            CoordinationRecords(
+                batch,
+                batchItems,
+                run,
+                candidates,
+                candidateParticipants,
+                ranges,
+                confirmation,
+                metadata?.first,
+                metadata?.second,
+                selection,
+            ),
         )
     }
 
@@ -167,13 +190,25 @@ class KomapperCoordinationRunRepository(
                 check(existingCandidateId == confirmation.candidateId) { "A different candidate is already confirmed" }
             }
         }
+        run.recommendationSelection?.let { requireNotNull(recommendations).insertSelection(it) }
+    }
+
+    override fun findByIdForUpdate(id: CoordinationRunId): CoordinationRun? {
+        val found =
+            jdbcTemplate
+                .query(
+                    "SELECT id FROM coordination_runs WHERE id = ? FOR UPDATE",
+                    { rs, _ -> CoordinationRunId(rs.getObject("id", UUID::class.java)) },
+                    id.value,
+                ).firstOrNull() ?: return null
+        return findById(found)
     }
 
     override fun findLatestByRoom(roomId: MeetingRoomId): CoordinationRun? {
         val id =
             jdbcTemplate
                 .query(
-                    "SELECT id FROM coordination_runs WHERE room_id = ? ORDER BY created_at DESC, id DESC LIMIT 1",
+                    "SELECT r.id FROM coordination_runs r JOIN meeting_rooms m ON m.active_run_id = r.id AND m.id = r.room_id WHERE m.id = ?",
                     { rs, _ -> CoordinationRunId(rs.getObject("id", UUID::class.java)) },
                     roomId.value,
                 ).firstOrNull() ?: return null
@@ -185,10 +220,9 @@ class KomapperCoordinationRunRepository(
             jdbcTemplate
                 .query(
                     """
-                    SELECT id FROM coordination_runs
-                    WHERE room_id = ?
-                    ORDER BY created_at DESC, id DESC
-                    LIMIT 1 FOR UPDATE
+                    SELECT r.id FROM coordination_runs r
+                    JOIN meeting_rooms m ON m.active_run_id = r.id AND m.id = r.room_id
+                    WHERE m.id = ? FOR UPDATE OF r
                     """.trimIndent(),
                     { rs, _ -> CoordinationRunId(rs.getObject("id", UUID::class.java)) },
                     roomId.value,
@@ -495,8 +529,8 @@ class JdbcCoordinationAttemptRepository(
             """
             INSERT INTO coordination_attempts
                 (id, coordination_run_id, attempt_number, started_at, finished_at, failure_code,
-                 input_tokens, output_tokens, response_bytes, estimated_cost_usd, failure_kind)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 input_tokens, output_tokens, response_bytes, estimated_cost_usd, failure_kind, provider, model, policy_version, invocation_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             attempt.id,
             attempt.coordinationRunId.value,
@@ -509,6 +543,10 @@ class JdbcCoordinationAttemptRepository(
             attempt.responseBytes,
             attempt.estimatedCostUsd,
             attempt.failureKind,
+            attempt.provider.name,
+            attempt.model,
+            attempt.policyVersion,
+            attempt.invocationId,
         )
     }
 

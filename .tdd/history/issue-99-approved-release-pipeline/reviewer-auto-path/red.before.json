@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-99-approved-release-pipeline",
+  "sourceRevision": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+  "testFiles": [
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "5bcd93a9f18a5ab34f47f77753b55741283d9962eafb28115aaa7f972e1b1284"
+    }
+  ],
+  "command": "node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs",
+  "failedTests": [
+    "immutable main release metadata binds run attempt SHA digest repository archive and exact migration catalog",
+    "a trusted unchanged schema and guard contract permits automatic image updates while mismatches request transition",
+    "first transition needs explicit approval observed disabled rules drained commands and an exact successful history prefix",
+    "main success publishes automatically while manual actions consume a validated existing run and attempt without rebuild",
+    "the driver verifies archive bytes before restricted host extraction and guard mutation follows observed approval",
+    "publication is immutable and manual read-only preflight preserves existing production authority without pause writes"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T13:11:09.968506+00:00"
+}

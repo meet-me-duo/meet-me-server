@@ -1,0 +1,71 @@
+{
+  "work_item": "issue-92-ci-report-portability",
+  "source_revision": "bf367bee46bbb2cc78b15f1f418c8e09efc29d0e",
+  "initial_ci": {
+    "run_id": 37566280630,
+    "result": "FAILURE",
+    "cause": "six scenario artifact writes denied at hardcoded /workspace path"
+  },
+  "changed_test_file": {
+    "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionMeetingScenarioPostgresTest.kt",
+    "sha256": "b2cdf14366a038a26e46b829c69fb603bbbd949290feb3be523d6be9dd4089e1"
+  },
+  "behavior_assertions_changed": false,
+  "change": "Project-local build/reports default, with normalized absolute override confined to project report directory or authorized /workspace and /tmp roots",
+  "targeted_totals": {
+    "tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full_guard": {
+    "started_at": "2026-10-07T03:32:23.208012+00:00",
+    "finished_at": "2026-10-07T03:34:18.005388+00:00",
+    "guard_exit_code": 0,
+    "hook": "unchanged .codex/hooks/tdd_guard.py",
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "provider_calls_by_this_task": 0,
+    "full_test_totals": {
+      "suites": 78,
+      "tests": 438,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    }
+  },
+  "fresh_reports": [
+    {
+      "name": "manual-close.json",
+      "sha256": "897b3bb4441543119a3d8d4c04dfa89ea1a6ec1833076d5cf34a58936133d3b4"
+    },
+    {
+      "name": "no-match-correction.json",
+      "sha256": "5d7fb53ef5061d81f53744e44440016191ed166da6fe3bd0006b47a078e31413"
+    },
+    {
+      "name": "partial-correction.json",
+      "sha256": "2f12a8c6234cc500e1f1183d86ec9cdd986cc2aa73813507c00b93b88bc62b0d"
+    },
+    {
+      "name": "three-person-count.json",
+      "sha256": "08164d5e5fe9a559fd2478144222ca998cfcdc18db9badcf1f32cf745b13d508"
+    },
+    {
+      "name": "time-deadline.json",
+      "sha256": "ef1f0e0bde95eb60983c572349eb2da0b8052f169f7d45af07b2c91090fcd352"
+    },
+    {
+      "name": "two-person-count.json",
+      "sha256": "ec032b2c5e035a8ccfa426ef3d11adc7ed62acebb015af777f474284e876edee"
+    }
+  ],
+  "raw_scope": "Local ignored logs and /workspace/scratch/meet-me-bootstrap/issue-92-ci-report-portability/full-guard-reports; historical initial scenario raw reports unchanged",
+  "guard_implementation": "Separate unstaged work in progress; not part of this portability checkpoint",
+  "exact_head_ci": "PENDING after checkpoint push",
+  "provider_calls": 0,
+  "operating_changes": 0
+}

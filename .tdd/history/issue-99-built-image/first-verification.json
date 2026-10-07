@@ -1,0 +1,74 @@
+{
+  "workItem": "issue-99-built-image",
+  "sourceRevision": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+  "recordedAt": "2026-10-07T12:03:17.974833+00:00",
+  "restoredFiles": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "a404f27bc06d29b212d40e5d6b687e5660c21f7b308ed0bcd86fdfa99a428484"
+    },
+    {
+      "path": "deploy/scripts/verify-built-image.sh",
+      "sha256": "5e1eaeab26273ffd436c9c7b4cd8008dd464dd3dfc2b88dea5b2e95b6337642c"
+    },
+    {
+      "path": "deploy/tests/built-image-workflow.test.cjs",
+      "sha256": "ff370f2db6a97dc64b45be5bcb77bf5aeca40cff0a95717038e7e3a5266ccd56"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "registry-push",
+      "exitCode": 1,
+      "failedTests": [
+        "CI builds and loads an ARM64 local tag using the existing QEMU pattern"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-registry-push.log"
+    },
+    {
+      "fault": "wrong-checkout",
+      "exitCode": 1,
+      "failedTests": [
+        "image CI checks out the exact PR head and removes persisted credentials"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-wrong-checkout.log"
+    },
+    {
+      "fault": "persist-credentials",
+      "exitCode": 1,
+      "failedTests": [
+        "image CI checks out the exact PR head and removes persisted credentials"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-persist-credentials.log"
+    },
+    {
+      "fault": "mutable-image",
+      "exitCode": 1,
+      "failedTests": [
+        "every image execution uses an immutable local ID with network and privilege isolation"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-mutable-image.log"
+    },
+    {
+      "fault": "network-access",
+      "exitCode": 1,
+      "failedTests": [
+        "every image execution uses an immutable local ID with network and privilege isolation"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-network-access.log"
+    },
+    {
+      "fault": "missing-java-sentinel",
+      "exitCode": 1,
+      "failedTests": [
+        "valid legacy and required modes use real Java while rejected commands use a safe sentinel"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-fault-missing-java-sentinel.log"
+    }
+  ],
+  "exactRestoration": true,
+  "sourceContractOnly": true,
+  "actualImageChecks": "PENDING_EXACT_HEAD_CI",
+  "operationalCommands": 0,
+  "paidCalls": 0
+}

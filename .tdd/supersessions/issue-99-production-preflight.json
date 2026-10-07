@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-99-production-preflight",
+  "recordedAt": "2026-10-07T10:46:36.694216+00:00",
+  "sourceRevision": "6f7f54e46846c690a8374aa7dc1898bee21d873f",
+  "authority": "User explicitly approved minimal read-only workflow using existing production role; independent privacy and rerun identity findings require stronger output/identity contract.",
+  "testFiles": [
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "beforeSha256": "19d8653e7029fd379be5150c64328781531602cfb5070a07dcaab1ad6d34ecaf",
+      "archivedBeforePath": ".tdd/history/issue-99-production-preflight/preflight-contract.before-review.cjs",
+      "afterSha256": "21d29f8fb799176c196dc7d6fd2dc240486605d1bd57e6bddcc0b3b0f6f4663c",
+      "changes": [
+        "Add fixed-path/typed nested metadata regression for independently reproduced output leakage.",
+        "Require approved triggering actor on rerun; preserve original existing tests."
+      ]
+    }
+  ],
+  "verification": "Original15:13assertionRED→15GREEN; expanded20:6assertionRED→20GREEN. Both raw logs retained; initial raw source skeleton failures are assertions of missing implementation, not remote operating execution.",
+  "paidCalls": 0,
+  "operationalWrites": 0
+}

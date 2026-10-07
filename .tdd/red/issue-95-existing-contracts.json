@@ -1,0 +1,46 @@
+{
+  "workItem": "issue-95-existing-contracts",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionMeetingScenarioPostgresTest.kt",
+      "sha256": "213f4d88b77fbb1e1ff344972338b1436fadc5cf813a75239a09028c45e0b4a3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionNaturalLanguageOnlyIntegrationTest.kt",
+      "sha256": "84023f5931215174c2a71ca228fe6e7d2be5c66c2c7c4f69ae05d7fc7bca7219"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "d392b1b06315919ff6cb3365b95949fe37047a953550ad7d50cfd3e8ac563b85"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "48ee2cdb9ebbc238d9d26cfb71fbf280b1aa2d5aa7ce4f269a2f5d99f8b63228"
+    }
+  ],
+  "command": [
+    "/workspace/issue95-red-baseline/gradlew",
+    "-p",
+    "/workspace/issue95-red-baseline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*CorrectionMeetingScenarioPostgresTest",
+    "--tests",
+    "*SubmissionNaturalLanguageOnlyIntegrationTest",
+    "--tests",
+    "*CorePersistenceIntegrationTest",
+    "--tests",
+    "*DatabaseMigrationRunnerTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionMeetingScenarioPostgresTest.PARTIAL preserves all three inputs and corrected third attendee joins reanalysis before confirmation()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionMeetingScenarioPostgresTest.NO_MATCH keeps own inputs through correction then reparses and protects confirmed result()",
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다()",
+    "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest.legacy mixed batch exposes partial counts and warnings with Plan C and preserves confirmation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:13:52.184995Z"
+}

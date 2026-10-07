@@ -1,0 +1,50 @@
+{
+  "format_version": 1,
+  "kind": "independent-deployment-review-assertion-red",
+  "role": "independent_test_author",
+  "executed_by": "root",
+  "author_verification": "Read actual root logs; no execution by author",
+  "tests": {
+    "deploy/tests/test_v8_release_guard_review_boundaries.py": "fc2c048cf95a68c14300345a2f04ee567a21924f6c430fc8d4e4c0af6ea687f3",
+    ".github/scripts/deploy-guard-contract.test.cjs": "6c4021b88fca679d665a84f2492347d04ed2ac1fcb47093b368cb855f24a46e1"
+  },
+  "baseline_source": {
+    "host_guard": {
+      "path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/review-edge-baseline-host-guard.sh",
+      "sha256": "1dfbbc8584ab6c419f60d5e76645ba68f8328130b07bdef7e67057cf11ca55a4"
+    },
+    "ci": {
+      "path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/review-edge-baseline-ci.yml",
+      "sha256": "9285fc9b38909c1deed4962aa980f779d5d637ae6b9017232008213e720c796a"
+    }
+  },
+  "valid_runtime_red": {
+    "methods": 2,
+    "assertion_failures": 5,
+    "log": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/review-boundaries-red.log",
+    "log_sha256": "2044d93f1e46c78a9b5f852cc8a65af432e3ea3680d81522a59e44467a39c78b",
+    "cases": [
+      "Exact 3-field policy rejects four extra-empty TAB variants",
+      "Unapproved current rollback rejects before writes despite approved target"
+    ]
+  },
+  "valid_static_red": {
+    "tests": 5,
+    "passed": 4,
+    "assertion_failures": 1,
+    "log": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/static-ci-red.log",
+    "log_sha256": "73b94091d2d9cedc8e45abbfa0399e2f01cbf4965a8e6b06d3905441c4b47ba7",
+    "case": "CI must execute the new static contract test file"
+  },
+  "excluded": "Refresh invalid intermediate fixture error; no missinghelper/compilation/FD simulation claim included as validRED",
+  "new_detector_pending": {
+    "path": "deploy/tests/test_v8_release_guard_detectors.py",
+    "sha256": "460a91ff743b45c86d3917718ae1796932b46f79cf651d0c8a0768f73c71a8a1",
+    "methods": 3,
+    "assertion_red_claim": false,
+    "fd_scope": "Actual child-held inode oracle, local symlink alias with permission denied target. Logical namespace simulation only.",
+    "prior_fixture_error_sha256": "a9432e251c665fdc1af2eacce2377359a6c0b6300c33ad36ea22ca7b82520c5b",
+    "prior_fixture_error": "PermissionError from Python Path.exists, excluded; use actual Bash [[ -e ]] precondition. Root fresh run pending."
+  },
+  "schema": "Dedicated deployment record, manually reviewed; existing Kotlin red-evidence schema and hook unchanged."
+}

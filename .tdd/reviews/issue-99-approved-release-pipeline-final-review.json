@@ -1,0 +1,112 @@
+{
+  "workItem": "issue-99-approved-release-pipeline-final-review",
+  "reviewer": "/root/pipeline_final_review",
+  "recordedAt": "2026-10-07T14:02:54.385004+00:00",
+  "baseline": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+  "verdict": "LOCAL_SOURCE_AND_EVIDENCE_PASS",
+  "blockingDefects": [],
+  "authority": "Approved minimal feature-branch split of immutable main build/publication from preflight and first transition deployment; subsequent same SQL/guard contract main CI automatic release retained. Existing production Environment/OIDC/IAM/protections unchanged. No operational execution or additional validation scope authorized here.",
+  "priorReview": ".tdd/reviews/issue-99-approved-release-pipeline-independent-review.json",
+  "sourceReview": [
+    "All eight frozen source/test fingerprints exactly match prior SOURCE_PASS; no source changes after that review.",
+    "Automatic publication is restricted to successful same-repository main push CI. Manual main preflight/deploy consumes an immutable run and attempt with verified source, CI/producer origin, archive SHA, registry digest, SQL catalog and 14-file guard bundle.",
+    "Missing or different trusted automatic contract records return TRANSITION_REQUIRED in automatic/preflight paths without installation, policy, service or database mutation.",
+    "First transition requires explicit approval, two observed disabled rules, zero active targeted commands and exact successful migration history prefix. Same-contract READY/history/current-image verification keeps subsequent main deployment automatic.",
+    "First transition policy removes old V8 approvals. Installation, actual retired-FD validation and writer quiescence remain in the existing reviewed guard; no old-image fallback or phase reset is introduced.",
+    "Trusted root record is written only after actual READY, selected image, full migration history, current release, SQL catalog and installed guard bundle verification. Future app-only changes retain automatic main flow.",
+    "Reviewed active-command query and bounded two-file SSM transport fixes remain unchanged. IAM and environment protections are not modified.",
+    "Handoff now distinguishes historical PR-only preflight/current old-main CD from new manual main metadata preflight and approved split; actual production access and registry approval remain unverified."
+  ],
+  "evidenceReview": {
+    "red": {
+      "path": ".tdd/red/issue-99-approved-release-pipeline.json",
+      "assertionFailures": 16,
+      "testFingerprintsUnchanged": true
+    },
+    "green": {
+      "rawLog": ".codex/tdd-evidence/issue-99-approved-release-pipeline-final-green.log",
+      "tests": 39,
+      "failures": 0,
+      "skipped": 0,
+      "durationSeconds": 5.224829596
+    },
+    "faultInjection": {
+      "path": ".tdd/verification/issue-99-approved-release-pipeline.json",
+      "faults": 7,
+      "assertionFailures": 8,
+      "rawAssertionLogsReviewed": true,
+      "restoredFileCount": 303,
+      "reviewedPipelineWorkflowAndGuardRestorationMatch": true
+    },
+    "mandatoryGuard": {
+      "path": ".codex/tdd-evidence/issue-99-approved-release-pipeline-mandatory-guard.json",
+      "exitCode": 0,
+      "durationSeconds": 8.639,
+      "sha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+      "tasks": [
+        "ktlintCheck",
+        "assemble",
+        "test"
+      ],
+      "cachedResultsMayBeReused": true,
+      "freshLocal654Claim": false
+    }
+  },
+  "remainingProof": [
+    "New committed exact HEAD CI and remote Draft PR100 state are root-owned pending checks.",
+    "Actual main preflight, current production target and parameter metadata, host history/guard/drain, published ECR digest and exact transition approval remain operational prerequisites.",
+    "Independent host orchestration runtime fixtures were canceled before execution at the user instruction; source review is not production installation or Docker daemon cleanup execution evidence."
+  ],
+  "reviewerExecution": {
+    "tests": 0,
+    "newFixtures": 0,
+    "Docker": 0,
+    "Gradle": 0,
+    "Aws": 0,
+    "paidModels": 0,
+    "productionActions": 0,
+    "sourceEdits": 0
+  },
+  "currentReadFingerprints": [
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "a78db4c4374c3a0ce55b5544a325ddd246d7a5af7dfc602f8405cfef103f5ff7",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "3a8e57ddbb93fbb511af18aa125b36b519abaeb1a659a78fd9db2788591e4dce",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": ".github/workflows/production-preflight.yml",
+      "sha256": "5c2aea34864f5669bdef663b6a34e470d24498249e309354c8c3cedc73b33ea1",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "63701e34dfc5e94dda22844344e26876ecbf8fb77625a7a1ccad51e71a8389fe",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "1827431b7efd0ed36c86af8b0d80392abff681c1b08aa639757ed6cb22feb226",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "3dbd26a81e5b0a00e0ffc7c6e16a501b64e5c895699ce16f7b36ee638d41e798",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "811df8004ea116d15fe6bb3844417fbf51d09b41b10b276520d56491e939de16",
+      "priorSourceReviewMatch": true
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "14d78425e11775a8adb55177c1eea6716ca9d053b3b458d600d8061fa52b3eaa",
+      "priorSourceReviewMatch": true
+    }
+  ]
+}

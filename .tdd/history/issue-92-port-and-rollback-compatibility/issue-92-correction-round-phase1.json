@@ -1,0 +1,49 @@
+{
+  "workItem": "issue-92-correction-round-phase1",
+  "sourceRevision": "f70536e26c588487edb1e18e09fb8d34e6e6c504",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundConcurrencyPostgresTest.kt",
+      "sha256": "23c08ebde264bb6181e421a803ff7e117e665fb23e3f052a1362a00ff4f53a81"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundHttpPostgresTest.kt",
+      "sha256": "59c14551f651b1cc587d19efd7ff5da5d4b9450902f36886179ed69bd47ccd96"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/CorrectionRoundPostgresFixture.kt",
+      "sha256": "5f3ed1f0f7cb10eca53bd9b7c57b48aa91104f598c100091a96b3fffee6fd20e"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*CorrectionRoundHttpPostgresTest",
+    "--tests",
+    "*CorrectionRoundConcurrencyPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.reopen preserves CLOSED anchor and source cohort while publishing editable correction state()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.foreign analysis and foreign round cannot be used as authority in another room()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.member cannot reopen or analyze but can edit own source-cohort submission()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.force reparse creates independent work for identical version set and replay cannot duplicate it()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.three committed correction runs exhaust permanent room quota and fourth changes no data()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.normalized no-op preserves revision version and original reference date()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.old close remains no-op during correction and unscoped PUT cannot update CLOSED room()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.active or delayed analysis cannot open a correction round()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.stale round and stale revision cannot mutate newer round including no-op text()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.unchanged analyze reuses source without new batch run outbox or attempt()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.late analyze replay preserves current open round and changed request payload conflicts()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.late reopen replay returns original round and cannot overwrite newer generation()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.changed analyze freezes current cohort and keeps original batch immutable()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.correction changes only self input without creating parse work or touching other participant()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConcurrencyPostgresTest.save committed first is included in analyze frozen batch()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConcurrencyPostgresTest.same analysis request waiting on committed peer replays exactly one fresh batch and outbox()",
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConcurrencyPostgresTest.analyze committed first prevents queued late save from changing frozen batch()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T01:38:39.531086Z"
+}

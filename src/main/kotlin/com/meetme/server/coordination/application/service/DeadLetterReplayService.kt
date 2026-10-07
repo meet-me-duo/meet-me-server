@@ -21,13 +21,17 @@ class DeadLetterReplayService(
     private val outboxRepository: OutboxRepository,
     private val coordinationRunRepository: CoordinationRunRepository,
     private val jdbcTemplate: JdbcTemplate,
+    private val roomRepository: com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository,
 ) {
     @Transactional
     fun replay(eventId: OutboxEventId): Boolean {
         val event = outboxRepository.findById(eventId) ?: return false
         if (event.status != OutboxStatus.DEAD_LETTERED) return false
         val run = coordinationRunRepository.findById(CoordinationRunId(event.aggregateId)) ?: return false
-        coordinationRunRepository.update(run.retryDeadLetter())
+        val (room, current) = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run) ?: return false
+        if (current.status != com.meetme.server.coordination.domain.CoordinationStatus.DEAD_LETTERED) return false
+        coordinationRunRepository.update(current.retryDeadLetter())
+        roomRepository.update(room.transition())
         outboxRepository.requeue(eventId)
         jdbcTemplate.update("DELETE FROM coordination_worker_failures WHERE event_id = ?", eventId.value)
         return true

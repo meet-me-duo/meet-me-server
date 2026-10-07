@@ -1,0 +1,16 @@
+{
+  "workItem": "issue-99-built-image",
+  "sourceRevision": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+  "testFiles": [
+    {
+      "path": "deploy/tests/built-image-workflow.test.cjs",
+      "sha256": "c96e4106fe6c8b8725abfd358c5dc155a1081a29adfc76998a189e32ed37b660"
+    }
+  ],
+  "command": "node --test --test-reporter=tap deploy/tests/built-image-workflow.test.cjs",
+  "failedTests": [
+    "the shared Docker runner explicitly selects the verified ARM64 platform for every probe"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T12:17:20.081536+00:00"
+}

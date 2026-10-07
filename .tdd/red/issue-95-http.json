@@ -1,0 +1,55 @@
+{
+  "workItem": "issue-95-http",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationConfirmationPostgresTest.kt",
+      "sha256": "16c4557bf35eab1aa3303cc5c808094b8b4d98d2a325f0ea96803959d3f2823e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationHttpPostgresTest.kt",
+      "sha256": "01887266632cf8d44032d3591ef5fc9cc9dd713096b0794ad2959c364e26a455"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationOpenApiExportPostgresTest.kt",
+      "sha256": "868a3dcf2fda036e9fa03a9f680ba5cbe891ce3dbe5e467d38ef15dbcaf0b7f8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPostgresFixture.kt",
+      "sha256": "b165fe1f4b8c8ce5e1a3b68a4dea962c4598649209cd1bba0b36bd42838f07f6"
+    }
+  ],
+  "command": [
+    "GRADLE_USER_HOME=/workspace/.gradle-user",
+    "/workspace/issue95-red-baseline/gradlew",
+    "-p",
+    "/workspace/issue95-red-baseline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RecommendationHttpPostgresTest",
+    "--tests",
+    "*RecommendationConfirmationPostgresTest",
+    "--tests",
+    "*RecommendationOpenApiExportPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationConfirmationPostgresTest.typed confirmation first makes waiting reopen fail and retains selected result()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationConfirmationPostgresTest.reopen first makes waiting typed confirmation fail without writing a selection()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.historical legacy analysis retains candidate confirmation and selection null()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.typed request fields are all mandatory and invalid requests cannot confirm()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.five actual windows publish three primary options and every alternative exactly once()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.zero two three and four windows preserve actual count and at most three primary cards()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.submicrosecond selection is rejected and cannot replay a different tuple as identical()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.one actual window stays one option with no artificial duplicates()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.alternative query requires active analysis and validates limit and opaque cursor()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.new protocol blocks candidate only confirmation()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.only host may confirm while participant and guest read permissions stay scoped()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.invalid actual intervals foreign variants and stale analyses cannot alter database state()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.typed confirmation preserves chosen twenty minutes and protects the whole immutable tuple()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.open correction and replacement analysis protect frozen versions and reject old option selection()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest.native OpenAPI documents real recommendation endpoints selection requiredness and nullable schemas()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:01:31.105942Z"
+}

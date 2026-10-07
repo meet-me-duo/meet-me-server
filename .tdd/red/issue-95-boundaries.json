@@ -1,0 +1,38 @@
+{
+  "workItem": "issue-95-boundaries",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationDatabaseGuardPostgresTest.kt",
+      "sha256": "230a06a871e73e13d476b158ac5b88b8b5676f566f5f9d8cff6f82e50f5cfbeb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationReviewRegressionPostgresTest.kt",
+      "sha256": "ea0a0c7849867a0dbbe9c732ebf5e26fc4eabff77e7e0bfefb688be435088012"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPostgresFixture.kt",
+      "sha256": "b165fe1f4b8c8ce5e1a3b68a4dea962c4598649209cd1bba0b36bd42838f07f6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RecommendationDatabaseGuardPostgresTest",
+    "--tests",
+    "*RecommendationReviewRegressionPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.direct typed insertion during OPEN revision fails while unconfirmed published options remain immutable()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.persisted typed selection makes old run status quality and room pointer updates fail()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.old revision writer cannot insert an OPEN round after typed selection()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.direct typed inserts reject escaped window foreign option variant and room ownership()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.old candidate writer remains valid for a legacy analysis and is rejected for new protocol()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationReviewRegressionPostgresTest.actual seconds selection summary preserves both boundaries instead of showing zero duration()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationReviewRegressionPostgresTest.one microsecond selection summary preserves actual fractions and persisted idempotent result()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T05:56:38.094166Z"
+}
