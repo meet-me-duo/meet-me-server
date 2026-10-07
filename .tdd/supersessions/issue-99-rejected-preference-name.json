@@ -1,0 +1,13 @@
+{
+  "workItem": "issue-99-rejected-preference-name",
+  "recordedAt": "2026-10-07T07:38:57.497420Z",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "scope": "Shorten one method display name to satisfy maximum line length. No fixture/input/expected/assertion changes. Prior RED and before bytes retained in history; fresh two expected scoring failures captured with final formatted test hash.",
+  "testFile": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/D2RejectedPreferencePostgresTest.kt",
+  "beforeSha256": "0b1c49e8e4d6538b7c2ce26c91e0ddf63f7684db4dd1ad693216952380e6b321",
+  "afterSha256": "29c45572b69b84186dc14487beee9b6448aa19b9cf188ab405ab522ca3522526",
+  "archivedBeforePath": ".tdd/history/issue-99-rejected-preference-name/D2RejectedPreferencePostgresTest.before.kt",
+  "archivedRedPath": ".tdd/history/issue-99-rejected-preference-name/issue-99-rejected-preference.json",
+  "providerCalls": 0,
+  "replacementRedPath": ".tdd/red/issue-99-rejected-preference.json"
+}

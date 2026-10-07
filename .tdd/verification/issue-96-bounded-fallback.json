@@ -1,0 +1,361 @@
+{
+  "workItem": "issue-96-bounded-fallback",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "boundary": "Bounded Gemini 4 + Luna 1 admission; full-jitter retry and fallback reserve; typed permanent failures; SDK retry disabling; strict nullable schema; captured out-of-range conditions and AVAILABLE-only safety; durable owner, version and active-run fences; atomic publication rollback; conservative crash expiry; matching post-lock deadline; post-admission remaining budget.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/OpenAiConfiguration.kt",
+      "sha256": "f6344187a9d39b9fa5ae73a06fd3b08025f6ed3bf4c41f96c1b38fed353a01c1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d6ef45e14b1ae9ca28b13497c047cdfbd6555ecd8c19c407ff6e3b109549b7d6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt",
+      "sha256": "ad6b1ef0c024be953f8baee54d8c81a180f11fe88390c36e3aa747b43e067263"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/OpenAiLunaNaturalLanguageParserAdapter.kt",
+      "sha256": "c0f7ac47b005bcd6de3dd04094d59e94a2b524af763df8a82605a5cc844f744a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ProviderFailureClassifier.kt",
+      "sha256": "424c5f263dc4b4b501e811cb2d6af409ad9e6b371010eba7f1901d8f775f0cd6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/CoordinationPersistenceAdapters.kt",
+      "sha256": "3fa55b6762f46ec14d9f530ff33962390709775bb26430851f59547dada90853"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcAnalysisInvocationRepository.kt",
+      "sha256": "4a757c9d48b9c7a2401eb750ff9e159dff3801cc47a2fc9437a02de9e182937c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/AnalysisInvocationRepository.kt",
+      "sha256": "a754c17fa4cf90196e096eecfabf701a13404acd5a5ecda89bd37870bb30431e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/CoordinationRepositories.kt",
+      "sha256": "7eb2ebbc40cc49554f8c663d2be96ba577afb779904439f532ad50f274e1c076"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/NaturalLanguageParserPort.kt",
+      "sha256": "6bc9da59614f37886aefa28cf993647063ca015e4035d2219fae89f60336f0a4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/ActiveRunLock.kt",
+      "sha256": "c22eda03253fc62d518a5703b2e46e3d51c0c6a80106f139e337b7cafde7b8cd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/AnalysisDeadlineExceededException.kt",
+      "sha256": "c89ed3e1b35f22517dbb96177d00eb722755a676291287596c9471eb93b7d35c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/AnalysisInvocationRecovery.kt",
+      "sha256": "83fe4b7a64cdecb0fe36a06d865b40e62152bc2380c95706bbaf5947babf98fa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "57f6787741894c650673988775587c46fac8af1314b270f441f2701a51898349"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "c168a880b672664d57f8dce7d19275ad198ef4383a469d8f4162819e6120e78a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcher.kt",
+      "sha256": "b88fe817b0d283db7bb1c2ad033f3f3033f1248e7112435c92d262defdb719e3"
+    },
+    {
+      "path": "src/main/resources/application.yml",
+      "sha256": "aac00f1a9f79209d8dbafa1b9dd82ff673f73648075284ea8ebd72aacf54a00b"
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__add_bounded_analysis_invocations.sql",
+      "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AnalysisInvocationAdmissionDeadlinePostgresTest.kt",
+      "sha256": "fdf9a9bd7de0ceccb63c7e8d8dc69659a679ee454cdb89855707b74059a22a7a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/BoundedExecutionLifecyclePostgresTest.kt",
+      "sha256": "b7c47d6de8503b33630487afff3102f4194365a8f5f0462b61e788b411b7c29f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/BoundedPublicationRollbackPostgresTest.kt",
+      "sha256": "bbfab6d6e866777514f88c3e00f049891b6e32e8ede4636835a08f88b0552926"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/DurableAnalysisInvocationPostgresTest.kt",
+      "sha256": "c9e01bd3b6325ccc8af6ade66f07ed59adc0bfadd8b7d0b3cc360cb43bd70874"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiHighDemandBoundaryTest.kt",
+      "sha256": "db6eac992170a8ccd111b16b609fc4d4d253b51f4d41c750047e108571e0066f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "sha256": "b1b176f28d54db087d6fb5fed0f48ea30c810d6d80c93bd79231cee5f8ecff22"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "sha256": "8473df2afbe4a4245089b981312b6f31b4a682d2d482d45a069072d0d593dc27"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderFailureContractTest.kt",
+      "sha256": "f0bf977ef5a93eda1bae5218c2fdcbbac33293bd5762293e45c7c620632c93d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "sha256": "36c549fd78381d7994509fcc514587a363fe0bf3154adcead09fd378cf64a681"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTransportBudgetContractTest.kt",
+      "sha256": "fd3ff9b884fcedcb4cc03b4f6c88918e94df87bbf21f23b0eabe48508e1964d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaProviderContractTest.kt",
+      "sha256": "45fdb37df7b281734fa6b274347deca3eaccc5b53a9e6517fb1f8a1d7e48a8ea"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaTransportNoReplayContractTest.kt",
+      "sha256": "f3ad9302dec7ba2dc1f2b06c96c6ab1e9c7afc6ddcc2588fc416037b1d5933bf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SearchScopeProviderResponseContractTest.kt",
+      "sha256": "34791fc27cca44d59d7fba9811f2baabb3106df71582362f258f308b97190473"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedAdmissionBudgetContractTest.kt",
+      "sha256": "77e130f5f3e84ed3bd5804cedd21e40dba4bdfe7dc83c09ccd621397bd3f4cc1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "f9abaa99c94bfcaa78b9237bba7ca2505fd867e5a1e6ded7d5ed978e754ddf85"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/RejectedAdmissionFallbackContractTest.kt",
+      "sha256": "2e09150a7c9bcc58832a3948ca6ac9e16d99a7d12670813674c1b541ec65d05c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "d392b1b06315919ff6cb3365b95949fe37047a953550ad7d50cfd3e8ac563b85"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "48ee2cdb9ebbc238d9d26cfb71fbf280b1aa2d5aa7ce4f269a2f5d99f8b63228"
+    },
+    {
+      "path": "src/test/resources/issue-96/luna-search-scope-observed.json",
+      "sha256": "f825d68d464723278476fdea1e969a24ced4a40dca9c569ad4d28b94b592413a"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Ignore persisted provider counters and reuse the initial invocation snapshot for admission",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-01.log",
+        "test",
+        "--tests",
+        "*DurableAnalysisInvocationPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest#persisted counters enforce four Gemini calls and one Luna across stale snapshots() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove the Luna and completion reserve from the Gemini budget",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-02.log",
+        "test",
+        "--tests",
+        "*BoundedProviderFallbackContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#late Gemini success cannot publish and invokes Luna while reserve remains() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#late Luna success cannot publish inside the completion reserve() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#retry-after that cannot fit Gemini budget skips sleep and preserves fallback reserve() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#timeouts exhaust Gemini 42 seconds with only two retries and reserve Luna 15 seconds() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Permit permanent provider errors to retry and enter fallback",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-03.log",
+        "test",
+        "--tests",
+        "*BoundedProviderFallbackContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[1] kind = INVALID_RESPONSE [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[2] kind = CONFIGURATION [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[3] kind = AUTHENTICATION [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[4] kind = PERMISSION [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[5] kind = BILLING [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[6] kind = QUOTA [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#[7] kind = INVALID_REQUEST [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Enable a nested Google SDK retry despite the application physical attempt budget",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-04.log",
+        "test",
+        "--tests",
+        "*GeminiTransportBudgetContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest#503 sends one SDK request and has no hidden final retry sleep inside call budget() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove nullable rejection_code from strict required result fields",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-05.log",
+        "test",
+        "--tests",
+        "*LunaProviderContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest#strict nullable schema has required rejection code and every object property is required() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest#Responses API sends pinned Luna model strict common schema and one HTTP request() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Misclassify typed authentication failure as transient server failure",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-06.log",
+        "test",
+        "--tests",
+        "*GeminiProviderFailureContractTest",
+        "--tests",
+        "*LunaProviderContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest#[1] code = \"401\", status = \"UNAUTHENTICATED\", expected = \"AUTHENTICATION\" [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest#[1] status = \"401\", code = \"invalid_api_key\", expected = \"AUTHENTICATION\" [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Restore rejection of otherwise valid dated conditions outside search scope",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-07.log",
+        "test",
+        "--tests",
+        "*SearchScopeProviderResponseContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest#stored Luna evaluation response preserves all valid conditions and COMPLETE three evening ranges() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest#AVAILABLE-only outside search remains empty availability and COMPLETE NO_MATCH() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest#valid exception outside search preserves COMPLETE weekday intersections() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Treat empty expanded AVAILABLE windows as unrestricted search availability",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-08.log",
+        "test",
+        "--tests",
+        "*SearchScopeProviderResponseContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest#AVAILABLE-only outside search remains empty availability and COMPLETE NO_MATCH() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Ignore the durable invocation owner token fence",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-09.log",
+        "test",
+        "--tests",
+        "*DurableAnalysisInvocationPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest#wrong owner and foreign attempt cannot consume calls or publish() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow a stale exact run version to consume an admitted physical attempt",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-10.log",
+        "test",
+        "--tests",
+        "*DurableAnalysisInvocationPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest#admitted worker is fenced when run changes or revision opens before publication() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Ignore active run and open revision fences under the room lock",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-11.log",
+        "test",
+        "--tests",
+        "*DurableAnalysisInvocationPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest#admitted worker is fenced when run changes or revision opens before publication() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest#stale version inactive pointer open revision and retained room cannot write() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Publish structured results outside the atomic application transaction",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-12.log",
+        "test",
+        "--tests",
+        "*BoundedPublicationRollbackPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest#deadline crossing after structured writes throws typed cancellation and rolls back all publication() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest#processor converts publication deadline rollback into delayed ACK without another physical call() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Skip conservative expiry recovery for interrupted structuring or matching executions",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-13.log",
+        "test",
+        "--tests",
+        "*DurableAnalysisInvocationPostgresTest",
+        "--tests",
+        "*BoundedExecutionLifecyclePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest#crashed physical call is not repeated by fresh worker before or after original deadline() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest#expired delivery and scheduler recovery delay original batch without reclaim or matching() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Bypass the original deadline and cancellation checks after matching acquires the room lock",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-14.log",
+        "test",
+        "--tests",
+        "*BoundedExecutionLifecyclePostgresTest",
+        "--tests",
+        "*BoundedPublicationRollbackPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest#cancellation immediately before matching publication cannot write completed candidates() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest#bounded matching at original deadline delays without publishing candidates() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest#matching writer rechecks original deadline after acquiring actual room lock() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest#matching storage deadline rollback ends delayed in a fresh transaction with no candidates() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Give each provider a fresh fifteen seconds after delayed durable admission",
+      "command": [
+        "python3",
+        "/workspace/run-meetme-gradle.py",
+        "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-faults/fault-15.log",
+        "test",
+        "--tests",
+        "*BoundedAdmissionBudgetContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest#Luna claim waiting until second 58 records timeout and delays without starting a physical call() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest#Luna claim waiting until second 56 receives only one completion safe second() [org.opentest4j.AssertionFailedError]; com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest#Gemini admission that consumes its budget starts Luna with actual remaining time() [org.opentest4j.AssertionFailedError]",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-07T06:27:37.751481Z"
+}

@@ -210,6 +210,23 @@ class JdbcStructuredSubmissionRepository(
 internal object StructuredConditionJsonMapper {
     fun toMap(condition: StructuredCondition): Map<String, Any?> =
         when (condition) {
+            is StructuredCondition.PreferredTimeWindow ->
+                mapOf(
+                    "type" to "PREFERRED_TIME_WINDOW",
+                    "polarity" to null,
+                    "date" to condition.date?.toString(),
+                    "day_of_week" to condition.dayOfWeek?.name,
+                    "start_time" to condition.startTime.toString(),
+                    "end_time" to if (condition.endsAtNextDayStart) END_OF_DAY else condition.endTime.toString(),
+                )
+            is StructuredCondition.PreferredPlace ->
+                mapOf(
+                    "type" to "PREFERRED_PLACE",
+                    "query" to condition.query,
+                    "radius_meters" to null,
+                    "area_key" to condition.areaKey,
+                    "area_name" to condition.areaName,
+                )
             is StructuredCondition.TimeWindow ->
                 mapOf(
                     "type" to "TIME_WINDOW",
@@ -235,6 +252,26 @@ internal object StructuredConditionJsonMapper {
 
     fun fromMap(map: Map<String, Any?>): StructuredCondition =
         when (map["type"]) {
+            "PREFERRED_TIME_WINDOW" ->
+                map.getValue("end_time").toString().let { rawEndTime ->
+                    require(map["polarity"] == null)
+                    val endsAtNextDayStart = rawEndTime == END_OF_DAY
+                    StructuredCondition.PreferredTimeWindow(
+                        map["date"]?.toString()?.let(LocalDate::parse),
+                        map["day_of_week"]?.toString()?.let(DayOfWeek::valueOf),
+                        LocalTime.parse(map.getValue("start_time").toString()),
+                        if (endsAtNextDayStart) LocalTime.MIDNIGHT else LocalTime.parse(rawEndTime),
+                        endsAtNextDayStart,
+                    )
+                }
+            "PREFERRED_PLACE" -> {
+                require(map["radius_meters"] == null)
+                StructuredCondition.PreferredPlace(
+                    map.getValue("query").toString(),
+                    map.getValue("area_key").toString(),
+                    map.getValue("area_name").toString(),
+                )
+            }
             "TIME_WINDOW" ->
                 map.getValue("end_time").toString().let { rawEndTime ->
                     val endsAtNextDayStart = rawEndTime == END_OF_DAY

@@ -105,7 +105,6 @@ class GeminiTimeContextContractTest {
             listOf(
                 """{"type":"SPECIFIC_PLACE","query":"강남역","area_key":"AREA_1","area_name":"강남","latitude":37.0}""",
                 """{"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"MONDAY","start_time":"19:00","end_time":"21:00","query":"강남역"}""",
-                window(null, 19, 21, date = DATE.plusDays(30)),
                 window("MONDAY", 19, 21, date = DATE),
             )
         invalidConditions.forEach { invalid ->
@@ -117,6 +116,17 @@ class GeminiTimeContextContractTest {
             assertNotNull(result.rejectionCode)
             assertTrue(result.conditions.isEmpty(), invalid)
         }
+        // Issue #96 preserves valid out-of-scope structure and any authoritative provider rejection independently.
+        val outside =
+            adapter
+                .parseProviderResponse(
+                    response(request, window(null, 19, 21, date = DATE.plusDays(30)), "AMBIGUOUS_TIME_CONSTRAINT"),
+                    request,
+                ).single()
+        assertEquals("AMBIGUOUS_TIME_CONSTRAINT", outside.rejectionCode)
+        assertEquals(1, outside.conditions.size)
+        assertEquals(DATE.plusDays(30), (outside.conditions.single() as StructuredCondition.TimeWindow).date)
+        assertEquals(emptyList(), availability(outside, request))
     }
 
     @Test
@@ -158,8 +168,9 @@ class GeminiTimeContextContractTest {
                 .parseProviderResponse(response(request, window(null, 20, 21, date = DATE.plusDays(1)), null), request)
                 .single()
 
-        assertNotNull(result.rejectionCode)
-        assertEquals(emptyList(), result.conditions)
+        assertNull(result.rejectionCode)
+        assertEquals(DATE.plusDays(1), (result.conditions.single() as StructuredCondition.TimeWindow).date)
+        assertEquals(emptyList(), availability(result, request))
     }
 
     @Test

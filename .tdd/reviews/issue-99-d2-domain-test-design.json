@@ -1,0 +1,88 @@
+{
+  "workItem": "issue-99-d2-domain",
+  "author": "/root/d2_domain_tests",
+  "role": "independent test designer; no production implementation",
+  "recordedAt": "2026-10-07T07:18:42.310789Z",
+  "specBasis": [
+    "docs/ISSUE_95_CONTRACT.md: D2 approved on 2026-10-07",
+    "docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md: approved examples 1-6",
+    "docs/PRD.md: 3.4, FR-011 and Rule 3"
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjectorD2ContractTest.kt",
+      "sha256": "ec67005974e4dd561c28223a40e39ebd224edc2db796155bb682556703d753b7"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationPreferenceScopeContractTest.kt",
+      "sha256": "0ed229be29dbf3cff467b7ad6bf205f3f523f874ae2784c86ad81dd83a83ee43"
+    }
+  ],
+  "cases": {
+    "99-D2-01": "Attendee count outranks preferred attendee count and diversity; valid partial alternative retained.",
+    "99-D2-02": "Repeated time predicates and multiple satisfied dimensions yield one vote per attendee.",
+    "99-D2-03": "Time alternatives OR, place alternatives OR, time and place dimensions AND; remote cannot meet explicit area preference.",
+    "99-D2-04": "No explicit preferences means zero votes; availability is not reinterpreted.",
+    "99-D2-05": "Normalized adjacent/overlapping union covers entire original window.",
+    "99-D2-06": "Gap in preference union invalidates whole-window score; both actual preferred subwindows remain.",
+    "99-D2-07": "Original plus both preference windows and overlap remain; exact nonuniform endpoints avoid arbitrary fixed duration.",
+    "99-D2-08": "Preferred range clipped to hard availability; no enlargement.",
+    "99-D2-09": "Already-subtracted unavailable gap cannot return via preference, including endpoint-only contact.",
+    "99-D2-10": "Nonattendees contribute no score or preference boundary windows.",
+    "99-D2-11": "Area preferences never manufacture common places or eliminate other valid variants.",
+    "99-D2-12": "Preference count outranks distant date; equal preference quality follows PRD date/clock/absolute diversity.",
+    "99-D2-13": "Participant, availability, preferred range and area ordering are deterministic.",
+    "99-D2-14": "Touching midnight preference union covers continuous cross-date window.",
+    "99-D2-15": "DST repeated local clock distinct instant retains separate scoring and options.",
+    "99-D2-16": "Matched time and place yields one in-person vote; explicit time dimension with empty expansion yields zero despite matched area.",
+    "99-D2-17": "Matched time-only yields one vote across modes; explicit empty time yields zero.",
+    "99-D2-18": "Matched time and place yields one in-person vote; explicit place dimension with empty area set yields zero despite matched time."
+  },
+  "reviewNotes": [
+    "Expected scores come solely from approved D2 predicates and attendees.",
+    "Subwindow generation method is not fixed: extra finite windows are allowed when endpoints arise from availability and explicit preferences; original/own/intersection windows are mandatory.",
+    "Hard unavailable input is modeled at the public projector seam as already-subtracted availableTimes; adapter subtraction is another test owner boundary.",
+    "No Gradle or paid provider call performed by test author. RED not yet observed and must not be inferred from source inspection.",
+    "This records author spec review; independent final test review is a separate reviewer responsibility.",
+    "Before valid second RED, score helper asserts required option/variant presence. Separate explicit-empty scope cases include positive control to catch baseline universal-zero scorer without intentionally incorrect intermediate implementation.",
+    "Fresh formatted RED: combined run 53 tests/13 assertion failures; domain15/10fail + scope3/3fail. Other35 provider/mapper/transport fixture tests were GREEN. Scope failures occur in meaningful positive controls; explicit-empty negative assertions remain mandatory for final GREEN and defect injection.",
+    "Test author inspected original fresh RED XML in build/test-results/test and observed domain15/10fail/errors0 plus scope3/3fail/errors0, all AssertionFailedError. Another Gradle run cleaned original XML before archival; summaries use unchanged actual raw RED log and exact named assertion failures. No replacement XML was created."
+  ],
+  "redStatus": "OBSERVED_VALID_ASSERTION_RED",
+  "independentTestReview": {
+    "reviewer": "/root/d2_provider_tests",
+    "verdict": "PASS",
+    "basis": "Read-only review of all 15 tests against approved D2 handoff/PRD Rule 3; no implementation edits or Gradle execution.",
+    "findingResolved": "Removed variants.first() preference sorting assertion before RED; public per-variant scores and primary ordering retained.",
+    "scopeReview": "Updated 99-D2-16..18 positive controls and first15 assertNotNull helper reviewed PASS by /root/d2_provider_tests before fresh RED. The declared empty dimension must remain unsatisfied; matched dimensions establish baseline failure."
+  },
+  "redResults": [
+    {
+      "workItem": "issue-99-d2-domain",
+      "tests": 15,
+      "failures": 10,
+      "errors": 0,
+      "testSha256": "ec67005974e4dd561c28223a40e39ebd224edc2db796155bb682556703d753b7",
+      "rawLogSha256": "0b90495e49270fe34ddfee7bf97517dd2f54444cbcd3608201f6ab0e4025256b"
+    },
+    {
+      "workItem": "issue-99-d2-preference-scope",
+      "tests": 3,
+      "failures": 3,
+      "errors": 0,
+      "testSha256": "0ed229be29dbf3cff467b7ad6bf205f3f523f874ae2784c86ad81dd83a83ee43",
+      "rawLogSha256": "0b90495e49270fe34ddfee7bf97517dd2f54444cbcd3608201f6ab0e4025256b"
+    }
+  ],
+  "redSourceScope": "sourceRevision is PR97 HEAD baseline; merged #96 providers plus data-only preference/presence seam existed in the uncommitted workspace. RecommendationProjector still had original zero-score/no-preference-subwindow behavior. These JSONs do not assert the clean baseline alone compiled all tests.",
+  "redSourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjector.kt",
+      "sha256": "1b61edf711773ebfd4b5667033671f8bc06ce080692b1fd5810ea5f8a7bd575f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
+      "sha256": "6dbf3bbd1cbcd4f7821a42812ca502128802c445664708f257ab78ef201052e5"
+    }
+  ]
+}

@@ -491,12 +491,12 @@ meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, c
 
 ### ADR-047: 시간별 추천 projection과 실제 시각 typed selection
 
-**상태**: Accepted (명시 선호 집계 D2는 별도 TBD)
+**상태**: Accepted (D2는 ADR-048에서 확정)
 **날짜**: 2026-10-07
 
 **결정**: 사용자 승인 #95에 따라 날짜·시간 추천의 의미를 기존 방식별 Plan 종류와 분리한다. N/N-1/N-2 전체 조합을 최소2명 조건으로 평가하고 동일 절대 창을 한 option, 방식·장소·참석 집합을 variant로 보존한다. primary 최대3 이외 전체 대안도 분석에 고정해 cursor로 제공한다. 소요시간 설정이나 임의 고정 길이를 만들지 않으며 HOST가 단일 창 안에서 실제 시작·종료를 고른다. 새 projection은 legacy 결과 완료와 원자 게시하고 typed 선택은 candidate FK와 분리해 저장한다. 전체 분석/option/variant/시각 튜플만 멱등이며 active run·CLOSED·OPEN round·기존 확정·frozen version을 검증한다.
 
-ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분석에서 이 결정으로 대체한다. 기존 candidate API·다중 time_ranges·과거 final_confirmations와 기존 matcher는 호환 경로로 보존한다. 새 분석의 candidate-only 확정은 거부한다. ADR-035 시간대, ADR-045 입력 안전 제외와 ADR-046 입력 보존·활성 분석·동결 배치·수정 제한·CLOSED 보존은 유지하며 확정 보호는 두 선택 타입에 적용한다. D2 집계·강도·AND/OR를 이 ADR로 확정하지 않는다.
+ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분석에서 이 결정으로 대체한다. 기존 candidate API·다중 time_ranges·과거 final_confirmations와 기존 matcher는 호환 경로로 보존한다. 새 분석의 candidate-only 확정은 거부한다. ADR-035 시간대, ADR-045 입력 안전 제외와 ADR-046 입력 보존·활성 분석·동결 배치·수정 제한·CLOSED 보존은 유지하며 확정 보호는 두 선택 타입에 적용한다. D2 집계는 후속 ADR-048을 따른다.
 
 **이유**: 방식별 한 카드에 모든 시간이 묶이면 서로 다른 날짜·시간을 비교하기 어렵고 실제 모임 시각이 확정되지 않는다. 별도 immutable projection과 typed 선택은 기존 확정 FK를 오용하거나 과거 결과를 재작성하지 않고 새 제품 동작을 표현한다.
 
@@ -504,11 +504,20 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 
 ### ADR-048: 자연어 명시 선호와 결정론적 선호 집계
 
-**상태**: Accepted (제품 구현·검증 미완료)
+**상태**: Accepted (제품 구현·통합 검증은 #99에서 추적)
 **날짜**: 2026-10-07
 
 **결정**: 사용자 직접 승인에 따라 D2의 집계 의미를 확정한다. 참석 인원 다음으로 선호가 맞는 참석자 수를 비교하고 동등한 품질에서 날짜·시간 다양성을 적용한다. 참석자별 최대1점, 같은 차원 대안 OR·명시된 여러 차원 AND, 시간 창 전체 선호 충족을 적용한다. 선호 하위 창과 원래 가능한 대안을 보존하며 불가·예외·기존 장소조건을 우선한다. 새 UI 없이 기존 자연어를 AI가 구조화하고 서버가 계산한다. #96의 Gemini/Luna 공통 prompt·schema·validator 및 조건 저장·복원을 함께 확장한다. 공개 옵션 API와 frozen version·확정 보호를 유지한다. 이 결정은 ADR-047의 D2 TBD만 확정하며 다른 계약과 운영 승인 범위를 바꾸지 않는다.
 
 **이유**: 여러 문장을 쓴 사람이 더 큰 가중치를 갖거나 일부만 겹치는 큰 창이 선호를 전부 만족한다고 표시되는 것을 피한다. 자연어 입력 유지와 공통 검증은 공급자별 의미 차이와 입력 UI 추가를 줄인다. 선호를 필수 제약과 분리해야 기존의 가능한 대안을 잃지 않는다.
 
-**트레이드오프**: 여러 차원 AND는 시간만 또는 장소만 맞는 후보에 부분 점수를 주지 않는다. 선호 경계의 하위 창은 저장·조회 규모를 늘리므로 큰 N과 #96 완료 예산을 함께 검증해야 한다. 내부 schema/version과 JSON 호환은 새 구현 세션에서 설계하며 구 저장 결과는 선호 없음으로 복원한다. 기존 조건부 필수 제약의 안전 제외를 임의로 완화하지 않는다.
+**트레이드오프**: 여러 차원 AND는 시간만 또는 장소만 맞는 후보에 부분 점수를 주지 않는다. 선호 경계의 하위 창은 저장·조회 규모를 늘리므로 큰 N과 #96 완료 예산을 함께 검증해야 한다. 통합 #99의 live schema_version 3는 선호 시간·장소를 하드 제약과 별도 타입으로 보존하며 v1/v2 구 저장 결과는 선호 없음으로 복원한다. 명시 차원의 존재는 시간 확장 결과가 비어도 유지한다. 일부 조건이 거부된 참가자는 유효한 가능 조건과 선호 하위 창을 보존하되 선호 점수를 주지 않는다. 잘못된 하드 TIME_WINDOW는 AMBIGUOUS_TIME_CONSTRAINT로 안전 제외하고 기존 조건부 필수 제약의 안전 제외를 임의로 완화하지 않는다.
+### ADR-049: 제한된 Luna 구조화 폴백과 영속 실행 예산
+
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인 Issue #96에 따라 Gemini 최초 1회+최대 3회 Full Jitter 기술 재시도 뒤 OpenAI `gpt-6-luna` 구조화 폴백 1회를 사용한다. 실제 남은 60초 예산에 따라 Gemini 호출과 backoff를 줄이고 Luna·완료 시간을 예약한다. 동일 provider-independent schema/prompt/validator를 사용하며 성공 결과 전체를 한 공급자에서 선택한다. 검색 범위는 domain expansion에서 적용하고 유효 날짜 조건을 검증 실패로 바꾸지 않는다. SDK 내부 재시도와 transport 연결 재전송은 비활성화한다.
+
+**이유**: 공급자 일시 장애에서도 같은 입력·기준일로 한 번의 대체 구조화를 수행하면서 비용·시간 상한을 보존하기 위해서다. run version별 PostgreSQL invocation/attempt claim·owner·deadline·winner fencing은 Outbox 재전달과 프로세스 재시작의 상한 초기화 및 늦은 게시를 막는다. HOST의 명시적 지연 재시도만 새 논리 실행·비용 단위로 다루며 기존 #92 room→exact run·활성 pointer·OPEN 라운드·확정 보호를 유지한다.
+
+**트레이드오프**: 최대 4회 Gemini를 모든 지연 상황에서 보장하지 않고 남은 예산에 맞춰 줄인다. 중단된 실행은 기존 예산 안에서 호출을 다시 시작하지 않고 deadline 만료 후 지연 상태로 보수적으로 종결한다. 공급자 exactly-once 및 전체 자연어 의미 정확성은 보장하지 않는다. Luna의 미확인 가격·usage는 null로 기록한다. 두 공급자가 모두 실패하면 PARTIAL로 복구하지 않고 입력·batch 보존과 ANALYSIS_DELAYED/후보 0/ACK를 유지한다. 추가 provider 원문 전달 고지·처리 조건과 운영 설정은 배포 전 별도 검토 대상이다. 기존 ADR-016/018의 Gemini 단독 장애 정책을 이 범위에서 대체하며 배포·병합 승인을 포함하지 않는다.

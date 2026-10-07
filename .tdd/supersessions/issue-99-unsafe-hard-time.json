@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-99-unsafe-hard-time",
+  "recordedAt": "2026-10-07T07:37:51.482812Z",
+  "authority": "Approved hard exclusions first and unsafe time rejection; parent accepted independent review finding that dropped malformed hard time can otherwise become neutral full-search availability.",
+  "scope": "Hard TIME_WINDOW invalid shape now requires existing AMBIGUOUS_TIME_CONSTRAINT unsafe rejection; valid conditions remain intact. Invalid specific/travel/unresolved places remain CONDITION_VALIDATION_FAILED. No other frozen provider or mapper tests changed.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2HardConditionShapeContractTest.kt",
+      "beforeSha256": "6ccc1e79f8450697d2334aeaad0ac860c2355a60e3f23dbb299d35a2ea51b2c4",
+      "afterSha256": "6544d5ea5e760fc642456fe6f53d085a1ea0086307ab6bc6c4da8945c032859e",
+      "archivedBeforePath": ".tdd/history/issue-99-unsafe-hard-time/D2HardConditionShapeContractTest.before.kt",
+      "changes": [
+        "Hard dated/recurring malformed raw shape expected rejection changes generic CONDITION_VALIDATION_FAILED to existing unsafe AMBIGUOUS_TIME_CONSTRAINT; exact valid sentinel preservation unchanged.",
+        "Final ktlint formatting before fresh actual safety RED; expectations frozen at recorded afterSha256."
+      ]
+    }
+  ],
+  "historicalEvidence": "Original hard-shape tests were introduced as independent regression controls, root planned GREEN+mutation, no missing-behavior RED was claimed. Original bytes archived; independent review fingerprints may remain historical until refreshed.",
+  "verification": "Actual root safety RED:14 tests/9 assertion failures/0errors. New unsafe provider:5tests/3expected assertion failures. Updated hardshape:5tests/2expected assertion failures. Exact XML names and final formatted hashes recorded in replacement summaries; raw full run copied byte-for-byte by workItem.",
+  "providerCalls": 0,
+  "replacementRed": [
+    ".tdd/red/issue-99-unsafe-hard-time-provider.json",
+    ".tdd/red/issue-99-hard-condition-safety.json"
+  ],
+  "executionSourceBoundary": "Provider contract remained generic CONDITION_VALIDATION_FAILED for malformed hard time during this run; root temporarily set MatchingProcessor canScore=true only to reproduce style-renamed rejected-preference PostgreSQL assertions in the same run, then restored original bytes. That unrelated score toggle does not drive provider or hardshape failures. No source alterations by independent test author."
+}

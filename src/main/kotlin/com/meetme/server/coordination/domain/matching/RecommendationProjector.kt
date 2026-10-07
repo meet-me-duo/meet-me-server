@@ -31,24 +31,49 @@ object RecommendationProjector {
         mode: MeetingMode,
         participants: List<ParticipantMatchInput>,
         zone: ZoneId,
+        checkCancellation: () -> Unit = {},
     ): RecommendationProjection {
         require(participants.map { it.participantId }.distinct().size == participants.size)
         if (participants.size < 2) return RecommendationProjection(emptyList(), emptyList())
-        val ordered = participants.sortedBy { it.participantId.value.toString() }
+        checkCancellation()
+        val ordered =
+            participants.sortedBy { it.participantId.value.toString() }.map {
+                it.copy(
+                    explicitPreferences =
+                        it.explicitPreferences.copy(
+                            timeRanges = TimeRangeMatcher.normalize(it.explicitPreferences.timeRanges),
+                        ),
+                )
+            }
         val windows = linkedMapOf<InstantTimeRange, MutableList<RecommendationVariant>>()
         for (size in ordered.size downTo maxOf(2, ordered.size - 2)) {
             combinations(ordered, size) { subset ->
+                checkCancellation()
                 var common = TimeRangeMatcher.normalize(subset.first().availableTimes)
                 for (participant in subset.drop(1)) {
                     common = TimeRangeMatcher.intersect(common, participant.availableTimes)
                     if (common.isEmpty()) break
                 }
                 if (common.isNotEmpty()) {
-                    val variants = variants(mode, subset)
-                    for (window in common) windows.getOrPut(window) { mutableListOf() }.addAll(variants)
+                    val eligibleVariants = variants(mode, subset)
+                    if (eligibleVariants.isNotEmpty()) {
+                        for (available in common) {
+                            for (window in preferenceWindows(available, subset, checkCancellation)) {
+                                checkCancellation()
+                                val scored =
+                                    eligibleVariants.map { variant ->
+                                        variant.copy(
+                                            preferenceCount = subset.count { matchesPreference(it.explicitPreferences, window, variant) },
+                                        )
+                                    }
+                                windows.getOrPut(window) { mutableListOf() }.addAll(scored)
+                            }
+                        }
+                    }
                 }
             }
         }
+        checkCancellation()
         val options =
             windows
                 .mapNotNull { (window, variants) ->
@@ -68,6 +93,7 @@ object RecommendationProjector {
                 )
         val selected = mutableListOf<Int>()
         while (selected.size < minOf(3, options.size)) {
+            checkCancellation()
             val remaining = options.indices.filter { it !in selected }
             val best = options[remaining.first()].variants.first()
             val equal =
@@ -127,6 +153,45 @@ object RecommendationProjector {
             selected += index
         }
         return RecommendationProjection(options, selected)
+    }
+
+    private fun preferenceWindows(
+        available: InstantTimeRange,
+        subset: List<ParticipantMatchInput>,
+        checkCancellation: () -> Unit,
+    ): Set<InstantTimeRange> {
+        val preferred = subset.flatMap { TimeRangeMatcher.intersect(listOf(available), it.explicitPreferences.timeRanges) }.distinct()
+        val result = linkedSetOf(available)
+        result.addAll(preferred)
+        // Every intersection of multiple intervals is defined by a maximum start and minimum end,
+        // hence two original intervals suffice to preserve all meaningful shared preference windows.
+        for (leftIndex in preferred.indices) {
+            checkCancellation()
+            for (rightIndex in leftIndex + 1 until preferred.size) {
+                if (rightIndex % 128 == 0) checkCancellation()
+                val start = maxOf(preferred[leftIndex].startInclusive, preferred[rightIndex].startInclusive)
+                val end = minOf(preferred[leftIndex].endExclusive, preferred[rightIndex].endExclusive)
+                if (start < end) result += InstantTimeRange(start, end)
+            }
+        }
+        return result
+    }
+
+    private fun matchesPreference(
+        preferences: ParticipantPreferences,
+        window: InstantTimeRange,
+        variant: RecommendationVariant,
+    ): Boolean {
+        if (!preferences.canScore || (!preferences.hasTimePreference && !preferences.hasPlacePreference)) return false
+        val timeMatches =
+            !preferences.hasTimePreference ||
+                preferences.timeRanges.any {
+                    it.startInclusive <= window.startInclusive && window.endExclusive <= it.endExclusive
+                }
+        val placeMatches =
+            !preferences.hasPlacePreference ||
+                (variant.meetingMode == MeetingMode.IN_PERSON && variant.representativeArea?.key in preferences.areaKeys)
+        return timeMatches && placeMatches
     }
 
     private fun variants(

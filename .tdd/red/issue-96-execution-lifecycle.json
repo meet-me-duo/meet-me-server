@@ -1,0 +1,34 @@
+{
+  "workItem": "issue-96-execution-lifecycle",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/BoundedExecutionLifecyclePostgresTest.kt",
+      "sha256": "b7c47d6de8503b33630487afff3102f4194365a8f5f0462b61e788b411b7c29f"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/run-meetme-gradle.py",
+    "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-review-red.log",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*BoundedAdmissionBudgetContractTest",
+    "--tests",
+    "*BoundedPublicationRollbackPostgresTest",
+    "--tests",
+    "*LunaTransportNoReplayContractTest",
+    "--tests",
+    "*BoundedExecutionLifecyclePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.cancellation immediately before matching publication cannot write completed candidates()",
+    "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.bounded matching at original deadline delays without publishing candidates()",
+    "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.bounded matching completes before deadline even when provider invocation already finished()",
+    "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.matching writer rechecks original deadline after acquiring actual room lock()",
+    "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.failed providers ACK once with max five physical calls then host retry owns a separate cost unit()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:10:04.547716Z"
+}

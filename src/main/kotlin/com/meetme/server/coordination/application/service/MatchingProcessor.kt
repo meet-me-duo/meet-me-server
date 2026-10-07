@@ -1,5 +1,6 @@
 package com.meetme.server.coordination.application.service
 
+import com.meetme.server.coordination.application.port.output.AnalysisInvocationRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
@@ -15,6 +16,7 @@ import com.meetme.server.coordination.domain.matching.CompatiblePlaceArea
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
 import com.meetme.server.coordination.domain.matching.ParticipantAllowedArea
 import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
+import com.meetme.server.coordination.domain.matching.ParticipantPreferences
 import com.meetme.server.coordination.domain.matching.RecommendationProjection
 import com.meetme.server.coordination.domain.matching.RecommendationProjector
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
@@ -25,6 +27,7 @@ import com.meetme.server.submission.application.port.output.StructuredSubmission
 import com.meetme.server.submission.application.port.output.SubmissionRepository
 import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
+import com.meetme.server.submission.domain.TimePolarity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.nio.charset.StandardCharsets
@@ -46,8 +49,18 @@ class MatchingProcessor(
     private val clock: Clock = Clock.systemUTC(),
     private val recommendationRepository: RecommendationRepository? = null,
 ) {
+    fun processBounded(
+        batchId: SubmissionBatchId,
+        canPublish: () -> Boolean,
+    ) = processInternal(batchId, canPublish)
+
     @Transactional
-    fun process(batchId: SubmissionBatchId) {
+    fun process(batchId: SubmissionBatchId) = processInternal(batchId, null)
+
+    private fun processInternal(
+        batchId: SubmissionBatchId,
+        canPublish: (() -> Boolean)?,
+    ) {
         val startedNanos = System.nanoTime()
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
         val run = persistence.start(initial) ?: return
@@ -126,6 +139,31 @@ class MatchingProcessor(
                             )
                         },
                     offlineArea = if (!preventsOffline && areas.isNotEmpty()) ParticipantAllowedArea(areas) else null,
+                    explicitPreferences =
+                        ParticipantPreferences(
+                            timeRanges =
+                                com.meetme.server.coordination.domain.matching.TimeRangeMatcher.expandNaturalWindows(
+                                    conditions.filterIsInstance<StructuredCondition.PreferredTimeWindow>().map {
+                                        StructuredCondition.TimeWindow(
+                                            TimePolarity.AVAILABLE,
+                                            it.date,
+                                            it.dayOfWeek,
+                                            it.startTime,
+                                            it.endTime,
+                                            it.endsAtNextDayStart,
+                                        )
+                                    },
+                                    room.searchRange,
+                                    room.timeZone,
+                                ),
+                            areaKeys =
+                                conditions.filterIsInstance<StructuredCondition.PreferredPlace>().mapTo(
+                                    mutableSetOf(),
+                                ) { it.areaKey },
+                            hasTimePreference = conditions.any { it is StructuredCondition.PreferredTimeWindow },
+                            hasPlacePreference = conditions.any { it is StructuredCondition.PreferredPlace },
+                            canScore = structured[submission.latest.id]?.rejectionCode == null,
+                        ),
                 )
             }
 
@@ -153,16 +191,41 @@ class MatchingProcessor(
                 )
             }
         val completed = run.complete(if (hasUnappliedInput) CandidateQuality.PARTIAL else CandidateQuality.COMPLETE, candidates)
-        if (recommendationRepository == null) {
-            persistence.complete(completed, snapshots)
-        } else {
-            val projection =
-                RecommendationProjector.generate(
-                    room.mode,
-                    inputs,
-                    room.timeZone.value,
+        if (canPublish == null) {
+            if (recommendationRepository == null) {
+                persistence.complete(completed, snapshots)
+            } else {
+                persistence.completeRecommendations(
+                    completed,
+                    snapshots,
+                    RecommendationProjector.generate(room.mode, inputs, room.timeZone.value),
                 )
-            persistence.completeRecommendations(completed, snapshots, projection)
+            }
+        } else {
+            val published =
+                try {
+                    val projection =
+                        if (recommendationRepository == null) {
+                            null
+                        } else {
+                            RecommendationProjector.generate(
+                                room.mode,
+                                inputs,
+                                room.timeZone.value,
+                            ) {
+                                if (!canPublish()) throw AnalysisDeadlineExceededException()
+                            }
+                        }
+                    persistence.completeBounded(completed, snapshots, projection, canPublish)
+                } catch (_: AnalysisDeadlineExceededException) {
+                    false
+                }
+            if (!published) {
+                // Publication has finished or rolled back before this fresh delay transaction.
+                persistence.delay(run)
+                metrics?.matching("ANALYSIS_DELAYED", Duration.ofNanos(System.nanoTime() - startedNanos), 0)
+                return
+            }
         }
         metrics?.matching("COMPLETED", Duration.ofNanos(System.nanoTime() - startedNanos), candidates.size)
     }
@@ -183,7 +246,30 @@ class MatchingProcessingPersistenceService(
     private val runRepository: CoordinationRunRepository,
     private val normalizedPlaceRepository: NormalizedPlaceRepository,
     private val recommendations: RecommendationRepository? = null,
+    private val invocationRepository: AnalysisInvocationRepository? = null,
+    private val clock: Clock = Clock.systemUTC(),
 ) {
+    @Transactional
+    fun completeBounded(
+        run: CoordinationRun,
+        places: List<NormalizedPlace>,
+        projection: RecommendationProjection? = null,
+        canPublish: () -> Boolean,
+    ): Boolean {
+        val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return false
+        if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return false
+        val invocation = invocationRepository?.findLatestByRun(current.id)?.takeIf { current.version == it.runVersion + 1 }
+
+        fun withinDeadline(): Boolean = canPublish() && (invocation == null || clock.instant() < invocation.deadlineAt)
+        if (!withinDeadline()) return false
+        normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
+        runRepository.update(run)
+        if (projection != null) publishRecommendations(run, room.id.value, projection)
+        roomRepository.update(room.transition())
+        if (!withinDeadline()) throw AnalysisDeadlineExceededException()
+        return true
+    }
+
     fun room(id: com.meetme.server.shared.domain.MeetingRoomId) =
         requireNotNull(roomRepository.findById(id)) { "Room for coordination run does not exist" }
 
@@ -215,6 +301,15 @@ class MatchingProcessingPersistenceService(
         if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return
         normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
         runRepository.update(run)
+        publishRecommendations(run, room.id.value, projection)
+        roomRepository.update(room.transition())
+    }
+
+    private fun publishRecommendations(
+        run: CoordinationRun,
+        roomId: UUID,
+        projection: RecommendationProjection,
+    ) {
         val options =
             projection.options.mapIndexed { index, option ->
                 val id = stableId("${run.id.value}|${option.window.startInclusive}|${option.window.endExclusive}")
@@ -236,9 +331,8 @@ class MatchingProcessingPersistenceService(
             }
         requireNotNull(recommendations).publish(
             com.meetme.server.coordination.domain
-                .RecommendationAnalysis(run.id.value, room.id.value, options),
+                .RecommendationAnalysis(run.id.value, roomId, options),
         )
-        roomRepository.update(room.transition())
     }
 
     private fun stableId(value: String) = UUID.nameUUIDFromBytes(value.toByteArray(StandardCharsets.UTF_8))

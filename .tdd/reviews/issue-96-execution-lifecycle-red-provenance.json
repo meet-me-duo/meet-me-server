@@ -1,0 +1,19 @@
+{
+  "workItem": "issue-96-execution-lifecycle",
+  "baselineGitRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "executionScope": "Incremental uncommitted implementation plus declared matching TODO skeleton, not clean baseline Git bytes",
+  "originalLog": ".codex/tdd-evidence/issue-96-review-red.log",
+  "archivedLog": ".codex/tdd-evidence/issue-96-execution-lifecycle.log",
+  "logSha256": "0d5480702f4560fdf0274dc79cf91f21df2f97efcf8be9cbe0ad2cfcd42d68c5",
+  "tests": 6,
+  "failures": 5,
+  "greenTests": [
+    "crashed physical call is not repeated by fresh worker before or after original deadline()"
+  ],
+  "failureEvidence": "Four TODO failures plus missing room-lock observation because completeBounded TODO throws before acquiring the lock.",
+  "limitations": [
+    "Original lifecycle XML was overwritten by later GREEN execution; summary derives failed IDs from preserved original Gradle log. No synthetic XML created.",
+    "Baseline revision names accepted base; RED executed incremental uncommitted implementation with matching TODO skeleton."
+  ],
+  "recordedAt": "2026-10-07T06:10:04.547716Z"
+}

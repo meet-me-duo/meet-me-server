@@ -12,6 +12,7 @@ import com.meetme.server.submission.domain.StructuredCondition
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import tools.jackson.databind.json.JsonMapper
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -73,28 +74,86 @@ class GeminiNaturalLanguageParserAdapterTest {
         val conditionItem = conditions.getValue("items") as Map<String, Any>
         val variants = conditionItem.getValue("anyOf") as List<Map<String, Any>>
 
-        assertEquals(5, variants.size)
-        val timeVariants =
-            variants.filter { variant ->
+        assertEquals(8, variants.size)
+        val byType =
+            variants.groupBy { variant ->
                 val properties = variant.getValue("properties") as Map<String, Any>
                 val type = properties.getValue("type") as Map<String, Any>
-                type["enum"] == listOf("TIME_WINDOW")
+                (type.getValue("enum") as List<String>).single()
             }
-        assertEquals(2, timeVariants.size)
-
-        timeVariants.forEach { variant ->
-            assertEquals(
-                setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
-                (variant.getValue("required") as List<String>).toSet(),
+        assertEquals(
+            mapOf(
+                "TIME_WINDOW" to 2,
+                "PREFERRED_TIME_WINDOW" to 2,
+                "SPECIFIC_PLACE" to 1,
+                "PREFERRED_PLACE" to 1,
+                "TRAVEL_CONSTRAINT" to 1,
+                "UNRESOLVED_PLACE" to 1,
+            ),
+            byType.mapValues { it.value.size },
+        )
+        val requiredByType =
+            mapOf(
+                "TIME_WINDOW" to setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
+                "PREFERRED_TIME_WINDOW" to setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
+                "SPECIFIC_PLACE" to setOf("type", "query", "area_key", "area_name"),
+                "PREFERRED_PLACE" to setOf("type", "query", "radius_meters", "area_key", "area_name"),
+                "TRAVEL_CONSTRAINT" to setOf("type", "expression"),
+                "UNRESOLVED_PLACE" to setOf("type", "query"),
             )
-            val properties = variant.getValue("properties") as Map<String, Any>
-            listOf("start_time", "end_time").forEach { field ->
-                val time = properties.getValue(field) as Map<String, Any>
-                assertFalse(time.containsKey("format"))
-                assertTrue(time.getValue("description").toString().contains("HH:mm"))
-                assertTrue(time.getValue("description").toString().contains("without a UTC offset"))
+        byType.forEach { (type, schemas) ->
+            schemas.forEach { variant ->
+                val properties = variant.getValue("properties") as Map<String, Any>
+                assertEquals(requiredByType.getValue(type), (variant.getValue("required") as List<String>).toSet())
+                assertEquals(requiredByType.getValue(type), properties.keys)
+                assertEquals(false, variant["additionalProperties"])
             }
         }
+        listOf("TIME_WINDOW", "PREFERRED_TIME_WINDOW").forEach { type ->
+            val timeVariants = byType.getValue(type)
+            val scopes =
+                timeVariants
+                    .map { variant ->
+                        val properties = variant.getValue("properties") as Map<String, Any>
+                        val date = properties.getValue("date") as Map<String, Any>
+                        val weekday = properties.getValue("day_of_week") as Map<String, Any>
+                        if (date["type"] == "string") assertEquals("date", date["format"])
+                        if (weekday["type"] == "string") assertEquals(DayOfWeek.entries.map { it.name }, weekday["enum"])
+                        date["type"] to weekday["type"]
+                    }.toSet()
+            assertEquals(setOf("string" to "null", "null" to "string"), scopes)
+            timeVariants.forEach { variant ->
+                val properties = variant.getValue("properties") as Map<String, Any>
+                val polarity = properties.getValue("polarity") as Map<String, Any>
+                assertEquals(
+                    if (type == "TIME_WINDOW") {
+                        mapOf("type" to "string", "enum" to listOf("AVAILABLE", "UNAVAILABLE"))
+                    } else {
+                        mapOf("type" to "null")
+                    },
+                    polarity,
+                )
+                listOf("start_time", "end_time").forEach { field ->
+                    val time = properties.getValue(field) as Map<String, Any>
+                    assertFalse(time.containsKey("format"))
+                    assertTrue(time.getValue("description").toString().contains("HH:mm"))
+                    assertTrue(time.getValue("description").toString().contains("without a UTC offset"))
+                }
+            }
+        }
+        listOf("SPECIFIC_PLACE", "PREFERRED_PLACE").forEach { type ->
+            val properties = byType.getValue(type).single().getValue("properties") as Map<String, Any>
+            listOf("query", "area_key", "area_name").forEach { field ->
+                assertEquals(mapOf("type" to "string"), properties[field])
+            }
+            if (type == "PREFERRED_PLACE") assertEquals(mapOf("type" to "null"), properties["radius_meters"])
+        }
+        val travelProperties = byType.getValue("TRAVEL_CONSTRAINT").single().getValue("properties") as Map<String, Any>
+        val unresolvedProperties = byType.getValue("UNRESOLVED_PLACE").single().getValue("properties") as Map<String, Any>
+        assertEquals(mapOf("type" to "string"), travelProperties["expression"])
+        assertEquals(mapOf("type" to "string"), unresolvedProperties["query"])
+        val version = rootProperties.getValue("schema_version") as Map<String, Any>
+        assertEquals(listOf("3"), version["enum"])
 
         assertTrue(adapter.prompt(request(1)).contains("HH:mm room-local wall-clock time without a UTC offset"))
     }
@@ -210,7 +269,7 @@ class GeminiNaturalLanguageParserAdapterTest {
     }
 
     @Test
-    fun `탐색 범위 밖 날짜 조건을 제외한다`() {
+    fun `Issue 96 유효한 탐색 범위 밖 날짜 조건도 보존한다`() {
         val request = request(1)
         val json =
             """
@@ -222,8 +281,10 @@ class GeminiNaturalLanguageParserAdapterTest {
             """.trimIndent()
 
         val result = adapter.parseProviderResponse(json, request).single()
-        assertEquals(emptyList(), result.conditions)
-        assertEquals("CONDITION_VALIDATION_FAILED", result.rejectionCode)
+        // Issue #96 supersedes the old scope-as-validation contract: the matcher applies search scope.
+        val condition = assertIs<StructuredCondition.TimeWindow>(result.conditions.single())
+        assertEquals(LocalDate.of(2026, 10, 21), condition.date)
+        assertNull(result.rejectionCode)
     }
 
     @Test

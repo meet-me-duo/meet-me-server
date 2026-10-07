@@ -65,6 +65,10 @@ data class CoordinationAttempt(
     val outputTokens: Long?,
     val responseBytes: Int?,
     val estimatedCostUsd: java.math.BigDecimal?,
+    val provider: AnalysisProvider = AnalysisProvider.GEMINI,
+    val model: String = "gemini-3.8-flash",
+    val policyVersion: String = "gemini-v1",
+    val invocationId: UUID? = null,
 )
 
 interface CoordinationAttemptRepository {

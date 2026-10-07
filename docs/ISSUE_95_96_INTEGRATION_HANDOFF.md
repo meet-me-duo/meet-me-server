@@ -1,5 +1,7 @@
 # #95·#96 병렬 V9 충돌과 통합 인계
 
+> 아래 본문은 PR97/98의 시작 인계 기록이다. #99 통합의 최신 구현·검증 상태는 [통합 기록](ISSUE_99_INTEGRATION.md)을 따른다. 추천 V9·invocation V10, ADR-047/048·Luna ADR-049로 조정하며 원본 SQL 바이트를 보존했다.
+
 확인: 2026-10-07 UTC. #95 [Draft PR97](https://github.com/meet-me-duo/meet-me-server/pull/97)의 구현 snapshot은 `fcde6ca716357cfc923786669c944ca3fc48d734`, #96 [Draft PR98](https://github.com/meet-me-duo/meet-me-server/pull/98)의 확인 snapshot은 `9a4c4d5463e578829baed12cfebad16fb0bf33a4`다. 양쪽 기준 PR94 HEAD `bf4edff51dea5f1f90a8ac627edf05ec17b6d56d`는 PR93/V8을 포함한다.
 
 **각 PR의 독립 GREEN/CI는 통합·배포 준비 완료를 뜻하지 않는다.** 현재 두 migration은 같은 version9여서 그대로 한 classpath에 넣으면 Flyway duplicate version 오류다. 이 세션은 #96 source를 읽어 비교했으며 운영 적용·번호 변경·통합 merge를 실행하지 않았다.

@@ -1,0 +1,25 @@
+{
+  "workItem": "issue-96-invocation-admission-deadline",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AnalysisInvocationAdmissionDeadlinePostgresTest.kt",
+      "sha256": "fdf9a9bd7de0ceccb63c7e8d8dc69659a679ee454cdb89855707b74059a22a7a"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/run-meetme-gradle.py",
+    "/workspace/meet-me-server/.codex/tdd-evidence/issue-96-invocation-admission-deadline-red.log",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*AnalysisInvocationAdmissionDeadlinePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.AnalysisInvocationAdmissionDeadlinePostgresTest.fully exhausted budget while waiting for room lock cannot admit an invocation()",
+    "com.meetme.server.coordination.adapter.input.web.AnalysisInvocationAdmissionDeadlinePostgresTest.room lock waiting consumes five seconds without extending original invocation deadline()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:12:43.058024Z"
+}

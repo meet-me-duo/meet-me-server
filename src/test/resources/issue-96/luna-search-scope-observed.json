@@ -1,0 +1,40 @@
+{
+  "sourceHead": "1ddbd26747936a56a0f6f2f380d1ef066fb41ed7",
+  "model": "gpt-6-luna",
+  "schemaVersion": "2",
+  "endExclusive": "2026-10-12",
+  "room": {"mode": "REMOTE", "participantCount": 2, "submittedParticipantCount": 2, "submissionClosed": true},
+  "request": {
+    "timeZone": "Asia/Seoul", "searchStartDate": "2026-10-07", "searchEndDate": "2026-10-12",
+    "inputs": [
+      {"inputRef":"00000000-0000-4000-8000-000000000001","rawText":"평일 오후7시부터 오후9시까지 가능해요. 다음주 목요일만 오후8시부터 가능해요.","locale":"ko-KR","referenceDate":"2026-10-07"},
+      {"inputRef":"00000000-0000-4000-8000-000000000002","rawText":"매일 오후6시부터 오후10시까지 가능해요.","locale":"ko-KR","referenceDate":"2026-10-07"}
+    ]
+  },
+  "providerResponse": {
+    "schema_version":"2",
+    "results":[
+      {"input_ref":"00000000-0000-4000-8000-000000000001","rejection_code":null,"conditions":[
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"WEDNESDAY","start_time":"19:00","end_time":"21:00"},
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"THURSDAY","start_time":"19:00","end_time":"21:00"},
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"FRIDAY","start_time":"19:00","end_time":"21:00"},
+        {"type":"TIME_WINDOW","polarity":"UNAVAILABLE","date":"2026-10-15","day_of_week":null,"start_time":"19:00","end_time":"20:00"}
+      ]},
+      {"input_ref":"00000000-0000-4000-8000-000000000002","rejection_code":null,"conditions":[
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"WEDNESDAY","start_time":"18:00","end_time":"22:00"},
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"THURSDAY","start_time":"18:00","end_time":"22:00"},
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"FRIDAY","start_time":"18:00","end_time":"22:00"},
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"SATURDAY","start_time":"18:00","end_time":"22:00"},
+        {"type":"TIME_WINDOW","polarity":"AVAILABLE","date":null,"day_of_week":"SUNDAY","start_time":"18:00","end_time":"22:00"}
+      ]}
+    ]
+  },
+  "fixedExpected": {
+    "rejectionCodes":[null,null],"quality":"COMPLETE","planType":"B","candidateCount":1,
+    "timeRanges":[["2026-10-07T19:00","2026-10-07T21:00"],["2026-10-08T19:00","2026-10-08T21:00"],["2026-10-09T19:00","2026-10-09T21:00"]]
+  },
+  "observedPr93": {
+    "rejectionCodes":["CONDITION_VALIDATION_FAILED",null],"quality":"PARTIAL","planType":"B","candidateCount":1,
+    "timeRanges":[["2026-10-07T19:00","2026-10-07T21:00"],["2026-10-08T19:00","2026-10-08T21:00"],["2026-10-09T19:00","2026-10-09T21:00"]]
+  }
+}

@@ -1,6 +1,7 @@
 package com.meetme.server.coordination.adapter.output.integration
 
 import com.google.genai.Client
+import com.google.genai.errors.ApiException
 import com.meetme.server.config.GeminiProperties
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
 import com.meetme.server.coordination.application.port.output.CoordinationAttemptRepository
@@ -79,7 +80,7 @@ class GeminiHighDemandBoundaryTest {
                 },
             )
         mockStatic(Client::class.java).use { factory ->
-            factory.`when`<Any> { Client.builder() }.thenThrow(RuntimeException("503 UNAVAILABLE high demand; retryDelay: 1.5s"))
+            factory.`when`<Any> { Client.builder() }.thenThrow(ApiException(503, "UNAVAILABLE", "high demand; retryDelay: 1.5s"))
             val failure = assertFailsWith<NaturalLanguageParserException> { adapter().parse(request) }
 
             assertEquals(ParserFailureKind.SERVER, failure.kind)
@@ -179,7 +180,8 @@ class GeminiHighDemandBoundaryTest {
             JsonMapper.builder().build(),
         )
 
-    private fun highDemand() = RuntimeException("503 UNAVAILABLE: high demand. Retry-After: 2")
+    // Issue #96 uses SDK status/code, never user-controlled message text, to classify a failure.
+    private fun highDemand() = ApiException(503, "UNAVAILABLE", "high demand. Retry-After: 2")
 
     companion object {
         @Suppress("UNCHECKED_CAST")

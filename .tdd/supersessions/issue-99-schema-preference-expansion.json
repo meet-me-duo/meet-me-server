@@ -1,0 +1,53 @@
+{
+  "workItem": "issue-99-schema-preference-expansion",
+  "recordedAt": "2026-10-07T07:54:22.707527Z",
+  "authority": "Approved D2 handoff and root live v3 choice add two preferred time scopes and preferred place to existing five hard schemas; parent agreed independent contract supersession.",
+  "scope": "Only the outdated schema-shape test and DayOfWeek import change. Existing five hard schemas, both hard time scopes, required fields and HH:mm/UTC-offset assertions preserved and strengthened. Preference schemas explicitly checked for nullable role markers and exact keys. Every other test body unchanged.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapterTest.kt",
+      "beforeSha256": "b1b176f28d54db087d6fb5fed0f48ea30c810d6d80c93bd79231cee5f8ecff22",
+      "afterSha256": "8f2d0f18fa5fcbb6e0f95b8459b4b3b620e101d64f6fed4d770ecfa07d4413b6",
+      "archivedBeforePath": ".tdd/history/issue-99-schema-preference-expansion/GeminiNaturalLanguageParserAdapterTest.before.kt",
+      "changes": [
+        "Expected5 schemas→exact hard5+preferred3 type counts; require dated/recurring shape for both hard and preferred time, hard polarity unchanged and preferred polarity null; exact strict required/property sets for all schemas; place preferred radius null; rootversion3."
+      ]
+    }
+  ],
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-42-gemini-schema-compatibility.json",
+      "archived_path": ".tdd/history/issue-99-schema-preference-expansion/issue-42-gemini-schema-compatibility.json",
+      "sha256": "1ec8c1f948d5a32037753e343d22378d7ca299645c17426d16c002549277bb31",
+      "sourceRevision": "d3b2bca5b312a6b711cc38849267791c7dad55f1"
+    },
+    {
+      "path": ".tdd/red/issue-46-gemini-semantic-normalization.json",
+      "archived_path": ".tdd/history/issue-99-schema-preference-expansion/issue-46-gemini-semantic-normalization.json",
+      "sha256": "76719a98dbfc1b6168095eb7482d99f575b291fb28f9546d4551cb2d9c366882",
+      "sourceRevision": "ed22d9b1698f745d8d891c3a8df8c96199b2b47e"
+    },
+    {
+      "path": ".tdd/red/issue-50-gemini-typed-output-schema.json",
+      "archived_path": ".tdd/history/issue-99-schema-preference-expansion/issue-50-gemini-typed-output-schema.json",
+      "sha256": "901bbf6ec9a356e7de74ccf9082b92e75dd40532304b49b0a8d752d6af17cf9e",
+      "sourceRevision": "597f5aa5ad46ffc89d5995225f669fa950f28830"
+    },
+    {
+      "path": ".tdd/red/issue-62-gemini-midnight-boundary.json",
+      "archived_path": ".tdd/history/issue-99-schema-preference-expansion/issue-62-gemini-midnight-boundary.json",
+      "sha256": "6bac9923492cf37b21391d00193cd2b7a6c2a01e1a9445fd68885692c0506b7d",
+      "sourceRevision": "6cd54c5204021feaa2fbf159a85261f7f9cc664f"
+    },
+    {
+      "path": ".tdd/red/issue-66-gemini-place-groups.json",
+      "archived_path": ".tdd/history/issue-99-schema-preference-expansion/issue-66-gemini-place-groups.json",
+      "sha256": "0099ca2123f4152a9bc951280ffe0f0fe6d674cf2e39c96ae2b663f5835c3142",
+      "sourceRevision": "f93d4bcd373c4aef23fcada7f67b79edac6a8cca"
+    }
+  ],
+  "actualLegacyAssertion": ".tdd/history/issue-99-schema-preference-expansion/legacy-assertion-red-observation.json",
+  "historicalEvidencePolicy": "All five affected active historical RED summaries archived byte-for-byte. Original source revisions, commands, test hashes and failure names untouched; issue96 provider historical references remain where archived earlier. Current guard expected5/actual8 failure archived as CONTRACT_SUPERSEDED observation, not claimed as new missing behavior RED.",
+  "verification": "Root focused schema regression GREEN after ktlintFormat; every other test body unchanged. Full unchanged guard and independent final review pending.",
+  "providerCalls": 0
+}

@@ -1,0 +1,15 @@
+{
+  "workItem": "issue-99-openapi-contract",
+  "baselineRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "baselinePath": "docs/openapi/issue-95.openapi.json",
+  "baselineSha256": "56a8ddfa3bc7bd1c562ddb31a6ea8c39806abb86eef727381992678f2e9b42f2",
+  "nativeExportPath": ".codex/tdd-evidence/issue-99.openapi.json",
+  "nativeExportSha256": "2681d3f2b5ece9b37aee4bae393dd6b03a1b1285172a754b3f75dee99e24501d",
+  "exportSource": "RecommendationOpenApiExportPostgresTest actual /v3/api-docs response under final passing unchanged guard",
+  "parsedJsonEqual": true,
+  "byteEqual": false,
+  "protocol": "diverse-time-v1",
+  "apiChanges": false,
+  "browserJointValidationClaimed": false,
+  "recordedAt": "2026-10-07T07:51:58Z"
+}

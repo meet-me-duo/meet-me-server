@@ -1,0 +1,38 @@
+{
+  "workItem": "issue-99-d2-json-mapper",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/D2PreferenceJsonMapperTest.kt",
+      "sha256": "528d4a2320764b73caf0839f4fc7188a5714325a1093cd5ef38879ec3d9166e3"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*RecommendationProjectorD2ContractTest",
+    "--tests",
+    "*D2PreferenceProviderContractTest",
+    "--tests",
+    "*D2PreferenceJsonMapperTest",
+    "--tests",
+    "*LunaProviderContractTest",
+    "--tests",
+    "*GeminiTransportBudgetContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.output.persistence.D2PreferenceJsonMapperTest.dated and recurring midnight preferences preserve the exclusive next day boundary in JSON()",
+    "com.meetme.server.submission.adapter.output.persistence.D2PreferenceJsonMapperTest.mixed hard conditions and preferences survive serialization as independent typed values()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-07T07:23:51.285232Z"
+}

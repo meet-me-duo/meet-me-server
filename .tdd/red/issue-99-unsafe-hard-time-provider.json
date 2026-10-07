@@ -1,0 +1,37 @@
+{
+  "workItem": "issue-99-unsafe-hard-time-provider",
+  "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/D2UnsafeHardTimeContractTest.kt",
+      "sha256": "2c66a12019e708eefbebbbf7e10ef4bdd0d04a98517fa43d73a67395a5125905"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1",
+    "GRADLE_USER_HOME=/workspace/gradle-user-home",
+    "./gradlew",
+    "test",
+    "--tests",
+    "*D2UnsafeHardTimeContractTest",
+    "--tests",
+    "*D2UnsafeHardTimePostgresTest",
+    "--tests",
+    "*D2HardConditionShapeContractTest",
+    "--tests",
+    "*D2RejectedPreferencePostgresTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.D2UnsafeHardTimeContractTest.malformed hard exclusion makes participant unsafe despite surviving valid available time and preference()",
+    "com.meetme.server.coordination.adapter.output.integration.D2UnsafeHardTimeContractTest.malformed hard date clock unknown null and missing nullable scope preserve preference but mark time unsafe()",
+    "com.meetme.server.coordination.adapter.output.integration.D2UnsafeHardTimeContractTest.provider generic rejection cannot override unsafe malformed hard time()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T07:41:24.552813Z"
+}

@@ -22,6 +22,15 @@ data class ParticipantMatchInput(
     val availableTimes: List<InstantTimeRange>,
     val offlineRegion: ParticipantAllowedRegion? = null,
     val offlineArea: ParticipantAllowedArea? = null,
+    val explicitPreferences: ParticipantPreferences = ParticipantPreferences(),
+)
+
+data class ParticipantPreferences(
+    val timeRanges: List<InstantTimeRange> = emptyList(),
+    val areaKeys: Set<String> = emptySet(),
+    val hasTimePreference: Boolean = timeRanges.isNotEmpty(),
+    val hasPlacePreference: Boolean = areaKeys.isNotEmpty(),
+    val canScore: Boolean = true,
 )
 
 data class CompatiblePlaceArea(
