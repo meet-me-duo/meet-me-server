@@ -1,7 +1,7 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-05
+> **최종 갱신:** 2026-10-07
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
@@ -36,6 +36,10 @@
 - 사용자 개입이 필요하면 `.agents/rules/user-intervention.md`의 `[USER ACTION REQUIRED]` 형식으로 서비스 위치와 단계별 행동까지 종속 작업 전에 안내한다.
 
 ## 현재 진행 요약
+
+- **현재 작업 — Issue #91:** 독립 클라우드 환경의 `/workspace/meet-me-server-91`, `feature/91-language-time-context`에서 자연어 시간 문맥 상속과 상대 날짜 기준일을 개선한다. 기준은 2026-10-07 원격 확인 및 `develop` fast-forward pull을 마친 `848b9688451551781769799ff7d27485ea5a5445`다. 기존 서버·웹의 `work` checkout과 Windows 미커밋 원본은 보존한다. 아래 사용자요청2 기록은 기존 작업의 이력이다.
+- **#91 확정 계약:** 상대 날짜는 고정 제출 버전의 `createdAt`을 방 시간대로 변환한 입력별 지역 날짜에 고정한다. 평일 19~21시·이번 주 목요일 20시부터·주말 14~19시 예시는 부모 종료 21시를 상속하고 해당 목요일의 19~20시를 제외한다. 명시적 오전·오후·불가·부정·충돌을 우선하며, 부모 없는 열린 경계는 임의로 완성하지 않는다. 공개 API·DB·matcher 계약을 유지하고 입력별 기준일과 prompt를 전달한다. 원문 전체를 안전하게 해석할 수 있는 제한된 시간 표현만 adapter 내부에서 문맥 처리하고, 공급자 schema/ref/조건 검증 실패를 복구 성공으로 숨기지 않는다.
+- **#91 검증 및 승인 범위:** 독립 테스트 설계, RED/GREEN, 원문 문맥 처리·합성 provider fixture와 실제 결정론적 매칭, 주 경계·서울 자정·재시도/재분석 기준일, 의도적 결함 주입, 독립 리뷰와 필수 guard를 실행한다. 합성 fixture는 유료 Gemini·운영 데이터 접근 없이 검증한다. 추가 사용자 요청에 따라 같은 모델·설정의 실제 평가도 필요하며, 기존 테스트 키와 평가 비용 상한 확인 전 호출하지 않는다. fixture 결과를 실제 모델 정확성으로 표시하지 않는다. Draft PR까지 준비하고 병합·운영 배포는 최종 승인 게이트를 유지한다. #92/웹 #17은 별도 텍스트 인계와 미확정 계약 검토 후 분리한다.
 
 - **현재 로컬 조사 (사용자요청2):** 후보 개수뿐 아니라 자연어 의도·Gemini 시간/장소 구조화·하드 배제·선호·모호성·후보 선택·결과 한국어 문구를 종단 평가한다. 시작 시 clean `main c43a30b`, `develop` fast-forward pull 후 `5d8c32e`를 확인했다. `chore/candidate-scenario-investigation`에서 재현을 시작하고 결함 수정 범위가 확정되어 `fix/candidate-semantics`로 rename했다. 별도 worktree는 만들지 않았으며 작업 경로는 `C:/Users/jinhy/Projects/meet-me/meet-me-server` 한 개다. 이번 변경은 main/develop에서 편집하지 않는다.
 - **계획/구현 경계:** 기존 A=전원 대면, B=전원 비대면, C=부분 참석 유형·유형별 최대 한 카드·시간 전체 묶음 계약을 유지한다. 합성 provider fixture 23개는 실제 adapter·매칭·result HTTP를 실행하되 repository는 mock이다. 기존 개발 키·고정 모델의 실제 호출은 전후 각 3건, 합계 6건으로 끝냈다. 실제 모델·parser/matcher/result service 검증을 PostgreSQL/Redis/브라우저 전체 E2E로 표시하지 않는다. 시간/장소 다양성 카드 재설계와 시간·장소 결합 지원 스키마는 결정 대기다.
@@ -941,3 +945,28 @@
 실행 근거는 `.codex/tdd-evidence/candidate-publication-verification.json`이다. hook이 실제로 받는 `tool_name=Bash`, `tool_input.command` 형식과 전체 XML329개를 확인했다. 앞선 exec_command/cmd 형식의 이벤트는 hook이 무시했으므로 그 exit0을 실제 게이트 성공으로 사용하지 않았다. 실제 전체 gate 이후 commit126cd8f·push·PR #88 생성은 성공했고 작업 브랜치의 검증 코드 지문은 유지한다. 웹 companion 검증 전 서버 병합·운영 배포는 아직 없다.
 
 2026-10-05 PR #88의 codehead126cd8f Linux CI #37277475001와 기록headc4a6b1d CI #37277747962가 모두 성공했고 Issue 연결 검사도 성공했다. 원격 CI의 Ubuntu 품질 게이트와 배포 정책·Compose secret fidelity·DB credential refresh·Nginx 검증 단계가 전부 성공임을 확인했다. CI 기록만 추가한 최종 head도 GitHub 검사를 확인한 뒤에만 병합한다. 원격 develop5d8c32e/mainc43a30b는 유지하며 웹 companion 확인 전 서버 병합·배포하지 않는다.
+
+## 2026-10-07 — Issue #91 독립 클라우드 구현 시작
+
+- [x] `[AGENT]` 공식 환경 도구 준비와 baseline 검증: JDK 17·체크섬 검증 Gradle 9.7.1, 서버 gate 329건/실패0/skip2, 웹 unit94/E2E257+skip1. 유료 모델·운영 데이터 접근 없음.
+- [x] `[AGENT]` 열린 Issue #91과 최신 develop `848b968` 확인, 깨끗한 별도 develop worktree에서 fast-forward pull 후 지정 feature 브랜치 생성. 원본 서버·웹 work checkout 보존.
+- [x] `[AGENT]` 독립 계약 테스트와 유효한 assertion/TODO RED 근거 수집. 7개 RED 기록의 테스트 지문을 고정했다.
+- [x] `[AGENT]` 입력별 immutable referenceDate·문맥 상속 구현 및 원문 전체 의미/유일 부모/부정·명시 시각·32조건 한도 검증. 독립 설계한 37개 대상 테스트 GREEN과 지원 범위 내 독립 코드 리뷰 PASS를 확인했다.
+- [x] `[AGENT]` 실제 processor/result·합성 adapter/matcher 회귀, 독립 리뷰·의도적 결함 주입 6/6 탐지와 필수 guard 통과. 최종 전체 테스트 366건/실패0/오류0/기존 skip2.
+- [ ] `[AGENT]` 검증·한계·정확한 SHA를 기록하고 #91 Draft PR 및 후속 인계 준비.
+
+확정 범위는 #91이며 #92/웹 #17의 미확정 수정 라운드·비용·멱등 계약은 별도 결정 대상으로 유지한다. 서버 production 코드는 로컬에서 아직 변경되지 않았음을 텍스트 인계로 확인했다. Library ZIP 전송은 공식 경로 두 번 실패 후 중단했고 원본 파일 덮어쓰기는 하지 않았다. 실제 Gemini 성공이나 운영 복구 완료를 합성 fixture 결과로 단정하지 않는다.
+
+### 2026-10-07 #91 독립 테스트 및 웹 인계 상태
+
+- 독립 문맥·기준일 테스트 18개: 컴파일 후 예상 RED 11개를 고정하고 첫 GREEN을 확인했다. 독립 검토에서 공급자 AVAILABLE 합집합 보정과 명시 오전 종료 상속 누락을 발견했고 별도 회귀 4개 중 3개 assertion RED를 고정했다. 사용자 정확한 filler 원문 회귀를 포함한 총 22개 대상 테스트가 수정 후 모두 통과했다.
+- 제출 버전 생성 시각의 방 지역 날짜를 parser 입력에 전달하고, prompt 및 adapter 내부 전체 입력 제한 문법으로 부모 종료와 날짜별 배제를 처리한다. 공급자 schema/ref/condition 검증 실패, 다른 rejection과 장소 조건은 복구로 덮지 않는다. 최종 전체 guard·결함 주입·Draft PR은 아직 미완료다.
+- 웹 #17 인계 ZIP은 6개 청크와 전체 SHA-256, 7파일 SHA-256을 모두 검증해 저장소 밖의 안전한 인계 폴더에 보존했다. 기존 웹 checkout 덮어쓰기와 legacy 코드 배포는 하지 않았다.
+- 실제 평가 계획은 합성 23사례 + 원문 반복 2회, 최대 25호출이다. 고정 gemini-3.8-flash/LOW/15초/32768출력/1attempt를 유지한다. 현재 GEMINI_API_KEY 없음, 실제 호출 0회, 사용자가 최대 25회·총 USD0.30 비용 상한을 승인했으며 secure 키 설정은 별도 대기다. 기존 방당 10원 설정을 평가 승인으로 사용하지 않는다. 승인된 USD0.30 상한은 매 호출 최대 출력 비용 예약 시 일부 사례를 미실행으로 남길 수 있다.
+
+- 2026-10-07 추가 진행: provider 성공 응답이 원문 충돌·부정·조건부 장소를 숨기는 회귀 10개를 독립 설계해 7개 assertion RED를 고정했다. 제한 문맥을 NotApplicable/Resolved/Rejected로 구분하고 성공 조건에도 전체 원문 안전 검사를 적용 중이다. 일반 시간·장소와 안양역 보존을 검사한다. 추가 경계 검토는 정오 상속과 변환 전 공급자 area-name 전체 배치 검증을 확인한다.
+- 웹 별도 `feature/17-analysis-recovery-cloud` worktree에서 인계 코드 API/lint/typecheck/build, 단위121개, E2E305개/skip1/실패0 검증을 완료했다. RecoveryPanel의 #92 API 연결은 아직 미구현이다. #92의 no-op 재사용·라운드 generation/request ID·구 클라이언트/rollback 계약은 독립 설계 인계에서 결정 항목으로 유지한다.
+- 최종 독립 회귀는 총 37개이며 모두 GREEN이다. 정오·전체 배치 장소 이름 검증·종료가 명시된 시간과 장소 보존 3개 중 2개 assertion RED, 야간 날짜 모호성과 밤 12시 자정 2개 assertion RED를 추가로 고정했다. `밤 1~6시`는 모호하여 미반영하고 `밤 12시`는 자정으로 처리한다. 6개 RED 기록의 테스트 파일 해시는 변경되지 않았다. 결함 주입과 전체 guard는 별도 실행 중이며 실제 모델 정확성은 아직 미검증이다.
+- 현재 작업의 키 boolean 확인은 `exists=false/nonempty=false`다. 다른 새 환경의 키 존재 확인을 현재 작업의 인증 성공으로 사용하지 않으며 키를 환경 간 복사하지 않는다. 실제 평가 하네스는 별도 scratch에 준비했고 공급자 비용 경계 검증 전 실제 호출을 차단한다. 고정 23사례+원문 반복 2회 계획에 새 야간 fixture 2개를 자동 대체하지 않는다.
+- 첫 전체 guard는 366건 중 기존 prompt 원문 행 보존 계약 1건이 실패했다. 기존 테스트를 변경하지 않고 assertion RED를 별도 고정한 뒤 `reference_date → ref → locale → rawText` 한 행으로 수정했다. 기존 `ref → locale → rawText` 연결과 새 기준일 연결을 함께 보존하며, 기존 6개와 새 37개 총 43개 대상 GREEN·ktlintCheck 통과 및 독립 format 리뷰 PASS를 확인했다. 최종 source 지문으로 결함 주입과 전체 guard를 다시 검증한다.
+- 최종 지문의 결함 주입 6개를 다시 실행해 모두 assertion 실패로 탐지했고 원본 바이트를 복구했다. 2026-10-07 01:12 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`가 종료 코드0으로 통과했다. `ktlintCheck assemble test`는 61개 suite/366건/실패0/오류0/skip2이며 기존 유료 live probe와 OpenAPI export opt-in만 skip했다. 독립 리뷰 역할은 `/root/issue91_test_design`, 판정은 지원 범위 내 PASS다. 고정 테스트 7개 기록과 최종 소스·결함 검증 지문은 `.tdd/red/issue-91-*.json` 및 `.tdd/verification/issue-91-time-context.json`을 따른다. 원시 로그는 ignored `.codex/tdd-evidence/`에만 보존한다. 새 작업 인계를 위해 검증한 소스·테스트·문서·요약을 별도 feature 커밋으로 보존하며 SHA는 Git 이력으로 추적한다. 실제 Gemini 평가·#92 연결·Draft PR·병합·운영 배포 완료를 의미하지 않는다.

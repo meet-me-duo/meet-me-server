@@ -9,6 +9,7 @@ data class NaturalLanguageInput(
     val inputRef: String,
     val rawText: String,
     val locale: Locale,
+    val referenceDate: LocalDate,
 )
 
 data class NaturalLanguageBatchRequest(

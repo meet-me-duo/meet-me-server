@@ -1,0 +1,24 @@
+{
+  "workItem": "issue-91-night-boundary",
+  "sourceRevision": "848b9688451551781769799ff7d27485ea5a5445",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextNightBoundaryTest.kt",
+      "sha256": "0672dda271ebaf1c6f8430fd947e96a94a76c18da2f4edbbb4eabff021f92c7c"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiTimeContextNightBoundaryTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextNightBoundaryTest#early night inheritance remains ambiguous and cannot create afternoon attendance()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextNightBoundaryTest#night twelve is midnight before inherited afternoon end and real two person matching()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T00:57:35Z"
+}

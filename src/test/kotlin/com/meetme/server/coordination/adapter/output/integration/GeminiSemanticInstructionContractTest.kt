@@ -98,6 +98,6 @@ class GeminiSemanticInstructionContractTest {
             ZoneId.of("Asia/Seoul"),
             LocalDate.of(2026, 9, 20),
             LocalDate.of(2026, 9, 28),
-            listOf(NaturalLanguageInput(UUID.randomUUID().toString(), rawText, Locale.forLanguageTag("ko-KR"))),
+            listOf(NaturalLanguageInput(UUID.randomUUID().toString(), rawText, Locale.forLanguageTag("ko-KR"), LocalDate.of(2026, 9, 20))),
         )
 }

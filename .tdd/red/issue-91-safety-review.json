@@ -1,0 +1,25 @@
+{
+  "workItem": "issue-91-safety-review",
+  "sourceRevision": "848b9688451551781769799ff7d27485ea5a5445",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextSafetyReviewTest.kt",
+      "sha256": "6254b2a90c24318e995b94888a903ef3300048658d54f28abaf375555450260e"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiTimeContextSafetyReviewTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextSafetyReviewTest#explicit afternoon child outside inherited morning parent remains rejected()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextSafetyReviewTest#explicit morning start supplies the unstated end period before child inheritance()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextSafetyReviewTest#valid provider availability union cannot preserve the superseded Thursday hour()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T00:44:44Z"
+}

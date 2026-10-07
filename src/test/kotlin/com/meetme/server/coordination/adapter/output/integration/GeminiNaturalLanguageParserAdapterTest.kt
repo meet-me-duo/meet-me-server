@@ -312,7 +312,7 @@ class GeminiNaturalLanguageParserAdapterTest {
             LocalDate.of(2026, 9, 20),
             LocalDate.of(2026, 9, 28),
             (1..count).map {
-                NaturalLanguageInput(UUID.randomUUID().toString(), "월요일 저녁", Locale.forLanguageTag("ko-KR"))
+                NaturalLanguageInput(UUID.randomUUID().toString(), "월요일 저녁", Locale.forLanguageTag("ko-KR"), LocalDate.of(2026, 9, 20))
             },
         )
 }

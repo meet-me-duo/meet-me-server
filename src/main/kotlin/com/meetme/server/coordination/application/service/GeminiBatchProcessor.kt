@@ -49,6 +49,7 @@ class GeminiBatchProcessor(
         val ids = run.batch.submissionVersionIds.toSet()
         val submissions = submissionRepository.findLatestByRoom(run.roomId).filter { it.latest.id in ids }
         check(submissions.size == ids.size) { "Frozen submission batch is incomplete" }
+        val room = persistence.room(run.roomId)
         val naturalInputs =
             submissions.mapNotNull { submission ->
                 submission.latest.rawText?.let {
@@ -57,11 +58,13 @@ class GeminiBatchProcessor(
                             .toString(),
                         it,
                         submission.latest.locale,
+                        submission.latest.createdAt
+                            .atZone(room.timeZone.value)
+                            .toLocalDate(),
                     )
                 }
             }
         check(naturalInputs.isNotEmpty()) { "Gemini batch must contain natural language" }
-        val room = persistence.room(run.roomId)
         val request =
             NaturalLanguageBatchRequest(
                 room.timeZone.value,

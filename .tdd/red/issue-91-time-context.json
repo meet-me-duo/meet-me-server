@@ -1,0 +1,30 @@
+{
+  "workItem": "issue-91-time-context",
+  "sourceRevision": "848b9688451551781769799ff7d27485ea5a5445",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "sha256": "e9233f212d49e7bf54577cb5315010c087567fbf449ccd51106af5842c0f18a5"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiTimeContextContractTest",
+    "--tests",
+    "*GeminiTimeReferenceDateTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest#reference week starts Monday across Sunday Monday month and year boundaries()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest#prompt carries separate per input immutable reference dates()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest#weekday exception inherits parent end and subtracts the earlier Thursday hour()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest#thirty one day search does not force recurring conditions past the thirty two limit()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest#this week exception does not narrow next weeks Thursday()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest#real two participant matcher produces the exact five intervals()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T00:38:03Z"
+}
