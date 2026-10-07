@@ -39,13 +39,16 @@ jobs:
         run: ./gradlew --no-daemon ktlintCheck assemble test
 
       - name: Verify production deployment policy
-        run: node --test .github/scripts/deploy-workflow.test.cjs
+        run: node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs
 
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
 
       - name: Verify database credential refresh
         run: bash deploy/tests/refresh-database-credential.test.sh
+
+      - name: Verify persistent V8 release guard
+        run: python3 -m unittest discover -s deploy/tests -p 'test_v8_release_guard*.py' -v
 
       - name: Verify production Nginx runtime
         run: bash deploy/scripts/verify-nginx-runtime.sh

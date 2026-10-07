@@ -1,0 +1,71 @@
+{
+  "role": "independent_test_designer",
+  "source_revision": "bf367bee46bbb2cc78b15f1f418c8e09efc29d0e",
+  "status": "ROOT_EXECUTED_VALID_NAMED_BEHAVIOR_ASSERTION_RED_3_INDEPENDENTLY_READ",
+  "files": [
+    {
+      "path": "deploy/tests/test_v8_release_guard.py",
+      "sha256": "3eb1658c24a46431d81df0f99fabf5bbf44e5d0d5324fa3f2fe664de118d0905"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/deploy-release.sh",
+      "sha256": "fabf3c8781e2ab1c7b7883fc1574d908754464975e63179cd491efc15359c6b4"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/rollback-release.sh",
+      "sha256": "7eefb8b736aebcf67018b23dbcf72299cbdc5a1c6de32954601b62dc7d55b7d4"
+    },
+    {
+      "path": "deploy/tests/fixtures/pre-v8/refresh-database-credential.sh",
+      "sha256": "a733d6b0cfae30fded20e38d6f89139a9d4c5b49f97e699284f276704d0160ad"
+    },
+    {
+      "path": "deploy/scripts/deploy-release.sh",
+      "sha256": "fabf3c8781e2ab1c7b7883fc1574d908754464975e63179cd491efc15359c6b4"
+    },
+    {
+      "path": "deploy/scripts/rollback-release.sh",
+      "sha256": "7eefb8b736aebcf67018b23dbcf72299cbdc5a1c6de32954601b62dc7d55b7d4"
+    },
+    {
+      "path": "deploy/scripts/refresh-database-credential.sh",
+      "sha256": "a733d6b0cfae30fded20e38d6f89139a9d4c5b49f97e699284f276704d0160ad"
+    },
+    {
+      "path": "deploy/compose.production.yml",
+      "sha256": "3141d7be8c4c3b5b41552d89911e637cbb3b6a06d11aa36faf285f760c5d7ff6"
+    }
+  ],
+  "raw_log": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/baseline-red.log",
+  "raw_log_sha256": "3cca96ceca3ddf25fea578b300c9b0b5aa6dc36945b58e0b33590f45cf893e1b",
+  "command": "python3 -m unittest discover -s deploy/tests -p test_v8_release_guard.py -v",
+  "valid_assertion_failures": [
+    {
+      "test": "test_quiesce_and_sticky_marker_precede_real_migration_command",
+      "message": "Existing app writers/workers must stop before migration",
+      "classification": "Actual current deploy script behavior, not missing helper/setup"
+    },
+    {
+      "test": "test_health_failure_never_revives_previous_incompatible_image",
+      "message": "Health failure must not fall back to old app",
+      "classification": "Actual current deploy script behavior, not missing helper/setup"
+    },
+    {
+      "test": "test_migration_failure_preserves_marker_and_never_starts_an_app",
+      "message": "Attempted migration requires durable sticky marker",
+      "classification": "Actual current deploy script behavior, not missing helper/setup"
+    }
+  ],
+  "excluded": "All other helper absence/setup errors, timeout synchronization and unvalidated feature inventory are excluded from RED count. Baseline old ordinary credential maintenance PASS is not V8 proof.",
+  "unimplemented_source_helpers_at_baseline": [
+    "install-host-release-guard.sh",
+    "host-release-guard.sh",
+    "guardedrestartservice"
+  ],
+  "preserved_frozen_test_sha256": "3eb1658c24a46431d81df0f99fabf5bbf44e5d0d5324fa3f2fe664de118d0905",
+  "author_execution": "Author independently read root raw log; no unittest/Gradle/model/network/realDocker/realAWS invocation by author.",
+  "safe_projection": "Temp copied scripts only; logical host/proc/owner; actual flock/dev/inodes/modes/hardlinks; no operator-install/root-permission proof.",
+  "record_format": "deployment-script-independent-red-v1; dedicated record manually reviewed, existing Kotlin RED schema/hook unmodified",
+  "log_scope": "Full19 baseline run contains3 validated behavior assertion failures plus helper/setup failures and errors excluded. Entire failed suite is not classified valid RED.",
+  "source_fingerprints_scope": "Exact preimplementation bf367 source checked at root baseline3 RED and independent read; these are historical source bytes, not current implementation fingerprints."
+}

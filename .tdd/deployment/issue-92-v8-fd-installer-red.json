@@ -1,0 +1,55 @@
+{
+  "format_version": 1,
+  "kind": "independent-deployment-fd-installer-assertion-red",
+  "role": "independent_test_author",
+  "execution_owner": "root",
+  "author_actions": "Independent source/test/log read and SHA verification only; no production edit or behavior execution.",
+  "frozen_test_hash_check": {
+    "result": "PASS",
+    "sha256": {
+      "deploy/tests/test_v8_release_guard.py": "3eb1658c24a46431d81df0f99fabf5bbf44e5d0d5324fa3f2fe664de118d0905",
+      "deploy/tests/test_v8_release_guard_additional.py": "9225e3641229e83d2e8290c81bb37b7d8d06e0a704847898117202236d77c1b8",
+      "deploy/tests/test_v8_release_guard_review_boundaries.py": "fc2c048cf95a68c14300345a2f04ee567a21924f6c430fc8d4e4c0af6ea687f3",
+      "deploy/tests/test_v8_release_guard_detectors.py": "460a91ff743b45c86d3917718ae1796932b46f79cf651d0c8a0768f73c71a8a1",
+      "deploy/tests/test_v8_release_guard_installer_boundaries.py": "4143dabd344cdf0560ea25e1a9e2209a4f8d6c2b18c80cf260322fe695034a1d"
+    }
+  },
+  "fd_case": {
+    "test_path": "deploy/tests/test_v8_release_guard_detectors.py",
+    "test_sha256": "460a91ff743b45c86d3917718ae1796932b46f79cf651d0c8a0768f73c71a8a1",
+    "selector": "V8ReleaseGuardDetectorsTest.test_known_live_retired_fd_with_access_denied_projection_rejects_before_mutation",
+    "valid_methods": 1,
+    "valid_assertion_failures": 1,
+    "baseline_source_path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/fd-red-baseline-guard.sh",
+    "baseline_source_sha256": "64d674c4d63fef4d7f0c87361d2e12283f7eb5ba796f1f2d9bb0ab3b4a90d8de",
+    "raw_log_path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/fd-boundary-red-fixed-fixture.log",
+    "raw_log_sha256": "186feccde5dda9892b375adae33854724afe47a57706bfa8e8945f0ab08c79cd",
+    "assertion": "Known live FD with visible symlink and denied metadata must fail closed; observed returncode0",
+    "oracle": "Real child remains alive holding retired archive descriptor. Actual /proc/child/fd stat verifies matching device/inode. Projected visible FD symlink points same pinned inode hardlink through chmod0 alias. Actual Bash -e returns1 and stat raisesPermissionError while original real descriptor remains open.",
+    "scope": "Local logical namespace access-denial simulation backed by actual open descriptor/inode. Does not prove native host root permission, proc visibility, or external dispatch pause/drain.",
+    "excluded_prior_run": {
+      "log_path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/fd-boundary-red.log",
+      "log_sha256": "e493b69d92fbe68bd48da05b44302393e46f18604dd550f9641c6dd247921c91",
+      "test_sha256": "a9432e251c665fdc1af2eacce2377359a6c0b6300c33ad36ea22ca7b82520c5b",
+      "reason": "Python3.12 Path.exists raised PermissionError in fixture precondition; ERROR is not RED."
+    }
+  },
+  "installer_case": {
+    "test_path": "deploy/tests/test_v8_release_guard_installer_boundaries.py",
+    "test_sha256": "4143dabd344cdf0560ea25e1a9e2209a4f8d6c2b18c80cf260322fe695034a1d",
+    "selector": "V8ReleaseGuardInstallerBoundariesTest.test_unknown_preexisting_guard_rejects_before_rewriting_legacy_entrypoints",
+    "valid_methods": 1,
+    "valid_assertion_failures": 3,
+    "subcases": {
+      "launcher": "Installer failed after rewriting legacy wrapper bytes/inodes",
+      "override": "Installer returned0 and adopted unknown override",
+      "both": "Installer failed after rewriting legacy wrapper bytes/inodes"
+    },
+    "baseline_source_path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/installer-red-baseline.sh",
+    "baseline_source_sha256": "4058ad2a261a880a8617ebb94be685f6d561502077a3ee4990253239d62d6462",
+    "raw_log_path": "/workspace/scratch/meet-me-bootstrap/issue-92-v8-guard-tests/installer-boundary-red.log",
+    "raw_log_sha256": "9d2d17b855513b1b5b91f24043f64eebd53e9ecdc31c86e0e7b336d86b72dd64"
+  },
+  "follow_up": "Producer minimal fixes authorized by parent after these valid REDs; GREEN and fault execution remain parent-owned and pending.",
+  "schema_scope": "Separate deployment JSON; existing Kotlin red-evidence schema/hooks unchanged."
+}

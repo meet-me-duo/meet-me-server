@@ -2,7 +2,7 @@ services:
   app:
     image: ${APP_IMAGE:?APP_IMAGE is required}
     container_name: meet-me-app
-    restart: "no"
+    restart: unless-stopped
     env_file:
       - path: ${RUNTIME_ENV_FILE:-.env.runtime}
         format: raw
@@ -63,3 +63,4 @@ services:
 networks:
   backend:
     driver: bridge
+

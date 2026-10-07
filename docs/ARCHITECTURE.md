@@ -414,7 +414,9 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - RDS master password는 RDS가 관리하는 Secrets Manager secret을 사용한다. Gemini API key는 Terraform 값과 state에 넣지 않고 SSM Parameter Store `SecureString`에 사용자가 직접 등록한다. Kakao Local key는 제출 MVP 런타임에서 사용하지 않는다.
 - RDS master password의 `AWSCURRENT` 버전이 바뀌면 EventBridge가 SSM Run Command로 EC2의 자격 증명 갱신 작업을 실행한다. 동일 작업을 5분마다 재확인해 이벤트 누락이나 일시 실패를 복구한다. 작업은 현재 release의 secret 값과 앱 컨테이너 설정을 비교하고 변경 시 `render-runtime-env.sh`로 환경 파일을 다시 만든 뒤 앱만 교체한다. 배포·롤백과 같은 파일 잠금을 사용하며, 비밀번호 값은 Terraform state·명령 출력·로그에 넣지 않는다. 앱 health가 정상일 때만 갱신 완료로 간주한다.
 - 로컬 관리 작업은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용한다. GitHub Actions는 장기 Access Key 없이 OIDC로 환경별 최소 권한 role을 사용한다.
-- 배포는 ECR image digest 고정, 동일 이미지의 Flyway 선실행, 애플리케이션 교체 순서로 수행한다. 실패 시 이전 image digest로 애플리케이션만 되돌리고 적용된 Flyway migration은 자동 downgrade하지 않는다.
+- V8 배포는 설치된 `/opt/meet-me/guard/host-release-guard.sh`가 관리한다. deploy·호환 rollback·credential refresh·boot restart가 공통 잠금과 root 소유의 영속 manifest·선행조건·정확한 digest 승인 TSV를 검증한다. 모든 저장 release의 진입 script를 wrapper로 교체하고 구 파일 inode를 hard-link로 보존하여 열린 구 Bash FD가 있으면 중단한다. cmdline·credential은 검사 출력에 포함하지 않는다.
+- 앱 전체를 중지하고 Docker 자동 재시작을 비활성화한 뒤 `V8_STARTED`와 sticky `input_revision_v8` marker를 원자적으로 영속화한다. 승인된 동일 이미지로 Flyway 실행·앱 교체·실제 Docker image와 health 확인을 완료해야 `current`와 `READY`를 기록한다. 실패 시 점검 상태를 유지하고 승인된 digest의 deploy로 roll-forward한다. Flyway downgrade·구 image 자동 fallback은 제공하지 않는다.
+- Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [INPUT_REVISION_ROLLOUT.md](INPUT_REVISION_ROLLOUT.md)를 따른다.
 - `main` 병합은 운영 배포 승인으로 간주한다. `main` push로 시작된 CI가 성공하면 별도의 권한 있는 Production workflow가 `workflow_run`의 정확한 `head_sha`를 배포하고, PR·`develop`·수동 CI와 실패한 CI는 자동 배포하지 않는다. 운영 배포는 하나씩 실행하되 대기 실행을 취소하지 않으며, `workflow_dispatch`는 `main`의 장애 복구·재배포 수단으로 유지한다.
 
 ### 제출 MVP 토폴로지 선택 근거

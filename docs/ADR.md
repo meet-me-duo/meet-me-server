@@ -468,9 +468,15 @@ meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, c
 
 **배포 전제와 복구 경계**: V8부터 구 서버의 동시 쓰기를 허용하지 않는다. 구 서버는 migration 뒤 신규 방/분석의 active pointer를 기록하지 않고 기존 retention이 round FK를 정리하지 않으므로, 기존 writer·worker·Outbox relay·retention을 모두 중지한 뒤 migration해야 한다. HTTP 요청만 막거나 웹을 먼저 배포하는 것으로 이 경계를 충족하지 않는다. migration 후에는 V8 호환 서버만 실행한다. 이 범위에서는 ADR-041의 이전 image 자동 rollback을 대체하고 roll-forward를 사용한다.
 
-현재 `deploy/scripts/deploy-release.sh`는 구 앱이 실행된 채 migrate하고 health 실패 시 previous image를 자동 실행하므로 이 결정과 호환되지 않는다. `rollback-release.sh`와 ADR-044의 `refresh-database-credential.sh`도 이전 release image를 실행할 수 있다. 특히 health 실패 뒤 current symlink가 이전 release를 가리키면 정기/이벤트 credential refresh가 배포 잠금 해제 후 구 앱을 재기동할 수 있다. 따라서 현재 스크립트 그대로의 main 병합·자동 배포는 승인 조건을 충족하지 않는다.
+기존 배포 script의 migration 전 구 writer 유지·health 실패 뒤 previous image fallback과 explicit rollback/credential refresh의 구 image 재기동을 독립 assertion RED로 확인했다. 이를 대체하는 저장소 구현은 모든 관리 경로를 설치된 고정 host launcher로 연결한다. 실제 호스트에 기존 script가 남아 있거나 외부 선행조건을 완료하지 않았다면 main 병합·자동 배포는 여전히 승인 조건을 충족하지 않는다.
 
-후속 최소 변경 설계는 다음 순서를 따른다. 운영 실행은 별도 승인 대상이며 아직 구현·배포 검증 완료를 뜻하지 않는다.
+확정한 lifecycle 계약은 다음과 같다. 생산 script 구현의 독립 검증과 실제 호스트 설치·운영 승인은 별도로 추적한다.
+
+- `state/compatible-images.tsv`의 완전한 image@sha256:64hex·`input_revision_v8`·review evidence hash만 실행을 허가한다. installer와 launcher는 요청 image를 자동 등록하지 않는다. root 소유·group/world 비쓰기·regular-file 상태, prerequisite·manifest·wrapper·launcher·고정 Compose override의 바이트를 검사한다.
+- 영속 phase는 `PRE_V8`/`V8_STARTED`/`READY`다. PRE_V8에는 marker가 없어야 하고 첫 승인 deploy만 가능하다. V8_STARTED와 READY에는 정확한 sticky marker가 필요하다. V8_STARTED도 승인 deploy만 가능하며 rollback/refresh/restart는 READY에서 승인된 digest만 사용한다. marker 뒤 phase가 없어지거나 깨지면 자동 초기화하지 않는다.
+- 설치기는 모든 저장 release의 구 진입 script를 같은 파일시스템의 archive에 hard-link로 고정하고 device/inode를 정밀도가 보존되는 문자열로 기록한다. 모든 설치·launch는 `/proc/<pid>/fd` metadata로 열린 구 inode를 확인한다. 살아 있는 프로세스의 관측 거부는 fail closed다. 구 cmdline을 읽거나 출력하지 않는다. 설치가 중단되면 유효한 pre-marker manifest/pin을 보존한 명시적 installer 재시도만 허용하며 launch가 missing phase를 정상 상태로 간주하지 않는다.
+- 앱 Compose 자동 재시작을 `no`로 바꾸고 모든 관리 Compose 호출의 마지막 고정 override가 승인 image와 restart 정책을 강제한다. guarded boot unit은 고정 restart를 호출한다. 저장된 구 Compose 파일에 다른 image/restart가 있어도 관리 실행이 이를 재사용하지 않는다.
+- 관리 대상은 단일 `meet-me-app`의 HTTP·worker·Outbox relay·retention과 알려진 진입 경로다. root의 직접 Docker/SSM 실행·임의 구 workflow·관리되지 않은 DB writer는 shell guard가 통제할 수 없으므로 운영자가 별도로 중지·권한 통제한다. prerequisite JSON의 boolean/evidence는 운영자 진술이며 실제 AWS pause·호스트 설치의 기계적 증명으로 보고하지 않는다.
 
 1. 공통 release 잠금 아래 모든 앱 재기동 경로(deploy health fallback, explicit rollback, credential refresh)에 지속적인 최소 호환 release 검사를 먼저 설치·검증한다. 이전 release 폴더에 남은 script도 검사하도록 공통 host launcher 또는 사전 갱신된 guard를 사용한다. 새 폴더의 marker만으로 이전 script를 보호했다고 간주하지 않는다. 정기·이벤트 refresh의 이미 대기 중인 실행, 수동 배포 dispatch, host 재부팅/Compose 재시작과 운영자의 직접 구 image 실행도 함께 통제한다. schema 숫자 또는 image label만으로 호환성을 허가하지 않고 검증된 compatible image digest와 계약 근거를 사용한다.
 2. V8 이미지·웹 native schema·합성 이전 데이터 migration 검사·호환 roll-forward digest를 확정한다. 기존 앱 전체를 중지하고 실행 중 작업 종료를 확인한다. Redis의 미처리 참조는 삭제하지 않고 신 서버가 PostgreSQL 활성 상태를 재검증하게 한다. 서비스는 이 기간 점검 상태로 유지한다.
@@ -478,6 +484,6 @@ meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, c
 4. V8 호환 서버를 시작하고 health·native OpenAPI·additive 조회 계약을 확인한다. 실패하면 구 서버를 재기동하지 않고 호환 image로 roll-forward하거나 점검 상태를 유지한다. 호환 서버의 current release 선택과 credential refresh 재개 순서는 구 image 부활이 불가능하도록 검사한다.
 5. 생성 schema를 사용한 웹을 배포하고 capability가 있을 때만 수정 흐름을 노출한다. 별도 합성 검증 후 서비스 접근을 재개한다. 정기 credential refresh도 호환 release만 대상으로 재개한다.
 
-**기존 웹 호환의 한계**: 새 웹+구 서버는 recovery capability가 없으면 관련 동작을 숨긴다. 구 웹+새 서버의 OPEN 라운드는 공개 COLLECTING으로 보이지만 round/revision 없는 PUT은 409이고 기존 close는 200 no-op이다. 이는 입력과 배치를 보호하는 계약이며 수정 UX의 양방향 호환 성공은 아니다. 웹 선배포도 기존 탭·캐시의 구 웹 제거를 보장하지 않는다. 운영자는 이 잔여 한계를 승인하고 새로고침·업데이트된 웹에서 본인 입력을 확인하라는 안내를 제공해야 한다. 구 웹이 새 서버의 OPEN을 일반 최초 수집으로 표시하는 경로와 저장 draft 보존은 합성 검증 대상으로 남긴다.
+**기존 웹 호환의 한계**: 새 웹+구 서버는 recovery capability가 없으면 관련 동작을 숨긴다. 구 웹+새 서버의 OPEN 라운드는 공개 COLLECTING으로 보이지만 round/revision 없는 PUT은 409이고 기존 close는 200 no-op이다. 이는 입력과 배치를 보호하는 계약이며 수정 UX의 양방향 호환 성공은 아니다. 웹 선배포도 기존 탭·캐시의 구 웹 제거를 보장하지 않는다. 정확한 구/신 번들 합성 브라우저 검증에서 구 PUT409는 draft를 유지하지만 reload가 미저장 draft를 잃게 함을 확인했다. 운영자는 먼저 원문을 복사하고 새로고침한 뒤 새 웹에 다시 입력·명시적 저장·결과 확인하는 안내와 지원 경로를 제공해야 한다. 이 운영 절차와 실제 cross-version backend 검증은 별도 선행조건이다.
 
 **읽기 전용 배포 후 확인**: 로컬/격리 staging에서는 합성 방·합성 증명으로 room/본인 submission/candidates GET의 metadata와 권한 경계를 검사한다. 운영 실행이 별도 승인된 뒤에는 `/healthz`, 앱 내부 `127.0.0.1:9090/actuator/health`, `/v3/api-docs`의 계약을 확인한다. 사용자 방·운영 원문·다른 참여자 입력을 탐색하지 않으며 운영 POST/PUT·재분석·확정은 smoke에 포함하지 않는다. credential·cookie·원문은 로그나 인계 자료에 출력하지 않는다. 합성 쓰기 흐름과 구 캐시 화면은 운영 데이터 없이 staging에서 검증한다. ADR-042의 main 병합은 자동 CD를 시작하므로 위 lifecycle guard·migration·웹·operator 조건이 충족되기 전에는 Draft PR/CI 완료와 배포 준비 완료를 구분한다.
