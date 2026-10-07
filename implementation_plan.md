@@ -1003,9 +1003,10 @@
 - [x] 결함 완료 후 최종 독립 리뷰 PASS 및 source/test 동결 지문 일치.
 - [x] 변경하지 않은 전체 필수 guard: 78suite·438test·실패0·오류0·opt-in skip4.
 - [x] 실제 native OpenAPI 생성과 웹 #17 최초 RecoveryPanel 연결, draft/auth/cache/늦은 응답 검증.
-- [ ] 웹 후속 unit176 회귀와 최종 browser 검증·최종 head 확인.
-- [ ] root의 서버 로컬 feature commit 및 정확한 SHA 기록.
-- [ ] 서버 push·Draft PR·정확한 head CI: 최초 명시적 금지의 철회가 확인되지 않아 차단. 우회·자동 승인 재시도 없음. main/develop 병합과 배포는 보류.
+- [x] 웹 후속 unit176·browser329 PASS/기존 skip1·flaky0와 최종 head `3c403a2667d4a3921ba8a661fb2a4e9758b220ed` 확인.
+- [x] root의 서버 로컬 feature commit·push `bf367bee46bbb2cc78b15f1f418c8e09efc29d0e` 및 Draft PR #94 게시.
+- [ ] 서버 정확한 head CI 완료 확인. main/develop 병합과 운영 배포는 보류.
+- [ ] 별도 승인된 V8 lifecycle guard: 독립 계약·RED → 생산 script 구현 → 격리 검증·결함 주입·독립 리뷰·전체 gate. 실제 호스트 설치는 별도 운영 조건이다.
 
 #91의 최신 LLM 중심 구현 `1ddbd26747936a56a0f6f2f380d1ef066fb41ed7`을 #92 feature에 통합했다. #92 생산 기능과 native API 계약은 아래 실제 검증을 통과했다. 실제 공급자 호출과 운영 데이터 접근은 0이다. 논리 분석 한도를 물리 API 호출 또는 USD 상한으로 보고하지 않는다.
 
@@ -1018,11 +1019,13 @@
 - root의 신규 worker fixture에서 정확한 stub6개를 보강한 detector baseline35개 GREEN 뒤 최종 결함9개를 모두 DETECTED로 확인했다. 각 실행 당시 동결195개 파일 원본 바이트를 복원했으며, 앞선 fault3 SURVIVED는 탐지 성공으로 계산하지 않는다. `.tdd/verification/issue-92-recovery-boundaries.json`은 현재 실제 detector/helper5개와 source112개 지문을 추적한다. 이후 추가 테스트를 포함한 새196개 파일 전체를 다시 결함 주입·복원했다는 주장은 하지 않는다. 독립 리뷰는 production39개·source112개 불변과 실제 detector5개·결함9개 이력을 확인했고 source blocker0이다.
 - 첫 전체 guard의435개 중55개 fixture 실패 뒤 독립 저자가 활성 포트/정확한 버전 조회 등 fixture 정합을 보완하여 legacy79개 GREEN을 확인했다. RED 근거의 비실패 sidecar 지문만 좁힌 이유·원본 이력은 [.tdd/supersessions/issue-92-legacy-fixture-compatibility.json](.tdd/supersessions/issue-92-legacy-fixture-compatibility.json) 및 `.tdd/history/issue-92-legacy-fixture-compatibility/`에 보존한다. 원래 실제 실패 테스트의 기대·실패·sourceRevision·실행 명령·로그는 바꾸지 않았으며, 이 과거 근거를 현재 의존 전체의 신규 RED로 과장하지 않는다.
 - root는2026-10-07 03:09:19 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`의 최종 exit0을 확인했다. `ktlintCheck assemble test`는78suite/438test/실패0/오류0/opt-in skip4이고 guard 단위 검증12개도 통과했다. legacy HOST/auth/idempotency/worker 기존 테스트와 신규503 회귀3개가 이 전체 GREEN에 포함된다. source112개와 adapter `d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17`은 불변이다. 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-full-guard.json`이며 문서 owner의 source/test/harness 변경·Gradle·모델 호출은0이다.
-- 웹 #17의 unit174·browser329·결함7/native 완료와 push head `059f049a4832effb2e2cc844d33f4cdd50b5dc1e`는 앞 단계의 이력이다. 현재 후속 unit176·최종 browser 검증이 진행 중이라059f를 현재 최종 head로 보고하지 않으며, 완료 후 최종 SHA를 갱신한다. 이 웹 결과를 서버 CI·운영 배포 완료로 사용하지 않는다.
+- 웹 #17의 unit174·결함7과 push head `059f049a4832effb2e2cc844d33f4cdd50b5dc1e`는 앞 단계의 이력이다. 최종 head는 `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`이며 unit176 PASS·browser329 PASS/기존 skip1/flaky0·오류0, 결함8 탐지/정확한 원본 복원과 구/신 번들 합성6검사를 완료했다. native22225 지문은 동일하다. 이 웹 결과를 서버 CI·운영 배포 완료로 사용하지 않는다.
 - 구 웹 정확한 source `68c41f7619e7f1a28b2b597cb56867e4d3e852bc` 재빌드 bundle과 최초 baseline의 바이트 동일성을 확인한 뒤 구/신 실제 bundle 격리 브라우저6검사가 모두 PASS했다. 구 PUT409는 draft·revision1을 유지하고 close200은 OPEN/no analysis이며 hosting 교체만으로 구 탭은 바뀌지 않았다. 명시적 reload 후 신 UI는 현재 round/revision으로 저장하고 구 Join은 ROOM_CLOSED·신 Join은 숨김이다. 신 웹+신규 필드 없는 구 계약은 raw-only 저장/HOST close를 유지한다. 실제 backend/model/운영 호출0인 합성 HTTP 검증이며 real cross-version backend/운영 Origin 검증과 구분한다. 새로고침은 미저장 구 draft를 잃게 하므로 먼저 복사하고 신 웹에서 다시 입력·명시적 저장·결과 확인하는 안내·지원 및 운영 갱신 gate는 아직 미구현/미실행이다. 상세6검사와 잔여 조건은 [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 기록했다.
 - 합성 모임6개의 기대 시간·참석자·실제 결과·검증 범위는 [ISSUE_92_SCENARIO_RESULTS.md](docs/ISSUE_92_SCENARIO_RESULTS.md)에 추적한다. 실제 PostgreSQL/HTTP/application processor/matcher이며 자연어 port는 mock, Redis consumer end-to-end와 실제 모델 정확도 증거는 아니다.
-- 자동 승인 검토가 PR 생성 작업을 거절했다. 사유는 이번 turn 최초 게시 금지 지시의 명확한 철회가 확인되지 않았다는 것이다. 다른 경로로 우회하거나 승인 재시도를 하지 않았다. 전체 gate 후 root의 로컬 서버 feature commit은 준비 중이며 아직 SHA를 기록하지 않았다. 서버 push/Draft PR/정확한 head CI는 계속 차단되어 미실행이고 과거 웹 push와 구분한다.
-- 배포 lifecycle guard는 아직 구현하지 않았다. [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)는 차단 명령·구 writer quiesce·호환 roll-forward·구 refresh/rollback 경로·캐시 구 웹 안내·별도 승인 후 읽기 전용 smoke의 준비안이다. 운영 guard 설치·migration·서버/웹 배포·운영 smoke·develop/main 병합은 미실행이다. main CI 이후 자동 CD 경계를 유지하며 배포 준비 완료로 보고하지 않는다.
+- 앞선 PR 생성 거절은 최초 게시 금지의 명확한 철회가 없었던 시점의 이력이다. 이후 사용자가 직접 게시를 명확히 승인하여 root가 서버 `bf367bee46bbb2cc78b15f1f418c8e09efc29d0e`를 push하고 [서버 Draft PR #94](https://github.com/meet-me-duo/meet-me-server/pull/94)(base develop)와 [웹 Draft PR #18](https://github.com/meet-me-duo/meet-me-web/pull/18)(base main)을 게시했다. 이는 새 직접 승인에 따른 재개이며 이전 거절을 우회하지 않았다. 웹의 정확한 head `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`의 CI #37566261043은 unit176·browser329/기존 skip1 검사를 포함해 성공했다. 서버 최초 head bf367의 CI #37566280630은 합성 모임6개 결과 기록의 `/workspace` 경로 권한 때문에 실패했다. 독립 저자의 이식성 수정 뒤 해당6개 검사는 통과했고 root의 변경하지 않은 전체438 gate는 2026-10-07 03:34:18 UTC에78suite/438test/실패0/오류0/opt-in skip4로 다시 통과했다. 이식성 수정·검증·현재 기록은 동일 커밋 예정이며 push 후 정확한 head CI 확인은 진행 중이다. 별도 guard 생산 파일은 이 이식성 checkpoint에 포함하지 않는다. 기능 기대·운영 정책·평가 도구를 완화하지 않았으며, 이 CI 실패를 기능 GREEN 또는 전체 CI 성공으로 기록하지 않는다. 병합·운영 배포는 실행하지 않았다.
+- 배포 lifecycle guard 생산 초안은 별도 미게시 작업이며 독립 검증 중이다. 이 이식성 checkpoint에는 guard 생산 코드와 테스트를 포함하지 않는다. [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)는 차단 명령·구 writer quiesce·호환 roll-forward·구 refresh/rollback 경로·캐시 구 웹 안내·별도 승인 후 읽기 전용 smoke의 준비안이다. 운영 guard 설치·migration·서버/웹 배포·운영 smoke·develop/main 병합은 미실행이다. main CI 이후 자동 CD 경계를 유지하며 배포 준비 완료로 보고하지 않는다.
+
+- 부모 단독 실제 Gemini 평가는 7/50회에서 작은 연결 확인 요청(6번째)200·OK, 제보 원문 요청(7번째)503·UNAVAILABLE/출력 없음으로 보고됐다. 실제 원문 정확도와 실제 모델 HTTP·DB 검증은 미확인이며 합성 모임6개 결과와 구분한다. 이 root의 공급자 호출·평가 도구 변경은0이다.
 
 ### 초기 구현·검증 진행 이력
 

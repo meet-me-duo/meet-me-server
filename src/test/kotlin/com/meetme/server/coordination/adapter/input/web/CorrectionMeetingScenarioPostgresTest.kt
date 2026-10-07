@@ -329,13 +329,18 @@ class CorrectionMeetingScenarioPostgresTest : CorrectionRoundPostgresFixture() {
             trace["failure_type"] = failure.javaClass.simpleName
             throw failure
         } finally {
+            val defaultDirectory = Path.of("build", "reports", "issue-92-meeting-scenarios").toAbsolutePath().normalize()
             val directory =
-                Path.of(
-                    System.getenv(
-                        "MEETME_ISSUE92_SCENARIO_REPORT_DIR",
-                    ) ?: "/workspace/scratch/meet-me-bootstrap/issue-92-meeting-scenarios",
-                )
-            require(directory.isAbsolute && (directory.startsWith("/workspace") || directory.startsWith("/tmp")))
+                Path
+                    .of(
+                        System.getenv(
+                            "MEETME_ISSUE92_SCENARIO_REPORT_DIR",
+                        ) ?: defaultDirectory.toString(),
+                    ).normalize()
+            require(
+                directory.isAbsolute &&
+                    (directory.startsWith(defaultDirectory) || directory.startsWith("/workspace") || directory.startsWith("/tmp")),
+            )
             Files.createDirectories(directory)
             Files.writeString(directory.resolve("$name.json"), mapper.writerWithDefaultPrettyPrinter().writeValueAsString(trace))
         }
