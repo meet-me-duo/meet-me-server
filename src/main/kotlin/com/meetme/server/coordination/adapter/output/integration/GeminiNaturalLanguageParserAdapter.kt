@@ -132,29 +132,8 @@ class GeminiNaturalLanguageParserAdapter(
                 if (conditions.isEmpty() && rejectionCode.isNullOrBlank()) {
                     throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 }
-                val context =
-                    if (!conditionRejected &&
-                        (
-                            (rawConditions.isEmpty() && rejectionCode == "AMBIGUOUS_TIME_CONSTRAINT") ||
-                                rejectionCode == null
-                        )
-                    ) {
-                        KoreanTimeContextResolver.resolve(requestByRef.getValue(ref), request)
-                    } else {
-                        KoreanTimeContextResolver.Result.NotApplicable
-                    }
                 val versionId = SubmissionVersionId(UUID.fromString(ref))
-                when (context) {
-                    is KoreanTimeContextResolver.Result.Rejected ->
-                        StructuredSubmissionResult(versionId, emptyList(), rejectionCode ?: context.code)
-                    is KoreanTimeContextResolver.Result.Resolved ->
-                        if (conditions.all { it is StructuredCondition.TimeWindow }) {
-                            StructuredSubmissionResult(versionId, context.conditions, null)
-                        } else {
-                            StructuredSubmissionResult(versionId, conditions, rejectionCode)
-                        }
-                    KoreanTimeContextResolver.Result.NotApplicable -> StructuredSubmissionResult(versionId, conditions, rejectionCode)
-                }
+                StructuredSubmissionResult(versionId, conditions, rejectionCode)
             }
         val expectedRefs = request.inputs.map { it.inputRef }.toSet()
         if (parsed.map { it.submissionVersionId.value.toString() }.toSet() != expectedRefs || parsed.size != request.inputs.size) {
@@ -284,18 +263,30 @@ class GeminiNaturalLanguageParserAdapter(
             )
             appendLine("A week starts Monday. 이번주 means the week containing that reference_date; 다음주 means the following week.")
             appendLine("A start-only exception may inherit an end only from one compatible explicit parent window containing that start.")
+            appendLine("Apply this to any clearly described parent hours and natural phrasing, not only the examples below.")
+            appendLine("First resolve the parent window's explicit or contextual period, then inherit that same period for its child.")
             appendLine(
                 "Use explicit AM/PM, noon, midnight, night and 24-hour notation before contextual hour inference; never shift all hours by 12.",
             )
-            appendLine("For weekday 7–9 and weekend 2–7 in ordinary availability context, use 19–21 and 14–19 respectively.")
+            appendLine(
+                "Interpret unmarked hours from the complete availability context; explicit morning or 24-hour notation takes precedence.",
+            )
+            appendLine("Examples of ordinary evening availability: weekday 6–9 becomes 18–21 and weekday 7–10 becomes 19–22.")
+            appendLine("An ordinary afternoon weekend 1–6 becomes 13–18; weekend 2–7 becomes 14–19.")
+            appendLine("A morning parent 06–09 and a compatible 8-start child stay 06–09 and 08–09, never 18–21 or 20–21.")
+            appendLine(
+                "The matcher unions AVAILABLE windows, then subtracts UNAVAILABLE windows; another AVAILABLE cannot narrow the union.",
+            )
             appendLine("For 평일 7–9 plus 이번주 목요일 8시부터, keep recurring weekday 19–21 and add date-specific UNAVAILABLE 19–20.")
             appendLine("That Thursday remains 20–21; other weekdays and next week's Thursday must not be narrowed.")
+            appendLine("For any other inherited start, subtract the dated parent-start-to-child-start prefix, keeping the parent end.")
             appendLine(
                 "Conflicting parents, explicit period conflicts or ambiguous overnight inheritance remain AMBIGUOUS_TIME_CONSTRAINT.",
             )
             appendLine("Understand the entire input including corrections, negation and conditions; never discard an unknown suffix.")
             appendLine("If time bounds cannot be determined, return empty conditions with rejection_code AMBIGUOUS_TIME_CONSTRAINT.")
             appendLine("Place-only inputs without a time restriction may keep their explicit place conditions.")
+            appendLine("Independent place sentences and polite or colloquial phrasing do not invalidate otherwise clear time constraints.")
             appendLine("This schema has independent time and place lists; it cannot represent conditional time-place associations.")
             appendLine("Do not turn coupled time/place alternatives into a Cartesian product of unrelated possibilities.")
             appendLine("For coupled restrictions, return empty conditions with rejection_code UNSUPPORTED_CONDITIONAL_CONSTRAINT.")

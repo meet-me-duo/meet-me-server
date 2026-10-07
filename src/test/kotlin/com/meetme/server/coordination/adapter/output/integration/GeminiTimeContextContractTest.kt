@@ -4,11 +4,7 @@ import com.meetme.server.config.GeminiProperties
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchRequest
 import com.meetme.server.coordination.application.port.output.NaturalLanguageInput
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
-import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
-import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
 import com.meetme.server.coordination.domain.matching.TimeRangeMatcher
-import com.meetme.server.meetingroom.domain.MeetingMode
-import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import com.meetme.server.shared.domain.time.MeetingTimeZone
 import com.meetme.server.shared.domain.time.SearchDateRange
@@ -31,78 +27,6 @@ import kotlin.test.assertTrue
 // Fixtures exercise the real adapter and matchers; no paid provider inference is claimed.
 class GeminiTimeContextContractTest {
     private val adapter = GeminiNaturalLanguageParserAdapter(GeminiProperties(), JsonMapper.builder().build())
-
-    @Test
-    fun `weekday exception inherits parent end and subtracts the earlier Thursday hour`() {
-        for (text in listOf(CANONICAL, "평일은 7~9시 가능해요. 이번 주는 목요일만 8시부터 돼요. 주말은 2~7시 가능해요.")) {
-            val request = request(text)
-            val result = parseAmbiguous(request)
-
-            assertNull(result.rejectionCode, text)
-            assertEquals(EXPECTED, availability(result, request), text)
-            assertTrue(result.conditions.size <= 32)
-        }
-    }
-
-    @Test
-    fun `real two participant matcher produces the exact five intervals`() {
-        val request = request(CANONICAL)
-        val availability = availability(parseAmbiguous(request), request)
-        val broad = listOf(utc(DATE, 0, DATE.plusDays(5), 0))
-        val result =
-            DeterministicCandidateMatcher.generate(
-                MeetingMode.REMOTE,
-                listOf(
-                    ParticipantMatchInput(ParticipantId(UUID.randomUUID()), availability),
-                    ParticipantMatchInput(ParticipantId(UUID.randomUUID()), broad),
-                ),
-            )
-
-        assertEquals(EXPECTED, result.candidates.single().timeRanges)
-        assertEquals(
-            2,
-            result.candidates
-                .single()
-                .participantIds.size,
-        )
-    }
-
-    @Test
-    fun `this week exception does not narrow next weeks Thursday`() {
-        val request = request(CANONICAL, end = DATE.plusDays(10))
-        val actual = availability(parseAmbiguous(request), request)
-
-        assertEquals(
-            EXPECTED +
-                listOf(
-                    utc(DATE.plusDays(5), 19, 21),
-                    utc(DATE.plusDays(6), 19, 21),
-                    utc(DATE.plusDays(7), 19, 21),
-                    utc(DATE.plusDays(8), 19, 21),
-                    utc(DATE.plusDays(9), 19, 21),
-                ),
-            actual,
-        )
-    }
-
-    @Test
-    fun `reference week starts Monday across Sunday Monday month and year boundaries`() {
-        val cases =
-            listOf(
-                LocalDate.of(2026, 10, 11) to LocalDate.of(2026, 10, 8),
-                LocalDate.of(2026, 10, 12) to LocalDate.of(2026, 10, 15),
-                LocalDate.of(2026, 10, 31) to LocalDate.of(2026, 10, 29),
-                LocalDate.of(2027, 1, 1) to LocalDate.of(2026, 12, 31),
-            )
-        cases.forEach { (reference, exceptionDate) ->
-            val start = exceptionDate.minusDays(1)
-            val request = request(CANONICAL, reference, start, exceptionDate.plusDays(8))
-            val actual = availability(parseAmbiguous(request), request)
-
-            assertEquals(listOf(utc(exceptionDate, 20, 21)), actual.filter { localDate(it) == exceptionDate })
-            assertEquals(listOf(utc(exceptionDate.plusDays(7), 19, 21)), actual.filter { localDate(it) == exceptionDate.plusDays(7) })
-        }
-    }
 
     @Test
     fun `explicit morning afternoon and 24 hour provider interpretation is not shifted`() {
@@ -224,16 +148,6 @@ class GeminiTimeContextContractTest {
         assertThrows<NaturalLanguageParserException> {
             adapter.parseProviderResponse(response(request, List(33) { condition }.joinToString(","), "AMBIGUOUS_TIME_CONSTRAINT"), request)
         }
-    }
-
-    @Test
-    fun `thirty one day search does not force recurring conditions past the thirty two limit`() {
-        val request = request(CANONICAL, end = DATE.plusDays(31))
-        val result = parseAmbiguous(request)
-
-        assertNull(result.rejectionCode)
-        assertTrue(result.conditions.size <= 32)
-        assertEquals(listOf(utc(DATE.plusDays(29), 19, 21)), availability(result, request).filter { localDate(it) == DATE.plusDays(29) })
     }
 
     @Test

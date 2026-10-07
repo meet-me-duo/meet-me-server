@@ -954,7 +954,7 @@
 - [x] `[AGENT]` 입력별 immutable referenceDate·문맥 상속 구현 및 원문 전체 의미/유일 부모/부정·명시 시각·32조건 한도 검증. 독립 설계한 37개 대상 테스트 GREEN과 지원 범위 내 독립 코드 리뷰 PASS를 확인했다.
 - [x] `[AGENT]` 실제 processor/result·합성 adapter/matcher 회귀, 독립 리뷰·의도적 결함 주입 6/6 탐지와 필수 guard 통과. 최종 전체 테스트 366건/실패0/오류0/기존 skip2.
 - [x] `[AGENT]` 검증·한계·정확한 SHA를 기록하고 #91 Draft PR 및 후속 인계 준비.
-- [ ] `[AGENT]` 사용자 후속 요구에 따라 제한적인 정규식 의미 게이트를 LLM 중심 해석으로 교체하고 새 독립 RED·결함 주입·리뷰를 완료한다.
+- [x] `[AGENT]` 사용자 후속 요구에 따라 제한적인 정규식 의미 게이트를 LLM 중심 해석으로 교체하고 새 독립 RED·결함 주입·리뷰를 완료한다.
 
 확정 범위는 #91이며 #92/웹 #17의 미확정 수정 라운드·비용·멱등 계약은 별도 결정 대상으로 유지한다. 서버 production 코드는 로컬에서 아직 변경되지 않았음을 텍스트 인계로 확인했다. Library ZIP 전송은 공식 경로 두 번 실패 후 중단했고 원본 파일 덮어쓰기는 하지 않았다. 실제 Gemini 성공이나 운영 복구 완료를 합성 fixture 결과로 단정하지 않는다.
 
@@ -979,3 +979,16 @@
 - 현재 작업의 키 boolean 확인은 `exists=false/nonempty=false`다. 다른 새 환경의 키 존재 확인을 현재 작업의 인증 성공으로 사용하지 않으며 키를 환경 간 복사하지 않는다. 실제 평가 하네스는 별도 scratch에 준비했고 공급자 비용 경계 검증 전 실제 호출을 차단한다. 고정 23사례+원문 반복 2회 계획에 새 야간 fixture 2개를 자동 대체하지 않는다.
 - 첫 전체 guard는 366건 중 기존 prompt 원문 행 보존 계약 1건이 실패했다. 기존 테스트를 변경하지 않고 assertion RED를 별도 고정한 뒤 `reference_date → ref → locale → rawText` 한 행으로 수정했다. 기존 `ref → locale → rawText` 연결과 새 기준일 연결을 함께 보존하며, 기존 6개와 새 37개 총 43개 대상 GREEN·ktlintCheck 통과 및 독립 format 리뷰 PASS를 확인했다. 최종 source 지문으로 결함 주입과 전체 guard를 다시 검증한다.
 - 최종 지문의 결함 주입 6개를 다시 실행해 모두 assertion 실패로 탐지했고 원본 바이트를 복구했다. 2026-10-07 01:12 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`가 종료 코드0으로 통과했다. `ktlintCheck assemble test`는 61개 suite/366건/실패0/오류0/skip2이며 기존 유료 live probe와 OpenAPI export opt-in만 skip했다. 독립 리뷰 역할은 `/root/issue91_test_design`, 판정은 지원 범위 내 PASS다. 고정 테스트 7개 기록과 최종 소스·결함 검증 지문은 `.tdd/red/issue-91-*.json` 및 `.tdd/verification/issue-91-time-context.json`을 따른다. 원시 로그는 ignored `.codex/tdd-evidence/`에만 보존한다. 새 작업 인계를 위해 검증한 소스·테스트·문서·요약을 별도 feature 커밋으로 보존하며 SHA는 Git 이력으로 추적한다. 실제 Gemini 평가·#92 연결·Draft PR·병합·운영 배포 완료를 의미하지 않는다.
+
+
+### #91 LLM 중심 계약 전환 (2026-10-07)
+
+- 사용자 후속 요구와 독립 아키텍처 검토에 따라 `KoreanTimeContextResolver`와 adapter 원문 semantic gate를 제거했다. 유효한 provider SUCCESS의 시간·장소를 보존하고 AMBIGUOUS를 합성 성공으로 복구하지 않는다. Prompt는 일반 부모/자식 시각과 AVAILABLE union minus UNAVAILABLE, immutable reference_date를 안내한다. API·모델·SDK·재시도 설정은 변경하지 않는다.
+- 독립 신규 authority15개는 기존 `20bd3b4` 코드에서 컴파일 후 예상 assertion7개 RED를 확인했다. 기존37개를 행별 검토해 raw lexical 기대18개를 대체했고 구조/provider14개와 기준일5개를 보존했다. 기준일의 성공 pipeline은 명시적 provider SUCCESS fixture로 바꾸고 정확한 five-window 기대값은 유지했다. 변경된 테스트의 34개 migration 묶음도 기존 코드를 복원해 assertion7개 RED를 재확인한 뒤 지문을 고정했다. 원문 로그는 ignored `.codex/tdd-evidence/`에만 있다.
+- 이전7RED·6결함 근거를 `.tdd/history/issue-91-lexical-f70536e/`로 바이트 그대로 옮기고 `.tdd/supersessions/issue-91-llm-boundary.json`에 대체 사유와 보존 본문 지문을 기록했다. 이전 커밋과 성공366건은 당시 제한 문법 계약의 이력이며 새 설계의 검증 근거로 재사용하지 않는다. 원문 행 보존의 기존 prompt 계약은 테스트 바이트가 같아 해당 RED 근거를 활성 트리에도 그대로 유지한다.
+- 추가 실제 평가5사례는 실제 응답 관측 전에 독립 작성자가 고정했다. 평일6–9/7–10·주말1–6·명시AM부모·독립안양역의 정확한 구간·참가자·COMPLETE·요약을 유지하며 모델 결과에 맞춰 변경하지 않는다. 공급자 호출은 별도 부모 지정 평가 작업만 수행한다. 구현 작업의 실제 호출은0이다.
+- #92 서버 production과 웹 #17 연결은 별도 worktree와 담당자로 병렬 진행한다. 실제 OpenAPI 생성과 서버 Gradle은 공유 캐시 충돌을 피하도록 root가 순차 실행한다. 새로운 분석 라운드와 비용 상한은 별도 계약이며 모델 의미 미리보기 API를 추정하여 구현하지 않는다.
+
+- 새 경계 최종 검증: authority15+보존provider14+reference5가 GREEN이며 새 결함7개(lexical복귀,상수덮어쓰기,모호성성공변환,worker기준일,ref검증누락,날짜/요일검증누락,area명검증누락)를 모두 assertion으로 탐지했다. 실제 소스를 복구하고 독립 reviewer가 source3/test6/삭제resolver/archive8의 지문을 다시 확인했다. 리뷰 기록은 `.tdd/reviews/issue-91-provider-authority.json`, 새 결함 기록은 `.tdd/verification/issue-91-provider-authority.json`이다.
+- 2026-10-07 01:57 UTC 변경하지 않은 mandatory tdd_guard는 exit0, ktlintCheck/assemble/test 모두 성공했다. XML62suite/369건/실패0/오류0/기존skip2다. 새6개 offline 공유원장 테스트가 잠금·누적25회/USD0.30·미정산예약·중복·정책변경을 검사한다. 기본25/확장30 dryrun은 모두 UNRUN/호출0, synthetic replay는 예상PASS1/foreignrefFAIL1/UNRUN28이며 실제 공급자 응답이나 새prompt 모델 정확성 근거가 아니다.
+- 최종 feature commit/push 및 Draft PR #93의 설명을 현재 LLM 중심 경계로 갱신한다. 커밋 해시는 Git 이력으로 추적한다. 실제 모델 평가의 input100k 예약 하드 상한은 아직 별도 확인이 필요하고 live 기본flagfalse다. 새 outputdir이 승인을 초기화하지 않도록 approvalID+sharedledgerdir를 필수로 하며 미정산 예약은 전체 비용을 유지한 채 중단한다. 실제 모델·운영 데이터·병합·배포 호출0. #92 생산 컴파일 성공과 웹 mock검증은 별도이며 실제 PostgreSQL 확장 경계/OpenAPI/native연결 최종gate는 미완료다.

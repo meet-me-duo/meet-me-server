@@ -5,10 +5,7 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageBat
 import com.meetme.server.coordination.application.port.output.NaturalLanguageInput
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
-import com.meetme.server.coordination.domain.matching.TimeRangeMatcher
 import com.meetme.server.shared.domain.time.InstantTimeRange
-import com.meetme.server.shared.domain.time.MeetingTimeZone
-import com.meetme.server.shared.domain.time.SearchDateRange
 import com.meetme.server.submission.domain.StructuredCondition
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -25,52 +22,6 @@ import kotlin.test.assertNull
 // Issue #91 independent boundary review. Provider-wide validity precedes contextual rejection.
 class GeminiTimeContextBoundaryReviewTest {
     private val adapter = GeminiNaturalLanguageParserAdapter(GeminiProperties(), JsonMapper.builder().build())
-
-    @Test
-    fun `explicit noon parent is authoritative before conventional contextual inference`() {
-        val raw =
-            "평일은 정오부터 오후 2시까지 가능해요. 이번주는 목요일만 오후 1시부터 돼요. " +
-                "주말은 오후 2시부터 오후 7시까지 가능해요."
-        val request = request(listOf(raw))
-        val successfulConditions =
-            listOf(
-                window("MONDAY", 12, 14),
-                window("TUESDAY", 12, 14),
-                window("WEDNESDAY", 12, 14),
-                window("THURSDAY", 12, 14),
-                window("FRIDAY", 12, 14),
-                window("SATURDAY", 14, 19),
-                window("SUNDAY", 14, 19),
-            ).joinToString(",")
-        val ref = request.inputs.single().inputRef
-        val responses =
-            listOf(
-                """
-                {"schema_version":"2","results":[{"input_ref":"$ref","conditions":[$successfulConditions]}]}
-                """.trimIndent(),
-                """
-                {"schema_version":"2","results":[
-                  {"input_ref":"$ref","conditions":[],"rejection_code":"AMBIGUOUS_TIME_CONSTRAINT"}
-                ]}
-                """.trimIndent(),
-            )
-        for (response in responses) {
-            val result = adapter.parseProviderResponse(response, request).single()
-
-            assertNull(result.rejectionCode)
-            assertEquals(
-                listOf(utc(0, 12, 14), utc(1, 13, 14), utc(2, 12, 14), utc(3, 14, 19), utc(4, 14, 19)),
-                TimeRangeMatcher.calculateAvailability(
-                    result.conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    SearchDateRange.explicit(DATE, DATE.plusDays(5)),
-                    MeetingTimeZone.of("Asia/Seoul"),
-                ),
-            )
-        }
-    }
 
     @Test
     fun `fully bounded scoped week input does not enter start-only context recovery`() {

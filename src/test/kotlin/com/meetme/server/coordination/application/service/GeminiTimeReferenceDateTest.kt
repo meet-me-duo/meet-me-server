@@ -34,17 +34,22 @@ import com.meetme.server.shared.domain.time.MeetingTimeZone
 import com.meetme.server.shared.domain.time.SearchDateRange
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import com.meetme.server.submission.domain.Submission
+import com.meetme.server.submission.domain.TimePolarity
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import tools.jackson.databind.json.JsonMapper
 import java.time.Clock
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.ZoneOffset
+import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 import java.util.UUID
 import kotlin.test.assertEquals
@@ -246,14 +251,68 @@ class GeminiTimeReferenceDateTest {
 
         fun parse(
             request: NaturalLanguageBatchRequest,
-            reason: String = "AMBIGUOUS_TIME_CONSTRAINT",
+            reason: String? = null,
         ): NaturalLanguageBatchResult {
             val results =
-                request.inputs.joinToString(",") {
-                    """{"input_ref":"${it.inputRef}","conditions":[],"rejection_code":"$reason"}"""
+                request.inputs.map { input ->
+                    val conditions =
+                        if (reason == null) {
+                            explicitProviderWindows(input.referenceDate, request)
+                        } else {
+                            emptyList()
+                        }
+                    mapOf(
+                        "input_ref" to input.inputRef,
+                        "conditions" to
+                            conditions.map { condition ->
+                                mapOf(
+                                    "type" to "TIME_WINDOW",
+                                    "polarity" to condition.polarity.name,
+                                    "date" to condition.date?.toString(),
+                                    "day_of_week" to condition.dayOfWeek?.name,
+                                    "start_time" to condition.startTime.toString(),
+                                    "end_time" to condition.endTime.toString(),
+                                )
+                            },
+                        "rejection_code" to reason,
+                    )
                 }
-            val response = """{"schema_version":"2","results":[$results]}"""
+            val response = JsonMapper.builder().build().writeValueAsString(mapOf("schema_version" to "2", "results" to results))
             return NaturalLanguageBatchResult(adapter.parseProviderResponse(response, request), ParserUsage(null, null, response.length))
+        }
+
+        // Provider SUCCESS fixture: interpretation is explicit fixture data, never recovered from raw text.
+        private fun explicitProviderWindows(
+            reference: LocalDate,
+            request: NaturalLanguageBatchRequest,
+        ): List<StructuredCondition.TimeWindow> {
+            val recurring =
+                DayOfWeek.entries.map { day ->
+                    val weekend = day.value >= 6
+                    StructuredCondition.TimeWindow(
+                        TimePolarity.AVAILABLE,
+                        null,
+                        day,
+                        LocalTime.of(if (weekend) 14 else 19, 0),
+                        LocalTime.of(if (weekend) 19 else 21, 0),
+                    )
+                }
+            val thursday = reference.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).plusDays(3)
+            val exception =
+                if (thursday >= request.searchStartDate && thursday < request.searchEndDate) {
+                    listOf(
+                        StructuredCondition.TimeWindow(
+                            TimePolarity.UNAVAILABLE,
+                            thursday,
+                            null,
+                            LocalTime.of(19, 0),
+                            LocalTime.of(20, 0),
+                        ),
+                    )
+                } else {
+                    emptyList()
+                }
+            return recurring + exception
         }
 
         fun processor(parser: NaturalLanguageParserPort): GeminiBatchProcessor =

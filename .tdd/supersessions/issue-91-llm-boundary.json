@@ -1,0 +1,193 @@
+{
+  "superseded_revision": "f70536e26c588487edb1e18e09fb8d34e6e6c504",
+  "reason": "User-approved LLM-centered interpretation supersedes raw lexical rejection/overwrite and AMBIGUOUS recovery. Original test and evidence bytes remain in Git history; evidence JSON is archived byte-for-byte here.",
+  "archived_evidence": [
+    {
+      "path": ".tdd/red/issue-91-prompt-compatibility.json",
+      "sha256": "9afcd455e9f906311f71404c5ff51dbae27a5bd4a8ee2d377d186436e1e6950c",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-prompt-compatibility.json"
+    },
+    {
+      "path": ".tdd/red/issue-91-provider-safety.json",
+      "sha256": "100668f3f63f06e3b5dae57f960028a844d8923a12dbbe2a1c22df77ab5d04f1",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-provider-safety.json"
+    },
+    {
+      "path": ".tdd/red/issue-91-reference-date.json",
+      "sha256": "abd6aa89abbd094a8f0e3685759131e95598218041c9f423e5dc23aadae78075",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-reference-date.json"
+    },
+    {
+      "path": ".tdd/red/issue-91-night-boundary.json",
+      "sha256": "8fd6560bbc62f5cbe1aef79c0d27d325714fe5c46977beb2698f6ed1174ea34c",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-night-boundary.json"
+    },
+    {
+      "path": ".tdd/red/issue-91-boundary-review.json",
+      "sha256": "3eb5709aba844d52efb53454c4bb8ffeae6f84e3ff78d1a882f7f909871c0cb5",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-boundary-review.json"
+    },
+    {
+      "path": ".tdd/red/issue-91-time-context.json",
+      "sha256": "499b8e5c59a8e28126399de59f894b4ef60bc0509f9db6e7e16279d05706fac6",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-time-context.json"
+    },
+    {
+      "path": ".tdd/red/issue-91-safety-review.json",
+      "sha256": "36d35d9ece58f3f193663382623a35f32c3b568c9cb46995af76e70a2587c059",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/red/issue-91-safety-review.json"
+    },
+    {
+      "path": ".tdd/verification/issue-91-time-context.json",
+      "sha256": "0c6e86d59f7a252d3560b0cd21d94f9d0839e966f08e62a5997540491e3fe5b4",
+      "archived_path": ".tdd/history/issue-91-lexical-f70536e/verification/issue-91-time-context.json"
+    }
+  ],
+  "independent_test_inventory_sha256": "c13956156c1ee1d373e43d099d48d20a54dee826256bd681d61731fd22894270",
+  "independent_keep_body_manifest": {
+    "status": "SCRATCH_ONLY_MIGRATION_READY_NO_GRADLE",
+    "source_baseline": "20bd3b4",
+    "preserved_test_methods": 14,
+    "removed_lexical_methods": 18,
+    "files": [
+      {
+        "repo_file": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextBoundaryReviewTest.kt",
+        "original_sha256": "80d25173ef3eea3ef616fa36aca4183f121764446057eb77461da29b6f80810b",
+        "preserved": [
+          {
+            "method": "fully bounded scoped week input does not enter start-only context recovery",
+            "body_sha256": "cba1cf78f3f7a8733a5c98496c2c17fb4e38bb23ffc6dc7a13881e55f9714aec"
+          },
+          {
+            "method": "provider area name conflicts remain invalid before unsafe input conditions are discarded",
+            "body_sha256": "9a663bfd5806c0b29512253821137bef62ea8182461332d02e06f8975e9c3617"
+          }
+        ],
+        "removed": [
+          "explicit noon parent is authoritative before conventional contextual inference"
+        ],
+        "action": "ROOT_REPLACE_WITH_SCRATCH_COPY",
+        "scratch_file": "/workspace/scratch/meet-me-bootstrap/issue-91-llm-authority/retained-legacy-tests/GeminiTimeContextBoundaryReviewTest.kt",
+        "migrated_sha256": "70a1a77db0932996dcff09540bc378794887b38b8db5ee0cbbdec19c51d58371"
+      },
+      {
+        "repo_file": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+        "original_sha256": "e9233f212d49e7bf54577cb5315010c087567fbf449ccd51106af5842c0f18a5",
+        "preserved": [
+          {
+            "method": "explicit morning afternoon and 24 hour provider interpretation is not shifted",
+            "body_sha256": "0dab3ce64cdf5ada1c888b02cb2d57e134d7fc143f5cb064a4d5d46108c8a5de"
+          },
+          {
+            "method": "unknown bounds contradictions and unsupported whole input never become success",
+            "body_sha256": "96a0f35ef032fa51ee32b8d1e2c954b891f37ad0aa6d97baaa697cf999395f84"
+          },
+          {
+            "method": "provider unsupported conditional rejection cannot be recovered by context",
+            "body_sha256": "8beecd4471124036e68e035f5da55145e2486274991fbd04428f00bac757b9c2"
+          },
+          {
+            "method": "provider condition validation failures cannot be hidden by ambiguous recovery",
+            "body_sha256": "46b1e0734bbbede41509a45bfa9903b3f71360dcd2b68a05355dfc61ac16c359"
+          },
+          {
+            "method": "schema missing duplicate and foreign references remain invalid responses",
+            "body_sha256": "0df5aeaadabb73a1d687261369f07e5161bc96ba6143d1b3a47432dd7b6a3fe8"
+          },
+          {
+            "method": "provider thirty two condition boundary is accepted and thirty three cannot be recovered",
+            "body_sha256": "9d4906be08cbd77209231d85056f660e72bd0d4438182c3a9ab658792361eb81"
+          },
+          {
+            "method": "out of search exception does not turn empty explicit availability into all day",
+            "body_sha256": "bcdc5efe7ddfabd3d210ab81796c752dc02af5c9de0bffd5a2bed33a686d1888"
+          },
+          {
+            "method": "prompt carries separate per input immutable reference dates",
+            "body_sha256": "61836f19f3b34ee71292371970813b46625d1a50f155f2875ee6971041368f4b"
+          }
+        ],
+        "removed": [
+          "weekday exception inherits parent end and subtracts the earlier Thursday hour",
+          "real two participant matcher produces the exact five intervals",
+          "this week exception does not narrow next weeks Thursday",
+          "reference week starts Monday across Sunday Monday month and year boundaries",
+          "thirty one day search does not force recurring conditions past the thirty two limit"
+        ],
+        "action": "ROOT_REPLACE_WITH_SCRATCH_COPY",
+        "scratch_file": "/workspace/scratch/meet-me-bootstrap/issue-91-llm-authority/retained-legacy-tests/GeminiTimeContextContractTest.kt",
+        "migrated_sha256": "b0e1b93571f37242267f2935efa0e4fef0512cd855f46538c4ded854d4ee9d9b"
+      },
+      {
+        "repo_file": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextNightBoundaryTest.kt",
+        "original_sha256": "0672dda271ebaf1c6f8430fd947e96a94a76c18da2f4edbbb4eabff021f92c7c",
+        "preserved": [],
+        "removed": [
+          "early night inheritance remains ambiguous and cannot create afternoon attendance",
+          "night twelve is midnight before inherited afternoon end and real two person matching"
+        ],
+        "action": "ROOT_DELETE_ONLY_NO_SURVIVING_TEST"
+      },
+      {
+        "repo_file": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextProviderSafetyTest.kt",
+        "original_sha256": "5c0a1d2eae6e11834e484bc6ac04783e945771920d7d54a8cbeb4177443219d6",
+        "preserved": [
+          {
+            "method": "ordinary explicit time outside the context family remains provider validated",
+            "body_sha256": "fd2e3e2d58357c95de30976b41af9b1f1a78c46693297d0861c745239a13bab5"
+          },
+          {
+            "method": "ordinary independent time and place outside the context family remain unchanged",
+            "body_sha256": "af201585d880e90976412f2f3158679706b406e76d72e376121a0722f67a52dd"
+          },
+          {
+            "method": "broad negative word heuristics do not reject an unrelated ordinary place name",
+            "body_sha256": "fd3a974c0a266bc8c1d4c1fd5250633cca5abbb954795931147b65836eba26f2"
+          }
+        ],
+        "removed": [
+          "provider success cannot admit afternoon child outside an explicit morning parent",
+          "provider success cannot choose one of conflicting parent ends",
+          "provider success cannot invent an end for an orphan start-only context",
+          "provider success cannot admit a child that starts outside its compatible parent",
+          "provider success cannot erase negative or double negative residual clauses",
+          "provider success cannot silently ignore an unknown conditional or injection tail",
+          "provider success cannot flatten context coupled to a conditional place"
+        ],
+        "action": "ROOT_REPLACE_WITH_SCRATCH_COPY",
+        "scratch_file": "/workspace/scratch/meet-me-bootstrap/issue-91-llm-authority/retained-legacy-tests/GeminiTimeContextProviderSafetyTest.kt",
+        "migrated_sha256": "d8a9f7bd1487c088bf55c9b69bac62103cf08befd84089b3de5d6d18cd86f44d"
+      },
+      {
+        "repo_file": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextSafetyReviewTest.kt",
+        "original_sha256": "6254b2a90c24318e995b94888a903ef3300048658d54f28abaf375555450260e",
+        "preserved": [
+          {
+            "method": "explicit afternoon child outside inherited morning parent remains rejected",
+            "body_sha256": "b5e93a73849195de33f961b1c24a4cd3e79975da082ae2bd3cade794016ec1a3"
+          }
+        ],
+        "removed": [
+          "valid provider availability union cannot preserve the superseded Thursday hour",
+          "exact user filler text inherits context without dropping any clause",
+          "explicit morning start supplies the unstated end period before child inheritance"
+        ],
+        "action": "ROOT_REPLACE_WITH_SCRATCH_COPY",
+        "scratch_file": "/workspace/scratch/meet-me-bootstrap/issue-91-llm-authority/retained-legacy-tests/GeminiTimeContextSafetyReviewTest.kt",
+        "migrated_sha256": "b3e94b13cbc9567297893eb374540256332814f6290c96b8603bf3010cd9feb5"
+      }
+    ],
+    "root_delete_files": [
+      "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextNightBoundaryTest.kt"
+    ]
+  },
+  "new_boundary": "Provider structured conditions/rejection preserved; immutable reference dates and schema/ref/count/date/time/area consistency retained. No independent guarantee against provider source-clause omission.",
+  "replacement_red": ".tdd/red/issue-91-provider-authority-migration.json",
+  "retained_methods": 14,
+  "retained_reference_methods": 5,
+  "new_authority_methods": 15,
+  "retired_lexical_methods": 18,
+  "retained_unchanged_red_evidence": [
+    ".tdd/red/issue-91-prompt-compatibility.json"
+  ]
+}

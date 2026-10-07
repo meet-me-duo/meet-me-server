@@ -1,0 +1,53 @@
+{
+  "workItem": "issue-91-provider-authority-migration",
+  "sourceRevision": "20bd3b47fde81b506ab80474377fb1cef4ea3b63",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "sha256": "d798f7a782686bc324c1247e725670a055079963d6198b132dbf84a0d11c2619"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextBoundaryReviewTest.kt",
+      "sha256": "9fae0c4adef53efdf8876743ec717ac230fdb7517041842fe3456e06a7fbe6e3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "sha256": "843cfefca69e5b422e600b87ed0b6f5919cc971003dbdbd8104a3bead45f3e1c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextProviderSafetyTest.kt",
+      "sha256": "d8a9f7bd1487c088bf55c9b69bac62103cf08befd84089b3de5d6d18cd86f44d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextSafetyReviewTest.kt",
+      "sha256": "bba78e74669e506d653bc89cf5f64e4c7e975536528ac87a1817f8811867c0c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
+      "sha256": "e74bb3ec82e541284d8575e834cc725c3d2ec0e710b1f6b2570b22879f2247f9"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiProviderAuthorityContractTest",
+    "--tests",
+    "*GeminiTimeContext*Test",
+    "--tests",
+    "*GeminiTimeReferenceDateTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.weekday six to nine provider success reaches two participant matching unchanged()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.weekend one to six provider success is not restricted to the old two to seven template()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.valid dated provider windows are preserved instead of rewritten as recurring lexical windows()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.natural correction and polite suffix do not discard a valid complete provider success()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.independent additional place survives language interpretation and real offline matching()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.weekday seven to ten provider success preserves the inherited twenty two end()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.ambiguous provider rejection remains empty even when the old canonical regex could recover it()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T01:44:48.864833Z"
+}
