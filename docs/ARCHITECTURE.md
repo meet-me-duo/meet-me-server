@@ -374,12 +374,12 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - AI Adapter는 방 전체 제출 배치에서 비어 있지 않은 최신 `raw_text`만 배치 내부 불투명 참조값으로 구분하고, 각 입력 locale과 방 Time Zone ID를 파싱 문맥으로 전달한다. 자연어가 없는 참여자는 AI 요청에서 제외하며 결과는 요청한 입력 참조값별 언어 중립 서버 스키마와 지역 날짜·시간 값으로 변환한다.
 - 입력별 `referenceDate`는 고정 제출 버전의 `createdAt`을 방 시간대로 변환한 지역 날짜다. Worker 시각·탐색 시작일과 분리하여 같은 버전의 재시도·재분석에서도 보존한다. 상대 주는 이 기준일을 포함하는 월요일~일요일이며 특정 날짜 예외를 매주 반복하는 요일 조건으로 바꾸지 않는다.
 - 자연어 전체의 부모 시간·날짜 예외·정정·부정·독립 장소 해석은 Gemini Structured Output의 책임이다. Adapter는 원문 정규식을 두 번째 의미 판정기로 사용하거나 유효한 공급자 SUCCESS 조건을 다른 시간으로 덮어쓰지 않는다. 공급자 `AMBIGUOUS_TIME_CONSTRAINT`도 원문 패턴으로 SUCCESS로 복구하지 않는다. Prompt는 일반 부모 구간·명시 오전/오후·24시간·정오/자정과 시작만 있는 호환 자식의 종료 상속을 안내한다.
-- Matcher는 AVAILABLE 합집합에서 UNAVAILABLE을 차감한다. 따라서 특정 날짜 시작 예외는 반복 기본과 해당 날짜의 제외 prefix로 구조화하도록 요청한다. 이 중첩은 정상적인 축소 표현이며 구조적 모순이 아니다. 참조값·결과 개수·32조건·날짜 범위/요일 일치·시간 경계·조건 필드·배치 area_key/area_name 일관성 검증은 서버에 유지한다. 독립 시간·장소 조건의 공존 자체로 조건 결합을 추정하지 않는다.
+- Matcher는 AVAILABLE 합집합에서 UNAVAILABLE을 차감한다. 따라서 특정 날짜 시작 예외는 반복 기본과 해당 날짜의 제외 prefix로 구조화하도록 요청한다. 이 중첩은 정상적인 축소 표현이며 구조적 모순이 아니다. 참조값·결과 개수·32조건·날짜 유효성/요일 일치·시간 경계·조건 필드·배치 area_key/area_name 일관성 검증은 서버에 유지한다. 독립 시간·장소 조건의 공존 자체로 조건 결합을 추정하지 않는다.
 - Prompt는 원문 전체의 정정·부정과 표현 가능한 조건을 보존하고, 종료를 특정할 수 없는 모호성이나 flat schema로 표현할 수 없는 시간·장소 결합에는 미반영 사유를 반환하도록 요구한다. 구조적으로 유효한 모델 출력이 원문 조건을 누락했는지는 서버 구조 검증만으로 보장하지 못한다. 합성 provider fixture는 결과 보존과 결정론적 매칭 검증이며 실제 모델의 자연어 정확성 근거는 고정 기대값에 대한 별도 실제 평가로 보고한다.
 - 참가자 제출·수정에는 파싱 작업을 생성하지 않는다. 입력 수집 종료 시 고정한 방 전체 제출 배치에 자연어가 하나 이상 있을 때만 하나의 논리 파싱 작업을 생성한다. 자연어가 전혀 없으면 Gemini를 건너뛰고 정형 일정 입력으로 결정론적 매칭을 시작한다.
 - 신규 원문은 ECMAScript trim 후 필수 1~500 Unicode 코드포인트이고 방 합계는 10,000이다. legacy null은 복원 전용으로 Gemini에 전달하지 않으며 초과 원문은 자르지 않는다.
-- 논리 파싱 작업은 최초 호출 1회와 최대 3회의 재시도로 구성한다. 네트워크 오류, timeout, HTTP 429와 공급자 5xx에만 재시도하고 의미 파싱 또는 스키마·도메인 검증 실패에는 같은 배치를 자동 재호출하지 않는다.
-- 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 15초이고 논리 작업 전체 timeout은 60초다.
+- 논리 파싱 작업은 Gemini 최초 1회와 최대 3회 기술 재시도 뒤 OpenAI `gpt-6-luna` 폴백 1회로 제한한다. NETWORK/TIMEOUT/명시적 일시 RATE_LIMIT/SERVER만 재시도·폴백한다. typed 오류 code/status가 문자열보다 우선하며 단순 429/RESOURCE_EXHAUSTED는 quota로 보수적으로 구분한다. 인증·권한·결제·비일시 quota·잘못된 요청·설정·응답 검증 오류는 재시도하지 않는다. 성공한 PARTIAL/NO_MATCH/AMBIGUOUS는 기술 오류가 아니다.
+- 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 최대 15초를 실제 남은 예산으로 줄인다. Worker 진입 시 단일 monotonic 60초 deadline을 시작하며 Gemini 최대 42초·Luna 최대 15초·완료 예약 3초를 사용한다. 4회×15초와 backoff를 모두 보장하지 않는다. 공급자 HTTP와 결과 게시 경계에서 deadline을 검사하며 SDK 중첩 retry와 연결 재전송을 끈다.
 - 응답은 자연어가 있어 요청에 포함된 불투명 참조값의 개수와 집합이 일치해야 하며 참가자별 항목을 독립적으로 검증한다. 배치 전체의 기술적 재시도가 소진되면 입력과 고정 배치를 보존하고 `ANALYSIS_DELAYED`로 전이하며 매칭하지 않는다.
 - 조건은 `TIME_WINDOW`, `SPECIFIC_PLACE`, `TRAVEL_CONSTRAINT`, `UNRESOLVED_PLACE` 유니온으로 저장한다. `SPECIFIC_PLACE`는 `query`, 배치 내부 `area_key`, 공통 `area_name`을 포함한다. 좌표는 스키마에 포함하지 않으며 조건 단위 검증 실패는 유효 조건과 분리해 미반영 사유로 보존한다.
 - `TIME_WINDOW`의 시작과 일반 종료는 offset 없는 `HH:mm`을 사용하고, 종료에 한해서만 `24:00`을 다음 지역 날짜 시작의 배타적 경계로 허용한다. 날짜·시간 파싱 실패는 해당 조건의 검증 실패로 격리하고 방 전체 응답 실패로 승격하지 않는다.
@@ -506,3 +506,13 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 9. 추가 지원 언어, 사용자 선호 locale 저장 위치와 locale 결정 우선순위
 10. 같은 기기에서 여러 사람이 같은 방에 참여할 때의 계정·세션 전환 UX
 11. Post-MVP 실제 좌표·이동시간 검증을 위한 지도 공급자, 결제 방식과 Gemini 그룹 보정 정책
+
+### 제한된 Luna 폴백과 durable 실행 (ADR-047)
+
+Gemini와 OpenAI Responses API의 outbound adapter는 동일 `NaturalLanguageBatchRequest`와 공통 prompt/schema/domain validator를 사용한다. OpenAI strict 형식은 nullable `rejection_code`를 required로 지정하고 null을 허용한다. Gemini의 기존 nullable/omitted 키 호환은 보존한다. 거부·잘림·참조 누락/중복·크기 초과는 INVALID_RESPONSE로 처리한다. 개별 조건의 잘못된 enum·날짜·시간은 기존 공통 validator 계약대로 CONDITION_VALIDATION_FAILED/PARTIAL로 구분한다. 두 공급자의 결과를 부분 혼합하거나 #93에서 삭제한 원문 lexical resolver·SUCCESS 덮어쓰기·AMBIGUOUS 복구를 재도입하지 않는다.
+
+`analysis_invocations`는 run ID와 STRUCTURING version별로 owner token·최초 deadline·공급자별 호출 카운터·승자를 보존한다. room→exact run 잠금 아래 실행 및 시도 claim과 attempt 이력을 함께 커밋하고 동일 실행의 재전달은 새 공급자 호출을 시작하지 않는다. 프로세스 장애로 중단된 실행은 원래 deadline 만료 후 복구 scheduler가 입력과 batch를 보존하여 ANALYSIS_DELAYED로 종결한다. 결과는 활성 pointer·run version·수정 라운드·owner·admitted attempt·deadline 검사를 통과한 한 승자만 게시한다. matching 게시도 같은 deadline으로 제한한다. 공급자 HTTP는 두 어댑터 모두 명시적 재시도·redirect 없는 OkHttp 전체 호출 timeout으로 본문 읽기까지 제한하며, timeout 또는 실패 시 연결을 취소한다. DB 저장 중 deadline 초과는 typed 예외로 트랜잭션을 롤백한 뒤 새 트랜잭션에서 지연 상태를 기록한다. HOST 지연 재시도는 새 run version의 별도 실행이며 공급자 exactly-once는 보장하지 않는다.
+
+Attempt에 provider/model/policy/invocation별 usage를 구분한다. 알 수 없는 usage 또는 가격은 null이며 Luna에는 Gemini 단가를 적용하지 않는다. 유효한 범위 밖 날짜 조건은 validator에서 보존하고 결정론적 matcher가 검색 기간에만 펼친다. AVAILABLE 여부는 조건을 버리기 전에 판단하므로 범위 밖 AVAILABLE-only가 전체 가능으로 바뀌지 않는다.
+
+설정에는 `OPENAI_API_KEY` 변수 참조만 추가한다. 실제 비밀값과 운영 설정은 이 구현에서 읽거나 등록하지 않는다. 새 공급자로 원문을 전달하는 사용자 고지·처리 조건 검토와 운영 자격 증명 등록은 배포 준비의 별도 작업이며 개인 보관함 연결·별도 품질 평가를 운영 배포 승인으로 확대하지 않는다.

@@ -189,35 +189,12 @@ class GeminiProviderAuthorityContractTest {
     }
 
     @Test
-    fun `valid out of range is preserved while contradictory date weekday and coordinates remain invalid`() {
+    fun `out of range and contradictory date weekday metadata cannot become provider success`() {
         val request = request(CANONICAL)
         val valid = wireCondition(datedWindow(1, 20, 21))
-        // Issue #96 supersedes scope-as-validation: valid AVAILABLE remains explicit even when it expands to nothing.
-        val outside = valid + ("date" to DATE.plusDays(5).toString())
-        val outsideWire =
-            mapper.writeValueAsString(
-                mapOf(
-                    "schema_version" to "2",
-                    "results" to listOf(mapOf("input_ref" to request.inputs.single().inputRef, "conditions" to listOf(outside))),
-                ),
-            )
-        val outsideParsed = adapter.parseProviderResponse(outsideWire, request).single()
-        assertNull(outsideParsed.rejectionCode)
-        assertEquals(DATE.plusDays(5), (outsideParsed.conditions.single() as StructuredCondition.TimeWindow).date)
-        assertEquals(
-            emptyList(),
-            TimeRangeMatcher.calculateAvailability(
-                outsideParsed.conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
-                emptyList(),
-                emptyList(),
-                emptyList(),
-                SearchDateRange.explicit(request.searchStartDate, request.searchEndDate),
-                MeetingTimeZone.of(request.timeZone.id),
-            ),
-            "Out-of-range AVAILABLE must not become neutral all-day availability",
-        )
         val invalid =
             listOf(
+                valid + ("date" to DATE.plusDays(5).toString()),
                 valid + ("day_of_week" to DayOfWeek.FRIDAY.name),
                 valid + ("coordinates" to listOf(37.1, 127.1)),
             )

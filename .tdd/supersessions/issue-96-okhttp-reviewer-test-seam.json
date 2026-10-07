@@ -1,0 +1,31 @@
+{
+  "workItem": "issue-96-okhttp-reviewer-test-seam",
+  "recordedAt": "2026-10-07T06:02:39.599950Z",
+  "reason": "Internal loopback constructor transport changes from JDK HttpClient to per-client OkHttp. Only import/client factory change; assertions, request, TCP behavior, delays and expected outcomes are unchanged. Original raw transport tests were GREEN and are not represented as RED.",
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-96-publication-admission.json",
+      "archived_path": ".tdd/history/issue-96-okhttp-test-seam/issue-96-publication-admission.json",
+      "sha256": "b9bf36d9fad706dc7f875294afbeba65495b71959310953e4ac70e7a6d071b5f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaTransportNoReplayContractTest.kt",
+      "beforeSha256": "4e1bdab81997488d83eebd74c7901af9fb57131b7e797d66b1e3f757681895c2",
+      "afterSha256": "f3ad9302dec7ba2dc1f2b06c96c6ab1e9c7afc6ddcc2588fc416037b1d5933bf",
+      "archivedBeforePath": ".tdd/history/issue-96-okhttp-test-seam/LunaTransportNoReplayContractTest.before.kt",
+      "changes": [
+        "java.net.http.HttpClient import -> okhttp3.OkHttpClient",
+        "HttpClient.newBuilder().version(HTTP_1_1).build() -> OkHttpClient.Builder().build()"
+      ]
+    }
+  ],
+  "activeReviewerRED": {
+    "path": ".tdd/red/issue-96-publication-admission.json",
+    "scope": "Same unchanged publication/admission test bytes and same six actual expected failures from original execution. Raw transport GREEN file omitted after seam change; this narrowing does not claim any new execution."
+  },
+  "transportBaseline": ".tdd/reviews/issue-96-review-red-provenance.json",
+  "compatibleTransportVerification": "Root focused GREEN: 98 tests, 12 suites, failures/errors/skipped 0, log .codex/tdd-evidence/issue-96-focused-green.log. Raw TCP single-reset exchange and unfinished-body timeout/server cancellation assertions both passed with default injected OkHttp client.",
+  "providerCalls": 0
+}

@@ -210,7 +210,7 @@ class GeminiNaturalLanguageParserAdapterTest {
     }
 
     @Test
-    fun `탐색 범위 밖 날짜 조건을 제외한다`() {
+    fun `Issue 96 유효한 탐색 범위 밖 날짜 조건도 보존한다`() {
         val request = request(1)
         val json =
             """
@@ -222,8 +222,10 @@ class GeminiNaturalLanguageParserAdapterTest {
             """.trimIndent()
 
         val result = adapter.parseProviderResponse(json, request).single()
-        assertEquals(emptyList(), result.conditions)
-        assertEquals("CONDITION_VALIDATION_FAILED", result.rejectionCode)
+        // Issue #96 supersedes the old scope-as-validation contract: the matcher applies search scope.
+        val condition = assertIs<StructuredCondition.TimeWindow>(result.conditions.single())
+        assertEquals(LocalDate.of(2026, 10, 21), condition.date)
+        assertNull(result.rejectionCode)
     }
 
     @Test

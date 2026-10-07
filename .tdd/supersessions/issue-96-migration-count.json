@@ -1,0 +1,34 @@
+{
+  "workItem": "issue-96-migration-count",
+  "recordedAt": "2026-10-07T05:46:08.943017Z",
+  "scope": "Explicit migration compatibility supersession for additive V9 bounded analysis invocation schema. Exact migration count and current version checks remain; V1-V8 upgrade-target tests are unchanged. No behavioral expectations are weakened.",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "beforeSha256": "b65834a5bb071321a573458967658c66988a5ae7d309e0dab278d77dd472bfe9",
+      "afterSha256": "48ee2cdb9ebbc238d9d26cfb71fbf280b1aa2d5aa7ce4f269a2f5d99f8b63228",
+      "archivedBeforePath": ".tdd/history/issue-96-migration-count/DatabaseMigrationRunnerTest.before.kt",
+      "changes": [
+        "current Flyway version expectation 8 -> 9",
+        "migrationsExecuted expectation 8 -> 9"
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "beforeSha256": "27d5aa20731270e54542af7b69d434b6c0a27c0e20461f35099cb8e0e9f411ec",
+      "afterSha256": "d392b1b06315919ff6cb3365b95949fe37047a953550ad7d50cfd3e8ac563b85",
+      "archivedBeforePath": ".tdd/history/issue-96-migration-count/CorePersistenceIntegrationTest.before.kt",
+      "changes": [
+        "current Flyway version expectation 8 -> 9"
+      ]
+    }
+  ],
+  "preservedHistoricalRed": {
+    "path": ".tdd/history/issue-96-migration-count/issue-22-database-migration.json",
+    "sha256": "60f5bfa607091a94137ad4d54b3155c5ccc97f0bfe64147b60a4e306939a9eb5"
+  },
+  "behavioralRed": ".tdd/red/issue-96-durable-invocation.json",
+  "verification": "Root full pre-review migration suites passed within524tests (only3 unrelated superseded search-scope assertions failed); final mandatory gate will be recorded in issue-96 verification. V1-V8 targeted upgrade tests remain unchanged.",
+  "providerCalls": 0
+}

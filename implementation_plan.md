@@ -10,6 +10,20 @@
 
 ## 운영 규칙
 
+### Issue #96 현재 작업 범위 (2026-10-07 UTC)
+
+- [x] `[AGENT]` Issue #96·#95, PR #93, 지침 6개, project-architecture skill과 기존 Worklog를 확인했다. 깨끗한 `develop` 848b968에서 ff-only pull 후 독립 `feature/96-bounded-luna-fallback`에 검증된 PR #94 기준 bf4edff를 fast-forward했다. 이 기준은 #93 provider-authority를 이미 포함한다.
+- [x] `[AGENT]` 부모가 제공한 저장 Luna 응답 fixture의 canonical SHA-256 `03bb35860232477203710071cb736c185e9c211f418da886dc2bd5d74cc2c6bf`를 확인했다. 원래 sourceHead·모델·입력 참조·referenceDate·검색 배타적 끝·schemaVersion을 보존한다. 직접 모델 호출은 0이며 부모의 평가 횟수·비용을 이 작업의 검증으로 집계하지 않는다.
+- [x] `[AGENT]` 독립 계약 테스트 → 구현 → 독립 결함 리뷰 순서로 제한 폴백, 공통 검증, durable 실행·시도 claim·승자 게시·시간 경계를 검증했다. 실제 assertion으로 결함15개를 탐지하고218개 소스·테스트의 바이트 복원을 확인했다.
+- [x] `[AGENT]` 실제 PostgreSQL, 무료 저장 응답 재생, 합성 HTTP timeout/취소 및 변경하지 않은 필수 hook의 전체526건/실패0/오류0/skip4를 확인했다.
+- [ ] `[AGENT]` push 후 draft PR의 정확 HEAD CI를 확인하고 PR 본문에 실행 링크를 기록한다.
+- [ ] `[AGENT]` 검증 후 commit·push·develop 대상 draft PR을 게시한다. 사용자가 이 범위를 명시적으로 위임했으므로 추가 생성 승인 대기는 없다.
+- [ ] `[SHARED]` #95와 신규 migration 번호 및 최소 통합 계약을 조율한다. 기존 V1~V8을 수정하지 않으며 #95 추천·확정 모델을 이 브랜치에 구현하지 않는다.
+
+승인 계약은 Gemini 최초 1회 + 최대 3회 지수 백오프 Full Jitter 기술 재시도 뒤 OpenAI `gpt-6-luna` 1회다. 60초 전체 예산에 Luna 호출과 완료 시간을 남기며 실제 남은 시간에 맞춰 Gemini 재시도 수와 호출 timeout을 줄인다. 구현 예산안은 Gemini 최대 42초, Luna 최대 15초, 완료 예약 3초다. 성공한 PARTIAL/NO_MATCH/AMBIGUOUS는 기술 실패가 아니다. NETWORK/TIMEOUT/명시적인 일시 rate-limit/SERVER만 폴백하며 인증·권한·결제·quota·잘못된 요청·설정·응답 검증은 구분한다. 두 공급자는 같은 frozen 입력·스키마·공통 validator와 후처리를 사용하고 결과를 혼합하지 않는다. 두 공급자 기술 실패는 입력·배치 보존과 `ANALYSIS_DELAYED`/후보 0/정상 ACK를 유지한다.
+
+동일 Outbox 재전달·프로세스 재시작은 기존 논리 실행의 deadline·호출 상한을 초기화하지 않는다. 명시적 HOST 재시도는 같은 batch/run의 새 version에 해당하는 별도 논리 실행·비용 단위다. 공급자 exactly-once는 보장하지 않는다. 알 수 없는 usage/비용은 null이며 Luna에 Gemini 단가를 적용하지 않는다. 설정은 코드의 변수 참조만 추가하고 비밀값·운영 설정·권한을 읽거나 변경하지 않는다. 운영 배포·병합·유료 API 호출은 이 작업 범위에 없다.
+
 - `[x]`는 구현, 관련 테스트, 문서 검토와 검증이 모두 끝난 작업만 표시한다.
 - `[ ]`는 미착수, 진행 중, 사용자 선택 대기 또는 검증 미완료 상태를 포함한다.
 - 작업 시작 전 현재 브랜치, `git status`, 최근 커밋과 관련 GitHub Issue/PR을 확인한다.
@@ -1078,3 +1092,17 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 기존 가드·deploy·기존 정적 검사 및 기능196개는 `06bc741`과 바이트 동일하다. 과거 선택210개 복원 증거는 `06bc741`의 당시 범위로 보존하고, workflow2개가 달라진 현재 전체210개와 동일하다고 표시하지 않는다. 별도 후속 근거는 `.tdd/deployment/issue-92-release-extraction.json`으로 추적한다.
 - 실제 모델 평가는 부모가 별도 환경에서 총10/50회 진행했다. 9번째 원문 해석200 성공과 10번째 실제 HTTP·DB 배치503 미완료를 합성 검사와 구분한다. 이 구현·검증 작업의 공급자 호출 및 평가 도구 변경은0이다.
 - Commit/PR: 동일 커밋 예정, 기존 Draft PR #94 업데이트. 정확 새 head CI는 push 이후 확인하며 운영 host 설치·설정·migration·배포·main/develop 병합은 미실행이다.
+
+### Issue #96 제한된 Luna 폴백 구현·검증 (2026-10-07 UTC)
+
+- Gemini 최초 1회와 Full Jitter 최대 3회 기술 재시도 뒤 Luna 1회를 구현했다. 전체 60초의 초기 배분은 Gemini 42초, Luna 15초, 완료 3초이며 DB admission 대기 뒤 실제 남은 시간으로 timeout을 다시 계산한다. 저장 중 deadline 초과는 typed 예외로 롤백하고 별도 트랜잭션에서 ANALYSIS_DELAYED로 종결한다. 호출하지 못한 admission도 보수적으로 슬롯을 소비하며 physical-call metrics와 구분한다.
+- 두 어댑터는 공통 prompt/schema/validator를 사용한다. OpenAI strict nullable rejection_code는 required+null을 허용한다. 두 HTTP transport의 retry와 redirect를 명시적으로 끄고 본문 읽기 전체 timeout·취소를 검증한다. typed 인증/권한/결제/quota/잘못된 요청과 일시 NETWORK/TIMEOUT/RATE_LIMIT/SERVER를 구분하며 성공 PARTIAL/AMBIGUOUS/NO_MATCH는 폴백하지 않는다.
+- V9는 run ID+STRUCTURING version별 원래 deadline·owner·4+1 admission·승자를 영속화한다. 기존 V1~V8과 #95의 추천·확정 모델을 바꾸지 않는다. 재전달·재시작은 예산을 초기화하거나 자동 유료 재호출하지 않고 원래 deadline 만료 복구로 지연 처리한다. HOST 명시적 retry는 같은 frozen batch/run의 새 version을 사용한다. 공급자 exactly-once와 운영 배포 완료를 주장하지 않는다.
+- 독립 테스트 설계는 contract_tests와 durable_tests, 공급자 구현은 provider_adapter, 독립 리뷰·결함 설계는 fault_review가 담당했다. 최초 RED, 보조 코드 수리 후 재확인, 기존 검색 범위 계약의 #96 supersession을 각 .tdd/red·history·supersessions에 보존한다. 일부 lifecycle 원본 XML은 덮어써졌으므로 원본 실패 로그를 증거로 사용하며 XML을 재작성하지 않는다.
+- 저장 Luna fixture는 부모 평가 세션의 실제 응답이며 canonical SHA-256 03bb35860232477203710071cb736c185e9c211f418da886dc2bd5d74cc2c6bf를 보존했다. 10/15의 유효한 UNAVAILABLE 조건은 validator에서 유지하고 matcher가 검색 기간에 적용한다. 기대 10/7·8·9 19–21 COMPLETE와 범위 밖 AVAILABLE-only의 빈 가능 구간을 무료 재생으로 검증한다. 공급자 원문 lexical 해석·SUCCESS 덮어쓰기·AMBIGUOUS 복구는 재도입하지 않는다.
+- 첫 대상 98건은 모두 GREEN이다. 첫 전체 524건은 오류0/skip4이며 실패3건은 범위 밖 날짜를 잘못된 조건으로 취급하던 기존 계약이다. 사용자 #96 요구에 따라 독립 저자가 해당 조건 검증과 검색 적용을 분리하고 기존 잘못된 enum·요일·좌표·참조 거절을 유지하여 새 RED를 확인한다. 최종 GREEN·결함 주입·mandatory hook·정확 HEAD CI의 최종 집계는 아래 완료 근거를 따른다.
+- 배포 정적13개·Compose fidelity·합성 credential refresh·V8 release guard37개는 통과했다. Nginx 원본 로컬 실행은 workspace의0600 bind file 및 주입 proxy403 환경 문제로 실패했고, 동일 공개 config의 읽기 가능한 임시 fixture와 컨테이너 로컬 HTTP proxy 제거로 health를 확인했다. 저장소 파일 권한·운영 권한·deployment script는 변경하지 않았으며 정확 HEAD CI에서 원본 script를 확인한다.
+- 이 구현 세션의 유료 모델 호출·운영 접근·비밀값 읽기/출력/저장·운영 등록·권한 변경은0이다. 부모의 Gemini10+Luna9 실제 품질 평가를 이 세션의 호출 또는 새 transport 실검증으로 집계하지 않는다. 개인 OPENAI 연결은 운영 설정·배포 승인과 별개이며 코드에는 변수 참조만 추가했다.
+- Commit/PR: 동일 커밋 예정, develop 대상 독립 draft PR. #94 bf4edff 기준과 #93 포함, #95 migration 번호 예약은 통합 담당 조율 항목이다. 운영 배포·병합은 미실행이다.
+
+**#96 최종 로컬 완료 근거**: 변경하지 않은 .codex/hooks/tdd_guard.py가 exit0(130.077초)로 ktlintCheck·assemble·test 및 guard self-tests를 통과했다. 실제90suite/526건/실패0/오류0/skip4이며 기존 유료 live probe·export/debug opt-in만 skip했다. 독립 source/test SHA 검토 PASS와 결함15개 assertion 탐지·전체218개 바이트 복원을 .tdd/reviews/issue-96-independent-review.json 및 .tdd/verification/issue-96-bounded-fallback.json으로 추적한다. 모든 #96 RED8개 요약의 JSON Schema와 최종 테스트 지문이 일치한다. 원시 로그·XML은 ignored .codex/tdd-evidence에만 보존한다. 커밋·draft PR 생성과 정확 HEAD CI는 이 검증 지문을 사용하며 결과 URL·head SHA는 PR 본문과 Git 이력에서 확인한다. 운영 배포·main/develop 병합 및 유료 호출은0이다.

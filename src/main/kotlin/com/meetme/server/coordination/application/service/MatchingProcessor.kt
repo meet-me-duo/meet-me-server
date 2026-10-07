@@ -1,5 +1,6 @@
 package com.meetme.server.coordination.application.service
 
+import com.meetme.server.coordination.application.port.output.AnalysisInvocationRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
@@ -39,8 +40,18 @@ class MatchingProcessor(
     private val metrics: ApplicationMetricsPort? = null,
     private val clock: Clock = Clock.systemUTC(),
 ) {
+    fun processBounded(
+        batchId: SubmissionBatchId,
+        canPublish: () -> Boolean,
+    ) = processInternal(batchId, canPublish)
+
     @Transactional
-    fun process(batchId: SubmissionBatchId) {
+    fun process(batchId: SubmissionBatchId) = processInternal(batchId, null)
+
+    private fun processInternal(
+        batchId: SubmissionBatchId,
+        canPublish: (() -> Boolean)?,
+    ) {
         val startedNanos = System.nanoTime()
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
         val run = persistence.start(initial) ?: return
@@ -146,7 +157,22 @@ class MatchingProcessor(
                 )
             }
         val completed = run.complete(if (hasUnappliedInput) CandidateQuality.PARTIAL else CandidateQuality.COMPLETE, candidates)
-        persistence.complete(completed, snapshots)
+        if (canPublish == null) {
+            persistence.complete(completed, snapshots)
+        } else {
+            val published =
+                try {
+                    persistence.completeBounded(completed, snapshots, canPublish)
+                } catch (_: AnalysisDeadlineExceededException) {
+                    false
+                }
+            if (!published) {
+                // Publication has finished or rolled back before this fresh delay transaction.
+                persistence.delay(run)
+                metrics?.matching("ANALYSIS_DELAYED", Duration.ofNanos(System.nanoTime() - startedNanos), 0)
+                return
+            }
+        }
         metrics?.matching("COMPLETED", Duration.ofNanos(System.nanoTime() - startedNanos), candidates.size)
     }
 
@@ -165,7 +191,28 @@ class MatchingProcessingPersistenceService(
     private val roomRepository: com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository,
     private val runRepository: CoordinationRunRepository,
     private val normalizedPlaceRepository: NormalizedPlaceRepository,
+    private val invocationRepository: AnalysisInvocationRepository? = null,
+    private val clock: Clock = Clock.systemUTC(),
 ) {
+    @Transactional
+    fun completeBounded(
+        run: CoordinationRun,
+        places: List<NormalizedPlace>,
+        canPublish: () -> Boolean,
+    ): Boolean {
+        val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return false
+        if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return false
+        val invocation = invocationRepository?.findLatestByRun(current.id)?.takeIf { current.version == it.runVersion + 1 }
+
+        fun withinDeadline(): Boolean = canPublish() && (invocation == null || clock.instant() < invocation.deadlineAt)
+        if (!withinDeadline()) return false
+        normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
+        runRepository.update(run)
+        roomRepository.update(room.transition())
+        if (!withinDeadline()) throw AnalysisDeadlineExceededException()
+        return true
+    }
+
     fun room(id: com.meetme.server.shared.domain.MeetingRoomId) =
         requireNotNull(roomRepository.findById(id)) { "Room for coordination run does not exist" }
 

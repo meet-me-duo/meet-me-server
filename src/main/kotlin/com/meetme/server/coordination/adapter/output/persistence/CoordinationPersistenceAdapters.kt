@@ -505,8 +505,8 @@ class JdbcCoordinationAttemptRepository(
             """
             INSERT INTO coordination_attempts
                 (id, coordination_run_id, attempt_number, started_at, finished_at, failure_code,
-                 input_tokens, output_tokens, response_bytes, estimated_cost_usd, failure_kind)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 input_tokens, output_tokens, response_bytes, estimated_cost_usd, failure_kind, provider, model, policy_version, invocation_id)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             attempt.id,
             attempt.coordinationRunId.value,
@@ -519,6 +519,10 @@ class JdbcCoordinationAttemptRepository(
             attempt.responseBytes,
             attempt.estimatedCostUsd,
             attempt.failureKind,
+            attempt.provider.name,
+            attempt.model,
+            attempt.policyVersion,
+            attempt.invocationId,
         )
     }
 

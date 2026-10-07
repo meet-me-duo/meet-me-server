@@ -487,3 +487,14 @@ meeting_rooms는 active_run_id, revision_generation, active_revision_round_id, c
 **기존 웹 호환의 한계**: 새 웹+구 서버는 recovery capability가 없으면 관련 동작을 숨긴다. 구 웹+새 서버의 OPEN 라운드는 공개 COLLECTING으로 보이지만 round/revision 없는 PUT은 409이고 기존 close는 200 no-op이다. 이는 입력과 배치를 보호하는 계약이며 수정 UX의 양방향 호환 성공은 아니다. 웹 선배포도 기존 탭·캐시의 구 웹 제거를 보장하지 않는다. 정확한 구/신 번들 합성 브라우저 검증에서 구 PUT409는 draft를 유지하지만 reload가 미저장 draft를 잃게 함을 확인했다. 운영자는 먼저 원문을 복사하고 새로고침한 뒤 새 웹에 다시 입력·명시적 저장·결과 확인하는 안내와 지원 경로를 제공해야 한다. 이 운영 절차와 실제 cross-version backend 검증은 별도 선행조건이다.
 
 **읽기 전용 배포 후 확인**: 로컬/격리 staging에서는 합성 방·합성 증명으로 room/본인 submission/candidates GET의 metadata와 권한 경계를 검사한다. 운영 실행이 별도 승인된 뒤에는 `/healthz`, 앱 내부 `127.0.0.1:9090/actuator/health`, `/v3/api-docs`의 계약을 확인한다. 사용자 방·운영 원문·다른 참여자 입력을 탐색하지 않으며 운영 POST/PUT·재분석·확정은 smoke에 포함하지 않는다. credential·cookie·원문은 로그나 인계 자료에 출력하지 않는다. 합성 쓰기 흐름과 구 캐시 화면은 운영 데이터 없이 staging에서 검증한다. ADR-042의 main 병합은 자동 CD를 시작하므로 위 lifecycle guard·migration·웹·operator 조건이 충족되기 전에는 Draft PR/CI 완료와 배포 준비 완료를 구분한다.
+
+
+## ADR-047 제한된 Luna 구조화 폴백과 영속 실행 예산
+
+**날짜**: 2026-10-07
+
+**결정**: 사용자 승인 Issue #96에 따라 Gemini 최초 1회+최대 3회 Full Jitter 기술 재시도 뒤 OpenAI `gpt-6-luna` 구조화 폴백 1회를 사용한다. 실제 남은 60초 예산에 따라 Gemini 호출과 backoff를 줄이고 Luna·완료 시간을 예약한다. 동일 provider-independent schema/prompt/validator를 사용하며 성공 결과 전체를 한 공급자에서 선택한다. 검색 범위는 domain expansion에서 적용하고 유효 날짜 조건을 검증 실패로 바꾸지 않는다. SDK 내부 재시도와 transport 연결 재전송은 비활성화한다.
+
+**이유**: 공급자 일시 장애에서도 같은 입력·기준일로 한 번의 대체 구조화를 수행하면서 비용·시간 상한을 보존하기 위해서다. run version별 PostgreSQL invocation/attempt claim·owner·deadline·winner fencing은 Outbox 재전달과 프로세스 재시작의 상한 초기화 및 늦은 게시를 막는다. HOST의 명시적 지연 재시도만 새 논리 실행·비용 단위로 다루며 기존 #92 room→exact run·활성 pointer·OPEN 라운드·확정 보호를 유지한다.
+
+**트레이드오프**: 최대 4회 Gemini를 모든 지연 상황에서 보장하지 않고 남은 예산에 맞춰 줄인다. 중단된 실행은 기존 예산 안에서 호출을 다시 시작하지 않고 deadline 만료 후 지연 상태로 보수적으로 종결한다. 공급자 exactly-once 및 전체 자연어 의미 정확성은 보장하지 않는다. Luna의 미확인 가격·usage는 null로 기록한다. 두 공급자가 모두 실패하면 PARTIAL로 복구하지 않고 입력·batch 보존과 ANALYSIS_DELAYED/후보 0/ACK를 유지한다. 추가 provider 원문 전달 고지·처리 조건과 운영 설정은 배포 전 별도 검토 대상이다. 기존 ADR-016/018의 Gemini 단독 장애 정책을 이 범위에서 대체하며 배포·병합 승인을 포함하지 않는다.

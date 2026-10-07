@@ -1,0 +1,15 @@
+{
+  "workItem": "issue-96-invocation-admission-deadline",
+  "executionScope": "Incremental uncommitted V9 implementation before invocation admission deadline fix; sourceRevision identifies accepted base and not clean baseline bytes.",
+  "tests": 2,
+  "failures": 2,
+  "errors": 0,
+  "assertionEvidence": [
+    "org.opentest4j.AssertionFailedError: actual value is not null ==> expected: <null> but was: <AnalysisInvocation(id=0446e618-e8ad-4144-a748-5114a792fff7, runId=CoordinationRunId(value=c8bea6e1-2470-43fc-8cbd-358774b88887), runVersion=2, startedAt=2026-10-07T00:01:00Z, deadlineAt=2026-10-07T00:02:00Z, ownerToken=e08fb89a-1094-475f-8d15-720d0967ae16, geminiAttempts=0, lunaAttempts=0, finishedAt=null, winnerAttemptId=null)>",
+    "org.opentest4j.AssertionFailedError: expected: <2026-10-07T00:01:00Z> but was: <2026-10-07T00:01:05Z>"
+  ],
+  "archivedLogSha256": "9d37533cbde9c09842dd280363a5f317004323a77627cb28645e97b5105728b0",
+  "archivedXmlSha256": "e2df19e0f07ad48d1cb1372107c9f200fc7e01b1aaa9f36312efbe0ff8c66490",
+  "providerCalls": 0,
+  "recordedAt": "2026-10-07T06:12:43.058024Z"
+}

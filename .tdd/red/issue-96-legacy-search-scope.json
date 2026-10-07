@@ -1,0 +1,25 @@
+{
+  "workItem": "issue-96-legacy-search-scope",
+  "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiProviderAuthorityContractTest.kt",
+      "sha256": "8473df2afbe4a4245089b981312b6f31b4a682d2d482d45a069072d0d593dc27"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiTimeContextContractTest.kt",
+      "sha256": "36c549fd78381d7994509fcc514587a363fe0bf3154adcead09fd378cf64a681"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/issue96-legacy-scope-red.py"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.valid out of range is preserved while contradictory date weekday and coordinates remain invalid()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest.provider condition validation failures cannot be hidden by ambiguous recovery()",
+    "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest.out of search exception does not turn empty explicit availability into all day()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T06:15:56.939399Z"
+}
