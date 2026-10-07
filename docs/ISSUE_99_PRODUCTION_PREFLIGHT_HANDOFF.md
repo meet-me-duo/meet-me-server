@@ -12,7 +12,7 @@
 
 기존 Issue99/Draft PR100의 `feature/integrate-recommendations-fallback`에서 `.github/workflows/production-preflight.yml`을 준비했다. 동일 저장소 PR100·develop base·고정 feature·기존 작성자/실행자/재실행자만 허용하고 현재 PR SHA를 AWS 권한 취득 전에 검증한다. production 환경과 기존 역할/instance 변수를 사용한다. 브랜치 push의 PR 이벤트로 실행하며 권한 거부나 환경 승인은 우회하지 않는다.
 
-조회는 EC2/RDS metadata, 두 credential refresh EventBridge rule/target, 진행 중 SSM command, 현재 image digest/guard 정책·파일 신뢰/phase/unit, Flyway history 및 공개 health/OpenAPI HTTP 상태로 제한한다. 운영 OpenAI 위치는 기존 prefix의 `/meet-me/production/secret/openai-api-key`를 제안하며 ParameterStore Name/Type/Version만 확인한다. 존재 여부는 아직 미확정이다. 값은 사용자 보안 입력이며 시험환경에서 복사하지 않는다. 현재 runtime env renderer에는 OpenAI 전달이 구현되지 않았으므로 parameter 존재만으로 Luna 준비 완료를 선언하지 않는다.
+조회는 EC2/RDS metadata, 두 credential refresh EventBridge rule/target, 진행 중 SSM command, 현재 image digest/guard 정책·파일 신뢰/phase/unit, Flyway history 및 공개 health/OpenAPI HTTP 상태로 제한한다. 운영 OpenAI 위치는 기존 prefix의 `/meet-me/production/secret/openai-api-key`이며 ParameterStore Name/Type/Version만 확인한다. 존재 여부는 아직 미확정이다. 값은 사용자 보안 입력이며 시험환경에서 복사하지 않는다. [운영키 전달 후속](ISSUE_99_LUNA_RUNTIME_SETUP.md)은 renderer·required mode·entrypoint·Compose 모의 검증을 준비하며 parameter 존재만으로 Luna 준비 완료를 선언하지 않는다.
 
 Flyway는 현재 컨테이너의 기존 PG driver와 독립 Java reader로 읽는다. child JVM은 bounded timeout/heap 및 임시 디렉터리 정리 아래 실행하며 Spring main을 시작하지 않는다. DB 서버의 READ ONLY transaction을 확인하고 history의 version/script/checksum/success만 조회한 뒤 rollback한다. 비밀값·환경 전체·예외 본문·원시 SSM 출력은 로그/artifact에 남기지 않는다. container PID/restart 상태의 전후 metadata도 수집한다.
 
@@ -23,6 +23,8 @@ Flyway는 현재 컨테이너의 기존 PG driver와 독립 Java reader로 읽�
 - 실제 로컬 격리 PostgreSQL18.6 및 기존 bootJar PropertiesLauncher에서 reader의 성공/정확한 fixture history를 확인했다. 이는 운영 DB 조회 증거가 아니다.
 - 제품 src/main·src/test 및 V1~V10 migration은 실제 평가 SHA와 동일하다. 새 HEAD의 전체 guard/CI 및 실제 AWS 조회는 별도로 확인한다.
 - 이 문서를 작성한 시점의 실제 운영 조회 성공은0이다. Workflow 실행 뒤 exact SHA/run URL과 결과를 부모에게 먼저 인계한다.
+
+후속48b8957248a7357e9a4a04cd854d2be8bd4290e1의 [CI37610286399](https://github.com/meet-me-duo/meet-me-server/actions/runs/37610286399)는 성공했다. [Preflight37610286680](https://github.com/meet-me-duo/meet-me-server/actions/runs/37610286680)은 production 환경 보호규칙이 `refs/pull/100/merge`를 허용하지 않아 실패했다. runner_id0·steps0·artifact0으로 AWS 인증/조회 이전이며 코드 또는 AWS 권한 실패로 분류하지 않는다. 수동 재실행·보호규칙 변경은 하지 않았다. 부모는 집 PC의 기존 AWS 연결에서도 첫 명령 전 transport disconnected로 조회0을 보고했다. 현재 기존 권한으로 읽기 접근을 확인하는 사용자 단계와 실제 운영 target 확인이 남아 있다.
 
 조회가 성공해도 배포 준비 완료를 자동 판정하지 않는다. 실제 Flyway가 예상 V8 이하인지, 충돌 V9 invocation/예상 밖 migration이 없는지, 현재 digest와 guard/단위 상태, 두 rule의 실제 target/state, 진행 중 command와 key 위치를 확인한다. 예상 밖 migration은 즉시 중단·보고하며 repair/번호 변경하지 않는다.
 

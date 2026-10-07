@@ -522,4 +522,6 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 
 2026-10-07 후속 사용자 승인으로 시간 배분은 Gemini 단계 최대30초(호출별15초)·Luna 최대27초·완료3초로 조정한다. 단일60초와 최대4+1·재전달/승자 fencing을 유지하며 공통 Application 예산으로 reservation·durable admission·실제 transport cap을 일치시킨다. bounded-luna-v1 및 V10 SQL은 보존하고 배분 조정은 정확 source HEAD로 추적한다.
 
+운영키 전달 후속은 ADR-041의 사용자 등록 SSM SecureString 패턴을 확장한다. OpenAI를 기존 운영 prefix의 `secret/openai-api-key`에서 `OPENAI_API_KEY`로 전달하며 release의 `gemini-luna-required` 모드에서는 키가 없거나 읽기/형식 검증에 실패하면 서버·migration 기동을 거부한다. 기존 mode 없는 release/명시 Gemini 단독은 OpenAI 권한을 요구하지 않는다. 키 값은 Terraform·GitHub·명령 로그에 저장하지 않고 실제 사용자 등록·운영 전달 확인은 코드 검증과 분리한다. 시간 예산·앱/DB 계약과 운영 승인 경계는 유지한다.
+
 **트레이드오프**: 최대 4회 Gemini를 모든 지연 상황에서 보장하지 않고 남은 예산에 맞춰 줄인다. 중단된 실행은 기존 예산 안에서 호출을 다시 시작하지 않고 deadline 만료 후 지연 상태로 보수적으로 종결한다. 공급자 exactly-once 및 전체 자연어 의미 정확성은 보장하지 않는다. Luna의 미확인 가격·usage는 null로 기록한다. 두 공급자가 모두 실패하면 PARTIAL로 복구하지 않고 입력·batch 보존과 ANALYSIS_DELAYED/후보 0/ACK를 유지한다. 추가 provider 원문 전달 고지·처리 조건과 운영 설정은 배포 전 별도 검토 대상이다. 기존 ADR-016/018의 Gemini 단독 장애 정책을 이 범위에서 대체하며 배포·병합 승인을 포함하지 않는다.

@@ -47,6 +47,9 @@ jobs:
       - name: Verify production Compose secret fidelity
         run: bash deploy/scripts/verify-compose-secret-fidelity.sh
 
+      - name: Verify runtime provider key delivery
+        run: node --test deploy/tests/runtime-provider-env.test.cjs
+
       - name: Verify database credential refresh
         run: bash deploy/tests/refresh-database-credential.test.sh
 

@@ -37,7 +37,7 @@ output "required_secure_parameters" {
   description = "Parameter names the user must create as SecureString values. Values must never enter Terraform state."
   value = {
     gemini_api_key        = "${local.runtime_parameter_path}/secret/gemini-api-key"
+    openai_api_key        = "${local.runtime_parameter_path}/secret/openai-api-key"
     acm_export_passphrase = "${local.runtime_parameter_path}/secret/acm-export-passphrase"
   }
 }
-

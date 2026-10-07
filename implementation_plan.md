@@ -16,7 +16,15 @@
 
 - [x] `[AGENT]` processor와 Lunaadapter의15초고정캡을 공급자별15/27초로 일치시키고 single monotonic/durable60초 및 Gemini30/provider57/완료60 경계를 검증한다.
 - [x] `[AGENT]` 독립 mock·loopback/transport·실제Postgres로20초Luna성공·27/57/60late차단·lockwait·4+1·재전달noreset·원자추천rollback을 검증한다. 유료/운영 쓰기는0.
-- [ ] `[AGENT]` 문서·구현지문·guard전체test·PR100새HEADCI를 갱신하고 정확새SHA/검사결과를 부모에게 즉시 인계한다.
+- [x] `[AGENT]` 시간 배분 후속6f7f54e의 guard654건·CI37599130138 성공 및 전담 평가3시나리오/4분석PASS를 인계했다. 문서/읽기 조회48b8957의CI37610286399도 성공이며 평가 SHA와 제품 바이트 동일성을 구분한다.
+
+**운영키 전달 후속 승인:** 현재 feature/PR100에서 SSM SecureString 참조·runtime env·Compose 전달·entrypoint 기동 조건을 무료 독립 검증한다. 실제 키 값 조회/등록/복사/출력·IAM/환경보호 변경·운영 명령·main merge·서비스 중단은 보류한다. 집 PC 접속은 운영 권한 확대 승인으로 취급하지 않는다.
+
+- [x] `[AGENT]` 새 release의 Luna required mode에서 키 누락/권한/타입/형식 오류가 환경파일 교체와 앱/migration 시작을 막고 기존 Gemini 단독 release는 OpenAI 조회 없이 유지되는 독립 RED/GREEN·결함 검증. 독립18의RED15→GREEN18 뒤 NUL blocker 추가RED1→GREEN19, 7fault/12assertion·9파일 exact 복원, 실제 로컬Compose 합성키/mode byte 보존을 확인했다.
+- [ ] `[AGENT]` 기존 IAM prefix 코드 검토·문서/guard·Draft PR100 새 정확 HEAD CI를 갱신한다. 새 source는 배포 계약만 바꾸며 앱 시간 배분·SQL·실제 평가 SHA는 별도 유지한다.
+- [ ] `[USER]` 기존 AWS 인증의 값 없는 운영 metadata/읽기 접근 확인. 기존 preflight37610286680은 production 환경이 refs/pull/100/merge를 거부하여 runner/step 실행0이다. 반복 재실행과 정책 우회는 하지 않는다.
+- [ ] `[USER]` 서울리전 `/meet-me/production/secret/openai-api-key` SecureString 수동 등록과 비밀값 없는 완료 신호. 코드 전달 경로 완성 전 등록을 요청하지 않는다.
+- [ ] `[SHARED]` 승인된 운영 시점에 실제 parameter→runtime→앱 전달/인증과 정확 digest/guard/drain 시작 조건 확인. 현재 코드/fixture 성공만으로 운영 Luna 준비를 완료 표시하지 않는다.
 
 
 - [x] `[AGENT]` 지정 PR97 HEAD518c612·PR98 HEAD9a4c4d5·PR94/93 의존, 최신 develop848b968과 규칙·인계를 확인했다. Issue99 생성 후 feature/integrate-recommendations-fallback에서만 조율한다.
@@ -28,7 +36,7 @@
 - [x] `[AGENT]` 변경 없는 필수 guard exit0·ktlintCheck/assemble·109suite 전체631건/실패0/오류0/skip4, hook self-tests12 PASS. 첫 전체의 기존 schema 분기수 assertion은 독립 supersession과 focused12 GREEN으로 보완했다.
 - [x] `[AGENT]` Worklog 최종 갱신과 commit/push/Draft PR 준비. Commit/PR은 동일 커밋 예정이며 코드·현재 증거 지문과 완료 근거를 동기화했다.
 - [x] `[AGENT]` 최초 통합51a4c0d commit/push·develop 대상 Draft PR100 게시·CI37591069034 전 단계 성공을 확인했다. 후속 시간배분의 정확 HEAD CI는 별도로 확인한다.
-- [ ] `[SHARED]` 실제 유료 품질 검증은 전담01a114c3-02d3-7011-ab8f-19706bdda089에 통합 준비 뒤 인계. 이 구현/CI의 호출0.
+- [x] `[SHARED]` 전담 실제 평가 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS를 docs/ISSUE_99_LIVE_EVALUATION.md에 기록했다. 구현/CI 호출0, 평가추가18·누적41/50을 구분하며 새entrypoint/운영키의 실제 전달은 미완료다.
 - [ ] `[USER]` 운영 V8guard/digest/드레인 승인. 코드 완료와 배포 준비를 구분하며 main/develop 병합·배포·운영 migration·보안/비밀정보/자동화 변경은 실행하지 않는다.
 
 
@@ -1196,3 +1204,13 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 현재 조회 구현/독립 RED·리뷰·원격 실행은 진행 중이다. 운영OpenAI 값은 사용자 보안입력이며 시험환경에서 복사/출력하지않는다. 조회거부·예상밖migration·새비용/권한은 확대하지않고보고한다.
 - 읽기 전용 조회의 독립20검사는 RED6 assertion→GREEN20/skip0이며 결함3개를 assertion7개로 탐지하고 관련6파일 exact 복원을 확인했다. 독립 최종 리뷰 PASS·차단0, 기존 배포정책13 PASS다. 실제 격리PG18.6/current bootJar PropertiesLauncher reader smoke는 운영 조회와 구분한다. 변경 없는 mandatory guard exit0(8.725초)는 기존654건의 Gradle up-to-date 결과를 재사용하며 새654 실행으로 주장하지 않는다. 제품 src/main·src/test/V1~V10 및 guard는6f7f54e와 동일하다.
 - [실행 인계](docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)에 승인 경계·조회 방법·키 위치·digest/CD 순서·남은 시작 조건을 정리했다. 기존Draft PR100 feature에서 조회workflow와 평가기록을 commit/push하며 새 정확HEAD CI와 실제 AWS 접근은 원격 실행 결과로 별도 보고한다. 이 기록 시점의 실제 운영조회 성공0·서비스중단0·유료호출0이다.
+
+## Issue #99 Worklog — Luna 운영키 전달 후속 (2026-10-07 UTC)
+
+- `[AGENT]` 사용자 승인으로 기존feature/PR100에서 공개release mode gemini-luna-required, SSM SecureString→OPENAI_API_KEY/MEETME_RUNTIME_PROVIDER_MODE→raw Compose→entrypoint pre-server/migrate/customcommand 검사 경로를 추가했다. ownrelease marker exactenum±LF 검증, SecureString 타입/ASCII33~126 rawJSON 검증, OpenAI 값/AWS진단 비출력, 같은dir0600 임시file→atomic rename과 unsafe destination 거부를 구현했다. mode없는/명시gemini-only는 OpenAI조회0이며 기존release의mode로DBrefresh에도요구를 유지한다.
+- `[AGENT]` 독립testauthor는18 frozen검사를작성했고 최초RED15 assertion/pass3→GREEN18을확인했다. reviewer가 발견한 BashNUL marker 우회는원본18/RED byte archive를보존한뒤별도추가test1의19RED18pass/1assertion→rawjq수정→GREEN19/skip0로해결했다. 새19의원본18prefix는byte-identical이다.
+- `[AGENT]` 7fault(type/rawASCII/startupguard/atomicrename/legacyOpenAIquery/rawmode/packagemode누락)를 assertion12개로탐지했고9source/testfileexact복원후19GREEN을재확인했다. 별도독립reviewJSON으로추적하며배포13+preflight20 combined33GREEN/skip0, 실제localAlpine rawCompose의합성DB/OpenAI키와mode byte보존을확인했다. 실제secret/운영AWS/모델 호출은0이다.
+- `[AGENT]` 변경없는mandatoryguardexit0(9.556초)는기존654건의Gradleup-to-date결과를재사용한다. 새654실행으로주장하지않는다. src/main·src/test·V1~V10·시간배분·nativeAPI·hostguard·runtimeIAM은실제평가6f7f54e와동일하다. image에포함되는entrypoint는변경되므로이전image digest를새배포에재사용하지않는다.
+- `[AGENT]` IAM선언의SSM /meet-me/production/*는새path를포함하며Terraform에는수동등록name출력만추가했다. 새secret값/resource/IAM/KMS정책/권한은만들지않는다. TerraformCLI가선택환경에없어fmt/validate를실행했다고주장하지않으며값없는output/path를정적검토했다. 실제적용권한은미확인이다.
+- `[USER]` 수동키생성/SSM SecureString등록과실제전달확인은미완료다. docs/ISSUE_99_LUNA_RUNTIME_SETUP.md에책임/정확경로/완료신호/비밀공유금지를기록했다. 집PC의첫AWS시도는명령전transport연결실패로조회0이라는부모보고를기록하며재접속을권한확대승인으로취급하지않는다. 기존production환경의PRmerge-ref거부를우회하거나수동rerun하지않았다. main/develop병합·운영중단·배포·자동화/보안정책변경은보류한다.
+- Commit/PR: 동일커밋예정, 기존DraftPR100갱신. 새정확HEADCI는push후별도로확인하며기존48b8957 CI37610286399의성공을재사용하지않는다. 새코드는앱/시간배분을바꾸지않지만배포entrypoint/env계약은새source로구분한다.

@@ -1,0 +1,30 @@
+{
+  "workItem": "issue-99-runtime-luna",
+  "sourceRevision": "48b8957248a7357e9a4a04cd854d2be8bd4290e1",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-provider-env.test.cjs",
+      "sha256": "d4f6750494c386ee4be34cefa26f1699eea2dc00dacefe7605034675561d0ad4"
+    }
+  ],
+  "command": "node --test deploy/tests/runtime-provider-env.test.cjs",
+  "failedTests": [
+    "required release fetches SecureString under custom parameter root and preserves printable opaque key into raw environment",
+    "renderer reads its own release marker rather than destination directory or caller working directory",
+    "legacy or explicit Gemini-only layout never requests OpenAI (absent)",
+    "legacy or explicit Gemini-only layout never requests OpenAI (\"gemini-only\")",
+    "legacy or explicit Gemini-only layout never requests OpenAI (\"gemini-only\\n\")",
+    "malformed empty multiline whitespace and non-enum release markers fail before replacing existing environment",
+    "symlink dangling symlink unreadable and nonregular release mode markers are rejected",
+    "wrong Parameter type empty non-string and non-printable values fail without clobbering environment",
+    "AWS required-key failure hides stderr and preserves existing environment byte-for-byte",
+    "failed final same-directory atomic rename preserves existing environment and permissions",
+    "destination symlink dangling symlink and directory are rejected instead of following or replacing them",
+    "required entrypoint rejects absent empty unsafe key and invalid mode before launching server",
+    "required entrypoint rejects absent empty unsafe key and invalid mode before launching migrate",
+    "required entrypoint rejects absent empty unsafe key and invalid mode before launching true",
+    "new production artifact requires release mode file and CI runs this independent runtime contract"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-07T11:20:55.982870+00:00"
+}

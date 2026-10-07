@@ -1,0 +1,109 @@
+{
+  "workItem": "issue-99-runtime-luna",
+  "sourceRevision": "48b8957248a7357e9a4a04cd854d2be8bd4290e1",
+  "recordedAt": "2026-10-07T11:28:57.041863+00:00",
+  "restoredFiles": [
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "903f4a9ca537d448dc5ec9c22ace186abe203aba6a13dde8ae141a26888653f2"
+    },
+    {
+      "path": "deploy/container-entrypoint.sh",
+      "sha256": "39c10e61398402c872cc740c8eff825848c62fba112b48cbfaab732fee4d5ad3"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "ad0056efb86d716932c228186f575b6de3dd5305a8e4151cad5a35703ad62441"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "5be89fd45127d5d64b9418c4a0276547bb874f7686cc853a51d0dd6a9343e71d"
+    },
+    {
+      "path": "deploy/runtime-provider-mode",
+      "sha256": "4883fb332ead07cc0f0e4047dd1fb28fc0b45ab56de36bc4ce44322620b974ff"
+    },
+    {
+      "path": "infra/production/outputs.tf",
+      "sha256": "e93a8fa8ed2561ad018d7864ac0aab1fce49494e227121de05b8f8e13985ad64"
+    },
+    {
+      "path": ".env.example",
+      "sha256": "91c9be1f53b82db7ca5f25f4e2e0882b14bbeea65c9a0e7b2f4a7d6a4eda66a3"
+    },
+    {
+      "path": "deploy/scripts/verify-compose-secret-fidelity.sh",
+      "sha256": "4ab6a30f2949421b3b79ccba2a7e2b8fa4eea9f843d428db76b214a372a5564f"
+    },
+    {
+      "path": "deploy/tests/runtime-provider-env.test.cjs",
+      "sha256": "d928ef8e8687417865b556d1bba13856f195d25aece8d545ca39cd96316140df"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "missing-secure-type",
+      "exitCode": 1,
+      "failedTests": [
+        "wrong Parameter type empty non-string and non-printable values fail without clobbering environment"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-secure-type.log"
+    },
+    {
+      "fault": "missing-raw-ascii",
+      "exitCode": 1,
+      "failedTests": [
+        "wrong Parameter type empty non-string and non-printable values fail without clobbering environment"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-raw-ascii.log"
+    },
+    {
+      "fault": "missing-entrypoint-guard",
+      "exitCode": 1,
+      "failedTests": [
+        "required entrypoint rejects absent empty unsafe key and invalid mode before launching server",
+        "required entrypoint rejects absent empty unsafe key and invalid mode before launching migrate",
+        "required entrypoint rejects absent empty unsafe key and invalid mode before launching true"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-entrypoint-guard.log"
+    },
+    {
+      "fault": "missing-atomic-rename",
+      "exitCode": 1,
+      "failedTests": [
+        "failed final same-directory atomic rename preserves existing environment and permissions"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-atomic-rename.log"
+    },
+    {
+      "fault": "legacy-openai-query",
+      "exitCode": 1,
+      "failedTests": [
+        "legacy or explicit Gemini-only layout never requests OpenAI (absent)",
+        "legacy or explicit Gemini-only layout never requests OpenAI (\"gemini-only\")",
+        "legacy or explicit Gemini-only layout never requests OpenAI (\"gemini-only\\\\n\")"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-legacy-openai-query.log"
+    },
+    {
+      "fault": "missing-raw-mode-check",
+      "exitCode": 1,
+      "failedTests": [
+        "malformed empty multiline whitespace and non-enum release markers fail before replacing existing environment",
+        "release mode markers containing embedded or trailing NUL bytes are rejected before environment replacement"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-raw-mode-check.log"
+    },
+    {
+      "fault": "missing-mode-package",
+      "exitCode": 1,
+      "failedTests": [
+        "new production artifact requires release mode file and CI runs this independent runtime contract"
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-99-runtime-luna-fault-missing-mode-package.log"
+    }
+  ],
+  "exactRestoration": true,
+  "operationalCommands": 0,
+  "paidCalls": 0
+}

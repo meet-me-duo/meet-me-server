@@ -80,6 +80,7 @@ jobs:
             compose.guard.yml \
             meet-me-guarded-restart.service \
             container-entrypoint.sh \
+            runtime-provider-mode \
             nginx \
             scripts
           aws s3 cp release.tar.gz \
