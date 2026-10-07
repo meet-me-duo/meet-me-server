@@ -30,7 +30,7 @@ Flyway는 현재 컨테이너의 기존 PG driver와 독립 Java reader로 읽�
 
 사용자는 본인 PowerShell의 기존 배포 프로필 로그인과 AWS 수동 키 등록을 보고했다. 집 PC의 별도 실행계정에서는 그 프로필을 발견하지 못하며, 선택 환경에서도 새 인증을 만들거나 복사하지 않는다. 마지막 성공 main 운영 배포 [37279832865](https://github.com/meet-me-duo/meet-me-server/actions/runs/37279832865)의 SSM 대상은 사용자 전달 대상과 일치한다. 저장소 workflow는 production.RUNTIME_INSTANCE_ID를 사용하므로 이 로그는 당시 변수의 실제 확장 근거다. 현재 환경 변수 직접 조회는403으로 차단되어 현재 값의 동일성까지 확인한 것은 아니다. 실제 ID/계정/권한 원시 출력은 공개 문서에 기록하지 않는다.
 
-다음은 기존 로그인된 사용자 터미널에서 수행할 metadata 명령의 준비 예시다. 이 작업에서는 실행하지 않았으며 원격 SSM 명령/배포/서비스 변경을 포함하지 않는다. profile과 instance는 사용자 확인값을 로컬에만 넣고 현재 환경 변수 값과 다르면 진행을 멈춘다.
+다음은 기존 로그인된 사용자 터미널에서 수행할 metadata 명령의 선택 가능한 준비 예시다. 로컬 CLI를 필수 배포 경로로 요구하지 않는다. 실제 배포는 기존 GitHub Actions가 수행한다. 이 작업에서는 명령을 실행하지 않았으며 원격 SSM 명령/배포/서비스 변경을 포함하지 않는다. profile과 instance는 사용자 확인값을 로컬에만 넣고 현재 환경 변수 값과 다르면 진행을 멈춘다.
 
 ```powershell
 $profile = '<existing-profile>'
@@ -48,6 +48,18 @@ aws --profile $profile --region $region ssm list-commands --instance-id $instanc
 운영키 후속82b8d2a의 [CI37614973315](https://github.com/meet-me-duo/meet-me-server/actions/runs/37614973315)와 [Infrastructure37614973327](https://github.com/meet-me-duo/meet-me-server/actions/runs/37614973327)은 성공했다. [Preflight37614973475](https://github.com/meet-me-duo/meet-me-server/actions/runs/37614973475)는 동일 환경 보호로 runner/step0이다. 새 ARM64 CI는 production 환경·AWS·registry push 없이 정확 PR HEAD의 이미지만 build/load한다. 28개 격리 검사는 실제 JRE17/UID/entrypoint 바이트와 required mode 차단을 확인하고 합성 키만 사용한다. config image ID는 registry digest나 배포 승인으로 재사용하지 않는다. 새 정확 HEAD의 실제 이미지 실행은 CI 결과로 별도 확인한다.
 
 조회가 성공해도 배포 준비 완료를 자동 판정하지 않는다. 실제 Flyway가 예상 V8 이하인지, 충돌 V9 invocation/예상 밖 migration이 없는지, 현재 digest와 guard/단위 상태, 두 rule의 실제 target/state, 진행 중 command와 key 위치를 확인한다. 예상 밖 migration은 즉시 중단·보고하며 repair/번호 변경하지 않는다.
+
+## 기존 CD 검사와 첫 V8 이후 운영 조건
+
+현재 main5e8faab의 workflow 목록은 CI/Deploy Production/Infrastructure/Issue Lifecycle이며 읽기 preflight는 없다. Deploy Production의 workflow_dispatch는 ECR build/push·S3 release 업로드·SSM 배포·migration을 수행하고 읽기 모드를 제공하지 않는다. 조회용으로 수동 배포를 실행하지 않으며 PR 환경 거절을 우회하지 않는다.
+
+기존 CD는 digest 형식·release 잠금·runtime renderer·Flyway migration·컨테이너 health·SSM 성공·공개 health/OpenAPI를 확인한다. 실제 DB history 확인은 같은 migration을 다시 실행하기 위한 검사가 아니라 예상 밖 V9/V10/체크섬·실패 이력과 복구 가능성을 사전에 판단하는 근거다. main source의 migration은 V1~V7이며 이것은 운영 history 관측값이 아니다.
+
+기존 main deploy-release.sh는 구 writer가 실행 중일 때 migrate를 실행하고 health 실패 시 previous image를 재기동할 수 있다. ADR의 V8 이후 계약은 구 writer·worker·retention 동시 실행과 구 image 복구를 금지한다. PR100의 host-release-guard.sh는 실제 설치 manifest/phase/승인 digest/legacy process를 확인하고 writer를 중지한 뒤 migration을 수행한다. 이 호스트 선행조건은 저장소 source/CI 성공만으로 확인되지 않으며 기존 health 검사와 중복되지 않는다.
+
+구조·보호규칙·인증을 바꾸지 않는 현재 범위에서는 기존 승인된 운영 읽기 경로로 실제 상태를 확인하고, guard/drain 및 정확 registry digest 승인 순서를 확정한 뒤 GitHub Actions 서버 배포와 웹 연계를 진행하는 기준을 유지한다. 현재 CD는 build와 deploy가 한 job에 있고 중간 독립 digest 승인 단계가 없으므로 첫 V8 이후 자동 배포 시작 순서는 미해결이다. CI의 local config image ID를 승인 digest로 치환하거나 main 병합을 먼저 실행하지 않는다.
+
+후속 host/DB SSM 읽기 명령은 별도로 내용을 보고한 뒤 승인 경계에 따라 실행한다. 준비된 host-preflight.sh는 선택한 Docker/systemd/guard metadata를 읽고, 기존 컨테이너의 private /tmp에 임시 reader class/properties를 만든 뒤 최대15초·heap32MB의 독립 JVM으로 READ ONLY transaction에서 Flyway history만 조회하고 rollback한다. 짧은 DB 연결·JVM 자원·임시 파일 생성/정리의 부작용이 있으며 앱/컨테이너/서비스 재시작·migration·DB 쓰기·키 값 출력은 포함하지 않는다. 이 세션에서는 원격 명령을 실행하지 않았다.
 
 새 image digest는 build 후에만 확정된다. 현 CD는 build와 deploy 사이 독립 승인 단계가 없으므로 preflight·키 전달·정확 digest 승인 순서를 확정하기 전에 main을 merge하지 않는다. V9/V10 적용 후 오래된 V8 image 복구를 허용하지 않으며 policy의 호환 label만으로 새 migration 호환성을 보장하지 않는다. 서비스 중단/guard 설치/automation pause·drain/DB 적용은 부모의 실제 시작 보고 이후 단계다.
 

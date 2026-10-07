@@ -4,13 +4,13 @@
   "testFiles": [
     {
       "path": "deploy/tests/built-image-workflow.test.cjs",
-      "sha256": "c96e4106fe6c8b8725abfd358c5dc155a1081a29adfc76998a189e32ed37b660"
+      "sha256": "da5084420a26eb203bb11b1d138ad72b6b9b0273d1f5dab73f276c33bd421643"
     }
   ],
   "command": "node --test --test-reporter=tap deploy/tests/built-image-workflow.test.cjs",
   "failedTests": [
-    "the shared Docker runner explicitly selects the verified ARM64 platform for every probe"
+    "the image job disables implicit Docker build records and build summaries"
   ],
   "expectedFailureCategory": "MISSING_BEHAVIOR",
-  "recordedAt": "2026-10-07T12:17:20.081536+00:00"
+  "recordedAt": "2026-10-07T12:07:02.266183+00:00"
 }

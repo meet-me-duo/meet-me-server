@@ -3,7 +3,9 @@ set -euo pipefail
 set +x
 
 # Local, isolated image verification only. Never pull/push or start the application.
-fail() { printf '%s\n' 'Built image verification failed' >&2; exit 1; }
+phase=inspect
+probe=0
+fail() { printf 'Built image verification failed phase=%s probe=%d\n' "$phase" "$probe" >&2; exit 1; }
 [[ $# == 1 && "$1" =~ ^[a-zA-Z0-9][a-zA-Z0-9._/:@-]*$ ]] || fail
 image="$1"
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
@@ -17,6 +19,7 @@ trap cleanup EXIT
 trap fail HUP INT TERM
 
 metadata="$(docker image inspect --format '{{.Id}} {{.Os}} {{.Architecture}} {{.Config.User}} {{json .Config.Entrypoint}}' "$image" 2>"$scratch/error")" || fail
+phase=metadata
 [[ "$metadata" =~ ^(sha256:[0-9a-f]{64})\ linux\ arm64\ 10001:10001\ \[\"/app/container-entrypoint.sh\"\]$ ]] || fail
 config_id="${BASH_REMATCH[1]}"
 image="$config_id"
@@ -32,12 +35,14 @@ run_command() {
   while [[ $# -gt 0 && "$1" != -- ]]; do options+=("$1"); shift; done
   [[ $# -gt 0 ]] || fail
   shift
-  docker run --name "$name" --rm --pull never --network none --read-only \
+  probe=$((probe + 1))
+  docker run --platform linux/arm64 --name "$name" --rm --pull never --network none --read-only \
     --security-opt no-new-privileges --cap-drop ALL \
     --tmpfs /tmp:rw,nosuid,size=128m "${options[@]}" "$image" "$@" \
     >"$scratch/stdout" 2>"$scratch/stderr"
 }
 
+phase=file
 run_command --entrypoint /bin/sh -- -eu -c '
   test "$(id -u):$(id -g)" = 10001:10001
   test -f /app/app.jar && test -s /app/app.jar
@@ -56,11 +61,14 @@ check_jre() {
 }
 
 # Legacy mode is absent, and the custom command is the real packaged JRE.
+phase=jre-legacy-absent
 run_command -- java -version || fail
 check_jre
+phase=jre-legacy-explicit
 run_command --env MEETME_RUNTIME_PROVIDER_MODE=gemini-only -- java -version || fail
 check_jre
 synthetic_key='image$fixture-'"'"'"quoted"-\backslash-#opaque'
+phase=jre-required
 run_command --env MEETME_RUNTIME_PROVIDER_MODE=gemini-luna-required \
   --env "OPENAI_API_KEY=$synthetic_key" -- /bin/sh -eu -c \
   'test "$OPENAI_API_KEY" = "$1"; exec java -version' image-key-check "$synthetic_key" || fail
@@ -79,6 +87,7 @@ check_rejected() {
 for command in server migrate custom; do
   arguments=("$command")
   [[ "$command" != custom ]] || arguments=(java -version)
+  phase=key-guard
   check_rejected 'Required Luna runtime key is missing or invalid' \
     --env MEETME_RUNTIME_PROVIDER_MODE=gemini-luna-required -- \
     -eu -c "$guard_probe" image-key-guard "${arguments[@]}"
@@ -87,6 +96,7 @@ for command in server migrate custom; do
       --env MEETME_RUNTIME_PROVIDER_MODE=gemini-luna-required --env "OPENAI_API_KEY=$unsafe" -- \
       -eu -c "$guard_probe" image-key-guard "${arguments[@]}"
   done
+  phase=mode-guard
   for invalid_mode in unsupported $'gemini-only\n'; do
     check_rejected 'Runtime provider mode is invalid' \
       --env "MEETME_RUNTIME_PROVIDER_MODE=$invalid_mode" --env "OPENAI_API_KEY=$synthetic_key" -- \
@@ -95,6 +105,7 @@ for command in server migrate custom; do
 done
 
 # Config ID identifies this local build only; it is not an ECR release manifest digest.
+phase=provenance
 source_revision="$(git -C "$repository_root" rev-parse HEAD 2>"$scratch/error")" || fail
 [[ "$source_revision" =~ ^[0-9a-f]{40}$ ]] || fail
 printf '{"protocol":"meetme-built-image-v1","sourceSha":"%s","configImageId":"%s","architecture":"arm64","entrypointSha256":"%s","runtimeJava":17,"cases":28,"network":"none","rootFilesystem":"read-only","noEcrDigestApproval":true,"checks":"passed"}\n' "$source_revision" "$config_id" "$source_sha"

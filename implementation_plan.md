@@ -1224,3 +1224,12 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - `[AGENT]` 제품 Kotlin/SQL·runtime renderer/entrypoint·Compose·Dockerfile·IAM·deployment workflow·mandatoryguard는82b8d2a와 동일하다. 앱의 실제 paid/web 평가SHA는6f7f54e/8e56fe0 그대로이며 새 유료 호출0이다. 원격명령·main/develop병합·운영배포·DB적용·자동화/보안/인증설정변경0. 수동 metadata 준비 명령은 docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md에만 마련했다.
 - 변경없는최종mandatoryguardexit0(9.07초), 기존배포13/preflight20/runtime19/최종image11의combined63GREEN/skip0. 앱코드는동일하므로새654실행으로주장하지않는다.
 - Commit/PR: 기존DraftPR100의동일커밋예정. 새ARM64image/전체CI는push후별도로확인하며운영키82CI성공을새image성공으로재사용하지않는다.
+
+### ARM64 실제 실행 후속 (2026-10-07 UTC)
+
+- 새정확HEAD04c6b16363984488b60cee52faf21b8303161a55를commit/push하고CI37619050758을실행했다. ARM64build/load는성공했으나첫격리helper검사가약380ms뒤실패해28probe/proof성공을선언하지않는다. amd64runner에서platform미명시Docker경고가첫fileprobe의무출력검사와충돌했을가능성을공식Docker/Moby동작과source로검토했다. 실제stderr는출력/보존하지않아원인확정으로기록하지않는다.
+- 독립testauthor가원본11/RED/history를보존하고12번째sharedrunner의explicitplatform계약을추가했다. 새12RED11pass/1assertion을확인했다. helper의platform선택과고정phase/숫자probe진단만보완하며오류본문/키/argv출력이나무출력조건완화는하지않는다. 앱/runtime/IAM/Dockerfile/SQL/deployworkflow는그대로다.
+- Infrastructure37619050888은fmt/bootstrap·productionvalidate성공,productionplan skip이다. Preflight37619050603은동일production환경보호로runner0/steps0이다. 기존정책을바꾸거나manualrerun하지않았다.
+- 사용자정정에따라실제배포는기존GitHubActions로진행하는기준을유지한다. 현재main5e8faab의workflow는CI/DeployProduction/Infrastructure/IssueLifecycle이며read-onlypreflight는없고manualdeploy는실제ECRpush/SSM/migration을수행한다. main의V1~7source는운영history증거가아니다. 기존migration/health/OpenAPI검증과새V8+의실제guard/digest/drain확인을구분한다. 사용자로컬CLI는필수경로로단정하지않으며새권한/보호규칙/인증은추가하지않는다. 기존CD의build→deploy사이독립digest승인단계가없는시작순서미해결도구분한다.
+- platform보완후12GREEN/skip0, 최종9fault/9assertion·3파일exact복원, combined64/0/skip0을확인했다. 변경없는필수guardexit0(9.302초)는기존654품질결과를재사용하며새654실행으로주장하지않는다. 독립최종리뷰와후속새HEADCI는구분한다.
+- 후속commit/새HEADCI는helper/계약/evidence수정후진행한다. 유료호출·원격SSM명령·운영변경은계속0이다.

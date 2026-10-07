@@ -1,7 +1,7 @@
 {
   "workItem": "issue-99-built-image",
-  "sourceRevision": "04c6b16363984488b60cee52faf21b8303161a55",
-  "recordedAt": "2026-10-07T12:18:02.065266+00:00",
+  "sourceRevision": "82b8d2a6eb460a5dc059b86c6f559a6f287d08aa",
+  "recordedAt": "2026-10-07T12:07:31.529550+00:00",
   "restoredFiles": [
     {
       "path": ".github/workflows/ci.yml",
@@ -9,11 +9,11 @@
     },
     {
       "path": "deploy/scripts/verify-built-image.sh",
-      "sha256": "1e226839b2b6540e24f077fffaff927cca700330eecc8c8b81cec2fa947ea58f"
+      "sha256": "5e1eaeab26273ffd436c9c7b4cd8008dd464dd3dfc2b88dea5b2e95b6337642c"
     },
     {
       "path": "deploy/tests/built-image-workflow.test.cjs",
-      "sha256": "c96e4106fe6c8b8725abfd358c5dc155a1081a29adfc76998a189e32ed37b660"
+      "sha256": "da5084420a26eb203bb11b1d138ad72b6b9b0273d1f5dab73f276c33bd421643"
     }
   ],
   "injections": [
@@ -23,7 +23,7 @@
       "failedTests": [
         "CI builds and loads an ARM64 local tag using the existing QEMU pattern"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-registry-push.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-registry-push.log"
     },
     {
       "fault": "wrong-checkout",
@@ -31,7 +31,7 @@
       "failedTests": [
         "image CI checks out the exact PR head and removes persisted credentials"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-wrong-checkout.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-wrong-checkout.log"
     },
     {
       "fault": "persist-credentials",
@@ -39,7 +39,7 @@
       "failedTests": [
         "image CI checks out the exact PR head and removes persisted credentials"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-persist-credentials.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-persist-credentials.log"
     },
     {
       "fault": "mutable-image",
@@ -47,7 +47,7 @@
       "failedTests": [
         "every image execution uses an immutable local ID with network and privilege isolation"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-mutable-image.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-mutable-image.log"
     },
     {
       "fault": "network-access",
@@ -55,7 +55,7 @@
       "failedTests": [
         "every image execution uses an immutable local ID with network and privilege isolation"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-network-access.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-network-access.log"
     },
     {
       "fault": "missing-java-sentinel",
@@ -63,7 +63,7 @@
       "failedTests": [
         "valid legacy and required modes use real Java while rejected commands use a safe sentinel"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-missing-java-sentinel.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-missing-java-sentinel.log"
     },
     {
       "fault": "implicit-build-record",
@@ -71,7 +71,7 @@
       "failedTests": [
         "the image job disables implicit Docker build records and build summaries"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-implicit-build-record.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-implicit-build-record.log"
     },
     {
       "fault": "implicit-build-summary",
@@ -79,26 +79,12 @@
       "failedTests": [
         "the image job disables implicit Docker build records and build summaries"
       ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-implicit-build-summary.log"
-    },
-    {
-      "fault": "implicit-runner-platform",
-      "exitCode": 1,
-      "failedTests": [
-        "the shared Docker runner explicitly selects the verified ARM64 platform for every probe"
-      ],
-      "rawLog": ".codex/tdd-evidence/issue-99-built-image-platform-fault-implicit-runner-platform.log"
+      "rawLog": ".codex/tdd-evidence/issue-99-built-image-final-fault-implicit-build-summary.log"
     }
   ],
   "exactRestoration": true,
   "sourceContractOnly": true,
-  "actualImageChecks": "PENDING_NEXT_EXACT_HEAD_CI",
-  "previousActualCi": {
-    "runId": 37619050758,
-    "arm64BuildAndLoad": "success",
-    "packagedRuntimeCheck": "failure",
-    "proofArtifact": false
-  },
+  "actualImageChecks": "PENDING_EXACT_HEAD_CI",
   "operationalCommands": 0,
   "paidCalls": 0
 }

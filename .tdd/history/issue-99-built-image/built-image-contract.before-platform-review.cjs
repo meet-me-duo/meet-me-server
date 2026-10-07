@@ -131,9 +131,3 @@ test('the image job disables implicit Docker build records and build summaries',
   assert.match(jobEnvironment[1], /^      DOCKER_BUILD_RECORD_UPLOAD:\s*["']false["']\s*$/m);
   assert.match(jobEnvironment[1], /^      DOCKER_BUILD_SUMMARY:\s*["']false["']\s*$/m);
 });
-
-test('the shared Docker runner explicitly selects the verified ARM64 platform for every probe', () => {
-  const runners = helper().match(/docker run\b[\s\S]*?>"\$scratch\/stdout" 2>"\$scratch\/stderr"/g) || [];
-  assert.equal(runners.length, 1, 'Every probe must use one shared isolated runner');
-  assert.match(runners[0], /--platform\s+linux\/arm64(?:\s|$)/, 'Host architecture must not implicitly select the image runtime platform');
-});
