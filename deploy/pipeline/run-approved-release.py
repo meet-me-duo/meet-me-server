@@ -257,7 +257,7 @@ def _aws_facts(instance, region, repository):
         target = targets["Targets"][0]
         _require(target["Id"] == target_id and target["Arn"] == f"arn:{partition}:ssm:{region}::document/AWS-RunShellScript")
         _require(target["RoleArn"] == f"arn:{partition}:iam::{account}:role/meet-me-production-db-credential-refresh")
-        _require(target["RunCommandTargets"] == [{"Key": "InstanceIds", "Values": [instance]}])
+        _require(target["RunCommandParameters"]["RunCommandTargets"] == [{"Key": "InstanceIds", "Values": [instance]}])
         states.append(rule["State"])
     # Pending may not yet appear in a node-scoped query. Supported global active filters preserve that drain boundary.
     active = {}

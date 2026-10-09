@@ -33,6 +33,14 @@ function rejection(name, args, expected) {
   assert.deepEqual(pythonCall(name, args), { ok: false, reason: expected });
 }
 
+test('bounded active command reads and fixed failure diagnostics pass offline regressions', () => {
+  const result = cp.spawnSync('python3', ['-m', 'unittest', 'discover', '-s', 'deploy/tests', '-p', 'test_preflight_command_reads.py'], {
+    cwd: root, encoding: 'utf8', timeout: 10_000,
+    env: { PATH: process.env.PATH, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
+  });
+  assert.equal(result.status, 0, 'Active command truncation, target ambiguity and AWS failure categories must remain fail closed');
+});
+
 function successPayload(overrides = {}) {
   return {
     protocol: 'meetme-readonly-preflight-v1',
