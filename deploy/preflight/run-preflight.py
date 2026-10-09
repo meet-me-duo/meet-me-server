@@ -194,8 +194,62 @@ def aws_call(service, operation, *args):
         if result.returncode:
             return {"status": "unavailable", "reason": "AWS_DENIED_OR_FAILED"}
         return {"status": "success", "data": json.loads(result.stdout)}
+    except subprocess.TimeoutExpired:
+        return {"status": "unavailable", "reason": "AWS_TIMEOUT"}
+    except json.JSONDecodeError:
+        return {"status": "unavailable", "reason": "AWS_INVALID_JSON"}
+    except (OSError, UnicodeError):
+        return {"status": "unavailable", "reason": "AWS_EXECUTION_FAILED"}
     except Exception:
         return {"status": "unavailable", "reason": "AWS_UNAVAILABLE"}
+
+
+def active_commands(instance):
+    """Bound active reads; Pending cannot safely be filtered by managed node."""
+    active = {}
+    query = ("{Commands: Commands[].{CommandId:CommandId,Status:Status,"
+             "RequestedDateTime:RequestedDateTime,DocumentName:DocumentName,"
+             "InstanceIds:InstanceIds,Targets:Targets},NextToken:NextToken}")
+    for key, value in (("Status", "Pending"), ("ExecutionStage", "Executing")):
+        result = aws_call("ssm", "list-commands", "--filters", json.dumps([{"key": key, "value": value}]),
+                          "--page-size", "50", "--max-items", "50", "--query", query)
+        if result["status"] != "success":
+            return result
+        try:
+            data = result["data"]
+            if data.get("NextToken"):
+                return {"status": "unavailable", "reason": "COMMANDS_TRUNCATED"}
+            if type(data["Commands"]) is not list:
+                raise ValueError()
+            for command in data["Commands"]:
+                if type(command) is not dict or not re.fullmatch(r"[0-9a-f-]{36}", command["CommandId"]):
+                    raise ValueError()
+                if command["Status"] not in ("Pending", "InProgress", "Delayed", "Cancelling", "Success", "Cancelled", "Failed", "TimedOut"):
+                    raise ValueError()
+                ids, targets = command["InstanceIds"], command["Targets"]
+                if (type(ids) is not list or type(targets) is not list or not (ids or targets)
+                        or any(type(item) is not str or not re.fullmatch(r"(?:i-[0-9a-f]{8,17}|mi-[0-9a-f]{17})", item) for item in ids)):
+                    raise ValueError()
+                matches = instance in ids
+                for target in targets:
+                    if (type(target) is not dict or set(target) != {"Key", "Values"}
+                            or target["Key"] != "InstanceIds" or type(target["Values"]) is not list
+                            or not target["Values"] or any(type(item) is not str or (item != "*" and not re.fullmatch(
+                                r"(?:i-[0-9a-f]{8,17}|mi-[0-9a-f]{17})", item)) for item in target["Values"])):
+                        raise ValueError()
+                    matches = matches or instance in target["Values"] or "*" in target["Values"]
+                if matches and command["Status"] in ("Pending", "InProgress", "Delayed", "Cancelling"):
+                    active[command["CommandId"]] = {k: command.get(k) for k in
+                        ("CommandId", "Status", "RequestedDateTime", "DocumentName")}
+        except (ValueError, TypeError, KeyError, AttributeError):
+            return {"status": "unavailable", "reason": "UNEXPECTED_COMMAND_METADATA"}
+    return {"status": "success", "data": list(active.values())}
+
+
+def refresh_target_metadata(data):
+    return [{k: target.get(k) for k in ("Id", "Arn", "RoleArn")}
+            | {"RunCommandTargets": target["RunCommandParameters"]["RunCommandTargets"]}
+            for target in data["Targets"]]
 
 
 def project(call, mapper):
@@ -233,15 +287,13 @@ def main():
         lambda d: {k: d["DBInstances"][0].get(k) for k in
                    ("DBInstanceIdentifier", "DBInstanceStatus", "Engine", "EngineVersion", "Endpoint",
                     "BackupRetentionPeriod", "LatestRestorableTime", "DeletionProtection")})
-    reads["commandsBefore"] = project(aws_call("ssm", "list-commands", "--instance-id", instance),
-        lambda d: [{k: c.get(k) for k in ("CommandId", "Status", "RequestedDateTime", "DocumentName")}
-                   for c in d["Commands"] if c.get("Status") in ("Pending", "InProgress", "Delayed")])
+    reads["commandsBefore"] = active_commands(instance)
     for suffix in ("rotated", "reconcile"):
         name = "meet-me-production-db-credential-" + suffix
         reads[name] = project(aws_call("events", "describe-rule", "--name", name),
             lambda d: {k: d.get(k) for k in ("Name", "State", "ScheduleExpression")})
         reads[name + "-targets"] = project(aws_call("events", "list-targets-by-rule", "--rule", name),
-            lambda d: [{k: t.get(k) for k in ("Id", "Arn", "RoleArn", "RunCommandTargets")} for t in d["Targets"]])
+            refresh_target_metadata)
     parameter = "/meet-me/production/secret/openai-api-key"
     reads["openaiParameterMetadata"] = project(aws_call("ssm", "describe-parameters", "--parameter-filters",
             "Key=Name,Option=Equals,Values=" + parameter),
