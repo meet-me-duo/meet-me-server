@@ -34,6 +34,13 @@
 - `[AGENT]` 최종 Node 계약 검사 41건 PASS/skip 0, command 회귀 5건 및 EventBridge 회귀 4건 PASS, 의도적 결함 8건 모두 assertion으로 탐지했다. 자체 검토에서는 truncation·불명확한 target·nested target 불일치를 계속 unavailable/차단으로 처리하는지 확인했다. 별도의 독립 리뷰 완료를 주장하지 않으며 Draft PR의 리뷰 요청으로 남긴다.
 - `[AGENT]` 수정하지 않은 `.codex/hooks/tdd_guard.py`가 exit 0으로 필수 `--no-daemon ktlintCheck assemble test`를 완료했다. JVM 111 suite/654 tests, failures 0/errors 0/skipped 4이며 hook self-test 12건도 PASS이다. 이 결과와 `git diff --check`를 확인한 뒤 승인된 fix 브랜치 commit/push 및 Draft PR을 진행한다. 원격 exact HEAD CI는 게시 후 별도로 확인한다.
 
+### 병합·게시 승인 갱신 (2026-10-09 UTC)
+
+- `[USER]` 부모가 전달한 08:47 UTC “승인할게”는 PR #104의 develop 반영, main 승격 PR과 정확 SHA CI, main 반영에 따른 자동 ECR/S3 게시 및 수정본 읽기 전용 preflight 실행을 승인한다. 실제 서비스 교체, refresh rule 비활성화, writer 종료, guard 설치, V8~V10 migration, IAM·권한·secret 변경은 승인하지 않았다.
+- `[AGENT]` PR #104의 구현 변경은 `d02ed2c1e39abcafdd34e7187cf0a818b129ab13`, exact HEAD CI 37905762969의 Quality Gate/ARM64 Built Image 모두 success이다. 이번 후속 commit은 승인 범위를 기록하는 Worklog 변경만 포함하며 commit hash는 Git 이력을 기준으로 확인한다(동일 커밋 예정). 구현과 분리된 최종 테스트 검토 후 최신 HEAD CI도 확인한다.
+- `[SHARED]` main 반영 직전에 운영 V1~V7/guard 미설치/첫 전환 승인 false의 차단 증거를 재확인한다. 자동 파이프라인이 실제 배포를 수행할 상태로 바뀌었거나 확인이 불완전하면 main 병합을 중단하고 보고한다. workflow·보호 설정을 우회하지 않는다. 게시 source/run/attempt/digest와 이후 preflight 결과를 분리해 기록한다.
+- `[AGENT]` 구현과 분리된 최종 검토자가 공개 AWS 계약, 두 reader, 신규 회귀와 의도적 결함 8건의 증거를 검토하고 offline 회귀 9건을 별도로 재실행해 PASS를 확인했다. blocking correctness/test/security finding은 없었다. UNINSTALLED/history V1~V7에서 approve=false이면 TRANSITION_REQUIRED이며 배포 SSM 분기를 건너뛴다는 source 경계를 확인했다. live AWS 사실과 이전 AWS_UNAVAILABLE의 실제 예외 종류는 이 독립 검토 범위가 아니다.
+
 ## 운영 규칙
 
 ### Issue #99 현재 통합 범위 (2026-10-07 UTC)
