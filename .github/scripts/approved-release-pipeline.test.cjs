@@ -62,6 +62,14 @@ const first = { history: history.slice(0, 7), phase: 'UNINSTALLED', currentImage
 const copy = value => JSON.parse(JSON.stringify(value));
 function rejected(name, args, reason) { assert.deepEqual(pythonCall(name, args), { ok: false, reason }); }
 
+test('EventBridge targets follow the documented nested AWS metadata shape and fail closed on mismatch', () => {
+  const result = cp.spawnSync('python3', ['-m', 'unittest', 'discover', '-s', 'deploy/tests', '-p', 'test_eventbridge_target_metadata.py'], {
+    cwd: root, encoding: 'utf8', timeout: 10_000,
+    env: { PATH: process.env.PATH, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
+  });
+  assert.equal(result.status, 0, 'Correct nested target metadata must pass while wrong targets and top-level shadows remain rejected');
+});
+
 test('immutable main release metadata binds run attempt SHA digest repository archive and exact migration catalog', () => {
   assert.deepEqual(pythonCall('validate_manifest', [manifest, expected]), { ok: true, result: { ...manifest, imageRef: `${repository}@${imageDigest}` } });
   const invalid = [

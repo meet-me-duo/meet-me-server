@@ -1,12 +1,38 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-07
+> **최종 갱신:** 2026-10-09
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), 확정된 장기 결정은 [`docs/ADR.md`](docs/ADR.md)를
 기준으로 한다. 이 문서가 기준 문서와 충돌하면 기준 문서를 우선하고 이 계획을 갱신한다.
+
+## 최신 운영 읽기 점검 (2026-10-09 UTC)
+
+- `[AGENT]` main `35c8faff9c4c112e5ad28ac740cd75d3665105a7`의 [Preflight 37899264333](https://github.com/meet-me-duo/meet-me-server/actions/runs/37899264333), attempt 1을 기존 production OIDC로 실행했다. 인증과 host/Flyway 읽기는 성공했으며 전체 결과는 commandsBefore `AWS_UNAVAILABLE`로 exit 2다. 새 인증·권한·secret 설정 변경은 없다.
+- `[USER/AGENT]` 사용자가 재등록한 서울 리전 `/meet-me/production/secret/openai-api-key`는 metadata에서 `SecureString`, Version 1로 확인됐다. 값·키 유효성·runtime 전달은 조회/검증하지 않았다.
+- `[AGENT]` 기존 `5e8faab` release는 healthy, 공개 health/OpenAPI는 200이며 probe 전후 PID/restartCount가 같다. 실제 Flyway V1~V7은 모두 성공하고 publisher 37643254403/1 manifest의 prefix와 checksum이 일치한다. V8~V10은 미적용이다. refresh 두 rule은 ENABLED/각 target 1개, guard 8개 파일 없음·guarded-restart not-found/inactive다.
+- `[AGENT]` 로컬 `fix/101-preflight-failure-diagnostics`는 최신 develop `492dc13b9f9d12d9550f31ad4c84c1ff5ea51c87` 기준이다. 운영 main과 해당 preflight 코드의 동일성을 확인했다. 전체 SSM 이력의 자동 pagination을 bounded active filter 두 개로 제한하고, timeout/JSON/실행 실패를 고정 코드로 구분하는 수정과 오프라인 회귀를 준비했다. truncation·불명확한 target은 계속 unavailable다. 실제 실패가 timeout인지 JSON 처리인지 기존 artifact로 확정하지 않는다.
+- `[AGENT]` 새 unittest 5개 PASS, 기존 preflight/release/deploy 계약 40개 PASS(39개 첫 실행 PASS, Git checkout 소유자 환경 오류 1개 동일 소유자에서 재실행 PASS). python3/Git Bash alias만 local evidence preload로 매핑했고 저장소 assertions는 유지했다. 최종 회귀 5개 재실행 및 고의 결함 5개 모두 assertion 탐지·source 파일 불변을 확인했다. 새 Gradle/전체 앱 실행은 수행하지 않았고 커밋도 없다.
+- `[AGENT]` 별도 source 차단: AWS EventBridge Target API의 경로는 `RunCommandParameters.RunCommandTargets`다. 현재 preflight projection과 release `_aws_facts`는 최상위 `RunCommandTargets`를 사용하므로 artifact null을 실제 target 누락으로 판정할 수 없다. release gate의 이 응답 경로 문제는 이번 로컬 수정에 포함하지 않았다. [AWS Target](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_Target.html) / [RunCommandParameters](https://docs.aws.amazon.com/eventbridge/latest/APIReference/API_RunCommandParameters.html).
+- `[SHARED]` 원격 push/PR/병합은 부모의 별도 승인 범위 확인 후 진행한다. reader 변경도 ADR-050의 guard fingerprint를 바꾸므로 기존 게시 tar/digest와 같은 계약으로 취급하지 않는다. exact source/digest·게시 이미지 검증·수정본 읽기 결과와 첫 전환 조건을 보고한 뒤 최종 유지보수 승인이 필요하다. rule 중지·drain·guard 설치·old writer 종료·V8~V10 migration·새 image 시작·서버/웹 배포는 미실행이다. 웹 PR18/20은 Open/Draft임을 확인만 했다. 사전과제 저장소는 접근하지 않았다.
+
+### 같은 날 후속 — EventBridge 경로 수정과 main 자동 실행 분석
+
+- `[AGENT]` 부모의 승인 대기 지시에 따라 원격 변경 없이 같은 로컬 브랜치에서 release gate의 nested `RunCommandParameters.RunCommandTargets` 접근과 preflight의 해당 metadata projection을 수정했다. 정확한 InstanceIds/역할/문서/target 1개 일치·pagination 거부 조건은 그대로다. Input·명령 본문은 metadata에 포함하지 않는다. 앞 항목의 "release gate 수정 미포함"은 이 후속 이전 상태다.
+- `[AGENT]` 새 EventBridge 회귀 4개는 기존 schema에서 assertion RED 3개·PASS 1개 확인 후 GREEN 4개다. 정상 nested 응답 허용, 비밀 없는 projection, top-level shadow/다른 인스턴스/없거나 빈 nested 대상 거부를 검증했다. 기존 preflight/release/deploy 41개 PASS·skip0, 기존 command 회귀 5개 PASS다. EventBridge 결함3개를 assertion으로 탐지하고 파일 bytes 불변을 확인했다. 전체 앱 Gradle·원격 CI·독립 리뷰는 이 후속에서 실행하지 않았고 커밋·push·PR도 없다.
+- `[AGENT]` 현재 GitHub production environment의 protection_rules는 branch_policy만, 허용 브랜치는 main이다. required reviewer와 wait timer는 없다. main legacy protection은 404(Branch not protected), main 적용 rules API는 []다. 설정은 변경하지 않았다. main push CI 성공 후 `Deploy Production`의 build-publish는 ECR/S3 게시를 자동 실행한다. approved-release는 automatic/approve=false로 실제 facts를 읽고 `TRANSITION_REQUIRED`일 때 deployment SSM 분기를 실행하지 않는다. 유효한 READY/history10/root record·동일 SQL/guard fingerprint·일치하는 current image·active command0·parameterReady이면 AUTO_READY로 사용자 수동 입력 없이 배포할 수 있다.
+- `[SHARED]` 따라서 main 반영을 읽기 전용 실행이라고 표시하면 안 된다. 이번 local reader/driver 변경의 guard fingerprint는 기존 게시물과 다르며 현재 V1~V7·guard 미설치 snapshot은 same-contract 자동 배포 조건을 충족하지 않는다. 가상의 pendingCommands=0과 유효한 UNINSTALLED 상태로 수행한 오프라인 policy replay는 automatic/preflight 모두 TRANSITION_REQUIRED였다. 실제 command0·root record·fresh state 확인을 대체하지 않는다. 첫 전환은 action=deploy + approve_first_transition=true 및 두 rule DISABLED·실제 drain0·정확한 history prefix가 필요하다. main 병합 승인에는 자동 build/publish가 포함되는지 부모가 명확히 해야 한다. 운영 전환 승인은 아직 없다.
+
+아래 2026-10-07 진행 요약과 Worklog는 당시 이력이다. 현재 운영 확인 상태는 위 기록을 따른다.
+
+### develop Draft PR 승인 범위 (2026-10-09 UTC)
+
+- `[USER]` 부모가 확인한 08:18 UTC의 “진행해”는 수정 브랜치 push, develop 대상 리뷰 PR, 정확 HEAD CI 실행의 승인이다. main 병합, ECR/S3 운영 release 게시, 운영 배포·migration·refresh rule 변경·guard 설치는 승인하지 않았다.
+- `[AGENT]` 이번 수정의 열린 이슈 [#103](https://github.com/meet-me-duo/meet-me-server/issues/103)을 만들었다. 변경은 두 Python 조회 코드, Node 계약 검사 연결, 신규 offline 회귀 테스트 9건 및 이 Worklog로 제한한다. 기존 develop commit `492dc13b9f9d12d9550f31ad4c84c1ff5ea51c87`에서 분기했고 운영 workflow 설정은 바꾸지 않는다.
+- `[AGENT]` 최종 Node 계약 검사 41건 PASS/skip 0, command 회귀 5건 및 EventBridge 회귀 4건 PASS, 의도적 결함 8건 모두 assertion으로 탐지했다. 자체 검토에서는 truncation·불명확한 target·nested target 불일치를 계속 unavailable/차단으로 처리하는지 확인했다. 별도의 독립 리뷰 완료를 주장하지 않으며 Draft PR의 리뷰 요청으로 남긴다.
+- `[AGENT]` 수정하지 않은 `.codex/hooks/tdd_guard.py`가 exit 0으로 필수 `--no-daemon ktlintCheck assemble test`를 완료했다. JVM 111 suite/654 tests, failures 0/errors 0/skipped 4이며 hook self-test 12건도 PASS이다. 이 결과와 `git diff --check`를 확인한 뒤 승인된 fix 브랜치 commit/push 및 Draft PR을 진행한다. 원격 exact HEAD CI는 게시 후 별도로 확인한다.
 
 ## 운영 규칙
 
