@@ -5,6 +5,8 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.system.CapturedOutput
@@ -33,6 +35,9 @@ import kotlin.test.assertFalse
 @ExtendWith(OutputCaptureExtension::class)
 class SubmissionWebIntegrationTest {
     @Autowired
+    private lateinit var deadlineScheduler: com.meetme.server.meetingroom.application.service.DeadlineClosureScheduler
+
+    @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
@@ -46,6 +51,153 @@ class SubmissionWebIntegrationTest {
                 "manual_availability_intervals, submission_versions, submission_heads, participants, " +
                 "meeting_rooms, guest_browser_sessions CASCADE",
         )
+    }
+
+    @Test
+    fun `방 생성 뒤 미제출 HOST는 재방문 재참여 실패 재시도에도 같은 참여 기록으로 한 번 제출한다`() {
+        val host = createRoom(expectedParticipants = 4, manualOnly = false)
+        assertEquals(1, count("participants"))
+        assertEquals(0, count("submission_heads"))
+        mockMvc
+            .perform(get("/api/rooms/{inviteCode}", host.inviteCode).cookie(Cookie("meet_me_guest", host.credential)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.viewer.role").value("HOST"))
+        mockMvc
+            .perform(get("/api/rooms/{inviteCode}/submission", host.inviteCode).cookie(Cookie("meet_me_guest", host.credential)))
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.code").value("SUBMISSION_NOT_FOUND"))
+        repeat(2) {
+            mockMvc
+                .perform(
+                    post("/api/rooms/{inviteCode}/participants", host.inviteCode)
+                        .header("Origin", ALLOWED_ORIGIN)
+                        .cookie(Cookie("meet_me_guest", host.credential))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"display_name":"주최자"}"""),
+                ).andExpect(status().isOk)
+                .andExpect(jsonPath("$.viewer.role").value("HOST"))
+        }
+        mockMvc
+            .perform(save(host, """{"raw_text":"   "}"""))
+            .andExpect(status().isBadRequest)
+            .andExpect(jsonPath("$.code").value("SUBMISSION_INPUT_REQUIRED"))
+        assertEquals(1, count("meeting_rooms"))
+        assertEquals(0, count("submission_heads"))
+        repeat(2) {
+            mockMvc
+                .perform(save(host, """{"raw_text":"화요일 저녁 온라인 가능"}"""))
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$.revision").value(1))
+        }
+        assertEquals(1, count("participants"))
+        assertEquals(1, count("submission_heads"))
+        assertEquals(1, count("submission_versions"))
+        assertEquals(0, count("coordination_runs"))
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [0, 1, 2])
+    fun `미제출 HOST의 수동 마감은 기존 고유 제출 수로만 분석 준비를 판단한다`(submittedMembers: Int) {
+        verifyUnsubmittedHostClosure(submittedMembers, deadline = false)
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [0, 1, 2])
+    fun `미제출 HOST의 시간 마감은 기존 고유 제출 수로만 분석 준비를 판단한다`(submittedMembers: Int) {
+        verifyUnsubmittedHostClosure(submittedMembers, deadline = true)
+    }
+
+    @Test
+    fun `같은 HOST의 동시 동일 제출은 참여자와 제출 버전 하나로 수렴한다`() {
+        val host = createRoom(expectedParticipants = 4, manualOnly = false)
+        val start = CountDownLatch(1)
+        val executor = Executors.newFixedThreadPool(2)
+        try {
+            val results =
+                (1..2).map {
+                    executor.submit<Int> {
+                        start.await()
+                        mockMvc
+                            .perform(save(host, """{"raw_text":"화요일 저녁 온라인 가능"}"""))
+                            .andReturn()
+                            .response.status
+                    }
+                }
+            start.countDown()
+            assertEquals(listOf(200, 200), results.map { it.get(10, java.util.concurrent.TimeUnit.SECONDS) })
+            assertEquals(1, count("participants"))
+            assertEquals(1, count("submission_heads"))
+            assertEquals(1, count("submission_versions"))
+            assertEquals(0, count("coordination_runs"))
+        } finally {
+            executor.shutdownNow()
+        }
+    }
+
+    @Test
+    fun `미제출 HOST를 제출로 세지 않고 두 MEMBER가 목표 인원에 도달할 때만 마감한다`() {
+        val host = createRoom(expectedParticipants = 2, manualOnly = false)
+        val first = join(host.inviteCode, "합성 참여자 1")
+        mockMvc
+            .perform(save(first, """{"raw_text":"화요일 저녁 온라인 가능"}"""))
+            .andExpect(status().isOk)
+        assertEquals(0, count("coordination_runs"))
+        mockMvc
+            .perform(get("/api/rooms/{inviteCode}", host.inviteCode).cookie(Cookie("meet_me_guest", host.credential)))
+            .andExpect(jsonPath("$.collection_status").value("COLLECTING"))
+        val second = join(host.inviteCode, "합성 참여자 2")
+        mockMvc
+            .perform(save(second, """{"raw_text":"화요일 저녁 온라인 가능"}"""))
+            .andExpect(status().isOk)
+        mockMvc
+            .perform(get("/api/rooms/{inviteCode}", host.inviteCode).cookie(Cookie("meet_me_guest", host.credential)))
+            .andExpect(jsonPath("$.closure_reason").value("EXPECTED_PARTICIPANTS"))
+            .andExpect(jsonPath("$.public_status").value("ANALYZING"))
+        assertEquals(3, count("participants"))
+        assertEquals(2, count("submission_heads"))
+        assertEquals(2, count("submission_batch_items"))
+        assertEquals(1, count("coordination_runs"))
+    }
+
+    private fun verifyUnsubmittedHostClosure(
+        submittedMembers: Int,
+        deadline: Boolean,
+    ) {
+        val host = createRoom(expectedParticipants = if (deadline) 4 else null, manualOnly = !deadline)
+        repeat(submittedMembers) { index ->
+            val member = join(host.inviteCode, "합성 참여자 $index")
+            mockMvc
+                .perform(save(member, """{"raw_text":"화요일 저녁 온라인 가능"}"""))
+                .andExpect(status().isOk)
+        }
+        if (deadline) {
+            jdbcTemplate.update("UPDATE meeting_rooms SET submission_deadline = CURRENT_TIMESTAMP - INTERVAL '1 second'")
+            deadlineScheduler.closeDueRooms()
+        } else {
+            mockMvc
+                .perform(
+                    post("/api/rooms/{inviteCode}/close", host.inviteCode)
+                        .header("Origin", ALLOWED_ORIGIN)
+                        .cookie(Cookie("meet_me_guest", host.credential))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"confirm_early":false}"""),
+                ).andExpect(status().isOk)
+        }
+        mockMvc
+            .perform(get("/api/rooms/{inviteCode}", host.inviteCode).cookie(Cookie("meet_me_guest", host.credential)))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.viewer.role").value("HOST"))
+            .andExpect(jsonPath("$.collection_status").value("CLOSED"))
+            .andExpect(jsonPath("$.closure_reason").value(if (deadline) "DEADLINE" else "MANUAL"))
+            .andExpect(jsonPath("$.public_status").value(if (submittedMembers < 2) "INSUFFICIENT_PARTICIPANTS" else "ANALYZING"))
+        mockMvc
+            .perform(save(host, """{"raw_text":"마감 후 주최자 입력"}"""))
+            .andExpect(status().isConflict)
+            .andExpect(jsonPath("$.code").value("ROOM_CLOSED"))
+        assertEquals(submittedMembers + 1, count("participants"))
+        assertEquals(submittedMembers, count("submission_heads"))
+        assertEquals(if (submittedMembers < 2) 0 else 1, count("coordination_runs"))
+        assertEquals(if (submittedMembers < 2) 0 else submittedMembers, count("submission_batch_items"))
     }
 
     @Test

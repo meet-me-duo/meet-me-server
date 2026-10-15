@@ -1,12 +1,37 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-09
+> **최종 갱신:** 2026-10-15
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), 확정된 장기 결정은 [`docs/ADR.md`](docs/ADR.md)를
 기준으로 한다. 이 문서가 기준 문서와 충돌하면 기준 문서를 우선하고 이 계획을 갱신한다.
+
+## 웹 #22 / JIN-71 로컬 후속 — 방 생성과 HOST 조건 제출 분리 (2026-10-15 UTC)
+
+- `[AGENT]` 두 저장소 지침·Worklog·실제 원격 main을 읽었다. 서버 main과 사용자 제공 운영 기준은 `91eb2505ddf6b4db549a5bc2b8b07f11e514d0b0`, 웹 main은 `7b95951aba1a8fafb28a4df7e93f4e6faa9ba221`다. 원래 작업 트리는 모두 깨끗했다. 서버 develop을 ff-only 갱신한 `dd8e07d6e1245269454e59edd2981532cc3f3dc3`는 main과 tree가 같으며 별도 `feature/22-host-input-contract-tests`에서 테스트만 보완한다.
+- [x] `[AGENT]` 현재 `POST /api/rooms`가 HOST만 생성하고 제출은 별도 `PUT /submission`인 계약을 확인했다. 서버 API·제품 Kotlin·SQL·설정 변경은 필요하지 않다. 웹에서 생성 성공·선공유·나중에 입력·저장 실패 재시도 안내와 진행 중 중복 클릭 방어를 보완한다.
+- [x] `[AGENT]` 실제 격리 PostgreSQL 대상 32개 검증 통과(신규 9개 포함). 생성 직후 제출 0개, 같은 HOST 재방문·재참여·빈 원문 거부 후 재시도, 동일 원문 순차/동시 제출의 참여자·제출 head·version 각각 1개 수렴을 확인했다. 기존 비공개·주최자 권한·마감 경합 회귀를 함께 실행했다.
+- [x] `[AGENT]` HOST 미제출 시 수동/시간 마감의 제출 0·1·2명과 인원 목표 마감을 검증했다. 기존 계약은 역할이 아닌 고유 제출 수를 세며, 2명 미만은 `INSUFFICIENT_PARTICIPANTS`, 다른 참여자 2명 이상이면 HOST 원문 없이 분석 배치를 만든다. 서버가 `CLOSED`로 마감한 뒤 HOST의 최초 제출은 `ROOM_CLOSED`로 거부한다. 시간 회귀는 합성 DB의 deadline 경과 후 scheduler를 직접 호출하며 정확한 시각 경계의 pre-scan 거부를 입증하지 않는다. HOST 필수 제출이나 마감 연장 정책을 새로 만들지 않았다.
+- [x] `[AGENT]` 최종 `ktlintCheck assemble test` PASS(exit 0, 5m31s). 실제 전체 663개 중 659개 PASS/기존skip4/실패0/오류0이다. 첫 실행도 기능 실패0이었으나 새 테스트의 chain 줄바꿈 8개가 ktlint에서 거부돼 서식만 수정하고 전체 gate를 재실행했다. 테스트 입력·기대값은 유지했다. 웹 최종 API 정합·lint·typecheck·unit282·build PASS, 전체 mock browser375 PASS/기존skip1/실패0/flaky0. 검증 원본은 `/workspace/scratch/issue-22/`, source/test SHA와 최종 집계는 웹 `docs/verification/issue-22-local.json`에 기록했다.
+- 범위 밖: 소셜 로그인·계정·아카이브·선택 암호·모호성 질문, commit/push/PR/merge/배포, 운영 흐름 검증·운영 데이터·보안 설정 변경. 관련 계정 이슈는 후속 연동이며 이 작업의 의존성으로 새로 지정하지 않는다. 이 기록은 운영 실행 근거가 아니다.
+
+### 같은 날 독립 리뷰 후속
+
+- `[AGENT]` 별도 read-only `review_contract`와 `review_web`가 소스·테스트·원시 로그/XML·SHA를 대조했다. 서버 제품 코드가 배포 기준과 동일하고 신규9 실제 실행·기존skip4·참여자별 제약·권한·마감·추천·재분석 회귀 결과를 확인했다. 서버 source/test는 위 전체 gate 이후 동일하므로 전체659 PASS를 다시 실행한 것으로 집계하지 않는다.
+- `[AGENT]` 웹 필수 발견4건은 최초 HOST draft의 마감 전환 보존, 생성/저장 응답 유실의 결과 미확인 안내, 저장 시도 이후 미제출 단정 제거, 본인 GET이 저장을 확인한 뒤 미확인 오류 해소다. 독립 수용26개는 첫 구현19 RED/기존7 GREEN 후 최종26 GREEN, 고의 결함5종 assertion 탐지·정확 복원으로 검증했다. 최종8파일 지문 묶음 `ecea54680f84953585bc7e3366f562f3d1feb15666ca62304c22bc1091649953`를 reviewer가 직접 재계산했다. 최종 변경 코드의 추가 필수 수정은 없다.
+- `[AGENT]` 기존 P2는 남긴다. PRD Rule4(273행)는 deadline 전까지만 수정을 허용하지만 `SubmissionService.save`는 CLOSED만 검사하고 저장 후 예상 인원 마감만 처리하며 scheduler 기본60초 간격 전에 경과한 deadline의 PUT을 접수할 수 있다. 이번 테스트는 scheduler 마감 이후 거부만 검증했다. 기존 구현을 유지하고 후속으로 명시하거나, 원격 반영 전 별도 서버 범위에서 기존 PRD 시간 경계를 원자적으로 강제하고 동시성 TDD를 추가하는 선택지가 있다. 임의 유예 정책이나 서버 제품 변경은 하지 않았다.
+- `[AGENT]` 기존skip4는 live Gemini opt-in1과 선택적 OpenAPI 검사/export/debug capture opt-in3이며 각 소스는 기준과 동일하다. 정확한 클래스·메서드·조건·검증 한계와 최신 웹 검증 결과는 웹 `docs/verification/issue-22-independent-review.md` 및 `issue-22-local.json`을 따른다. 실제 서버/browser 종단·운영 검증과 생성 POST 응답 유실의 서버 멱등 재생은 별도다. 로컬 작업만 유지하며 원격 쓰기는 없다.
+- `[AGENT]` 독립 리뷰 수정 후 웹 실제 최종 API 정합·lint·build(tsc 포함)·전체 단위308 PASS, 고정 build 전체 mock browser383 PASS/기존skip1/실패0/flaky0/retries0다. 종료 후 source8파일·dist SHA가 같고 임시 Playwright 설정을 제거했다. 이는 별도 mock 검증이며 서버/backend 연결이나 운영 실행의 증거로 사용하지 않는다.
+
+### 같은 날 게시 승인 — 커밋·PR·원격 CI
+
+- `[USER]` 2026-10-15 10:30 KST 검증된 변경의 commit/push/PR 생성과 원격 CI 확인을 승인했다. merge·배포·운영 데이터·보안 변경은 제외한다. 위 로컬 단계의 미커밋 기록은 당시 이력이다.
+- `[AGENT]` 원격 developdd8e07d/main91eb250과 open PR0, 최종 test SHA4f8aea3a… 및 source8 묶음ecea5468…를 확인했다. 웹22/JIN-71의 서버 회귀만 추적하는 보조 이슈를 연결하고 develop 대상 PR을 준비한다. 제품/API/SQL/설정은 동일하며 기존 deadline P2는 별도 후속이다.
+- `[AGENT]` commit 전 변경 없는 .codex/hooks/tdd_guard.py를 필수 실행한다. Gradle이 이전 결과를 재사용하면 새로운659건 실행으로 집계하지 않는다. 로컬 cache만 준비하고 guard·wrapper·CI는 변경하지 않는다.
+- `[AGENT]` 실제 필수 guard는 exit0/11.507초로 통과했다. 기존 품질 결과 재사용이며 새로운659건 실행으로 주장하지 않는다. 회귀 테스트만 추적하는 [서버111](https://github.com/meet-me-duo/meet-me-server/issues/111)을 만들었고 웹22/JIN-71과 연결한다. 제품/API/SQL/설정과 검증 test SHA는 그대로다.
+- Commit/PR: 동일 커밋 예정. 정확 SHA·PR·원격 결과는 게시 후 PR/Linear에서 대조한다. 최종 갱신일2026-10-15 UTC.
 
 ## 최신 운영 읽기 점검 (2026-10-09 UTC)
 
