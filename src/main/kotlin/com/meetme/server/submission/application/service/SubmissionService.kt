@@ -44,6 +44,13 @@ class SubmissionService(
         val participant = requireParticipant(room.id, command.rawCredential)
         val existing = submissionRepository.findByParticipant(participant.id)
         val correction = room.collectionStatus == CollectionStatus.CLOSED
+        val now = clock.instant()
+        val deadline = room.closurePolicy.deadline
+        if (!correction && deadline != null && now >= deadline) {
+            throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
+                com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.ROOM_CLOSED,
+            )
+        }
         if (correction) {
             val roundId = room.activeRevisionRoundId
             if (roundId == null) {
@@ -91,7 +98,6 @@ class SubmissionService(
                 mapOf("maximum" to SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS),
             )
         }
-        val now = clock.instant()
         val submission =
             existing?.revise(SubmissionVersionId(idGenerator.next()), rawText, emptyList(), command.locale, now)
                 ?: Submission.start(
