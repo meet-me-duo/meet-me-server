@@ -1,0 +1,40 @@
+{
+  "workItem": "issue-107-http",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationHttpPostgresTest.kt",
+      "sha256": "66dc527163a830f3edb5fc6d21a268afb3b2f3ffbe036d7ac9676f30ab38d648"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-run-gradle",
+    "test",
+    "--tests",
+    "*ClarificationProviderContractTest",
+    "--tests",
+    "*ClarificationHttpPostgresTest",
+    "--no-daemon",
+    "--max-workers=2"
+  ],
+  "failedTests": [
+    "unknown and another owners valid question return same conflict and never expose source()",
+    "host analysis winning race fences late answer out of frozen batch()",
+    "B and trimmed direct answers save new versions without another parse job()",
+    "invalid direct or mixed choice payload never changes revision question or work()",
+    "direct boundary accepts one and five hundred Unicode codepoints without truncation()",
+    "answer creates immutable revision while retaining source and requires explicit host analysis()",
+    "cancel is durable across reload and does not change submission revision or enqueue work()",
+    "missing or consumed round and stale revision reject save and cancel without changing data()",
+    "persisting same source output cannot regenerate question id or ask another participant()",
+    "credential and exact Origin protect question reads and answer writes()",
+    "same request racing itself creates only one answer revision()",
+    "same request retries replay response even after host consumes round but changed body conflicts()",
+    "unanswered question remains pending without inventing revision and host cannot read ambiguity source()",
+    "original edit races question answer with source revision fencing()",
+    "answer persistence failure rolls back new version head and provenance as one transaction()",
+    "owner reload returns same question identity with source revision and round editability()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:51:55.277087Z"
+}

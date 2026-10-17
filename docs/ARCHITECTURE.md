@@ -532,3 +532,16 @@ Gemini와 OpenAI Responses API의 outbound adapter는 동일 `NaturalLanguageBat
 Attempt에 provider/model/policy/invocation별 usage를 구분한다. 알 수 없는 usage 또는 가격은 null이며 Luna에는 Gemini 단가를 적용하지 않는다. 유효한 범위 밖 날짜 조건은 validator에서 보존하고 결정론적 matcher가 검색 기간에만 펼친다. AVAILABLE 여부는 조건을 버리기 전에 판단하므로 범위 밖 AVAILABLE-only가 전체 가능으로 바뀌지 않는다.
 
 설정에는 `OPENAI_API_KEY` 변수 참조만 추가한다. 실제 비밀값과 운영 설정은 이 구현에서 읽거나 등록하지 않는다. 새 공급자로 원문을 전달하는 사용자 고지·처리 조건 검토와 운영 자격 증명 등록은 배포 준비의 별도 작업이며 개인 보관함 연결·별도 품질 평가를 운영 배포 승인으로 확대하지 않는다.
+
+
+### #107 본인 모호성 보완 경계 (2026-10-17 사용자 위임)
+
+공통 provider 계약은 기존 배치 응답의 nullable `clarification`에 최대1개 질문과 전체 수정본 A/B를 담는다. `schema_version=3`의 additive reader는 구 응답의 해당 필드 생략도 null로 읽는다. 공급자 SDK, HTTP timeout, invocation/attempt admission과 Worker는 변경하지 않는다. 질문 제안만을 위한 별도 LLM 호출은 없다. 명확한 문맥·부정·선호·원문 버전별 기준일은 보존하고 상대 날짜가 있는 선택지는 절대 날짜로 표현한다. 서버는 원문 regex로 의미를 덮어쓰지 않고 구절·길이·서로 다른 옵션·모호성 rejection과 빈 조건의 구조 계약을 검증한다.
+
+V13 `submission_clarifications`는 불변 source version별 최초 proposal, 멱등 request/body, 답변 후 version과 최초 응답 snapshot을 보존한다. 저장은 기존 구조화 결과와 같은 트랜잭션이며 방 만료 정리는 FK cascade로 함께 삭제한다. 같은 원문에 답한 이력·답변으로 생성된 version은 재질문하지 않고 참여자·방당 최초 질문은 최대3개다. 무응답·취소는 안전 미반영을 유지하고 `AMBIGUOUS_INPUT`도 전체 가능 시간으로 확대하지 않는다.
+
+ClarificationUseCase는 본인 소유권 확인 후 현재 활성 완료 배치·원본 version·OPEN 라운드·expected revision을 검증하고 기존 SaveSubmissionUseCase를 호출한다. room 잠금과 답변 provenance는 하나의 트랜잭션으로 묶는다. 저장·조회·작업 재생은 AI/Outbox를 만들지 않으며 HOST의 기존 `/analysis`만 새 분석을 고정한다. 질문 API의 본인 접근과 타인 모호성의 HOST 비공개는 기존 비모호성 미반영 공개와 구분한다. #109 공통 소유권 resolver와 CurrentAccountPort의 통합은 해당 세션 계약을 따르며 이 기능에서 계정/participant/auth/CORS 구현을 복제하지 않는다.
+
+`RoomResponse.clarification_protocol=owner-clarification-v1`은 웹 기능 지원 표지이며 권한이 아니다. 웹은 표지가 없으면 새 질문 API를 호출하지 않는다. 질문은 방·viewer context별 캐시에 격리하고 room version·활성 분석·라운드 변경에 재조회한다. 오래된 답변·조회는 새 소유자의 상태를 복구하지 않으며 보완 UI의 직접 원문은 메모리에만 남긴다. native OpenAPI와 생성 웹 타입을 함께 검증한다. 실제 모델의 의미 정확성·비용·latency는 mock 계약/격리 PostgreSQL·브라우저 검증으로 증명하지 않는다.
+
+웹의 소유자 query/cache와 답변 form 수명은 구분한다. form은 질문 ID·source revision·편집 round ID를 key로 사용하며 새 질문/라운드는 선택·직접 입력·operation·blocked 상태를 초기화한다. 이전 form의 늦은 POST는 새 질문 cache·알림·권한 callback을 변경하지 않는다. 같은 질문/라운드 query 재조회는 form을 유지한다.
