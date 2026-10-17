@@ -1,12 +1,21 @@
 # meet-me-server Implementation Plan
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-15
+> **최종 갱신:** 2026-10-17
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), 확정된 장기 결정은 [`docs/ADR.md`](docs/ADR.md)를
 기준으로 한다. 이 문서가 기준 문서와 충돌하면 기준 문서를 우선하고 이 계획을 갱신한다.
+
+## deadline 정합성 수정 — scheduler 전 제출 차단 (2026-10-17 UTC)
+
+- [x] `[AGENT]` 기본 60초 scheduler와 실제 시각을 유지한 격리 HTTP/PostgreSQL에서 deadline 경과 후 기존 수정·첫 제출이 200으로 저장되고 늦은 버전까지 동결되는 기존 오류를 재현했다. 기준 main `91eb2505ddf6b4db549a5bc2b8b07f11e514d0b0`과 develop `3232128bb1d0886c987e378a787633bd2aee6341`의 제품·빌드 입력은 같다.
+- [x] `[AGENT]` 최신 develop 기반 `fix/deadline-submission-cutoff`에서 기존 방 잠금·권한 확인 후 deadline을 검사하여 동일 본문 반환과 저장 전에 `ROOM_CLOSED`로 거부했다. CLOSED 정식 수정 라운드와 기존 인증·revision·동결 의미를 유지한다. 제품 변경은 `SubmissionService.kt` 한 파일이며 #107~#110의 별도 구현·SQL·설정·웹 소스는 포함하지 않는다.
+- [x] `[AGENT]` 독립 회귀 37개는 고정 지문으로 RED 20실패/17통과 → GREEN 37통과다. 정각·전후, 첫 제출·수정·동일 원문, DB 불변, 실제 PG 잠금·scheduler 경합, 인원 목표와 CLOSED 수정 라운드를 검증했다. 결함 7종 모두 assertion으로 탐지하고 원본을 복원했다.
+- [x] `[AGENT]` 전체 `ktlintCheck assemble test` 696통과/기존 opt-in skip4/실패·오류0, 최종 독립 리뷰 PASS다. 동일 검증 JAR의 실제 HTTP에서 늦은 두 요청은 409·DB 불변이고, 자연 scheduler 후 적시2명만 동결/적시1명은 인원 부족임을 확인했다. 원시 결과와 웹 #22 신규7파일은 보존하며 추적 요약은 `.tdd/red/deadline-submission-cutoff.json`, `.tdd/verification/deadline-submission-cutoff.json`에 둔다.
+- [ ] `[AGENT]` 사용자 승인 범위인 commit·feature push·develop 대상 Draft PR·정확 head SHA CI를 확인한다. 신규 버그 이슈 생성은 별도 승인 대기이며 기존 이슈나 연결 검사를 변경하지 않는다. Commit/PR: 동일 커밋 예정, 게시 후 PR에서 실제 SHA·CI 결과를 확인한다.
+- 범위 밖: merge/auto-merge/main push, 운영 배포·DB 변경·Secret 입력·실제 AI·운영 호출. #110 집 PC 미푸시 소스와 합친 상태의 검증을 대신하지 않는다.
 
 ## 웹 #22 / JIN-71 로컬 후속 — 방 생성과 HOST 조건 제출 분리 (2026-10-15 UTC)
 
@@ -145,6 +154,8 @@
 - 사용자 개입이 필요하면 `.agents/rules/user-intervention.md`의 `[USER ACTION REQUIRED]` 형식으로 서비스 위치와 단계별 행동까지 종속 작업 전에 안내한다.
 
 ## 현재 진행 요약
+
+- **최신 독립 마감 수정 (2026-10-17 UTC):** deadline 경과 후 scheduler 처리 전 저장을 기존 잠금 안에서 차단했다. 고정 회귀37·결함7종·전체696통과/기존skip4·실제HTTP·독립리뷰를 완료했고, 별도 Draft PR의 정확 head CI를 게시 후 확인한다. #107~#110·웹 #22 격리 E2E는 별도 범위다.
 
 - **현재 작업 — Issue #95 (2026-10-07 UTC):** PR #94 `bf4edff`를 포함한 독립 feature에서 재구성 계약과 실제 native OpenAPI를 준비했다. 독립 도메인18·HTTP/동시성15·DB6·게시3·retention1·리뷰3·binding4 총50개 GREEN을 확인했다. 최신 독립 HTTP 테스트의 PR94 baseline15 assertion RED, DB/정밀도7 assertion RED, 삭제 순서1 assertion RED 및 파일 지문을 기록했다. 신규 temporal option/variant·전체 대안·실제 시각 typed selection·legacy 호환·frozen/revision/confirmed 보호를 구현했다. D2 명시 선호 집계는 사용자 직접 승인으로 확정됐으며 제품 구현·검증은 새 세션에 인계한다. 원격 계약 commitfcde6ca와 Draft PR97을 공개했고 독립 최종 리뷰 및 결함 주입5/5탐지를 완료했다. 원본source/test지문을정확복구했다. 최종필수guard와 HEAD627e0b7의 CI37582706551 전 단계 성공을 확인했다. 이번 문서 후속 HEAD의 CI는 별도로 추적한다. 모델 호출0이며 병합·운영 배포·권한 변경은 수행하지 않는다.
 
@@ -832,6 +843,7 @@
 
 | 날짜 | 변경 내용 | 검증/근거 | Commit/PR |
 | --- | --- | --- | --- |
+| 2026-10-17 | deadline 경과 후 scheduler 전 제출을 기존 잠금 안에서 차단하고 정식 수정 라운드 보존 | 독립37회귀, 결함7종 탐지, 전체696통과/기존skip4, 실제HTTP409·DB불변, 독립리뷰PASS | 동일 커밋 예정, develop 대상 별도 Draft PR |
 | 2026-09-04 | 구현 계획 최초 작성. 현재 프로젝트 기반과 Codex 훅 진행 상태 반영 | PRD, Architecture, ADR, 저장소 상태 대조 | 동일 커밋 예정 |
 | 2026-09-04 | Flyway SQL 마이그레이션 기본 디렉터리 준비 | `src/main/resources/db/migration/.gitkeep` 확인 | 동일 커밋 예정 |
 | 2026-09-05 | 외부 계정·권한·결제·동의·비밀정보의 사용자 개입 규칙과 행동 가이드 체크포인트 추가 | `user-intervention.md`, AGENTS, 프로젝트 스킬과 계획 간 일치 확인 | 동일 커밋 예정 |
