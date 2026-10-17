@@ -20,7 +20,8 @@ class ParticipantOwnershipConfiguration {
         credentials: GuestCredentialPort,
         participants: ParticipantRepository,
         clock: Clock,
-    ): GuestOwnershipProofPort = GuestCookieOwnershipProofAdapter(sessions, credentials, participants, clock)
+        reaccess: com.meetme.server.participant.application.port.output.GuestReaccessRepository,
+    ): GuestOwnershipProofPort = GuestReaccessOwnershipProofAdapter(sessions, credentials, participants, reaccess, clock)
 
     @Bean
     fun participantOwnershipResolver(

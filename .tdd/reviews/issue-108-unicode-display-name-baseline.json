@@ -1,0 +1,14 @@
+{
+  "workItem": "issue-108-unicode-display-name",
+  "baselineSource": {
+    "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleDtos.kt",
+    "sha256": "3aefb857078c12e7fe9c2282963aa72fc99f322e070157f598daa99631ba426c",
+    "archive": ".codex/tdd-evidence/issue-108-unicode-display-name-dto-before.kt"
+  },
+  "tests": 3,
+  "failures": 2,
+  "errors": 0,
+  "assertion": "Non-BMP 50 codepoints and trimmed 50 codepoints expected201 actual400; 51 codepoints400/no-write case passes.",
+  "rawLog": ".codex/tdd-evidence/issue-108-unicode-display-name.log",
+  "recordedAt": "2026-10-17T16:52:39Z"
+}

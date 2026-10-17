@@ -37,6 +37,7 @@ data class ViewerParticipation(
     val displayName: String?,
     val role: ParticipantRole?,
     val contextId: java.util.UUID? = null,
+    val participantId: java.util.UUID? = null,
 )
 
 enum class PublicRoomStatus {

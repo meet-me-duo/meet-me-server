@@ -87,7 +87,7 @@ class ScopedGuestProofWebIntegrationTest {
     }
 
     @Test
-    fun `replace only proof permits replacement but rejects private submission read`() {
+    fun `replace only proof uses blind endpoint and rejects ordinary submission write and private read`() {
         proof(GuestProofLevel.REPLACE_ONLY)
         mvc
             .perform(
@@ -96,20 +96,21 @@ class ScopedGuestProofWebIntegrationTest {
                     .cookie(cookie())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"raw_text":"replacement supplied by participant"}"""),
-            ).andExpect(status().isOk)
-            .andExpect(jsonPath("$.revision").value(2))
+            ).andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.code").value("GUEST_PROOF_INSUFFICIENT"))
         mvc
             .perform(get("/api/rooms/$invite/submission").cookie(cookie()))
             .andExpect(status().isForbidden)
             .andExpect(jsonPath("$.code").value("GUEST_PROOF_INSUFFICIENT"))
         assertEquals(
-            "replacement supplied by participant",
-            jdbc.queryForObject("SELECT raw_text FROM submission_versions WHERE revision=2", String::class.java),
+            "private previous input",
+            jdbc.queryForObject("SELECT raw_text FROM submission_versions", String::class.java),
         )
+        assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM submission_versions", Int::class.java))
     }
 
     @Test
-    fun `replace only proof can replace without legacy cookie but still cannot read`() {
+    fun `replacement only trusted context proof without cookie still rejects ordinary write and read`() {
         `when`(proofs.resolve(room, null, false)).thenReturn(GuestOwnershipProof(room, participant, GuestProofLevel.REPLACE_ONLY))
         mvc
             .perform(
@@ -117,11 +118,35 @@ class ScopedGuestProofWebIntegrationTest {
                     .header("Origin", ORIGIN)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"raw_text":"replacement without cookie"}"""),
-            ).andExpect(status().isOk)
+            ).andExpect(status().isForbidden)
+            .andExpect(jsonPath("$.code").value("GUEST_PROOF_INSUFFICIENT"))
         mvc
             .perform(get("/api/rooms/$invite/submission"))
             .andExpect(status().isForbidden)
             .andExpect(jsonPath("$.code").value("GUEST_PROOF_INSUFFICIENT"))
+        assertEquals("private previous input", jdbc.queryForObject("SELECT raw_text FROM submission_versions", String::class.java))
+        assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM submission_versions", Int::class.java))
+    }
+
+    @Test
+    fun `verified trusted context proof without legacy cookie keeps private read and ordinary replacement`() {
+        `when`(proofs.resolve(room, null, false)).thenReturn(GuestOwnershipProof(room, participant, GuestProofLevel.VERIFIED_GUEST))
+        mvc
+            .perform(get("/api/rooms/$invite/submission"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.raw_text").value("private previous input"))
+        mvc
+            .perform(
+                put("/api/rooms/$invite/submission")
+                    .header("Origin", ORIGIN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"raw_text":"verified context replacement without cookie"}"""),
+            ).andExpect(status().isOk)
+            .andExpect(jsonPath("$.revision").value(2))
+        assertEquals(
+            "verified context replacement without cookie",
+            jdbc.queryForObject("SELECT raw_text FROM submission_versions WHERE revision=2", String::class.java),
+        )
     }
 
     @Test

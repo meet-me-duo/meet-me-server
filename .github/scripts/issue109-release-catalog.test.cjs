@@ -6,7 +6,8 @@ const cp = require('node:child_process');
 const crypto = require('node:crypto');
 const test = require('node:test');
 
-// Issue #109 approved offline release contract: publish exact V1..V11; retain immutable V10 consumption.
+// Issue #109 approved offline release contract, additively superseded by #108 publication V1..V12.
+// All immutable V10/V11 consumption and transition assertions are retained.
 // No AWS, Docker, production host read, deployment, credentials or service mutation is performed.
 const root = path.resolve(__dirname, '../..');
 const repository = '123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/meet-me';
@@ -96,18 +97,19 @@ function flywayCrc(raw) {
   return (crc ^ 0xffffffff) | 0;
 }
 
-test('V11 publisher derives exact eleven source migrations, Flyway checksums and source fingerprints', () => {
+test('V12 publisher derives exact twelve source migrations while retaining the original eleven checksums', () => {
   const value = fixture();
   try {
     const result = publish(value);
-    assert.equal(result.ok, true, 'Actual V11 source must be publishable without dropping the new migration');
-    const expectedRows = Array.from({ length: 11 }, (_, i) => {
+    assert.equal(result.ok, true, 'Actual V12 source must be publishable without dropping the new migration');
+    const expectedRows = Array.from({ length: 12 }, (_, i) => {
       const version = String(i + 1);
       const script = fs.readdirSync(value.migrations).find(name => name.startsWith(`V${version}__`));
       const raw = fs.readFileSync(path.join(value.migrations, script));
       return { version, script, checksum: flywayCrc(raw), sha256: hashes(raw) };
     });
-    assert.deepEqual(expectedRows.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -1822689491]);
+    assert.deepEqual(expectedRows.slice(0, 11).map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -1822689491]);
+    assert.equal(expectedRows[11].checksum, -1574736948);
     assert.deepEqual(result.result.migrations, expectedRows.map(({ sha256, ...row }) => row));
     assert.equal(result.result.schemaFingerprint, hashes(canonical(expectedRows.map(({ checksum, ...row }) => row))));
     assert.equal(result.result.guardFingerprint, hashes(canonical(guardFiles.map(name => ({ path: name, sha256: hashes(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
@@ -116,26 +118,26 @@ test('V11 publisher derives exact eleven source migrations, Flyway checksums and
   } finally { value.remove(); }
 });
 
-test('publisher rejects V10-only source, duplicate versions, unknown V12 and symlinked V11', () => {
+test('publisher rejects missing V11, duplicate versions, unknown V13 and symlinked V11', () => {
   for (const fault of ['missing', 'duplicate', 'unknown', 'symlink']) {
     const value = fixture();
     try {
       const v11 = path.join(value.migrations, 'V11__add_accounts_and_participant_ownership.sql');
       if (fault === 'missing') fs.unlinkSync(v11);
       if (fault === 'duplicate') fs.copyFileSync(v11, path.join(value.migrations, 'V11__duplicate.sql'));
-      if (fault === 'unknown') fs.renameSync(v11, path.join(value.migrations, 'V12__unknown.sql'));
+      if (fault === 'unknown') fs.renameSync(v11, path.join(value.migrations, 'V13__unknown.sql'));
       if (fault === 'symlink') { fs.unlinkSync(v11); fs.symlinkSync('V1__create_core_domain.sql', v11); }
       assert.deepEqual(publish(value), { ok: false, reason: 'UNTRUSTED_RELEASE' }, fault);
     } finally { value.remove(); }
   }
 });
 
-test('manifest reader accepts immutable V10 and complete V11 only', () => {
+test('manifest reader retains immutable V10 and complete V11 and rejects unknown catalogs', () => {
   for (const length of [10, 11]) {
     const release = manifest(length);
     assert.deepEqual(python('validate_manifest', [release, expected]), { ok: true, result: { ...release, imageRef: `${repository}@${release.imageDigest}` } });
   }
-  for (const length of [7, 9, 12]) assert.deepEqual(python('validate_manifest', [manifest(length), expected]), { ok: false, reason: 'UNTRUSTED_RELEASE' });
+  for (const length of [7, 9, 13]) assert.deepEqual(python('validate_manifest', [manifest(length), expected]), { ok: false, reason: 'UNTRUSTED_RELEASE' });
 });
 
 test('both complete contracts retain automatic updates without weakening exact history and fingerprints', () => {
@@ -180,7 +182,7 @@ test('V11 complete records cannot bypass failed history, checksum tampering or p
     denied(release, badChecksum, action);
     const unsuccessful = ready(release); unsuccessful.history[10].success = false;
     denied(release, unsuccessful, action);
-    for (const length of [9, 12]) denied(release, { ...ready(release), automaticContract: record(manifest(length)) }, action);
+    for (const length of [9, 13]) denied(release, { ...ready(release), automaticContract: record(manifest(length)) }, action);
   }
 });
 
@@ -198,7 +200,7 @@ test('host stored record parser accepts strict V10 and V11 with synthetic read-o
     const value = record(manifest(length));
     assert.deepEqual(python('_record', [value], 'host-approved-release.py', true), { ok: true, result: value });
   }
-  const invalid = [record(manifest(9)), record(manifest(12))];
+  const invalid = [record(manifest(9)), record(manifest(13))];
   for (const field of ['version', 'script', 'checksum', 'success']) {
     const value = record(manifest(11)); value.history[10][field] = { version: '12', script: 'V12__wrong.sql', checksum: true, success: false }[field]; invalid.push(value);
   }

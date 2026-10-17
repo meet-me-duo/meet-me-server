@@ -39,6 +39,7 @@ class SubmissionService(
     private val revisionRoundRepository: com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository,
     private val runRepository: com.meetme.server.coordination.application.port.output.CoordinationRunRepository,
     private val ownership: ParticipantOwnershipResolver,
+    private val guestWriteGuard: com.meetme.server.submission.application.port.output.GuestSubmissionWriteGuard,
 ) : SaveSubmissionUseCase,
     GetOwnSubmissionUseCase {
     @Transactional
@@ -46,7 +47,15 @@ class SubmissionService(
         val room = findRoom(command.inviteCode, lock = true)
         val participant = requireParticipant(room.id, command.rawCredential, OwnershipOperation.REPLACE_OWN)
         val existing = submissionRepository.findByParticipant(participant.id)
+        guestWriteGuard.validate(room.id, participant.id, command.rawCredential, existing?.latest?.revision ?: 0, command.blindReplacement)
         val correction = room.collectionStatus == CollectionStatus.CLOSED
+        val now = clock.instant()
+        val deadline = room.closurePolicy.deadline
+        if (!correction && deadline != null && now >= deadline) {
+            throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
+                com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.ROOM_CLOSED,
+            )
+        }
         if (correction) {
             val roundId = room.activeRevisionRoundId
             if (roundId == null) {
@@ -78,7 +87,7 @@ class SubmissionService(
             if (command.expectedRevision == null || existing?.latest?.revision != command.expectedRevision) revisionConflict()
         }
         val rawText = normalizeText(command.rawText)
-        if (existing != null && existing.latest.rawText == rawText) {
+        if (!command.blindReplacement && existing != null && existing.latest.rawText == rawText) {
             return existing.toView(true, room.activeRevisionRoundId, room.version)
         }
 
@@ -94,7 +103,6 @@ class SubmissionService(
                 mapOf("maximum" to SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS),
             )
         }
-        val now = clock.instant()
         val submission =
             existing?.revise(SubmissionVersionId(idGenerator.next()), rawText, emptyList(), command.locale, now)
                 ?: Submission.start(

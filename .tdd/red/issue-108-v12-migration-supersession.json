@@ -1,0 +1,49 @@
+{
+  "workItem": "issue-108-v12-migration-supersession",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "2e79cedfaef071df198d828e7efc4101ef43647cd0a826c41739fdcd827b389e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "a1e6e74ec704e847f892a29cc638e32dc2bf468a27e2f466960b42254588673c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "e9f064511bf59f7598a2965b3b33bade84cfe715cedc7b93408ea8243244a326"
+    }
+  ],
+  "command": [
+    "/tmp/issue108-integration-gradle-run",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Pkotlin.incremental=false",
+    "--max-workers=2",
+    "-I",
+    "/tmp/issue108-author-test-format.gradle",
+    "runKtlintCheckOverTestSourceSet",
+    "test",
+    "--tests",
+    "*GuestReaccessWebIntegrationTest",
+    "--tests",
+    "*ScopedGuestProofWebIntegrationTest",
+    "--tests",
+    "*ScopedGuestViewerJoinWebIntegrationTest",
+    "--tests",
+    "*CorePersistenceIntegrationTest",
+    "--tests",
+    "*DatabaseMigrationRunnerTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.blank PostgreSQL migrates exactly twelve versions and preserves both independent legacy schemas()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()",
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T16:10:00.844135Z"
+}

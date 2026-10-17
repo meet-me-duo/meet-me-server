@@ -1,0 +1,139 @@
+{
+  "workItem": "issue-108-contract-supersession",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "authorRole": "independent test designer",
+  "authority": "Explicit parent delegation of #108 product contract and #109 integration contract; existing frozen 47 independent tests remain unchanged.",
+  "status": "EXPECTED_RED_CONFIRMED",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "beforeSha256": "f667e4bd437a66ec0ab5fe0a2930f6cc7ea99983e9e238c961a7cdc442815ed3",
+      "afterSha256": "2e79cedfaef071df198d828e7efc4101ef43647cd0a826c41739fdcd827b389e",
+      "change": "Latest 11 -> 12; preserve original core table checks and Flyway validation, add both V12 tables.",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/CorePersistenceIntegrationTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestProofWebIntegrationTest.kt",
+      "beforeSha256": "3fe7c60ae6e5afa7fda0963a9c9e51bc57f6e0d87ed079e07cd383ea70627eff",
+      "afterSha256": "8fd4d8db95bf8155b78a2c84c64e2f6be600ae38fab8bb22d044f3eb9b63170a",
+      "change": "REPLACE_ONLY ordinary PUT 200 -> 403 with original version preservation. Blind endpoint is the only replacement command. Preserve rawCredential=null request-context compatibility using a new VERIFIED_GUEST ordinary read/PUT success case.",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/ScopedGuestProofWebIntegrationTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestViewerJoinWebIntegrationTest.kt",
+      "beforeSha256": "4712944c46246a713dc520c996ed86b64154eb657dfa41bf46c7c251d7221a43",
+      "afterSha256": "5cfd2c31f791493865032426e4cad074eb7cbb27a26c72d5d512e693fd473cc7",
+      "change": "REPLACE_ONLY public room GET 403 -> 200 with joined=false and null private viewer fields, supporting polling without selected identity or source text disclosure. Other join/read rejection tests remain.",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/ScopedGuestViewerJoinWebIntegrationTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "beforeSha256": "b1942835425c266e188ffec9c5306b8b16ff63fb2cd3f5ab84b39cfa44ef08c9",
+      "afterSha256": "a1e6e74ec704e847f892a29cc638e32dc2bf468a27e2f466960b42254588673c",
+      "change": "Fresh migration executed/latest 11 -> 12; retain real PostgreSQL production migration entrypoint.",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/DatabaseMigrationRunnerTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "beforeSha256": "00816f9f659517ec7ca5fd4a0a0e90ad297779f39b84f495ef695055e92f0be9",
+      "afterSha256": "e9f064511bf59f7598a2965b3b33bade84cfe715cedc7b93408ea8243244a326",
+      "change": "Fresh total/latest/count 11 -> 12; V8 incremental count 3 -> 4; retain all independent legacy DDL, original snapshots and V9-V11 table assertions; add V12 table presence and no automatic hash/grant backfill.",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/IntegratedLegacyUpgradePostgresTest.before.kt"
+    }
+  ],
+  "unchangedMigrationSha256": {
+    "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab",
+    "src/main/resources/db/migration/V11__add_accounts_and_participant_ownership.sql": "0431b2c18a5f03c341d3d4c4d1f3456e169db610cb5bd92e3681978623b3b92c",
+    "src/main/resources/db/migration/V1__create_core_domain.sql": "f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515",
+    "src/main/resources/db/migration/V2__add_anonymous_room_lifecycle.sql": "75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7",
+    "src/main/resources/db/migration/V3__add_submission_gemini_pipeline.sql": "a1d7723e2461dbc6e483040f24fe9df8efc5d088b9ddc00ffaf1cdc842f12371",
+    "src/main/resources/db/migration/V4__add_matching_results.sql": "14f90ca0642a4ee02242d334ebe542503907b509ee1a4fdfcc45f6c33905fe9d",
+    "src/main/resources/db/migration/V5__remove_meeting_duration.sql": "7127e1ccc1284865cc3b0ea38be3582a1870f7d3ec05e3700d4577d1084c3146",
+    "src/main/resources/db/migration/V6__add_reliable_outbox_processing.sql": "526c1cca68d23c1ee9fe4fad6c7cf0937eb53df5e306ee75b327223855f8af7a",
+    "src/main/resources/db/migration/V7__resume_delayed_matching_from_structuring.sql": "d252715c33435f88498e8e0131ea5b35e6e081e63fdc91fab67b7f1b6235c747",
+    "src/main/resources/db/migration/V8__add_input_revision_rounds.sql": "04ac022f09473e4d95128c765b2e274b7d1d1abb0fee4b722f56119638d22a92",
+    "src/main/resources/db/migration/V9__add_time_recommendations.sql": "a6fc046611fb3cafa96d51f87de09687b3fdecc403988d211b7d86c4fad0585d"
+  },
+  "unchangedMigrationCount": 11,
+  "invariants": [
+    "No V1-V11 SQL edits or checksum replacement",
+    "No weakening or deletion of legacy business snapshots",
+    "REPLACE_ONLY cannot obtain private read or claim rights",
+    "Null rawCredential alone does not reject trusted VERIFIED_GUEST context proof",
+    "Ordinary generic replacement remains denied for REPLACE_ONLY; blind endpoint verifies stored revision and returns no source text",
+    "Public viewer polling never discloses participant name/context/id for insufficient proof"
+  ],
+  "recordedAt": "2026-10-17T16:10:00.844135Z",
+  "redResults": {
+    "issue-108-http-integration": {
+      "tests": 37,
+      "failures": 37,
+      "errors": 0
+    },
+    "issue-108-scoped-contract-supersession": {
+      "tests": 13,
+      "failures": 3,
+      "errors": 0
+    },
+    "issue-108-v12-migration-supersession": {
+      "tests": 8,
+      "failures": 4,
+      "errors": 0
+    }
+  },
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-95-existing-contracts.json",
+      "archivedPath": ".tdd/history/issue-108-contract-supersession/issue-95-existing-contracts.json",
+      "sha256": "86b3d4383b8658a1ee4bc07603d51bcf538aedcf7d80889d559088ba1403608f",
+      "sourceRevision": "bf4edff51dea5f1f90a8ac627edf05ec17b6d56d"
+    },
+    {
+      "path": ".tdd/red/issue-22-database-migration.json",
+      "archivedPath": ".tdd/history/issue-108-contract-supersession/issue-22-database-migration.json",
+      "sha256": "60f5bfa607091a94137ad4d54b3155c5ccc97f0bfe64147b60a4e306939a9eb5",
+      "sourceRevision": "a9c334eeba5f7ea8e4dfad7eab2938f15fdd55a6"
+    },
+    {
+      "path": ".tdd/red/issue-109-scoped-proof.json",
+      "archivedPath": ".tdd/history/issue-108-contract-supersession/issue-109-scoped-proof.json",
+      "sha256": "fd670a52b6bb081ab0b5719fdbd17068ff40503ffd4f3e880fa53c1222694ef6",
+      "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341"
+    },
+    {
+      "path": ".tdd/red/issue-99-integration.json",
+      "archivedPath": ".tdd/history/issue-108-contract-supersession/issue-99-integration.json",
+      "sha256": "6fac51d46bba01503af99929f29c8d6411d2ff3e089b079d6f75d2190d377621",
+      "sourceRevision": "518c612f4be9627427f61a56c982b496342f0a28"
+    }
+  ],
+  "beforeTests": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "beforeSha256": "f667e4bd437a66ec0ab5fe0a2930f6cc7ea99983e9e238c961a7cdc442815ed3",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/CorePersistenceIntegrationTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestProofWebIntegrationTest.kt",
+      "beforeSha256": "3fe7c60ae6e5afa7fda0963a9c9e51bc57f6e0d87ed079e07cd383ea70627eff",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/ScopedGuestProofWebIntegrationTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestViewerJoinWebIntegrationTest.kt",
+      "beforeSha256": "4712944c46246a713dc520c996ed86b64154eb657dfa41bf46c7c251d7221a43",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/ScopedGuestViewerJoinWebIntegrationTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "beforeSha256": "b1942835425c266e188ffec9c5306b8b16ff63fb2cd3f5ab84b39cfa44ef08c9",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/DatabaseMigrationRunnerTest.before.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "beforeSha256": "00816f9f659517ec7ca5fd4a0a0e90ad297779f39b84f495ef695055e92f0be9",
+      "archivedBeforePath": ".tdd/history/issue-108-contract-supersession/IntegratedLegacyUpgradePostgresTest.before.kt"
+    }
+  ],
+  "historicalEvidencePolicy": "Four superseded active RED summaries moved byte-for-byte. Their source revisions, test fingerprints, commands and failure names remain unchanged. New public-contract RED summaries replace active assertions; original frozen 47 independent tests are untouched.",
+  "verification": "Selected six-file ktlint check and compilation pass. Actual PostgreSQL + native RSA/Bearer run: 58 tests, 44 expected missing-behavior failures, zero errors. GREEN, fault injection, full gates and independent final review remain pending."
+}

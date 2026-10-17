@@ -11,6 +11,7 @@ data class SaveSubmissionCommand(
     val locale: Locale,
     val revisionRoundId: java.util.UUID? = null,
     val expectedRevision: Int? = null,
+    val blindReplacement: Boolean = false,
 )
 
 data class SubmissionView(

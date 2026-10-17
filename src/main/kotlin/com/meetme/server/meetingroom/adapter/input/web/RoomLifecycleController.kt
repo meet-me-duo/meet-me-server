@@ -7,7 +7,6 @@ import com.meetme.server.meetingroom.application.port.input.CreateRoomCommand
 import com.meetme.server.meetingroom.application.port.input.CreateRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.GetRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.JoinRoomCommand
-import com.meetme.server.meetingroom.application.port.input.JoinRoomUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -34,7 +33,7 @@ import java.time.Duration
 class RoomLifecycleController(
     private val createRoom: CreateRoomUseCase,
     private val getRoom: GetRoomUseCase,
-    private val joinRoom: JoinRoomUseCase,
+    private val guestParticipation: com.meetme.server.participant.application.port.input.GuestReaccessUseCase,
     private val closeRoom: CloseRoomUseCase,
     private val properties: AnonymousAccessProperties,
 ) {
@@ -152,7 +151,7 @@ class RoomLifecycleController(
         @Valid @RequestBody request: JoinRoomRequest,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
     ): ResponseEntity<RoomResponse> {
-        val result = joinRoom.join(JoinRoomCommand(inviteCode, credential, request.displayName))
+        val result = guestParticipation.join(JoinRoomCommand(inviteCode, credential, request.displayName), request.password)
         return responseBuilder(
             if (result.participantCreated) HttpStatus.CREATED else HttpStatus.OK,
             result.newCredential,

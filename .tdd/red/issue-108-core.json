@@ -1,0 +1,69 @@
+{
+  "workItem": "issue-108-core",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordHasherTest.kt",
+      "sha256": "f1adc8f3949994e30f8b0fd5e7023e2cd7d22af5866a053a63b05449be704122"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicyTest.kt",
+      "sha256": "5df51408aac2f6912249b1e504116301c4edeec7d2255dd1af57eda8b0aa328d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestReaccessAttemptGuardTest.kt",
+      "sha256": "829221965ac36cb76f912324fa7c6c7f6587786b2cf0b20b7c2fa8c71f3882c0"
+    }
+  ],
+  "command": [
+    "bash",
+    "gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GuestPasswordHasherTest",
+    "--tests",
+    "*GuestReaccessPolicyTest",
+    "--tests",
+    "*GuestReaccessAttemptGuardTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.W01 암호 없는 기록에 임의 암호를 제출해도 읽기 권한으로 승격하지 않는다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.A03 기존 소유 세션이어도 다른 participant를 지정하면 거부한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I04 다른 방 또는 participant는 무암호여도 대체 입력 권한을 얻지 못한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.W05 암호 설정 기록은 암호 없는 대체 입력으로 우회할 수 없다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I08 기존 소유 세션에 틀린 암호가 전달되어도 기존 권한을 회수하지 않는다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.M02 회원 연결 기록은 이전 guest 암호로 다른 기기에서 접근할 수 없다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I05 다른 기기의 정확한 암호 증명은 guest 제출 접근만 부여한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.W01 암호 없는 기록의 다른 기기는 기존 원문 없는 대체 입력만 허용한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I06 존재하지 않는 기록은 일반 거부로 귀결된다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I02 암호 없는 기록의 기존 소유 세션도 읽기 범위를 유지한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I02 유효한 기존 소유 세션은 암호를 재입력하지 않고 범위를 유지한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.M03 회원 연결된 무암호 기록에는 다른 기기의 대체 입력도 허용하지 않는다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I06 다른 기기의 암호 누락 빈 값 오입력은 모두 거부한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.M02 회원 연결 기록도 기존 유효 소유 세션 범위는 유지한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessPolicyTest.I04 기존 소유 세션이어도 다른 방을 지정하면 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R01 허용 요청도 IP 30회와 room participant 5회의 15분 제한을 모두 검사한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R04 IP limiter 장애는 fail closed이며 내부 오류와 식별자를 전달하지 않는다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R01 IP 한도 초과는 공통 제한 코드와 Retry After로 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R02 IP를 교체해도 같은 room participant의 대상 제한 키는 유지한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R01 대상 한도 초과도 IP와 같은 제한 코드로 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R03 같은 IP의 다른 participant와 방은 각각 다른 대상 키를 사용한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R04 IP 허용 후 대상 limiter 장애도 fail closed한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.R05 Redis 키는 유형별 접두사와 SHA256 hex이며 원 식별자를 포함하지 않는다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P07 공백 하나도 길이 1인 암호로 보존한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P07 Unicode 코드 포인트 128개까지 허용하고 긴 입력은 조용히 절단하지 않는다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P01 같은 암호도 무작위 salt로 서로 다른 해시를 만들고 각각 검증한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P04 평문과 빈 값과 잘못된 해시 형식은 인증에 성공하지 않는다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P01 독립 Python 표준 라이브러리에서 생성한 PBKDF2 fixture를 검증한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P03 대소문자와 정규화 형태가 다른 Unicode는 다른 암호다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P04 정상 해시가 절단되거나 변조되면 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P01 hash는 확정한 PBKDF2 SHA256 cost와 salt 및 key 길이를 기록한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P03 암호 앞뒤 공백을 보존하고 trim한 입력을 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P04 변경된 cost와 salt 및 key 길이는 검증 전에 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P02 한 글자 다른 암호와 빈 암호는 증명으로 인정하지 않는다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.P07 선택 암호 없음은 null로 전달하며 빈 문자열 hash는 거부한다()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-17T14:35:17.740060Z"
+}

@@ -1,0 +1,71 @@
+{
+  "workItem": "issue-108-final-fault-results",
+  "recordedAt": "2026-10-17T17:07:25Z",
+  "scope": "One grouped five-fault Kotlin/HTTP/Postgres run plus one separate offline publisher fault run, each followed by restored GREEN. This is two mutation invocations, not six independent invocations.",
+  "runs": [
+    {
+      "workItem": "issue-108-http-integration-faults",
+      "groupedMutationRuns": 1,
+      "injectedFaults": 5,
+      "mutantTests": 74,
+      "mutantFailures": 25,
+      "mutantErrors": 0,
+      "restoredTests": 74,
+      "restoredFailures": 0,
+      "restoredErrors": 0,
+      "sourceExactBytesAndModesRestored": true,
+      "frozenTestsUnchanged": true,
+      "schemaValidation": "PASS (jsonschema Draft202012Validator)",
+      "evidencePath": ".tdd/verification/issue-108-http-integration-faults.json",
+      "rawManifest": ".codex/tdd-evidence/issue-108-http-integration-faults-20261017T165718Z/execution-result.json",
+      "assertions": [
+        {
+          "fault": "F1",
+          "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H10 틀린 암호는 원문이나 암호 존재 정보를 노출하지 않고 거부한다()",
+          "assertionMessage": "java.lang.AssertionError: Status expected:<403> but was:<200>"
+        },
+        {
+          "fault": "F2",
+          "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H25 같은 revision을 선택한 두 기기의 대체 입력은 하나만 수용하고 나머지는 충돌한다()",
+          "assertionMessage": "org.opentest4j.AssertionFailedError: expected: <[200, 409]> but was: <[200, 200]>"
+        },
+        {
+          "fault": "F3",
+          "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H37 blind 입력은 기존 원문과 같아도 새 버전으로 snapshot을 소비하며 같은 grant 재사용은 충돌한다()",
+          "assertionMessage": "org.opentest4j.AssertionFailedError: expected: <[공개하면 안 되는 기존 원문 108, 공개하면 안 되는 기존 원문 108]> but was: <[공개하면 안 되는 기존 원문 108]>"
+        },
+        {
+          "fault": "F4",
+          "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H36 Unicode 129개 암호 등록 실패는 participant 세션 해시를 모두 rollback하고 쿠키를 발급하지 않는다()",
+          "assertionMessage": "org.opentest4j.AssertionFailedError: expected: <1> but was: <2>"
+        },
+        {
+          "fault": "F5",
+          "detectedBy": "com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest.\"FIRST\", deadline offset 0ns, expected participant policy false",
+          "assertionMessage": "java.lang.AssertionError: Status expected:<409> but was:<200>"
+        }
+      ]
+    },
+    {
+      "workItem": "issue-108-release-catalog-faults",
+      "groupedMutationRuns": 1,
+      "injectedFaults": 1,
+      "mutantTests": 14,
+      "mutantFailures": 2,
+      "mutantErrors": 0,
+      "restoredTests": 14,
+      "restoredFailures": 0,
+      "restoredErrors": 0,
+      "sourceExactBytesAndModesRestored": true,
+      "frozenTestsUnchanged": true,
+      "schemaValidation": "PASS (jsonschema Draft202012Validator)",
+      "evidencePath": ".tdd/verification/issue-108-release-catalog-faults.json",
+      "rawManifest": ".codex/tdd-evidence/issue-108-release-catalog-faults-20261017T170644Z/execution-result.json",
+      "assertions": []
+    }
+  ],
+  "originalCore47FingerprintsUnchanged": true,
+  "originalHttp37FingerprintsUnchanged": true,
+  "productionPermanentChangesByTestAuthor": 0,
+  "externalCalls": "No AWS, production, real credentials, host lifecycle or deployment calls. Local synthetic PostgreSQL Testcontainers used only for Kotlin integration suite."
+}

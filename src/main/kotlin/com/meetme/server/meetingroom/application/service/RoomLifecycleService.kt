@@ -261,6 +261,7 @@ class RoomLifecycleService(
             when (failure.code) {
                 RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED,
                 RoomLifecycleErrorCode.GUEST_SESSION_INVALID,
+                RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT,
                 RoomLifecycleErrorCode.PARTICIPANT_REQUIRED,
                 -> null
                 else -> throw failure
@@ -304,7 +305,19 @@ class RoomLifecycleService(
             closureReason = closureReason,
             closedAt = closedAt,
             publicStatus = if (round != null) PublicRoomStatus.COLLECTING else publicStatus(submittedParticipants),
-            viewer = ViewerParticipation(viewer != null, viewer?.displayName?.value, viewer?.role, viewer?.id?.value),
+            viewer =
+                ViewerParticipation(
+                    viewer != null,
+                    viewer?.displayName?.value,
+                    viewer?.role,
+                    viewer?.id?.value,
+                    viewer
+                        ?.takeIf {
+                            it.userId ==
+                                null
+                        }?.id
+                        ?.value,
+                ),
             analysisId = run?.id?.value,
             revisionGeneration = revisionGeneration,
             revisionRound =
