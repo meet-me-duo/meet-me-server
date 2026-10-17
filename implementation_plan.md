@@ -1362,3 +1362,10 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] [AGENT] 실제 분기 기준은 서버#109 c06b60a9833ae77e5fce9cfef5719ab2f37470ff, 웹#109 95f09c0a98c6538b0f19ed381fdf11a2f5b844d9이며 두 원격이 동일함을 확인했다. 서버 CI branch 필터를 유지하기 위해 새 PR base는 develop3232128, 웹main9b18397로 한다. #109 포함 commit과 그 이후 자체 delta를 본문에서 구분한다.
 - [x] [AGENT] 독립 역할의 최종 서버/웹 통합 검토, source/test/고정dist지문·실JAR·전체 로컬 게이트·현재통합source FI 및 mandatoryguard 근거를 보존했다. 인증소스와 보호된 SubmissionService/GeminiBatchProcessor는 #109 그대로다.
 - [ ] [AGENT] 승인 범위의 통합 commit·push→별도Draft PR→정확HEAD 전체CI 확인. Commit/PR: 동일 커밋 예정. 기존 독립PR의 성공CI와 새 통합CI를 혼동하지 않는다.
+
+### 통합 첫 원격 CI 후속: 역사 catalog 테스트 정렬 (2026-10-17 UTC)
+
+- [x] [AGENT] 통합 commit100f934를 push하고 별도 Draft117을 생성했다. 실제 부모c06b60a와 PR base develop3232128을 구분했다. 웹 통합fb87358 Draft28은 exactCI39050257242 전체SUCCESS(unit466/browser391+기존skip1), 기존PR116/27은 유지했다.
+- [x] [AGENT] 서버 exactCI39050251162는 ktlint/assemble/test·ARM64·배포정책/preflight를 통과했으나 #109 역사 catalog 테스트5/17이 기존V11상한과 현재V13지원 계약 충돌로 실패했다. 후속단계는SKIP이며 전체성공으로 집계하지 않는다. 원본원격로그를 보존했다.
+- [x] [AGENT] 독립설계자가 역사V10/V11 fixture와 현재V1..11+V13 fixture를 분리하고 requiredprefix/checksum/success/identity/pending/명시승인·두rulesDISABLED 불변식을 보존해 test oracle만 정렬한다. 제품/배포guard/SQL/CIworkflow는 변경하지 않는다. 기존generic13/FI4는 동일production 바이트의 근거이며 이번oracle교정을 새제품RED로 집계하지 않는다.
+- [ ] [AGENT] 관련Node전체17(내부generic13포함)·독립최종review·변경없는 mandatoryguard 확인 후 추가commit·push하고 새 정확HEAD의 전체CI를 확인한다. Commit/PR: 동일 커밋 예정, 기존Draft117 유지.

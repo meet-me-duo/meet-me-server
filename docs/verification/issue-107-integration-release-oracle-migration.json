@@ -1,0 +1,70 @@
+{
+  "workItem": "issue-107-109-release-oracle-migration",
+  "recordedAt": "2026-10-17T16:48:48.413530+00:00",
+  "baseHead": "100f934a992bf3df5a73666278fb45ac58efb4a7",
+  "ciFailure": {
+    "run": "39050251162",
+    "log": "/workspace/shared/issue107/integration-server-first-ci-failure.log",
+    "logSha256": "35e53225642ca066e7dbd094004ee7207cb293daee88da97c7d2a3c57d72415b",
+    "classification": "Obsolete V11-only fixture/oracle conflicts with accepted generic V1..V10 mandatory prefix plus bounded sorted additive versions, current V1..V11+V13. Real assertion mismatch, not production regression RED."
+  },
+  "changedTest": {
+    "path": ".github/scripts/issue109-release-catalog.test.cjs",
+    "beforeSha256": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859",
+    "afterSha256": "532ba14198059b2a9b6a98a2c7a469060b68ae3d79413795dd393de9940736e4"
+  },
+  "unchangedSourceAndFrozenTests": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "d9c3d10b4ccc872860475dfbe452a0833bd7fd830453ec697e2a4121c3183a4f",
+      "equalsPublished100f934": true
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "dd40a0313418db09d7117c601181dbcd71231fe664dbcce0185d08951ac33481",
+      "equalsPublished100f934": true
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6efc9cf7dc34ddd0332e29174a9ba8b46eb2f2d9b100c9d0d9e649815338755e",
+      "equalsPublished100f934": true
+    },
+    {
+      "path": "deploy/tests/test_issue107_release_catalog.py",
+      "sha256": "3d09a4af0c779c384981758812c73cdcb3a3f830c7c33ce944cf6aa923cdea50",
+      "equalsPublished100f934": true
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "061206c6f615f9b9f57a4b869c43460daa74cbd44e04f05557e322c385e07d4b",
+      "equalsPublished100f934": true
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/approved-release-pipeline.test.cjs",
+    ".github/scripts/issue109-release-catalog.test.cjs"
+  ],
+  "result": {
+    "tests": 17,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "log": "/tmp/issue107-integration-release-oracle-migration-green.log",
+    "logSha256": "c79f689710696f075d71652167abfa596dc438d3379f77a843e937d1375ac262"
+  },
+  "frozenPython13ExecutedByExistingNodeWrapper": true,
+  "preservedAssertions": [
+    "historical V1..V11 fixed checksum values unchanged",
+    "independent byte-wise JS CRC32 and exact source/schema/guard/archive fingerprints",
+    "duplicate version, missing mandatory prefix, noncanonical names, symlinks rejected",
+    "V10/V11 exact history, bad checksum, failed history, pending commands, origin/publication identity rejected",
+    "V10 to V11 transition still requires explicit approval and both refresh rules disabled",
+    "valid different complete record requests transition; never automatic approval",
+    "malformed record9 and wrong per-row version/script/checksum/success remain rejected"
+  ],
+  "noProductionGuardOrFrozenTestChanges": true,
+  "noGradleCommitPushOrDeployment": true
+}
