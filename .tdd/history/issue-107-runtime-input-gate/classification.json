@@ -1,0 +1,30 @@
+{
+  "executed": 61,
+  "assertionFailures": 59,
+  "todoReached": 57,
+  "missingLegacyNetworkGuard": 2,
+  "errors": 0,
+  "passControls": [
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest#RR04 malformed enabled value does not create a permissive production provider()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest#[3] endpoint = \"http://192.0.2.1:1\""
+  ],
+  "missingGuardTests": [
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest#RI16 legacy verification boolean cannot bypass runtime through an external endpoint :: [1] endpoint = \"https://generativelanguage.googleapis.com\"",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest#RI16 legacy verification boolean cannot bypass runtime through an external endpoint :: [2] endpoint = \"https://example.invalid\""
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckRuntimeBindingContractTest.kt",
+      "sha256": "186b5e1f789688dc0dfdc7a692a4fe543c1c4892a2580d2f6aa1694d32e4583a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckRuntimeInputGateTransportTest.kt",
+      "sha256": "95cb3ac266134366b480423069043644840ce54eaf9d08f8fcf43edb8d6d324b"
+    }
+  ],
+  "logSha256": "fb9a28b5959f8bcb195801b5a759b75d2918b06b9f29d3853fbfd338585aeabc",
+  "xmlSha256": {
+    "TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest.xml": "8bc9157eb41388b646c206dbaf7f257921a625fc6a1649a3ca5a10fc30e99885",
+    "TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest.xml": "66330a528c5ebebb6d9776fccf54d5c6059b56e21d6715802e11b72e1e54ada6"
+  }
+}

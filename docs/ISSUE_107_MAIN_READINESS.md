@@ -15,9 +15,9 @@
 | 서버 main 자동 배포 | `.github/workflows/deploy.yml`의 main push CI 성공 후 build/publish, 이후 기존 승인 release contract·host guard | 새 catalog/guard 지문은 기존 승인을 재사용할 수 없음. 실제 현재 host/history/approval의 읽기 검증과 운영 schema 전환 승인 필요 |
 | Flyway | `application.yml`은 enabled, 새 기능은 V11~V16 필요 | 운영 DB migration은 현재 미승인. 최근 문서의 V1~V7 기록은 현재 DB 상태 증명이 아님. 키나 DB 값을 읽거나 바꾸지 않았음 |
 | 인증 초기화 | `AccountAuthConfiguration`은 signing 설정 전부 비어 있으면 AUTH_UNAVAILABLE, 일부만 있으면 시작 거부. #109는 신규 HOST 생성/명령에 계정 요구 | Google/Kakao 공개 앱 설정 완료 인계 유지. 남은 서버 자격 증명 전달·RS256/검증 JWKS·정확 runtime callback/Origin·실로그인 미확인. 익명 HOST의 명시 claim도 로그인 준비 필요 |
-| 운영 인증 전달 | `deploy/scripts/render-runtime-env.sh`에 AUTH/Google/Kakao 변수 전달이 없고 `deploy/compose.production.yml`은 runtime env만 읽으며 RSA/JWKS mount가 없음 | 비밀값 없는 전달·mount/권한 코드의 검증된 준비안과 사용자 소유 외부 설정이 필요. 이번 조사에서 Secret 읽기/생성/입력0 |
+| 운영 인증 전달 | 후속 renderer는 typed AUTH/Google/Kakao·optional AI OFF flag를 원자 전달하며 Compose는 UID10001의 read-only RSA/JWKS bind·missing path 자동생성 금지를 적용한다. auth marker/renderer/compose를 current17 승인 지문에 포함 | 코드·합성54/관련 회귀 검증과 실제 외부 준비는 별개. 정확 후속 HEAD CI·운영 파라미터/파일/권한·실로그인 확인 필요. Secret 읽기/생성/입력0 |
 | 웹 main 배포 | `.github/workflows/deploy.yml`은 main push→production Environment→S3/CloudFront | 대응 서버가 새 인증·proof·check protocol을 지원하고 실제 준비됐다는 증거가 먼저 필요. UI를 먼저 배포해 로그인/미지원 API를 강요하지 않음 |
-| 새 개인 AI 검사 | 실제 bean의 `PrecheckProviderOptions.totalOutputTokenCapVerified=false`가 호출 전 CONFIGURATION으로 차단한다. runtime opt-in 바인딩 자체도 없다. 신규 방은 PRE_SUBMIT_V1이 기본이므로 이 상태로 운영에 반영하면 모든 신규 입력의 확인 완료가 불가능하다 | **구체적인 main 사용 차단 조건**. 동일 API 공식 thinking guide에서 합산 output cap 근거를 보완했으나 지원 thinking 파라미터·기본 OFF 활성화 코드·input cap·실제 지원/청구·모임 총10원 정책 충돌은 남았다. 실제 호출은 미승인, 합성 성공이 이를 해소하지 않는다. 평가 준비안의 조건부 비용 산식을 보장으로 사용하지 않으며 우회 활성화0 |
+| 새 개인 AI 검사 | 후속 production bean은 `MEETME_PRECHECK_PROVIDER_ENABLED=false` 기본 바인딩·고정 GenerateContent3.8/LOW/2048·count4096 gate/사후 usage 방어를 제공한다. key/임의 verified flag만으로 켜지지 않는다. OFF에서는 CONFIGURATION·count/generation0이며 신규 방 확인을 완료할 수 없다 | **main 사용 차단 조건 유지**. activation/input gate 코드 준비와 실제 지원·billed input cap/청구·모임 총10원 정책 결정은 별개. 실제 opt-in/유료 호출 미승인, 합성 성공이 해소하지 않는다. 조건부 비용 산식을 보장으로 사용하지 않으며 실제 OFF 유지 |
 | 복구 | ADR-046/051/052 및 release guard는 구 writer 혼합·잘못된 image rollback을 허용하지 않음 | 신규 schema/protocol 작성 후 구 이미지 rollback 가능하다고 주장하지 않음. 정확 호환 image와 roll-forward·복구 절차를 검증하고 운영 전환 별도 승인 |
 
 ## 안전한 확인·실행 순서

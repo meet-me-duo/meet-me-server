@@ -2,6 +2,7 @@
 
 ## 현재 #107 제출 전 확인·통합 (2026-10-17 UTC)
 
+- 최신 후속 승인: 실제 외부 설정/비용 정책과 독립인 인증 runtime 전달·기본 OFF AI 입력/출력 제한 준비는 제품 코드까지 완료하고 독립 TDD/FI/리뷰·정확 CI·develop까지 진행한다. 기존 main·실제 외부 작업 보류는 유지한다.
 - 사용자 D1/D2 승인 완료: CLEAR 뒤 완료 집계·시각/수동 마감의 마지막 accepted 동결, pending 수정은 이전 accepted·최초 미확인/미응답은 결과 미반영, 마감 연장0.
 - [x] [AGENT] 6개 PR 정확SHA/공통조상/중복patch-id·실제pairwise충돌·마감113 흡수/fixture회귀·개발배포경계 독립 조사
 - [x] [AGENT] PR115 exact c06b60a를 서버 develop에 일반merge: 59e39bea8db58e17de119be353cb673fb68d9d98. tree는원래검증HEAD와동일. 첫자동검토거절후최신명시승인의동일HEAD1회재시도로성공,우회0
@@ -15,7 +16,9 @@
 - [x] [AGENT] commit/push/Draft/exactHEADCI: 서버 PR120 HEAD bb62a95 CI39063547650 / 웹 PR31 HEAD02a68d8 CI39063558547 성공. 각 job checkout/tree 확인
 - [x] [AGENT] 서버 PR120 develop 일반merge bb996482a3090739a8ce02c8b093561e2c5c58a2 및 pushCI39064886318 두 job 실제 checkout 동일 SHA·성공 확인. 웹 Draft·미병합 유지
 - [x] [AGENT] main 준비 후속: provider opt-in 코드 부재·동일 API cap 공식 근거 정정, 30개 실제 평가 호출/중단/측정/조건부 비용 명세, 완료된 공개 OAuth 설정 재요구 없는 인증/DB 안내
-- [ ] [AGENT] 기존 API 지원 profile·기본 OFF 활성화/인증 전달 코드·input cap 독립 TDD/리뷰. 근거 없는 verified=true·유료 호출0 유지
+- [x] [AGENT] 기존 API 지원 profile·기본 OFF 실제 바인딩/인증 전달·input gate 독립 TDD/FI. 필수 전체1258(1254PASS/기존skip4), Node140·V837·합성 Nginx PASS. 근거 없는 verified=true·유료 호출0 유지
+- [x] [AGENT] runtime 준비 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음 (`docs/verification/issue107-runtime-readiness-independent-review.md`)
+- [ ] [AGENT] runtime 준비 commit/push/Draft→정확 HEAD CI→develop 일반merge·정확 merge CI
 - [ ] [USER/SHARED] 모임 총 AI10원 정책 충돌 결정·입증된 상한으로 별도 유료 평가 승인, 런타임 자격 증명·RS256/JWKS 및 실로그인/운영 읽기·복구·전환 승인. 공개 OAuth 설정은 완료 유지. 운영자 요약은 기본 OFF이며 출시 차단 조건 아님
 - 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
 - 상세상태/다음시작점/역할·검증한계: [새107 Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음

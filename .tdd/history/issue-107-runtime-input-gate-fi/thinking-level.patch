@@ -1,0 +1,11 @@
+--- src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt original
++++ src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt thinking-level
+@@ -41,7 +41,7 @@
+                     mapOf(
+                         "candidateCount" to 1,
+                         "maxOutputTokens" to 2048,
+-                        "thinkingConfig" to if (runtime) mapOf("thinkingLevel" to "LOW") else mapOf("thinkingBudget" to 0),
++                        "thinkingConfig" to if (runtime) mapOf("thinkingLevel" to "HIGH") else mapOf("thinkingBudget" to 0),
+                         "responseMimeType" to "application/json",
+                         "responseJsonSchema" to RESPONSE_SCHEMA,
+                     ),

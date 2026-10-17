@@ -39,6 +39,9 @@ meetme:
     api-key: ${GEMINI_API_KEY:}
     model: gemini-3.8-flash
     max-response-bytes: 262144
+  precheck:
+    provider:
+      enabled: ${MEETME_PRECHECK_PROVIDER_ENABLED:false}
   openai:
     api-key: ${OPENAI_API_KEY:}
     model: gpt-6-luna

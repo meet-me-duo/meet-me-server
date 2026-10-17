@@ -17,6 +17,13 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    volumes:
+      - type: bind
+        source: ${AUTH_KEYS_DIRECTORY:-/opt/meet-me/auth}
+        target: /run/meetme-auth
+        read_only: true
+        bind:
+          create_host_path: false
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://127.0.0.1:9090/actuator/health"]
       interval: 15s

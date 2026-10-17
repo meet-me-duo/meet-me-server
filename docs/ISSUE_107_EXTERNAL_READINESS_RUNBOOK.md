@@ -8,9 +8,9 @@
 
 ## 인증 런타임 [AGENT → USER → SHARED]
 
-**현재 차단:** `render-runtime-env.sh`에는 AUTH/GOOGLE/KAKAO 전달이 없고 `compose.production.yml`에는 RSA/JWKS mount가 없다. 사용자 Secret 등록만으로 해결되지 않는다. 에이전트의 전달 코드·독립 검증이 먼저다. 아래는 **제안 이름이며 현재 renderer가 소비하는 Parameter가 아니다.**
+**저장소 준비:** 새 `runtime-auth-mode=oauth-rs256-required` 릴리스의 renderer가 아래 typed Parameter를 소비하고 Compose가 RSA/JWKS를 read-only bind한다. marker 없는 과거 릴리스는 auth 조회0으로 보존한다. 새 marker·renderer·Compose는 승인 guard catalog17에 묶이며 기존14 승인을 재사용하지 않는다. 합성 focused 검증과 실제 운영 준비는 별개이고 최종 전체 gate/리뷰/게시 근거는 Worklog에서 확인한다.
 
-| 런타임 변수 | 제안한 Parameter 경로(`/meet-me/production` 아래) | 형식 |
+| 런타임 변수 | Parameter 경로(`/meet-me/production` 아래) | 형식 |
 | --- | --- | --- |
 | GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET | `/secret/google-client-id`, `/secret/google-client-secret` | SecureString, 기존 Web OAuth client |
 | KAKAO_CLIENT_ID / KAKAO_CLIENT_SECRET | `/secret/kakao-client-id`, `/secret/kakao-client-secret` | SecureString, 기존 REST API key/활성 secret. Admin/JS key 금지 |
@@ -21,14 +21,15 @@
 | AUTH_WEB_CALLBACK_URI | `/config/auth-web-callback-uri` | String, `https://app.meet-me.co.kr/auth/callback` |
 | APP_ALLOWED_ORIGINS | 기존 `/config/allowed-origins` | String, 정확한 `https://app.meet-me.co.kr`; wildcard 금지 |
 | AUTH_SIGNING_PRIVATE_KEY_PATH / AUTH_VERIFICATION_JWKS_PATH | 파일 본문을 env 단일행 값으로 전달하지 않음 | 아래 read-only 컨테이너 파일 경로 |
+| MEETME_PRECHECK_PROVIDER_ENABLED | `/config/precheck-provider-enabled` | optional String, 정확한 `true`/`false`만 허용. 미등록/조회 실패는 false, 성공 응답이 malformed이면 전체 env 교체 거부. 현재 기본 OFF·실제 등록/활성화 미승인 |
 
-**[AGENT] 먼저 할 일:** auth 설정의 원자적 렌더링·누락/개행/NUL/잘못된 Type 거부·값 비출력, 0600 env·symlink 거부·실패 시 이전 env 유지, 기존 credential refresh 경로의 동일 계약, read-only mount·UID/GID10001 읽기 권한을 합성 값으로 검증한다. 부분 signing은 시작 거부, 전부 없음은 AUTH_UNAVAILABLE인 정책을 유지하며 임시 키·익명 HOST fallback을 만들지 않는다. 변경된 guard/catalog 지문은 기존 운영 승인을 재사용하지 않는다.
+**[AGENT] 준비한 계약:** AWS 원본 JSON을 Bash에 담기 전에 raw/escaped NUL·개행·Type·값을 검증하고 전부 성공한 뒤 0600 env를 원자 교체한다. 값은 출력하지 않으며 목적지/조상 symlink·실패 시 이전 env 보존·기존 credential refresh·read-only mount/UID10001을 합성 값으로 검증한다. required의 기본 destination은 renderer의 canonical release 디렉터리다. 기존 Kotlin의 부분 signing 시작 거부/전부 없음 AUTH_UNAVAILABLE 정책은 유지하고 임시 키·익명 HOST fallback은 없다. entrypoint·migration·Dockerfile·IAM 정책은 변경하지 않았다. `infra/production/runtime.tf`에는 기존 parameter prefix 읽기 정책이 있으나 실제 적용/권한 성공은 미확인이다.
 
-**[USER ACTION REQUIRED — 전달 코드 준비 이후]** 이유는 사용자 소유 자격 증명을 안전하게 실행 환경에 넣기 위해서다. 기존 앱 공개 설정을 반복하는 작업이 아니다. 사전 조건은 기존 AWS 계정·서울 리전 및 합의된 비밀관리 경로 접근 권한이다.
+**[USER ACTION REQUIRED — 검증된 코드의 운영 적용을 별도 승인한 뒤]** 이유는 사용자 소유 자격 증명을 안전하게 실행 환경에 넣기 위해서다. 기존 앱 공개 설정을 반복하는 작업이 아니다. 사전 조건은 기존 AWS 계정·서울 리전 및 합의된 비밀관리 경로 접근 권한이다. 지금 생성/입력하거나 실제 SSM을 조회하지 않는다.
 
-1. [Systems Manager](https://console.aws.amazon.com/systems-manager/) → Parameter Store, `ap-northeast-2`에서 에이전트가 검증한 최종 이름에 기존 자격 증명을 직접 등록한다. UI에서 Parameter Store가 별도 서비스로 보이면 해당 메뉴를 사용한다. 새 IAM/KMS 권한이 필요하면 자동 확대하지 않는다.
+1. [Systems Manager](https://console.aws.amazon.com/systems-manager/) → Parameter Store, `ap-northeast-2`에서 위 이름에 기존 자격 증명을 직접 등록한다. UI에서 Parameter Store가 별도 서비스로 보이면 해당 메뉴를 사용한다. 새 IAM/KMS 권한이 필요하면 자동 확대하지 않는다. AI optional flag는 미등록/OFF로 유지하며 비용 정책·실제 평가 승인을 받기 전 true로 등록하지 않는다.
 2. 서비스 JWT용 RSA PKCS#8 개인키와 **public RSA JWK Set**을 승인된 보안 경로에 준비한다. 기존 안전한 키가 있으면 재발급하지 않는다. JWKS의 `keys`에는 공개 RSA `kty,n,e,kid`가 있어야 하고 private `d,p,q,dp,dq,qi`는 없어야 한다. 현재 kid와 서명 개인키의 공개 부분이 일치해야 한다. 실제 회전/폐기는 이번 준비에서 실행하지 않는다.
-3. 제안 mount는 호스트 `/opt/meet-me/auth/` → 컨테이너 `/run/meetme-auth/:ro`다. 예시 파일 `signing-private.pem`≤16KiB, `verification.jwks.json`≤64KiB의 컨테이너 경로를 AUTH 변수에 지정한다. 실제 UID/GID10001에 필요한 읽기·탐색 권한만 부여한다. 경로·소유권·mount는 검증된 코드와 운영 승인 뒤 적용하며 지금 실행하지 않는다.
+3. mount는 호스트 `${AUTH_KEYS_DIRECTORY:-/opt/meet-me/auth}` → 컨테이너 `/run/meetme-auth/:ro`다. `signing-private.pem`≤16KiB, `verification.jwks.json`≤64KiB의 컨테이너 경로를 renderer가 고정 출력한다. 없는 호스트 디렉터리는 자동 생성하지 않는다. 실제 UID/GID10001에 필요한 읽기·탐색 권한만 부여한다. 실제 파일·소유권은 운영 승인 뒤 준비하며 지금 실행하지 않는다.
 4. 완료 신호는 환경명, Parameter/변수 **이름과 configured 여부**, 파일 존재·read-only·권한 검사 통과 여부다. Client Secret/REST API key/개인키·토큰·쿠키·code/state·DB 암호를 채팅·저장소·로그·스크린샷에 보내지 않는다.
 
 **[SHARED] 후속:** 값 비출력 설정 검사 → 격리 회귀 → 별도 승인한 사용자 계정으로 Google/Kakao 실제 로그인·취소·재로그인 → callback/Origin·Secure HttpOnly cookie·RS256 kid/issuer/audience·다른 계정/기기 소유권·archive를 확인한다. 등록 완료를 실로그인 성공으로 표시하지 않는다. 이 작업은 실제 인증 활성화만 막으며 합성 검증·문서는 계속 가능하다.
@@ -50,7 +51,7 @@
 
 운영자 요약 `OperatorQueryProperties.enabled=false`와 빈 allowlist를 유지한다. 운영자 UUID 등록·권한 변경·활성화는 core login/room/precheck의 선행 조건이 아니다. `/api/operations` 거부는 정상이다. 기존 실제 CurrentAccountPort·명시 allowlist·조회 전 인가·감사 실패 시 보호 정보 미반환 정책을 유지한다. OFF는 감사 schema·Flyway를 제거하는 설정이 아니며 `cleanupEnabled=true`의 감사 정리는 별도다.
 
-1. 에이전트가 기존 API의 검증된 기본 OFF 활성화/인증 전달 경로와 평가 input cap을 준비한다. **모임 총 AI10원 정책과 새 호출 예산의 충돌**은 [평가 준비안](ISSUE_107_REAL_MODEL_EVALUATION_PLAN.md)을 기준으로 부모가 결정한다.
+1. 에이전트의 코드·독립 검증 결과를 확인하고 **모임 총 AI10원 정책과 새 호출 예산의 충돌**을 부모가 결정한다. 기본 OFF 활성화·인증 전달 경로의 코드 준비를 사용자 키 입력 탓으로 남기지 않는다. count 사전 제한은 실제 billed input hard cap 증명이 아니므로 [평가 준비안](ISSUE_107_REAL_MODEL_EVALUATION_PLAN.md)의 남은 과금 근거도 확인한다.
 2. 입증된 최대 비용을 보고받은 뒤 **30개 실제 평가 승인**. 준비된 경로로 기존 OAuth 자격 증명·RS256/JWKS를 안전하게 전달하고 별도 실로그인 검증을 승인한다. 공개 앱 설정은 반복하지 않는다.
 3. 실제 준비 결과 뒤 **운영 읽기·복구/유지보수·정확 전환 승인**. main 자동 배포 때문에 준비 전 main을 먼저 병합하지 않는다. 서버 호환성을 확인한 뒤 웹 main을 진행한다.
 

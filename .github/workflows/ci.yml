@@ -22,7 +22,7 @@ jobs:
   quality:
     name: Quality Gate
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - name: Check out repository
@@ -45,7 +45,7 @@ jobs:
         run: node --test .github/scripts/production-preflight-contract.test.cjs
 
       - name: Verify first transition and subsequent automatic release contract
-        run: node --test .github/scripts/approved-release-pipeline.test.cjs .github/scripts/issue108-release-catalog.test.cjs .github/scripts/issue109-release-catalog.test.cjs .github/scripts/issue110-release-catalog.test.cjs .github/scripts/issue107-integrated-catalog.test.cjs
+        run: node --test .github/scripts/approved-release-pipeline.test.cjs .github/scripts/issue108-release-catalog.test.cjs .github/scripts/issue109-release-catalog.test.cjs .github/scripts/issue110-release-catalog.test.cjs .github/scripts/issue107-integrated-catalog.test.cjs .github/scripts/issue107-runtime-auth-catalog.test.cjs
 
       - name: Verify OAuth proxy log privacy
         run: node --test .github/scripts/issue110-nginx-privacy.test.cjs
@@ -55,6 +55,9 @@ jobs:
 
       - name: Verify runtime provider key delivery
         run: node --test deploy/tests/runtime-provider-env.test.cjs
+
+      - name: Verify auth runtime delivery and isolated key mounts
+        run: node --test deploy/tests/runtime-auth-env.test.cjs deploy/tests/runtime-auth-compose.test.cjs deploy/tests/runtime-auth-raw-json.test.cjs
 
       - name: Verify isolated built image workflow
         run: node --test deploy/tests/built-image-workflow.test.cjs
