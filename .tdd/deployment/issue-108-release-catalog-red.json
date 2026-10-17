@@ -1,0 +1,96 @@
+{
+  "workItem": "issue-108-release-catalog",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "recordedAt": "2026-10-17T16:19:30.189530Z",
+  "scope": "Offline source publication and pure metadata/host-record validation only; no AWS, host probes, Docker, credential or configuration operations. No Gradle run.",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue108-release-catalog.test.cjs",
+      "sha256": "96ed264fabc8d37fffc552b85b04be7bf0479ec3232de2cdef5e5ac3318d4afb"
+    },
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "sha256": "506693749d94bd764116ac3d6b34a638847987fd1b12c47a13a3cde81099ce17"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "b68db51cbbffd2740387c16a261673ce401c32b68697253d94011a1b58535796"
+    }
+  ],
+  "pythonSourceBeforeSha256": {
+    "deploy/pipeline/approved_release.py": "a5925de1808120c75b122659dd0c57d2686d87f4970d7fe7dd59101b1376896c",
+    "deploy/pipeline/host-approved-release.py": "6db169cd88620ed3ff04e942a54d4d1bd3e6c5c389613b167eb64581a6bbd945",
+    "deploy/pipeline/publish_manifest.py": "e2752c2949e3b8a63493f19d7fa7f6489bf3c1cdd52ece283c8ccc601c0bade5"
+  },
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    ".github/scripts/issue108-release-catalog.test.cjs",
+    ".github/scripts/issue109-release-catalog.test.cjs",
+    ".github/scripts/approved-release-pipeline.test.cjs"
+  ],
+  "tests": 30,
+  "passed": 17,
+  "failed": 13,
+  "failedTests": [
+    "immutable main release metadata binds run attempt SHA digest repository archive and exact migration catalog",
+    "108 R01 publisher emits exactly V1 through V12 with independent Flyway checksums and fingerprints",
+    "108 R02 V12 SQL byte changes update source fingerprint and Flyway checksum without changing V1 through V11",
+    "108 R03 guard bytes are fingerprinted independently of the exact twelve-schema fingerprint",
+    "108 R04 publisher rejects missing V12 missing predecessors duplicate versions and unknown V13",
+    "108 R06 manifest reader accepts exact V10 V11 and V12 while rejecting unsupported or malformed catalogs",
+    "108 R07 host stored-record reader accepts V12 and retains V10 V11 without reading host state",
+    "108 R08 unchanged complete V12 contract permits AUTO_READY and preserves V10 V11 behavior",
+    "108 R09 V11 to V12 never silently transitions and requires explicit drained disabled-rule approval",
+    "108 R10 absent or mismatched automatic contract demands transition and cannot become automatic readiness",
+    "108 R11 explicit V12 transition retains successful contiguous V7 through V12 prefix policy",
+    "108 R13 READY is bound to exact observed image history and both fingerprints",
+    "V12 publisher derives exact twelve source migrations while retaining the original eleven checksums"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "rawLog": ".codex/tdd-evidence/issue-108-release-catalog-final-red.log",
+  "independentRun": {
+    "command": [
+      "node",
+      "--test",
+      ".github/scripts/issue108-release-catalog.test.cjs"
+    ],
+    "tests": 14,
+    "passed": 3,
+    "failed": 11,
+    "failedTests": [
+      "108 R01 publisher emits exactly V1 through V12 with independent Flyway checksums and fingerprints",
+      "108 R02 V12 SQL byte changes update source fingerprint and Flyway checksum without changing V1 through V11",
+      "108 R03 guard bytes are fingerprinted independently of the exact twelve-schema fingerprint",
+      "108 R04 publisher rejects missing V12 missing predecessors duplicate versions and unknown V13",
+      "108 R06 manifest reader accepts exact V10 V11 and V12 while rejecting unsupported or malformed catalogs",
+      "108 R07 host stored-record reader accepts V12 and retains V10 V11 without reading host state",
+      "108 R08 unchanged complete V12 contract permits AUTO_READY and preserves V10 V11 behavior",
+      "108 R09 V11 to V12 never silently transitions and requires explicit drained disabled-rule approval",
+      "108 R10 absent or mismatched automatic contract demands transition and cannot become automatic readiness",
+      "108 R11 explicit V12 transition retains successful contiguous V7 through V12 prefix policy",
+      "108 R13 READY is bound to exact observed image history and both fingerprints"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue-108-release-catalog-initial-red.log"
+  },
+  "legacyObservation": {
+    "command": [
+      "node",
+      "--test",
+      ".github/scripts/issue109-release-catalog.test.cjs",
+      ".github/scripts/approved-release-pipeline.test.cjs"
+    ],
+    "tests": 16,
+    "passed": 14,
+    "failed": 2,
+    "category": "LIVE_V12_ADDITION_EXCEEDS_HISTORICAL_PUBLICATION_CATALOG",
+    "log": ".codex/tdd-evidence/issue-108-release-prior-contract-observation.log"
+  },
+  "assertedContract": [
+    "Publish exact complete unique V1..V12 with independent CRC32 and SHA256 schema/guard/archive fingerprints",
+    "Retain complete V10/V11 reader and automatic READY acceptance",
+    "V11 to V12 requires explicit approved disabled-rule/drained transition; automatic/preflight return TRANSITION_REQUIRED",
+    "Fail closed on absent or mismatched contract for automatic readiness, invalid phase/history/types/checksums/unknown V13 and source symlinks"
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "root": "/workspace/issue108-server",
+  "preparedAt": "2026-10-17T16:53:30Z",
+  "notice": "PREPARATION ONLY. No mutation or test run has been performed by this plan. Execution requires separate parent GO.",
+  "tests": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/input/web/GuestReaccessWebIntegrationTest.kt",
+      "sha256": "6a45dd18274dfeee1afe4b10c40a536c65257535a446b904dfccf8621f14e6ce"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionDeadlinePostgresTest.kt",
+      "sha256": "9dbc7e87cf86dcdf58837c21c1cf4ff1e33211f3f446e7a3715ec8075483808c"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "F1",
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicy.kt",
+      "old": "return if (passwords.verify(password, record.passwordHash)) {",
+      "new": "return if (true) {",
+      "testId": "108 H10 ",
+      "failureNeedles": [
+        "403",
+        "200"
+      ],
+      "description": "Password verification always succeeds for a supplied password; wrong password must be rejected.",
+      "originalSha256": "4148d22281817d7027270fde86e187f0e659fd417afcd30de7b9b4be1d12f027",
+      "suite": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest"
+    },
+    {
+      "id": "F2",
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessWriteGuard.kt",
+      "old": "        if (grant.expectedRevision != currentRevision) fail(RoomLifecycleErrorCode.REVISION_CONFLICT)\n",
+      "new": "        // ISSUE108 FAULT: revision precondition deliberately omitted.\n",
+      "testId": "108 H25 ",
+      "failureNeedles": [
+        "[200, 409]",
+        "[200, 200]"
+      ],
+      "description": "Skip stored revision precondition; two replacement requests must not both succeed.",
+      "originalSha256": "35f73a345ad3d4b8888320a6b939984df0387b2675863234044c449a6ca61e67",
+      "suite": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest"
+    },
+    {
+      "id": "F3",
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "old": "if (!command.blindReplacement && existing != null && existing.latest.rawText == rawText) {",
+      "new": "if (existing != null && existing.latest.rawText == rawText) {",
+      "testId": "108 H37 ",
+      "assertionNeedle": "assertEquals(listOf(ORIGINAL, ORIGINAL), versions(owner.id))",
+      "description": "Restore generic same-text no-op for blind write; the first same-text replacement must still create a fresh version.",
+      "originalSha256": "7db4f54cbdfc8653746e48ede9345e624914b0a1621bfd2b464ab8d713cf6b59",
+      "expectedAssertionLine": 691,
+      "suite": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest"
+    },
+    {
+      "id": "F4",
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessService.kt",
+      "old": "    @Transactional\n    override fun join(",
+      "new": "    override fun join(",
+      "testId": "108 H36 ",
+      "failureNeedles": [
+        "expected: <1>",
+        "but was: <2>"
+      ],
+      "assertionNeedle": "assertEquals(1, count(\"participants\"))",
+      "description": "Remove only join outer transaction; invalid password hashing must roll back inner participant/session registration.",
+      "originalSha256": "65265949abbe7588c72fd327d57b8f925bbed677fd516af26493a56cd6297f1f",
+      "expectedAssertionLine": 892,
+      "suite": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest"
+    },
+    {
+      "id": "F5",
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "old": "if (!correction && deadline != null && now >= deadline) {",
+      "new": "if (false && !correction && deadline != null && now >= deadline) {",
+      "testId": "\"FIRST\", deadline offset 0ns, expected participant policy false",
+      "suite": "com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest",
+      "failureNeedles": [
+        "409",
+        "200"
+      ],
+      "description": "Disable only initial-collection deadline rejection after acquiring room lock; ordinary FIRST at exact deadline must reject before any write.",
+      "originalSha256": "7db4f54cbdfc8653746e48ede9345e624914b0a1621bfd2b464ab8d713cf6b59"
+    }
+  ],
+  "command": [
+    "/tmp/issue108-integration-gradle-run",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Pkotlin.incremental=false",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*GuestReaccessWebIntegrationTest",
+    "--tests",
+    "*SubmissionDeadlinePostgresTest"
+  ],
+  "kind": "junit",
+  "expectedTestCount": 74,
+  "workItem": "issue-108-http-integration-faults",
+  "evidencePath": ".tdd/verification/issue-108-http-integration-faults.json",
+  "boundary": "ONE grouped run with five simultaneous mutations across four source files, mapped to H10/H25/H37-first/H36/deadline-FIRST-exact. F3+F5 share one exact original SubmissionService backup. This is not five independent runs. Followed by one restored 74-test GREEN run.",
+  "nonMasking": [
+    "F1 only changes supplied-password verification; H25/H37 use unprotected records and do not call it.",
+    "F3 only changes same-text no-op; H25 writes two different texts, so H25 uniquely observes F2.",
+    "F2 can also change a later H37 outcome; F3 is mapped only to the first same-text fresh-version assertion before reuse.",
+    "F4 leaves valid joins committed and does not alter H10/H25/H37 valid setup; H36 specifically checks failed hash registration rollback.",
+    "F5 is independently mapped to ordinary account-owned FIRST at exact deadline. That path has no supplied guest password, no blind revision grant, no existing same-text submission and no invalid join; F1/F2/F3/F4 cannot cause its expected409/actual200 failure.",
+    "F3 removes only the blind exception to same-text no-op. It does not alter ordinary deadline-FIRST, EDIT or SAME rejection; F5 and F3 use distinct exact anchors in the same backed-up file.",
+    "F5 can cause additional deadline-related H22 failures, but only the designated deadline-FIRST assertion is counted for F5; additional failing tests do not count as extra fault runs."
+  ],
+  "restorePolicy": "Exact four-file byte/mode backup; apply each reviewed anchor sequentially within its file; stop child process group before restore; strict source/test SHA checks; one clean two-class 74-test run. Abort rather than overwrite external source drift.",
+  "suites": [
+    {
+      "name": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest",
+      "tests": 37
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest",
+      "tests": 37
+    }
+  ]
+}

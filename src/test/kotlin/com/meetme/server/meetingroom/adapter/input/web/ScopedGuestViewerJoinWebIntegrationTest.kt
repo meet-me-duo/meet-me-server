@@ -8,6 +8,7 @@ import com.meetme.server.participant.application.port.output.GuestProofLevel
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import jakarta.servlet.http.Cookie
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -85,12 +86,17 @@ class ScopedGuestViewerJoinWebIntegrationTest {
     }
 
     @Test
-    fun `replacement only proof cannot reveal existing participation through public room viewer`() {
+    fun `replacement only proof keeps public polling available without revealing existing participation`() {
         proof(GuestProofLevel.REPLACE_ONLY)
         mvc
             .perform(get("/api/rooms/$invite").cookie(cookie()))
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.code").value("GUEST_PROOF_INSUFFICIENT"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.viewer.joined").value(false))
+            .andExpect(jsonPath("$.viewer.display_name").value(nullValue()))
+            .andExpect(jsonPath("$.viewer.context_id").value(nullValue()))
+            .andExpect(jsonPath("$.viewer.participant_id").value(nullValue()))
+            .andExpect(jsonPath("$.viewer.raw_text").doesNotExist())
+        assertEquals("private previous input", jdbc.queryForObject("SELECT raw_text FROM submission_versions", String::class.java))
     }
 
     @Test

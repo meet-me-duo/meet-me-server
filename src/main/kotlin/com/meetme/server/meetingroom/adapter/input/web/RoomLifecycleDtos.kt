@@ -49,11 +49,22 @@ data class CreateRoomRequest(
 
 @Schema(description = "익명 참여 요청")
 data class JoinRoomRequest(
-    @field:Size(max = 50)
     @field:JsonProperty("display_name")
-    @field:Schema(description = "게스트 최초 참여 때 필요한 표시 이름. 회원은 계정 이름을 사용하여 생략 가능", example = "지수", nullable = true)
+    @field:Schema(
+        description = "게스트 최초 참여 때 필요한 표시 이름. 앞뒤 공백 제거 후 1~50 Unicode 코드 포인트. 회원은 계정 이름을 사용하여 생략 가능",
+        example = "지수",
+        nullable = true,
+    )
     val displayName: String? = null,
-)
+    @field:Schema(
+        description = "게스트 최초 참여의 선택 암호. 공백·대소문자를 보존하며 1~128 Unicode 코드 포인트. 회원은 사용하지 않음",
+        nullable = true,
+        accessMode = Schema.AccessMode.WRITE_ONLY,
+    )
+    val password: String? = null,
+) {
+    override fun toString(): String = "JoinRoomRequest(redacted)"
+}
 
 @Schema(description = "수동 마감 요청")
 data class CloseRoomRequest(
@@ -78,6 +89,9 @@ data class ViewerParticipationResponse(
         format = "uuid",
     )
     val contextId: java.util.UUID? = null,
+    @field:JsonProperty("participant_id")
+    @field:Schema(description = "현재 유효한 게스트의 기록 번호. 재접근 선택 보조용이며 권한 증명이 아님. 회원·미참여는 null", nullable = true, format = "uuid")
+    val participantId: java.util.UUID? = null,
 )
 
 @Schema(description = "조건 수정 라운드. 과거 operation 결과와 현재 활성 라운드는 별개")
@@ -199,7 +213,13 @@ data class RoomResponse(
                 view.closureReason,
                 view.closedAt,
                 view.publicStatus,
-                ViewerParticipationResponse(view.viewer.joined, view.viewer.displayName, view.viewer.role, view.viewer.contextId),
+                ViewerParticipationResponse(
+                    view.viewer.joined,
+                    view.viewer.displayName,
+                    view.viewer.role,
+                    view.viewer.contextId,
+                    view.viewer.participantId,
+                ),
                 view.inputDisclosurePolicy,
                 view.analysisId,
                 view.revisionGeneration,

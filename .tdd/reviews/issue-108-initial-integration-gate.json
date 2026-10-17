@@ -1,0 +1,15 @@
+{
+  "exitCode": 2,
+  "durationSeconds": 1261.04,
+  "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+  "tests": 895,
+  "failures": 37,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 137,
+  "recordedAt": "2026-10-17T16:42:57.593438Z",
+  "status": "FIXTURE_INTEGRATION_FAILURE",
+  "failureScope": "All 37 failures belong to the imported SubmissionDeadlinePostgresTest before its guest-host setup is adapted to the public account-host contract.",
+  "rawLog": ".codex/tdd-evidence/issue-108-integration-quality-gate.log",
+  "rawLogSha256": "407c254e47a5505e64295f869d978b033e9a94c5f5656b36db96ce035c64b7a4"
+}

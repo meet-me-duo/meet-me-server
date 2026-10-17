@@ -1,0 +1,7 @@
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    project.tasks.register('issue108NativeClasspath') {
+        dependsOn project.tasks.named('testClasses')
+        doLast { new File('/tmp/issue108-native/classpath.txt').text = project.sourceSets.test.runtimeClasspath.asPath }
+    }
+}

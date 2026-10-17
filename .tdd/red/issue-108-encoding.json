@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-108-encoding",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordEncodingBoundaryTest.kt",
+      "sha256": "403599e1dafc64813dec502d0aa262f574fbe27b91376ca47bd8f4c0bf5b286a"
+    }
+  ],
+  "command": [
+    "bash",
+    "gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GuestPasswordEncodingBoundaryTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P08 verify는 단독 surrogate를 UTF8 대체 문자 암호로 취급하지 않는다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P09 key의 사용하지 않는 trailing bits가 다르면 같은 decoded bytes여도 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P09 salt와 key에 패딩이 추가된 해시는 같은 바이트여도 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P09 독립 Python fixture의 정규 Base64url 무패딩 해시는 허용한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P09 표준 Base64 alphabet 별칭과 잘못된 문자는 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P08 hash는 단독 high 및 low surrogate와 잘못된 surrogate 배열을 거부한다()",
+    "com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.P09 salt의 사용하지 않는 trailing bits가 다르면 같은 decoded bytes여도 거부한다()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-17T14:37:11.299292Z"
+}

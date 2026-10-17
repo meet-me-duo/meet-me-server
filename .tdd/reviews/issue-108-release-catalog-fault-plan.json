@@ -1,0 +1,34 @@
+{
+  "root": "/workspace/issue108-server",
+  "preparedAt": "2026-10-17T16:29:17Z",
+  "notice": "PREPARATION ONLY. No mutation or test run has been performed by this plan. Execution requires separate parent GO.",
+  "tests": [
+    {
+      "path": ".github/scripts/issue108-release-catalog.test.cjs",
+      "sha256": "96ed264fabc8d37fffc552b85b04be7bf0479ec3232de2cdef5e5ac3318d4afb"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "C1",
+      "path": "deploy/pipeline/publish_manifest.py",
+      "old": "\"migrations\": rows,",
+      "new": "\"migrations\": rows[:-1],",
+      "testId": "108 R01 ",
+      "originalSha256": "cf5d0ca120c9f3e0c04b6c9a5acbee2e417b7114f431a58846196be09a6109a7",
+      "description": "Publisher silently omits V12 from emitted rows despite twelve source migrations; independent exact catalog assertion must detect eleven returned rows."
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    ".github/scripts/issue108-release-catalog.test.cjs"
+  ],
+  "kind": "tap",
+  "expectedTestCount": 14,
+  "workItem": "issue-108-release-catalog-faults",
+  "evidencePath": ".tdd/verification/issue-108-release-catalog-faults.json",
+  "boundary": "ONE offline Python publisher mutation and ONE standalone Node contract invocation, followed by restored 14-test GREEN. No AWS/host/Docker/credential/configuration action.",
+  "restorePolicy": "Exact one-file byte/mode backup; one publisher mutation; stop child process group before restore; strict source/test SHA checks; one clean standalone 14-test Node run. Abort rather than overwrite external source drift."
+}

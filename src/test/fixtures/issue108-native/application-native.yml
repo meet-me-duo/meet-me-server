@@ -1,0 +1,39 @@
+server:
+  address: 127.0.0.1
+  port: 8080
+spring:
+  flyway:
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:55432/meetme108
+    username: synthetic108
+    password: local-fixture-only
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 56379
+meetme:
+  anonymous:
+    allowed-origins: http://localhost:5173
+    cookie-secure: false
+  rate-limit:
+    enabled: true
+  reliability:
+    enabled: false
+  data-retention:
+    enabled: false
+  auth:
+    signing-key-id: issue108-local
+    signing-private-key-path: /tmp/issue108-native/service-private.pem
+    verification-jwks-path: /tmp/issue108-native/service-jwks.json
+    issuer: http://localhost:8080
+    audience: meetme-web
+    web-callback-uri: http://localhost:5173/auth/callback
+    google:
+      client-id: synthetic-google-108
+      client-secret: synthetic-local-only
+      redirect-uri: http://localhost:8080/api/auth/google/callback
+    kakao:
+      client-id: synthetic-kakao-108
+      client-secret: synthetic-local-only
+      redirect-uri: http://localhost:8080/api/auth/kakao/callback

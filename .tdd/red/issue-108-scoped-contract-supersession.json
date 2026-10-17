@@ -1,0 +1,44 @@
+{
+  "workItem": "issue-108-scoped-contract-supersession",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestProofWebIntegrationTest.kt",
+      "sha256": "8fd4d8db95bf8155b78a2c84c64e2f6be600ae38fab8bb22d044f3eb9b63170a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestViewerJoinWebIntegrationTest.kt",
+      "sha256": "5cfd2c31f791493865032426e4cad074eb7cbb27a26c72d5d512e693fd473cc7"
+    }
+  ],
+  "command": [
+    "/tmp/issue108-integration-gradle-run",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Pkotlin.incremental=false",
+    "--max-workers=2",
+    "-I",
+    "/tmp/issue108-author-test-format.gradle",
+    "runKtlintCheckOverTestSourceSet",
+    "test",
+    "--tests",
+    "*GuestReaccessWebIntegrationTest",
+    "--tests",
+    "*ScopedGuestProofWebIntegrationTest",
+    "--tests",
+    "*ScopedGuestViewerJoinWebIntegrationTest",
+    "--tests",
+    "*CorePersistenceIntegrationTest",
+    "--tests",
+    "*DatabaseMigrationRunnerTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest.replacement only trusted context proof without cookie still rejects ordinary write and read()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest.replace only proof uses blind endpoint and rejects ordinary submission write and private read()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestViewerJoinWebIntegrationTest.replacement only proof keeps public polling available without revealing existing participation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T16:10:00.844135Z"
+}

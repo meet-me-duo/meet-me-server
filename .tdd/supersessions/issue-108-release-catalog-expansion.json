@@ -1,0 +1,71 @@
+{
+  "workItem": "issue-108-release-catalog-expansion",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "recordedAt": "2026-10-17T16:19:30.189530Z",
+  "authority": "Parent explicitly selected minimal additive supersession (b): current publication exact11 to exact12; unsupported upper-bound oracle12 to13 only at necessary reader/record sites; no change to deployment policy or external authority.",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "beforeSha256": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859",
+      "afterSha256": "506693749d94bd764116ac3d6b34a638847987fd1b12c47a13a3cde81099ce17",
+      "archivedBeforePath": ".tdd/history/issue-108-release-catalog-expansion/issue109-release-catalog.test.before.cjs"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "beforeSha256": "01b47f4fd025b3bc04ad05f5ec9bad6d11ed5cb4f1f666baa58660146d5d6933",
+      "afterSha256": "b68db51cbbffd2740387c16a261673ce401c32b68697253d94011a1b58535796",
+      "archivedBeforePath": ".tdd/history/issue-108-release-catalog-expansion/approved-release-pipeline.test.before.cjs"
+    }
+  ],
+  "pythonSourceBeforeSha256": {
+    "deploy/pipeline/approved_release.py": "a5925de1808120c75b122659dd0c57d2686d87f4970d7fe7dd59101b1376896c",
+    "deploy/pipeline/host-approved-release.py": "6db169cd88620ed3ff04e942a54d4d1bd3e6c5c389613b167eb64581a6bbd945",
+    "deploy/pipeline/publish_manifest.py": "e2752c2949e3b8a63493f19d7fa7f6489bf3c1cdd52ece283c8ccc601c0bade5"
+  },
+  "archivedEvidence": [
+    {
+      "path": ".tdd/red/issue-109-release-catalog.json",
+      "archivedPath": ".tdd/history/issue-108-release-catalog-expansion/issue-109-release-catalog.json",
+      "sha256": "158100f12e93e80c5946d92b90bbe873012cb3441f473c4f22a2fac1e6925818",
+      "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341"
+    },
+    {
+      "path": ".tdd/red/issue-99-approved-release-pipeline.json",
+      "archivedPath": ".tdd/history/issue-108-release-catalog-expansion/issue-99-approved-release-pipeline.json",
+      "sha256": "3ea51a4ec69380118a177fec7fcbbfdef7d144a39a63584471fb161944f2e45c",
+      "sourceRevision": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f"
+    }
+  ],
+  "changes": [
+    "issue109 publication expected rows 11 -> 12; original eleven hardcoded CRC32 values preserved byte-for-byte and independent JS oracle checks V12 CRC32 -1574736948.",
+    "Unknown source13 replaces obsolete unknown12; reader/host unsupported count12 ->13 only. V11 manifest history with extra row12 remains invalid and unchanged.",
+    "All V10/V11 read, READY, explicit first transition, history gap/checksum/success, trusted guard, pending commands and identity rejection assertions retained.",
+    "approved-release-pipeline actual-source publication expected versions/checksums extends by exactly V12; all other assertions unchanged."
+  ],
+  "priorObservation": {
+    "command": [
+      "node",
+      "--test",
+      ".github/scripts/issue109-release-catalog.test.cjs",
+      ".github/scripts/approved-release-pipeline.test.cjs"
+    ],
+    "tests": 16,
+    "passed": 14,
+    "failed": 2,
+    "category": "LIVE_V12_ADDITION_EXCEEDS_HISTORICAL_PUBLICATION_CATALOG",
+    "log": ".codex/tdd-evidence/issue-108-release-prior-contract-observation.log"
+  },
+  "newRedEvidence": ".tdd/deployment/issue-108-release-catalog-red.json",
+  "supersessionRed": {
+    "tests": 16,
+    "passed": 14,
+    "failed": 2,
+    "failedTests": [
+      "immutable main release metadata binds run attempt SHA digest repository archive and exact migration catalog",
+      "V12 publisher derives exact twelve source migrations while retaining the original eleven checksums"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue-108-release-catalog-final-red.log"
+  },
+  "historicalPolicy": "Two previous active RED summaries and two before-test files archived byte-for-byte with original source/test hashes. Existing #109 verification/review historical source fingerprints are left unchanged. No frozen Python runtime copy is executed.",
+  "verification": "Expected RED confirmed on old Python source. Native HTTP/main Gradle runs are owned by root. Source implementation, GREEN and targeted fault injection remain pending."
+}
