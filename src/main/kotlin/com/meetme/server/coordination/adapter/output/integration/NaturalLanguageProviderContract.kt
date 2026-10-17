@@ -4,8 +4,10 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageBat
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.shared.domain.SubmissionVersionId
+import com.meetme.server.submission.domain.ClarificationProposal
 import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
+import com.meetme.server.submission.domain.SubmissionRules
 import com.meetme.server.submission.domain.TimePolarity
 import tools.jackson.databind.ObjectMapper
 import java.time.DateTimeException
@@ -52,7 +54,7 @@ internal class NaturalLanguageProviderContract(
         val providerAreaNames = mutableListOf<Pair<String, String>>()
         val parsed =
             results.map { result ->
-                if (!result.keys.all { it in setOf("input_ref", "conditions", "rejection_code") }) {
+                if (!result.keys.all { it in setOf("input_ref", "conditions", "rejection_code", "clarification") }) {
                     throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 }
                 if (strict && !result.containsKey("rejection_code")) invalid()
@@ -106,7 +108,12 @@ internal class NaturalLanguageProviderContract(
                     throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 }
                 val versionId = SubmissionVersionId(UUID.fromString(ref))
-                StructuredSubmissionResult(versionId, conditions, rejectionCode)
+                val clarification =
+                    result["clarification"]?.let {
+                        if (rejectionCode !in setOf("AMBIGUOUS_TIME_CONSTRAINT", "AMBIGUOUS_INPUT") || rawConditions.isNotEmpty()) invalid()
+                        parseClarification(it, requestByRef.getValue(ref).rawText)
+                    }
+                StructuredSubmissionResult(versionId, conditions, rejectionCode, clarification)
             }
         val expectedRefs = request.inputs.map { it.inputRef }.toSet()
         if (parsed.map { it.submissionVersionId.value.toString() }.toSet() != expectedRefs || parsed.size != request.inputs.size) {
@@ -117,6 +124,36 @@ internal class NaturalLanguageProviderContract(
             throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
         }
         return parsed
+    }
+
+    private fun parseClarification(
+        value: Any,
+        rawText: String,
+    ): ClarificationProposal {
+        val fields = value as? Map<*, *> ?: invalid()
+        if (fields.keys != setOf("excerpt", "question", "option_a", "option_b")) invalid()
+
+        fun text(
+            name: String,
+            maximum: Int,
+        ): String {
+            val raw = fields[name] as? String ?: invalid()
+            val trimmed = SubmissionRules.trimRawText(raw)
+            if (trimmed.isEmpty() || trimmed.codePointCount(0, trimmed.length) > maximum) invalid()
+            return trimmed
+        }
+        val excerpt = text("excerpt", 200)
+        if (!rawText.contains(excerpt)) invalid()
+        val question = text("question", 160)
+        val optionA = text("option_a", 500)
+        val optionB = text("option_b", 500)
+        if (optionA == optionB ||
+            optionA == SubmissionRules.trimRawText(rawText) ||
+            optionB == SubmissionRules.trimRawText(rawText)
+        ) {
+            invalid()
+        }
+        return ClarificationProposal(excerpt, question, optionA, optionB)
     }
 
     private fun parseCondition(
@@ -254,6 +291,19 @@ internal class NaturalLanguageProviderContract(
             appendLine("For 평일19–21가능, 목요일20시이후선호, keep weekday AVAILABLE19–21 and Thursday PREFERRED_TIME_WINDOW20–21.")
             appendLine("Soft preferences do not remove feasible alternatives and must not become hard availability constraints.")
             appendLine("Do not invent time bounds for vague or ambiguous time restrictions.")
+            appendLine(
+                "Only material ambiguity affecting candidate results may carry a clarification; clear or unambiguous inputs use null.",
+            )
+            appendLine("Return at most one concise clarification with an exact original excerpt, question, option_a and option_b.")
+            appendLine(
+                "Each option is a complete replacement input: preserve every other constraint, negation, exclusion and soft preference.",
+            )
+            appendLine("Resolve relative dates using the input reference_date and write absolute dates in both replacement options.")
+            appendLine("If two safe complete interpretations cannot express the ambiguity, use null instead of invented alternatives.")
+            appendLine(
+                "A clarification requires empty conditions and AMBIGUOUS_TIME_CONSTRAINT or AMBIGUOUS_INPUT; never assume availability.",
+            )
+            appendLine("Question <=160, excerpt <=200 and each complete replacement <=500 Unicode code points; options must be distinct.")
             appendLine(
                 "Resolve relative dates separately from each input's immutable room-local reference_date, never from today or search start.",
             )
@@ -405,10 +455,25 @@ internal class NaturalLanguageProviderContract(
                                     mapOf(
                                         "type" to "object",
                                         "additionalProperties" to false,
-                                        "required" to listOf("input_ref", "conditions", "rejection_code"),
+                                        "required" to listOf("input_ref", "conditions", "rejection_code", "clarification"),
                                         "properties" to
                                             mapOf(
                                                 "input_ref" to mapOf("type" to "string"),
+                                                "clarification" to
+                                                    mapOf(
+                                                        "anyOf" to
+                                                            listOf(
+                                                                mapOf("type" to "null"),
+                                                                mapOf(
+                                                                    "type" to "object",
+                                                                    "additionalProperties" to false,
+                                                                    "required" to listOf("excerpt", "question", "option_a", "option_b"),
+                                                                    "properties" to
+                                                                        listOf("excerpt", "question", "option_a", "option_b")
+                                                                            .associateWith { mapOf("type" to "string") },
+                                                                ),
+                                                            ),
+                                                    ),
                                                 "rejection_code" to
                                                     mapOf(
                                                         "type" to listOf("string", "null"),

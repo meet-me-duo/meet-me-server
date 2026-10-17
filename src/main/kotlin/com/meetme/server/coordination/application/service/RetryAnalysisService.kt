@@ -12,10 +12,8 @@ import com.meetme.server.meetingroom.application.port.input.RoomView
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.application.service.CollectionClosureService
 import com.meetme.server.meetingroom.domain.InviteCode
-import com.meetme.server.participant.application.port.output.GuestCredentialPort
-import com.meetme.server.participant.application.port.output.GuestSessionRepository
-import com.meetme.server.participant.application.port.output.ParticipantRepository
-import com.meetme.server.participant.domain.ParticipantRole
+import com.meetme.server.participant.application.service.OwnershipOperation
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.OutboxEventId
 import com.meetme.server.submission.application.port.input.SubmissionErrorCode
@@ -27,14 +25,12 @@ import java.time.Clock
 @Service
 class RetryAnalysisService(
     private val roomRepository: MeetingRoomRepository,
-    private val guestSessionRepository: GuestSessionRepository,
-    private val participantRepository: ParticipantRepository,
     private val coordinationRunRepository: CoordinationRunRepository,
     private val outboxRepository: OutboxRepository,
-    private val credentialPort: GuestCredentialPort,
     private val idGenerator: IdGenerator,
     private val getRoom: GetRoomUseCase,
     private val clock: Clock,
+    private val ownership: ParticipantOwnershipResolver,
 ) : RetryAnalysisUseCase {
     @Transactional
     override fun retry(
@@ -47,14 +43,7 @@ class RetryAnalysisService(
         val room =
             roomRepository.findByInviteCodeForUpdate(code)
                 ?: throw RoomLifecycleException(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
-        if (rawCredential.isNullOrBlank()) throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED)
-        val session =
-            guestSessionRepository
-                .findByCredentialDigest(credentialPort.digest(rawCredential))
-                ?.takeIf { it.isActive(clock.instant()) }
-                ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_INVALID)
-        val participant = participantRepository.findByRoomAndGuestSession(room.id, session.id)
-        if (participant?.role != ParticipantRole.HOST) throw RoomLifecycleException(RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED)
+        ownership.resolve(room.id, rawCredential, OwnershipOperation.HOST_COMMAND)
         if (room.activeRevisionRoundId != null) throw SubmissionException(SubmissionErrorCode.ANALYSIS_NOT_DELAYED)
         val run =
             coordinationRunRepository.findLatestByRoomForUpdate(room.id)

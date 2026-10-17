@@ -151,11 +151,16 @@ private fun MatchingResultErrorCode.status(): HttpStatus =
 
 private fun RoomLifecycleErrorCode.status(): HttpStatus =
     when (this) {
+        RoomLifecycleErrorCode.ACCOUNT_REQUIRED,
         RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED,
         RoomLifecycleErrorCode.GUEST_SESSION_INVALID,
         -> HttpStatus.UNAUTHORIZED
-        RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED -> HttpStatus.FORBIDDEN
+        RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT,
+        RoomLifecycleErrorCode.PARTICIPANT_REQUIRED,
+        RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED,
+        -> HttpStatus.FORBIDDEN
         RoomLifecycleErrorCode.ROOM_NOT_FOUND -> HttpStatus.NOT_FOUND
+        RoomLifecycleErrorCode.PARTICIPANT_CONFLICT,
         RoomLifecycleErrorCode.REVISION_CONFLICT,
         RoomLifecycleErrorCode.CORRECTION_ANALYSIS_LIMIT_REACHED,
         RoomLifecycleErrorCode.ROOM_CLOSED,

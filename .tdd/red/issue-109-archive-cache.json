@@ -1,0 +1,24 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-109-archive-cache",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomArchiveCacheContractTest.kt",
+      "sha256": "642c444eb380845cae282ac88994a908bcebdaacc62ec2fee6663b5ef6b5f8db"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*AccountRoomArchiveCacheContractTest",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+  ],
+  "failedTests": [
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomArchiveCacheContractTest#account room archive explicitly forbids response caching()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:56:08.633360Z"
+}

@@ -1,0 +1,185 @@
+{
+  "status": "PASS",
+  "workItem": "issue-109-auth-faults",
+  "testScope": "Local init script compiles account test source directory only for mutations, all production sources remain compiled; repository build/gates unchanged",
+  "role": "Independent auth public-contract test designer /root/auth_tests; temporary production mutations only",
+  "recordedAt": "2026-10-17T14:52:24.607262Z",
+  "faults": [
+    {
+      "fault": "skip-access-signature",
+      "source": "src/main/kotlin/com/meetme/server/account/adapter/output/security/Rs256AccessTokenAdapter.kt",
+      "replacement": {
+        "from": " || !jwt.verify(RSASSAVerifier(key))",
+        "to": ""
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.signature algorithm issuer audience kid and malformed tokens fail closed()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-skip-access-signature.log"
+    },
+    {
+      "fault": "skip-access-expiry",
+      "source": "src/main/kotlin/com/meetme/server/account/adapter/output/security/Rs256AccessTokenAdapter.kt",
+      "replacement": {
+        "from": "!expires.isAfter(now)",
+        "to": "false"
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.expiration boundary rejects signed token at exp and accepts the preceding second()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-skip-access-expiry.log"
+    },
+    {
+      "fault": "skip-oauth-browser-binding",
+      "source": "src/main/kotlin/com/meetme/server/account/application/service/OAuthLoginService.kt",
+      "replacement": {
+        "from": "!AuthEntropy.same(attempt.browserBindingDigest, AuthEntropy.digest(browserBinding))",
+        "to": "false"
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.application.service.OAuthLoginSecurityContractTest.missing wrong expired provider mismatched or foreign browser state creates no account or session()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-skip-oauth-browser-binding.log"
+    },
+    {
+      "fault": "skip-refresh-replay-family-revoke",
+      "source": "src/main/kotlin/com/meetme/server/account/adapter/output/redis/RedisRefreshSessionAdapter.kt",
+      "replacement": {
+        "from": "if values[5] ~= ARGV[2] then\n                    redis.call('HSET', fk, 'revoked', '1')",
+        "to": "if values[5] ~= ARGV[2] then\n                    -- intentional test fault skips family revocation"
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest.concurrent rotation across adapter instances allows one winner then invalidates the whole replayed family()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        },
+        {
+          "test": "com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest.rotation preserves account and absolute expiry then replay revokes newest descendant()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-skip-refresh-replay-family-revoke.log"
+    },
+    {
+      "fault": "extend-refresh-cookie-past-absolute",
+      "source": "src/main/kotlin/com/meetme/server/account/adapter/output/redis/RedisRefreshSessionAdapter.kt",
+      "replacement": {
+        "from": "math.min(now + tonumber(ARGV[5]), absolute)",
+        "to": "now + tonumber(ARGV[5])"
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest.idle boundary and absolute boundary refuse rotation while final day cookie life is capped()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-extend-refresh-cookie-past-absolute.log"
+    },
+    {
+      "fault": "skip-provider-nonce-binding",
+      "source": "src/main/kotlin/com/meetme/server/account/adapter/output/oauth/OidcOAuthProviderAdapter.kt",
+      "replacement": {
+        "from": "!AuthEntropy.same(nonce, expectedNonce)",
+        "to": "false"
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest.invalid signature kid algorithm issuer audience nonce expiry future issue subject and azp reject both providers()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-skip-provider-nonce-binding.log"
+    },
+    {
+      "fault": "accept-prefix-origin",
+      "source": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "replacement": {
+        "from": "received.single() !in origins.allowedOrigins",
+        "to": "origins.allowedOrigins.none { received.single().startsWith(it) }"
+      },
+      "detected": true,
+      "exitCode": 1,
+      "compileSuccessful": true,
+      "freshJUnitOnly": true,
+      "failures": [
+        {
+          "test": "com.meetme.server.account.adapter.input.web.AuthHttpSecurityContractTest.missing null lookalike or nonexact Origin never reaches refresh or logout ports()",
+          "kind": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "rawLog": ".codex/tdd-evidence/issue-109-auth-fault-accept-prefix-origin.log"
+    }
+  ],
+  "sourceRestoration": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/security/Rs256AccessTokenAdapter.kt",
+      "sha256": "86c03f9b5b5c80244c03a2b954cd33ece0132deda69dee9c086133d4a88a747e",
+      "exactRestored": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/application/service/OAuthLoginService.kt",
+      "sha256": "2e77ebc513b8a27d121b3248fbff99a35f9721df1da2f64ced82e6945839c3dc",
+      "exactRestored": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/redis/RedisRefreshSessionAdapter.kt",
+      "sha256": "5faf672c7cd490a1504efd0e7132652399244fa2e6d47eaedc14558784e0f695",
+      "exactRestored": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/oauth/OidcOAuthProviderAdapter.kt",
+      "sha256": "6fcbb0694ae001a28b84968f92d74d6f00585259caf8126346253ae69543908e",
+      "exactRestored": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "sha256": "e128e557882db88b0ac54bed681f196e3aad5e5c74c5f5213dcb461323315104",
+      "exactRestored": true
+    }
+  ],
+  "runner": "/tmp/meetme-109-auth-mutations.py",
+  "runnerSafety": [
+    "Delete all previous JUnit XML before each mutation run",
+    "Require XML modification time at or after invocation start and exact selected suite name",
+    "Require successful Kotlin compilation and :test FAILED with AssertionFailedError, reject setup/compile errors",
+    "Restore original bytes in per-fault and outer finally clauses"
+  ],
+  "testScopeInit": {
+    "path": "/tmp/meetme-109-auth-test-scope.init.gradle",
+    "content": "allprojects { afterEvaluate { kotlin.sourceSets.getByName('test').kotlin.setSrcDirs(['src/test/kotlin/com/meetme/server/account']) } }"
+  },
+  "baselineAndRestoredGreen": ".tdd/verification/issue-109-auth-green.json"
+}

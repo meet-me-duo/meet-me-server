@@ -1,0 +1,28 @@
+{
+  "workItem": "issue-107-account-integration",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationAccountOwnershipPostgresTest.kt",
+      "sha256": "9419a6607938502f76e17ef6b76fb2cd737957e8b8a192ae60a1d47564b7f762"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-run-gradle",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*ClarificationAccountOwnershipPostgresTest",
+    "--no-daemon",
+    "--max-workers=2"
+  ],
+  "failedTests": [
+    "real signed account without cookie reads and answers then host explicitly freezes new revision once()",
+    "verified guest can read but replace only proof cannot read source or submit clarification answer()",
+    "explicit account claim preserves participant source revision and question then account answers without cookie()",
+    "another authenticated account cannot borrow valid guest cookie to read or answer()",
+    "authenticated host sees own empty list and cannot answer guest question even with guest cookie()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T16:01:56.378455+00:00"
+}

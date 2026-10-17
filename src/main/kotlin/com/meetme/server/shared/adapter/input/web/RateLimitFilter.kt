@@ -84,7 +84,9 @@ class RateLimitFilter(
         return when {
             request.method == "POST" && path == "/api/rooms" -> Category.CREATE to properties.createRoom
             request.method == "POST" && PARTICIPANTS.matches(path) -> Category.JOIN to properties.joinRoom
-            request.method == "PUT" && SUBMISSION.matches(path) -> Category.SUBMISSION to properties.submission
+            (request.method == "PUT" && SUBMISSION.matches(path) || request.method == "POST" && CLARIFICATION_ANSWER.matches(path)) ->
+                Category.SUBMISSION to
+                    properties.submission
             request.method == "POST" && HOST_COMMAND.matches(path) -> Category.HOST_COMMAND to properties.hostCommand
             else -> null
         }
@@ -140,6 +142,7 @@ class RateLimitFilter(
 
     private companion object {
         val PARTICIPANTS = Regex("^/api/rooms/[^/]+/participants$")
+        val CLARIFICATION_ANSWER = Regex("^/api/rooms/[^/]+/submission/clarifications/[^/]+/answer$")
         val SUBMISSION = Regex("^/api/rooms/[^/]+/submission$")
         val HOST_COMMAND =
             Regex(

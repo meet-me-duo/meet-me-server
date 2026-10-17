@@ -1,9 +1,11 @@
 package com.meetme.server.submission.adapter.input.web
 
+import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.coordination.application.service.MatchingProcessor
 import com.meetme.server.shared.adapter.input.web.GuestCookie
 import com.meetme.server.shared.domain.SubmissionBatchId
 import com.meetme.server.shared.domain.SubmissionVersionId
+import com.meetme.server.shared.testsupport.AccountPrincipalTestFixture
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
@@ -26,6 +28,7 @@ import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -55,6 +58,9 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
 
     @Autowired private lateinit var mapper: ObjectMapper
 
+    @MockitoBean private lateinit var accountContext: CurrentAccountPort
+    private lateinit var accountFixture: AccountPrincipalTestFixture
+
     @BeforeEach
     fun cleanDatabase() {
         jdbc.execute(
@@ -63,6 +69,8 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
                 "submission_batch_items, submission_batches, manual_availability_intervals, submission_versions, " +
                 "submission_heads, participants, meeting_rooms, guest_browser_sessions CASCADE",
         )
+        accountFixture = AccountPrincipalTestFixture(jdbc, accountContext)
+        accountFixture.install()
     }
 
     @ParameterizedTest(name = "invalid body case {index}: {1} without mutation")
@@ -401,8 +409,8 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
             .andExpect(jsonPath("$[0].reason").value("LEGACY_MANUAL_ONLY_UNSUPPORTED"))
         mvc
             .perform(get("/api/rooms/{code}/candidates/unapplied-inputs", host.code).cookie(legacy.cookie()))
-            .andExpect(status().isForbidden)
-            .andExpect(jsonPath("$.code").value("HOST_PERMISSION_REQUIRED"))
+            .andExpect(status().isUnauthorized)
+            .andExpect(jsonPath("$.code").value("ACCOUNT_REQUIRED"))
         mvc
             .perform(get("/api/rooms/{code}/candidates/unapplied-inputs", host.code))
             .andExpect(status().isUnauthorized)
@@ -413,9 +421,10 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
             requireNotNull(
                 jdbc.queryForObject(
                     "SELECT h.latest_version_id FROM submission_heads h JOIN participants p ON p.id = h.participant_id " +
-                        "JOIN guest_browser_sessions g ON g.id = p.guest_session_id WHERE g.credential_digest = ?",
+                        "LEFT JOIN guest_browser_sessions g ON g.id = p.guest_session_id WHERE g.credential_digest = ? OR p.user_id::text = ?",
                     UUID::class.java,
                     credentialDigest(owner),
+                    owner.credential.removePrefix(AccountPrincipalTestFixture.PREFIX),
                 ),
             )
         jdbc.update("UPDATE submission_versions SET raw_text = NULL WHERE id = ?", id)
@@ -461,11 +470,13 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
             )
         }
 
-    private fun room(expected: Int? = null): Session =
-        session(
+    private fun room(expected: Int? = null): Session {
+        val account = accountFixture.newAccount("host")
+        return session(
             mvc
                 .perform(
                     post("/api/rooms")
+                        .cookie(account)
                         .header("Origin", ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -478,7 +489,9 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
                 ).andExpect(status().isCreated)
                 .andReturn()
                 .response,
+            credential = account.value,
         )
+    }
 
     private fun join(host: Session): Session =
         session(
@@ -497,9 +510,10 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
     private fun session(
         response: org.springframework.mock.web.MockHttpServletResponse,
         code: String? = null,
+        credential: String? = null,
     ) = Session(
         code ?: response.contentAsString.substringAfter("\"invite_code\":\"").substringBefore('"'),
-        requireNotNull(response.getHeader(HttpHeaders.SET_COOKIE)).substringAfter("meet_me_guest=").substringBefore(';'),
+        credential ?: requireNotNull(response.getHeader(HttpHeaders.SET_COOKIE)).substringAfter("meet_me_guest=").substringBefore(';'),
     )
 
     private fun save(

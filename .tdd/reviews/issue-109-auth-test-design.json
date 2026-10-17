@@ -1,0 +1,115 @@
+{
+  "workItem": "issue-109-auth",
+  "role": "Independent public-contract test designer /root/auth_tests; no production implementation",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "authority": [
+    "PRD FR-002D and security requirements",
+    "ADR-029/030/031",
+    "2026-10-17 user issue-109 decisions"
+  ],
+  "contract": {
+    "oauth": [
+      "Google and Kakao both use authorization code, unpredictable state, S256 PKCE and OIDC nonce",
+      "Only matching unexpired state, provider and initiating browser may complete; callback consumes state once atomically",
+      "Token exchange uses exact configured redirect URI and original code verifier; ID token signature/issuer/audience/expiry/nonce validated before account creation",
+      "Provider errors and invalid tokens issue no service session; same email never links identities"
+    ],
+    "access": [
+      "RS256 with explicit kid; exact 900-second exp minus iat",
+      "Current private signing key and old public verification keys coexist during rotation",
+      "Forged signature, unknown kid, wrong algorithm, wrong issuer/audience and expired token rejected",
+      "JWT verification needs no Redis and expired boundary is exact"
+    ],
+    "refresh": [
+      "Opaque cryptographic token; raw value absent from Redis keys and stored values",
+      "Initial idle 14 days; absolute family expiry 30 days never extended by rotation",
+      "Rotation invalidates old token; replay revokes the entire family including most recent token",
+      "Concurrent rotation yields at most one success; replay also invalidates any winner token",
+      "Current logout preserves another device; all-device logout preserves another account",
+      "Concurrent all-device logout and rotation leaves no surviving older family",
+      "Redis unavailable or lost never recreates an existing session"
+    ],
+    "http": [
+      "Refresh cookie Secure HttpOnly SameSite=Lax Path=/api/auth without Domain",
+      "Refresh and logout exact configured Origin; missing, null, lookalike and trailing-path origins refused",
+      "Refresh raw token only in Set-Cookie, Access only in response body; cookies expire on logout",
+      "All-device logout requires authenticated account and does not accept target account input"
+    ]
+  },
+  "plannedFaults": [
+    "Remove RS256 signature or expiration validation",
+    "Skip OAuth state browser binding or callback replay check",
+    "Extend Refresh absolute expiry on rotate",
+    "Do not revoke family on replay",
+    "Replace Redis atomic rotation with read/write or permit used-token rotate",
+    "Revoke every account on all-device logout",
+    "Accept absent or prefix-matching Origin"
+  ],
+  "execution": {
+    "redis": "Real local Docker Redis Testcontainers, available Docker Engine 28.4.0; synthetic tokens only",
+    "oauth": "Isolated fake provider and locally signed ephemeral ID tokens only; no operational login claim",
+    "red": ".tdd/red/issue-109-auth.json plus ignored .codex/tdd-evidence/issue-109-auth.log",
+    "freeze": "Exact test files and SHA-256 communicated before implementation GREEN"
+  },
+  "status": "PASS: 39 independent auth tests plus 6 independent identity tests, consolidated and corrected-fault restored verification 45/45",
+  "redEvidence": [
+    ".tdd/red/issue-109-auth.json",
+    ".tdd/red/issue-109-auth-access-bearer.json"
+  ],
+  "compositionVerification": {
+    "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthEndToEndPostgresTest.kt",
+    "scope": "Three scenarios composing frozen contracts with actual MVC, PostgreSQL18, Redis8, isolated local HTTP provider/JWKS",
+    "browserHarness": "Same file top-level AuthEndToEndPostgresTestKt.main with test-only primary adapters, ephemeral synthetic keys, local callback8080/frontend5173",
+    "manualHttp": "Google and Kakao each 302+302+302, refresh200, me200 at 2026-10-17T14:40Z; Python manually carried synthetic Secure cookies because its CookieJar rejects HTTP. Real browser validation still root-owned.",
+    "status": "PASS 3/3 actual integration tests; .codex/tdd-evidence/issue-109-auth-end-to-end.log"
+  },
+  "reviewFollowups": [
+    {
+      "finding": "OIDC HttpRequest timeout with InputStream headers does not bound stalled response body",
+      "test": "OidcProviderDeadlineSecurityTest.kt",
+      "initialRed": "Two assertion failures against unbounded body reads; final formatted RED queued before implementation fix",
+      "status": "RESOLVED: independent valid RED2 plus bounded asynchronous body read implementation and consolidated final GREEN"
+    }
+  ],
+  "officialReferences": [
+    {
+      "url": "https://developers.google.com/identity/openid-connect/openid-connect#validatinganidtoken",
+      "checkedAt": "2026-10-17",
+      "supports": "Both exact Google issuer identifiers allowed; provider+subject stable identity; signature audience expiration validation; legacy issuer test independent of implementation"
+    },
+    {
+      "url": "https://developers.kakao.com/docs/en/kakaologin/rest-api#get-authorization-code",
+      "checkedAt": "2026-10-17",
+      "supports": "Authorization request multiple consent IDs are comma-separated and OpenID Connect includes openid; response token scope format does not define request delimiter"
+    }
+  ],
+  "faultVerification": ".tdd/verification/issue-109-auth-faults.json (corrected fresh JUnit 7/7, 8 assertion failures, five source files byte-exact restored)",
+  "greenVerification": ".tdd/verification/issue-109-auth-green.json",
+  "remainingBoundaries": [
+    "Root owns original full ktlintCheck/assemble/test gate, native browser verification and final independent review",
+    "Real Google/Kakao operational login unavailable until user console/client/key provisioning; no credentials created or read",
+    "First fault report invalidated for stale JUnit after compilation failures, preserved in history; corrected scoped fault run and restored45 are authoritative"
+  ],
+  "independentFinalEvidenceReview": {
+    "reviewer": "/root/final_review",
+    "verdict": "ACCEPT corrected7fault and finalRestored45 evidence",
+    "checks": [
+      "Each of seven raw logs has actual :test FAILED with expected assertion failure and no compile error",
+      "Replay mutation produced two failures, other six mutations produced one each",
+      "Five source fingerprints match current restored files",
+      "finalRestoredVerification45 tests with zero failure/error/skip matches raw log"
+    ],
+    "recordedAt": "2026-10-17T14:54:19.384573Z",
+    "remaining": "Original full repository gate is root-owned and separate"
+  },
+  "lateProviderScopeReview": {
+    "finding": "R109-05 production Kakao authorization URL incorrectly used a space-separated generic OAuth scope value",
+    "test": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/ProductionOAuthAuthorizationContractTest.kt",
+    "red": ".tdd/red/issue-109-auth-provider-scope.json",
+    "redResult": "2tests1Kakao assertion failure, Google valid",
+    "implementation": "auth_impl changed only Kakao scope constant to openid,profile_nickname; Google unchanged",
+    "greenRaw": ".codex/tdd-evidence/issue-109-auth-provider-scope-green.log",
+    "greenResult": "8 tests pass: production defaults2 plus existing OIDC4+deadline2",
+    "boundary": "Production endpoint configuration exercised without HTTP or actual credentials. Prior five-source fault restoration snapshot predates this documented one-line scope correction."
+  }
+}

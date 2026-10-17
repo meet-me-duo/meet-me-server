@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Issue #99: actual V8 rows survive additive V9 recommendations and V10 bounded invocations unchanged. */
+/** Existing V8 rows survive V9 recommendations, V10 invocations, V11 account ownership and V13 clarifications unchanged. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,17 +18,17 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly ten versions and validates both independent schemas`() {
-        assertEquals(10, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly twelve versions and validates both independent schemas`() {
+        assertEquals(12, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "10",
+            "13",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("10", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("12", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
@@ -47,10 +47,11 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(2, flyway().migrate().migrationsExecuted)
+        assertEquals(4, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
+        assertEquals("0", scalar("SELECT count(*)::text FROM participants WHERE user_id IS NOT NULL"))
         assertEquals("3", scalar("SELECT count(*)::text FROM coordination_attempts"))
         assertEquals(
             "3",
@@ -206,6 +207,8 @@ class IntegratedLegacyUpgradePostgresTest {
             val value =
                 if (table == "coordination_attempts") {
                     "to_jsonb(t) - 'provider' - 'model' - 'policy_version' - 'invocation_id'"
+                } else if (table == "participants") {
+                    "to_jsonb(t) - 'user_id'"
                 } else {
                     "to_jsonb(t)"
                 }

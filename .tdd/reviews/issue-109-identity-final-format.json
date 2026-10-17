@@ -1,0 +1,28 @@
+{
+  "workItem": "issue-109-identity-final-format",
+  "reviewer": "/root/identity_db_tests",
+  "faultTestedSourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/persistence/JdbcAccountRepository.kt",
+      "sha256": "323ab1c972097db7082a6be0ac0097a43785479e22645b71f40db398b2885351"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/application/service/AccountIdentityService.kt",
+      "sha256": "29c562b1332acb8f268c8fb100971d84161cf02b3f5aff875305f9c65288ec3a"
+    }
+  ],
+  "finalSourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/persistence/JdbcAccountRepository.kt",
+      "sha256": "8d0a4d7ed22d014214cd188b3ece21382cb7b3401f3f72abd8e2178c901c3d6e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/application/service/AccountIdentityService.kt",
+      "sha256": "29c562b1332acb8f268c8fb100971d84161cf02b3f5aff875305f9c65288ec3a"
+    }
+  ],
+  "comparison": "Original pre-format source reconstructed and original SHA matched; tokenizer retained all string/character literals and executable tokens while ignoring whitespace and optional trailing commas; token sequences identical. Facade byte SHA unchanged.",
+  "verification": "real PostgreSQL and Spring proxy 6/6 GREEN after final main formatter; test frozen fingerprint unchanged",
+  "log": ".codex/tdd-evidence/issue-109-identity-formatted-green.log",
+  "recordedAt": "2026-10-17T14:48:19Z"
+}
