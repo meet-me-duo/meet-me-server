@@ -1,0 +1,171 @@
+{
+  "workItem": "issue-109-scoped-proof",
+  "role": "independent-test-designer",
+  "mutations": [
+    {
+      "fault": "replace-only-read",
+      "source": "src/main/kotlin/com/meetme/server/participant/application/service/ParticipantOwnershipResolver.kt",
+      "originalSha256": "a906aaaafb220631b51e1a0e0e7c531e69a00f5db7f5cf13544c1031cc6123d3",
+      "mutation": {
+        "before": "proof.level == GuestProofLevel.REPLACE_ONLY && operation != OwnershipOperation.REPLACE_OWN",
+        "after": "proof.level == GuestProofLevel.REPLACE_ONLY && operation == OwnershipOperation.CLAIM_ACCOUNT"
+      },
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*ParticipantOwnershipResolverContractTest.guest proof operations follow the least authority matrix*",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+      ],
+      "detected": true,
+      "freshXml": true,
+      "compileKotlinExecuted": true,
+      "exitCode": 1,
+      "tests": "8",
+      "failures": [
+        {
+          "test": "[5] operation = \"READ_OWN\", level = \"REPLACE_ONLY\", expected = \"GUEST_PROOF_INSUFFICIENT\"",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: Expected com.meetme.server.meetingroom.application.port.input.RoomLifecycleException to be thrown, but nothing was thrown."
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-scoped-fault-replace-only-read.log",
+      "localXml": ".codex/tdd-evidence/issue-109-scoped-fault-replace-only-read.xml",
+      "sourceRestored": true,
+      "classificationReview": "JUnit parameterized XML testcase name contains only argument display name. Fresh XML failure stack and Gradle log identify guest proof operations matrix [5] READ_OWN/REPLACE_ONLY; expected exception was not thrown. Initial name-prefix matcher was overly narrow; no test changes."
+    },
+    {
+      "fault": "submission-get-replace-scope",
+      "source": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "originalSha256": "2d0ce0c4abde659719a34a672af7e600bbe6180f4124f9863be0962b8034a1a1",
+      "mutation": {
+        "before": "requireParticipant(room.id, rawCredential, OwnershipOperation.READ_OWN)",
+        "after": "requireParticipant(room.id, rawCredential, OwnershipOperation.REPLACE_OWN)"
+      },
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*ScopedGuestProofWebIntegrationTest.replace only proof permits replacement but rejects private submission read*",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+      ],
+      "detected": true,
+      "freshXml": true,
+      "compileKotlinExecuted": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "replace only proof permits replacement but rejects private submission read()",
+          "type": "java.lang.AssertionError",
+          "message": "java.lang.AssertionError: Status expected:<403> but was:<200>"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-scoped-fault-submission-get-replace-scope.log",
+      "localXml": ".codex/tdd-evidence/issue-109-scoped-fault-submission-get-replace-scope.xml",
+      "sourceRestored": true
+    },
+    {
+      "fault": "stale-account-row-proof",
+      "source": "src/main/kotlin/com/meetme/server/participant/application/service/ParticipantOwnershipResolver.kt",
+      "originalSha256": "a906aaaafb220631b51e1a0e0e7c531e69a00f5db7f5cf13544c1031cc6123d3",
+      "mutation": {
+        "before": "it.guestSessionId != null && it.userId == null",
+        "after": "true"
+      },
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*ParticipantOwnershipResolverContractTest.proof must bind the requested room to the persisted guest owned participant*",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+      ],
+      "detected": true,
+      "freshXml": true,
+      "compileKotlinExecuted": true,
+      "exitCode": 1,
+      "tests": "5",
+      "failures": [
+        {
+          "test": "[4] mismatch = \"account owned\"",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: Expected com.meetme.server.meetingroom.application.port.input.RoomLifecycleException to be thrown, but nothing was thrown."
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-scoped-fault-stale-account-row-proof.log",
+      "localXml": ".codex/tdd-evidence/issue-109-scoped-fault-stale-account-row-proof.xml",
+      "sourceRestored": true
+    },
+    {
+      "fault": "replace-only-claim",
+      "source": "src/main/kotlin/com/meetme/server/participant/application/service/ParticipantOwnershipResolver.kt",
+      "originalSha256": "a906aaaafb220631b51e1a0e0e7c531e69a00f5db7f5cf13544c1031cc6123d3",
+      "mutation": {
+        "before": "proof.level == GuestProofLevel.REPLACE_ONLY && operation != OwnershipOperation.REPLACE_OWN",
+        "after": "proof.level == GuestProofLevel.REPLACE_ONLY && operation == OwnershipOperation.READ_OWN"
+      },
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*ParticipantOwnershipResolverContractTest.explicit claim requires verified proof even with authenticated room participation*",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+      ],
+      "detected": true,
+      "freshXml": true,
+      "compileKotlinExecuted": true,
+      "exitCode": 1,
+      "tests": "2",
+      "failures": [
+        {
+          "test": "[2] level = REPLACE_ONLY",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: Expected com.meetme.server.meetingroom.application.port.input.RoomLifecycleException to be thrown, but nothing was thrown."
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-scoped-fault-replace-only-claim.log",
+      "localXml": ".codex/tdd-evidence/issue-109-scoped-fault-replace-only-claim.xml",
+      "sourceRestored": true
+    },
+    {
+      "fault": "claim-proof-unlocked",
+      "source": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestCookieOwnershipProofAdapter.kt",
+      "originalSha256": "8a97dca47cd4d9d863bb6d2eab4213f67be89602e243f5fa8b1af96d1896287f",
+      "mutation": {
+        "before": "if (forUpdate) sessions.findByCredentialDigestForUpdate(digest)",
+        "after": "if (forUpdate && false) sessions.findByCredentialDigestForUpdate(digest)"
+      },
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GuestCookieOwnershipProofAdapterTest.active cookie maps only persisted room participant to verified proof with requested lock*",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+      ],
+      "detected": true,
+      "freshXml": true,
+      "compileKotlinExecuted": true,
+      "exitCode": 1,
+      "tests": "2",
+      "failures": [
+        {
+          "test": "[2] lock = true",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: expected: <GuestOwnershipProof(roomId=MeetingRoomId(value=21b46a2e-4ac4-47d7-97d6-00168f465812), participantId=ParticipantId(value=b534b7ab-71a0-47ce-a987-9a30d488e415), level=VERIFIED_GUEST)> but was: <null>"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-scoped-fault-claim-proof-unlocked.log",
+      "localXml": ".codex/tdd-evidence/issue-109-scoped-fault-claim-proof-unlocked.xml",
+      "sourceRestored": true
+    }
+  ],
+  "allSourcesRestored": true,
+  "recordedAt": "2026-10-17T14:57:41.424080+00:00",
+  "restorationVerifiedAt": "2026-10-17T14:58:02.698865+00:00",
+  "gateStatus": "All original sources restored with SHA verification; root full quality gate pending after mutation window release."
+}

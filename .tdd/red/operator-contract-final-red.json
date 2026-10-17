@@ -1,0 +1,35 @@
+{
+  "workItem": "operator-contract-final-red",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "recordedAt": "2026-10-17T15:38:02.946701+00:00",
+  "command": [
+    "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\meet-me-server\\gradlew.bat",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*OperatorTransportQueryPostgresTest",
+    "--tests",
+    "*OperatorQueryPostgresTest"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "baselineReplayAfterFormatting": true,
+  "failedTests": [
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#invocation isolates attempts normalizes failure strings and preserves nullable usage per provider()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#OpenAPI documents all operator response errors and only safe DTO fields()",
+    "com.meetme.server.shared.operations.OperatorTransportQueryPostgresTest#OpenAPI exposes only bounded local client call fields and nullable transport facts()",
+    "com.meetme.server.shared.operations.OperatorTransportQueryPostgresTest#complete observations distinguish not dispatched parser only and settled HTTP error call()"
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryPostgresTest.kt",
+      "sha256": "b29af39d0f46426a3e37403eec7c1d4ee0d098bb3033e5c3873042a75e9248a9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTransportQueryPostgresTest.kt",
+      "sha256": "7d2292cb74f4515dfdaf51a434ce344a7c934fec88d0783df46e13d393b456c9"
+    }
+  ],
+  "productBytesRestored": true,
+  "allTestBytesUnchanged": true
+}

@@ -540,3 +540,15 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: main 병합 직후 구 writer가 살아 있는 상태로 V8/V9를 적용하는 경로를 막고, 실제로 확인한 schema 계약을 후속 자동 배포의 기준으로 사용하기 위해서다. build와 deploy를 분리해야 생성 뒤 확정되는 registry digest를 승인 전에 검토할 수 있다.
 
 **트레이드오프**: 첫 전환과 SQL/guard 계약 변경은 명시 승인이 필요하다. 실패한 설치·준비는 fail closed 상태에서 별도 복구 검토가 필요하며 read-only probe도 임시 파일·짧은 JVM/DB 연결을 사용한다. 후속 자동 배포의 신뢰는 기존 main CI·branch protection·production 역할에 의존하며 root의 임의 운영 명령을 통제하지 않는다. 저장소 CI 성공은 실제 parameter 전달·운영 상태·최종 배포 승인을 대체하지 않는다.
+
+
+### ADR-051: 계정 HOST와 명시적 게스트 소유권 연결
+
+**상태**: Accepted (구현·실제 운영 활성화는 #109 검증/승인으로 분리)
+**날짜**: 2026-10-17
+
+**결정**: 사용자 위임으로 Google/Kakao 둘 다 OIDC code+PKCE·nonce·browser-bound 단기사용 state로 지원한다. provider+subject를 영구 계정 identity로 삼고 이메일 자동병합은 하지 않는다. 주최자 신규 생성/명령은 로그인 계정을 요구하며 일반 게스트 참여는 유지한다. participants의 소유자는 계정 또는 게스트 정확히 하나다. 기존 게스트/익명 HOST는 로그인과 유효한 기존 소유 증명을 검증한 명시적 연결로만 이전하고, 같은 방의 계정 기록이 있으면409 충돌로 거부한다. participant/제출/역할은 보존한다. 아카이브는 본인 HOST 방만 조회하고 기존30일 정리 기준의 만료시점을 표시한다. ADR-029~031의 RS25615분/Redis 회전 Refresh14일·절대30일/현재·전체기기 로그아웃은 유지한다. 이번 login-only scope에서는 공급자 장기 grant를 저장하지 않고 Calendar는 후속으로 둔다.
+
+**이유**: 다른 기기에서도 주최자가 자기 방을 찾게 하면서 링크·이름·이메일을 이용한 소유권 탈취와 기존 기록의 조용한 병합을 방지한다. 이중 증명·room lock·DB unique/XOR는 동시 연결과 계정 참여의 충돌을 명확하게 처리한다.
+
+**트레이드오프**: 실제 두 공급자 앱/동의·운영 RSA 키·외부 secret 전달과 검증이 필요하다. 신규 인증 버전은 익명 HOST 명령과 호환되지 않으므로 명시 연결 UI와 로그인 준비가 필요하다. 30일 아카이브는 영구 보관이 아니다. V11 owner nullable/XOR 계약은 구 writer와 혼합 운영하지 않고 승인된 전환 절차로 적용한다. 기존 ADR-032/036의 과거 익명 권한을 신규 버전의 HOST 요구와 소유권 연결 범위에서 대체한다. push/PR/병합/배포/운영DB/credential 생성 권한은 포함하지 않는다.

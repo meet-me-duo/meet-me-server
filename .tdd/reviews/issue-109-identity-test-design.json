@@ -1,0 +1,37 @@
+{
+  "workItem": "issue-109-identity",
+  "role": "independent-test-designer",
+  "basis": [
+    "docs/PRD.md FR-002B",
+    "docs/ISSUE_109_CONTRACT.md account identity contract",
+    "latest delegated issue-109 product decisions",
+    "public AccountRepository.findOrCreateIdentity contract confirmed with auth_impl"
+  ],
+  "boundary": "Real PostgreSQL, public AccountRepository through actual Spring @Transactional proxy; independent accepted schema fixture. Flyway compatibility separately owned by AccountOwnershipMigrationTest.",
+  "tests": [
+    "same provider+subject returns original account; changed profile cannot replace ownership or profile",
+    "same subject across Google/Kakao and equal display names remain three independent accounts",
+    "display name trims; 1 and 50 Unicode code points accepted; subject length255 accepted",
+    "blank/length256 subject and blank/length51 Unicode display name reject AUTH_OAUTH_INVALID with no persisted accounts",
+    "12 simultaneous first logins under insert delay yield one account+identity and no orphan",
+    "PostgreSQL BEFORE INSERT identity rejection rolls back user creation and retry succeeds"
+  ],
+  "intentionalFaultPlan": [
+    {
+      "fault": "remove transaction-scoped identity lock",
+      "detector": "12 simultaneous first logins under insert delay fail or leave account duplicates"
+    },
+    {
+      "fault": "remove application @Transactional boundary",
+      "detector": "injected identity insert rejection leaves orphan account and test fails"
+    }
+  ],
+  "status": "VALIDATED: frozen RED tests unchanged; real PostgreSQL and Spring transaction proxy 6/6 GREEN; advisory-lock omission and transaction-annotation omission detected; exact source bytes restored and 6/6 restored GREEN.",
+  "verification": ".tdd/verification/issue-109-identity-faults.json",
+  "localLogs": [
+    ".codex/tdd-evidence/issue-109-identity.log",
+    ".codex/tdd-evidence/issue-109-identity-fault-race.log",
+    ".codex/tdd-evidence/issue-109-identity-fault-transaction.log",
+    ".codex/tdd-evidence/issue-109-identity-restored-green.log"
+  ]
+}

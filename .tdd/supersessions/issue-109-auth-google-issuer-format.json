@@ -1,0 +1,22 @@
+{
+  "workItem": "issue-109-auth-google-issuer",
+  "reason": "A subsequent blanket formatter changed whitespace after initial RED. No expectations changed; strict canonical-only issuer behavior was temporarily reconstructed and current formatted test independently failed on valid documented legacy issuer. Production source restored byte-exact.",
+  "before": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/GoogleIssuerCompatibilitySecurityTest.kt",
+      "sha256": "1f2f528a440800905c9149b8e4e662452c12c60e6f82b6b5ff6d899d917ffb19"
+    }
+  ],
+  "after": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/GoogleIssuerCompatibilitySecurityTest.kt",
+      "sha256": "1a2f96957f966ed65eea5a76ac8735498e05cb616242a777464913bdcf895ef2"
+    }
+  ],
+  "rawLog": ".codex/tdd-evidence/issue-109-auth-google-issuer-format-refresh.log",
+  "temporaryFault": {
+    "from": "claims.issuer == \"accounts.google.com\"",
+    "to": "false"
+  },
+  "originalSourceSha256": "6fcbb0694ae001a28b84968f92d74d6f00585259caf8126346253ae69543908e"
+}

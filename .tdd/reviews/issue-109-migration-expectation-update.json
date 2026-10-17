@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-109-migration-expectation-update",
+  "recordedAt": "2026-10-17T15:15:08.738610+00:00",
+  "classification": "ACCEPTED_V11_SCHEMA_VERSION_EXPECTATION_UPDATE",
+  "basis": [
+    "docs/ADR.md#adr-051-계정-host와-명시적-게스트-소유권-연결",
+    "src/main/resources/db/migration/V11__add_accounts_and_participant_ownership.sql"
+  ],
+  "testFiles": [
+    "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+    "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+    "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt"
+  ],
+  "change": "Blank/latest database expected version and executed/history counts become 11. The explicit V8 baseline remains 8; its latest upgrade count becomes 3 (V9,V10,V11). Rename the blank-database test to eleven versions.",
+  "preservedInvariants": "All legacy row snapshots, original raw text and timestamps, frozen cohorts, attempts, confirmation, revision-round states, V9/V10 table counts and no-backfill assertions remain unchanged. No historical migration or production code changed.",
+  "redEvidence": "Existing whole-gate failures show stale latest-version expectations. This is an accepted additive migration expectation update, without synthetic RED.",
+  "verification": "Focused regression batch passed: 28 tests across six architecture, matching unit/web, core persistence, migration runner, and integrated legacy upgrade classes; zero failures/errors/skips. Root final whole gate remains separate.",
+  "productionChanged": false,
+  "addedColumnProjection": "Legacy participant snapshots subtract only the newly introduced V11 user_id field, mirroring the existing V10 coordination-attempt added-field projection. A separate assertion requires zero non-null legacy participant user_id values. Every V1-V10 business column remains compared exactly.",
+  "focusedEvidence": ".tdd/reviews/issue-109-focused-regressions.json"
+}

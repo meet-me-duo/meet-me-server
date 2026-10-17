@@ -4,6 +4,8 @@ import java.math.BigDecimal
 import java.time.Duration
 
 interface ApplicationMetricsPort {
+    fun analysisExecution(observation: AnalysisExecutionObservation) = Unit
+
     fun outboxPublished(recovered: Boolean)
 
     fun workerCompleted(outcome: String)

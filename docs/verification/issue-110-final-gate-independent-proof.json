@@ -1,0 +1,94 @@
+{
+  "qualityGuard": {
+    "label": "integration-corrected-guard",
+    "startedAtUtc": "2026-10-17T17:36:05.376529+00:00",
+    "finishedAtUtc": "2026-10-17T17:43:54.449447+00:00",
+    "command": [
+      "C:\\Python314\\python.exe",
+      "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\meet-me-server-110-integration\\.codex\\hooks\\tdd_guard.py"
+    ],
+    "exitCode": 0,
+    "log": "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\verification\\integration-corrected-guard.log",
+    "cloudAndProviderCredentialsForwarded": false,
+    "liveAiOptIns": false
+  },
+  "totals": {
+    "tests": 888,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4
+  },
+  "passed": 884,
+  "xmlFilesVerified": 150,
+  "xmlEarliest": "2026-10-17T17:36:27.921000+00:00",
+  "xmlLatest": "2026-10-17T17:43:07.493000+00:00",
+  "sealedSourceRawAndLfHashesVerified": 189,
+  "originalObservationTestsUnchanged": 2,
+  "modifiedTestHistoryAfterHashesVerified": true,
+  "guardSourceUnchangedFromHead": true,
+  "correctedFocused": {
+    "tests": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "latestAccountRegressions": [
+    {
+      "class": "com.meetme.server.account.adapter.input.web.AuthEndToEndPostgresTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "753a69512c1fb80c8e470954eb1617d59b9bd996a918cc8422900b0c30715951",
+      "failedTests": []
+    },
+    {
+      "class": "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "5f80d652e0a52526f4b8986af262260e0bf1c8c1682e1c14f2fc292d652d321d",
+      "failedTests": []
+    },
+    {
+      "class": "com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "d79ad536c7d818af6b3c4c510c3d36d9d68f112c769153c3d84078ecf66d99a7",
+      "failedTests": []
+    },
+    {
+      "class": "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "cdadf884a47a3a36378ddc9d94e419ef606b13edc8cf55855714cc1e9f92d36d",
+      "failedTests": []
+    },
+    {
+      "class": "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "f3fb412063525f18d03cd0e8d332d6cd2c8ca3ceac0b5ca74bcb4c49a5c44ee2",
+      "failedTests": []
+    },
+    {
+      "class": "com.meetme.server.shared.adapter.output.persistence.AccountOwnershipMigrationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sha256": "dd4532f6020de5285252d980fb1087539ef73fc545982bc979094ec03560e747",
+      "failedTests": []
+    }
+  ],
+  "latestAccountRegressionCases": 55,
+  "reviewerExecutedTests": false,
+  "publicationAndExactHeadCi": "pending implementation session"
+}

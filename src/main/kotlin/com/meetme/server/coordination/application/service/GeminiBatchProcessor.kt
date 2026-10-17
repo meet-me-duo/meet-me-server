@@ -14,12 +14,19 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageInp
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserPort
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
+import com.meetme.server.coordination.application.port.output.ParserObservationContext
+import com.meetme.server.coordination.application.port.output.ParserTransportObservationPort
+import com.meetme.server.coordination.application.port.output.ParserTransportSnapshot
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.RetryDelayPort
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
+import com.meetme.server.shared.application.port.output.AnalysisAttemptObservation
+import com.meetme.server.shared.application.port.output.AnalysisExecutionObservation
+import com.meetme.server.shared.application.port.output.AnalysisExecutionOutcome
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
+import com.meetme.server.shared.application.port.output.ObservedAnalysisProvider
 import com.meetme.server.shared.domain.SubmissionBatchId
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
@@ -49,6 +56,7 @@ class GeminiBatchProcessor(
     private val metrics: ApplicationMetricsPort? = null,
     @Qualifier("lunaParser") private val fallbackParser: NaturalLanguageParserPort? = null,
     private val invocationRepository: AnalysisInvocationRepository? = null,
+    private val transportObservations: ParserTransportObservationPort? = null,
 ) {
     fun process(batchId: SubmissionBatchId) {
         val processingStarted = monotonicTime.nanoTime()
@@ -87,15 +95,28 @@ class GeminiBatchProcessor(
                 naturalInputs,
             )
         val startingAttempt = attemptRepository.countByRun(run.id)
-        var physicalCalls = 0
+        val observedAttempts = mutableListOf<AnalysisAttemptObservation>()
         var admittedAttempts = 0
         val reserve = if (fallbackParser == null) Duration.ZERO else LUNA_TIMEOUT + COMPLETION_RESERVE
         val geminiDeadline = deadlineNanos - reserve.toNanos()
         val callDeadline = deadlineNanos - if (fallbackParser == null) 0 else COMPLETION_RESERVE.toNanos()
 
+        fun recordExecution(outcome: AnalysisExecutionOutcome) {
+            val observation = AnalysisExecutionObservation(outcome, elapsed(processingStarted), observedAttempts.toList())
+            val dispatched = observation.attempts.filter { it.parserDispatched }
+            val completeGeminiCost =
+                dispatched
+                    .takeIf { attempts ->
+                        attempts.isNotEmpty() &&
+                            attempts.all { it.provider == ObservedAnalysisProvider.GEMINI && it.estimatedCostUsd != null }
+                    }?.sumOf { requireNotNull(it.estimatedCostUsd) }
+            metrics?.analysisExecution(observation)
+            metrics?.geminiBatch(outcome.name, observation.elapsed, dispatched.size, completeGeminiCost)
+        }
+
         fun delay() {
             if (invocation == null) persistence.delay(run) else persistence.delayBounded(run, invocation)
-            metrics?.geminiBatch("ANALYSIS_DELAYED", elapsed(processingStarted), physicalCalls, null)
+            recordExecution(AnalysisExecutionOutcome.ANALYSIS_DELAYED)
         }
 
         fun invoke(
@@ -128,6 +149,14 @@ class GeminiBatchProcessor(
                 return null
             }
             admittedAttempts++
+            val observationIndex = observedAttempts.size
+            observedAttempts +=
+                AnalysisAttemptObservation(
+                    when (provider) {
+                        AnalysisProvider.GEMINI -> ObservedAnalysisProvider.GEMINI
+                        AnalysisProvider.OPENAI -> ObservedAnalysisProvider.OPENAI
+                    },
+                )
             // Admission can wait on a database lock. Recalculate after it, before starting HTTP.
             val maximumCallTimeout =
                 when (provider) {
@@ -135,15 +164,30 @@ class GeminiBatchProcessor(
                     AnalysisProvider.OPENAI -> LUNA_TIMEOUT
                 }
             val timeout = remaining(providerDeadline).coerceAtMost(maximumCallTimeout)
+            val transportContext = invocation?.let { ParserObservationContext(it.id, attempt.id) }
             if (timeout.toMillis() < 1) {
+                if (transportContext != null) {
+                    try {
+                        transportObservations?.record(ParserTransportSnapshot(transportContext, provider, false, emptyList()))
+                    } catch (_: Exception) {
+                        // Missing observation remains unknown and cannot change the execution policy.
+                    }
+                }
                 val failure = NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                 attemptRepository.update(attempt.complete(clock.instant(), ParserUsage(null, null, null), failure.kind.name))
                 return CallOutcome(attempt, null, failure)
             }
-            physicalCalls++
+            observedAttempts[observationIndex] = observedAttempts[observationIndex].copy(parserDispatched = true)
             val callStarted = monotonicTime.nanoTime()
             return try {
-                val result = port.parse(request.copy(callTimeout = timeout))
+                val result = port.parse(request.copy(callTimeout = timeout, observationContext = transportContext))
+                // Even a discarded late response may contain known, billable usage.
+                observedAttempts[observationIndex] =
+                    observedAttempts[observationIndex].copy(
+                        inputTokens = result.usage.inputTokens,
+                        outputTokens = result.usage.outputTokens,
+                        estimatedCostUsd = estimateCost(result.usage, provider),
+                    )
                 if (monotonicTime.nanoTime() >= providerDeadline || elapsed(callStarted) >= timeout) {
                     val failure =
                         NaturalLanguageParserException(com.meetme.server.coordination.application.port.output.ParserFailureKind.TIMEOUT)
@@ -190,7 +234,7 @@ class GeminiBatchProcessor(
             } else {
                 matchingProcessor?.processBounded(batchId) { monotonicTime.nanoTime() < deadlineNanos }
             }
-            metrics?.geminiBatch("COMPLETED", elapsed(processingStarted), physicalCalls, estimateCost(result.usage, attempt.provider))
+            recordExecution(AnalysisExecutionOutcome.COMPLETED)
             return true
         }
 

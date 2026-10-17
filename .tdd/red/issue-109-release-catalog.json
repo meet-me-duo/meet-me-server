@@ -1,0 +1,27 @@
+{
+  "workItem": "issue-109-release-catalog",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "sha256": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    ".github/scripts/issue109-release-catalog.test.cjs"
+  ],
+  "failedTests": [
+    "V11 publisher derives exact eleven source migrations, Flyway checksums and source fingerprints",
+    "publisher rejects V10-only source, duplicate versions, unknown V12 and symlinked V11",
+    "manifest reader accepts immutable V10 and complete V11 only",
+    "both complete contracts retain automatic updates without weakening exact history and fingerprints",
+    "V10 approved host requires explicit V11 transition and never silently upgrades automatically",
+    "V11 first transition accepts only successful contiguous exact V7 through V11 history prefixes",
+    "host stored record parser accepts strict V10 and V11 with synthetic read-only bytes only"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T15:30:11.774783Z"
+}

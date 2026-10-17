@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-109-auth-provider-deadline",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/OidcProviderDeadlineSecurityTest.kt",
+      "sha256": "b665fdd67aa0f104309b7d3b610b7f1402f77cc99eb94ece279309e7cc5350e2"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "-I",
+    "/tmp/meetme-109-auth-format.init.gradle",
+    "runKtlintFormatOverTestSourceSet",
+    "test",
+    "--tests",
+    "*OidcProviderDeadlineSecurityTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.adapter.output.oauth.OidcProviderDeadlineSecurityTest.token response body stall is bounded by exchange deadline()",
+    "com.meetme.server.account.adapter.output.oauth.OidcProviderDeadlineSecurityTest.JWKS response body stall is bounded by exchange deadline()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:41:34.013898Z"
+}

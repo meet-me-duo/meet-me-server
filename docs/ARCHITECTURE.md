@@ -5,6 +5,16 @@
 > **저장소:** `meet-me-duo/meet-me-server`  
 > **관련 문서:** `docs/PRD.md`, `docs/ADR.md`
 
+## #109 계정·소유권 경계 (2026-10-17)
+
+사용자 승인 #109는 기존 익명 제출 모드에서 계정 HOST로 전환하는 후속 버전이다. account 영역의 application port 뒤에 Google/Kakao OIDC, RSA JWT, Redis 회전 세션, JDBC 영구 계정 저장을 둔다. Domain에는 공급자·HTTP·Redis 타입을 노출하지 않는다. 계정 생성은 provider+subject unique 및 transaction으로 보호하고 이메일 자동 연결을 하지 않는다. login-only 공급자 토큰은 검증 뒤 폐기하며 Calendar 지속 grant/암호화 저장은 별도 범위다.
+
+participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 아카이브는 PostgreSQL HOST 소유권을 기준으로 읽고 기존 cleanup 기준30일을 expires_at으로 계산한다.
+
+Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 사용한다. provider issuer/audience/kid/signature/time 검증 뒤 서비스 Refresh를 cookie로만 발급하고 fixed frontend callback으로 돌아간다. Redis 회전·가족 폐기는 atomic script로 처리하며 실패 시 갱신을 허용하지 않는다. 서비스 RS256 private key는 mount된 외부 secret file, 검증 current/previous public key는 JWKS로 주입한다. 설정 없는 환경에서 임시 운영키를 만들지 않는다. 실제 앱/키/배포 및 운영 로그인은 별도 검증이다.
+
+[#109 계약과 변경 경계](ISSUE_109_CONTRACT.md), [ADR-051](ADR.md), [외부 설정](ISSUE_109_OAUTH_SETUP.md)를 따른다. 이하 제출 MVP 구조는 과거 버전 설명이며 이번 변경의 실제 완료 여부는 [실행 기록](ISSUE_109_WORKLOG.md)에서 확인한다.
+
 ## 1. 목적과 범위
 
 이 문서는 `meet-me-server`의 기술적 구조, 컴포넌트 책임, 의존성 방향과 외부 시스템 경계를 정의한다. 이 저장소는 백엔드만 포함하며 프론트엔드는 별도 저장소에서 개발한다.
@@ -468,6 +478,13 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - Grafana Alloy 수집, Grafana Cloud Metrics·Loki 전송, 대시보드와 Grafana-managed Alerting은 Post-MVP로 이관한다. 제출 MVP에서는 Grafana Cloud 계정·token·연락 채널을 요구하지 않는다.
 - 핵심 애플리케이션 지표는 Gemini 배치 호출·종결 결과·처리시간·재시도, 미발행 Outbox의 최장 대기시간, Redis Pending 수·최장 대기시간과 DLQ 진입 수를 포함한다.
 - Gemini가 제공한 token 사용량으로 논리 배치별 USD 비용을 합산하고, 운영 설정의 보수적 환산율(기본 1 USD = 1,500 KRW)로 원화 추정 비용과 10원 미만 여부를 지표에 기록한다. 환산율은 실시간 환율이 아니라 비용 상한 판정을 위한 환경별 설정이다.
+- 내부 분석 계측은 한 실행의 승인된 시도 수와 로컬 파서 dispatch 수를 별도로 기록한다. dispatch는 파서 진입 횟수이며 실제 HTTP 요청·공급자 수신·청구 건수를 증명하지 않는다. 재전달로 실행을 소유하지 못하거나 이미 완료된 결과를 재사용하는 경로는 새 실행 완료로 집계하지 않는다.
+- `AnalysisExecutionObservation`은 enum 결과·provider, 경과 시간과 숫자 usage만 전달한다. `meetme.analysis.execution.*`는 실행 결과·시간을, `meetme.analysis.admitted.attempts`와 `meetme.analysis.parser.dispatches`는 승인/dispatch 수를, `meetme.analysis.attempts`는 provider별 `ADMITTED_ONLY`/`PARSER_DISPATCHED`를 기록한다. dispatch된 시도마다 `meetme.analysis.usage.observations`의 `field`와 `knowledge=KNOWN|UNKNOWN`으로 입력 token·출력 token·비용의 확인 범위를 나타낸다. `meetme.analysis.attempt.*` summary에는 확인된 값만 기록하며, 알려진 0과 미확인 null을 구별한다. 이 지표의 합계는 확인된 시도의 소계이며 미확인 시도가 있을 때 전체 비용으로 표시하면 안 된다.
+- 기존 `meetme.gemini.batch.*`는 호환 지표로 남긴다. 새 실행 수와 기존 배치 수는 같은 종결의 두 표현이므로 합쳐서 세지 않는다. Gemini 배치 비용·원화 예산 판정은 dispatch가 하나 이상이고 모든 dispatch가 Gemini이며 모든 비용이 확인된 때만 합산한다. 재시도나 Luna의 비용이 미확인이면 마지막 성공 응답의 비용으로 전체를 대신하지 않는다. provider별 단가·timeout·재시도·영속 실행 계약은 바꾸지 않는다.
+- 위 내부 계측은 #110의 첫 단위다. 2026-10-17 후속 위임으로 최소 운영 조회 API·웹 화면, 검증된 accountId의 명시적 운영자 allowlist·기본 거부·접근 감사를 구현한다. 일반 HOST·회원·게스트에게 새 조회 권한을 자동 부여하지 않는다. 감사 보존은 구성 가능하고 초기 목표는 30일이며 실제 계정 등록과 운영 설정 적용은 별도 확인한다. [#110 조회 계약](issue-110-operator-query.md)에 최소 노출·영속 이력의 한계·#109 인증 연결·로컬 검증 경계를 기록한다.
+- V14는 제한된 운영 접근 감사만 보존한다. V15는 승인에 명시적으로 연결된 파서 진입과 로컬 OkHttp call lifecycle만 원자적으로 보존한다. 비동기 제한 큐·전용 DB 대기 한도는 관측 저장이 파서 timeout/재시도 정책을 바꾸지 않도록 분리한다. 관측 부재는 미확인이며 provider 수신·청구 exactly-once를 뜻하지 않는다. 기존 시도 cascade 삭제를 따르고 기존 비즈니스 보존을 연장하지 않는다.
+- 내부 지표는 프로세스 내 비영속 집계이며, 실행 중 프로세스가 중단되면 종결 관찰이 누락될 수 있으므로 영속 실행 이력이나 공급자 청구 원장으로 사용하지 않는다.
+- 새 `outcome`은 `GeminiBatchProcessor`의 로컬 구조화 처리 경로의 종결이다. `COMPLETED`는 해당 경로의 정상 종결이며 후보 게시 성공이나 방의 READY/COMPLETE 상태를 보증하지 않는다. `ANALYSIS_DELAYED`도 현재 방 상태를 재조회한 값은 아니다. 최종 매칭 결과는 별도 matching 지표와 영속 상태로 확인한다. `elapsed`에는 동기 후속 matching 처리 시간도 포함된다.
 - 지표 및 Loki label에는 `roomId`, `userId`, `batchId`, 원문, 요청 파라미터처럼 cardinality가 높거나 민감한 값을 사용하지 않는다. 진단에 필요한 상관관계 ID와 이벤트·배치 참조는 접근 통제된 로그 본문에만 넣고 원본 자연어·Calendar 일정·좌표·OAuth 토큰·외부 API 자격 증명은 기록하지 않는다.
 - Post-MVP에도 Grafana·Loki·Prometheus를 자체 운영하지 않고 Grafana Cloud의 관리형 저장·조회·알림을 사용한다. Alloy 배치는 운영 컴퓨팅 선택 후 확정한다.
 - MVP에서는 분산 tracing 저장소를 도입하지 않는다. 서비스 분리나 비동기 경로의 추적 필요성이 확인되면 OpenTelemetry와 Grafana Cloud Traces 도입을 별도 결정한다.

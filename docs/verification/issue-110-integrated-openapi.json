@@ -1,0 +1,23 @@
+{
+  "source": "actual running issue110 fixture with real account109 code",
+  "sourceSha256": "54ec5ef4111c04df4df4620c0bd72ed2ee97b02a209314da45d348fe4c429c66",
+  "paths": [
+    "/api/operations/invocations/{invocationId}",
+    "/api/operations/rooms",
+    "/api/operations/rooms/{roomId}"
+  ],
+  "referencedComponents": [
+    "#/components/schemas/AttemptSummaryResponse",
+    "#/components/schemas/InvocationSummaryResponse",
+    "#/components/schemas/LocalClientCallResponse",
+    "#/components/schemas/OperatorInvocationDetailResponse",
+    "#/components/schemas/OperatorProblemResponse",
+    "#/components/schemas/OperatorRoomDetailResponse",
+    "#/components/schemas/OperatorRoomPageResponse",
+    "#/components/schemas/ProviderUsageResponse",
+    "#/components/schemas/RevisionCountsResponse",
+    "#/components/schemas/RoomSummaryResponse"
+  ],
+  "allOperationsMatchWebSnapshot": true,
+  "noWebContractRewriteNeeded": true
+}

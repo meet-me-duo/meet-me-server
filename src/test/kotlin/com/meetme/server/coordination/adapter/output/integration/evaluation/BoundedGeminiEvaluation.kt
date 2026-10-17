@@ -7,6 +7,7 @@ import com.google.genai.types.HttpOptions
 import com.google.genai.types.HttpRetryOptions
 import com.google.genai.types.ThinkingConfig
 import com.google.genai.types.ThinkingLevel
+import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.config.GeminiProperties
 import com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapter
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
@@ -23,9 +24,11 @@ import com.meetme.server.meetingroom.domain.ClosurePolicy
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.meetingroom.domain.MeetingRoom
+import com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapter
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.participant.domain.GuestSession
 import com.meetme.server.participant.domain.Participant
 import com.meetme.server.participant.domain.ParticipantDisplayName
@@ -632,6 +635,14 @@ object BoundedGeminiEvaluation {
             Mockito.`when`(credentials.digest("synthetic-credential")).thenReturn(session.credentialDigest)
             Mockito.`when`(sessions.findByCredentialDigest(session.credentialDigest)).thenReturn(session)
             Mockito.`when`(members.findByRoomAndGuestSession(room.id, session.id)).thenReturn(host)
+            Mockito.`when`(members.findById(host.id)).thenReturn(host)
+            val clock = Clock.fixed(created, ZoneOffset.UTC)
+            val ownership =
+                ParticipantOwnershipResolver(
+                    CurrentAccountPort { null },
+                    GuestCookieOwnershipProofAdapter(sessions, credentials, members, clock),
+                    members,
+                )
             val messages =
                 ResourceBundleMessageSource().apply {
                     setBasename("messages")
@@ -648,7 +659,8 @@ object BoundedGeminiEvaluation {
                     runs,
                     credentials,
                     messages,
-                    Clock.fixed(created, ZoneOffset.UTC),
+                    clock,
+                    ownership = ownership,
                 ).getCandidates(room.inviteCode.value, "synthetic-credential", locale)
             val candidate = view.candidates.firstOrNull()
             return mapOf(

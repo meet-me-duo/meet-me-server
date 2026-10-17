@@ -32,19 +32,21 @@ object PersistenceMappers {
         ParticipantRecord(
             domain.id.value,
             domain.roomId.value,
-            domain.guestSessionId.value,
+            domain.guestSessionId?.value,
             domain.displayName.value,
             domain.role.name,
             domain.joinedAt.atOffset(ZoneOffset.UTC),
+            domain.userId,
         )
 
     fun toDomain(record: ParticipantRecord): Participant =
         Participant.restore(
             ParticipantId(record.id),
             MeetingRoomId(record.roomId),
-            GuestSessionId(record.guestSessionId),
+            record.guestSessionId?.let(::GuestSessionId),
             ParticipantDisplayName.of(record.displayName),
             ParticipantRole.valueOf(record.role),
             record.joinedAt.toInstant(),
+            record.userId,
         )
 }

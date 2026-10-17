@@ -82,7 +82,7 @@ class MatchingResultNaturalLanguageOnlyWebTest {
         mvc
             .perform(get("/api/rooms/{code}/candidates/unapplied-inputs", CODE))
             .andExpect(status().isUnauthorized)
-            .andExpect(jsonPath("$.code").value("GUEST_SESSION_REQUIRED"))
+            .andExpect(jsonPath("$.code").value("ACCOUNT_REQUIRED"))
     }
 
     @ParameterizedTest(name = "historical completion confirmed={0}")

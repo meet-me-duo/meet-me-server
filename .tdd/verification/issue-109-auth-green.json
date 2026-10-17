@@ -1,0 +1,114 @@
+{
+  "workItem": "issue-109-auth-green",
+  "recordedAt": "2026-10-17T14:47:34.776330Z",
+  "status": "PASS",
+  "tests": 45,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": {
+    "RefreshSessionSecurityContractTest": 11,
+    "OidcProviderSecurityContractTest": 4,
+    "BearerAccountSecurityContractTest": 2,
+    "GoogleIssuerCompatibilitySecurityTest": 1,
+    "OAuthLoginSecurityContractTest": 5,
+    "AccountIdentityPersistenceTest": 6,
+    "AuthEndToEndPostgresTest": 3,
+    "RefreshAvailabilitySecurityContractTest": 1,
+    "OidcProviderDeadlineSecurityTest": 2,
+    "AuthHttpSecurityContractTest": 6,
+    "AccessTokenSecurityContractTest": 4
+  },
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthEndToEndPostgresTest.kt",
+      "sha256": "3cdcd10d321ca4435394b393d3c143441d5b160b692cbcb634bbdacb9411edde"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthHttpSecurityContractTest.kt",
+      "sha256": "21fe17e987bffb293a24920f96df992d5f9975f8397800809e4f1c00037cecfe"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/BearerAccountSecurityContractTest.kt",
+      "sha256": "cd5011c9d676e2ca4d5c4269769f3b2e2fa033ad408553b872d5a19ca50dd9e4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/GoogleIssuerCompatibilitySecurityTest.kt",
+      "sha256": "1a2f96957f966ed65eea5a76ac8735498e05cb616242a777464913bdcf895ef2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/OidcProviderDeadlineSecurityTest.kt",
+      "sha256": "b665fdd67aa0f104309b7d3b610b7f1402f77cc99eb94ece279309e7cc5350e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/OidcProviderSecurityContractTest.kt",
+      "sha256": "5c45592a3d1afe67d21ba487ba78abac1837a9cdfd1116571b2ae1162022640e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/persistence/AccountIdentityPersistenceTest.kt",
+      "sha256": "66174673b7ebd21802fd2d6b7c8b7aa1ab6d95fe1c4c6d538b8cf34f2bf11565"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/redis/RefreshAvailabilitySecurityContractTest.kt",
+      "sha256": "e14365e45df03bbffe1b09bf218f875a9fd80fc00c7aa88f9b4f03b650414df6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/redis/RefreshSessionSecurityContractTest.kt",
+      "sha256": "aad5561e698d72a093e0e24d9fc2bda2a413bf081515b20898b50a0953e7bdbb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/security/AccessTokenSecurityContractTest.kt",
+      "sha256": "3c121b57ca58fb433fa8a0615f7e235e8fc7805c0819f7019ae3e15b958b350d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/application/service/OAuthLoginSecurityContractTest.kt",
+      "sha256": "dfe91402d968ad685bf3e6deb0765dc48f843e4034da88bea93d016ee74e1775"
+    }
+  ],
+  "rawLog": ".codex/tdd-evidence/issue-109-auth-green.log",
+  "execution": "auth_impl consolidated run all com.meetme.server.account.* tests, independently inspected XML45/0failure/0error by auth_tests before mutation run",
+  "boundary": "Local PG18Redis8 and isolated HTTP/JWKS. No operational Google/Kakao credentials or login validation.",
+  "restoredVerification": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": {
+      "com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest": 11,
+      "com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest": 4,
+      "com.meetme.server.account.adapter.input.web.BearerAccountSecurityContractTest": 2,
+      "com.meetme.server.account.adapter.output.oauth.GoogleIssuerCompatibilitySecurityTest": 1,
+      "com.meetme.server.account.application.service.OAuthLoginSecurityContractTest": 5,
+      "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest": 6,
+      "com.meetme.server.account.adapter.input.web.AuthEndToEndPostgresTest": 3,
+      "com.meetme.server.account.adapter.output.redis.RefreshAvailabilitySecurityContractTest": 1,
+      "com.meetme.server.account.adapter.output.oauth.OidcProviderDeadlineSecurityTest": 2,
+      "com.meetme.server.account.adapter.input.web.AuthHttpSecurityContractTest": 6,
+      "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest": 4
+    },
+    "rawLog": ".codex/tdd-evidence/issue-109-auth-restored-green.log",
+    "recordedAt": "2026-10-17T14:50:02.973094Z"
+  },
+  "finalRestoredVerification": {
+    "tests": 45,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": {
+      "com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest": 11,
+      "com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest": 4,
+      "com.meetme.server.account.adapter.input.web.BearerAccountSecurityContractTest": 2,
+      "com.meetme.server.account.adapter.output.oauth.GoogleIssuerCompatibilitySecurityTest": 1,
+      "com.meetme.server.account.application.service.OAuthLoginSecurityContractTest": 5,
+      "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest": 6,
+      "com.meetme.server.account.adapter.input.web.AuthEndToEndPostgresTest": 3,
+      "com.meetme.server.account.adapter.output.redis.RefreshAvailabilitySecurityContractTest": 1,
+      "com.meetme.server.account.adapter.output.oauth.OidcProviderDeadlineSecurityTest": 2,
+      "com.meetme.server.account.adapter.input.web.AuthHttpSecurityContractTest": 6,
+      "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest": 4
+    },
+    "rawLog": ".codex/tdd-evidence/issue-109-auth-final-restored-green.log",
+    "scope": "After corrected seven intentional faults. Local init limits test compilation to all account tests; full production source compilation retained. Final repository whole gate is separate and uses unchanged original build.",
+    "recordedAt": "2026-10-17T14:53:27.428557Z"
+  }
+}
