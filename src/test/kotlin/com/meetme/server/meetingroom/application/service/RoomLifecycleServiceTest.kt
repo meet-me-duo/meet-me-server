@@ -1,5 +1,7 @@
 package com.meetme.server.meetingroom.application.service
 
+import com.meetme.server.account.application.port.output.CurrentAccountPort
+import com.meetme.server.account.domain.AccountPrincipal
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository
 import com.meetme.server.meetingroom.application.port.input.CreateRoomCommand
@@ -9,8 +11,8 @@ import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
-import com.meetme.server.participant.application.port.output.IssuedGuestCredential
 import com.meetme.server.participant.application.port.output.ParticipantRepository
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.submission.application.port.output.SubmissionRepository
 import org.junit.jupiter.api.Test
@@ -41,7 +43,6 @@ class RoomLifecycleServiceTest {
         val secondCode = InviteCode.of("bcdefghijklmnopqrstuvw")
         val ids = listOf(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID()).iterator()
 
-        `when`(credentialPort.issue(NOW)).thenReturn(IssuedGuestCredential("raw", "digest", NOW.plusSeconds(2592000)))
         `when`(inviteGenerator.next()).thenReturn(firstCode, secondCode)
         `when`(idGenerator.next()).thenAnswer { ids.next() }
         `when`(roomRepository.insertIfInviteAvailable(anyValue())).thenReturn(false, true)
@@ -58,6 +59,8 @@ class RoomLifecycleServiceTest {
                 closureService,
                 Clock.fixed(NOW, ZoneOffset.UTC),
                 mock(InputRevisionRoundRepository::class.java),
+                CurrentAccountPort { AccountPrincipal(UUID.randomUUID(), "주최자") },
+                mock(ParticipantOwnershipResolver::class.java),
             )
 
         val result =

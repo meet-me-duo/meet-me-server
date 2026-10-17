@@ -1,0 +1,146 @@
+{
+  "workItem": "issue-109-ownership",
+  "role": "independent-test-designer",
+  "recordedAt": "2026-10-17T14:42:53.720057+00:00",
+  "allSourcesRestored": true,
+  "mutations": [
+    {
+      "fault": "accept-expired-or-revoked-proof",
+      "source": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomOwnershipService.kt",
+      "originalSha256": "234236684a02aac14534b0ef784817ef2c331993f01f834cc98e8f197b439448",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "expired and revoked proof cannot claim and failed claims do not mutate owner()",
+          "type": "java.lang.AssertionError"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-accept-expired-or-revoked-proof.log",
+      "mutation": {
+        "before": "?.takeIf { it.isActive(clock.instant()) }",
+        "after": "?.takeIf { true }"
+      }
+    },
+    {
+      "fault": "omit-claim-conflict",
+      "source": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomOwnershipService.kt",
+      "originalSha256": "234236684a02aac14534b0ef784817ef2c331993f01f834cc98e8f197b439448",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "claim with existing account participant conflicts without merging either record()",
+          "type": "jakarta.servlet.ServletException"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-omit-claim-conflict.log",
+      "mutation": {
+        "before": "if (participants.findByRoomAndUser(room.id, account.accountId) != null) fail(RoomLifecycleErrorCode.PARTICIPANT_CONFLICT)",
+        "after": "/* intentional fault: conflict check omitted */"
+      }
+    },
+    {
+      "fault": "prefer-guest-over-account",
+      "source": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt",
+      "originalSha256": "fa5ea4090ba12116fc1a8527653dac99a0f616a9475d4c8b325a7e8b3c546574",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "login and same display name never implicitly adopt guest records()",
+          "type": "java.lang.AssertionError"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-prefer-guest-over-account.log",
+      "mutation": {
+        "before": "if (account != null) participantRepository.findByRoomAndUser(room.id, account.accountId)",
+        "after": "if (account != null && false) participantRepository.findByRoomAndUser(room.id, account.accountId)"
+      }
+    },
+    {
+      "fault": "archive-all-account-hosts",
+      "source": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "originalSha256": "f1f6053414403f08968169ebaa51cf0fadca89d7ac5993d2816589bea522757d",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "archive lists only own host rooms and exposes created or closed anchored 30 day expiry()",
+          "type": "java.lang.AssertionError"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-archive-all-account-hosts.log",
+      "mutation": {
+        "before": "WHERE p.user_id = ? AND p.role = 'HOST'",
+        "after": "WHERE (p.user_id = ? OR p.user_id IS NOT NULL) AND p.role = 'HOST'"
+      }
+    },
+    {
+      "fault": "archive-ordinary-members",
+      "source": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "originalSha256": "f1f6053414403f08968169ebaa51cf0fadca89d7ac5993d2816589bea522757d",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "archive lists only own host rooms and exposes created or closed anchored 30 day expiry()",
+          "type": "java.lang.AssertionError"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-archive-ordinary-members.log",
+      "mutation": {
+        "before": "WHERE p.user_id = ? AND p.role = 'HOST'",
+        "after": "WHERE p.user_id = ?"
+      }
+    },
+    {
+      "fault": "archive-created-only-expiry",
+      "source": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "originalSha256": "f1f6053414403f08968169ebaa51cf0fadca89d7ac5993d2816589bea522757d",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "archive lists only own host rooms and exposes created or closed anchored 30 day expiry()",
+          "type": "java.lang.AssertionError"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-archive-created-only-expiry.log",
+      "mutation": {
+        "before": "rs.getTimestamp(\"retention_anchor\").toInstant().plus(Duration.ofDays(30))",
+        "after": "rs.getTimestamp(\"created_at\").toInstant().plus(Duration.ofDays(30))"
+      }
+    },
+    {
+      "fault": "db-exclusive-owner-constraint-omitted",
+      "source": "src/main/resources/db/migration/V11__add_accounts_and_participant_ownership.sql",
+      "originalSha256": "0431b2c18a5f03c341d3d4c4d1f3456e169db610cb5bd92e3681978623b3b92c",
+      "detected": true,
+      "exitCode": 1,
+      "tests": "1",
+      "failures": [
+        {
+          "test": "account migration preserves legacy guest and submission while enforcing exclusive unique owners()",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: expected: <23514> but was: <23505>"
+        }
+      ],
+      "localLog": ".codex/tdd-evidence/issue-109-mutation-db-exclusive-owner.log",
+      "classificationReview": "Detected by exact SQLSTATE assertion: removing XOR exposes duplicate-guest UNIQUE 23505 instead of required CHECK 23514. Initial runner required a no-exception assertion message; reviewed actual JUnit failure, with no test changes.",
+      "mutation": {
+        "before": "ADD CONSTRAINT ck_participant_exclusive_owner CHECK (guest_session_id XOR user_id)",
+        "after": "constraint omitted"
+      }
+    }
+  ],
+  "restoredGreenExitCode": 0,
+  "restoredGreenLocalLog": ".codex/tdd-evidence/issue-109-ownership-restored-green.log",
+  "restoredGreenTests": 29
+}

@@ -85,6 +85,31 @@ class KomapperParticipantRepository(
                     .firstOrNull()
             }?.let(PersistenceMappers::toDomain)
 
+    override fun findByRoomAndUser(
+        roomId: MeetingRoomId,
+        userId: UUID,
+    ): Participant? =
+        database
+            .runQuery {
+                QueryDsl
+                    .from(Meta.participantRecord)
+                    .where { Meta.participantRecord.roomId eq roomId.value }
+                    .where { Meta.participantRecord.userId eq userId }
+                    .firstOrNull()
+            }?.let(PersistenceMappers::toDomain)
+
+    override fun claimGuest(
+        id: ParticipantId,
+        guestSessionId: GuestSessionId,
+        userId: UUID,
+    ): Boolean =
+        jdbcTemplate.update(
+            "UPDATE participants SET guest_session_id = NULL, user_id = ? WHERE id = ? AND guest_session_id = ? AND user_id IS NULL",
+            userId,
+            id.value,
+            guestSessionId.value,
+        ) == 1
+
     override fun countByRoom(roomId: MeetingRoomId): Int =
         requireNotNull(
             jdbcTemplate.queryForObject("SELECT count(*) FROM participants WHERE room_id = ?", Int::class.java, roomId.value),

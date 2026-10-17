@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "exitCode": 0,
+  "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+  "recordedAt": "2026-10-17T15:34:21.176888+00:00",
+  "note": "After Python-only V11 catalog and CI test wiring changes. Unchanged Kotlin full773 gate already passed; Gradle may reuse up-to-date results. No git commit executed by this check.",
+  "sources": {
+    "deploy/pipeline/publish_manifest.py": "e2752c2949e3b8a63493f19d7fa7f6489bf3c1cdd52ece283c8ccc601c0bade5",
+    "deploy/pipeline/approved_release.py": "a5925de1808120c75b122659dd0c57d2686d87f4970d7fe7dd59101b1376896c",
+    "deploy/pipeline/host-approved-release.py": "6db169cd88620ed3ff04e942a54d4d1bd3e6c5c389613b167eb64581a6bbd945",
+    ".github/workflows/ci.yml": "d6a8e7b0f69d993be49766e6846967b279f4b25723531923d667ab9d01854cc0",
+    ".github/scripts/issue109-release-catalog.test.cjs": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859"
+  }
+}

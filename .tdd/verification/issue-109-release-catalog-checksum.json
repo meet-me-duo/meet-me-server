@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-109-release-catalog-checksum",
+  "recordedAt": "2026-10-17T15:32:38.780994Z",
+  "migration": {
+    "version": "11",
+    "script": "V11__add_accounts_and_participant_ownership.sql",
+    "sha256": "0431b2c18a5f03c341d3d4c4d1f3456e169db610cb5bd92e3681978623b3b92c",
+    "flywayChecksum": -1822689491
+  },
+  "independentRuntimeOracle": {
+    "library": "org.flywaydb:flyway-core:12.4.0",
+    "entryPoint": "org.flywaydb.core.internal.resolver.ChecksumCalculator.calculate(LoadableResource...)",
+    "resource": "Java Files.newBufferedReader(path, StandardCharsets.UTF_8) inside a read-only LoadableResource; no database connection or Flyway migrate invocation",
+    "algorithm": "Flyway actual bytecode: BufferedReader.readLine, remove first-line BOM, CRC32 over UTF-8 bytes of each line without line terminators, cast CRC32 value to signed Java int",
+    "publisherHelperInvoked": false,
+    "localProbeSource": "/tmp/Issue109FlywayChecksum.java",
+    "rawLog": ".codex/tdd-evidence/issue-109-v11-flyway-checksum.log"
+  },
+  "independentTestOracle": ".github/scripts/issue109-release-catalog.test.cjs byte-wise JS CRC32 checks complete eleven migration checksums and fingerprints",
+  "operationalPublishOrDeployment": false
+}

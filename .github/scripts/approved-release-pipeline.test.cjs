@@ -98,8 +98,8 @@ test('immutable main release metadata binds run attempt SHA digest repository ar
     assert.equal(built.ok, true, 'The publisher must derive release metadata from the actual source catalog');
     assert.equal(built.result.sourceSha, sha);
     assert.equal(built.result.archiveSha256, crypto.createHash('sha256').update(fs.readFileSync(fixture.archive)).digest('hex'));
-    assert.deepEqual(built.result.migrations.map(row => row.version), migrations.map(row => row.version));
-    assert.deepEqual(built.result.migrations.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105]);
+    assert.deepEqual(built.result.migrations.map(row => row.version), Array.from({ length: 11 }, (_, index) => String(index + 1)));
+    assert.deepEqual(built.result.migrations.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -1822689491]);
     assert.match(built.result.schemaFingerprint, /^[0-9a-f]{64}$/);
     assert.match(built.result.guardFingerprint, /^[0-9a-f]{64}$/);
     assert.equal(pythonCall('validate_manifest', [built.result, expected]).ok, true);

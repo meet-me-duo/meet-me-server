@@ -1,0 +1,13 @@
+{
+  "workItem": "issue-109-scoped-public-regression",
+  "role": "independent-test-designer",
+  "basis": "Reviewer identified public viewer/join coverage gap; existing scoped resolver implementation already fulfilled contract. Added independent regressions and verified GREEN without manufacturing RED.",
+  "tests": 4,
+  "status": "GREEN",
+  "testFile": {
+    "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestViewerJoinWebIntegrationTest.kt",
+    "sha256": "4712944c46246a713dc520c996ed86b64154eb657dfa41bf46c7c251d7221a43"
+  },
+  "localLog": ".codex/tdd-evidence/issue-109-scoped-public-regression.log",
+  "recordedAt": "2026-10-17T14:55:36.272063+00:00"
+}

@@ -49,7 +49,7 @@ def _fingerprints(value):
 
 
 def _migration_rows(rows, history=False):
-    _require(type(rows) is list and (7 <= len(rows) <= 10 if history else len(rows) == 10))
+    _require(type(rows) is list and (7 <= len(rows) <= 11 if history else len(rows) in (10, 11)))
     fields = {"version", "script", "checksum"}
     if history:
         fields |= {"success"}
@@ -126,7 +126,7 @@ def validate_deploy_facts(manifest, facts, action, approve_first_transition=Fals
             _run_identity(record)
             _fingerprints(record)
             _migration_rows(record["history"], history=True)
-            _require(len(record["history"]) == 10)
+            _require(len(record["history"]) in (10, 11))
             _image(record["currentImage"], manifest["imageRepository"])
 
         same_contract = (

@@ -52,9 +52,9 @@ def build_manifest(repo_root, archive_path, environment):
         migration_directory = root / "src/main/resources/db/migration"
         paths = list(migration_directory.glob("V*__*.sql"))
         rows, catalog = [], []
-        if len(paths) != 10:
+        if len(paths) != 11:
             raise ValueError()
-        for version in range(1, 11):
+        for version in range(1, 12):
             matches = [path for path in paths if re.fullmatch(rf"V{version}__[A-Za-z0-9_]+\.sql", path.name)]
             if len(matches) != 1 or matches[0].is_symlink():
                 raise ValueError()
