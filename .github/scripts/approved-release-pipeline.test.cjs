@@ -98,8 +98,8 @@ test('immutable main release metadata binds run attempt SHA digest repository ar
     assert.equal(built.ok, true, 'The publisher must derive release metadata from the actual source catalog');
     assert.equal(built.result.sourceSha, sha);
     assert.equal(built.result.archiveSha256, crypto.createHash('sha256').update(fs.readFileSync(fixture.archive)).digest('hex'));
-    assert.deepEqual(built.result.migrations.map(row => row.version), migrations.map(row => row.version));
-    assert.deepEqual(built.result.migrations.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105]);
+    assert.deepEqual(built.result.migrations.map(row => row.version), [...migrations.map(row => row.version), '13']);
+    assert.deepEqual(built.result.migrations.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -67069369]);
     assert.match(built.result.schemaFingerprint, /^[0-9a-f]{64}$/);
     assert.match(built.result.guardFingerprint, /^[0-9a-f]{64}$/);
     assert.equal(pythonCall('validate_manifest', [built.result, expected]).ok, true);
@@ -228,4 +228,13 @@ test('publication is immutable and manual read-only preflight preserves existing
     assert.doesNotMatch(source, /(?:actions|contents|pull-requests|deployments):\s*write|actions:\s*read|aws-access-key-id|aws-secret-access-key|secrets\./);
   }
   assert.doesNotMatch(workflow + preflight + pipeline, /disable-rule|enable-rule|events:DisableRule|iam:\*|put-role-policy|set-repository|protection-rules/);
+});
+
+// Independent #107 migration/approval boundaries also run in the existing CI entry point.
+test('additive sparse migration catalogs retain exact fingerprints and approval fences', () => {
+  const result = cp.spawnSync('python3', ['-m', 'unittest', 'discover', '-s', 'deploy/tests', '-p', 'test_issue107_release_catalog.py', '-v'], {
+    cwd: root, encoding: 'utf8', timeout: 10_000,
+    env: { PATH: process.env.PATH, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
+  });
+  assert.equal(result.status, 0, result.stderr || 'Independent release catalog boundaries must pass offline');
 });

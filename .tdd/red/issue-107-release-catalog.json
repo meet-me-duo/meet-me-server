@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-107-release-catalog",
+  "sourceRevision": "d459968b0e89e25b48eb1987acafa62e19d7e4b5",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue107_release_catalog.py",
+      "sha256": "3d09a4af0c779c384981758812c73cdcb3a3f830c7c33ce944cf6aa923cdea50"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "deploy/tests",
+    "-p",
+    "test_issue107_release_catalog.py",
+    "-v"
+  ],
+  "failedTests": [
+    "test_full_automatic_record_requires_all_first_ten_versions_not_only_history_minimum_seven"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T16:05:04.679129+00:00"
+}

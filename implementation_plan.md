@@ -1334,3 +1334,11 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] [AGENT] 기존 fixture25를 유지하고19개 추가→총44개·답변7개. 새 provider 합성 회귀8개 targeted PASS. 원격 main91eb250 소스는 이미 모호성 안전 rejection을 지원하나 보완 질문·명시 안내가 없었다. 실제 운영 image/당시 공급자 응답이 없어 실제 오류 원인은 미확정이다.
 - [x] [AGENT] 모드별 예시·오전/오후/24시간 안내·접근성 설명을 일반/수정/DIRECT 입력에 추가했다. 독립 안내15 RED→15 GREEN, 집중67 GREEN, 최신 소스로 FI4 탐지·정확 복원67 GREEN을 확인했다. 자동 원문 변환·저장·분석·추가 API는 없다.
 - [x] [AGENT] 추가 보강 후 서버 전체727(723 PASS/기존skip4/실패·오류0)·guard, 웹 전체375·고정 bundle 브라우저391 PASS/기존skip1, FI 서버6/웹4 및 독립 최종 근거를 확인했다. 정확 SHA·원본·한계는 docs/verification/issue-107-local.json에 기록한다. 승인된 Draft 게시를 진행하며 #109 실제 통합·프로덕션 기동 차단은 유지한다.
+
+### PR #116 exact HEAD CI catalog 보강 (2026-10-17 UTC)
+
+- [x] [AGENT] 게시 d459968 CI39046734109에서 Kotlin quality/ARM64/policy/preflight PASS, immutable release catalog FAIL 확인. publisher·manifest·host full record의 V1~V10 고정이 새 V13을 거부한 같은 원인이다.
+- [x] [AGENT] 독립 테스트13(초기12 RED9/대조3 + 추가fullrecord RED1/3subcases) 뒤 실제 source catalog 숫자 정렬·정규명·중복/링크거부·필수V1~V10·최대256개로 확장했다. 기존10 checksum과 정확 history/fingerprint·drain/rule/명시승인 경계는 유지한다. 기존 source-catalog assertion을 V13 포함으로 갱신하고 frozen synthetic10·거부검증은 보존했다.
+- [x] [AGENT] 새 Python13과 기존 CI node8 GREEN. #109의 같은3파일 V11 지원은 별도 통합 브랜치에서 덧셈 의미를 보존해 조합했으며 독립 PR 근거와 분리한다. 실행 bundle fingerprint 변경은 운영 승인 전환을 요구하며 배포 권한 확대는 없다.
+- [x] [AGENT] 최종 독립 리뷰·현source FI4/4·복원후Python13/node8·변경 없는 tdd_guard(11.717초, 기존727 cached) PASS. 별도 광범위 V8 guard의 로컬 오류는 조사 중이며 PASS로 집계하지 않는다.
+- [ ] [AGENT] 승인된 수정 commit/push 후 새 정확 SHA 원격 전체 CI 확인. Commit/PR: 동일 커밋 예정, 기존Draft116 유지.
