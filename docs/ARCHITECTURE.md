@@ -478,6 +478,13 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - Grafana Alloy 수집, Grafana Cloud Metrics·Loki 전송, 대시보드와 Grafana-managed Alerting은 Post-MVP로 이관한다. 제출 MVP에서는 Grafana Cloud 계정·token·연락 채널을 요구하지 않는다.
 - 핵심 애플리케이션 지표는 Gemini 배치 호출·종결 결과·처리시간·재시도, 미발행 Outbox의 최장 대기시간, Redis Pending 수·최장 대기시간과 DLQ 진입 수를 포함한다.
 - Gemini가 제공한 token 사용량으로 논리 배치별 USD 비용을 합산하고, 운영 설정의 보수적 환산율(기본 1 USD = 1,500 KRW)로 원화 추정 비용과 10원 미만 여부를 지표에 기록한다. 환산율은 실시간 환율이 아니라 비용 상한 판정을 위한 환경별 설정이다.
+- 내부 분석 계측은 한 실행의 승인된 시도 수와 로컬 파서 dispatch 수를 별도로 기록한다. dispatch는 파서 진입 횟수이며 실제 HTTP 요청·공급자 수신·청구 건수를 증명하지 않는다. 재전달로 실행을 소유하지 못하거나 이미 완료된 결과를 재사용하는 경로는 새 실행 완료로 집계하지 않는다.
+- `AnalysisExecutionObservation`은 enum 결과·provider, 경과 시간과 숫자 usage만 전달한다. `meetme.analysis.execution.*`는 실행 결과·시간을, `meetme.analysis.admitted.attempts`와 `meetme.analysis.parser.dispatches`는 승인/dispatch 수를, `meetme.analysis.attempts`는 provider별 `ADMITTED_ONLY`/`PARSER_DISPATCHED`를 기록한다. dispatch된 시도마다 `meetme.analysis.usage.observations`의 `field`와 `knowledge=KNOWN|UNKNOWN`으로 입력 token·출력 token·비용의 확인 범위를 나타낸다. `meetme.analysis.attempt.*` summary에는 확인된 값만 기록하며, 알려진 0과 미확인 null을 구별한다. 이 지표의 합계는 확인된 시도의 소계이며 미확인 시도가 있을 때 전체 비용으로 표시하면 안 된다.
+- 기존 `meetme.gemini.batch.*`는 호환 지표로 남긴다. 새 실행 수와 기존 배치 수는 같은 종결의 두 표현이므로 합쳐서 세지 않는다. Gemini 배치 비용·원화 예산 판정은 dispatch가 하나 이상이고 모든 dispatch가 Gemini이며 모든 비용이 확인된 때만 합산한다. 재시도나 Luna의 비용이 미확인이면 마지막 성공 응답의 비용으로 전체를 대신하지 않는다. provider별 단가·timeout·재시도·영속 실행 계약은 바꾸지 않는다.
+- 위 내부 계측은 #110의 첫 단위다. 2026-10-17 후속 위임으로 최소 운영 조회 API·웹 화면, 검증된 accountId의 명시적 운영자 allowlist·기본 거부·접근 감사를 구현한다. 일반 HOST·회원·게스트에게 새 조회 권한을 자동 부여하지 않는다. 감사 보존은 구성 가능하고 초기 목표는 30일이며 실제 계정 등록과 운영 설정 적용은 별도 확인한다. [#110 조회 계약](issue-110-operator-query.md)에 최소 노출·영속 이력의 한계·#109 인증 연결·로컬 검증 경계를 기록한다.
+- V14는 제한된 운영 접근 감사만 보존한다. V15는 승인에 명시적으로 연결된 파서 진입과 로컬 OkHttp call lifecycle만 원자적으로 보존한다. 비동기 제한 큐·전용 DB 대기 한도는 관측 저장이 파서 timeout/재시도 정책을 바꾸지 않도록 분리한다. 관측 부재는 미확인이며 provider 수신·청구 exactly-once를 뜻하지 않는다. 기존 시도 cascade 삭제를 따르고 기존 비즈니스 보존을 연장하지 않는다.
+- 내부 지표는 프로세스 내 비영속 집계이며, 실행 중 프로세스가 중단되면 종결 관찰이 누락될 수 있으므로 영속 실행 이력이나 공급자 청구 원장으로 사용하지 않는다.
+- 새 `outcome`은 `GeminiBatchProcessor`의 로컬 구조화 처리 경로의 종결이다. `COMPLETED`는 해당 경로의 정상 종결이며 후보 게시 성공이나 방의 READY/COMPLETE 상태를 보증하지 않는다. `ANALYSIS_DELAYED`도 현재 방 상태를 재조회한 값은 아니다. 최종 매칭 결과는 별도 matching 지표와 영속 상태로 확인한다. `elapsed`에는 동기 후속 matching 처리 시간도 포함된다.
 - 지표 및 Loki label에는 `roomId`, `userId`, `batchId`, 원문, 요청 파라미터처럼 cardinality가 높거나 민감한 값을 사용하지 않는다. 진단에 필요한 상관관계 ID와 이벤트·배치 참조는 접근 통제된 로그 본문에만 넣고 원본 자연어·Calendar 일정·좌표·OAuth 토큰·외부 API 자격 증명은 기록하지 않는다.
 - Post-MVP에도 Grafana·Loki·Prometheus를 자체 운영하지 않고 Grafana Cloud의 관리형 저장·조회·알림을 사용한다. Alloy 배치는 운영 컴퓨팅 선택 후 확정한다.
 - MVP에서는 분산 tracing 저장소를 도입하지 않는다. 서비스 분리나 비동기 경로의 추적 필요성이 확인되면 OpenTelemetry와 Grafana Cloud Traces 도입을 별도 결정한다.
@@ -542,3 +549,22 @@ Gemini와 OpenAI Responses API의 outbound adapter는 동일 `NaturalLanguageBat
 Attempt에 provider/model/policy/invocation별 usage를 구분한다. 알 수 없는 usage 또는 가격은 null이며 Luna에는 Gemini 단가를 적용하지 않는다. 유효한 범위 밖 날짜 조건은 validator에서 보존하고 결정론적 matcher가 검색 기간에만 펼친다. AVAILABLE 여부는 조건을 버리기 전에 판단하므로 범위 밖 AVAILABLE-only가 전체 가능으로 바뀌지 않는다.
 
 설정에는 `OPENAI_API_KEY` 변수 참조만 추가한다. 실제 비밀값과 운영 설정은 이 구현에서 읽거나 등록하지 않는다. 새 공급자로 원문을 전달하는 사용자 고지·처리 조건 검토와 운영 자격 증명 등록은 배포 준비의 별도 작업이며 개인 보관함 연결·별도 품질 평가를 운영 배포 승인으로 확대하지 않는다.
+
+
+### #107 본인 모호성 보완 경계 (2026-10-17 사용자 위임)
+
+공통 provider 계약은 기존 배치 응답의 nullable `clarification`에 최대1개 질문과 전체 수정본 A/B를 담는다. `schema_version=3`의 additive reader는 구 응답의 해당 필드 생략도 null로 읽는다. 공급자 SDK, HTTP timeout, invocation/attempt admission과 Worker는 변경하지 않는다. 질문 제안만을 위한 별도 LLM 호출은 없다. 명확한 문맥·부정·선호·원문 버전별 기준일은 보존하고 상대 날짜가 있는 선택지는 절대 날짜로 표현한다. 서버는 원문 regex로 의미를 덮어쓰지 않고 구절·길이·서로 다른 옵션·모호성 rejection과 빈 조건의 구조 계약을 검증한다.
+
+V13 `submission_clarifications`는 불변 source version별 최초 proposal, 멱등 request/body, 답변 후 version과 최초 응답 snapshot을 보존한다. 저장은 기존 구조화 결과와 같은 트랜잭션이며 방 만료 정리는 FK cascade로 함께 삭제한다. 같은 원문에 답한 이력·답변으로 생성된 version은 재질문하지 않고 참여자·방당 최초 질문은 최대3개다. 무응답·취소는 안전 미반영을 유지하고 `AMBIGUOUS_INPUT`도 전체 가능 시간으로 확대하지 않는다.
+
+ClarificationUseCase는 본인 소유권 확인 후 현재 활성 완료 배치·원본 version·OPEN 라운드·expected revision을 검증하고 기존 SaveSubmissionUseCase를 호출한다. room 잠금과 답변 provenance는 하나의 트랜잭션으로 묶는다. 저장·조회·작업 재생은 AI/Outbox를 만들지 않으며 HOST의 기존 `/analysis`만 새 분석을 고정한다. 질문 API의 본인 접근과 타인 모호성의 HOST 비공개는 기존 비모호성 미반영 공개와 구분한다. #109 공통 소유권 resolver와 CurrentAccountPort의 통합은 해당 세션 계약을 따르며 이 기능에서 계정/participant/auth/CORS 구현을 복제하지 않는다.
+
+`RoomResponse.clarification_protocol=owner-clarification-v1`은 웹 기능 지원 표지이며 권한이 아니다. 웹은 표지가 없으면 새 질문 API를 호출하지 않는다. 질문은 방·viewer context별 캐시에 격리하고 room version·활성 분석·라운드 변경에 재조회한다. 오래된 답변·조회는 새 소유자의 상태를 복구하지 않으며 보완 UI의 직접 원문은 메모리에만 남긴다. native OpenAPI와 생성 웹 타입을 함께 검증한다. 실제 모델의 의미 정확성·비용·latency는 mock 계약/격리 PostgreSQL·브라우저 검증으로 증명하지 않는다.
+
+웹의 소유자 query/cache와 답변 form 수명은 구분한다. form은 질문 ID·source revision·편집 round ID를 key로 사용하며 새 질문/라운드는 선택·직접 입력·operation·blocked 상태를 초기화한다. 이전 form의 늦은 POST는 새 질문 cache·알림·권한 callback을 변경하지 않는다. 같은 질문/라운드 query 재조회는 form을 유지한다.
+
+### #107 PRE_SUBMIT_V1 경계 (2026-10-17, ADR-053)
+
+PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 전 확인의 기준으로 두며 기존 Submission version은 CLEAR accepted만 저장한다. `meeting_rooms.submission_protocol`은 기존 방 LEGACY, 신규 방 PRE_SUBMIT_V1을 구분한다. queue claim·비용 admission·완료 publish는 영속 세대와 room lock으로 fence하며 Redis 유실이 원문/검사 상태를 잃게 하지 않는다. 외부 provider는 개인 입력/context만 받는 별도 output port이다. 최종 분석은 전체 accepted frozen batch의 구조화·AREA 그룹·결정론적 매칭을 계속 수행한다.
+
+조회/답변/취소/retry/멱등 replay 모두 현재 본인 소유권과 인증을 검사하고 no-store 응답을 쓴다. REPLACE_ONLY는 조회 권한을 얻지 않으며 candidate epoch/generation CAS로 제한된 대체만 수행한다. typed native OpenAPI와 web generated contract를 최종 통합한다. 신규 V16은 기존 SQL bytes를 보존하는 additive migration이며 정확 catalog·guard·DB upgrade 검증을 수행한다. runtime 인증 전달/키 mount·migration 승인·provider cap 검증이 준비되지 않으면 main 배포를 진행하지 않는다.

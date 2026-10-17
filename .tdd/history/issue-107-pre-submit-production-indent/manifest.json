@@ -1,0 +1,24 @@
+{
+  "recordedAt": "2026-10-17T19:19:50.193499+00:00",
+  "reason": "Fix only SELECT continuation indentation, 12 to 16 spaces on three lines.",
+  "files": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "before": "858516ff93f130aee1196758d9a3bfd1666b5de67c9ec44a5f11c197233d847f",
+      "after": "8291ef62126ba0a86c932b68bbdcc53f56b20d72d31ebcf6ce14449e79efe6ba",
+      "formatStableAfterSecondPass": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt",
+      "before": "2cd8db418bd946fcfec6446b766c9c1bbc4518db0fcd13381a761944f6524b87",
+      "after": "2cd8db418bd946fcfec6446b766c9c1bbc4518db0fcd13381a761944f6524b87",
+      "formatStableAfterSecondPass": true
+    }
+  ],
+  "onlyOneOf35SourceFilesChanged": true,
+  "sqlValueUnchanged": true,
+  "bindingSourceAndValueUnchanged": true,
+  "testChanges": 0,
+  "previousSupersessionPreserved": "../precheck-final-format-supersession/",
+  "nextCheck": "Parent mandatory tdd_guard retry; no prior test XML claimed as current guard PASS."
+}

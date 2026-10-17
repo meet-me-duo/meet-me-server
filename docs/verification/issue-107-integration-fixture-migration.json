@@ -1,0 +1,20 @@
+{
+  "scope": "separate #107+#109 integration only; independent published fixture remains unchanged",
+  "file": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationLifecyclePostgresTest.kt",
+  "publishedFeatureSha256": "f729271954be04a86ffd026531980fa510312823789b834477c70267e76d4f5c",
+  "integrationSha256": "7e0e7431c12ff002add892ebc7f00eafbfa2fc1f67bb2868989b540391a15788",
+  "reason": "#109 requires a signed-in account for HOST creation/commands. Existing inherited fixture uses AccountPrincipalTestFixture for business regressions; largeRoom now prepares its HOST the same way. Real JWT behavior is validated separately by the new 7-case suite without CurrentAccountPort/ClarificationOwnerPort mocks.",
+  "setupChanges": [
+    "prepare accounts.newAccount(host)",
+    "send prepared host cookie in room create",
+    "retain prepared account cookie instead of expecting guest Set-Cookie"
+  ],
+  "unchangedAssertions": [
+    "10000 Unicode codepoint batch boundary",
+    "21 participants and existing per-person inputs",
+    "answer rejection code",
+    "source/revision/provenance and work count expectations"
+  ],
+  "oldRedEvidence": "historical independent branch source fingerprint, not claimed to match this migrated fixture",
+  "newBehaviorRed": ".tdd/red/issue-107-account-integration.json"
+}

@@ -40,12 +40,18 @@ class SubmissionService(
     private val runRepository: com.meetme.server.coordination.application.port.output.CoordinationRunRepository,
     private val ownership: ParticipantOwnershipResolver,
     private val guestWriteGuard: com.meetme.server.submission.application.port.output.GuestSubmissionWriteGuard,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
 ) : SaveSubmissionUseCase,
     GetOwnSubmissionUseCase {
     @Transactional
     override fun save(command: SaveSubmissionCommand): SubmissionView {
         val room = findRoom(command.inviteCode, lock = true)
         val participant = requireParticipant(room.id, command.rawCredential, OwnershipOperation.REPLACE_OWN)
+        if (room.collectionStatus == CollectionStatus.COLLECTING &&
+            prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1"
+        ) {
+            revisionConflict()
+        }
         val existing = submissionRepository.findByParticipant(participant.id)
         guestWriteGuard.validate(room.id, participant.id, command.rawCredential, existing?.latest?.revision ?: 0, command.blindReplacement)
         val correction = room.collectionStatus == CollectionStatus.CLOSED

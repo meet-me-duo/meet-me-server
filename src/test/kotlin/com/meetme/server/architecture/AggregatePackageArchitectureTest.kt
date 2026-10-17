@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 
 class AggregatePackageArchitectureTest {
     private val sourceRoot: Path = Path.of("src/main/kotlin/com/meetme/server")
-    private val aggregates = setOf("account", "meetingroom", "participant", "submission", "coordination")
+    private val aggregates = setOf("account", "meetingroom", "participant", "submission", "coordination", "precheck")
 
     @Test
     fun `각 Aggregate는 최상위 기능 패키지 안에 헥사고날 계층을 소유한다`() {

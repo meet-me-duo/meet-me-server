@@ -1,0 +1,73 @@
+{
+  "workItem": "issue-110",
+  "scope": "actual-account-109-integration",
+  "testFile": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+  "originalCopy": ".tdd/history/issue-110-migration-runner/DatabaseMigrationRunnerTest.before.kt",
+  "beforeSha256": "39ec8b3ffdc280330742bab457a95cd1ae61c1d4333ea1edc21498192e9dff0d",
+  "afterSha256": "59ab4bfd801146824cd1240b5626a667e781344b685467aa11dda9b23247105a",
+  "before": {
+    "migrationsExecuted": 11,
+    "maximumVersion": "11"
+  },
+  "after": {
+    "migrationsExecuted": 13,
+    "maximumVersion": "15"
+  },
+  "reason": "V14 and V15 add exactly two migrations. V12 and V13 are reserved for independent issues and are not fabricated. All other test bytes and assertions are preserved.",
+  "evidenceKind": "independent schema expectation correction; not pre-implementation RED",
+  "executed": false,
+  "migrations": [
+    {
+      "file": "V1__create_core_domain.sql",
+      "sha256": "670d6a3eb6800fd633d6b6f3eca5e145cc5db96800b0d1a866dfa55d342aeda7"
+    },
+    {
+      "file": "V10__add_bounded_analysis_invocations.sql",
+      "sha256": "731c2e0aafa856c23d34197419add98d560b53d239128bdabccd5b4e0c35b099"
+    },
+    {
+      "file": "V11__add_accounts_and_participant_ownership.sql",
+      "sha256": "aa2f6ae6073370419dd9bf9bbe67a89a51b5e92b5e076a9e52f04fa16d55bc75"
+    },
+    {
+      "file": "V14__add_operator_access_audits.sql",
+      "sha256": "cddce45ef10fc2eac99cb739a1b631f41634b2cd06905e19919692844ca40196"
+    },
+    {
+      "file": "V15__add_parser_transport_observations.sql",
+      "sha256": "fcbcd040cb232ca400cbfb24b944f8289428032daf6ce386c35dbc119f9b9f98"
+    },
+    {
+      "file": "V2__add_anonymous_room_lifecycle.sql",
+      "sha256": "b0bf5e2f1954ecb5ee9b4b2f01186f34b7a8002012310548d5d9d33552c33335"
+    },
+    {
+      "file": "V3__add_submission_gemini_pipeline.sql",
+      "sha256": "d5680830a95948fb3dc65c5650996de46633a1bcd682576a9e788122f878f5dc"
+    },
+    {
+      "file": "V4__add_matching_results.sql",
+      "sha256": "f5d391b2960b810c9216d3100e395b8fb54396ac443a0ebf2942cd175c03697c"
+    },
+    {
+      "file": "V5__remove_meeting_duration.sql",
+      "sha256": "172ef7b460cc9fe0d438c36fd292e5ff267acf907e4a0ce03de7534647ca3c7c"
+    },
+    {
+      "file": "V6__add_reliable_outbox_processing.sql",
+      "sha256": "78a43573f1472439afb66269c3d15d687a3fee0366e730a0fab78120b8cb395b"
+    },
+    {
+      "file": "V7__resume_delayed_matching_from_structuring.sql",
+      "sha256": "f990998ffdb62d60e351177245d40f2fc1efa1cea7ceee287f6c6e08ea522d66"
+    },
+    {
+      "file": "V8__add_input_revision_rounds.sql",
+      "sha256": "61c36103e941a735d92e02222b050855d0c8ae54bd9653ed0be23307fd062939"
+    },
+    {
+      "file": "V9__add_time_recommendations.sql",
+      "sha256": "81748630533f5aadbd622fa8e508821352b6590794779d10f9ae92a44f9c0688"
+    }
+  ]
+}

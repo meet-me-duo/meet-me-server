@@ -1,0 +1,39 @@
+{
+  "recordedAt": "2026-10-17T18:30:00Z",
+  "repository": "meet-me-duo/meet-me-server",
+  "pr": 115,
+  "prHead": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "mergeSha": "59e39bea8db58e17de119be353cb673fb68d9d98",
+  "event": "push",
+  "branch": "develop",
+  "runId": 39057006651,
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/meet-me-duo/meet-me-server/actions/runs/39057006651",
+  "distinction": "This is the develop push CI of the actual merge commit; it is separate from PR HEAD CI39046253824.",
+  "jobs": [
+    {
+      "jobId": 117466920500,
+      "name": "ARM64 Built Image",
+      "conclusion": "success",
+      "checkoutSha": "59e39bea8db58e17de119be353cb673fb68d9d98",
+      "checkoutLogEvidence": [
+        "2026-10-17T18:11:32.5231106Z   ref: 59e39bea8db58e17de119be353cb673fb68d9d98",
+        "2026-10-17T18:11:33.2857337Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-10-17T18:11:33.2884871Z 59e39bea8db58e17de119be353cb673fb68d9d98"
+      ]
+    },
+    {
+      "jobId": 117466920651,
+      "name": "Quality Gate",
+      "conclusion": "success",
+      "checkoutSha": "59e39bea8db58e17de119be353cb673fb68d9d98",
+      "checkoutLogEvidence": [
+        "2026-10-17T18:11:35.0971402Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-10-17T18:11:35.0998195Z 59e39bea8db58e17de119be353cb673fb68d9d98"
+      ]
+    }
+  ],
+  "observationMethod": "GitHub GET /actions/runs/39057006651 and fetch_workflow_job_logs. The commit wrapper filters to pull_request events and cannot discover this push run.",
+  "productionAccess": false
+}

@@ -1,0 +1,59 @@
+{
+  "workItem": "transport-final-red",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "recordedAt": "2026-10-17T15:35:43.530429+00:00",
+  "command": [
+    "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\meet-me-server\\gradlew.bat",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ParserTransportObservationSessionTest",
+    "--tests",
+    "*ParserTransportAdapterContractTest",
+    "--tests",
+    "*ParserTransportFailureContractTest"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "baselineReplayAfterFormatting": true,
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[1] provider = GEMINI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[2] provider = OPENAI",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#legacy missing context cannot be attached to a guessed invocation()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#telemetry failure cannot escape completed session boundary()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#call start followed by connection failure is one local client call with unknown HTTP status()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#explicit admission not dispatched is known false with no client calls()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#settled calls retain start order status and bounded failure without exception content()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#parser entry without any started HTTP call is a known zero snapshot()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#overflow of bounded calls leaves snapshot unknown rather than silently truncating count()",
+    "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#unfinished started call leaves observation absent instead of fabricating zero or completeness()"
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportAdapterContractTest.kt",
+      "sha256": "6360633d86df8dbfe3f66ebb64c37c8d167e82587a9628fdda6ddd2bd8640b08"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportFailureContractTest.kt",
+      "sha256": "c2bb0921573a8491a97858cafb5dbb3a70306b350e9947ff9c1a2e166d1639be"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportObservationSessionTest.kt",
+      "sha256": "beebd1a02626e707e781aded5840a33cc017fc6153764b0cb68f57f28b30c103"
+    }
+  ],
+  "productBytesRestored": true,
+  "allTestBytesUnchanged": true
+}

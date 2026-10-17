@@ -1,0 +1,24 @@
+{
+  "workItem": "issue107-independent-core-fault-final-review",
+  "reviewer": "/root/baseline_merge_review",
+  "recordedAt": "2026-10-17T19:35:46.944487+00:00",
+  "status": "PASS_ALL6_ACTUAL_ASSERTIONS_AND_EXACT_RESTORATION",
+  "detail": ".tdd/verification/issue107-independent-core-faults.json",
+  "canonical": ".tdd/verification/issue107-independent-core-faults-canonical.json",
+  "baselineTests": 44,
+  "independentFaultTypes": 6,
+  "actualAssertionFailures": 6,
+  "eachRestoredTargetTests": 1,
+  "originalTestChanges": [],
+  "originalChangedPaths": [
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt"
+  ],
+  "originalChangesExactlyExpectedParentFormatOnly": true,
+  "formatEquivalenceReview": ".tdd/verification/issue107-final-source-format-equivalence.json",
+  "originalProductionEditsByReviewer": 0,
+  "originalTestEditsByReviewer": 0,
+  "externalModelCalls": 0,
+  "actualOAuthCalls": 0,
+  "postImplementationSupplement": "Current Worker366 includes separately archived PS06 valid-synthetic-fixture alignment. Fault evidence is post-implementation verification and not relabeled chronological first RED."
+}

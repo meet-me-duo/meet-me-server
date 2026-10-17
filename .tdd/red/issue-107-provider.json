@@ -1,0 +1,32 @@
+{
+  "workItem": "issue-107-provider",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClarificationProviderContractTest.kt",
+      "sha256": "a6eccd82e16a9b87bae7a05d5d4dabee8acd251e6b1d44af32818ce9f8b57f5c"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-run-gradle",
+    "test",
+    "--tests",
+    "*ClarificationProviderContractTest",
+    "--tests",
+    "*ClarificationHttpPostgresTest",
+    "--no-daemon",
+    "--max-workers=2"
+  ],
+  "failedTests": [
+    "shared prompt requests only material ambiguity and preserves full source meaning and dates()",
+    "clear live result with explicit null clarification keeps valid provider structure()",
+    "question is required and bounded to 160 Unicode codepoints()",
+    "proposal at 200 excerpt codepoint boundary is accepted even with supplementary characters()",
+    "both providers preserve ambiguity proposal and do not fabricate availability()",
+    "live provider schemas expose required nullable clarification with all proposal fields()",
+    "general ambiguity rejection accepts a safe clarification with no conditions()",
+    "500 supplementary Unicode codepoints are valid without UTF16 truncation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:51:55.268674Z"
+}

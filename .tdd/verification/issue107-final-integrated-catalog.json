@@ -1,0 +1,72 @@
+{
+  "workItem": "issue107-final-integrated-catalog",
+  "status": "PASS_OFFLINE_CATALOG_SCOPE",
+  "recordedAt": "2026-10-17T18:29:43.039773Z",
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    ".github/scripts/approved-release-pipeline.test.cjs",
+    ".github/scripts/issue108-release-catalog.test.cjs",
+    ".github/scripts/issue109-release-catalog.test.cjs",
+    ".github/scripts/issue110-release-catalog.test.cjs",
+    ".github/scripts/issue107-integrated-catalog.test.cjs"
+  ],
+  "tests": 46,
+  "passed": 46,
+  "failed": 0,
+  "syntheticV16UsedInThisRun": false,
+  "actualV16SqlSha256": "fe4d0ca5e8098c7ce3fbbb4c886701d05aaec22da87e2c5a1d7d8c96e3b78319",
+  "fingerprints": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b7215c98a249d0c5cb5c9a7655f223fe4bd2d980775aba1ebd282b5ad6c8e3a1"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "a1adb5c6ca3c9cc1df3346af2116673e7a7bb4ac664cfe7af8286ddb4a69523c"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "37a2acb82c5e7462d7dae4afac3c1df2de89431da4cb476ade37662ee45be9c2"
+    },
+    {
+      "path": ".github/scripts/issue108-release-catalog.test.cjs",
+      "sha256": "fe97470c85b96812e91ef3a241d2eec5038582e06e47ac0ba32b75ccd894c1fa"
+    },
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "sha256": "a3dd960d55e493459686c81aaf958612e7482e9a15573012261d9e19f9719759"
+    },
+    {
+      "path": ".github/scripts/issue110-release-catalog.test.cjs",
+      "sha256": "ae2c37fdf80364c637743c7be69889cc383d5ccacd99948bb2a367dc51ecbc25"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "9dc45b0c130c69ee8d5d5747b518639adac68b3a1701d5631911b3f0e8bffda7"
+    },
+    {
+      "path": "src/main/resources/db/migration/V16__add_pre_submission_checks.sql",
+      "sha256": "fe4d0ca5e8098c7ce3fbbb4c886701d05aaec22da87e2c5a1d7d8c96e3b78319"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "3974af01145c32b7f8900d422beb86cb1fe1eec1cb1b47f44e53f349c169c969"
+    }
+  ],
+  "rawLog": ".codex/tdd-evidence/issue107-final-catalog-all-green.log",
+  "faultEvidence": ".tdd/verification/issue107-integrated-catalog-faults.json",
+  "limitations": [
+    "Pure offline catalog/approval scope; not PostgreSQL or full server quality gate",
+    "No AWS, deployment, paid model, actual OAuth or remote writes"
+  ]
+}

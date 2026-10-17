@@ -3,3 +3,5 @@
 *.tftpl text eol=lf
 *.bat text eol=crlf
 *.jar binary
+/.tdd/history/issue-110-*/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+/.tdd/history/issue-107-*/** -text

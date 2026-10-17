@@ -49,6 +49,7 @@ import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.application.service.ClarificationService
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -73,6 +74,7 @@ class MatchingResultService(
     private val clock: Clock,
     private val recommendations: RecommendationRepository? = null,
     private val ownership: ParticipantOwnershipResolver,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
 ) : GetCandidatesUseCase,
     GetUnappliedInputsUseCase,
     ConfirmCandidateUseCase,
@@ -108,7 +110,11 @@ class MatchingResultService(
         return submissions.mapNotNull { submission ->
             val result = structured[submission.latest.id] ?: return@mapNotNull null
             val reason = result.rejectionCode ?: placeFailures[submission.latest.id]?.firstOrNull()?.status?.name ?: return@mapNotNull null
-            val rawText = submission.latest.rawText
+            if (reason in ClarificationService.AMBIGUITY_REASONS && submission.participantId != viewer.id) return@mapNotNull null
+            val rawText =
+                submission.latest.rawText.takeUnless {
+                    prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1" && submission.participantId != viewer.id
+                }
             val owner = participantRepository.findById(submission.participantId) ?: return@mapNotNull null
             UnappliedInputView(owner.displayName.value, rawText?.toPlainText(), reason)
         }

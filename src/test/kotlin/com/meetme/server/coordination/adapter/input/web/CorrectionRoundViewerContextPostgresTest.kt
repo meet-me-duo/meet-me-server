@@ -89,6 +89,8 @@ class CorrectionRoundViewerContextPostgresTest : CorrectionRoundPostgresFixture(
                 .andReturn()
                 .response
         val code = document(created).getValue("invite_code").toString()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
 
         fun join(): CorrectionSession {
             val response =

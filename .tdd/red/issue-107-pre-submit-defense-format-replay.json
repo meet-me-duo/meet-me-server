@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-107-pre-submit-defense-format-replay",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckDefensiveBoundaryPostgresTest.kt",
+      "sha256": "89275de222afa014b08bb7a5ce6c89ef677fa91ed506637ab177d239c9e674cd"
+    }
+  ],
+  "command": [
+    "flock",
+    "/tmp/meetme-gradle.lock",
+    "bash",
+    "gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "-I",
+    "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+    "test",
+    "--tests",
+    "*PrecheckDefensiveBoundaryPostgresTest.PS08 source 원문과 같은 제안은 opaque 선택ID가 유효해도 INVALID_RESPONSE다"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest.PS08 source 원문과 같은 제안은 opaque 선택ID가 유효해도 INVALID_RESPONSE다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T19:35:29.113229Z"
+}

@@ -256,7 +256,8 @@ class AuthEndToEndPostgresTest {
                     val code = registerCode(requireNotNull(query["nonce"]))
                     codeChallenges[code] = requireNotNull(query["code_challenge"])
                     val redirect = requireNotNull(query["redirect_uri"])
-                    if (!redirect.startsWith("http://localhost:8080/api/auth/")) {
+                    val redirectBase = System.getProperty("meetme.auth.test.redirect-base", "http://localhost:8080")
+                    if (!redirect.startsWith("$redirectBase/api/auth/")) {
                         exchange.sendResponseHeaders(400, -1)
                     } else {
                         exchange.responseHeaders.add("Location", "$redirect?code=$code&state=${query["state"]}")
@@ -358,25 +359,30 @@ class AuthEndToEndPostgresTest {
         }
 
         @JvmStatic
-        fun runBrowserServer() {
-            System.setProperty("meetme.auth.test.redirect-base", "http://localhost:8080")
+        fun runBrowserServer(
+            apiPort: Int = 8080,
+            webPort: Int = 5173,
+        ) {
+            val apiOrigin = "http://localhost:$apiPort"
+            val webOrigin = "http://localhost:$webPort"
+            System.setProperty("meetme.auth.test.redirect-base", apiOrigin)
             mapOf(
-                "server.port" to "8080",
+                "server.port" to apiPort.toString(),
                 "spring.datasource.url" to postgres.jdbcUrl,
                 "spring.datasource.username" to postgres.username,
                 "spring.datasource.password" to postgres.password,
                 "spring.flyway.enabled" to "true",
                 "spring.data.redis.host" to redis.host,
                 "spring.data.redis.port" to redis.getMappedPort(6379).toString(),
-                "meetme.anonymous.allowed-origins" to "http://localhost:5173",
+                "meetme.anonymous.allowed-origins" to webOrigin,
                 "meetme.anonymous.cookie-secure" to "false",
-                "meetme.auth.web-callback-uri" to "http://localhost:5173/auth/callback",
+                "meetme.auth.web-callback-uri" to "$webOrigin/auth/callback",
                 "meetme.reliability.enabled" to "false",
                 "meetme.rate-limit.enabled" to "false",
                 "meetme.data-retention.enabled" to "false",
             ).forEach { (name, value) -> System.setProperty(name, value) }
             SpringApplicationBuilder(MeetMeServerApplication::class.java, IsolatedAuthProviders::class.java).run()
-            println("ISSUE109_SYNTHETIC_BROWSER_SERVER_READY http://localhost:8080")
+            println("ISSUE109_SYNTHETIC_BROWSER_SERVER_READY $apiOrigin")
         }
     }
 }

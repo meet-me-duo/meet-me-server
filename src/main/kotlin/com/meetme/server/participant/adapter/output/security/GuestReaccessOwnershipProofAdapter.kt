@@ -30,7 +30,13 @@ class GuestReaccessOwnershipProofAdapter(
             (if (forUpdate) sessions.findByCredentialDigestForUpdate(digest) else sessions.findByCredentialDigest(digest))
                 ?.takeIf { it.isActive(clock.instant()) } ?: return null
         participants.findByRoomAndGuestSession(roomId, session.id)?.let {
-            return GuestOwnershipProof(roomId, it.id, GuestProofLevel.VERIFIED_GUEST)
+            return GuestOwnershipProof(
+                roomId,
+                it.id,
+                GuestProofLevel.VERIFIED_GUEST,
+                com.meetme.server.participant.application.port.output
+                    .GuestProofProvenance(session.id, session.expiresAt),
+            )
         }
         val stored =
             reaccess.grant(roomId, session.id, forUpdate)
@@ -42,6 +48,15 @@ class GuestReaccessOwnershipProofAdapter(
             participants.findById(grant.participantId)?.takeIf {
                 it.roomId == roomId && it.guestSessionId != null && it.userId == null
             } ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT)
-        return GuestOwnershipProof(roomId, target.id, grant.level)
+        return GuestOwnershipProof(
+            roomId,
+            target.id,
+            grant.level,
+            com.meetme.server.participant.application.port.output.GuestProofProvenance(
+                session.id,
+                minOf(session.expiresAt, grant.expiresAt),
+                grant.generation,
+            ),
+        )
     }
 }

@@ -490,7 +490,10 @@ class SubmissionNaturalLanguageOnlyIntegrationTest {
                 .andReturn()
                 .response,
             credential = account.value,
-        )
+        ).also { legacy ->
+            // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+            jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", legacy.code)
+        }
     }
 
     private fun join(host: Session): Session =

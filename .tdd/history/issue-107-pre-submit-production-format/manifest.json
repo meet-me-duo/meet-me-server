@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-17T19:16:39.635770+00:00",
+  "reason": "Mandatory ktlintCheck long-string formatting only; no test changes or behavior changes.",
+  "changedSourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "before": "1e139f29cd98af7e9566dcd865f4c9b70e98a558f4dca742556272ddb93bbfcd",
+      "after": "858516ff93f130aee1196758d9a3bfd1666b5de67c9ec44a5f11c197233d847f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt",
+      "before": "0077fa93bd1756eba72e695f07c4e26251a600f56c5e6a053fca936585c307dc",
+      "after": "2cd8db418bd946fcfec6446b766c9c1bbc4518db0fcd13381a761944f6524b87"
+    }
+  ],
+  "onlyTheseTwoOf35Changed": true,
+  "sql": {
+    "original": "SELECT k.*,c.id c_id,c.room_id,c.participant_id,c.revision,c.raw_text,c.locale,c.created_at,c.interpretation_reference_at,c.owner_binding,c.source_candidate_id,c.source_question_id,c.selected_choice_id,c.accepted_version_id FROM precheck_checks k JOIN precheck_candidates c ON c.id=k.candidate_id",
+    "concatenated": "SELECT k.*,c.id c_id,c.room_id,c.participant_id,c.revision,c.raw_text,c.locale,c.created_at,c.interpretation_reference_at,c.owner_binding,c.source_candidate_id,c.source_question_id,c.selected_choice_id,c.accepted_version_id FROM precheck_checks k JOIN precheck_candidates c ON c.id=k.candidate_id",
+    "byteIdentical": true,
+    "sha256": "5a9db55fa45855f77d8acfb7d33b282a8454fae9e9b75c322ead17957e2a3176"
+  },
+  "binding": {
+    "originalTemplate": "$prefix|${provenance.sessionId.value}|${provenance.validUntil.toEpochMilli()}|${provenance.grantGeneration ?: \"\"}|${proof.level.name}",
+    "concatenatedTemplate": "$prefix|${provenance.sessionId.value}|${provenance.validUntil.toEpochMilli()}|${provenance.grantGeneration ?: \"\"}|${proof.level.name}",
+    "byteIdenticalTemplate": true,
+    "sameInterpolationExpressionsAndOrder": true,
+    "sha256": "798b6c6f26f07c9838e3931d76051708957e16481af980f44e19f71bb2b0be28"
+  },
+  "priorFocused95": "precheck-final-focused/manifest.json (before hashes; do not mislabel as mandatory guard PASS)",
+  "nextCheck": "Parent reruns mandatory tdd_guard after this format-only supersession."
+}

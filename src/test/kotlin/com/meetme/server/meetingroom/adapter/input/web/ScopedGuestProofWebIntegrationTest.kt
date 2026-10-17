@@ -59,8 +59,8 @@ class ScopedGuestProofWebIntegrationTest {
         invite = "abcdefghijklmnopqrstuv"
         jdbc.update(
             """INSERT INTO meeting_rooms(id,invite_code,purpose,meeting_mode,time_zone_id,search_start_date,search_end_date,
-            search_range_source,manual_only,collection_status,created_at)
-            VALUES (?,?,'scoped proof','EITHER','Asia/Seoul','2026-10-17','2026-10-31','DEFAULTED',true,'COLLECTING',now())""",
+            search_range_source,manual_only,collection_status,created_at,submission_protocol)
+            VALUES (?,?,'scoped proof','EITHER','Asia/Seoul','2026-10-17','2026-10-31','DEFAULTED',true,'COLLECTING',now(),'LEGACY')""",
             room.value,
             invite,
         )

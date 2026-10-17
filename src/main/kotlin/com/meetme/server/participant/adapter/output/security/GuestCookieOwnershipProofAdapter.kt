@@ -6,6 +6,7 @@ import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestOwnershipProof
 import com.meetme.server.participant.application.port.output.GuestOwnershipProofPort
 import com.meetme.server.participant.application.port.output.GuestProofLevel
+import com.meetme.server.participant.application.port.output.GuestProofProvenance
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
 import com.meetme.server.shared.domain.MeetingRoomId
@@ -30,6 +31,11 @@ class GuestCookieOwnershipProofAdapter(
         val participant =
             participants.findByRoomAndGuestSession(roomId, session.id)
                 ?: throw RoomLifecycleException(RoomLifecycleErrorCode.PARTICIPANT_REQUIRED)
-        return GuestOwnershipProof(roomId, participant.id, GuestProofLevel.VERIFIED_GUEST)
+        return GuestOwnershipProof(
+            roomId,
+            participant.id,
+            GuestProofLevel.VERIFIED_GUEST,
+            GuestProofProvenance(session.id, session.expiresAt),
+        )
     }
 }

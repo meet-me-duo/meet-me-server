@@ -392,6 +392,8 @@ class RoomOwnershipWebIntegrationTest {
     @Test
     fun `member submission uses account without guest cookie and does not expose other member input`() {
         val room = room()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE id=?", room.id)
         val owner = login()
         participant(room, accountId = owner.accountId)
         mvc

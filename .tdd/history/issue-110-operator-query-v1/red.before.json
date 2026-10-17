@@ -1,0 +1,66 @@
+{
+  "workItem": "issue-110-operator-query",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorAuditRetentionServiceTest.kt",
+      "sha256": "7f1733132c8dfdbca724f1fa9fba6129319fe5e5f1eff9c915b35c53cc2aaaf9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorNoStoreFilterTest.kt",
+      "sha256": "f3d2d41ade378625485596185051b81eba773b1ab58fbf03fa5e92011a8c4ca3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryPostgresTest.kt",
+      "sha256": "5f893938f03503f346ef28a2367fffef6a20bf0092d316de4372c3b33401e9d9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryServiceTest.kt",
+      "sha256": "e24b6c281117340270f2aa54b1d4ff44c96315b626e1598cb7d44e14ef4bd7b5"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--offline",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "com.meetme.server.shared.operations.*"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.operations.OperatorAuditRetentionServiceTest#configured retention and batch are forwarded without extending room retention()",
+    "com.meetme.server.shared.operations.OperatorAuditRetentionServiceTest#disabled cleanup does not delete any audit rows()",
+    "com.meetme.server.shared.operations.OperatorAuditRetentionServiceTest#default cleanup uses thirty day cutoff and a bounded batch()",
+    "com.meetme.server.shared.operations.OperatorNoStoreFilterTest#unmarked successful response cannot expose protected data or bypass audit through a caller header()",
+    "com.meetme.server.shared.operations.OperatorNoStoreFilterTest#server handled marker preserves safe controller success without a duplicate audit()",
+    "com.meetme.server.shared.operations.OperatorNoStoreFilterTest#precontroller authentication infrastructure failure is sanitized and audited as unavailable()",
+    "com.meetme.server.shared.operations.OperatorNoStoreFilterTest#precontroller unauthorized response is sanitized and audited as denied()",
+    "com.meetme.server.shared.operations.OperatorNoStoreFilterTest#precontroller responses fail closed with sanitized unavailable when durable audit append fails()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#authenticated nonoperator gets indistinguishable forbidden for existing missing and malformed resources()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#authorized invalid query and missing target use sanitized audited errors with no store()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#audit cleanup removes only older rows in bounded batches preserving cutoff and business rows()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#allowed response fails closed when PostgreSQL cannot persist audit()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#current room policy and closure fields are mapped without implying historical setting snapshots()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#invocation isolates attempts normalizes failure strings and preserves nullable usage per provider()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#unfinished invocation exposes unknown elapsed and no fabricated provider observations()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#durable audit has only six bounded fields and no foreign key dependence on business lifecycle()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#caller controlled identity headers guest cookie and malformed targets never authenticate an operator()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#room detail retains historical invocations and distinguishes revisions legacy attempts and current room state()",
+    "com.meetme.server.shared.operations.OperatorQueryPostgresTest#room list has exact safe projection and keyset pagination remains stable across newer inserts()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#invalid limits are rejected without business reads and without copying raw values into audit()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#audit failure prevents an allowed response and exposes no internal exception()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#repository exception becomes fixed unavailable error and bounded audit()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#denied request also fails closed if durable audit is unavailable()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#allowed list uses default bounded page and emits server generated audit()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#unlisted authenticated account cannot gain operator permission from a valid target()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#invalid UUIDs and invalid or oversized cursors never reach repository()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#disabled feature and empty allowlist deny even a verified operator()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#page boundary limits one and one hundred are accepted()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#absent verified identity adapter fails closed()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#authorized missing room and invocation return not found with validated target audit()",
+    "com.meetme.server.shared.operations.OperatorQueryServiceTest#missing identity rejects every route before invalid query parsing or business lookup()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:49:34.685954+00:00"
+}

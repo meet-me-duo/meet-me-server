@@ -1,0 +1,34 @@
+// Canonical local-only command after a stable testClasses build:
+// ./gradlew -I docs/verification/issue-107-native-browser.init.gradle \
+//   -Dmeetme.issue107.native.stop-file=/tmp/issue107-native-stop issue107NativeBrowserServer
+// Create that exact stop file to close the API/control servers, PG and Redis.
+// Do not hold the shared build lock for the live server lifetime. RuntimeClasspath
+// can be prepared under that lock, then project class/resource directories copied
+// to a disposable snapshot for direct java while other verification builds continue.
+// Ports: API localhost:18920, web localhost:18921, control 127.0.0.1:18922.
+// Control /room/run-deadline-closure invokes the actual transactional deadline
+// scheduler once; /room/deadline only adjusts the isolated room clock boundary.
+// Disposable local fixtures only. No production credential or provider is required.
+allprojects {
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        tasks.register('issue107NativeBrowserServer', JavaExec) {
+            dependsOn tasks.named('testClasses')
+            classpath = sourceSets.test.runtimeClasspath
+            mainClass = 'com.meetme.server.submission.adapter.input.web.PreSubmissionCheckNativeBrowserServerKt'
+            jvmArgs '--add-modules=jdk.httpserver'
+            systemProperty 'meetme.issue107.native.stop-file', System.getProperty('meetme.issue107.native.stop-file')
+        }
+    }
+}
+
+allprojects {
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        tasks.register('issue107NativeRuntimeClasspath') {
+            dependsOn tasks.named('testClasses')
+            doLast {
+                def target = System.getProperty('meetme.issue107.native.classpath-file', '/tmp/meetme-issue107-native-runtime.classpath')
+                file(target).text = sourceSets.test.runtimeClasspath.asPath
+            }
+        }
+    }
+}

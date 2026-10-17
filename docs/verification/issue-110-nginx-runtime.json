@@ -1,0 +1,21 @@
+{
+  "scope": "actual repository HTTP proxy policy projected without TLS onto network-none unprivileged Nginx; refused loopback upstream and malformed request header",
+  "checks": {
+    "containerExit0": true,
+    "bothCallbackFailures": true,
+    "parserFailure": true,
+    "noCode": true,
+    "noState": true,
+    "safeAccessFields": true
+  },
+  "accessStatuses": [
+    502,
+    502,
+    400
+  ],
+  "productionAccessOrChanges": false,
+  "tlsVerification": false,
+  "sourceSha256": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44",
+  "projectedSha256": "bb4b65f4d9c7eb1bd6ede8758c902cc672104c03ce69decb18f6066b25c9f29d",
+  "logSha256": "87e713ff917361bc31dd4835691e96b756f474fbe51aead3821b8e9fa616d64f"
+}

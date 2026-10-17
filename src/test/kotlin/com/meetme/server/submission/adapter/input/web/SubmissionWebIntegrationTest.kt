@@ -566,7 +566,10 @@ class SubmissionWebIntegrationTest {
                 .substringAfter("\"invite_code\":\"")
                 .substringBefore('"'),
             account.value,
-        )
+        ).also { legacy ->
+            // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+            jdbcTemplate.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", legacy.inviteCode)
+        }
     }
 
     private fun join(

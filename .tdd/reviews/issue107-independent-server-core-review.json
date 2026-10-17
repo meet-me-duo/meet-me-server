@@ -1,0 +1,387 @@
+{
+  "workItem": "issue107-independent-server-core-review",
+  "reviewer": "/root/baseline_merge_review",
+  "role": "Independent source reviewer; no original product or backend tests edited. Catalog test author role is separate and catalog source final review is assigned to another reviewer.",
+  "recordedAt": "2026-10-17T19:39:45.489786Z",
+  "status": "APPROVED_FOR_AUTHORIZED_COMMIT_PUSH_DRAFT_PR_LOCAL_SERVER_SCOPE",
+  "initialSourceFingerprints": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckController.kt",
+      "sha256": "72870baed0fc5d5efb34e6d53a3ddee8fa9d3d4be3ebf9e582288d52da83e8a4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckNoStoreFilter.kt",
+      "sha256": "1f22ed9cc6130694734dcc2ac6eacf5f3a76bb0cd67f28401f497977dd06e063"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckOpenApiConfiguration.kt",
+      "sha256": "4de45e40849952bc754122ec29eb8d73f72f63b30015fc131923cb745931498e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckWorkerLifecycle.kt",
+      "sha256": "23203b9193fa592eb5b4b2fdaf3b999e31747c5317427bd89d9fbb92b57822e1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/observability/PrecheckMetricsAdapter.kt",
+      "sha256": "235242955d1efc3d2ff4e58283b5355beb5388babf4cc6ebfbd2175dcd8c9083"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "sha256": "1e139f29cd98af7e9566dcd865f4c9b70e98a558f4dca742556272ddb93bbfcd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt",
+      "sha256": "e14b1350c101acaf3e2e9ac18b74a85d2d34cb420b1360c7255a624efb7ecd3e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/input/PreSubmissionCheckUseCase.kt",
+      "sha256": "148de06cc47062f636378f1d8a8059ba1fa5a2c4f95c0eb70a840c5c547434da"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PreSubmissionCheckProvider.kt",
+      "sha256": "af59c2cc74d5f7fc3cbc9ede672a1e5dab700509fe785384673ddc939c51acee"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckMetricsPort.kt",
+      "sha256": "1628c0392ee5bfd6ad2f78163ed8ff8f0303a95c0ce1d55230d8c4b18d4319fd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckOwnershipBindingPort.kt",
+      "sha256": "97d1e5c390b7623d86785ef6ccdcf1e9af539d52285373914f6836446b6bc5a1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckRepository.kt",
+      "sha256": "f737ffa14f28022999039aee44bffecfa6e4751d2698a2fbd67a0d88233d7f71"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt",
+      "sha256": "3dea38ad6425d1ff9b148e8951f7dadca7e87af51c90b50b21e23471eb331e06"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "fe91b302bad455915db1bcff2a165a51e25e45b44eb652e1e5cced2ced2e52ee"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "953ef3aa4614424a91e708c8418ed9e1ec5f17e24a5a2ee3e49d0e0192394f58"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/domain/PrecheckModels.kt",
+      "sha256": "bc6053ec2580e60f76262af8a36102de26842f6def0a225521df4c387302cedd"
+    },
+    {
+      "path": "src/main/resources/db/migration/V16__add_pre_submission_checks.sql",
+      "sha256": "65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "a1f604c41752a794ef852b0209e178fc59a3c1b2ce731c99a0271e355fed58da"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "5bc679e7a914e0bc3f42cc707eebd8f04c93db6eac24ebf34647db465ed13745"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt",
+      "sha256": "b2be50c647a30a39f2874c8271a71906fd8f120a9637a820ab64075bcd40c879"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/JdbcClarificationRepository.kt",
+      "sha256": "a43e120ca7fbfec7f27b9848703f5a640e638115e77a5f468d2f6276cc727b90"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessService.kt",
+      "sha256": "e8f9d727f3b2951cc23a5ac82c0f5b4b9b0f2a71c714ccf18ba9c278dc20949d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessWriteGuard.kt",
+      "sha256": "093c84fd29b3f5d26b83010f66a9569785bc5cd45c7f93affecf32af306058fd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/JdbcGuestReaccessRepository.kt",
+      "sha256": "2cb17aecfb071c1b050237a4f84a1810f5a149a7b60b420fc24575e6451ebe46"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/RateLimitFilter.kt",
+      "sha256": "96f5f445ae00e27bbfbd8a101a81d982c167ce6fe63cd2f7a7a750fa3938dc2f"
+    }
+  ],
+  "initialSourceConclusions": [
+    "Create/answer/retry/cancel serialize via room row, validate current authenticated owner and protocol, then CAS expected candidate/check state. Per-participant+kind+UUID ledger has length-prefixed command fingerprint and immutable original outcome; response recomputes current private snapshot.",
+    "Original candidate storage is separate from accepted submission. Only fenced CLEAR writes immutable accepted version and binds exact candidate; pending/failed/cancelled/late results cannot count as first completion. Existing accepted version survives later pending edits.",
+    "Publish checks exact check version, execution generation/token, current candidate, owner binding, open room/deadline. Accepted writes and automatic closure are one transaction with final deadline/open checks. No provider I/O inside room/admission transactions.",
+    "Guest configured production proof captures session/proof expiry and grant generation; publish revalidates session/proof/claim. REPLACE_ONLY cannot read snapshots and saves blind candidate without elevating proof or asserting completion. Account claim invalidates old guest binding.",
+    "Queue admission global advisory lock after room row; maximum queued100/inflight2, persistent execution deadline30 including queue, provider budget15/reserve3, one explicit retry and six physical admitted attempts per participant/room. Superseded/cancelled work retains consumed attempts.",
+    "V16 preserves original SQL1..15 and backfills existing rooms LEGACY before setting PRE_SUBMIT_V1 default. Four PostgreSQL tables have FK retention cascades, immutable candidate revisions, exact accepted version FK, bounded raw text and durable idempotency/execution records. Real DB upgrade/retention/atomicity gates remain required.",
+    "Final whole-room processor receives only accepted frozen submission versions, exact accepted-version interpretation anchor, and the existing final analysis provider. No per-person structured AREA/group output is generated or merged. PRE_SUBMIT_V1 legacy post-batch question writes are suppressed, while legacy historical behavior stays available.",
+    "PRE_SUBMIT_V1 HOST unapplied summaries suppress other raw inputs; ambiguity reasons do not expose another participant question. Own precheck routes require READ_OWN, return no-store, and persisted observations contain bounded status/usage metadata rather than raw data in metric labels.",
+    "Existing CLOSED correction path retains expected revision/round/frozen-participant guards. Snapshot accepted.confirmation_source is derived from exact actual submission-version linkage, avoiding candidate/submission revision-clock or equal-text inference."
+  ],
+  "confirmedNewOpenFindings": [
+    {
+      "id": "S01",
+      "severity": "P2",
+      "status": "REMEDIATED_FINAL_SOURCE_AND_INDEPENDENT_TEST_BOUNDARY_VERIFIED",
+      "source": "PrecheckProcessingService.publish",
+      "finding": "Owner binding is checked before accepted SQL writes, but final guards recheck only room/check deadlines. A real session/grant can expire while accepted INSERT/bind blocks, allowing a late accepted commit under expired proof. Account claim is separately serialized by the room lock.",
+      "recommendedFix": "Revalidate binding after blocking accepted SQL/closure work; rollback all acceptance side effects on expiry and finalize stale ownership with a safe non-complete state in a separate transaction. Independent isolated PostgreSQL/clock oracle must establish the race before implementation.",
+      "sourceRemedy": "Two final owner/deadline fences throw out of transactional publish; separate rejectPublication preserves actual attempt usage and terminates only original exact version/generation/token/CHECKING claim."
+    },
+    {
+      "id": "S02",
+      "severity": "P2",
+      "status": "REMEDIATED_FINAL_SOURCE_AND_INDEPENDENT_TEST_BOUNDARY_VERIFIED",
+      "source": "PreSubmissionCheckWorker.validate / PrecheckProviderContract.boundedText",
+      "finding": "Prompt/choice label may contain escaped U+0000, which is valid JSON string data but not storable in PostgreSQL JSONB. The asynchronous publish transaction can fail and roll back attempt observations rather than producing typed INVALID_RESPONSE. Application choice IDs also need SQL-safe validation; actual Gemini IDs are canonical A/B.",
+      "scopeLimit": "No configured live provider call; default capability flag is false. Client500 or log disclosure is not asserted as an inevitable consequence.",
+      "recommendedFix": "Reject NUL in all question string fields at actual provider and application provider-result validation boundaries. No semantic regex or field-limit changes.",
+      "sourceRemedy": "Actual provider boundedText rejects NUL. Worker independently rejects NUL in prompt/excerpt/choice ID/label/proposedText and rejects full proposal identical to source. Opaque bounded distinct application IDs remain supported."
+    },
+    {
+      "id": "S03",
+      "severity": "P2",
+      "status": "REMEDIATED_FINAL_SOURCE_AND_INDEPENDENT_TEST_BOUNDARY_VERIFIED",
+      "source": "PrecheckProcessingService.claim",
+      "finding": "Claim caches now and validates proof/open/deadline before potentially waiting on global admission advisory lock. If session/grant or room deadline expires during that wait, worker fresh remaining budget checks only execution deadline, allowing an unnecessary physical provider call after proof/room expiry; publish still fences acceptance.",
+      "recommendedFix": "After admission lock acquisition, refresh clock and revalidate proof/open/execution deadline reserve, then use refreshed claimedAt/startAttempt timestamp. Preserve room-to-global lock order and existing queue/concurrency/budget policy.",
+      "sourceRemedy": "claim now runs same rejection helper before and after global admission lock; fresh clock is used for permission/open/checkdeadline reserve, inflight count and claimedAt/startAttempt."
+    },
+    {
+      "id": "S04",
+      "severity": "P2",
+      "status": "REMEDIATED_FINAL_SOURCE_AND_INDEPENDENT_TEST_BOUNDARY_VERIFIED",
+      "source": "PreSubmissionCheckService.answer / saveCandidate",
+      "finding": "Plain-create default referenceAt and DIRECT explicit referenceAt are evaluated before potentially waiting for global admission lock, but candidate.createdAt is captured after it. A wait across midnight can change the intended relative date for newly saved plain/DIRECT text. A/B intentionally inherits the old source interpretation anchor.",
+      "recommendedFix": "Derive plain/DIRECT interpretation reference from the actual candidate persistence timestamp after admission lock. Preserve explicit inherited source anchor for A/B. Independent clock/advisory-lock oracle distinguishes these paths.",
+      "sourceRemedy": "Plain/DIRECT referenceAt defaults to null and resolves to candidate persistence now after admission lock. Explicit A/B inherited referenceAt is preserved."
+    }
+  ],
+  "knownInProgressFromImplementer": [],
+  "requiredBeforeFinalCoreApproval": [],
+  "providerScopeReview": ".tdd/reviews/issue107-independent-provider-source-review.json",
+  "productionEditsByReviewer": 0,
+  "originalTestEditsByReviewer": 0,
+  "externalProviderCallsByReviewer": 0,
+  "realOAuthCallsByReviewer": 0,
+  "finalSourceFingerprints": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "5bc679e7a914e0bc3f42cc707eebd8f04c93db6eac24ebf34647db465ed13745"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt",
+      "sha256": "b2be50c647a30a39f2874c8271a71906fd8f120a9637a820ab64075bcd40c879"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleDtos.kt",
+      "sha256": "a72feba48216821cfd7328b4a87bdad540b93dcabef82a39e4402c8e8fd645eb"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomLifecycleUseCases.kt",
+      "sha256": "ddaa1e52b86fbf994e452dcca10c477045496937f49a2d77edc20e689ef1f9e4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt",
+      "sha256": "88c45ba52a5d383ed8ec622d63422a56401d24967de7b8049f817dd042f56886"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/JdbcGuestReaccessRepository.kt",
+      "sha256": "2cb17aecfb071c1b050237a4f84a1810f5a149a7b60b420fc24575e6451ebe46"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestCookieOwnershipProofAdapter.kt",
+      "sha256": "8169cd2b51a590807ad0ba4d74d4b02c1d31916219b5c0c648fe02d31c213fc0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestReaccessOwnershipProofAdapter.kt",
+      "sha256": "cb95720c91cffa61c992fb9475b2c69b899cccdd72c8ac41a74a0513961a5c31"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestOwnershipProofPort.kt",
+      "sha256": "89a93b1e6e085404f05c3c57c148b7f53074212f88b2440f56832226f32eb925"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestReaccessRepository.kt",
+      "sha256": "36369ccfc87485250f3100669ae100d3ed668a37313d255ed3f638ddd83d0132"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessService.kt",
+      "sha256": "e8f9d727f3b2951cc23a5ac82c0f5b4b9b0f2a71c714ccf18ba9c278dc20949d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessWriteGuard.kt",
+      "sha256": "093c84fd29b3f5d26b83010f66a9569785bc5cd45c7f93affecf32af306058fd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckController.kt",
+      "sha256": "72870baed0fc5d5efb34e6d53a3ddee8fa9d3d4be3ebf9e582288d52da83e8a4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckNoStoreFilter.kt",
+      "sha256": "1f22ed9cc6130694734dcc2ac6eacf5f3a76bb0cd67f28401f497977dd06e063"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckOpenApiConfiguration.kt",
+      "sha256": "4de45e40849952bc754122ec29eb8d73f72f63b30015fc131923cb745931498e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckWorkerLifecycle.kt",
+      "sha256": "23203b9193fa592eb5b4b2fdaf3b999e31747c5317427bd89d9fbb92b57822e1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/observability/PrecheckMetricsAdapter.kt",
+      "sha256": "235242955d1efc3d2ff4e58283b5355beb5388babf4cc6ebfbd2175dcd8c9083"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "sha256": "8291ef62126ba0a86c932b68bbdcc53f56b20d72d31ebcf6ce14449e79efe6ba"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt",
+      "sha256": "cdf249c54c6375083983ea5609f3c0a633172e12ceb38c70c77d2734eb618f23"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "14df35cbcda7ab31f96bd38bb717faf4828b055067b7b0118ae68461b2160155"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt",
+      "sha256": "2cd8db418bd946fcfec6446b766c9c1bbc4518db0fcd13381a761944f6524b87"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/input/PreSubmissionCheckUseCase.kt",
+      "sha256": "148de06cc47062f636378f1d8a8059ba1fa5a2c4f95c0eb70a840c5c547434da"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PreSubmissionCheckProvider.kt",
+      "sha256": "af59c2cc74d5f7fc3cbc9ede672a1e5dab700509fe785384673ddc939c51acee"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckMetricsPort.kt",
+      "sha256": "1628c0392ee5bfd6ad2f78163ed8ff8f0303a95c0ce1d55230d8c4b18d4319fd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckOwnershipBindingPort.kt",
+      "sha256": "97d1e5c390b7623d86785ef6ccdcf1e9af539d52285373914f6836446b6bc5a1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckRepository.kt",
+      "sha256": "f737ffa14f28022999039aee44bffecfa6e4751d2698a2fbd67a0d88233d7f71"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt",
+      "sha256": "327fcaea2613a4fd057bdf207e31c61f0be752adf6742f123b2864fac086b4d4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "ccc31bb2612b54abb2c450f6f7097848e55093dab5653058ca3a1adac951e764"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "b2704aaf40b22fcb58f7c9ee86b12702314cfbfe4e2fa1450d800ce37d4ffe3c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/domain/PrecheckModels.kt",
+      "sha256": "bc6053ec2580e60f76262af8a36102de26842f6def0a225521df4c387302cedd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/RateLimitFilter.kt",
+      "sha256": "33d66884003fc4b7e1e20396ebf16ba9e32e15b2104a3d67bb9b28b503a20d52"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/JdbcClarificationRepository.kt",
+      "sha256": "a43e120ca7fbfec7f27b9848703f5a640e638115e77a5f468d2f6276cc727b90"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "a1f604c41752a794ef852b0209e178fc59a3c1b2ce731c99a0271e355fed58da"
+    },
+    {
+      "path": "src/main/resources/db/migration/V16__add_pre_submission_checks.sql",
+      "sha256": "65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e"
+    }
+  ],
+  "finalSourceManifest": ".codex/tdd-evidence/issue-107-pre-submit-final-source.json",
+  "finalSourceManifestMatchesCurrent": true,
+  "defensive12FirstGreen": {
+    "observation": ".codex/tdd-evidence/precheck-defense-green/observation.json",
+    "xml": ".codex/tdd-evidence/precheck-defense-green/TEST-com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest.xml",
+    "tests": 12,
+    "failures": 0,
+    "errors": 0,
+    "testSha256": "85d318e3f3e379608ae4efe7e8c603a691b933a6c3942c105acd016374ad470b",
+    "scope": "Historical first defense phase before final admission/NUL changes. Current style supersession, final95 and fresh final formatted full guard are separately reviewed."
+  },
+  "styleSupersessionReview": {
+    "manifest": ".codex/tdd-evidence/issue-107-pre-submit-style-supersession/manifest.json",
+    "files": 3,
+    "currentAndArchivedFingerprintMismatches": 0,
+    "exactDiffRead": "Privacy2 chain wraps; Defense1 literal multiline; Rate comment ADR039→040 and mechanical formatting. No expectation, count, fixture or request path change.",
+    "chronology": "Original chronological RED remains bound to original SHA; current formatted source requires fresh GREEN and supplemental reconstructed RED/FI explicitly labeled."
+  },
+  "coverageGapResolved": "Separate Defense PS10 negative controls cover unchanged checkID/current candidate revision with stale expected_check_version for ANSWER/CANCEL/RETRY; all3 passed. Original Worker PS05 name was not used as evidence of that coverage.",
+  "formatSupersessionReview": ".tdd/verification/issue107-final-source-format-equivalence.json",
+  "focused95Green": {
+    "manifest": ".codex/tdd-evidence/precheck-final-focused/manifest.json",
+    "xmlFiles": 9,
+    "tests": 95,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "beforeAfterEntries": 44,
+    "beforeAfterAndCurrentAtPhaseMatched": true,
+    "scope": "Pre-final-format production35 + tests9 phase. Later2 main files have reviewed equivalent literal concatenation/indentation; the fresh unchanged final formatted full guard independently passed1197 tests with417 source pins unchanged."
+  },
+  "openImplementationFindings": [],
+  "finalFullGuardIndependentReview": ".tdd/reviews/issue107-independent-final-full-guard-check.json",
+  "sixFaultIndependentReview": ".tdd/reviews/issue107-independent-core-fault-final-review.json",
+  "sixFaultCanonical": ".tdd/verification/issue107-independent-core-faults-canonical.json",
+  "publicationSequence": "All independent local server pre-publication checks are closed. The existing user-authorized commit/push/Draft PR publication may proceed. Exact published HEAD CI is then required before any separately authorized merge. This is no main/deployment/actual-model-readiness approval.",
+  "backendCurrentTestProvenanceReview": ".tdd/reviews/issue107-independent-backend-format-replay-check.json",
+  "initialBoundaryAssessments": [
+    {
+      "boundary": "Canonical A/B in worker",
+      "assessment": "No production exploit: actual Gemini adapter strictly requires A/B, while application port and independently frozen worker HTTP oracles intentionally use bounded distinct AM/PM IDs. Enforcing A/B application-wide would change the already specified port contract. Do not rewrite frozen tests to accommodate it."
+    },
+    {
+      "boundary": "Proposal identical to raw",
+      "assessment": "Actual provider rejects; worker has bounded/distinct2 checks but does not repeat this adapter-specific structural guard. Optional defensive tightening requires separate oracle; do not represent as current actual-provider bypass."
+    },
+    {
+      "boundary": "Guest binding without provenance",
+      "assessment": "Current configured default adapter always supplies session/grant provenance; old GuestCookie adapter is not a registered component. No configured production exploit confirmed. Still G|owner fallback unconditionally active is fail-open for trusted/custom alternative proof implementations; independent null-provenance regression/minimal hardening is pending root decision."
+    },
+    {
+      "boundary": "checkVersion negative coverage",
+      "assessment": "Source correctly compares expectedCheckVersion. Frozen Worker PS05 name mentions stale version but actual body covers wrong question/choice only; separate old-version/same-current-candidate negative oracle recommended. Candidate-revision two-tab contract is independently covered and chosen for FI."
+    }
+  ],
+  "initialBoundaryAssessmentsScope": "Historical questions before final defensive fixes; these are not current open findings. Final resolutions are recorded below.",
+  "finalBoundaryResolutions": [
+    {
+      "boundary": "Canonical A/B in worker",
+      "resolution": "Actual Gemini requires A/B; application deliberately supports bounded distinct opaque IDs AM/PM. Preserve the specified port contract."
+    },
+    {
+      "boundary": "Proposal identical to raw",
+      "resolution": "Final worker repeats structural proposal!=raw and NUL guards; independent defense/admission controls and reconstructed assertion RED/restored GREEN validate the current boundary."
+    },
+    {
+      "boundary": "Guest binding without provenance",
+      "resolution": "Null proof fails401, present proof without provenance fails403; old guest cookie adapter now returns real expiry provenance. Final owner fences after blocking acceptance work rollback expired acceptance and preserve exact attempt accounting."
+    },
+    {
+      "boundary": "Stale expected check version",
+      "resolution": "Separate defense controls cover ANSWER/CANCEL/RETRY with stale expected_check_version while checkID/candidate remain current; original WorkerPS05 title is not used for that claim."
+    }
+  ],
+  "localApprovalLimits": [
+    "No unresolved inspected code/integration P1/P2 finding; remote published integration HEAD CI remains a post-publication gate.",
+    "Actual Gemini capability is unverified and default failclosed. Actual-model MUST_ASK/MUST_NOT_ASK semantics, accuracy, cost, p50/p95, real OAuth/Secrets/operations/deployment are unverified and outside approval.",
+    "Current-format reconstructed RED supplements are post-implementation observations, not the original chronological RED; original SHA-bound records and invalid harness failures are preserved."
+  ]
+}

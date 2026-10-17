@@ -93,6 +93,7 @@ data class RoomView(
     val remainingCorrectionAnalyses: Int = 3,
     val stateVersion: Long = 0,
     val recommendationProtocol: String? = null,
+    val submissionProtocol: String = "LEGACY",
 )
 
 data class RoomAccessResult(

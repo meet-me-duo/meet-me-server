@@ -195,6 +195,12 @@ data class RoomResponse(
     @field:JsonProperty("recommendation_protocol")
     @field:Schema(description = "활성 분석의 실제 시각 선택 protocol; legacy 또는 분석 전에는 null", nullable = true)
     val recommendationProtocol: String? = null,
+    @field:JsonProperty("clarification_protocol")
+    @field:Schema(description = "본인 보완 질문 API 지원 표지. 권한은 별도 검증", allowableValues = ["owner-clarification-v1"])
+    val clarificationProtocol: String = "owner-clarification-v1",
+    @field:JsonProperty("submission_protocol")
+    @field:Schema(description = "방 생성 시 고정된 제출 확인 흐름", allowableValues = ["LEGACY", "PRE_SUBMIT_V1"])
+    val submissionProtocol: String = "LEGACY",
 ) {
     companion object {
         fun from(view: RoomView) =
@@ -228,6 +234,7 @@ data class RoomResponse(
                 view.remainingCorrectionAnalyses,
                 view.stateVersion,
                 view.recommendationProtocol,
+                submissionProtocol = view.submissionProtocol,
             )
     }
 }

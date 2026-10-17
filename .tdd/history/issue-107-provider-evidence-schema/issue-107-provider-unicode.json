@@ -1,0 +1,28 @@
+{
+  "workItem": "issue-107-provider-unicode",
+  "recordedAt": "2026-10-17T18:52:13.862698+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderUnicodeContractTest.kt",
+      "sha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24"
+    }
+  ],
+  "tests": 2,
+  "failed": 2,
+  "errors": 0,
+  "expectedFailureCategory": "MISSING_STRUCTURAL_VALIDATION",
+  "failureSummary": "Valid JSON escaped NUL in question prompt and choice label are accepted; expected INVALID_RESPONSE before durable JSONB publication.",
+  "failures": [],
+  "command": [
+    "./gradlew",
+    "-I",
+    "/tmp/meetme-provider-only.init.gradle",
+    "test",
+    "--tests",
+    "*PrecheckProviderUnicodeContractTest",
+    "--max-workers=2"
+  ],
+  "rawLog": ".codex/tdd-evidence/issue107-provider-unicode-red.log",
+  "rawLogSha256": "4b9f6a65323f005e49747fafe4f43394258d8544dd49e0ec68b99a4f13479125",
+  "externalProviderCalls": 0
+}

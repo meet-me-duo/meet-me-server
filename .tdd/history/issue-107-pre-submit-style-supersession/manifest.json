@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-17T19:08:33.390610+00:00",
+  "reason": "Parent-approved format/comment-only final alignment. Historical chronological RED remains tied to original SHA. Current SHA requires fresh GREEN and subsequent FI/reconstructed RED explicitly labeled supplementary; no expectation changes.",
+  "files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt",
+      "originalSHA256": "669bff90933d20caf126ad0a6b8cdce6a46d82d0ccffb04d7b46c57793dafcd9",
+      "currentSHA256": "0ded3b08ddfc9cab3835e5780a23f40a206614f68354a3a02cda36ca438be548",
+      "originalSource": ".tdd/history/issue-107-pre-submit-initial48/original/PreSubmissionPrivacyQueuePostgresTest.kt",
+      "exactDiff": ".tdd/history/issue-107-pre-submit-style-supersession/PreSubmissionPrivacyQueuePostgresTest.kt.diff"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckDefensiveBoundaryPostgresTest.kt",
+      "originalSHA256": "85d318e3f3e379608ae4efe7e8c603a691b933a6c3942c105acd016374ad470b",
+      "currentSHA256": "89275de222afa014b08bb7a5ce6c89ef677fa91ed506637ab177d239c9e674cd",
+      "originalSource": ".tdd/history/issue-107-pre-submit-style-supersession/original/PrecheckDefensiveBoundaryPostgresTest.kt",
+      "exactDiff": ".tdd/history/issue-107-pre-submit-style-supersession/PrecheckDefensiveBoundaryPostgresTest.kt.diff"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckRateLimitRoutingContractTest.kt",
+      "originalSHA256": "273cd5b076a9b3c94459dff5279d3b0608efd4d1f45c54222e7238ddeb11f3f8",
+      "currentSHA256": "b056297553ad9677baf3380c6ad64d6dabc728ed10c3b7cb163cd726a30d07bc",
+      "originalSource": ".tdd/history/issue-107-pre-submit-style-supersession/original/PrecheckRateLimitRoutingContractTest.kt",
+      "exactDiff": ".tdd/history/issue-107-pre-submit-style-supersession/PrecheckRateLimitRoutingContractTest.kt.diff"
+    }
+  ],
+  "exactDiffReviewed": "Privacy2 method-chain wraps; Defense1 map literal multiline; Rate comment039→040 plus format. No assertions, expected values, fixtures, test count or request paths changed.",
+  "portableRecordedAt": "2026-10-17T19:15:54.361721+00:00",
+  "classification": "FORMAT_COMMENT_ONLY_SUPERSESSION; no assertion, fixture, path, expected value, or count changes. Original chronological RED fingerprints stay immutable.",
+  "currentGreenEvidence": ".tdd/history/issue-107-pre-submit-current-focused95/manifest.json",
+  "supplementaryFIEvidence": "Added separately by independent reviewer; not a chronological first RED."
+}

@@ -17,9 +17,9 @@ const archiveSha256 = 'c'.repeat(64);
 
 function pythonCall(name, args, module = 'approved_release.py') {
   const code = `import importlib.util,json,sys,pathlib\nsys.path.insert(0,str(pathlib.Path(sys.argv[1]).parent))\ns=importlib.util.spec_from_file_location('pipeline_contract',sys.argv[1])\nm=importlib.util.module_from_spec(s)\nsys.modules[s.name]=m\ns.loader.exec_module(m)\npayload=json.loads(sys.stdin.read())\ntry:\n result=getattr(m,payload['name'])(*payload['args'])\n print(json.dumps({'ok':True,'result':result}))\nexcept ValueError as error:\n print(json.dumps({'ok':False,'reason':str(error)}))\n`;
-  const result = cp.spawnSync('python3', ['-c', code, path.join(root, 'deploy/pipeline', module)], {
+  const result = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-c', code, path.join(root, 'deploy/pipeline', module)], {
     input: JSON.stringify({ name, args }), encoding: 'utf8', timeout: 5_000,
-    env: { PATH: process.env.PATH, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
+    env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
   });
   assert.equal(result.status, 0, 'Pure release validation must execute without main, credentials or external commands');
   assert.equal(result.stderr, '', 'Manifest validation must not emit raw metadata or diagnostics');
@@ -30,7 +30,7 @@ function archiveFixture(entries) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'meetme-release-archive-'));
   const archive = path.join(directory, 'release.tar.gz');
   const code = `import io,json,sys,tarfile\nwith tarfile.open(sys.argv[1],'w:gz') as archive:\n for entry in json.loads(sys.stdin.read()):\n  item=tarfile.TarInfo(entry['name']);kind=entry.get('kind','file')\n  data=entry.get('content','fixture').encode()\n  if kind=='dir':item.type=tarfile.DIRTYPE\n  elif kind=='symlink':item.type=tarfile.SYMTYPE;item.linkname=entry.get('link','target')\n  elif kind=='hardlink':item.type=tarfile.LNKTYPE;item.linkname=entry.get('link','target')\n  elif kind=='fifo':item.type=tarfile.FIFOTYPE\n  else:item.size=len(data)\n  archive.addfile(item,io.BytesIO(data) if kind=='file' else None)\n`;
-  const created = cp.spawnSync('python3', ['-c', code, archive], { input: JSON.stringify(entries), encoding: 'utf8', timeout: 5_000, env: { PATH: process.env.PATH, PYTHONDONTWRITEBYTECODE: '1' } });
+  const created = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-c', code, archive], { input: JSON.stringify(entries), encoding: 'utf8', timeout: 5_000, env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, PYTHONDONTWRITEBYTECODE: '1' } });
   assert.equal(created.status, 0, 'Synthetic tar metadata must be constructible without external services');
   return { archive, remove() { fs.rmSync(directory, { recursive: true, force: true }); } };
 }
@@ -63,14 +63,14 @@ const copy = value => JSON.parse(JSON.stringify(value));
 function rejected(name, args, reason) { assert.deepEqual(pythonCall(name, args), { ok: false, reason }); }
 
 test('EventBridge targets follow the documented nested AWS metadata shape and fail closed on mismatch', () => {
-  const result = cp.spawnSync('python3', ['-m', 'unittest', 'discover', '-s', 'deploy/tests', '-p', 'test_eventbridge_target_metadata.py'], {
+  const result = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-m', 'unittest', 'discover', '-s', 'deploy/tests', '-p', 'test_eventbridge_target_metadata.py'], {
     cwd: root, encoding: 'utf8', timeout: 10_000,
-    env: { PATH: process.env.PATH, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
+    env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, HOME: os.tmpdir(), PYTHONDONTWRITEBYTECODE: '1' },
   });
   assert.equal(result.status, 0, 'Correct nested target metadata must pass while wrong targets and top-level shadows remain rejected');
 });
 
-test('immutable main release metadata binds run attempt SHA digest repository archive and exact migration catalog', () => {
+test('immutable main release metadata retains historical V10 publication identity validation', () => {
   assert.deepEqual(pythonCall('validate_manifest', [manifest, expected]), { ok: true, result: { ...manifest, imageRef: `${repository}@${imageDigest}` } });
   const invalid = [
     { ...manifest, extra: 'unexpected' }, { ...manifest, buildRunId: '12346' }, { ...manifest, buildRunAttempt: '1' },
@@ -89,20 +89,21 @@ test('immutable main release metadata binds run attempt SHA digest repository ar
   invalid.push({ ...manifest, origin: { ...manifest.origin, extra: 'unexpected' } });
   for (const value of invalid) rejected('validate_manifest', [value, expected], 'UNTRUSTED_RELEASE');
   for (const field of ['buildRunId', 'buildRunAttempt', 'imageRepository']) rejected('validate_manifest', [manifest, { ...expected, [field]: 'different' }], 'UNTRUSTED_RELEASE');
+  // Current-source publication and its checksum/fingerprint oracle are tested independently
+  // in issue107-integrated-catalog.test.cjs C02; archived source expectations remain immutable.
+});
+
+test('actual integrated source publishes exactly V1 through V16 with independent source checksums', () => {
+  const integrated = require('./fixtures/integrated-release-catalog.cjs');
+  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...integrated.scripts].sort());
   const fixture = archiveFixture([{ name: 'scripts', kind: 'dir' }, { name: 'scripts/fixture.sh', content: 'fixture\n' }]);
   try {
-    const head = cp.spawnSync('git', ['-C', root, 'rev-parse', 'HEAD'], { encoding: 'utf8', env: { PATH: process.env.PATH } });
-    assert.equal(head.status, 0);
-    const sha = head.stdout.trim();
-    const built = pythonCall('build_manifest', [root, fixture.archive, { IMAGE_DIGEST: imageDigest, CI_RUN_ID: '67890', CI_SHA: sha, SOURCE_SHA: sha, BUILD_RUN_ID: '12345', BUILD_RUN_ATTEMPT: '2', ECR_REPOSITORY_URL: repository }], 'publish_manifest.py');
-    assert.equal(built.ok, true, 'The publisher must derive release metadata from the actual source catalog');
-    assert.equal(built.result.sourceSha, sha);
-    assert.equal(built.result.archiveSha256, crypto.createHash('sha256').update(fs.readFileSync(fixture.archive)).digest('hex'));
-    assert.deepEqual(built.result.migrations.map(row => row.version), Array.from({ length: 12 }, (_, index) => String(index + 1)));
-    assert.deepEqual(built.result.migrations.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -1822689491, -1574736948]);
-    assert.match(built.result.schemaFingerprint, /^[0-9a-f]{64}$/);
-    assert.match(built.result.guardFingerprint, /^[0-9a-f]{64}$/);
-    assert.equal(pythonCall('validate_manifest', [built.result, expected]).ok, true);
+    const built = pythonCall('build_manifest', [root, fixture.archive, integrated.environment], 'publish_manifest.py');
+    assert.equal(built.ok, true, 'Actual source must publish without synthetic or omitted SQL');
+    assert.deepEqual(built.result.migrations, integrated.scripts.map((script, i) => ({ version: String(i + 1), script,
+      checksum: integrated.crc(fs.readFileSync(path.join(root, 'src/main/resources/db/migration', script))) })));
+    assert.equal(built.result.archiveSha256, integrated.hash(fs.readFileSync(fixture.archive)));
+    assert.equal(integrated.validate(built.result).ok, true);
   } finally { fixture.remove(); }
 });
 

@@ -72,6 +72,8 @@ abstract class CorrectionRoundPostgresFixture {
                 .andReturn()
                 .response
         val code = document(created).getValue("invite_code").toString()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
         val host = CorrectionSession(code, hostCookie.value)
         val memberCookie = if (memberAccount) accounts.newAccount("member") else null
         val joined =

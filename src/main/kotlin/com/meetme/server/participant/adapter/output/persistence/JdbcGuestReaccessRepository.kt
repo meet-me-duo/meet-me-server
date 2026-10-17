@@ -64,6 +64,8 @@ class JdbcGuestReaccessRepository(
                         GuestProofLevel.valueOf(rs.getString("level")),
                         rs.getInt("expected_revision"),
                         rs.getTimestamp("expires_at").toInstant(),
+                        rs.getObject("expected_candidate_revision", Integer::class.java)?.toInt(),
+                        rs.getObject("grant_generation", java.util.UUID::class.java),
                     )
                 },
                 roomId.value,
@@ -75,9 +77,10 @@ class JdbcGuestReaccessRepository(
         createdAt: Instant,
     ) {
         jdbc.update(
-            """INSERT INTO guest_reaccess_grants(room_id,guest_session_id,participant_id,level,expected_revision,expires_at,created_at)
-                VALUES (?,?,?,?,?,?,?) ON CONFLICT(room_id,guest_session_id) DO UPDATE SET level=EXCLUDED.level,
-                expected_revision=EXCLUDED.expected_revision,expires_at=EXCLUDED.expires_at""",
+            """INSERT INTO guest_reaccess_grants(room_id,guest_session_id,participant_id,level,expected_revision,expires_at,created_at,expected_candidate_revision,grant_generation)
+                VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT(room_id,guest_session_id) DO UPDATE SET level=EXCLUDED.level,
+                expected_revision=EXCLUDED.expected_revision,expires_at=EXCLUDED.expires_at,
+                expected_candidate_revision=EXCLUDED.expected_candidate_revision,grant_generation=EXCLUDED.grant_generation""",
             grant.roomId.value,
             grant.sessionId.value,
             grant.participantId.value,
@@ -85,6 +88,8 @@ class JdbcGuestReaccessRepository(
             grant.expectedRevision,
             Timestamp.from(grant.expiresAt),
             Timestamp.from(createdAt),
+            grant.expectedCandidateRevision,
+            grant.generation,
         )
     }
 }

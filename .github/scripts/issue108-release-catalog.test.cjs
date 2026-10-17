@@ -106,82 +106,8 @@ function sourceRows(value) {
   });
 }
 
-test('108 R01 publisher emits exactly V1 through V12 with independent Flyway checksums and fingerprints', () => {
-  const value = fixture();
-  try {
-    const result = publish(value);
-    assert.equal(result.ok, true, 'The complete current V12 source must be publishable');
-    const rows = sourceRows(value);
-    assert.deepEqual(rows.slice(0, 11).map(row => row.checksum), oldChecksums, 'Existing eleven migration checksums remain immutable');
-    assert.equal(rows[11].script, 'V12__add_guest_reaccess.sql');
-    assert.deepEqual(result.result.migrations, rows.map(({ sha256, ...row }) => row));
-    assert.equal(result.result.schemaFingerprint, hash(canonical(rows.map(({ checksum, ...row }) => row))));
-    assert.equal(result.result.guardFingerprint, hash(canonical(guardFiles.map(name => ({ path: name, sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
-    assert.equal(result.result.archiveSha256, hash(fs.readFileSync(value.archive)));
-    assert.equal(python('validate_manifest', [result.result, expected]).ok, true);
-  } finally { value.remove(); }
-});
-
-test('108 R02 V12 SQL byte changes update source fingerprint and Flyway checksum without changing V1 through V11', () => {
-  const value = fixture();
-  try {
-    const first = publish(value);
-    assert.equal(first.ok, true);
-    fs.appendFileSync(path.join(value.migrations, 'V12__add_guest_reaccess.sql'), '\n-- independent V12 fingerprint boundary\n');
-    const changed = publish(value);
-    assert.equal(changed.ok, true);
-    assert.deepEqual(first.result.migrations.slice(0, 11), changed.result.migrations.slice(0, 11));
-    assert.notEqual(first.result.migrations[11].checksum, changed.result.migrations[11].checksum);
-    assert.notEqual(first.result.schemaFingerprint, changed.result.schemaFingerprint);
-    assert.equal(changed.result.migrations[11].checksum, sourceRows(value)[11].checksum);
-    assert.equal(first.result.guardFingerprint, changed.result.guardFingerprint);
-  } finally { value.remove(); }
-});
-
-test('108 R03 guard bytes are fingerprinted independently of the exact twelve-schema fingerprint', () => {
-  const value = fixture();
-  try {
-    const first = publish(value);
-    assert.equal(first.ok, true);
-    fs.appendFileSync(path.join(value.directory, 'deploy/scripts/deploy-release.sh'), '\n# synthetic fingerprint mutation\n');
-    const changed = publish(value);
-    assert.equal(changed.ok, true);
-    assert.notEqual(first.result.guardFingerprint, changed.result.guardFingerprint);
-    assert.equal(first.result.schemaFingerprint, changed.result.schemaFingerprint);
-  } finally { value.remove(); }
-});
-
-test('108 R04 publisher rejects missing V12 missing predecessors duplicate versions and unknown V13', () => {
-  for (const fault of ['missing-v12', 'missing-v11', 'duplicate-v12', 'unknown-v13']) {
-    const value = fixture();
-    try {
-      const v12 = path.join(value.migrations, 'V12__add_guest_reaccess.sql');
-      if (fault === 'missing-v12') fs.unlinkSync(v12);
-      if (fault === 'missing-v11') fs.unlinkSync(path.join(value.migrations, 'V11__add_accounts_and_participant_ownership.sql'));
-      if (fault === 'duplicate-v12') fs.copyFileSync(v12, path.join(value.migrations, 'V12__duplicate.sql'));
-      if (fault === 'unknown-v13') fs.copyFileSync(v12, path.join(value.migrations, 'V13__unknown.sql'));
-      assert.deepEqual(publish(value), { ok: false, reason: 'UNTRUSTED_RELEASE' }, fault);
-    } finally { value.remove(); }
-  }
-});
-
-test('108 R05 publisher rejects symlinked V12 guard files and publication archive', () => {
-  for (const fault of ['v12', 'guard', 'archive']) {
-    const value = fixture();
-    try {
-      if (fault === 'v12') {
-        const target = path.join(value.migrations, 'V12__add_guest_reaccess.sql');
-        fs.unlinkSync(target); fs.symlinkSync('V1__create_core_domain.sql', target);
-      }
-      if (fault === 'guard') {
-        const target = path.join(value.directory, 'deploy/scripts/deploy-release.sh');
-        fs.unlinkSync(target); fs.symlinkSync('rollback-release.sh', target);
-      }
-      if (fault === 'archive') { fs.unlinkSync(value.archive); fs.symlinkSync(path.join(value.migrations, 'V1__create_core_domain.sql'), value.archive); }
-      assert.deepEqual(publish(value), { ok: false, reason: 'UNTRUSTED_RELEASE' }, fault);
-    } finally { value.remove(); }
-  }
-});
+// Current publication is governed by issue107-integrated-catalog.test.cjs C01-C05.
+// Original publisher expectations are byte-preserved in .tdd/history/issue-107-integrated-catalog/.
 
 test('108 R06 manifest reader accepts exact V10 V11 and V12 while rejecting unsupported or malformed catalogs', () => {
   for (const length of [10, 11, 12]) {

@@ -1,0 +1,110 @@
+{
+  "source": "verification/integration-final-guard-results",
+  "overallGate": {
+    "tests": 888,
+    "failures": 4,
+    "errors": 0,
+    "skipped": 4,
+    "status": "FAILED; corrected focused/full rerun pending"
+  },
+  "selectedRegressions": [
+    {
+      "class": "com.meetme.server.account.adapter.input.web.AuthEndToEndPostgresTest",
+      "tests": 3,
+      "xmlSha256": "222c205176f88f5c6283755c55be8a47303ae7ed1ba534df23eb8b461c7d09d7",
+      "testNames": [
+        "refresh replay revokes latest descendant and nonexact Origin has no rotation side effect()",
+        "callback browser mismatch never reaches provider and state replay cannot issue another session()",
+        "Google and Kakao full callback refresh account identity current and all-device logout preserve boundaries()"
+      ]
+    },
+    {
+      "class": "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest",
+      "tests": 4,
+      "xmlSha256": "f981cc042a032e80cc77f42fe678b0361a5784333a71e21e8f035dab28a16fae",
+      "testNames": [
+        "signature algorithm issuer audience kid and malformed tokens fail closed()",
+        "RS256 token has kid exact fifteen minute lifetime and independently verifiable signature()",
+        "expiration boundary rejects signed token at exp and accepts the preceding second()",
+        "rotation accepts previous public key but signs with current kid()"
+      ]
+    },
+    {
+      "class": "com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest",
+      "tests": 4,
+      "xmlSha256": "1917fec75bac9c5ced85e940d67a137de9809869ea1403510b053e497152cbf0",
+      "testNames": [
+        "provider HTTP errors missing ID token and JWKS errors fail without leaking provider response()",
+        "both providers exchange exact form and validate signed subject without requiring email()",
+        "both provider authorization redirects include exact client redirect state nonce and S256 PKCE()",
+        "invalid signature kid algorithm issuer audience nonce expiry future issue subject and azp reject both providers()"
+      ]
+    },
+    {
+      "class": "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest",
+      "tests": 17,
+      "xmlSha256": "972dafc1b44699d69d71a226496f3d27df05bf33af2c8333dbc99f5459060c7c",
+      "testNames": [
+        "guest host cannot close until explicit claim and unrelated logged in account cannot ride host proof()",
+        "OpenAPI includes ownership archive and claim security error contracts()",
+        "archive lists only own host rooms and exposes created or closed anchored 30 day expiry()",
+        "claim with existing account participant conflicts without merging either record()",
+        "expired and revoked proof cannot claim and failed claims do not mutate owner()",
+        "member submission uses account without guest cookie and does not expose other member input()",
+        "simultaneous account join and guest claim either conflict or preserve the claimed participant()",
+        "archive requires login and claim requires trusted origin()",
+        "competing accounts claim guest only once and losing account never receives ownership()",
+        "member joins without reentering name and account identity wins over guest cookie()",
+        "all host endpoints require account and reject unrelated account riding legacy host cookie()",
+        "explicit claim preserves participant and submission then removes guest ownership()",
+        "host creation requires account even when guest proof and name are valid()",
+        "login and same display name never implicitly adopt guest records()",
+        "claim needs both authenticated account and valid guest ownership proof()",
+        "guest participation remains available with valid display name()",
+        "member host uses account profile without name or password and issues no guest credential()"
+      ]
+    },
+    {
+      "class": "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest",
+      "tests": 26,
+      "xmlSha256": "20f0cb167aaba5624ce355bd53710e3b6adfb65a6793f68c43e332b37c474df5",
+      "testNames": [
+        "[1] operation = \"READ_OWN\"",
+        "[2] operation = \"REPLACE_OWN\"",
+        "[1] level = VERIFIED_GUEST",
+        "[2] level = REPLACE_ONLY",
+        "[1] operation = \"READ_OWN\", level = \"VERIFIED_GUEST\", expected = \"ALLOW\"",
+        "[2] operation = \"REPLACE_OWN\", level = \"VERIFIED_GUEST\", expected = \"ALLOW\"",
+        "[3] operation = \"HOST_COMMAND\", level = \"VERIFIED_GUEST\", expected = \"ACCOUNT_REQUIRED\"",
+        "[4] operation = \"CLAIM_ACCOUNT\", level = \"VERIFIED_GUEST\", expected = \"ACCOUNT_REQUIRED\"",
+        "[5] operation = \"READ_OWN\", level = \"REPLACE_ONLY\", expected = \"GUEST_PROOF_INSUFFICIENT\"",
+        "[6] operation = \"REPLACE_OWN\", level = \"REPLACE_ONLY\", expected = \"ALLOW\"",
+        "[7] operation = \"HOST_COMMAND\", level = \"REPLACE_ONLY\", expected = \"ACCOUNT_REQUIRED\"",
+        "[8] operation = \"CLAIM_ACCOUNT\", level = \"REPLACE_ONLY\", expected = \"ACCOUNT_REQUIRED\"",
+        "[1] operation = READ_OWN",
+        "[2] operation = REPLACE_OWN",
+        "[1] operation = READ_OWN",
+        "[2] operation = REPLACE_OWN",
+        "[3] operation = HOST_COMMAND",
+        "[1] mismatch = \"proof room\"",
+        "[2] mismatch = \"loaded room\"",
+        "[3] mismatch = \"loaded id\"",
+        "[4] mismatch = \"account owned\"",
+        "[5] mismatch = \"missing participant\"",
+        "claim without account fails before the proof is consulted()",
+        "[1] operation = READ_OWN",
+        "[2] operation = REPLACE_OWN",
+        "authenticated member never gains host authority through guest host proof()"
+      ]
+    },
+    {
+      "class": "com.meetme.server.shared.adapter.output.persistence.AccountOwnershipMigrationTest",
+      "tests": 1,
+      "xmlSha256": "dbbff19ca7936c11e19a6448453ed02cb377db8f5d6af66841c937f8913b9a00",
+      "testNames": [
+        "account migration preserves legacy guest and submission while enforcing exclusive unique owners()"
+      ]
+    }
+  ],
+  "reviewerRanTests": false
+}
