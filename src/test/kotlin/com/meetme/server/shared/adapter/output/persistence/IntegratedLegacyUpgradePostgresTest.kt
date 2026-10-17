@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Existing V8 rows survive V9 recommendations, V10 invocations and V11 account ownership without automatic linking. */
+/** Existing V8 rows survive V9/V10/V11 and V14/V15 metadata without automatic linking or reanalysis. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,17 +18,17 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly eleven versions and validates both independent legacy schemas`() {
-        assertEquals(11, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly thirteen versions and validates both independent legacy schemas`() {
+        assertEquals(13, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "11",
+            "15",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("11", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("13", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
@@ -47,7 +47,7 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(3, flyway().migrate().migrationsExecuted)
+        assertEquals(5, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")

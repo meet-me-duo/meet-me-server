@@ -6,7 +6,8 @@ const cp = require('node:child_process');
 const crypto = require('node:crypto');
 const test = require('node:test');
 
-// Issue #109 approved offline release contract: publish exact V1..V11; retain immutable V10 consumption.
+// Issue #109 immutable V10/V11 consumption is retained. Current source publication is superseded
+// by issue #110's exact V1..V11 + V14/V15 catalog; originals are in .tdd/history/issue-110-catalog/.
 // No AWS, Docker, production host read, deployment, credentials or service mutation is performed.
 const root = path.resolve(__dirname, '../..');
 const repository = '123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/meet-me';
@@ -29,11 +30,11 @@ function python(name, args, module = 'approved_release.py', hostRecord = false) 
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'meetme-109-release-read-'));
   const fixture = path.join(directory, 'synthetic-record.json');
   fs.writeFileSync(fixture, '{}');
-  const code = `import importlib.util,json,sys,pathlib\nsys.path.insert(0,str(pathlib.Path(sys.argv[1]).parent))\ns=importlib.util.spec_from_file_location('offline_contract',sys.argv[1])\nm=importlib.util.module_from_spec(s);sys.modules[s.name]=m;s.loader.exec_module(m)\np=json.loads(sys.stdin.read())\nif p['hostRecord']:\n m.CONTRACT=pathlib.Path(sys.argv[2])\n m._bytes=lambda *_:json.dumps(p['args'][0]).encode('utf-8')\ntry:\n result=m._record() if p['hostRecord'] else getattr(m,p['name'])(*p['args'])\n print(json.dumps({'ok':True,'result':result}))\nexcept ValueError as error:\n print(json.dumps({'ok':False,'reason':str(error)}))\n`;
+  const code = `import importlib.util,json,sys,pathlib,types\nif sys.platform=='win32' and sys.argv[1].endswith('host-approved-release.py'):sys.modules['fcntl']=types.ModuleType('fcntl')\nsys.path.insert(0,str(pathlib.Path(sys.argv[1]).parent))\ns=importlib.util.spec_from_file_location('offline_contract',sys.argv[1])\nm=importlib.util.module_from_spec(s);sys.modules[s.name]=m;s.loader.exec_module(m)\np=json.loads(sys.stdin.read())\nif p['hostRecord']:\n m.CONTRACT=pathlib.Path(sys.argv[2])\n m._bytes=lambda *_:json.dumps(p['args'][0]).encode('utf-8')\ntry:\n result=m._record() if p['hostRecord'] else getattr(m,p['name'])(*p['args'])\n print(json.dumps({'ok':True,'result':result}))\nexcept ValueError as error:\n print(json.dumps({'ok':False,'reason':str(error)}))\n`;
   try {
-    const result = cp.spawnSync('python3', ['-c', code, path.join(root, 'deploy/pipeline', module), fixture], {
+    const result = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-c', code, path.join(root, 'deploy/pipeline', module), fixture], {
       input: JSON.stringify({ name, args, hostRecord }), encoding: 'utf8', timeout: 5_000,
-      env: { PATH: process.env.PATH, HOME: directory, PYTHONDONTWRITEBYTECODE: '1' },
+      env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, HOME: directory, PYTHONDONTWRITEBYTECODE: '1' },
     });
     assert.equal(result.status, 0, 'Offline contract must execute without parser/setup failures or external commands');
     assert.equal(result.stderr, '', 'Offline validation must not emit metadata diagnostics');
@@ -96,18 +97,18 @@ function flywayCrc(raw) {
   return (crc ^ 0xffffffff) | 0;
 }
 
-test('V11 publisher derives exact eleven source migrations, Flyway checksums and source fingerprints', () => {
+test('current integrated publisher derives exact V1..V11 plus V14/V15 source checksums and fingerprints', () => {
   const value = fixture();
   try {
     const result = publish(value);
-    assert.equal(result.ok, true, 'Actual V11 source must be publishable without dropping the new migration');
-    const expectedRows = Array.from({ length: 11 }, (_, i) => {
-      const version = String(i + 1);
+    assert.equal(result.ok, true, 'Current integrated source must publish all thirteen migrations');
+    const expectedRows = [...Array.from({ length: 11 }, (_, i) => i + 1), 14, 15].map(number => {
+      const version = String(number);
       const script = fs.readdirSync(value.migrations).find(name => name.startsWith(`V${version}__`));
       const raw = fs.readFileSync(path.join(value.migrations, script));
       return { version, script, checksum: flywayCrc(raw), sha256: hashes(raw) };
     });
-    assert.deepEqual(expectedRows.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -1822689491]);
+    assert.deepEqual(expectedRows.map(row => row.checksum), [751905489, -717392933, -1899585498, 1674511551, -809392941, 1476091850, -273770541, 79860964, 1241531971, 40203105, -1822689491, 1718407698, -1216068646]);
     assert.deepEqual(result.result.migrations, expectedRows.map(({ sha256, ...row }) => row));
     assert.equal(result.result.schemaFingerprint, hashes(canonical(expectedRows.map(({ checksum, ...row }) => row))));
     assert.equal(result.result.guardFingerprint, hashes(canonical(guardFiles.map(name => ({ path: name, sha256: hashes(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
@@ -116,12 +117,12 @@ test('V11 publisher derives exact eleven source migrations, Flyway checksums and
   } finally { value.remove(); }
 });
 
-test('publisher rejects V10-only source, duplicate versions, unknown V12 and symlinked V11', () => {
+test('current integrated publisher rejects missing V14, duplicate versions, unknown V12 and symlinked V11', () => {
   for (const fault of ['missing', 'duplicate', 'unknown', 'symlink']) {
     const value = fixture();
     try {
       const v11 = path.join(value.migrations, 'V11__add_accounts_and_participant_ownership.sql');
-      if (fault === 'missing') fs.unlinkSync(v11);
+      if (fault === 'missing') fs.unlinkSync(path.join(value.migrations, 'V14__add_operator_access_audits.sql'));
       if (fault === 'duplicate') fs.copyFileSync(v11, path.join(value.migrations, 'V11__duplicate.sql'));
       if (fault === 'unknown') fs.renameSync(v11, path.join(value.migrations, 'V12__unknown.sql'));
       if (fault === 'symlink') { fs.unlinkSync(v11); fs.symlinkSync('V1__create_core_domain.sql', v11); }

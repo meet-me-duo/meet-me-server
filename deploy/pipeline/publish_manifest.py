@@ -20,6 +20,16 @@ GUARD_FILES = tuple(sorted((
     "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java",
 )))
 
+MIGRATION_SCRIPTS = (
+    'V1__create_core_domain.sql', 'V2__add_anonymous_room_lifecycle.sql',
+    'V3__add_submission_gemini_pipeline.sql', 'V4__add_matching_results.sql',
+    'V5__remove_meeting_duration.sql', 'V6__add_reliable_outbox_processing.sql',
+    'V7__resume_delayed_matching_from_structuring.sql', 'V8__add_input_revision_rounds.sql',
+    'V9__add_time_recommendations.sql', 'V10__add_bounded_analysis_invocations.sql',
+    'V11__add_accounts_and_participant_ownership.sql',
+    'V14__add_operator_access_audits.sql', 'V15__add_parser_transport_observations.sql',
+)
+
 
 def canonical_bytes(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
@@ -43,30 +53,45 @@ def flyway_checksum(raw):
         raise ValueError("UNTRUSTED_RELEASE") from None
 
 
+def source_path(root, relative, directory=False):
+    """Reject source links before reading bytes, including every in-repository ancestor."""
+    if not root.is_dir() or root.is_symlink():
+        raise ValueError("UNTRUSTED_RELEASE")
+    path = root
+    parts = Path(relative).parts
+    for index, part in enumerate(parts):
+        path = path / part
+        is_directory = index < len(parts) - 1 or directory
+        if path.is_symlink() or not (path.is_dir() if is_directory else path.is_file()):
+            raise ValueError("UNTRUSTED_RELEASE")
+    return path
+
+
 def build_manifest(repo_root, archive_path, environment):
     try:
         root = Path(repo_root)
         archive = Path(archive_path)
         if not archive.is_file() or archive.is_symlink():
             raise ValueError()
-        migration_directory = root / "src/main/resources/db/migration"
-        paths = list(migration_directory.glob("V*__*.sql"))
+        migration_directory = source_path(root, "src/main/resources/db/migration", directory=True)
+        paths = list(migration_directory.iterdir())
         rows, catalog = [], []
-        if len(paths) != 11:
+        scripts = tuple(name for name in MIGRATION_SCRIPTS
+                        if name != 'V11__add_accounts_and_participant_ownership.sql'
+                        or (migration_directory / name).exists())
+        if {path.name for path in paths} != set(scripts):
             raise ValueError()
-        for version in range(1, 12):
-            matches = [path for path in paths if re.fullmatch(rf"V{version}__[A-Za-z0-9_]+\.sql", path.name)]
-            if len(matches) != 1 or matches[0].is_symlink():
+        for script in scripts:
+            path = migration_directory / script
+            version = script.split('__', 1)[0][1:]
+            if not path.is_file() or path.is_symlink():
                 raise ValueError()
-            path = matches[0]
             raw = path.read_bytes()
             rows.append({"version": str(version), "script": path.name, "checksum": flyway_checksum(raw)})
             catalog.append({"version": str(version), "script": path.name, "sha256": hashlib.sha256(raw).hexdigest()})
         guard_catalog = []
         for relative in GUARD_FILES:
-            path = root / "deploy" / relative
-            if not path.is_file() or path.is_symlink():
-                raise ValueError()
+            path = source_path(root, Path("deploy") / relative)
             guard_catalog.append({"path": relative, "sha256": file_sha256(path)})
         source_sha = environment["SOURCE_SHA"]
         run_id, attempt = environment["BUILD_RUN_ID"], environment["BUILD_RUN_ATTEMPT"]

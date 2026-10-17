@@ -1,0 +1,31 @@
+{
+  "workItem": "issue-110",
+  "repo": "meet-me-server-110-integration",
+  "files": [
+    {
+      "testFile": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "originalCopy": ".tdd/history/issue-110-full-gate-contract-reconciliation/CorePersistenceIntegrationTest.before.kt",
+      "beforeSha256": "7540425cc79717c5ffde50be6398001f4a35675023f966037c60906f4ed6a26d",
+      "sourceUnchanged": true
+    },
+    {
+      "testFile": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "originalCopy": ".tdd/history/issue-110-full-gate-contract-reconciliation/IntegratedLegacyUpgradePostgresTest.before.kt",
+      "beforeSha256": "787a72c1f2b065ddbf93781563dc76fc45fe0754d8075a284a0472f64e662eda",
+      "sourceUnchanged": true
+    },
+    {
+      "testFile": "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryPostgresTest.kt",
+      "originalCopy": ".tdd/history/issue-110-full-gate-contract-reconciliation/OperatorQueryPostgresTest.before.kt",
+      "beforeSha256": "b29af39d0f46426a3e37403eec7c1d4ee0d098bb3033e5c3873042a75e9248a9",
+      "sourceUnchanged": true
+    }
+  ],
+  "proposedCorrection": "Core current version 11 -> 15. Legacy blank count 11 -> 13, current version 11 -> 15, successful history count 11 -> 13, V8 upgrade count 3 -> 5. Keep all business snapshot/ownership assertions. Projection fixture uses syntactically malformed Bearer to test deterministic 401 without signing infrastructure; do not weaken expected status to 503.",
+  "status": "proposal only; test source unchanged while full gate is running",
+  "evidenceStatus": "candidate failures reported from active daemon; final JUnit and gate result pending",
+  "redEvidenceAccepted": false,
+  "gateLog": "verification/integration-final-guard.log",
+  "actualAccountContract": "RequestCurrentAccountAdapter verifies syntactically valid Bearer through AccessTokenPort. With no signing configuration that port returns AUTH_UNAVAILABLE, not AUTH_ACCESS_INVALID. Syntax-invalid Bearer rejects before token verification.",
+  "priorRedPolicy": "Preserve original test bytes and historical RED; changed input invalidates old per-file RED for this contract and needs current focused verification/fault evidence."
+}

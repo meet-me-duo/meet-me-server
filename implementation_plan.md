@@ -14,8 +14,41 @@
 
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-15
+> **최종 갱신:** 2026-10-17
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
+
+## #110 전담 완료 목표 — 운영자 요약 조회 (2026-10-17 재개, 목표 2026-10-18)
+
+### 실제 #109 통합 후속 기록
+
+- `[USER]` 후속 승인 범위는 feature commit·push·Draft PR·게시 HEAD CI까지다. Meet me 병합·배포·AWS/SSM·운영 DB·실제 키/운영자 등록은 제외한다. 과거 운영 조회 승인은 이 작업에 재사용하지 않는다.
+- `[AGENT]` 실제 서버 #109 `c06b60a9833ae77e5fce9cfef5719ab2f37470ff`와 웹 `95f09c0a98c6538b0f19ed381fdf11a2f5b844d9` 위에 별도 통합 브랜치를 만들었다. 원래 서버 미커밋 작업과 웹 PR26은 보존했다. 실제 `CurrentAccountPort`를 사용하며 계약 중복 정의는 없다.
+- `[AGENT]` 읽기 전용 요약·기본 거부 account UUID allowlist·최소 접근 감사 V14·보관기간 30일 구성·로컬 transport V15·웹 화면을 구현했다. 인증 invalid401/인프라503을 게스트로 낮추지 않는다. 원문/응답/URL/헤더/secret은 요약에 없으며 usage unknown과 부분 합계, 논리 실행/승인/dispatch/local call은 구분한다. 공급자 수신·청구·exactly-once를 주장하지 않는다.
+- `[AGENT]` 실제 소켓 HTTP14+마이그레이션1 GREEN; 웹 단위415와 production 브라우저395+기존skip1, 실제 격리 API 연결8검사 PASS. 실제 OAuth 공급자 로그인이나 운영 활성화가 아니다. 웹 Draft PR29 HEAD `ab25c6f8008cba191f2cf96dfb171b189f32a66f`, CI39054110586 성공이며 원시 로그에서도415/395+skip1을 확인했다.
+- `[AGENT]` Linux catalog/Nginx32와 Windows 실제 Git approval7 PASS. Nginx 실제 로컬 HTTP 투영에서 callback502 두 건과 사전 location 파싱400의 code/state 미노출을 확인했다(TLS·운영 검증 아님). 메모리 연동 결함2, catalog/log 결함3, 인증 상태 결함1을 assertion으로 검출하고 원본과 테스트 지문을 복원했다. 기존 단독 transport 변이 기록과 합산하지 않는다.
+- `[AGENT]` 첫 전체888개 실행은 고정 마이그레이션 기대값3건과 미구성 인증 대역1건으로4실패/오류0/기존skip4였다. UTF-8/CP949 출력 오류도 별도로 보존했다. 독립 작성자가 기존 보존/인가 assertion을 유지해 정정했으며 수정 전 bytes·SHA·실패 XML은 `.tdd/history/issue-110-full-gate-contract-reconciliation`에 기록했다. 수정 후 대상20개+ktlintCheck PASS, 전체 원본 commit guard 재검증은 진행 중이다.
+- `[SHARED]` #107+#109 PR117/웹PR28, #108과의 중앙 통합은 이 단위에 포함하지 않는다. V11=109/V12=108/V13=107/V14·15=110이며 현재 strict catalog는12·13을 의도적으로 거부한다. 실제 파일·checksum·history·approval fingerprint를 함께 확장해야 한다. 상세 인계는 `docs/ISSUE_110_HANDOFF.md`를 따른다.
+- `[AGENT]` 정정 후 원본 commit guard(수정 없음)가 17:36:05–17:43:54 UTC exit0으로 통과했다. fresh150 suite/888개 중884 PASS/기존skip4/실패0/오류0이며 이전 실패 실행을 합산하지 않는다. hook self-test·ktlintCheck·assemble·test를 실행했고, 증거·189 source raw/LF 지문·초기 frozen 테스트2개 유지·이전 실패 분류는 `docs/verification/issue-110-integration-final.json`에 봉인했다. 서버 게시 HEAD CI는 다음 단계이며 운영 접근/설정 변경은 없다.
+
+- `[USER]` 이 세션은 #110만 맡으며 내부 세부 결정은 dot에 위임됐다. 서버·웹 전체 구현, 합성/로컬 테스트와 독립 리뷰를 진행한다. push·병합·운영 설정·배포와 실제 운영자 등록은 별도 승인 전 실행하지 않는다. 전용 goal 도구는 없어 이 기록과 실행 계획으로 완료 기준을 관리한다.
+- `[USER]` 확정 정책은 일반 HOST·회원·게스트와 분리된 명시적 운영자 allowlist, 기본 접근 거부, 원문·응답·비밀정보 없는 요약, 접근 감사다. 감사 보존기간은 구성 가능하며 초기 목표는 30일이다. 실제 계정 지정과 실제 보존 설정 적용은 외부 적용 전에 확인한다. 기존 방 데이터 30일 정책은 바꾸지 않는다.
+- `[AGENT]` 최소 GET 3개로 방 목록 → 현재 방 설정/실행 이력 → 한 실행의 승인 시도/사용량 확인 범위를 연결한다. V10 승인 이력으로 실제 HTTP·청구 횟수를 단정하지 않고, 과거 버전·재시도·폴백·수정 분석·V8 REUSED를 구분한다. 운영자 인가 전에 대상 존재 여부를 조회하지 않으며 감사 저장 실패 시 보호 데이터를 반환하지 않는다.
+- [x] `[AGENT]` 최신 #110 OPEN/댓글 없음과 #20·#96 CLOSED를 기존 GitHub 인증으로 읽어 확정 요구와 기존 구현을 대조했다. 기존 내부 계측 4제품·2테스트와 검증 근거를 보존했다.
+- [ ] `[AGENT]` 독립 테스트 작성자가 설계한 인가·조회·감사·보존 RED/GREEN 및 실제 PostgreSQL 검증
+- [ ] `[AGENT]` 최소 운영자 화면·typed API·비민감 표시/거부·캐시 폐기와 대역 브라우저 검증
+- [ ] `[AGENT]` 생성 OpenAPI와 웹 계약 일치, 전체 필수 품질 게이트, 독립 리뷰·의도적 결함 탐지
+- `[SHARED]` #109 공통의 검증된 사용자 식별 포트와 Flyway 번호 배정은 연계 확인 중이다. 계약이 없으면 누구도 자동 운영자가 되지 않으며 요청 헤더/쿠키/파라미터가 주장하는 ID를 신뢰하지 않는다. 기존 `SubmissionService.kt`는 이 작업에서 변경하지 않는다.
+
+## 후속 #110 내부 분석 계측 보완 (2026-10-17)
+
+- `[AGENT]` #107~#110과 웹 #22를 실제 조회했다. 웹 #22 핵심 흐름은 현재 웹 main에 반영돼 있으며, 서버는 develop `3232128`에서 분기한 별도 작업 복사본 `feature/110-analysis-observation-summary`를 사용한다. 기존 저장소의 미커밋 변경은 보존한다.
+- `[AGENT]` 이번 단위는 내부 계측에 한정한다. 승인된 시도와 파서 dispatch를 분리하고, provider별 token·비용의 known/unknown 확인 범위를 기록한다. 파서 dispatch를 실제 HTTP 또는 청구된 호출 수로 간주하지 않는다. 기존 Gemini 배치 비용은 모든 dispatch의 Gemini 비용이 확인된 경우에만 전체 합계로 전달한다.
+- [x] `[AGENT]` 구현자와 분리된 테스트 설계 및 유효한 RED 증거: 새 15개 중 누락 동작 14개 실패, 허용 필드 경계 1개 통과. `.tdd/red/issue-110-analysis-observation.json`과 로컬 제외 로그에 보존했다.
+- [x] `[AGENT]` 최소 구현과 대상 테스트 GREEN: 새 15개와 기존 Gemini 처리 3개, 합계 18개 PASS/실패 0/스킵 0. 독립 정적 리뷰에서 차단 결함이 발견되지 않았다.
+- [x] `[AGENT]` 최종 `--offline --no-daemon ktlintCheck assemble test` Gradle exit 0/8m39s. 전체 113 suite/678 test 중 674 PASS/기존 opt-in skip 4/실패 0/오류 0이다. 첫 실행의 연결 단절 및 부분 77개 결과는 별도 보존했고 전체 통과로 집계하지 않았다. 종료 후 보조 실행기의 CP949 콘솔 출력 오류는 저장된 Gradle exit 0·성공 로그·완료 XML과 분리 확인했다.
+- [x] `[AGENT]` 고의 결함 3종을 assertion으로 탐지하고 제품 원본 바이트·테스트 지문을 복원·유지했다. 독립 최종 리뷰가 전체 XML 113개·로그·지문·스킵 조건과 `SubmissionService.kt`의 기준 커밋 동일성을 확인했으며 차단 결함은 없다. 근거는 `docs/verification/issue-110-local.md`와 작업 복사본 상위 `verification/issue-110-final-evidence.json`, `issue-110-independent-review.md`에 보존했다. 공유 Docker 엔진 재시작·종료·전체 컨테이너 정리와 원격 쓰기는 없다.
+- `[USER]` 운영자 권한·최소 조회 정보·보관기간은 TBD다. 신규 조회 API·웹 운영 화면·외부 telemetry 전송은 이번에 추가하지 않는다. #107 질문 시점/미응답, #108 중복 이름/분실/계정 연결, #109 익명 방 귀속/공급자/보관 정책도 확정하지 않는다.
+- `[SHARED]` 이 단위는 #110 전체 완료가 아니다. 실제 AI·운영 방 생성·운영 쓰기·보안 설정·병합·배포와 원격 게시 권한으로 확장하지 않는다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), 확정된 장기 결정은 [`docs/ADR.md`](docs/ADR.md)를

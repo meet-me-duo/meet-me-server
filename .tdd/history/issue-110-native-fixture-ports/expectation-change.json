@@ -1,0 +1,16 @@
+{
+  "workItem": "issue-110-account-109-integration",
+  "source109": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "testFile": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthEndToEndPostgresTest.kt",
+  "originalCopy": ".tdd/history/issue-110-native-fixture-ports/AuthEndToEndPostgresTest.before.kt",
+  "beforeSha256": "f26034f63e414bf1036b1742c8883860d8089f419a5280b42b8a51de62f930bf",
+  "afterSha256": "f23ad0ff0e68516250c3932fd52bf8dd4b2143633cd2d0a6b414c1eab870e6f8",
+  "originalTestMethodsUnchanged": true,
+  "defaultApiPort": 8080,
+  "defaultWebPort": 5173,
+  "issue110ApiPort": 18910,
+  "issue110WebPort": 18911,
+  "reason": "Local 8080 is occupied by another task. Parameterize only the test fixture server and synthetic provider redirect prefix to isolate native browser verification. Preserve existing default entrypoint and test assertions.",
+  "executed": false,
+  "evidenceKind": "test fixture isolation improvement; not RED for product behavior"
+}

@@ -19,6 +19,7 @@ data class NaturalLanguageBatchRequest(
     val searchEndDate: LocalDate,
     val inputs: List<NaturalLanguageInput>,
     val callTimeout: Duration = Duration.ofSeconds(15),
+    val observationContext: ParserObservationContext? = null,
 )
 
 data class ParserUsage(

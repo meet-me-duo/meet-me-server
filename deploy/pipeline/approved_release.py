@@ -23,6 +23,19 @@ REPOSITORY_PATTERN = (
     r"[A-Za-z0-9][A-Za-z0-9._/-]*"
 )
 
+LEGACY_CATALOGS = (tuple(range(1, 11)), tuple(range(1, 12)))
+NEW_CATALOGS = (tuple(range(1, 11)) + (14, 15), tuple(range(1, 12)) + (14, 15))
+COMPLETE_CATALOGS = LEGACY_CATALOGS + NEW_CATALOGS
+MIGRATION_NAMES = (
+    'create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
+    'add_matching_results', 'remove_meeting_duration', 'add_reliable_outbox_processing',
+    'resume_delayed_matching_from_structuring', 'add_input_revision_rounds',
+    'add_time_recommendations', 'add_bounded_analysis_invocations',
+    'add_accounts_and_participant_ownership',
+)
+MIGRATION_SCRIPTS = {version: f'V{version}__{name}.sql' for version, name in enumerate(MIGRATION_NAMES, 1)}
+MIGRATION_SCRIPTS.update({14: 'V14__add_operator_access_audits.sql', 15: 'V15__add_parser_transport_observations.sql'})
+
 
 def _require(condition):
     if not condition:
@@ -49,14 +62,20 @@ def _fingerprints(value):
 
 
 def _migration_rows(rows, history=False):
-    _require(type(rows) is list and (7 <= len(rows) <= 11 if history else len(rows) in (10, 11)))
+    _require(type(rows) is list)
+    versions = tuple(row.get('version') if type(row) is dict else None for row in rows)
+    catalogs = tuple(tuple(str(version) for version in catalog) for catalog in COMPLETE_CATALOGS)
+    _require(any(versions == catalog[:len(rows)] for catalog in catalogs) and len(rows) >= 7
+             if history else versions in catalogs)
     fields = {"version", "script", "checksum"}
     if history:
         fields |= {"success"}
-    for index, row in enumerate(rows, 1):
+    sparse = '14' in versions or '15' in versions
+    for row in rows:
         _object(row, fields)
-        _require(row["version"] == str(index))
-        _require(_matches(row["script"], rf"V{index}__[A-Za-z0-9_]+\.sql"))
+        version = int(row['version'])
+        _require(row['script'] == MIGRATION_SCRIPTS[version] if sparse
+                 else _matches(row['script'], rf'V{version}__[A-Za-z0-9_]+\.sql'))
         _require(type(row["checksum"]) is int and -(2 ** 31) <= row["checksum"] < 2 ** 31)
         if history:
             _require(row["success"] is True)
@@ -126,7 +145,7 @@ def validate_deploy_facts(manifest, facts, action, approve_first_transition=Fals
             _run_identity(record)
             _fingerprints(record)
             _migration_rows(record["history"], history=True)
-            _require(len(record["history"]) in (10, 11))
+            _require(tuple(int(row['version']) for row in record['history']) in COMPLETE_CATALOGS)
             _image(record["currentImage"], manifest["imageRepository"])
 
         same_contract = (
