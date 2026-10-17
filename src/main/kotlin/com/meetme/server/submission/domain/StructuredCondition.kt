@@ -88,6 +88,7 @@ data class StructuredSubmissionResult(
     val submissionVersionId: com.meetme.server.shared.domain.SubmissionVersionId,
     val conditions: List<StructuredCondition>,
     val rejectionCode: String?,
+    val clarification: ClarificationProposal? = null,
 ) {
     init {
         require(conditions.size <= 32)

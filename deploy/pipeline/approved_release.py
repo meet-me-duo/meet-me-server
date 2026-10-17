@@ -49,14 +49,18 @@ def _fingerprints(value):
 
 
 def _migration_rows(rows, history=False):
-    _require(type(rows) is list and (7 <= len(rows) <= 11 if history else len(rows) in (10, 11)))
+    _require(type(rows) is list and (7 <= len(rows) <= 256 if history else 10 <= len(rows) <= 256))
     fields = {"version", "script", "checksum"}
     if history:
         fields |= {"success"}
+    previous = 0
     for index, row in enumerate(rows, 1):
         _object(row, fields)
-        _require(row["version"] == str(index))
-        _require(_matches(row["script"], rf"V{index}__[A-Za-z0-9_]+\.sql"))
+        _require(_matches(row["version"], r"[1-9][0-9]{0,9}"))
+        version = int(row["version"])
+        _require(version > previous and (index > (7 if history else 10) or version == index))
+        previous = version
+        _require(_matches(row["script"], rf"V{version}__[A-Za-z0-9_]+\.sql"))
         _require(type(row["checksum"]) is int and -(2 ** 31) <= row["checksum"] < 2 ** 31)
         if history:
             _require(row["success"] is True)
@@ -126,7 +130,8 @@ def validate_deploy_facts(manifest, facts, action, approve_first_transition=Fals
             _run_identity(record)
             _fingerprints(record)
             _migration_rows(record["history"], history=True)
-            _require(len(record["history"]) in (10, 11))
+            _require([row["version"] for row in record["history"][:10]] == [str(version) for version in range(1, 11)])
+            _require(10 <= len(record["history"]) <= 256)
             _image(record["currentImage"], manifest["imageRepository"])
 
         same_contract = (

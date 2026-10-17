@@ -64,14 +64,19 @@ class CandidateScenarioMatrixTest {
         fixture.structured = GeminiNaturalLanguageParserAdapter(GeminiProperties(), mapper).parseProviderResponse(provider, request)
         val availability =
             fixture.structured.map {
-                TimeRangeMatcher.calculateAvailability(
-                    it.conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
-                    emptyList(),
-                    emptyList(),
-                    emptyList(),
-                    fixture.room.searchRange,
-                    fixture.room.timeZone,
-                )
+                // Issue #107: unresolved ambiguity has no availability; empty conditions are not neutral all-day input.
+                if (it.rejectionCode in setOf("AMBIGUOUS_INPUT", "AMBIGUOUS_TIME_CONSTRAINT")) {
+                    emptyList()
+                } else {
+                    TimeRangeMatcher.calculateAvailability(
+                        it.conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
+                        emptyList(),
+                        emptyList(),
+                        emptyList(),
+                        fixture.room.searchRange,
+                        fixture.room.timeZone,
+                    )
+                }
             }
         val commonTimes = availability.reduce(TimeRangeMatcher::intersect)
         val areas =
@@ -275,8 +280,8 @@ class CandidateScenarioMatrixTest {
                     remote,
                     listOf("적당한 시간에 학교 근처", "9월 21일 19~21시 강남역"),
                     listOf(emptyList(), one),
-                    listOf("B"),
-                    oneRange,
+                    emptyList(),
+                    emptyList(),
                     rejected = setOf(0),
                     quality = CandidateQuality.PARTIAL,
                 ),

@@ -185,6 +185,9 @@ class JdbcStructuredSubmissionRepository(
                 result.rejectionCode,
                 processedAt.atOffset(ZoneOffset.UTC),
             )
+            result.clarification?.let {
+                JdbcClarificationRepository(jdbcTemplate, objectMapper).record(result.submissionVersionId, it, processedAt)
+            }
         }
     }
 

@@ -236,7 +236,7 @@ class MatchingProcessor(
     private companion object {
         // These inputs contain time restrictions that the flat condition schema cannot preserve.
         // Keeping them in the participant total while declining availability prevents invented attendance.
-        val UNSAFE_TIME_REASONS = setOf("UNSUPPORTED_CONDITIONAL_CONSTRAINT", "AMBIGUOUS_TIME_CONSTRAINT")
+        val UNSAFE_TIME_REASONS = setOf("UNSUPPORTED_CONDITIONAL_CONSTRAINT", "AMBIGUOUS_TIME_CONSTRAINT", "AMBIGUOUS_INPUT")
     }
 }
 

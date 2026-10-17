@@ -49,6 +49,7 @@ import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.application.service.ClarificationService
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -108,6 +109,7 @@ class MatchingResultService(
         return submissions.mapNotNull { submission ->
             val result = structured[submission.latest.id] ?: return@mapNotNull null
             val reason = result.rejectionCode ?: placeFailures[submission.latest.id]?.firstOrNull()?.status?.name ?: return@mapNotNull null
+            if (reason in ClarificationService.AMBIGUITY_REASONS && submission.participantId != viewer.id) return@mapNotNull null
             val rawText = submission.latest.rawText
             val owner = participantRepository.findById(submission.participantId) ?: return@mapNotNull null
             UnappliedInputView(owner.displayName.value, rawText?.toPlainText(), reason)
