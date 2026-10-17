@@ -200,10 +200,14 @@ def _record():
         _require(type(record[key]) is str and re.fullmatch(r'[1-9][0-9]{0,19}', record[key]))
     _require(type(record['currentImage']) is str and re.fullmatch(
         r'[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(?:\.cn)?/[A-Za-z0-9][A-Za-z0-9._/-]*@sha256:[0-9a-f]{64}', record['currentImage']))
-    _require(type(record['history']) is list and len(record['history']) == 10)
-    for version, row in enumerate(record['history'], 1):
+    _require(type(record['history']) is list and 10 <= len(record['history']) <= 256)
+    previous = 0
+    for index, row in enumerate(record['history'], 1):
         _require(type(row) is dict and set(row) == {'version', 'script', 'checksum', 'success'})
-        _require(row['version'] == str(version) and row['success'] is True)
+        _require(type(row['version']) is str and re.fullmatch(r'[1-9][0-9]{0,9}', row['version']))
+        version = int(row['version'])
+        _require(version > previous and (index > 10 or version == index) and row['success'] is True)
+        previous = version
         _require(type(row['script']) is str and re.fullmatch(rf'V{version}__[A-Za-z0-9_]+\.sql', row['script']))
         _require(type(row['checksum']) is int and -(2 ** 31) <= row['checksum'] < 2 ** 31)
     return record

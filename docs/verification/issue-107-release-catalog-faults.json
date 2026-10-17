@@ -1,0 +1,91 @@
+{
+  "workItem": "issue-107-release-catalog",
+  "baselineExitCode": 0,
+  "baselineLog": "/tmp/issue107-release-catalog-fi-baseline.log",
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "d9c3d10b4ccc872860475dfbe452a0833bd7fd830453ec697e2a4121c3183a4f"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "8719bb03a24d4e60be614c9219e954c87d1e002c2597114e95eb8fbce08ae5e3"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6efc9cf7dc34ddd0332e29174a9ba8b46eb2f2d9b100c9d0d9e649815338755e"
+    }
+  ],
+  "testFile": {
+    "path": "deploy/tests/test_issue107_release_catalog.py",
+    "sha256": "2b2d467fd5a1be9e7ce1ce1f0032c1b686f847398c8a18ece5f26c2f9f628cc1"
+  },
+  "injections": [
+    {
+      "fault": "duplicate-version-accepted",
+      "file": "deploy/pipeline/publish_manifest.py",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_issue107_release_catalog.py",
+        "-v"
+      ],
+      "result": "DETECTED",
+      "exitCode": 1,
+      "detectedBy": [
+        "FAIL: test_publisher_rejects_duplicate_noncanonical_and_missing_prefix_versions (test_issue107_release_catalog.ReleaseCatalogContractTests.test_publisher_rejects_duplicate_noncanonical_and_missing_prefix_versions)"
+      ],
+      "log": "/tmp/issue107-release-catalog-fault-duplicate-version-accepted.log"
+    },
+    {
+      "fault": "history-prefix-not-checked",
+      "file": "deploy/pipeline/approved_release.py",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_issue107_release_catalog.py",
+        "-v"
+      ],
+      "result": "DETECTED",
+      "exitCode": 1,
+      "detectedBy": [
+        "FAIL: test_history_must_be_exact_successful_prefix_and_never_invent_gap_versions (test_issue107_release_catalog.ReleaseCatalogContractTests.test_history_must_be_exact_successful_prefix_and_never_invent_gap_versions)",
+        "FAIL: test_new_complete_history_and_record_allow_auto_only_for_exact_fingerprints_and_rows (test_issue107_release_catalog.ReleaseCatalogContractTests.test_new_complete_history_and_record_allow_auto_only_for_exact_fingerprints_and_rows)"
+      ],
+      "log": "/tmp/issue107-release-catalog-fault-history-prefix-not-checked.log"
+    },
+    {
+      "fault": "ready-record-bypasses-transition",
+      "file": "deploy/pipeline/approved_release.py",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_issue107_release_catalog.py",
+        "-v"
+      ],
+      "result": "DETECTED",
+      "exitCode": 1,
+      "detectedBy": [
+        "FAIL: test_new_complete_history_and_record_allow_auto_only_for_exact_fingerprints_and_rows (test_issue107_release_catalog.ReleaseCatalogContractTests.test_new_complete_history_and_record_allow_auto_only_for_exact_fingerprints_and_rows)",
+        "FAIL: test_old_approved_v10_contract_requires_explicit_transition_to_v13 (test_issue107_release_catalog.ReleaseCatalogContractTests.test_old_approved_v10_contract_requires_explicit_transition_to_v13)"
+      ],
+      "log": "/tmp/issue107-release-catalog-fault-ready-record-bypasses-transition.log"
+    }
+  ],
+  "restoredExactly": true
+}

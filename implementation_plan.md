@@ -1307,3 +1307,38 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 독립 동결6 신규+기존33의 유효 RED16/23PASS 뒤 최종39 PASS/실패0/skip0, 실제 Flyway12.4.0 checksum10 일치와7fault/8assertion 탐지·303 source/test 파일 exact복원을 확인했다. 테스트 기대를 구현자가 바꾸지 않았고 과거 workflow/RED를 history에 보존했다. 추가 host orchestration fixture는 최신 사용자 범위 지시로 실행 없이 폐기했으므로 독립 host runtime proof를 주장하지 않는다.
 - 변경 없는 필수 tdd_guard SHA07c4f974…exit0/8.639초로 hook self-tests·ktlintCheck·assemble·test를 확인했다. Gradle cached654 결과 재사용이며 새 로컬654 실행으로 집계하지 않는다. 제품 Kotlin/API/V1~V10 SQL/runtime renderer/entrypoint·기존guard/installer는369c5ff와 동일하다. 새 정확HEAD CI는 게시 후 PR100에서 별도로 확인한다.
 - 현재 실제AWS조회/운영명령/서비스중단/DB쓰기/main·develop병합/유료모델호출0. 운영 source/digest와 실제preflight를 보고한 뒤 최종배포승인을 받아야 한다. 구현/문서/검증 후속 Commit/PR: 동일 커밋 예정, 기존Draft PR100 유지.
+
+
+## Issue #107 모호성 보완 (2026-10-17 UTC)
+
+- 목표: 2026-10-18 KST까지 서버·웹 로컬 제품 구현과 격리 검증. push/PR/병합/배포/운영·유료 호출 제외. 내장 goal 도구 없음.
+- [x] [AGENT] 최신 서버 develop3232128·웹 main9b18397에서 독립 브랜치, 지침/기준문서·이슈 확인, 독립 fixture25+답변7·테스트설계와 공개계약 작성.
+- [x] [AGENT] provider·본인 HTTP·웹 UI의 유효 RED 확인 후 질문/답변/provenance·기존 수정 라운드 연결.
+- [x] [AGENT] #107 본인 소유권을 공통 resolver용 port와 테스트 전용 대역으로 분리. main 인증/guest fallback 복제 제거.
+- [ ] [AGENT] #109 공통 소유권 resolver 실제 adapter 통합과 프로덕션 기동. account/participant/auth/CORS/RoomLifecycle 소유파일 복제금지, V13 예약.
+- [x] [AGENT] 최종 nativeOpenAPI 동기화·서버 전체719(715 PASS/기존skip4)와 guard·웹 전체360/브라우저391 PASS(기존skip1)·서버6/웹4 결함 주입·독립 최종 리뷰 검증. 재개 근거와 정확 SHA는 docs/verification/issue-107-local.json을 따른다.
+- [ ] [SHARED] 실제 공급자의 자연어 의미·질문품질·비용/latency 평가 및 운영 적용은 이 세션 범위 밖. mock/격리 통과를 이 완료로 집계하지 않음.
+- 보호파일 GeminiBatchProcessor.kt·SubmissionService.kt·관측 계층은 수정하지 않음.
+- 현재 근거/계약: docs/ISSUE_107_CONTRACT.md, docs/ISSUE_107_TEST_DESIGN.md, .tdd/red/issue-107-*.json. 최종 게이트와 구현상태는 후속 검증 기록으로 갱신.
+
+### 후속 게시 승인과 통합 대기
+
+- [USER] 최종 테스트·독립 리뷰 통과 범위의 commit·push→Draft PR→정확한 HEAD CI 확인을 승인했다. merge/auto-merge/main 배포/운영 DB/Secret 변경은 제외한다.
+- [AGENT] 원격 develop3232128·웹 main9b18397 및 작업 브랜치/PR 중복 없음, feature push/PR의 운영 배포 비발생과 push dry-run을 확인했다. #107 독립 구현의 격리 검증 결과만 게시하며 #109 실제 adapter 부재·production 기동 차단을 Draft PR에서 명시한다.
+- [AGENT] 기존 전체 게이트 첫 실행의 5실패는 오래된 모호성 전원참석 oracle1·V13 migration 기대4다. 독립 설계자가 계약과 정확 catalog에 맞춰 수정했고 기존 데이터 보존 assertion은 유지했다. 원본 로그/XML과 최종 재실행을 분리 보존했다.
+- Commit/PR: 동일 커밋 예정. 실제 source SHA와 원격 CI는 게시 후 PR 및 로컬 publication 기록을 따른다.
+
+### ‘7-8시쯤’ 추가 제보 보강
+
+- [USER] 오전·오후 누락 실제 사례와 오늘/내일/다음주·자정·역전·가능/불가·문맥 대조, 짧은 상시 안내와 실제 예시를 요청했다. 실제 운영 AI 호출은 승인하지 않았다.
+- [x] [AGENT] 기존 fixture25를 유지하고19개 추가→총44개·답변7개. 새 provider 합성 회귀8개 targeted PASS. 원격 main91eb250 소스는 이미 모호성 안전 rejection을 지원하나 보완 질문·명시 안내가 없었다. 실제 운영 image/당시 공급자 응답이 없어 실제 오류 원인은 미확정이다.
+- [x] [AGENT] 모드별 예시·오전/오후/24시간 안내·접근성 설명을 일반/수정/DIRECT 입력에 추가했다. 독립 안내15 RED→15 GREEN, 집중67 GREEN, 최신 소스로 FI4 탐지·정확 복원67 GREEN을 확인했다. 자동 원문 변환·저장·분석·추가 API는 없다.
+- [x] [AGENT] 추가 보강 후 서버 전체727(723 PASS/기존skip4/실패·오류0)·guard, 웹 전체375·고정 bundle 브라우저391 PASS/기존skip1, FI 서버6/웹4 및 독립 최종 근거를 확인했다. 정확 SHA·원본·한계는 docs/verification/issue-107-local.json에 기록한다. 승인된 Draft 게시를 진행하며 #109 실제 통합·프로덕션 기동 차단은 유지한다.
+
+### PR #116 exact HEAD CI catalog 보강 (2026-10-17 UTC)
+
+- [x] [AGENT] 게시 d459968 CI39046734109에서 Kotlin quality/ARM64/policy/preflight PASS, immutable release catalog FAIL 확인. publisher·manifest·host full record의 V1~V10 고정이 새 V13을 거부한 같은 원인이다.
+- [x] [AGENT] 독립 테스트13(초기12 RED9/대조3 + 추가fullrecord RED1/3subcases) 뒤 실제 source catalog 숫자 정렬·정규명·중복/링크거부·필수V1~V10·최대256개로 확장했다. 기존10 checksum과 정확 history/fingerprint·drain/rule/명시승인 경계는 유지한다. 기존 source-catalog assertion을 V13 포함으로 갱신하고 frozen synthetic10·거부검증은 보존했다.
+- [x] [AGENT] 새 Python13과 기존 CI node8 GREEN. #109의 같은3파일 V11 지원은 별도 통합 브랜치에서 덧셈 의미를 보존해 조합했으며 독립 PR 근거와 분리한다. 실행 bundle fingerprint 변경은 운영 승인 전환을 요구하며 배포 권한 확대는 없다.
+- [x] [AGENT] 최종 독립 리뷰·현source FI4/4·복원후Python13/node8·변경 없는 tdd_guard(11.717초, 기존727 cached) PASS. 별도 광범위 V8 guard의 로컬 오류는 조사 중이며 PASS로 집계하지 않는다.
+- [ ] [AGENT] 승인된 수정 commit/push 후 새 정확 SHA 원격 전체 CI 확인. Commit/PR: 동일 커밋 예정, 기존Draft116 유지.

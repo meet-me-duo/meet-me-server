@@ -1,0 +1,56 @@
+{
+  "workItem": "issue-107-release-catalog",
+  "scope": "independent Draft PR116 repair from d459968; separate account integration excluded",
+  "recordedAt": "2026-10-17T16:13:00.904470+00:00",
+  "initialCi": {
+    "runId": 39046734109,
+    "sourceSha": "d459968b0e89e25b48eb1987acafa62e19d7e4b5",
+    "gradle": "PASS",
+    "arm64": "PASS",
+    "releaseCatalog": "FAIL"
+  },
+  "local": {
+    "catalogTests": 13,
+    "catalogFailures": 0,
+    "existingNodeEntry": 8,
+    "nodeFailures": 0,
+    "restoredNodeLog": "/tmp/issue107-release-pipeline-restored-green.log",
+    "finalFaults": "docs/verification/issue-107-release-catalog-final-faults.json",
+    "guard": {
+      "exitCode": 0,
+      "seconds": 11.717,
+      "log": "/tmp/issue107-release-final-guard.log",
+      "unchangedGuard": true,
+      "scope": "independent PR116 release catalog repair; original feature Kotlin/test suite unchanged"
+    },
+    "broadV8Guard": "running; errors under investigation, not counted PASS"
+  },
+  "files": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "d9c3d10b4ccc872860475dfbe452a0833bd7fd830453ec697e2a4121c3183a4f"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "dd40a0313418db09d7117c601181dbcd71231fe664dbcce0185d08951ac33481"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6efc9cf7dc34ddd0332e29174a9ba8b46eb2f2d9b100c9d0d9e649815338755e"
+    },
+    {
+      "path": "deploy/tests/test_issue107_release_catalog.py",
+      "sha256": "3d09a4af0c779c384981758812c73cdcb3a3f830c7c33ce944cf6aa923cdea50"
+    }
+  ],
+  "invariants": [
+    "exact V1..V10 checksum prefix",
+    "all canonical numeric source migrations included, gaps allowed",
+    "duplicate/symlink/noncanonical path rejected",
+    "max256 entries",
+    "exact successful history and schema/guard fingerprint",
+    "explicit approval, disabled rules and zero pending commands for transition"
+  ],
+  "operationalActions": 0,
+  "newExactHeadCi": "PENDING_AFTER_PUSH"
+}

@@ -50,15 +50,24 @@ def build_manifest(repo_root, archive_path, environment):
         if not archive.is_file() or archive.is_symlink():
             raise ValueError()
         migration_directory = root / "src/main/resources/db/migration"
-        paths = list(migration_directory.glob("V*__*.sql"))
-        rows, catalog = [], []
-        if len(paths) != 10:
+        if not migration_directory.is_dir() or migration_directory.is_symlink():
             raise ValueError()
-        for version in range(1, 11):
-            matches = [path for path in paths if re.fullmatch(rf"V{version}__[A-Za-z0-9_]+\.sql", path.name)]
-            if len(matches) != 1 or matches[0].is_symlink():
+        paths = list(migration_directory.iterdir())
+        rows, catalog = [], []
+        if not 10 <= len(paths) <= 256:
+            raise ValueError()
+        versions = {}
+        for path in paths:
+            match = re.fullmatch(r"V([1-9][0-9]{0,9})__[A-Za-z0-9_]+\.sql", path.name)
+            if match is None or not path.is_file() or path.is_symlink():
                 raise ValueError()
-            path = matches[0]
+            version = int(match.group(1))
+            if version in versions:
+                raise ValueError()
+            versions[version] = path
+        if sorted(versions)[:10] != list(range(1, 11)):
+            raise ValueError()
+        for version, path in sorted(versions.items()):
             raw = path.read_bytes()
             rows.append({"version": str(version), "script": path.name, "checksum": flyway_checksum(raw)})
             catalog.append({"version": str(version), "script": path.name, "sha256": hashlib.sha256(raw).hexdigest()})
