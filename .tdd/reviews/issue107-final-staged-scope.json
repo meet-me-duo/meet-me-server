@@ -1,0 +1,11 @@
+{
+  "recordedAt": "2026-10-17T19:40:55.782802+00:00",
+  "guardVerifiedSourceFiles": 417,
+  "stagedSourceMismatches": [],
+  "sourceDiffCheck": "git diff --cached --check -- . :(exclude,glob).tdd/history/**/*.diff => exit0",
+  "archivedPatchWhitespace": "Exact unified diff context blank lines contain one data space. Their bytes are preserved; source and all other staged files passed whitespace checks.",
+  "rawExecutionLogsPublished": false,
+  "ruleEngineRawLog": ".codex/tdd-evidence/precheck-final-format-indent-supersession/rule-engine.log",
+  "ruleEngineRawLogSha256": "41045d6734933df1c8f0e78b9daf0fd8e12876b0e68fcef27f7fd1b98c7cec8a",
+  "independentApproval": ".tdd/reviews/issue107-independent-server-core-review.json"
+}

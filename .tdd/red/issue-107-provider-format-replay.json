@@ -1,0 +1,37 @@
+{
+  "workItem": "issue-107-precheck-provider-format",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "874d13bb1cb182119982b03b81c0c0c9c03d92ac939b02cdc07e483a2c277624"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "-I",
+    "/tmp/meetme-provider-only.init.gradle",
+    "test",
+    "--tests",
+    "*PrecheckProviderTransportContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P09 server error sends one physical request without hidden retry()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P03 partial usage retains unknown thinking cost rather than reporting zero()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P10 redirect cannot forward credentials or create a second exchange()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P05 incomplete duplicate unrelated or overlong proposals never become clear()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P14 exactly five hundred Unicode codepoints are sent without rewriting()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P04 missing verdict unknown key invalid enum and malformed JSON are typed failures()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P01 one bounded request carries own context and clear does not invent unknown usage()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P12 unavailable bounded configuration fails before network()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P06 clear or needs edit cannot carry an unanswered proposal()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P11 timeout includes stalled response body and terminates the exchange()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P07 known response text with truncation finish reason is not publishable()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P02 validated proposal preserves complete alternatives and known usage()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P15 zero budget makes no network request()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P08 oversized actual HTTP body is rejected without retry()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.P13 invalid raw input and oversized request are not sent or truncated()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-17T18:38:05.803000Z"
+}

@@ -5,6 +5,7 @@ import com.meetme.server.meetingroom.application.port.input.RoomLifecycleExcepti
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestOwnershipProof
 import com.meetme.server.participant.application.port.output.GuestProofLevel
+import com.meetme.server.participant.application.port.output.GuestProofProvenance
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
 import com.meetme.server.participant.domain.GuestSession
@@ -58,7 +59,10 @@ class GuestCookieOwnershipProofAdapterTest {
         } else {
             `when`(sessions.findByCredentialDigest(DIGEST)).thenReturn(session)
         }
-        assertEquals(GuestOwnershipProof(room, participant.id, GuestProofLevel.VERIFIED_GUEST), adapter.resolve(room, RAW, lock))
+        assertEquals(
+            GuestOwnershipProof(room, participant.id, GuestProofLevel.VERIFIED_GUEST, GuestProofProvenance(sessionId, NOW.plusSeconds(1))),
+            adapter.resolve(room, RAW, lock),
+        )
         if (lock) {
             verify(sessions).findByCredentialDigestForUpdate(DIGEST)
             verify(sessions, never()).findByCredentialDigest(DIGEST)

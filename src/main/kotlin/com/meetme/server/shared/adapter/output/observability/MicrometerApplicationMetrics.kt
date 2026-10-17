@@ -1,6 +1,7 @@
 package com.meetme.server.shared.adapter.output.observability
 
 import com.meetme.server.config.AiCostProperties
+import com.meetme.server.shared.application.port.output.AnalysisExecutionObservation
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.stereotype.Component
@@ -12,6 +13,51 @@ class MicrometerApplicationMetrics(
     private val registry: MeterRegistry,
     private val costProperties: AiCostProperties = AiCostProperties(),
 ) : ApplicationMetricsPort {
+    override fun analysisExecution(observation: AnalysisExecutionObservation) {
+        val outcome = observation.outcome.name
+        registry.counter("meetme.analysis.execution.completed", "outcome", outcome).increment()
+        registry.timer("meetme.analysis.execution.duration", "outcome", outcome).record(observation.elapsed)
+        registry.summary("meetme.analysis.admitted.attempts", "outcome", outcome).record(observation.attempts.size.toDouble())
+        registry
+            .summary("meetme.analysis.parser.dispatches", "outcome", outcome)
+            .record(observation.attempts.count { it.parserDispatched }.toDouble())
+        observation.attempts.forEach { attempt ->
+            val provider = attempt.provider.name
+            registry
+                .counter(
+                    "meetme.analysis.attempts",
+                    "provider",
+                    provider,
+                    "stage",
+                    if (attempt.parserDispatched) "PARSER_DISPATCHED" else "ADMITTED_ONLY",
+                ).increment()
+            if (attempt.parserDispatched) {
+                recordAnalysisUsage(provider, "input_tokens", "input.tokens", attempt.inputTokens)
+                recordAnalysisUsage(provider, "output_tokens", "output.tokens", attempt.outputTokens)
+                recordAnalysisUsage(provider, "cost_usd", "cost.usd", attempt.estimatedCostUsd)
+            }
+        }
+    }
+
+    private fun recordAnalysisUsage(
+        provider: String,
+        field: String,
+        metric: String,
+        value: Number?,
+    ) {
+        registry
+            .counter(
+                "meetme.analysis.usage.observations",
+                "provider",
+                provider,
+                "field",
+                field,
+                "knowledge",
+                if (value == null) "UNKNOWN" else "KNOWN",
+            ).increment()
+        value?.let { registry.summary("meetme.analysis.attempt.$metric", "provider", provider).record(it.toDouble()) }
+    }
+
     override fun outboxPublished(recovered: Boolean) {
         registry.counter("meetme.outbox.published", "recovered", recovered.toString()).increment()
     }

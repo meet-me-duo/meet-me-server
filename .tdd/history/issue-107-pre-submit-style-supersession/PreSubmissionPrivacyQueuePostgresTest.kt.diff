@@ -1,0 +1,22 @@
+--- a/src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt
++++ b/src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt
+@@ -150,7 +150,8 @@
+         val owner = join(room)
+         mvc
+             .perform(
+-                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/rooms/${room.invite}/submission")
++                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
++                    .put("/api/rooms/${room.invite}/submission")
+                     .cookie(owner.cookie)
+                     .header("Origin", ORIGIN)
+                     .contentType(MediaType.APPLICATION_JSON)
+@@ -158,7 +159,8 @@
+             ).andExpect(status().isOk)
+         mvc
+             .perform(
+-                org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/rooms/${room.invite}/submission")
++                org.springframework.test.web.servlet.request.MockMvcRequestBuilders
++                    .put("/api/rooms/${room.invite}/submission")
+                     .header(HttpHeaders.AUTHORIZATION, room.host.bearer)
+                     .header("Origin", ORIGIN)
+                     .contentType(MediaType.APPLICATION_JSON)

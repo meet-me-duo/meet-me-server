@@ -22,6 +22,7 @@ class GuestReaccessWriteGuard(
     private val credentials: GuestCredentialPort,
     private val reaccess: GuestReaccessRepository,
     private val clock: Clock,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
 ) : GuestSubmissionWriteGuard {
     override fun validate(
         roomId: MeetingRoomId,
@@ -43,7 +44,15 @@ class GuestReaccessWriteGuard(
                 .grant(roomId, session.id, true)
                 ?.takeIf { clock.instant() < it.expiresAt && it.participantId == participantId && it.level == GuestProofLevel.REPLACE_ONLY }
                 ?: fail(RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT)
-        if (grant.expectedRevision != currentRevision) fail(RoomLifecycleErrorCode.REVISION_CONFLICT)
+        if (prechecks?.protocol(roomId.value) == "PRE_SUBMIT_V1") {
+            if (grant.expectedCandidateRevision !=
+                (prechecks.current(participantId.value)?.candidate?.revision ?: 0)
+            ) {
+                fail(RoomLifecycleErrorCode.REVISION_CONFLICT)
+            }
+        } else if (grant.expectedRevision != currentRevision) {
+            fail(RoomLifecycleErrorCode.REVISION_CONFLICT)
+        }
     }
 
     private fun fail(code: RoomLifecycleErrorCode): Nothing = throw RoomLifecycleException(code)

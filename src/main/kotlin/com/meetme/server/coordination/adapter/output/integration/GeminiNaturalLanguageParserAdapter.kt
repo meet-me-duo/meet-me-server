@@ -16,6 +16,7 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageBat
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserPort
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
+import com.meetme.server.coordination.application.port.output.ParserTransportObservationPort
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import okhttp3.OkHttpClient
@@ -33,6 +34,7 @@ class GeminiNaturalLanguageParserAdapter
     constructor(
         private val properties: GeminiProperties,
         objectMapper: ObjectMapper,
+        private val transportObservations: ParserTransportObservationPort? = null,
     ) : NaturalLanguageParserPort {
         private val contract = NaturalLanguageProviderContract(objectMapper)
         private var endpoint: URI? = null
@@ -41,11 +43,29 @@ class GeminiNaturalLanguageParserAdapter
             properties: GeminiProperties,
             objectMapper: ObjectMapper,
             endpoint: URI,
-        ) : this(properties, objectMapper) {
+            transportObservations: ParserTransportObservationPort? = null,
+        ) : this(properties, objectMapper, transportObservations) {
             this.endpoint = endpoint
         }
 
         override fun parse(request: NaturalLanguageBatchRequest): NaturalLanguageBatchResult {
+            val observation =
+                ParserTransportObservationSession(
+                    request.observationContext,
+                    com.meetme.server.coordination.application.port.output.AnalysisProvider.GEMINI,
+                    transportObservations,
+                )
+            try {
+                return parseObserved(request, observation)
+            } finally {
+                observation.finish()
+            }
+        }
+
+        private fun parseObserved(
+            request: NaturalLanguageBatchRequest,
+            observation: ParserTransportObservationSession,
+        ): NaturalLanguageBatchResult {
             if (properties.apiKey.isBlank()) throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
             require(request.inputs.isNotEmpty() && request.inputs.size <= 50)
             require(
@@ -71,6 +91,7 @@ class GeminiNaturalLanguageParserAdapter
                 val transport =
                     OkHttpClient
                         .Builder()
+                        .eventListenerFactory(observation.eventListenerFactory)
                         .retryOnConnectionFailure(false)
                         .followRedirects(false)
                         .followSslRedirects(false)

@@ -1,0 +1,146 @@
+{
+  "workItem": "issue107-pre-submit-core-faults",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "boundary": "Six independent mutations in a disposable full-source snapshot; baseline44 GREEN, each targeted actual assertion failure and exact source restoration/targeted GREEN. Only relevant actually tested3 mutated production files and2 unchanged HTTP/Worker tests are pinned here. Full snapshot/log details: .tdd/verification/issue107-independent-core-faults.json. Parent changed2 original non-mutated files during run only by independently proved literal/indentation equivalence: .tdd/verification/issue107-final-source-format-equivalence.json. These are not claimed byte-unchanged; reviewer original product/test edits0. Synthetic provider/isolated real PostgreSQL; external model/OAuth/operations0.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "5bc679e7a914e0bc3f42cc707eebd8f04c93db6eac24ebf34647db465ed13745"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt",
+      "sha256": "327fcaea2613a4fd057bdf207e31c61f0be752adf6742f123b2864fac086b4d4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "b2704aaf40b22fcb58f7c9ee86b12702314cfbfe4e2fa1450d800ce37d4ffe3c"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckHttpPostgresTest.kt",
+      "sha256": "e7e2a54d8884e44a9adfc9cbdda27afd95243733eae1f879e6ba4d5de95378e0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckWorkerPostgresTest.kt",
+      "sha256": "366dd031be2f2717234025717975451aa7ab9b6715b64a85b4443cf53a271aeb"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "candidate-revision-cas",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "sh",
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/issue107-core-fi-only.init.gradle",
+        "test",
+        "--tests",
+        "*PreSubmissionCheckHttpPostgresTest.PS10 같은 candidate revision의 두 탭은 하나만 쓰고 패자는 409다"
+      ],
+      "detectedBy": "PS10 같은 candidate revision의 두 탭은 하나만 쓰고 패자는 409다(); actual AssertionFailedError, mutant exit1 then exact restoration/targeted GREEN; .codex/tdd-evidence/issue107-independent-core-faults/candidate-revision-cas.log",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "room-deadline-publish",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "sh",
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/issue107-core-fi-only.init.gradle",
+        "test",
+        "--tests",
+        "*PreSubmissionCheckWorkerPostgresTest.PS12 정확 deadline 도착 이후 CLEAR 게시와 retry answer는 거부된다"
+      ],
+      "detectedBy": "PS12 정확 deadline 도착 이후 CLEAR 게시와 retry answer는 거부된다(); actual AssertionFailedError, mutant exit1 then exact restoration/targeted GREEN; .codex/tdd-evidence/issue107-independent-core-faults/room-deadline-publish.log",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "owner-binding-publish",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "sh",
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/issue107-core-fi-only.init.gradle",
+        "test",
+        "--tests",
+        "*PreSubmissionCheckWorkerPostgresTest.PS19 claim이 먼저 완료되면 옛 guest의 진행중 결과와 replay는 접근과 완료를 만들지 않는다"
+      ],
+      "detectedBy": "PS19 claim이 먼저 완료되면 옛 guest의 진행중 결과와 replay는 접근과 완료를 만들지 않는다(); actual AssertionFailedError, mutant exit1 then exact restoration/targeted GREEN; .codex/tdd-evidence/issue107-independent-core-faults/owner-binding-publish.log",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "physical-attempt-cap",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "sh",
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/issue107-core-fi-only.init.gradle",
+        "test",
+        "--tests",
+        "*PreSubmissionCheckWorkerPostgresTest.PS21 새 revision 취소 reload로 물리 호출 여섯번 상한을 초기화할 수 없다"
+      ],
+      "detectedBy": "PS21 새 revision 취소 reload로 물리 호출 여섯번 상한을 초기화할 수 없다(); actual AssertionFailedError, mutant exit1 then exact restoration/targeted GREEN; .codex/tdd-evidence/issue107-independent-core-faults/physical-attempt-cap.log",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "accepted-version-anchor",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "sh",
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/issue107-core-fi-only.init.gradle",
+        "test",
+        "--tests",
+        "*PreSubmissionCheckWorkerPostgresTest.PS31 frozen 최종 배치도 A 선택 source 날짜와 DIRECT 새 날짜를 구분해 내일을 이동시키지 않는다"
+      ],
+      "detectedBy": "PS31 frozen 최종 배치도 A 선택 source 날짜와 DIRECT 새 날짜를 구분해 내일을 이동시키지 않는다(); actual AssertionFailedError, mutant exit1 then exact restoration/targeted GREEN; .codex/tdd-evidence/issue107-independent-core-faults/accepted-version-anchor.log",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "cancelled-late-clear",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "sh",
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/issue107-core-fi-only.init.gradle",
+        "test",
+        "--tests",
+        "*PreSubmissionCheckWorkerPostgresTest.PS07 PS12 취소가 먼저면 늦은 CLEAR 무시하고 원문과 CANCELLED를 보존한다"
+      ],
+      "detectedBy": "PS07 PS12 취소가 먼저면 늦은 CLEAR 무시하고 원문과 CANCELLED를 보존한다(); actual AssertionFailedError, mutant exit1 then exact restoration/targeted GREEN; .codex/tdd-evidence/issue107-independent-core-faults/cancelled-late-clear.log",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T19:35:46Z"
+}

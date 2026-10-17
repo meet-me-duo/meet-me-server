@@ -200,11 +200,29 @@ def _record():
         _require(type(record[key]) is str and re.fullmatch(r'[1-9][0-9]{0,19}', record[key]))
     _require(type(record['currentImage']) is str and re.fullmatch(
         r'[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(?:\.cn)?/[A-Za-z0-9][A-Za-z0-9._/-]*@sha256:[0-9a-f]{64}', record['currentImage']))
-    _require(type(record['history']) is list and len(record['history']) in (10, 11, 12))
-    for version, row in enumerate(record['history'], 1):
+    _require(type(record['history']) is list)
+    versions = tuple(row.get('version') if type(row) is dict else None for row in record['history'])
+    catalogs = (tuple(map(str, range(1, 11))), tuple(map(str, range(1, 12))),
+                tuple(map(str, range(1, 13))), tuple(map(str, range(1, 12))) + ('13',),
+                tuple(map(str, range(1, 11))) + ('14', '15'),
+                tuple(map(str, range(1, 12))) + ('14', '15'), tuple(map(str, range(1, 17))))
+    _require(versions in catalogs)
+    sparse = '14' in versions
+    names = ('create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
+             'add_matching_results', 'remove_meeting_duration', 'add_reliable_outbox_processing',
+             'resume_delayed_matching_from_structuring', 'add_input_revision_rounds',
+             'add_time_recommendations', 'add_bounded_analysis_invocations', 'add_accounts_and_participant_ownership')
+    scripts = {str(version): f'V{version}__{name}.sql' for version, name in enumerate(names, 1)}
+    scripts.update({
+        '12': 'V12__add_guest_reaccess.sql', '13': 'V13__add_submission_clarifications.sql',
+        '14': 'V14__add_operator_access_audits.sql', '15': 'V15__add_parser_transport_observations.sql',
+        '16': 'V16__add_pre_submission_checks.sql',
+    })
+    for version, row in zip(versions, record['history']):
         _require(type(row) is dict and set(row) == {'version', 'script', 'checksum', 'success'})
-        _require(row['version'] == str(version) and row['success'] is True)
-        _require(type(row['script']) is str and re.fullmatch(rf'V{version}__[A-Za-z0-9_]+\.sql', row['script']))
+        _require(row['success'] is True)
+        _require(row['script'] == scripts[version] if sparse else
+                 type(row['script']) is str and re.fullmatch(rf'V{version}__[A-Za-z0-9_]+\.sql', row['script']))
         _require(type(row['checksum']) is int and -(2 ** 31) <= row['checksum'] < 2 ** 31)
     return record
 

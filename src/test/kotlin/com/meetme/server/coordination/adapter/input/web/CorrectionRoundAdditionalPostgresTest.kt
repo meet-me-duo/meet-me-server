@@ -244,6 +244,8 @@ class CorrectionRoundAdditionalPostgresTest : CorrectionRoundPostgresFixture() {
                 .andReturn()
                 .response
         val code = document(response).getValue("invite_code").toString()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
         val host = CorrectionSession(code, hostCookie.value)
 
         fun join(name: String): CorrectionSession {

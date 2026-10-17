@@ -1,0 +1,56 @@
+{
+  "workItem": "issue107-integrated-catalog",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "status": "VALID_RED",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "9dc45b0c130c69ee8d5d5747b518639adac68b3a1701d5631911b3f0e8bffda7"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/issue107-integrated-catalog.test.cjs"
+  ],
+  "failedTests": [
+    "C02 publisher emits exactly canonical V1 through V16 in numeric order with independent checksums and fingerprints",
+    "C05 schema guard and archive bytes independently change their fingerprints while first fifteen migrations remain fixed",
+    "C06 manifest and host-record readers preserve six complete historical catalogs and the final V16 catalog",
+    "C08 every unchanged complete historical and final contract retains AUTO_READY for exact history image and fingerprints",
+    "C09 final V16 first transition requires explicit approval both disabled rules zero pending work and exact successful prefix",
+    "C12 final publication identity and exact schema guard image contracts cannot silently become automatic approval"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "tests": 12,
+  "pass": 6,
+  "fail": 6,
+  "setupErrors": 0,
+  "failureReasons": [
+    "Current publisher only allows sparse110 catalog; exact final16 is rejected",
+    "Current reader lost immutable V12 and107 sparse13 catalogs; final16 missing",
+    "Final16 valid transition and changed-fingerprint classification currently rejected"
+  ],
+  "temporarySyntheticSqlOnly": "V16 only in disposable temp fixture while actual V16 absent; no migration placeholder written",
+  "rawEvidence": ".codex/tdd-evidence/issue107-integrated-catalog-red.log",
+  "rawSha256": "c808726feb7e4f9b18f0eb73143b79a02e05da4732ccb9e344adbdf7dccdab28",
+  "productionFingerprints": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "a7905eeca4d8bcd8bb297ffa5c4f8885db0831de507f8eb3f6e96c6212e3229d"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "c89451b1b8a53260e823fd797432134e279d7b47cf1045d5127f0eebb892d5b3"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "bae17e920efbe0b9a3e5874632641da8263d092294531d11b441a5bf4b206930"
+    }
+  ],
+  "recordedAt": "2026-10-17T18:14:55.665654Z"
+}

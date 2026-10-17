@@ -1,0 +1,144 @@
+package com.meetme.server.precheck.application.service
+
+import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProvider
+import com.meetme.server.precheck.application.port.output.PrecheckMetricsPort
+import com.meetme.server.precheck.application.port.output.PrecheckProviderException
+import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
+import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
+import com.meetme.server.precheck.application.port.output.PrecheckRepository
+import com.meetme.server.precheck.application.port.output.PrecheckVerdict
+import org.springframework.stereotype.Service
+import java.time.Clock
+import java.time.Duration
+
+@Service
+class PreSubmissionCheckWorker(
+    private val repository: PrecheckRepository,
+    private val processing: PrecheckProcessingService,
+    private val provider: PreSubmissionCheckProvider,
+    private val clock: Clock,
+    private val metrics: PrecheckMetricsPort? = null,
+) {
+    fun runOne(): Boolean {
+        repository.unfinishedCheckIds(128).forEach(processing::expire)
+        if (repository.inFlight(clock.instant()) >= 2) return false
+        for (id in repository.queuedCheckIds(128)) {
+            val claim = processing.claim(id) ?: continue
+            val check = claim.check
+            val remaining = Duration.between(clock.instant(), check.deadlineAt.minusSeconds(3)).coerceAtMost(Duration.ofSeconds(15))
+            val started = System.nanoTime()
+            var result: PrecheckProviderResult? = null
+            var failure: String? = null
+            try {
+                if (remaining.isNegative || remaining.isZero) throw PrecheckProviderException("TIMEOUT")
+                val request =
+                    PrecheckProviderRequest(
+                        check.id,
+                        check.candidate.rawText,
+                        check.candidate.referenceAt,
+                        claim.room.timeZone.value,
+                        check.candidate.locale,
+                        claim.room.searchRange.startInclusive,
+                        claim.room.searchRange.endExclusive,
+                        remaining,
+                    )
+                result = provider.check(request)
+                validate(result, check.candidate.rawText)
+            } catch (exception: PrecheckProviderException) {
+                failure = exception.failureCode.takeIf { it in FAILURES } ?: "PROVIDER_UNAVAILABLE"
+                result = null
+            } catch (_: Exception) {
+                failure = "PROVIDER_UNAVAILABLE"
+                result = null
+            }
+            val status =
+                try {
+                    processing.publish(claim, result, failure)
+                } catch (_: PrecheckPublicationExpired) {
+                    processing.rejectPublication(claim, result, failure)
+                }
+            metrics?.completed(
+                status.name,
+                Duration.between(check.deadlineAt.minusSeconds(30), requireNotNull(check.claimedAt)).coerceAtLeast(Duration.ZERO),
+                Duration.ofNanos(
+                    System.nanoTime() - started,
+                ),
+            )
+            return true
+        }
+        return false
+    }
+
+    private fun validate(
+        result: PrecheckProviderResult,
+        raw: String,
+    ) {
+        fun size(text: String) = text.codePointCount(0, text.length)
+
+        fun invalid(): Nothing = throw PrecheckProviderException("INVALID_RESPONSE")
+        if (result.inputTokens?.let { it < 0 } == true ||
+            result.outputTokens?.let { it < 0 || it > 2048 } == true ||
+            result.responseBytes?.let { it < 0 || it > 16384 } == true
+        ) {
+            invalid()
+        }
+        if (result.verdict != PrecheckVerdict.NEEDS_CHOICE) {
+            if (result.prompt != null || result.sourceExcerpt != null || result.choices.isNotEmpty()) invalid()
+            return
+        }
+        val prompt = result.prompt ?: invalid()
+        val excerpt = result.sourceExcerpt ?: invalid()
+        if (prompt.isBlank() ||
+            prompt.contains('\u0000') ||
+            size(prompt) > 160 ||
+            excerpt.isBlank() ||
+            excerpt.contains('\u0000') ||
+            size(excerpt) > 200 ||
+            !raw.contains(excerpt)
+        ) {
+            invalid()
+        }
+        if (result.choices.size != 2 ||
+            result.choices
+                .map { it.id }
+                .distinct()
+                .size != 2 ||
+            result.choices
+                .map { it.proposedText }
+                .distinct()
+                .size != 2
+        ) {
+            invalid()
+        }
+        result.choices.forEach {
+            if (it.id.isBlank() ||
+                it.id.contains('\u0000') ||
+                size(it.id) > 32 ||
+                it.label.isBlank() ||
+                it.label.contains('\u0000') ||
+                size(it.label) > 160 ||
+                it.proposedText.isBlank() ||
+                it.proposedText == raw ||
+                size(it.proposedText) > 500 ||
+                it.proposedText.contains('\u0000')
+            ) {
+                invalid()
+            }
+        }
+    }
+
+    companion object {
+        private val FAILURES =
+            setOf(
+                "CONFIGURATION",
+                "TIMEOUT",
+                "CONNECTION",
+                "CONNECTION_FAILED",
+                "RATE_LIMITED",
+                "PROVIDER_UNAVAILABLE",
+                "INVALID_RESPONSE",
+                "SERVER",
+                "INVALID_REQUEST",
+            )
+    }
+}

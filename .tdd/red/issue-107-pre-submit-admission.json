@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-107-pre-submit-admission",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckAdmissionFreshnessPostgresTest.kt",
+      "sha256": "80d8eab8bb09fb69af0e4f9d9bc80a2543da3e213c350b09a3b426e11450ecda"
+    }
+  ],
+  "command": [
+    "bash",
+    "gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*PrecheckAdmissionFreshnessPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.PS19 queued claim cannot start provider after admission wait crosses auth or room deadline :: [1] boundary = \"SESSION\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.PS19 queued claim cannot start provider after admission wait crosses auth or room deadline :: [2] boundary = \"ROOM_DEADLINE\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.PS08 bounded question fields reject embedded NUL before publication :: [1] field = \"PROMPT\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.PS08 bounded question fields reject embedded NUL before publication :: [2] field = \"LABEL\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.PS08 bounded question fields reject embedded NUL before publication :: [3] field = \"ID\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.PS19 create revalidates expired guest or closed deadline after admission wait :: [1] boundary = \"SESSION\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T19:06:49.755516Z"
+}

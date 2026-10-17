@@ -1,0 +1,30 @@
+{
+  "workItem": "async-final-red",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "recordedAt": "2026-10-17T15:36:29.669350+00:00",
+  "command": [
+    "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\meet-me-server\\gradlew.bat",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*AsyncParserTransportObservationAdapterTest"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "baselineReplayAfterFormatting": true,
+  "failedTests": [
+    "com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest#shutdown drops queued observations and rejects future records without running them on the caller()",
+    "com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest#one blocked write and one queued write reject overflow instead of unbounded storage work()",
+    "com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest#record returns while database write is blocked on a different worker thread()",
+    "com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest#queued snapshot copies call collection before the caller can mutate it()",
+    "com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest#storage failure is isolated and later accepted observations still execute()"
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/AsyncParserTransportObservationAdapterTest.kt",
+      "sha256": "c4b8a14d790bbe1572eeb2e10b325d554ece7f341b8e69741787abfb0bdf59e3"
+    }
+  ],
+  "productBytesRestored": true,
+  "allTestBytesUnchanged": true
+}

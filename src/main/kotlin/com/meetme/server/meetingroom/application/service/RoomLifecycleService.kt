@@ -57,6 +57,7 @@ class RoomLifecycleService(
     private val revisionRoundRepository: com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository,
     private val currentAccount: CurrentAccountPort = CurrentAccountPort { null },
     private val ownership: ParticipantOwnershipResolver,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
 ) : CreateRoomUseCase,
     GetRoomUseCase,
     JoinRoomUseCase,
@@ -339,6 +340,7 @@ class RoomLifecycleService(
             remainingCorrectionAnalyses = 3 - correctionAnalysisCount,
             stateVersion = version,
             recommendationProtocol = run?.recommendationProtocol,
+            submissionProtocol = prechecks?.protocol(id.value) ?: "LEGACY",
         )
     }
 

@@ -715,6 +715,8 @@ class GuestReaccessWebIntegrationTest {
                 .andReturn()
                 .response
         val invite = json.readTree(response.contentAsByteArray).path("invite_code").stringValue()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", invite)
         val id = requireNotNull(jdbc.queryForObject("SELECT id FROM meeting_rooms WHERE invite_code=?", UUID::class.java, invite))
         return Room(id, invite, host)
     }

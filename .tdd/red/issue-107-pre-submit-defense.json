@@ -1,0 +1,29 @@
+{
+  "workItem": "issue-107-pre-submit-defense",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckDefensiveBoundaryPostgresTest.kt",
+      "sha256": "85d318e3f3e379608ae4efe7e8c603a691b933a6c3942c105acd016374ad470b"
+    }
+  ],
+  "command": [
+    "bash",
+    "gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*PrecheckDefensiveBoundaryPostgresTest"
+  ],
+  "failedTests": [
+    "PS19 expiry와 grant 계보 없는 옛 guest binding은 owner가 같아도 active가 아니다()",
+    "[1] mode = \"CREATE\"",
+    "[2] mode = \"DIRECT\"",
+    "PS08 source 원문과 같은 제안은 opaque 선택ID가 유효해도 INVALID_RESPONSE다()",
+    "PS19 accepted SQL 대기 중 session expiry가 지나면 완료 집계 마감과 accepted link를 함께 rollback한다()",
+    "PS19 VERIFIED 라벨만 있고 provenance 없는 trusted proof는 신규 쓰기를 승인하지 않는다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T18:51:34.957973Z"
+}

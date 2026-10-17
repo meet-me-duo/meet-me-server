@@ -1,0 +1,1147 @@
+{
+  "recordedAt": "2026-10-17T15:40:54.933089+00:00",
+  "workItem": "issue-107",
+  "goalDeadline": "2026-10-18 Asia/Seoul",
+  "goalTool": "not available; no installation or configuration change",
+  "status": "ISOLATED_VALIDATION_COMPLETE_PRODUCTION_INTEGRATION_BLOCKED",
+  "blockers": [
+    "#109 shared ownership resolver actual package/signature/adapter not delivered; ClarificationOwnerPort has no main adapter; production startup is blocked.",
+    "#109 account integration of SaveSubmissionUseCase/GetOwnSubmissionUseCase and integrated account/Bearer HTTP tests remain required."
+  ],
+  "publicationAuthorization": "User subsequently authorized commit, push, Draft PR and exact HEAD CI verification after final local gates and independent review; independent scope and #109 integration wait must be explicit.",
+  "excludedActions": [
+    "merge",
+    "auto-merge",
+    "main deployment",
+    "production DB changes",
+    "Secret changes",
+    "production calls",
+    "paid AI calls"
+  ],
+  "validationLimits": [
+    "Synthetic provider stubs do not prove natural language semantics, real cost or latency.",
+    "PostgreSQL Testcontainers and mock browser are separate layers; no real backend-to-browser or production credential validation.",
+    "Clear-input question avoidance and A/B preservation of relative dates, negation and preferences are prompt/provider contracts, not proven real-model accuracy."
+  ],
+  "repository": "/workspace/meet-me-server",
+  "baseRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "branch": "feature/issue-107-clarifications",
+  "gates": {
+    "recordedAt": "2026-10-17T15:39:42.305878+00:00",
+    "runs": [
+      {
+        "command": [
+          "sh",
+          "gradlew",
+          "--no-daemon",
+          "ktlintCheck",
+          "assemble",
+          "test"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 513.22,
+        "log": "/tmp/issue107-server-final-gate.log"
+      },
+      {
+        "command": [
+          "python",
+          ".codex/hooks/tdd_guard.py"
+        ],
+        "exitCode": 0,
+        "durationSeconds": 10.443,
+        "log": "/tmp/issue107-server-final-guard.log"
+      }
+    ],
+    "totals": {
+      "tests": 727,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4,
+      "passed": 723
+    },
+    "suites": [
+      {
+        "name": "com.meetme.server.MeetMeServerApplicationTests",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.architecture.AggregatePackageArchitectureTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.config.AnonymousAccessPropertiesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.config.LocaleConfigurationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.config.MessageSourceConfigurationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.AnalysisInvocationAdmissionDeadlinePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.ClarificationHttpPostgresTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.ClarificationLifecyclePostgresTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.ClarificationOwnerDelegationPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionMeetingScenarioPostgresTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConcurrencyPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConfirmationPostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundLoggingPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullOutcomePostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullableSchemaPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.D2UnsafeHardTimePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.MatchingResultNaturalLanguageOnlyWebTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.MatchingResultWebIntegrationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationBindingPostgresTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationConfirmationPostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationPublicationPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationRetentionPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.input.web.RecommendationReviewRegressionPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioMatrixTest",
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.ClarificationProviderContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.ClarificationReportedTimeRegressionTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.D2HardConditionShapeContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.D2UnsafeHardTimeContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiHighDemandBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiPlaceGroupingContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextBoundaryReviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextSafetyReviewTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.KakaoLocalPlaceAdapterTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.LunaExtendedTransportBudgetContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.LunaTransportNoReplayContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.evaluation.ApprovalBudgetLedgerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.redis.RedisCoordinationWorkQueueTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.CandidateSummaryRendererTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.ClarificationMatchingSafetyTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.CoordinationWorkerTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.FrozenSubmissionBoundaryTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.GeminiBatchProcessorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.GeminiNaturalLanguageOnlyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.MatchingProcessorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.OutboxRelayTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.RejectedAdmissionFallbackContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.CoordinationRunTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcherTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.GeminiPlaceGroupMatcherTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.GeoMatcherTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.domain.matching.TimeRangeMatcherTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.meetingroom.adapter.input.web.RoomLifecycleWebIntegrationTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.meetingroom.adapter.output.persistence.RoomDataRetentionRepositoryTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.meetingroom.application.service.DeadlineClosureSchedulerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.meetingroom.application.service.RoomLifecycleServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.meetingroom.domain.InviteCodeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.meetingroom.domain.MeetingRoomTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.participant.adapter.output.security.GuestCredentialServiceTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.participant.domain.ParticipantDisplayNameTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.input.web.CorrelationLoggingFilterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.input.web.InputRevisionRedisRateLimitTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.input.web.RateLimitFilterTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.AnonymousRoomLifecycleMigrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.InputRevisionLegacyMigrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.MatchingResultsMigrationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.MeetingDurationRemovalMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.ReliableOutboxMigrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.persistence.SubmissionPipelineMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.adapter.output.redis.RedisRateLimiterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.shared.domain.time.TimeModelsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1
+      },
+      {
+        "name": "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest",
+        "tests": 57,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.adapter.input.web.SubmissionWebIntegrationTest",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.adapter.output.persistence.D2PreferenceJsonMapperTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.adapter.output.persistence.StructuredConditionJsonMapperTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.domain.SubmissionRulesTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.submission.domain.SubmissionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "build/libs/meet-me-server-0.0.1-SNAPSHOT-plain.jar",
+        "sha256": "669530428df2c0465096195e5284253321d0a2873ae5417dfd0c3ca7fb31d156",
+        "testOnlyOwnershipAdapterAbsent": true
+      },
+      {
+        "path": "build/libs/meet-me-server-0.0.1-SNAPSHOT.jar",
+        "sha256": "006c92c9dbfaf6a4b7cedbab26731e3b730a2228b22b8f73a53959a8ecc02f2a",
+        "testOnlyOwnershipAdapterAbsent": true
+      }
+    ],
+    "productionStartup": "BLOCKED: #109 real ClarificationOwnerPort adapter absent",
+    "guardNotCountedAsAdditionalFullTestExecution": true
+  },
+  "focusedClarificationTests": 64,
+  "reportedTimeRegression": {
+    "tests": 8,
+    "passed": 8,
+    "log": "/tmp/issue107-reported-time-green.log",
+    "fixtureClassificationCases": 44,
+    "answerScenarios": 7,
+    "comparison": "docs/verification/issue-107-reported-time-comparison.md",
+    "limits": "Synthetic provider contract; actual model interpretation and past production failure not reproduced."
+  },
+  "firstEntireSuiteAttempt": {
+    "totals": {
+      "tests": 719,
+      "failures": 5,
+      "errors": 0,
+      "skipped": 4
+    },
+    "failedTests": [
+      "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioMatrixTest.two-ambiguous-partial",
+      "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()",
+      "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.blank PostgreSQL migrates exactly ten versions and validates both independent schemas()",
+      "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다()",
+      "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()"
+    ],
+    "stage": "first full gate; legacy oracles before policy/migration expectation corrections"
+  },
+  "legacyOracleCorrections": "Independent designers updated the obsolete full-availability ambiguity scenario and exact migration counts/version for V1..V10+V13; preexisting retention/checksum/data assertions remain.",
+  "faultInjection": {
+    "serverDetected": 6,
+    "summary": ".tdd/verification/issue-107.json",
+    "sourceAndTestHashesVerified": true,
+    "restoredFullGatePassed": true
+  },
+  "redEvidence": {
+    "summaries": [
+      ".tdd/red/issue-107-http.json",
+      ".tdd/red/issue-107-lifecycle.json",
+      ".tdd/red/issue-107-provider.json"
+    ],
+    "testHashesVerified": true,
+    "formattedProviderHttpRedReplayed": true
+  },
+  "nativeOpenApi": {
+    "export": "/tmp/issue107-native-openapi.json",
+    "sha256": "551e18428cca1e7b569f8a4a45c1c4e70432ed389367b4833c13feea7f6e9efe",
+    "bytes": 49177,
+    "equalsWebSnapshot": true,
+    "combined109106RegenerationRequired": true
+  },
+  "protectedFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "0f4484723f43c444eb974a1690ff99aa198736e5addb0798de7d4713995602e8",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "ef9787fa213e144e8efc5c921491070ff51ba2d27e220d8177dbb72bc9fb733e",
+      "unchangedFromBase": true
+    }
+  ],
+  "preexistingMigrations": [
+    {
+      "path": "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql",
+      "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V1__create_core_domain.sql",
+      "sha256": "f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V2__add_anonymous_room_lifecycle.sql",
+      "sha256": "75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V3__add_submission_gemini_pipeline.sql",
+      "sha256": "a1d7723e2461dbc6e483040f24fe9df8efc5d088b9ddc00ffaf1cdc842f12371",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__add_matching_results.sql",
+      "sha256": "14f90ca0642a4ee02242d334ebe542503907b509ee1a4fdfcc45f6c33905fe9d",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V5__remove_meeting_duration.sql",
+      "sha256": "7127e1ccc1284865cc3b0ea38be3582a1870f7d3ec05e3700d4577d1084c3146",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V6__add_reliable_outbox_processing.sql",
+      "sha256": "526c1cca68d23c1ee9fe4fad6c7cf0937eb53df5e306ee75b327223855f8af7a",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__resume_delayed_matching_from_structuring.sql",
+      "sha256": "d252715c33435f88498e8e0131ea5b35e6e081e63fdc91fab67b7f1b6235c747",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V8__add_input_revision_rounds.sql",
+      "sha256": "04ac022f09473e4d95128c765b2e274b7d1d1abb0fee4b722f56119638d22a92",
+      "unchangedFromBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__add_time_recommendations.sql",
+      "sha256": "a6fc046611fb3cafa96d51f87de09687b3fdecc403988d211b7d86c4fad0585d",
+      "unchangedFromBase": true
+    }
+  ],
+  "changedSourceAndTestFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt",
+      "sha256": "be71c0337ee2636438f2c8eead5086d8be3ef860553bda09f5f4510227f1d3fa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "40214d03e1108c7d7d2ddda9cd05a8434a62d775d07a5d96af24ac1e4b5aceef"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt",
+      "sha256": "0dadd1094ca4df8eaa8d093d4d20414902e97c371019ce7487bcd59b59edd566"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleDtos.kt",
+      "sha256": "725d8541a17d9b30c00ba61e0d635468c7c2a0a1e3c5a4493ef5562b41218367"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/RateLimitFilter.kt",
+      "sha256": "e7995d88315265e308653610c348eec60e1af6ff8888ffada606eea7217f9c4b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/input/web/ClarificationController.kt",
+      "sha256": "66cb80af9d9f4e11417611bef6b76808db57b34e76ea8b7c8d36b44d9f7e9375"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionOpenApiConfiguration.kt",
+      "sha256": "ba7842aee8791950fcb408232a284fa4624d188d1ae0e8a3c4e5f6db28fb2f76"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/JdbcClarificationRepository.kt",
+      "sha256": "624bba53eaa99633e518c8daca7c9bfdd242af51c875081b175858cdd775240f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/SubmissionPersistenceAdapters.kt",
+      "sha256": "946223d214391780219131b8583c02afd98b0456a06bea84f22bcafedb33d8b0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/port/input/ClarificationUseCase.kt",
+      "sha256": "9bf737aff9afdcaee907d0347b9ac81e2390e2a37e1bc518b554b764a36ca1a0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/port/output/ClarificationOwnerPort.kt",
+      "sha256": "ff0c7f4bdda55bd4fe56213a08ced33a773bc3c42a3cfbd03b15883fe70b4962"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/port/output/ClarificationRepository.kt",
+      "sha256": "5291615f017d4607f584201197ddea687a536facb5e8f7438c8670a0a9872078"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/ClarificationService.kt",
+      "sha256": "eb4119cfd7280ee762364122fa750ebebd74e4ef94a469450e93e52d262b60a0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ClarificationProposal.kt",
+      "sha256": "7e9a2f7a40c80d7c4a5f835da85cdf97a0d1736606a7dd2ab1ecdb290bd22f24"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt",
+      "sha256": "c48bac8cd085198dc3b063adf1c19dc26ca1beb6f4913256b9b847a6c7c747a7"
+    },
+    {
+      "path": "src/main/resources/db/migration/V13__add_submission_clarifications.sql",
+      "sha256": "b6ea047b7aa87486941b06d5cfbd4873449821ba6d684a8f52946053aa53e3ff"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationHttpPostgresTest.kt",
+      "sha256": "66dc527163a830f3edb5fc6d21a268afb3b2f3ffbe036d7ac9676f30ab38d648"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationLifecyclePostgresTest.kt",
+      "sha256": "f729271954be04a86ffd026531980fa510312823789b834477c70267e76d4f5c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationOwnerDelegationPostgresTest.kt",
+      "sha256": "7935b127d0758864280ab4c0b8a696e845159e06ff988872a91f76da75172b81"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/CandidateScenarioMatrixTest.kt",
+      "sha256": "a8b5b6eda42201127c9502e56983532256439966a9ea068aa49b104c4dfe41e8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClarificationProviderContractTest.kt",
+      "sha256": "a6eccd82e16a9b87bae7a05d5d4dabee8acd251e6b1d44af32818ce9f8b57f5c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClarificationReportedTimeRegressionTest.kt",
+      "sha256": "cab9f8d38d627418eb32aa6d4c2d0ba7192ce9cdc737c6ea8cc6a81651806399"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ClarificationMatchingSafetyTest.kt",
+      "sha256": "1919f26059656da31845b1452500b1a7a261ae9fce7d8f47052da23d9e008cfe"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "dff3a895f9b6dc0ef7e2833729ab92a75999e33dc5a96968ccb87a48a07f95e6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "1108f67e645b85841c0aadc74d748e5258559e6df51420bd2d91a80475259db0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "a618838bc8700febafefcec3a859a04f48174cd5ca00f058b355feab99afcc61"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/integration/SyntheticClarificationOwnershipAdapter.kt",
+      "sha256": "85bf8dbfe72baec48c3c1640ff1db41f4b356e39acc19f0ce355ea060d379875"
+    }
+  ],
+  "handoff": "/workspace/shared/issue107/HANDOFF.md",
+  "skippedTests": [
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+      "test": "capture actual native schema for debugging explicitly marked unvalidated()",
+      "reason": {}
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+      "test": "bounded live Gemini semantic probe()",
+      "reason": {
+        "message": "org.opentest4j.TestAbortedException: Assumption failed: assumption is not true",
+        "type": "org.opentest4j.TestAbortedException"
+      }
+    },
+    {
+      "class": "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+      "test": "export actual generated OpenAPI JSON after Issue 83 GREEN()",
+      "reason": {}
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+      "test": "verify correction public schemas then export actual native OpenAPI JSON()",
+      "reason": {}
+    }
+  ]
+}

@@ -1,0 +1,2445 @@
+{
+  "scope": "issue110 on actual account109 server c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "qualityGuard": {
+    "label": "integration-corrected-guard",
+    "startedAtUtc": "2026-10-17T17:36:05.376529+00:00",
+    "finishedAtUtc": "2026-10-17T17:43:54.449447+00:00",
+    "command": [
+      "C:\\Python314\\python.exe",
+      "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\meet-me-server-110-integration\\.codex\\hooks\\tdd_guard.py"
+    ],
+    "exitCode": 0,
+    "log": "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\verification\\integration-corrected-guard.log",
+    "cloudAndProviderCredentialsForwarded": false,
+    "liveAiOptIns": false
+  },
+  "priorFailedGate": {
+    "runner": {
+      "label": "integration-final-guard",
+      "startedAtUtc": "2026-10-17T17:25:25.947085+00:00",
+      "finishedAtUtc": "2026-10-17T17:33:10.893810+00:00",
+      "command": [
+        "C:\\Python314\\python.exe",
+        "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\meet-me-server-110-integration\\.codex\\hooks\\tdd_guard.py"
+      ],
+      "exitCode": 1,
+      "log": "C:\\Users\\jinhy\\Documents\\Codex\\2026-10-11\\task-2\\transition-prep\\followups-20261017\\verification\\integration-final-guard.log",
+      "cloudAndProviderCredentialsForwarded": false,
+      "liveAiOptIns": false
+    },
+    "totals": {
+      "tests": 888,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 4
+    },
+    "cause": "three fixed-version migration expectations and one contract fixture Bearer; UTF8 reader mismatch in wrapper also preserved"
+  },
+  "junit": {
+    "repo": "meet-me-server-110-integration",
+    "label": "integration-corrected-guard",
+    "suites": [
+      {
+        "class": "com.meetme.server.account.adapter.input.web.AuthEndToEndPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "753a69512c1fb80c8e470954eb1617d59b9bd996a918cc8422900b0c30715951",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.input.web.AuthHttpSecurityContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e5716551a120d0d52950f044f17620449a16f8fd27bbb3a2bc696de6c23a9c8a",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.input.web.BearerAccountSecurityContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bd9143326094fe0efafb94a40259c7c61522c8c6dfd456e491be287a27d4a123",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.oauth.GoogleIssuerCompatibilitySecurityTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1b427e9351070126a40606b24a4e9ff3dc3b57d096b77278a5bd360a4cc277d2",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.oauth.OidcProviderDeadlineSecurityTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0610ec68757cd3de2bd338ee7457a3d957239fcfbddc2d78a83dc04f73719031",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d79ad536c7d818af6b3c4c510c3d36d9d68f112c769153c3d84078ecf66d99a7",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.oauth.ProductionOAuthAuthorizationContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f7f157f0dc6a31d937c16bc2de5391e24ff63e4f8c490abdbff9dca5106af744",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3c2054aab1821e483b603e37d1e619c07d98a82bacf599c5404b520669e58f6f",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.redis.RefreshAvailabilitySecurityContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "027ffe11b564f69ad393c5fa5daac4d11610ab1319cc314e76b36e172c1a9f45",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6b76ae9ecd4c779c8848758d764b28cb7113103444e3d039e0ac71ccf5d62030",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5f80d652e0a52526f4b8986af262260e0bf1c8c1682e1c14f2fc292d652d321d",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.account.application.service.OAuthLoginSecurityContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ce618a8553fea57583aae5ef2bc68b1e85b502bc8357faaef322e8ca78727768",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.architecture.AggregatePackageArchitectureTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ff5354a14f48f3b31d0481dec089f49a9fd01a8474e5c55594f130c16eb623e5",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.config.AnonymousAccessPropertiesTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "91c8113fd9711d1b371089601f78e44b36a83818dd8ef8cfdbfe5b11cb20c3ff",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.config.LocaleConfigurationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cc919d5c90630b7d172ff0d9090dd756093ad25540298bdc6b10c859f70dbe17",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.config.MessageSourceConfigurationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dea7b99b7358c2c78220488f626300c7efdd190ea2cc464dd2dec39c5b20f803",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.AnalysisInvocationAdmissionDeadlinePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "44cef0b0cc6c58ae983e319f6bd1b56f6159bd881d80067bfca79901171e1bb4",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "df1cb93a8e062238d1a04ac0f2fb99930bda55c96af7683e17918b458f12a800",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "aeb24434611f28b70f668bd8c131c0395b2a44a6038c2f2c1a4fe5c925e23ffc",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1f6e73c7b398b7f7d14e42c932125a9a06942826de1604cbaa8bb1dfa106948e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionMeetingScenarioPostgresTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e1a8d3aced5619cf9f35fc59e10e7945e9a88657bdf411535212271af5cbf2c7",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "807bd5af1b40ac5ebdb3113eecb5fde510441647cbb91b8718a3cffa3415e9d5",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConcurrencyPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e00e9e92112bbde13bbcfe809dfe0f43681d3464fc77bd75034983a7ebe5da84",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundConfirmationPostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "88c05acacd4d54409736368ed0c0800766a59fdbb7f1d40f696e5ef1dc66630e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f356dd76a0129ffe13746636cb6698f9a564016168ed8c5807436a12db830ff0",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundLoggingPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3796427f10b0d3de917840612014ea87ebb927af90cb5a9a358539191da4d947",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullableSchemaPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e450687aa3426b393980adee6c404a11d3f8d98c704e2c633920009c35cefd2e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullOutcomePostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a79ff1f8348c611c887cfbf649e9b6799519dbd792bef78bdbfdc50ccaca4f51",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "sha256": "18f0a5f5a811dd4a7b213e13016f49a23bb50258886d87ff415b14a44145258c",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d2b1352757c27c4ae759600697fbd589c2a87a7dd0e7269483634f3b55eb5425",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e0bb05c6131a1dd48846ea85e543e54eb599af6cfc6c3c658507f4b050f6f1ac",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.D2UnsafeHardTimePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "72232a72c67a9867ac55f39754bf8ab80bcac212b3adfbe50a43290cb1918061",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "55e8ddb5083a359d974d0c5ec640db0a7f9182e364cc962a79d844918b5f7863",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5514a5710a9afe2381153d463971ccce373ac1fb8fe2ba43e67eb2f7b2b5138d",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "sha256": "2836582dd6b2a0241cb7ca2756539c4e4614ef2fb85874af6245763336603d2c",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.MatchingResultNaturalLanguageOnlyWebTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "53610b20cd0a66cf391aeaaad1c1d03781e1764e911762023cd4c6ee9ba635a0",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.MatchingResultWebIntegrationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dc80fc304e0cb5dfe0b773ea49c13942ff54a2022eb05917588b2f5e2893d673",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationBindingPostgresTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cb9a10170db1cee50b47a8f9aae0e7de2d79de6dda5ea07452f5eb1bdfd6c562",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationConfirmationPostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cdabff9e52f4cb831b108cf9dd4e93741231079f678c49e43f494133866445f7",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c41db4298c39cafbe88c5d931f37ede00b83d7588cc68832f3181699a291c7c8",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "60b91b43f7f81d114862cae941b3791b5ef4683a16a6cae8dc9e13f286ac0b79",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4783576bbfbecf715e6b8645f15005099b460879cd9b0d34e09751c18694ad5f",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPublicationPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5776dfda4cec5216954895c4a00fb7bd4971e370d39148a373535b3d5c3c9f86",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationRetentionPostgresTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "94acf8b9e2a2883fb08bc3616890901c9f83f5ebc2f57c37d600a196a934d417",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationReviewRegressionPostgresTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2ec75a851a53239db54526d3617b2c6be14659be76e0a26c85984e2777774693",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "sha256": "23feae004e0f910596892f3efc658c56e5e1887b1afcc96e11978ad827b589bf",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioMatrixTest",
+        "tests": 23,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "72b57caa1ca94d4f7b746004205853bf1ed4d0db3d0c74ccf3487f07378d5064",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.D2HardConditionShapeContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "43ccaf6384cc2f9270dad2d4ec87185ccc7746c6da81011684309558b2ff2199",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f283f5fa63c7a943b4eb9670bba0460e762b5a6bbcd3b0dc0be10e9e37cc5bec",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.D2UnsafeHardTimeContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "af1156e3dbfbac841612a731dcf5e494863c55a88f717a4510f64fe523f5e092",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.evaluation.ApprovalBudgetLedgerTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9a67ed387bf8926c9544e9ceb8242cfba497b8a7a7f5f470b8e30b17c9e8ec10",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiHighDemandBoundaryTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4ff8c8adc0777a6d73e38c296f447fc7e95a4544861338c821379361e8cc8c28",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "24b98b4cc0c8117c25942bd9fe4a22c21361e65c6882163225daaf54061c8d11",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiPlaceGroupingContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "970c16d025d0bb9023c4359ebc1aff6cbb5aa85ddcf59de7b1473e7063cce6dd",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c614bc43ccb4ae94637ee0c5fce0ca9aafe3a540a0dadae33f83918246eb192c",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9ac7a2746c968a7a58f5dc265cc1adfa1998698de8bc45888c9b8f95fc7b0d79",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3e50545353cd7ccca1007acccdd82f5c7df6a46c497ed75e83ed660c4995f03f",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextBoundaryReviewTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "49d0346388f33529af75f493fc5841e0fc9a8ba49dcc7ec6efdef4641cb85913",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fd74d51d1c8cca8f201a78b35976aa7135cfc691eb5da5e97908fb402db76151",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "89e0ee36e585d6e5699aeae18e5395c25c2f07a7ad63f0dca434b3685763798e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextSafetyReviewTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c80eac9d4c4e068b4862bc813779cc9028d4561214b8603e35e852aeb4e19828",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "13ed939730033b3dfca0e85e7061ea52717642b0fd56bcad01025ad97782444a",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.KakaoLocalPlaceAdapterTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fb0313b2db9f81b42960cfb9325b0042bbfa8c09cc8d8dcd68318601f7bdef7b",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.LunaExtendedTransportBudgetContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "eeb3df00efdee2547ad69ee1eaa5342980e70c1690604cb99d7007d3f00b2cb9",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9e50d000ec98b5433f4557609e6ad1a8c67a52ac44c5ad170404015fba0047f8",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.LunaTransportNoReplayContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4703f94e04e955791b7d87c87ebb72da2377aa96f701c94771dde35df6e66d5e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "fc4468881a2bf430bdc78eddcc6aeb76e5c19f3c054ae72901204bfd250dd90e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6dcc29a3264effd76aa6441cfed17c1ba048f57e17fb84fee6764613742c865f",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7ba45ac143d7fb7b0ec9bce3db10b542e3fbb16e9a5412e6202d2caf035731ef",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "78b1f2f6d3befcea6327810aa92ab4e29bd1d4873d78f50d9d2a7ce3bcaf7800",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.output.redis.RedisCoordinationWorkQueueTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "670c91f25437dc5d2fd2d6fb5f58d88d33088f473993db461e158e94daac4717",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e42c6ae5b8f8f877e43a0225c15698b9cd8745b779ad88479e3a26b4611a0141",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest",
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b617e4aa83fc6a18910421645fe313d065c468ebcc6abe9f64fb1a6cdc70157e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "009993f5cbf12bc31c7d46ccfeb87339a30c129edf1e60d2fb6d18620d207cdb",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d4fcda9bc64e3d307df7ccf726b11bf34723c0b07fd0c3e20101a5b623a7f79e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.CandidateSummaryRendererTest",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ce9853aeef45458b1fb264b45a6cc352eb02e564fd7f2552b6c9bd789f07ac4f",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.CoordinationWorkerTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "da510557d62163055fda9c932d59b4329cdbf2bc7b0bb0b2996d5a6e81c0177e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.FrozenSubmissionBoundaryTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dd6a3469342c1a005ea96aafec4d60425b5119e3bc6c7680483e2025b623eefa",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "64685148534e927ac86a5740ca4ee0831f02de01902e2a4a34c9b5bdce1881df",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.GeminiBatchProcessorTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9b1d67d5cb357df5eb0a302876833d275bbb496d8572121783a9782e885a14f0",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.GeminiBatchProcessorTransportContextTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6aa81bf2ab9262ab2b1c2b1c17c24b9f7222847658846b10be212d1377401088",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.GeminiNaturalLanguageOnlyTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4c322d9a3ecfe08b6bbf5c55a74c15fbe2e09f7b232dba35aba4550723a853a5",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5acf3491697ed4e6c67b334051665c9b0b19cf7dd2b3cdf9ed21fa746a9737d7",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "96cfa41eaf2ed357a541ca9810eacb2a69e2fad401e66da184a882abfbb39d38",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.MatchingProcessorTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "584815509dd81b910b9ce56fc6263f232ad5b702d38dd813d9623a1c0d096a12",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dae77a087724f7bd1ceac41f6f7fcaa8ffe9aba879d8e06fe7511320d85e19f6",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.OutboxRelayTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "da414ceea412ceab4a43b676949f57ea3e54f6e7590076b921c18c60efb5b674",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.RejectedAdmissionFallbackContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6b8852173e488f46ad1fad0ffbb05234d2924c8e3007f7f15612e9ead60e1bbb",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "db9fbca6ee40cb037aab106676148c497f8756da6c7059cb1ed0961fb49ea06a",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.CoordinationRunTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ceef8c9555ba85836d6d1d794d99aea7a19d3bfcc3243a83564d99139e8affa4",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcherTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c8dabaa6b6e88ab24c29bf3f651bd75683c61f4bfd54db87362a144ee1f02288",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.GeminiPlaceGroupMatcherTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d0e824c1b6be7a19495615b92ed04bbc9b4c0ef816d942daa825f770bc77b583",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.GeoMatcherTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "95497037ff222c42b40e530ef8a280ce4b11eaac56f85e3caefc122720577f29",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1f1b38c9f587c5ad7f34b8bb492d598abeb9b1eca43b543762cbaa2c38664947",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest",
+        "tests": 18,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "24ece59e4908cc190210ba8589c5519c431041df9932fd6c7629ad677bafe096",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e8888483398f64c57a84b0824a854ae6183373caab26f89ba5e8b80c64ea9763",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.TimeRangeMatcherTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8b9611bca9f5ab47066644a28745b086fb78aace08c1cd78459ec11acf0871ca",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.adapter.input.web.AccountRoomArchiveCacheContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bffb7e655aac55233056a6514a6fdb84eddd4ff09df67b553dafdbb730b93b97",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.adapter.input.web.RoomLifecycleWebIntegrationTest",
+        "tests": 10,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "834cb62cb16e5c8cf4a6e8708dadf1d44ed51cf53b6d176c2a70894ab31af2af",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest",
+        "tests": 17,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cdadf884a47a3a36378ddc9d94e419ef606b13edc8cf55855714cc1e9f92d36d",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8b3e51e4c8df6d8ef0162991829163e4b8671dc728410f17ba935255342893d2",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestViewerJoinWebIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f58911c4e18b17e313583a7f1e3199cf0c793734839b60c74816875818b21c60",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.adapter.output.persistence.RoomDataRetentionRepositoryTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8721c4b68e201af828e93f71398493d5aac825a9bb86af00455553ec1582f52d",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.application.service.DeadlineClosureSchedulerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "32fe297eec6c3cfe40a2b14293aaabc9611a854e0c08565d927f105dff25d3f7",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.application.service.RoomLifecycleServiceTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c3676e3e4a2c5ecd383be37310ba3e860003b0bd2d3da3d2d159f1e37289088f",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.domain.InviteCodeTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d63c74518209efe437fe4e4d330b654c1c1df22d72323c6c68f45c9c86bcd616",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.meetingroom.domain.MeetingRoomTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3b7cc8955a8200f2382ea988bb33770b58403653d9beb8a6124192382b4ebe71",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.MeetMeServerApplicationTests",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dbd50ca94bd08ff67000e37f145a2946cf857fe16e10a145b93ee52bd2538769",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "d254668bec53ffec3db226f322ceb36e17db4b3c431d993019025d668b916cae",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.participant.adapter.output.security.GuestCredentialServiceTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "7632bf3b461a1f32a12df412a2e8de26dc5b6b0900b799b58d21b120b53d8a64",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest",
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f3fb412063525f18d03cd0e8d332d6cd2c8ca3ceac0b5ca74bcb4c49a5c44ee2",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.participant.domain.ParticipantDisplayNameTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "65950ba37de3d6bfe70f7e470f22442acff7d2934c77cc373cbcd642f0783bd0",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.input.web.CorrelationLoggingFilterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "df47b069a0b47f3fc1c1eb29a97e51cacff1e90cd88dc671b4de25db6c5ebf47",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.input.web.InputRevisionRedisRateLimitTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e1d41f08fc5c27ee5fac05c285bee26444cc184d040513353f79ead6380310de",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.input.web.RateLimitFilterTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e0b54f6fc6044978326e8b312f5eb90d16654cfc54f96ab9581968c5832e1e8c",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a21326d29bab86baf680ab0457896c87d7db57590ded4d51b359c35eae3afcfa",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.AccountOwnershipMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "dd4532f6020de5285252d980fb1087539ef73fc545982bc979094ec03560e747",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.AnonymousRoomLifecycleMigrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "373741281263b62a67574854f1aebe440f9e594cf1c5a5e0af34fe74390d8669",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "8d6663ec7e80f9a52b3974643666bd3fed1253374233bec219b1783fc7b913d9",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bd2d693d4a6425095777413ac904429b05f66c5b4e1b87a02b805eebe814b904",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.InputRevisionLegacyMigrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "cd7cbdf700a801bdd6ce5aa00856d428eb41a4a9b1016486e2fdd4a1781eca1b",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "a074015654455288c5fef1e997b3c38b53194b8f98e3ec54204f10e10d1298df",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.MatchingResultsMigrationTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "2d944d43ae0c1e580eb48c8943314973766382da11db2b70b5e5d1db116e1c09",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.MeetingDurationRemovalMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "0e0a3b8987570237b9ef40f457b0012035f64a3b98f9f2ded410d2c936683568",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.ReliableOutboxMigrationTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "4c0be1850dc89b82adf6c750b79186703cb3652f706699564541ab6082d13915",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.SubmissionPipelineMigrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "5eb6574bfdb6b7a62dc78c1390bed1976d566246e6b498fa3a51f053bc5a6211",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.redis.RedisRateLimiterTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e67c0404d02de2e50ff740c07c96f6dd1a75a580c4bdfeb294c8b8dfcfe5c280",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.domain.time.TimeModelsTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "e6dafcd7a00effcbe780e782e3a26aeaca82eca3f72dedbaf78a98bdaa365f61",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "6321e97679cab70d36b6b700f451fa5cdd0c3aabf55f38ac94c7b16e2ca83015",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorAccountDefaultDisabledHttpTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f7d6eae43e7831b5fdc626996a09c4cd76f961cbdbfdaf311cdbff298e47d4c0",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorAccountEmptyAllowlistHttpTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "227080ecccfa11a4d0219ace58d3f250a2961a39c03ebb744a435768cf6b2541",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorAccountHttpPostgresTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b58d923317aab1144e94d156c8f648f7692d2ec5c485b284566e28ccdd638281",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorAuditRetentionServiceTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "bf593c75a7cd30c49ca384b647f97bf61538d4ebba61ce037d57af3345dc98ca",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorAuditSchedulingContractTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "81c62db103377e97950e9e1786b7da6590a67bbc7c709642a93320352efe3144",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorControllerAuditBoundaryTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "db7332f4391cb89f1a209ef746493516c58b3a949747e6d8d15ed27d530a4292",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorNoStoreFilterTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ea647a42e68a6f683cdce4f6387b685556fd7987fede02492b00e7dd81bdc7d0",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorQueryPostgresTest",
+        "tests": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "9b5d7c03f0e1862dc9c63c9b97863a5a3e4952766c0a6d68ff97eb12e8aca9a4",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorQueryServiceTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "c240a82ef1b53c127919952d5664e905dee377908b8a6b92e71c9194385e3ab9",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.OperatorTransportQueryPostgresTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "3e624a1943db309cc9559a83a002a500c167c3d942174167bc5843b139cc2a25",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.ParserTransportConcurrencyPostgresTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "537a867b0c258bc9ebb755ed366619bfbb0bb229f30377bf4dbc6bfe1576c2d3",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.ParserTransportObservationPostgresTest",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "f4dc2135a451430d017cef8f940356f8d28e4cd78f15e0fd4365d6fe5fcb53d9",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.shared.operations.ParserTransportStoreBoundednessTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "86018d1389bf8de5a66a62574bd5c467b5687e8b4af9fc63dbde7cfa5ba1561e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "sha256": "e35a724fc0b2faab40019cd00ebd1fe49562e79f36d7508b4092db68b16f295c",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest",
+        "tests": 57,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ae6ab5a7ba842a09c74a89d54af1f41a8f6d596da14fea07f8988cfc6b960b18",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "19457f292bbe23aacf2a525d04468c256b1f347d7f81b41f2cc652e695bb3513",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.adapter.input.web.SubmissionWebIntegrationTest",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "ffd2efe34023a625df6bf7e8f9ea109c2477ef961645a7e72de0c8be8a3b1d6a",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.adapter.output.persistence.D2PreferenceJsonMapperTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b375d224f7083c4d24455af0288cbdf338865055c517bb5667fc06cda1648c1e",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.adapter.output.persistence.StructuredConditionJsonMapperTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "b010a4cc4e49d4e416ebb7854dce6478d31c45b7c9734ffb71c16e7263cccb18",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.domain.SubmissionRulesTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "17c29efa13d5072fc254df01f6745bf7397674b10403b20ffe310aa245c6ec1c",
+        "failedTests": []
+      },
+      {
+        "class": "com.meetme.server.submission.domain.SubmissionTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sha256": "1a379936539aae804e7a5d7b3f280a3d1c5b81477112642c162ff06fef828b63",
+        "failedTests": []
+      }
+    ],
+    "totals": {
+      "tests": 888,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    }
+  },
+  "passed": 884,
+  "originalObservationTestsUnchanged": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorObservationTest.kt",
+      "sha256": "d6d5385260a516f129ff5b6b205039da724d7155848bdffdbc93251f42dd377b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/observability/MicrometerAnalysisExecutionMetricsTest.kt",
+      "sha256": "5991a92f063f79083cec8d9b128e064ac8370984118e00dd35e1a5b4003b99b5"
+    }
+  ],
+  "otherEvidence": {
+    "account-http-red-online-summary.json": {
+      "repo": "meet-me-server-110-integration",
+      "label": "account-http-red-online",
+      "suites": [
+        {
+          "class": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "5ad79c69feebd55ce3e13c09574f1060475c2dcde3c31c864715f6b66c9fc3c8",
+          "failedTests": []
+        },
+        {
+          "class": "com.meetme.server.shared.operations.OperatorAccountDefaultDisabledHttpTest",
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "e3d6c0e29fe76413a7f97a61b875e57daa26f4d955689515e8391b3151dd9990",
+          "failedTests": [
+            "feature defaults disabled even for a verified allowlisted account()"
+          ]
+        },
+        {
+          "class": "com.meetme.server.shared.operations.OperatorAccountEmptyAllowlistHttpTest",
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "4c6ced8fd9820cf30ca1985c3c228f3462690bb41bb20f5fb47093826ea40c2e",
+          "failedTests": [
+            "empty allowlist defaults deny even for a valid account()"
+          ]
+        },
+        {
+          "class": "com.meetme.server.shared.operations.OperatorAccountHttpPostgresTest",
+          "tests": 12,
+          "failures": 10,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "0368172bc46caf3add47e027cb61a4ed47f03c93fb945db3f8f5023fbe272504",
+          "failedTests": [
+            "[1] token = \"synthetic-invalid\"",
+            "[2] token = \"synthetic-expired\"",
+            "duplicate Authorization fields reject even a valid operator token()",
+            "[1] header = \"Basic synthetic-operator\"",
+            "[2] header = \"Bearer\"",
+            "[3] header = \"Bearer synthetic operator\"",
+            "[4] header = \"Bearer synthetic-operator,\"",
+            "allowed verified account gets real safe summary and exactly one durable allowed audit()",
+            "verified account owning a real HOST participant is still not an operator()",
+            "verified ordinary member is forbidden without reading business projections()"
+          ]
+        }
+      ],
+      "totals": {
+        "tests": 15,
+        "failures": 12,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "account-http-green-summary.json": {
+      "repo": "meet-me-server-110-integration",
+      "label": "account-http-green",
+      "suites": [
+        {
+          "class": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "76a53a4b71a5f3758a54bfa106302bdc5bf22be05b6b2e8232af88b40e0deb77",
+          "failedTests": []
+        },
+        {
+          "class": "com.meetme.server.shared.operations.OperatorAccountDefaultDisabledHttpTest",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "e990d18dd5f4b78501fb1e454375894afd12367938cc4a4f0b2ae6dd37d1b0c6",
+          "failedTests": []
+        },
+        {
+          "class": "com.meetme.server.shared.operations.OperatorAccountEmptyAllowlistHttpTest",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "4c8eff9e66455e78b54f7dfe13ff94afc8bb3d906ff8ce73a093ecdfdbc08f45",
+          "failedTests": []
+        },
+        {
+          "class": "com.meetme.server.shared.operations.OperatorAccountHttpPostgresTest",
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "0c13afc8e105903cea9bbd9bb6937d17def52a9c1ee6c6c07be80ea09441658f",
+          "failedTests": []
+        }
+      ],
+      "totals": {
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "account-http-auth-fault-proof.json": {
+      "fault": "invalid bearer mapped to503",
+      "tests": 12,
+      "assertionFailures": 7,
+      "sourceRestoredExactly": true,
+      "testsUnchanged": true,
+      "sourceSha256": "103389a380da03509c6f083969e16c7863a9d91d1f4042fa2ff58d0292ef13c1"
+    },
+    "guard-110-faults.json": {
+      "results": [
+        {
+          "fault": "source-ancestor",
+          "failed": 4,
+          "tests": 5,
+          "sourceSha256": "19bbc72c2aadd6d0238249194601cd16ee372197f582699221ccee79c01b0e0d",
+          "logSha256": "b57bb2902f7c0c3388baa9187933328d8f688192aa43da5c64939522bcef71c6"
+        },
+        {
+          "fault": "guard-fingerprint",
+          "failed": 1,
+          "tests": 1,
+          "sourceSha256": "9d519071a805f8b3023592bc964f7a0596a5b723fea41b1712dd834e6b2cf7c7",
+          "logSha256": "a7a92fc82e7eabad9a605089960874a5dcdf6c6b835081b1f3caa7b2d1e2aa2f"
+        },
+        {
+          "fault": "http-error-log",
+          "failed": 1,
+          "tests": 6,
+          "sourceSha256": "c37d03fb9ad2e7974c3210d7403ad3ae1678188cdd9ba65b149015e264f09da9",
+          "logSha256": "6a19c9fe5cac1d96be9c95b4a906d0017d96756bca0a9ea163a712b384c7fe10"
+        }
+      ],
+      "allSourcesRestoredExactly": true,
+      "allTestsUnchanged": true,
+      "testFiles": {
+        ".github/scripts/approved-release-pipeline.test.cjs": "07f7276b16f3877df3db93228bbb9857c9bef29a445a25f8c22ae1f2e49a66fb",
+        ".github/scripts/deploy-extraction-contract.test.cjs": "0dff4e7ed64ebdbfc7564774c85745df9648d72021311e38ca9f25e986921ab8",
+        ".github/scripts/deploy-guard-contract.test.cjs": "37413d3d24b79bb4677b9fba19b4434efad539458bc7f203dd35805e041f9242",
+        ".github/scripts/deploy-workflow.test.cjs": "008ea55104c521b137801b7ed4c70ca7e26b5792544d2b2fd336ba9e0832ea81",
+        ".github/scripts/issue-links.test.cjs": "303a259355e6df20cb98d81dcd512379a8d8831b9e56802530e141713081a940",
+        ".github/scripts/issue109-release-catalog.test.cjs": "25acd48710f4b3bb636172a1ba77a54fdd06bb24873d13a12b509a980dbbc922",
+        ".github/scripts/issue110-nginx-privacy.test.cjs": "134207bd37dd38242da5a884efd9eb60f1575bb273b0966c9127a7914430d00d",
+        ".github/scripts/issue110-release-catalog.test.cjs": "b463a6a145a8ff7413184c05f42f25fbf85bd692ccaa14b3f4df833f6a1092c7",
+        ".github/scripts/production-preflight-contract.test.cjs": "e9eb7b5c3afbf581c068710aa7b0666a9f1a656e5382e69c96d48f097bec0fd9"
+      }
+    },
+    "issue-110-integrated-openapi.json": {
+      "source": "actual running issue110 fixture with real account109 code",
+      "sourceSha256": "54ec5ef4111c04df4df4620c0bd72ed2ee97b02a209314da45d348fe4c429c66",
+      "paths": [
+        "/api/operations/invocations/{invocationId}",
+        "/api/operations/rooms",
+        "/api/operations/rooms/{roomId}"
+      ],
+      "referencedComponents": [
+        "#/components/schemas/AttemptSummaryResponse",
+        "#/components/schemas/InvocationSummaryResponse",
+        "#/components/schemas/LocalClientCallResponse",
+        "#/components/schemas/OperatorInvocationDetailResponse",
+        "#/components/schemas/OperatorProblemResponse",
+        "#/components/schemas/OperatorRoomDetailResponse",
+        "#/components/schemas/OperatorRoomPageResponse",
+        "#/components/schemas/ProviderUsageResponse",
+        "#/components/schemas/RevisionCountsResponse",
+        "#/components/schemas/RoomSummaryResponse"
+      ],
+      "allOperationsMatchWebSnapshot": true,
+      "noWebContractRewriteNeeded": true
+    },
+    "nginx-110-runtime.json": {
+      "scope": "actual repository HTTP proxy policy projected without TLS onto network-none unprivileged Nginx; refused loopback upstream and malformed request header",
+      "checks": {
+        "containerExit0": true,
+        "bothCallbackFailures": true,
+        "parserFailure": true,
+        "noCode": true,
+        "noState": true,
+        "safeAccessFields": true
+      },
+      "accessStatuses": [
+        502,
+        502,
+        400
+      ],
+      "productionAccessOrChanges": false,
+      "tlsVerification": false,
+      "sourceSha256": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44",
+      "projectedSha256": "bb4b65f4d9c7eb1bd6ede8758c902cc672104c03ce69decb18f6066b25c9f29d",
+      "logSha256": "87e713ff917361bc31dd4835691e96b756f474fbe51aead3821b8e9fa616d64f"
+    }
+  },
+  "releasePolicy": {
+    "linux": {
+      "passed": 32,
+      "failed": 0,
+      "skipped": 0
+    },
+    "windowsActualGitApproval": {
+      "passed": 7,
+      "failed": 0
+    }
+  },
+  "source": {
+    "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt": {
+      "rawSha256": "b9c2ed1bde9762dfc7cd6caea31597d22c9f9731d4a066012330f352f07675ad",
+      "canonicalLfSha256": "e128e557882db88b0ac54bed681f196e3aad5e5c74c5f5213dcb461323315104"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthExceptionHandler.kt": {
+      "rawSha256": "cf85f2ee0c5d64c674d90132003fbbc5cfc925607b796a322db1e1c331919ac9",
+      "canonicalLfSha256": "631a023e0518f467581adff2248e9b48c7b640a97099a9d24a7cb3550ff1de6d"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/input/web/RequestCurrentAccountAdapter.kt": {
+      "rawSha256": "8f1dfd2ccbe54889e7669a43c00179030ce4f13d139032161e4e7f120ae1f603",
+      "canonicalLfSha256": "96b19e38d1614ffe394b1063ae7383e660380b24112fe698e8254a773ace86c0"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/output/oauth/OidcOAuthProviderAdapter.kt": {
+      "rawSha256": "2fcecd873f779dc2e985dde2680624c2692edfc7f98114580f4cf429ba5df841",
+      "canonicalLfSha256": "03a7bc267b7aca9139b239219790258d1b4ccfad5863c2198982ff9f69cc21ce"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/output/persistence/JdbcAccountRepository.kt": {
+      "rawSha256": "1b3700c267baf81f056a68747ec23ac7adbdde26d80d186e7182fa4b7ba6fa35",
+      "canonicalLfSha256": "8d0a4d7ed22d014214cd188b3ece21382cb7b3401f3f72abd8e2178c901c3d6e"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/output/redis/RedisOAuthStateAdapter.kt": {
+      "rawSha256": "886d6c9e0007049695c351e519e15dd352bac6980531a226a80a0c68e3dc3a4c",
+      "canonicalLfSha256": "65d59bc38e03c03ae8b3c831452dd0a00ea49f626e667bfed44f6b645a7d11db"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/output/redis/RedisRefreshSessionAdapter.kt": {
+      "rawSha256": "7e9b507bfa7b7e1f3549dd059d61543899b4608d78efef738dc26935fcd79194",
+      "canonicalLfSha256": "5faf672c7cd490a1504efd0e7132652399244fa2e6d47eaedc14558784e0f695"
+    },
+    "src/main/kotlin/com/meetme/server/account/adapter/output/security/Rs256AccessTokenAdapter.kt": {
+      "rawSha256": "6465adce9c86985adf7fe16badeba9884d517c7f73d60cefc2ecff2e74cdf668",
+      "canonicalLfSha256": "86c03f9b5b5c80244c03a2b954cd33ece0132deda69dee9c086133d4a88a747e"
+    },
+    "src/main/kotlin/com/meetme/server/account/application/port/output/AccountPorts.kt": {
+      "rawSha256": "5e3b9188345e27b63bf34a6728441bc2345e012432058e46dddc140e60ab0fed",
+      "canonicalLfSha256": "19e5d97e1e80097dea9a0b6b7c442b3e8f208d6d793138bc8a71bacb162eae56"
+    },
+    "src/main/kotlin/com/meetme/server/account/application/service/AccountIdentityService.kt": {
+      "rawSha256": "d9fd567e14118029cc968381a7d51e35174a18247d2965959cdd5afd7917f6da",
+      "canonicalLfSha256": "29c562b1332acb8f268c8fb100971d84161cf02b3f5aff875305f9c65288ec3a"
+    },
+    "src/main/kotlin/com/meetme/server/account/application/service/OAuthLoginService.kt": {
+      "rawSha256": "e613940fd2d8f17f1a7003905e5eb8cf2747437d3aca89d5c4e247a0f11e4964",
+      "canonicalLfSha256": "2e77ebc513b8a27d121b3248fbff99a35f9721df1da2f64ced82e6945839c3dc"
+    },
+    "src/main/kotlin/com/meetme/server/account/domain/AccountModels.kt": {
+      "rawSha256": "5cb02d43f342525f50bd0e8579088a6f218b6756bc471ffaf3b26e039844d7d6",
+      "canonicalLfSha256": "11d136e4504ebb11ccca9badf0729a597039ab4e38eaacc4340cd358c9ff560b"
+    },
+    "src/main/kotlin/com/meetme/server/account/domain/AuthEntropy.kt": {
+      "rawSha256": "4c78b46346230717a92184f9f2c25944bca1454716e78e93ac179ca0e56eb1ac",
+      "canonicalLfSha256": "675745908c6000d2c29b01c04d7b6ff81cfbdb375796c467aabf1f33517acaf0"
+    },
+    "src/main/kotlin/com/meetme/server/config/.gitkeep": {
+      "rawSha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+      "canonicalLfSha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "src/main/kotlin/com/meetme/server/config/AccountAuthConfiguration.kt": {
+      "rawSha256": "979fca697963c127c80c52ea97dfd6774676a380c27a923b8e876512801b7130",
+      "canonicalLfSha256": "fbaa98b155b4cccc01d3219ee1e48349cb84360cddd5670e8bc3c00e3b4ce3f9"
+    },
+    "src/main/kotlin/com/meetme/server/config/AnonymousAccessConfiguration.kt": {
+      "rawSha256": "ac0dfe40a1067eaaf5d9efd2daaa6ad8314948ec879a716692b42287c24219e1",
+      "canonicalLfSha256": "b2b9accdb87a7ccb9b6a4c115ed1ab8754ccd47f8199cc7cd9e9481a0d128bc9"
+    },
+    "src/main/kotlin/com/meetme/server/config/AnonymousWebSecurityConfiguration.kt": {
+      "rawSha256": "7b2a10b2518c1575870ecca0deba56a4bc5baf6bf8617bda229b65b8693cd44a",
+      "canonicalLfSha256": "a2ac18f1de5484fec4d4dceb36e6fd3b96ec9dd8b64484552bc21a6d01b2d013"
+    },
+    "src/main/kotlin/com/meetme/server/config/DataRetentionConfiguration.kt": {
+      "rawSha256": "268aad22850f7e7f6462545c4fec44d3e87dd91f058e27db1a46113fe976ad6b",
+      "canonicalLfSha256": "69c8632b9d377bc7296f0b618cf14091b28f89469ebf1b51cf8e42fbf67ebb97"
+    },
+    "src/main/kotlin/com/meetme/server/config/GeminiConfiguration.kt": {
+      "rawSha256": "3fb1a6619e6fce113fe6cd984c8a72143b36c4e417015855ba917602c090b4d0",
+      "canonicalLfSha256": "d68ea93b2ca023fdd39db618728c4272b1e1f282abd0694d20dec36a956efd39"
+    },
+    "src/main/kotlin/com/meetme/server/config/LocaleConfiguration.kt": {
+      "rawSha256": "e4f8f4b464fc7cd2e7945674b7eb4aac13eb977300f790e559677b1b9870cb4f",
+      "canonicalLfSha256": "426138035b300c79454ce5199636b78ee373c3222648a19f5f764bdf5bfdc363"
+    },
+    "src/main/kotlin/com/meetme/server/config/OpenAiConfiguration.kt": {
+      "rawSha256": "70e87228810be0839241bdf3db3335882541365f5a3ae0cafc12cfc2244e6c86",
+      "canonicalLfSha256": "f6344187a9d39b9fa5ae73a06fd3b08025f6ed3bf4c41f96c1b38fed353a01c1"
+    },
+    "src/main/kotlin/com/meetme/server/config/OperatorQueryConfiguration.kt": {
+      "rawSha256": "6d2a71a685d55942910a2d9c019797d824e47e225cb696507f35f17170133a9f",
+      "canonicalLfSha256": "6d2a71a685d55942910a2d9c019797d824e47e225cb696507f35f17170133a9f"
+    },
+    "src/main/kotlin/com/meetme/server/config/RateLimitConfiguration.kt": {
+      "rawSha256": "26ed75f899230e84812abb11ce0bd9a072bb20ec48a7e18cc0fc99189e58041b",
+      "canonicalLfSha256": "b61afc536df828ba88b8d9c80b858bd306cee1fa4ed0cd024648cf0703cc2510"
+    },
+    "src/main/kotlin/com/meetme/server/config/ReliabilityConfiguration.kt": {
+      "rawSha256": "1c257b2c13a148bafd02a8b07674d1c9a23333a39353e923be182ed04fc59b43",
+      "canonicalLfSha256": "f6befc76516cf3e876e24672e82f868de3a1a87ec391471f7c0b3b4cf2a8ec7c"
+    },
+    "src/main/kotlin/com/meetme/server/config/RetryConfiguration.kt": {
+      "rawSha256": "eea5e26b360ee28543a6b4a791caeee933e3830127b59a3caaff220d281d79cf",
+      "canonicalLfSha256": "d55307e9b28cf8b8dcf682ba91bd6bc20d17a39ef77639d9d44688fae843d144"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/AnalysisController.kt": {
+      "rawSha256": "08c5867971c8d8d618935f2ff93cffc64fae05649f5aff64debd7678a54ee30b",
+      "canonicalLfSha256": "2b28dcce69da1e35eafe036ae43d6ccdf0a1ac1cd7280050dfff68ffb29ce144"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/InputRevisionController.kt": {
+      "rawSha256": "c12228846523f323a0bf86bbed27ac0565bd6519a5c885dd064878e5ea3fbfee",
+      "canonicalLfSha256": "c458d6377d297bdf2fa91e98841345ba46a1deeb6d2e7360f5477f31987ae37b"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultController.kt": {
+      "rawSha256": "43f2bd64ed4edf313a800a8bad7dbb3865b8efd762e24da71e1629af3de262a2",
+      "canonicalLfSha256": "c5338d2f00e591866273c14ae9f18118768394b7fa751edfadcb2615861fbeab"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultDtos.kt": {
+      "rawSha256": "dde2c54b950d735bcf143b0b3d69a5ac34d0ae376ff53e701663a7590f89a7b7",
+      "canonicalLfSha256": "ce0b74fad5b7694e84f27b4122149d72b402432dbf109e63311218f45f822a66"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationController.kt": {
+      "rawSha256": "b833dc1021a52977c1d949ca4d4634af5b97d36fc55d5b34ce606f2d065842b9",
+      "canonicalLfSha256": "dd388458ba6aa5acc0415fbd1128eb215afbb07cd36524cd89d756ada52f7c16"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationDtos.kt": {
+      "rawSha256": "ed954f4447f8fd0def0b4db29f68bfcaeec52f88ccd4e3d95ad59a187d4240ba",
+      "canonicalLfSha256": "775e5e43315097619d8d44fab934474239d8a906dda532664d931467806370ea"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationOpenApiConfiguration.kt": {
+      "rawSha256": "0e1f880dd1151944df6ca5fbde3e75a8509a7a87d21181f3bf937f56fc68ad7b",
+      "canonicalLfSha256": "812c6e60ab52578b4aa632124ac0feb1f3ebbcaa8484538ef1a05363702f2686"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt": {
+      "rawSha256": "14983dea921a3a5491ea099aedb58f5f4043ea1f51491432f2d9077458a5e1cd",
+      "canonicalLfSha256": "e4d24633515f39eb1f198a8af4f2923b70130d85357a46b42214dfbed9986f5b"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/KakaoLocalPlaceAdapter.kt": {
+      "rawSha256": "d7ce3f9ff6e932cfe037378364e7901534298971cd95785f4e6e4d92aa2da7fa",
+      "canonicalLfSha256": "5a92f2789a543d5b2a8247abe852c0851a365bbf3747c070261b8c22d4495de9"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt": {
+      "rawSha256": "eb62875f9d74cfd17dc1b6f10b1e417f5160c9509ebc45d9c8f28ba3717fdf3c",
+      "canonicalLfSha256": "24c165bfbf25057c29c89be29fad6a90df504024fe13255360efc32d0a46ebf8"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/OpenAiLunaNaturalLanguageParserAdapter.kt": {
+      "rawSha256": "b5cea17b2819273e945888fc70f083e51500e8db08473307d605c79d695dda0b",
+      "canonicalLfSha256": "8b03b7c9ae1dbe0652a2ed4435db075ea34c72fd67285c124c6cd623fc908c3e"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportObservationSession.kt": {
+      "rawSha256": "08edb20d74a9dcb8f86dabc353e65238c383bfaa6c51ff949fd33e6e28ae5525",
+      "canonicalLfSha256": "08edb20d74a9dcb8f86dabc353e65238c383bfaa6c51ff949fd33e6e28ae5525"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ProviderFailureClassifier.kt": {
+      "rawSha256": "2ce0d2d1ab1f30dc9aa6522231e86a97ab4a50c8f405f1efd79bc4638305eef4",
+      "canonicalLfSha256": "424c5f263dc4b4b501e811cb2d6af409ad9e6b371010eba7f1901d8f775f0cd6"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/AsyncParserTransportObservationAdapter.kt": {
+      "rawSha256": "c1eae680f2951e4348b437fe5ece09f86d19dc9911a90e5fcb69c170c6f192f2",
+      "canonicalLfSha256": "c1eae680f2951e4348b437fe5ece09f86d19dc9911a90e5fcb69c170c6f192f2"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/CoordinationPersistenceAdapters.kt": {
+      "rawSha256": "083c32dde009effda20cd2b269a5df9a0935cc8758be71e4f5c5444019f8a80b",
+      "canonicalLfSha256": "1e95b87772bc68d79289cba513100c913dccf4deb0b608b3ff64bbb0281b8481"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcAnalysisInvocationRepository.kt": {
+      "rawSha256": "4962901ad0e4964fb928de372bde016fc23afbf01bbae6e66452b9c84c1d3b24",
+      "canonicalLfSha256": "4a757c9d48b9c7a2401eb750ff9e159dff3801cc47a2fc9437a02de9e182937c"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcInputRevisionRoundRepository.kt": {
+      "rawSha256": "a1f5fe58fe4dd3882f548277cc289ff84d4f9a51e0f630a629201caa43789eb4",
+      "canonicalLfSha256": "cb53699ba9c279b67918ba20d7c7c92f21508d94e59d1eaec99987fd654a43ce"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcParserTransportObservationAdapter.kt": {
+      "rawSha256": "82f00f2a3dc9275f78baf2b2ab3b666b9862485d82966cb68fcb3b703946adf9",
+      "canonicalLfSha256": "82f00f2a3dc9275f78baf2b2ab3b666b9862485d82966cb68fcb3b703946adf9"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcRecommendationRepository.kt": {
+      "rawSha256": "f097e3391d5d8d7934dd4b7f8e6d2d80498a1d2944d74773bcaa4f68538b187a",
+      "canonicalLfSha256": "c19434615b9897977e7abe3db6fab88a34173e4e29d442f04df9c56ad89bb6c4"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JsonPayloadType.kt": {
+      "rawSha256": "f29242ae021c9c79df534e7ef731655b0bfe051718a733e7f0ae5488e644caba",
+      "canonicalLfSha256": "21555a4fd3db0d3d671a847846b882f47c5599832e1ef7032ac4372a2846befc"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/ParserTransportStore.kt": {
+      "rawSha256": "fccc32a59c30a1da6e47947392178adf2d64d23652b6cae259d2a5a7a4655a2e",
+      "canonicalLfSha256": "fccc32a59c30a1da6e47947392178adf2d64d23652b6cae259d2a5a7a4655a2e"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/PersistenceMappers.kt": {
+      "rawSha256": "deaf1fc90f0c3964b9c9aa639d906610a538cb31704152507c43d0b19524a29a",
+      "canonicalLfSha256": "05d6538459a25722e784eb06d8ba49dd45ff5274562951fed8c607146c5e8ed3"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/Records.kt": {
+      "rawSha256": "a75ff6fb27141cf22e7720cb8377f381731ec6a3082facb79b533c80a0f4d491",
+      "canonicalLfSha256": "ecff7848d4acf8b0b36d7c8afea5a856a67f7a11c2fc62cc0ed65603b385f0f2"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/redis/RedisCoordinationWorkQueue.kt": {
+      "rawSha256": "b2633577313b5f883ae48db0cd9f6ef4870ca352d22759c583bc679d4f0b9808",
+      "canonicalLfSha256": "c69b2b6c56a00ab5aa2e170bc5bc2f528e43657b6d9c814953efd8ef4a8ce028"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/input/InputRevisionUseCases.kt": {
+      "rawSha256": "fac811f9f91fc004cd350fd63f4501a5b73b2a956aed482fede08a4b5b4994f7",
+      "canonicalLfSha256": "c8a5be09fb3ea127112f6163f09d0ea28fdc6a0f2ef753036fd9206d899eb146"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/input/MatchingResultUseCases.kt": {
+      "rawSha256": "f3443ebd00b3e13652b2e93a788479c6fcac2a8f6d91df927c80e4f04ddd0c48",
+      "canonicalLfSha256": "a6e3699bb8eda41bffea35983f2e10a0536e88014cc5810937acb00b91ca0802"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/input/RecommendationUseCase.kt": {
+      "rawSha256": "600087a202008dac93e38a7df470675e63d1dffd3e322b65ff5f92aeac982ddc",
+      "canonicalLfSha256": "dc9855d2e9159e806f8bd8b39f0eaedeb916d9baaa4b391343940562831897cf"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/input/RetryAnalysisUseCase.kt": {
+      "rawSha256": "11bcd5126476bacc251d26183c4d34d93e7fc577705e31f53aa4f1fd69ff4cd0",
+      "canonicalLfSha256": "4626a0b6cae7a366823c5a3dda62cf9b1325532f754e83374a3dda1d2eabf901"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/AnalysisInvocationBudget.kt": {
+      "rawSha256": "b17fed956d5ba2be42a7ae6db769c83589dd7dbaa0cb1964f71d2492d51a47c7",
+      "canonicalLfSha256": "1d044cb40e5a21a3875c8c2c9be99146c538a1cf9a43e11e70fcde4409616141"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/AnalysisInvocationRepository.kt": {
+      "rawSha256": "c11853ff4a87e053af0da69b60ddcf05f0d41fedb222765509bb800399ee571e",
+      "canonicalLfSha256": "a754c17fa4cf90196e096eecfabf701a13404acd5a5ecda89bd37870bb30431e"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/CoordinationRepositories.kt": {
+      "rawSha256": "9806a02a76c6d2035cfc4ad69307849d229265f9193ea3b8ce1e6f4e6eef47eb",
+      "canonicalLfSha256": "7eb2ebbc40cc49554f8c663d2be96ba577afb779904439f532ad50f274e1c076"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/CoordinationWorkQueuePort.kt": {
+      "rawSha256": "a5b12f657612e32407f74eb3e11866c3f9f89459a35d64d6c5dc28d7e5dd5883",
+      "canonicalLfSha256": "d954cb470b78ee51d0b45b48fbf3d675fa3051763f9d411413f8b7855642995a"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/InputRevisionRoundRepository.kt": {
+      "rawSha256": "d39f29fba005304265fd7646c73b5f1a4f267b5737969710b4d9b353003addb1",
+      "canonicalLfSha256": "a91539d3a1daa8f4eaee16586550fbd113797f8c19d254363ae5728d1f92bb58"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/NaturalLanguageParserPort.kt": {
+      "rawSha256": "470937b1a59ee9acd2c00bf51cbfc4a8c25309399deb0e7c88a864a862ebdb24",
+      "canonicalLfSha256": "84dbd70649fadbe81f53ad412706a6a17404dc0ceaab741605376d959c1fdb92"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/ParserTransportObservationPort.kt": {
+      "rawSha256": "0166d4fc27066cc5e01595a13a822db528d07a7ae0b2a450baef98ac5bd8d583",
+      "canonicalLfSha256": "0166d4fc27066cc5e01595a13a822db528d07a7ae0b2a450baef98ac5bd8d583"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/PlaceSearchPort.kt": {
+      "rawSha256": "d84915fba02e18308bab9d17bf84280ea257e8184b3d6a6e0c90e26cd94a0b12",
+      "canonicalLfSha256": "af5fc6c8a6ec8113527d563597eff338cb15e0361b8db86e61d98d824d434c8f"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/ProcessingPorts.kt": {
+      "rawSha256": "be915cfee8a9821b146ed597a2b8b4a00b9fa2cbaa631f3ff1fc86ddfa5c8f99",
+      "canonicalLfSha256": "f2b05df3295cfc0599958de43837e930377661f0a892578501f3e3c627ee9ec0"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/port/output/RecommendationRepository.kt": {
+      "rawSha256": "e111582e3d32c2cf6d8e905fe38aa954812cb696752bebaa7cc5c6243e4e922e",
+      "canonicalLfSha256": "bebd983fd24e8d74aa3b37c5bab0e13eb7970eca52240d222d04e812ea007a56"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/ActiveRunLock.kt": {
+      "rawSha256": "0c8a85b68d6951df4b635e5041277aef7fe366af4f06dd58cd89f6d5b6ab04dc",
+      "canonicalLfSha256": "3a38a36ebcc1e198c7bd2b2b702bd36cf141958b41dfde97717f6b01407499dc"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/AnalysisDeadlineExceededException.kt": {
+      "rawSha256": "5103d44f58399ff5e9c27faf28cb4c0335cf12c58d8eab92bbf942e00b6d236c",
+      "canonicalLfSha256": "c89ed3e1b35f22517dbb96177d00eb722755a676291287596c9471eb93b7d35c"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/AnalysisInvocationRecovery.kt": {
+      "rawSha256": "8c80f8c284bdd1f8b0827174b9b75e95f7c3218cadca38fa0c45ccc0b8a24ac1",
+      "canonicalLfSha256": "83fe4b7a64cdecb0fe36a06d865b40e62152bc2380c95706bbaf5947babf98fa"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/CandidateSummaryRenderer.kt": {
+      "rawSha256": "812eade0e21bcd471d4a76f19e8040bc5e92dd955a20b825bc1dc6b6134b023b",
+      "canonicalLfSha256": "908067d0b24ad798d6494367e9c21e6499863a4498367fa03ded1253e664867d"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationPersistenceService.kt": {
+      "rawSha256": "cbf81b2db5638c5627982a5c90432d48ce122028aa7179f71cfa99f159412633",
+      "canonicalLfSha256": "643f9fc27c595c91715cb4561e0da226f4d4644a86fb250478784b648f0a14f7"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationWorker.kt": {
+      "rawSha256": "2dcfddd8a50083977a0460d08e36d9358ff43e6b5abbc181901498e41f6c026d",
+      "canonicalLfSha256": "cdc806bc2283f38507b86d8c9e2c21824f8885e3b0552a3b5534650d8641c645"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/CoordinationWorkServices.kt": {
+      "rawSha256": "b181ddbf8a9f8fc8254ca443f289d2da5c2ab149e3b792a399f2532308352809",
+      "canonicalLfSha256": "711b90012676a5246d4b2c3c33db29bc44651d4f388d1fb63969e172ceccd086"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/DeadLetterReplayService.kt": {
+      "rawSha256": "048f35259feb8f7c24fc2263fb52ec56b668d59155c9153dc548d8e6f7475aba",
+      "canonicalLfSha256": "08c358d082a17f1bde8e38317aafc0a0a63184bf06e818e36b26e04cbef5163a"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/FrozenSubmissionReader.kt": {
+      "rawSha256": "952d9a0253cb7b5b3e1a81718ce06bfaac7f2a2b0a3b1119d4a2b98596081708",
+      "canonicalLfSha256": "6f7f92f0b4c62f95c63aa433fbe05a76f450d186ac634599822c526b648645e7"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt": {
+      "rawSha256": "52838b13236bf43b94a31b359b749c38537b4b5b3ff881cd5d71425cc52c44e5",
+      "canonicalLfSha256": "fe6d9971f4a91d2f3dcebe08a18e2ea6da270e13bed99570e0d40807098a3001"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/InputRevisionService.kt": {
+      "rawSha256": "044af3af72a495bbb864fd73290f0a3240ab11d766d974de7f4348ca33c9a602",
+      "canonicalLfSha256": "d1de68302ab6a2a0d6a08ff2a3f1c4badde73e53287b372716fff997a2232817"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt": {
+      "rawSha256": "d604a0111adb0cc99435d563df9deb84cb632d6ac5193d451953639aa9804fdc",
+      "canonicalLfSha256": "40321fbd6060a05a289f28fc6807d8053fbb3eae51fcb7b0f99378d47a7a96be"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt": {
+      "rawSha256": "9f5b99f8927289f5ad158b3bb5529e23d1fcd7382d38fa3d84fb511de8c79e7d",
+      "canonicalLfSha256": "8bd19370657d9bb526e3bac3ca8ab7bfcb85c84186a9427d8d411d024737b4d4"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/OutboxRelay.kt": {
+      "rawSha256": "c639ccdf14afff239457b6709711e306a1133b8a3ef8b93570d27cda15ba0e0e",
+      "canonicalLfSha256": "682284977c5854c56f32c4b206abedb6ec0063699987c4da8176d0595b7b94aa"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/application/service/RetryAnalysisService.kt": {
+      "rawSha256": "9f46bed13b6cf1883577470c77c908635b2605a58dac659a8cc0a8336c58942d",
+      "canonicalLfSha256": "037c49c01ba8be32f6c13a0f02957b2304d520d06404ea24d5059b6586f21163"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/CoordinationRun.kt": {
+      "rawSha256": "35475656dc07d4a99d09ff1fa63cc279a81d4057868c2caec4cea81b25df4b04",
+      "canonicalLfSha256": "14cffcd2b7b80b66e8e3501410d89d3005e1f73b0e5228dd4f92d8b815c195fb"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/InputRevisionRound.kt": {
+      "rawSha256": "787f54dd5ce3981f188a2a49db0739751f09587796a653e90641b4c39bde06c1",
+      "canonicalLfSha256": "5c2eacc159ed2187f10e23d435c87863f59ce85c08c7852725acd77ca82eb7f2"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/location/GeoCoordinate.kt": {
+      "rawSha256": "c4b7a3c0b9b826abb50164c037b9c29425a86a4565ec812974b6cd61e39e72a6",
+      "canonicalLfSha256": "ff8a40832b7d8aeaa78f948dcd84dc44147ba893fc9d49aca465650e55cf10ab"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt": {
+      "rawSha256": "62bbabad709eed0a3d065b038b2710d98e421c74278f43683cb11d1cc1463906",
+      "canonicalLfSha256": "ef4c3adc7cdd72853aacf7a1348bc65eb15eef59f00540f385f7170b9af51b93"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/matching/GeoMatcher.kt": {
+      "rawSha256": "b9d6c04024cde2f17cd7e701e591cce38a6c93f5de92ab817b0cd7415d4ced74",
+      "canonicalLfSha256": "95eaed0dae2d01d6b0daab83be57333b1e3d53e79ebf0bce92fa29aedaf86869"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjector.kt": {
+      "rawSha256": "c20b128f44f13ec06b9c9ac3a2cdb9e963ed7599a966fb557eba7a941da60a45",
+      "canonicalLfSha256": "af27573bbbac11df940420464c9b8214c84050e072fee85fa21c22b181174eb3"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcher.kt": {
+      "rawSha256": "80774d9ebf0d7f877037855bccb03b0c0e8eb6dfb61d5ff1ba0a35ff9c359fac",
+      "canonicalLfSha256": "b88fe817b0d283db7bb1c2ad033f3f3033f1248e7112435c92d262defdb719e3"
+    },
+    "src/main/kotlin/com/meetme/server/coordination/domain/RecommendationAnalysis.kt": {
+      "rawSha256": "24c613bcc266e540b81757247af75327a08668f73c72cd21c2fc212adcbcb6eb",
+      "canonicalLfSha256": "f60289441706018cd4d503eccc48036cee4e979f3b6e71a51432ee433e004555"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleController.kt": {
+      "rawSha256": "99c4acb24eca329dcba62ee11995a409bd7f597ecc5d433815e09365f78f4903",
+      "canonicalLfSha256": "989684fae1cded5e911bdde75ca246fb63943135df2379d05cd805e363a1a678"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleDtos.kt": {
+      "rawSha256": "e0589fe63dd888607fa14d2e0e7b9954f1cc2452efb7366baf75d580be3a3be3",
+      "canonicalLfSha256": "f6ce2f58d3111667a82860eaedbef8ad235b3133711735619f4bbf177cd5a1b6"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOpenApiConfiguration.kt": {
+      "rawSha256": "75157a616277727d593fe6fafbe70826ca0a1a3ff77124b312bc95c3f808a8af",
+      "canonicalLfSha256": "f73138d5e603836ae197b91fa80126c14a08978d957979a1315601599b935eda"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipController.kt": {
+      "rawSha256": "33e4f2bb5e3348192098f532c668a8e155b4ca2ef99bd7d2863e69a91bc83051",
+      "canonicalLfSha256": "7af2d29cb3c9d5fbd9a2676751d5bd42824411c06822293f8cd21b4b0ec57ebc"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt": {
+      "rawSha256": "bfc974623007a734a70b216341b67da4a4d872f558c761e1effb2bf74837a9e0",
+      "canonicalLfSha256": "ed184a728dc99a4cd29bbb04c6697fbe8c4fe843c9ae609d2690a01c5abe34b4"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/KomapperMeetingRoomRepository.kt": {
+      "rawSha256": "ec6df11af637575767b10952d40925663d112084e97768c59daf4c9dd54becc7",
+      "canonicalLfSha256": "463d85533d2bd51739bdd4f130b5ac644907d5dcdb80e77fb0607d90b53345b9"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/PersistenceMappers.kt": {
+      "rawSha256": "2fb49b3e1fa9a4413b47813bec182f3e2b8c69103cbad925c902ebc211f0f877",
+      "canonicalLfSha256": "b6694e1eb2fd412806ea977423c3651d0922913599055c00b1140653e3597e1b"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/Records.kt": {
+      "rawSha256": "3a3791d7997c7f0a1777758060fb1a5074cf5bc3664a23411647bf5e24f34b21",
+      "canonicalLfSha256": "75c5f442e2c553591d5f482671d4edcbf69772b2962e47ec67c21b33e8d6a7a7"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/RoomDataRetentionRepository.kt": {
+      "rawSha256": "662212a15f23201074ac7a49951aae4846414bec8a374771cfe102698f1db632",
+      "canonicalLfSha256": "f63c1e37528fdcb818d1e6a9259060cee71f68adc21a3eb821e906f3ed34626b"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/security/SecureInviteCodeGenerator.kt": {
+      "rawSha256": "726a4be0bc3788e0b462013527fe49585637735df5c9187f7e5cebc202f6207b",
+      "canonicalLfSha256": "04992bd269b4af30529b9b32c96f15b744d969288b60f2322e0d50a4ab0d3c4a"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomLifecycleUseCases.kt": {
+      "rawSha256": "3d0b95424873b4e429433cb610d561b4791082b59c5d5a1672117911821157e9",
+      "canonicalLfSha256": "72b3a6e9eeaddee7144ef61eac90f2c5667a3349cc21ef73790226dd6022be50"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomOwnershipUseCase.kt": {
+      "rawSha256": "6abed9f26dd341f4db73dcfc7058506014d512a087d0a21a4096746df7444d45",
+      "canonicalLfSha256": "72d5950dc96f3e8e157e50f08adbf6e19138af17f47cb46fef5071e3dde77e22"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/AccountRoomArchivePort.kt": {
+      "rawSha256": "ead3c6557be965ca1dc2acb83a8685154eca2b497e3181bc83e8810ff8ba5f45",
+      "canonicalLfSha256": "68b9d4b6119dc4a1c2c65a982155148290972504a507f7573cd75cd04e2f8f67"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/MeetingRoomPorts.kt": {
+      "rawSha256": "1081af4724de671fdc664714d25d5dfa552bd1cd007b385c882a829ffc6072e2",
+      "canonicalLfSha256": "1d8611f54174a9e3d2a21f49b227eeac22958be8c2566b029c223a4c077196ba"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/RoomDataRetentionPort.kt": {
+      "rawSha256": "e070a26820a682f1735c56bdebb2b58166391f6c8fbb96eba4aebf69b7af6c32",
+      "canonicalLfSha256": "64fcbcd0287c671574411cf04984e6b4313bbe2015850af95583947255a5d043"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/service/CollectionClosureService.kt": {
+      "rawSha256": "ebff278da41dbde5c4d94470c60c7fe56b39a98b763450654ee63a9bbdd5942e",
+      "canonicalLfSha256": "66aa02ad9c2a68de333405dacea8093e144899f64b1386a4d5e529b4ba8a1df7"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/service/DeadlineClosureScheduler.kt": {
+      "rawSha256": "831eaaca1d62ff5814d3920f20ef315a3e3af49f66ecd455fc92608432bf4db4",
+      "canonicalLfSha256": "0925ead07a2373305de4ddd74f60ac75dd730acbdb70b87b3e291e871cd94bc3"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt": {
+      "rawSha256": "44b283af6aab69e39d96db67532b65b8c601ca8c70d6212d38aca53d1374ac62",
+      "canonicalLfSha256": "d0b9b9bc2d357dc6ad7565baccb82f5b5736d903bbc89f313d1142cbb46d4b7a"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomOwnershipService.kt": {
+      "rawSha256": "c25c028971c534d74cddabac4914baca8b7e2edbd1ff39b47342985d70a04966",
+      "canonicalLfSha256": "9ff09f07e7f1600e1c9d6565f6facbf9a78dc122c4de9e4ae12e064a9eea3ab3"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/domain/InviteCode.kt": {
+      "rawSha256": "3d4c757c5553c09b787f96b9ed7530d7b2ce33401b2236311c0ad70c028904b0",
+      "canonicalLfSha256": "86717649129bd68d497a82a7b1c7531e0a33aea21f9f33ef916148eeaa7525bd"
+    },
+    "src/main/kotlin/com/meetme/server/meetingroom/domain/MeetingRoom.kt": {
+      "rawSha256": "00c82fb471a23066a4609500bd901981157e35a8c68f45d20333d756ddaba277",
+      "canonicalLfSha256": "d94a65ee7642d70ee02424ed59e72c770549e75e1a637d614b66618aadaa3958"
+    },
+    "src/main/kotlin/com/meetme/server/MeetMeServerApplication.kt": {
+      "rawSha256": "6fcd1b55f92facbbb82837c27e051eeab3a30e7ad41723b983d0c294c5d21ee9",
+      "canonicalLfSha256": "3fcc6effd31f5dac70f330820d2e56cc93c76701b44d2749afebda747075fbab"
+    },
+    "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/KomapperParticipantRepositories.kt": {
+      "rawSha256": "67f0e028625336d8e1e1ccf1778e5039387d32f26e748fe2036340b670fa1514",
+      "canonicalLfSha256": "093712a76a13b92c52afd6211acdbb9f9cf9837e2dce292fbc0c912bbe29ec2c"
+    },
+    "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/PersistenceMappers.kt": {
+      "rawSha256": "7a6395f93c1362ba14efbe709816e989ea8a4b79a6a2518927ff56e572ead133",
+      "canonicalLfSha256": "b55b2c229bbe41071e76340a3b2d5f87787c47a393e5158a0caf3bb7c9c918c8"
+    },
+    "src/main/kotlin/com/meetme/server/participant/adapter/output/persistence/Records.kt": {
+      "rawSha256": "5490c1381a521759ad79d08a837edb228e666550c830c6e2580089cb6643f071",
+      "canonicalLfSha256": "9123bfa07397cf38a586bb29d463f5d752a19815775b68858c05067482f8b480"
+    },
+    "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestCookieOwnershipProofAdapter.kt": {
+      "rawSha256": "f34d4d4ddb62a48903d25b468bd00829cb2ee6a5a9cf6a97fdf12d0b7cf5b07a",
+      "canonicalLfSha256": "8a97dca47cd4d9d863bb6d2eab4213f67be89602e243f5fa8b1af96d1896287f"
+    },
+    "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestCredentialService.kt": {
+      "rawSha256": "9f62b3771dc22f743252fcea34ce8e0a4b7d49e47ccc35d6a8ccbbb092cea79e",
+      "canonicalLfSha256": "49db93ebd6dcfec8cbcc7e7161b4dad8083ec746b922a32638bed1f2feb8e59a"
+    },
+    "src/main/kotlin/com/meetme/server/participant/adapter/output/security/ParticipantOwnershipConfiguration.kt": {
+      "rawSha256": "1f6f021ec302051cd9c4049692f9e715d6aa98b68353fa32da8d5cce79f0c88b",
+      "canonicalLfSha256": "159992eedc964f21a0a9e981cc01f01826f323fc7cf86a84cb8daae0db748b9a"
+    },
+    "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestOwnershipProofPort.kt": {
+      "rawSha256": "7c69c245438230793ca8b4b04cee69f2f9ff678cf46f7809d27cb30386be5c7d",
+      "canonicalLfSha256": "13b231bd2ab43214ed255a6a986d73ea4e0d3bd4abf232b2e8b7c2783619125c"
+    },
+    "src/main/kotlin/com/meetme/server/participant/application/port/output/ParticipantPorts.kt": {
+      "rawSha256": "f1675095fcbc29f639baaae3da039b760f1262dcb211bb10f6453d7f9a4c7324",
+      "canonicalLfSha256": "243a9b6ced556fff9f8044236477e3a09259840bf9750915da2b6744cd173cac"
+    },
+    "src/main/kotlin/com/meetme/server/participant/application/service/ParticipantOwnershipResolver.kt": {
+      "rawSha256": "14c4c4befcb6214f12a20d2e8497f3665bf3dc8be014917411463285aab83195",
+      "canonicalLfSha256": "a906aaaafb220631b51e1a0e0e7c531e69a00f5db7f5cf13544c1031cc6123d3"
+    },
+    "src/main/kotlin/com/meetme/server/participant/domain/Participant.kt": {
+      "rawSha256": "5bfd6c766410a94c4c2af7f140bbe43d065d5ad75188dec74eb54492ad6bed63",
+      "canonicalLfSha256": "89416fda2ed99e192e0f4acccbe0ae7144958572762e0715e38582a8ec10693c"
+    },
+    "src/main/kotlin/com/meetme/server/participant/domain/ParticipantDisplayName.kt": {
+      "rawSha256": "3c5653ef97253c49d851ba9141b6e5aaef7556724fa622c6613d646a323dd0c2",
+      "canonicalLfSha256": "31176fd5f5daefd49febc531ce11c3649cd2dc64217d61915e23788b181617a4"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/ApiContracts.kt": {
+      "rawSha256": "7ec74b2df3873f99cea6398fe45a4aea1d8f4bd33e5e06b95bff927deddccaf9",
+      "canonicalLfSha256": "b72152855f815a95e4622faa0a9366b736a41487cdf0573c3f155a23ae62017a"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/ApiExceptionHandler.kt": {
+      "rawSha256": "107cf117b0885dc825e2023c41605d77900b64f076d63644c1fb8785d9b9398d",
+      "canonicalLfSha256": "b8283cd331eb2612eec7c0addaa62080cc26d70b4d68bd95cc8fc0dad34f496f"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/CorrelationLoggingFilter.kt": {
+      "rawSha256": "abe6dc898a0fed93e55dae00dd6408bce2614919be3adb9c136928dc4213704c",
+      "canonicalLfSha256": "5d9df4a3d360fcb99947fb1b3eb4d4f6f2fe87e37f91357ddcd753b1540f2c32"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorNoStoreFilter.kt": {
+      "rawSha256": "0f8381cd366afe466c019e4f127ba548ee5928e479f125271e61cc9259a68616",
+      "canonicalLfSha256": "0f8381cd366afe466c019e4f127ba548ee5928e479f125271e61cc9259a68616"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorQueryController.kt": {
+      "rawSha256": "e53d4fd353ff2d142f7e9df720951fef131f01dcef5aebd52310b7e29c3c95b1",
+      "canonicalLfSha256": "e53d4fd353ff2d142f7e9df720951fef131f01dcef5aebd52310b7e29c3c95b1"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorQueryDtos.kt": {
+      "rawSha256": "3eb68be669ff0df4b83d1b95435e974429fae896296befec6a0cca9014cc5514",
+      "canonicalLfSha256": "3eb68be669ff0df4b83d1b95435e974429fae896296befec6a0cca9014cc5514"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorQueryExceptionHandler.kt": {
+      "rawSha256": "103389a380da03509c6f083969e16c7863a9d91d1f4042fa2ff58d0292ef13c1",
+      "canonicalLfSha256": "103389a380da03509c6f083969e16c7863a9d91d1f4042fa2ff58d0292ef13c1"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/RateLimitFilter.kt": {
+      "rawSha256": "c82c58913df6fdc651083621782ff24c4fc865af4b1dc7650bcff35648477b10",
+      "canonicalLfSha256": "9fc572e552ee958a94e2d2c84aebae3f4faaf6b3a2e4e4730ce5c35710fb0286"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/account/CurrentAccountOperatorIdentityAdapter.kt": {
+      "rawSha256": "03885898a1bf7354133a6659b24fefecf959364b972916db2587a105c3a7bda6",
+      "canonicalLfSha256": "03885898a1bf7354133a6659b24fefecf959364b972916db2587a105c3a7bda6"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/observability/MicrometerApplicationMetrics.kt": {
+      "rawSha256": "9c7de2c13418a88ecf9df6d5f0c28e1738cd0f60afe0332356f2d863ab0aba11",
+      "canonicalLfSha256": "f06c43b5282eb37e205959c389314562e211865aa6ff5b38b6b7e3772d9e59bb"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/observability/ReliabilityGaugeCollector.kt": {
+      "rawSha256": "ceb42549cb20f92dc124699dcebc750131383175ee562440e9daa1abaa978730",
+      "canonicalLfSha256": "39115ef041fc4d501505ea438f4547b929c0e4ed29a5099298ea92137f9e11d9"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunner.kt": {
+      "rawSha256": "89106ffbe62283b8d0a31ee8b29b489c6a565e0d7415c9dd13fe954f5815cf79",
+      "canonicalLfSha256": "2ec54da61003084f51ecf42e2f17443260005f138a78adc9d4b9579189cfbee9"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/operations/JdbcOperationsQueryRepository.kt": {
+      "rawSha256": "d9de2a8d624acd4d307fdfa94211761cade9ab0c6775b7aca12193ac22a9606e",
+      "canonicalLfSha256": "d9de2a8d624acd4d307fdfa94211761cade9ab0c6775b7aca12193ac22a9606e"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/operations/JdbcOperatorAccessAuditRepository.kt": {
+      "rawSha256": "bfaa77da53134d5c6f2c2a0ff507f6f7fa2476a238e1e1a8bf593dd71881894c",
+      "canonicalLfSha256": "bfaa77da53134d5c6f2c2a0ff507f6f7fa2476a238e1e1a8bf593dd71881894c"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/redis/RedisRateLimiter.kt": {
+      "rawSha256": "5794bcc8937b65c58a183cfe7865e916a3166d83a58a56acb3864db3e021fea3",
+      "canonicalLfSha256": "92cbb92b662c6cf413786af02cefe28ac898916bfd6f57e25f39a3821e4775c6"
+    },
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/security/SystemIdGenerator.kt": {
+      "rawSha256": "a52938fd03b679f68a13e26a20e32d9a98cb25e29dfca66336326b5d69182f8a",
+      "canonicalLfSha256": "ca0a1a0e6e08b4c54b04e10d0937d69f7a002dc64ad6931b7a2b7b7a0f74bfdf"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/input/operations/OperationsCursorCodec.kt": {
+      "rawSha256": "fb011652d34a0fb8a52c7d6b32295174f1e147ee500fdfc7c5047bf511fd0d6b",
+      "canonicalLfSha256": "fb011652d34a0fb8a52c7d6b32295174f1e147ee500fdfc7c5047bf511fd0d6b"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/input/operations/OperatorQueryModels.kt": {
+      "rawSha256": "64ea08bf8e5b7f2d431e44168ebcbe7c1265e9a3d67fbdc2444e06e01e851170",
+      "canonicalLfSha256": "64ea08bf8e5b7f2d431e44168ebcbe7c1265e9a3d67fbdc2444e06e01e851170"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/AnalysisExecutionObservation.kt": {
+      "rawSha256": "5deaaf61be3f6c924994e810553652d5d91c0232264d1bdbf3adca116c81ea87",
+      "canonicalLfSha256": "5deaaf61be3f6c924994e810553652d5d91c0232264d1bdbf3adca116c81ea87"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/ApplicationMetricsPort.kt": {
+      "rawSha256": "5aa846bbe8c3afa9abeefbe757be18affc5b671f1ff0d4afa560647c36916731",
+      "canonicalLfSha256": "ed854e902fe53c941dd56d8803808e21d3777e2dd4a0eff06b91796de3241a8a"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/IdGenerator.kt": {
+      "rawSha256": "640636760e76bbd855401ecf2ade00eea35b8179a45208a78f776d676e74bd6d",
+      "canonicalLfSha256": "c0edf17506d99d265715bc964f4c241d02d67b31fc63a06e7f562daf7ad6394d"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/operations/OperatorQueryPorts.kt": {
+      "rawSha256": "942598d6ecf3534414e203f8d08f91cfbd527c1b7243610bf53121e285ad29a2",
+      "canonicalLfSha256": "942598d6ecf3534414e203f8d08f91cfbd527c1b7243610bf53121e285ad29a2"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/RateLimitPort.kt": {
+      "rawSha256": "567ecf2f0f72773d739d04f7375d9ebc6e5f9d4bf008b7653425a6dbd9dc3559",
+      "canonicalLfSha256": "935337fa94aca2c223c1ff71cc2da72c2ceeb34d68b45a416b8a3022403cc5f7"
+    },
+    "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt": {
+      "rawSha256": "e16daa13b4679b8877365cca21d306999a0a5273982d698b1d67a58e48109abe",
+      "canonicalLfSha256": "e16daa13b4679b8877365cca21d306999a0a5273982d698b1d67a58e48109abe"
+    },
+    "src/main/kotlin/com/meetme/server/shared/domain/DomainIds.kt": {
+      "rawSha256": "0b8df56908c857c69269e2089c64d7766a365db4610156a095a5ba0d46be6193",
+      "canonicalLfSha256": "1e1fb70ffd0285c506f6cdae57ca9803eb92b2e4882c7d70d92b62d1847328c9"
+    },
+    "src/main/kotlin/com/meetme/server/shared/domain/time/TimeModels.kt": {
+      "rawSha256": "72af893e62baaaa1d970426302a8ce2ca17a7f502e04765bb4fe5fa313bf6684",
+      "canonicalLfSha256": "5bdf62ebd0f76d41523c08f15fda6d37f13c226f58c0ec604229a2dbed954565"
+    },
+    "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionController.kt": {
+      "rawSha256": "eb0b49086dca987b114222f03a87b132c29b18475ec09529868992345f9734e8",
+      "canonicalLfSha256": "d9c71c82174d27260e6deaaa8f3154826f4577f3d55fbca025d988947e040a9b"
+    },
+    "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionDtos.kt": {
+      "rawSha256": "db7923a8f62c9066484f90c0f636cd82e208b7cdec47bfba791698f8d8fd0654",
+      "canonicalLfSha256": "a95ddf5b6c42ad3df30445b8d5fbef871108ab1403838d50c1f93b2ae8ab1471"
+    },
+    "src/main/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionOpenApiConfiguration.kt": {
+      "rawSha256": "fe46be8432e2fd935103795237516ea18f5b16f2184e5a23e86648bdefc38c49",
+      "canonicalLfSha256": "5be75be7a8259d360caef713fa210bb85249c6f96ef51bfe22571a3af831c36b"
+    },
+    "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/PersistenceMappers.kt": {
+      "rawSha256": "a15fcc031376fa32f8cd39bad79b0bb64b7cb2fcd67df1f641b16f28fd00df04",
+      "canonicalLfSha256": "89af55edd3de8bb70d119320926107d38636719b9682afb1d95b24b1bdffb068"
+    },
+    "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/Records.kt": {
+      "rawSha256": "c9f0569af981497a6f47abcca26d17ec3fb261135c760222bc991084cc04099f",
+      "canonicalLfSha256": "43c0b6200bb5c3d0f4dfcb5f410beb338f76b8802654687a2b067b763b525814"
+    },
+    "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/SubmissionPersistenceAdapters.kt": {
+      "rawSha256": "a21d15426b45d98a291ce7a2a5cddca4344674caafc6f33c008e4cb3ad2a28b1",
+      "canonicalLfSha256": "50db6ad18c97b2abda9cf93cb79afdde10b8def5267b68410349f7b8e8f0b381"
+    },
+    "src/main/kotlin/com/meetme/server/submission/application/port/input/SubmissionUseCases.kt": {
+      "rawSha256": "f783d43c15fb797711f15ba7ebb97786d878c3bc03cdba4ede0873a4f9280db6",
+      "canonicalLfSha256": "6b350b62197ef91fae9d2d51f5984386bf33661fd917c07a241024843571bd3b"
+    },
+    "src/main/kotlin/com/meetme/server/submission/application/port/output/SubmissionRepositories.kt": {
+      "rawSha256": "aecf4d6c92b1a78e1383e226c8e54174c21bf883297efc54e7980748f3801841",
+      "canonicalLfSha256": "c92e4fd12f40a8a58fb9f371888560c28cf5915abe1efd9c128ff51c4bff8421"
+    },
+    "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt": {
+      "rawSha256": "9d09b49d2f49bd7cf46938a95a774ede7c65048419baf56d56d33684fa69631e",
+      "canonicalLfSha256": "2d0ce0c4abde659719a34a672af7e600bbe6180f4124f9863be0962b8034a1a1"
+    },
+    "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt": {
+      "rawSha256": "fc82535ba2410e827a0c39198b37defd7db003305d54a9cfc7d8a1d12e4f5381",
+      "canonicalLfSha256": "af23494b2de0e62ed933343e7761dc6a5d712b05ff7e4980bf343545dc4d4a64"
+    },
+    "src/main/kotlin/com/meetme/server/submission/domain/Submission.kt": {
+      "rawSha256": "cdf4d7e4dfd83ff8714f3ac733a364bee967da1bd50a142d6d39628bfca8df23",
+      "canonicalLfSha256": "43b3d8387c5286c5de9db8415578f089240620629f45b40b074aa10ba85d99e5"
+    },
+    "src/main/kotlin/com/meetme/server/submission/domain/SubmissionRules.kt": {
+      "rawSha256": "6aa9b46bf803284b133d6bdbdbbf146e7287298d7cca769d13f7bbf523800620",
+      "canonicalLfSha256": "a1d21e4de11eb396b6da04940457feea841c24d12ecde046e011a3280dbfecca"
+    },
+    "src/main/resources/application-local.yml": {
+      "rawSha256": "ed9a492ee853b69e561459c4fda2c12858ad8c5f229f1959f441f00d5aee8fa7",
+      "canonicalLfSha256": "f41ec983a37577979d1542a148657b1a99864cb6f38e0ce893f8f369fca4c235"
+    },
+    "src/main/resources/application-prod.yml": {
+      "rawSha256": "0b6c0b6f6f6a900a9f219862b17193a3bff8bc02b35157c77b0ab5a3c9421224",
+      "canonicalLfSha256": "12ac7f73b2ba8ef11f13fca0de2cfe27452fd99581910cf1f42ae78fa195e73a"
+    },
+    "src/main/resources/application.yml": {
+      "rawSha256": "5d4ac7f23a3b5da9d6ad81056aa6f2a1e2f46ec2199ccac7b651e7cf5c86c175",
+      "canonicalLfSha256": "4271762e15c09061da97206f887e5ea0baa3285d9a75c1f021113d5311a80b57"
+    },
+    "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql": {
+      "rawSha256": "731c2e0aafa856c23d34197419add98d560b53d239128bdabccd5b4e0c35b099",
+      "canonicalLfSha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab"
+    },
+    "src/main/resources/db/migration/V11__add_accounts_and_participant_ownership.sql": {
+      "rawSha256": "aa2f6ae6073370419dd9bf9bbe67a89a51b5e92b5e076a9e52f04fa16d55bc75",
+      "canonicalLfSha256": "0431b2c18a5f03c341d3d4c4d1f3456e169db610cb5bd92e3681978623b3b92c"
+    },
+    "src/main/resources/db/migration/V14__add_operator_access_audits.sql": {
+      "rawSha256": "cddce45ef10fc2eac99cb739a1b631f41634b2cd06905e19919692844ca40196",
+      "canonicalLfSha256": "cddce45ef10fc2eac99cb739a1b631f41634b2cd06905e19919692844ca40196"
+    },
+    "src/main/resources/db/migration/V15__add_parser_transport_observations.sql": {
+      "rawSha256": "fcbcd040cb232ca400cbfb24b944f8289428032daf6ce386c35dbc119f9b9f98",
+      "canonicalLfSha256": "fcbcd040cb232ca400cbfb24b944f8289428032daf6ce386c35dbc119f9b9f98"
+    },
+    "src/main/resources/db/migration/V1__create_core_domain.sql": {
+      "rawSha256": "670d6a3eb6800fd633d6b6f3eca5e145cc5db96800b0d1a866dfa55d342aeda7",
+      "canonicalLfSha256": "f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515"
+    },
+    "src/main/resources/db/migration/V2__add_anonymous_room_lifecycle.sql": {
+      "rawSha256": "b0bf5e2f1954ecb5ee9b4b2f01186f34b7a8002012310548d5d9d33552c33335",
+      "canonicalLfSha256": "75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7"
+    },
+    "src/main/resources/db/migration/V3__add_submission_gemini_pipeline.sql": {
+      "rawSha256": "d5680830a95948fb3dc65c5650996de46633a1bcd682576a9e788122f878f5dc",
+      "canonicalLfSha256": "a1d7723e2461dbc6e483040f24fe9df8efc5d088b9ddc00ffaf1cdc842f12371"
+    },
+    "src/main/resources/db/migration/V4__add_matching_results.sql": {
+      "rawSha256": "f5d391b2960b810c9216d3100e395b8fb54396ac443a0ebf2942cd175c03697c",
+      "canonicalLfSha256": "14f90ca0642a4ee02242d334ebe542503907b509ee1a4fdfcc45f6c33905fe9d"
+    },
+    "src/main/resources/db/migration/V5__remove_meeting_duration.sql": {
+      "rawSha256": "172ef7b460cc9fe0d438c36fd292e5ff267acf907e4a0ce03de7534647ca3c7c",
+      "canonicalLfSha256": "7127e1ccc1284865cc3b0ea38be3582a1870f7d3ec05e3700d4577d1084c3146"
+    },
+    "src/main/resources/db/migration/V6__add_reliable_outbox_processing.sql": {
+      "rawSha256": "78a43573f1472439afb66269c3d15d687a3fee0366e730a0fab78120b8cb395b",
+      "canonicalLfSha256": "526c1cca68d23c1ee9fe4fad6c7cf0937eb53df5e306ee75b327223855f8af7a"
+    },
+    "src/main/resources/db/migration/V7__resume_delayed_matching_from_structuring.sql": {
+      "rawSha256": "f990998ffdb62d60e351177245d40f2fc1efa1cea7ceee287f6c6e08ea522d66",
+      "canonicalLfSha256": "d252715c33435f88498e8e0131ea5b35e6e081e63fdc91fab67b7f1b6235c747"
+    },
+    "src/main/resources/db/migration/V8__add_input_revision_rounds.sql": {
+      "rawSha256": "61c36103e941a735d92e02222b050855d0c8ae54bd9653ed0be23307fd062939",
+      "canonicalLfSha256": "04ac022f09473e4d95128c765b2e274b7d1d1abb0fee4b722f56119638d22a92"
+    },
+    "src/main/resources/db/migration/V9__add_time_recommendations.sql": {
+      "rawSha256": "81748630533f5aadbd622fa8e508821352b6590794779d10f9ae92a44f9c0688",
+      "canonicalLfSha256": "a6fc046611fb3cafa96d51f87de09687b3fdecc403988d211b7d86c4fad0585d"
+    },
+    "src/main/resources/messages.properties": {
+      "rawSha256": "c903e223068b3465640bc8f03a3a70e214c8090060d085ade789d22484e8ab5a",
+      "canonicalLfSha256": "15d0285fe75a8e92223d5590e666e14393997cf7e24fa32bc2d101399407c85e"
+    },
+    "src/main/resources/messages_ko_KR.properties": {
+      "rawSha256": "94e86ebf1561129c1df6c5687e0948af63bcffcc4e2bf21954cc7c0f955355a2",
+      "canonicalLfSha256": "ee5e0ae725043e7fda7e67db8af6ee04f779a0e4bf77a3e8c96f858e01f1649b"
+    },
+    "src/main/resources/META-INF/services/org.komapper.jdbc.spi.JdbcUserDefinedDataType": {
+      "rawSha256": "9ad9c64b8e2310ed1e8fd63ffda9b5d8aa2fbf339d8e0281301f27edda52921a",
+      "canonicalLfSha256": "6440724383d80409e495eaf1763f6c1b4cebd588db706f650ccc33f57152f24e"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/AsyncParserTransportObservationAdapterTest.kt": {
+      "rawSha256": "c4b8a14d790bbe1572eeb2e10b325d554ece7f341b8e69741787abfb0bdf59e3",
+      "canonicalLfSha256": "c4b8a14d790bbe1572eeb2e10b325d554ece7f341b8e69741787abfb0bdf59e3"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorAccountHttpPostgresTest.kt": {
+      "rawSha256": "dd5a72cd19924b4e68be096abc5a7d7ad89a7d705bf9edc3bf52fc95c1387007",
+      "canonicalLfSha256": "dd5a72cd19924b4e68be096abc5a7d7ad89a7d705bf9edc3bf52fc95c1387007"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorAuditRetentionServiceTest.kt": {
+      "rawSha256": "7f1733132c8dfdbca724f1fa9fba6129319fe5e5f1eff9c915b35c53cc2aaaf9",
+      "canonicalLfSha256": "7f1733132c8dfdbca724f1fa9fba6129319fe5e5f1eff9c915b35c53cc2aaaf9"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorAuditSchedulingContractTest.kt": {
+      "rawSha256": "1fc8c1fde179deefc8be41f49cf25b809cda1610533652ddafbc392159084d71",
+      "canonicalLfSha256": "1fc8c1fde179deefc8be41f49cf25b809cda1610533652ddafbc392159084d71"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorControllerAuditBoundaryTest.kt": {
+      "rawSha256": "b8fd978d19be4a425015809fca1894ee391039d4e07f0b22fe5b1e4fa29346e3",
+      "canonicalLfSha256": "b8fd978d19be4a425015809fca1894ee391039d4e07f0b22fe5b1e4fa29346e3"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorNativeBrowserServer.kt": {
+      "rawSha256": "67c464f0cfd89b62c4fa51c43586dd6a481ee69f49e4cc64cb71b7582830fdbe",
+      "canonicalLfSha256": "67c464f0cfd89b62c4fa51c43586dd6a481ee69f49e4cc64cb71b7582830fdbe"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorNoStoreFilterTest.kt": {
+      "rawSha256": "f3d2d41ade378625485596185051b81eba773b1ab58fbf03fa5e92011a8c4ca3",
+      "canonicalLfSha256": "f3d2d41ade378625485596185051b81eba773b1ab58fbf03fa5e92011a8c4ca3"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryPostgresTest.kt": {
+      "rawSha256": "8a99acda0b12479f10a189701b178e16930f1edf3692da2fb48e36535314d824",
+      "canonicalLfSha256": "8a99acda0b12479f10a189701b178e16930f1edf3692da2fb48e36535314d824"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryServiceTest.kt": {
+      "rawSha256": "e24b6c281117340270f2aa54b1d4ff44c96315b626e1598cb7d44e14ef4bd7b5",
+      "canonicalLfSha256": "e24b6c281117340270f2aa54b1d4ff44c96315b626e1598cb7d44e14ef4bd7b5"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/OperatorTransportQueryPostgresTest.kt": {
+      "rawSha256": "7d2292cb74f4515dfdaf51a434ce344a7c934fec88d0783df46e13d393b456c9",
+      "canonicalLfSha256": "7d2292cb74f4515dfdaf51a434ce344a7c934fec88d0783df46e13d393b456c9"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/ParserTransportConcurrencyPostgresTest.kt": {
+      "rawSha256": "4c1dd50fcb7f1c771ebad871b453b5d65dc37bfbfdda3b5dbe0e89763411e49a",
+      "canonicalLfSha256": "4c1dd50fcb7f1c771ebad871b453b5d65dc37bfbfdda3b5dbe0e89763411e49a"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/ParserTransportObservationPostgresTest.kt": {
+      "rawSha256": "8df0768d89239c048d1c4ab7f4ab82e7d91bba26c32f5c080a2ea4b14178f743",
+      "canonicalLfSha256": "8df0768d89239c048d1c4ab7f4ab82e7d91bba26c32f5c080a2ea4b14178f743"
+    },
+    "src/test/kotlin/com/meetme/server/shared/operations/ParserTransportStoreBoundednessTest.kt": {
+      "rawSha256": "61855473a05273706bf93359e845874df2cad3d0d79a541a8234f5ded5f382ef",
+      "canonicalLfSha256": "61855473a05273706bf93359e845874df2cad3d0d79a541a8234f5ded5f382ef"
+    }
+  },
+  "evidenceFiles": {
+    "integration-corrected-guard.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "integration-corrected-guard.json": {
+      "sha256": "19eacfa5ee4b11d1d068fd03d6d748cd6195892bfb36dd85efb36c7e684bce89",
+      "bytes": 619
+    },
+    "integration-corrected-guard-summary.json": {
+      "sha256": "973e881785237e167394311978f2494a8d6081098ca1ca6cf3414d8cf6ac9fd8",
+      "bytes": 46313
+    },
+    "integration-final-guard.log": {
+      "sha256": "f5e869b7699f50b5a76d6050eafcee96575ca92960dd61aeadbfea05782acd9e",
+      "bytes": 1855
+    },
+    "integration-final-guard-summary.json": {
+      "sha256": "53804bb0e17d97000f2fa4afb2da02327e877db804da21521cb89da11d1b5ef2",
+      "bytes": 46752
+    },
+    "catalog-linux-final.log": {
+      "sha256": "c6fb072a294b82279461b12b33f8aaa9963f2a2565ad72ec341dd783f5e4ddb0",
+      "bytes": 3687
+    },
+    "approved-pipeline-windows.log": {
+      "sha256": "518eb3523d578b6d20dacc157ab5196ae26ff4d08e3111630b9339262a8c1fb4",
+      "bytes": 1024
+    },
+    "account-http-red-online-summary.json": {
+      "sha256": "0b71ef6e5c4470462143b830ca1560dc253d97cb5d391516124ac5100653ee33",
+      "bytes": 2225
+    },
+    "account-http-green-summary.json": {
+      "sha256": "c4fbac083a6c5d49a29ea95556e39e92a1002881ac911107081cc93e95459ec5",
+      "bytes": 1399
+    },
+    "account-http-auth-fault-proof.json": {
+      "sha256": "b0c8420f026ee0c2e23fe6b66997d805cceb413a7f13e9f6c5ff6a29c5db9c7c",
+      "bytes": 237
+    },
+    "guard-110-faults.json": {
+      "sha256": "731d4f82cd8e675fc917d92560f0761ce248d5099ff1fed999b1bacd4bf58635",
+      "bytes": 2032
+    },
+    "issue-110-integrated-openapi.json": {
+      "sha256": "1fc4195e9960388e373222cf16a7ebeae4515b6c1197ada74e8ad67299cae55a",
+      "bytes": 955
+    },
+    "nginx-110-runtime.json": {
+      "sha256": "48a51514dc7770c50d374c5cecf5c09bf15fd5d79661ec83ff86f6580b00b5ef",
+      "bytes": 742
+    }
+  },
+  "publication": "feature branch commit, push and Draft PR authorized; exact HEAD CI tracked in PR",
+  "excluded": [
+    "production access",
+    "real operator enablement",
+    "provider receipt or billing proof",
+    "Meet me merge or deployment",
+    "central107+108+109+110 integration"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "workItem": "issue107-integrated-catalog-final-source-review",
+  "recordedAt": "2026-10-17T18:33:26.736790+00:00",
+  "reviewRole": "Independent final deployment/catalog reviewer: neither implemented these three deployment files nor authored the frozen catalog suites",
+  "sourceHead": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "subjectFingerprints": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b7215c98a249d0c5cb5c9a7655f223fe4bd2d980775aba1ebd282b5ad6c8e3a1"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "a1adb5c6ca3c9cc1df3346af2116673e7a7bb4ac664cfe7af8286ddb4a69523c"
+    }
+  ],
+  "status": "PASS_NO_UNRESOLVED_P1_P2",
+  "findings": [],
+  "verifiedBoundaries": [
+    "New publication requires exactly the canonical V1..V16 SQL names, in numeric order; extra entries, missing files, alternate names and source symlinks fail closed.",
+    "V1..V15 raw bytes match the independently pinned approved PR inventory; V16 exists as actual SQL, not the synthetic RED fallback.",
+    "Schema fingerprint uses ordered version/script/raw SHA256 catalog; guard and archive fingerprints and Flyway checksums remain bound.",
+    "Manifest and host record readers accept exactly six historical complete inventories plus final contiguous16. Unpublished complete13/14/15 catalogs remain denied.",
+    "Observed successful history must match the exact row/checksum/order prefix of the target release even with explicit first-transition approval.",
+    "Sparse historical107/110 histories are readable but cannot be silently converted into a contiguous16 target prefix, including when explicit approval is true.",
+    "Automatic readiness still requires full history and matching schema/guard fingerprints and trusted READY host state. Manual transition still requires explicit approval, both refresh rules DISABLED and no pending commands.",
+    "Failed rows, changed checksums, reordered history, CI/source identity mismatch and stale fingerprints remain fail closed."
+  ],
+  "validation": {
+    "ciEquivalentCatalogNode": {
+      "tests": 46,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "evidence": ".codex/tdd-evidence/issue107-integrated-catalog-final-review-node.log"
+    },
+    "independentReadOnlyProbes": {
+      "passed": 52,
+      "exitCode": 0,
+      "evidence": ".codex/tdd-evidence/issue107-integrated-catalog-final-review-probes.json",
+      "probeSourceSha256": "98aeb5ce8520c0eb5ace0537b48114a0aecd4dbda73652250d85fddb2e7fb488"
+    },
+    "priorIndependentFaultEvidenceReviewed": ".tdd/verification/issue107-integrated-catalog-faults.json",
+    "testSupersessionReviewed": ".tdd/history/issue-107-integrated-catalog/supersession.json"
+  },
+  "limits": [
+    "This review does not approve operational deployment, real DB migration, main merge, provider execution, or infrastructure changes.",
+    "Sparse histories intentionally require a separate operator-reviewed migration strategy; an approval flag is not such a strategy.",
+    "V16 business-schema and PostgreSQL behavior are owned by the migration/application review and tests, not inferred from publication inventory checks."
+  ],
+  "productionEditsForThisReview": 0,
+  "frozenTestEdits": 0,
+  "externalCalls": 0,
+  "operationalCalls": 0,
+  "paidProviderCalls": 0
+}

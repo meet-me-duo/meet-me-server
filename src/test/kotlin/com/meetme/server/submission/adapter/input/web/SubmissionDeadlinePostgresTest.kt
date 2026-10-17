@@ -431,7 +431,10 @@ class SubmissionDeadlinePostgresTest : CorrectionRoundPostgresFixture() {
                 ).andExpect(status().isCreated)
                 .andReturn()
                 .response
-        return CorrectionSession(document(response).getValue("invite_code").toString(), hostCookie.value)
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        val code = document(response).getValue("invite_code").toString()
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
+        return CorrectionSession(code, hostCookie.value)
     }
 
     private fun join(

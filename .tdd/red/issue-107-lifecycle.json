@@ -1,0 +1,24 @@
+{
+  "workItem": "issue-107-lifecycle",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ClarificationLifecyclePostgresTest.kt",
+      "sha256": "f729271954be04a86ffd026531980fa510312823789b834477c70267e76d4f5c"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-run-gradle",
+    "test",
+    "--tests",
+    "*ClarificationLifecyclePostgresTest",
+    "--no-daemon"
+  ],
+  "failedTests": [
+    "native OpenAPI documents clarification request response and errors and exports exact response bytes()",
+    "unknown fields wrong scalar types null and numeric enum are rejected before any write()",
+    "active completed source no longer ambiguous fences an old question id()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:42:31.630238Z"
+}

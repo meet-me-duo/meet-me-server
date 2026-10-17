@@ -1,0 +1,36 @@
+{
+  "workItem": "issue-107-pre-submit-worker-format-replay",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckWorkerPostgresTest.kt",
+      "sha256": "366dd031be2f2717234025717975451aa7ab9b6715b64a85b4443cf53a271aeb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt",
+      "sha256": "0ded3b08ddfc9cab3835e5780a23f40a206614f68354a3a02cda36ca438be548"
+    }
+  ],
+  "command": [
+    "flock",
+    "/tmp/meetme-gradle.lock",
+    "bash",
+    "gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "-I",
+    "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+    "test",
+    "--tests",
+    "*PreSubmissionCheckWorkerPostgresTest.PS03 질문 제안은 source 원문을 자동 치환하지 않으며 최종 분석 작업을 만들지 않는다",
+    "--tests",
+    "*PreSubmissionPrivacyQueuePostgresTest.PS22 전역 대기100 포화에도 101번째 원문은 FAILED_QUEUE로 보존하고 한자리 뒤 명시retry만 접수한다"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.PreSubmissionPrivacyQueuePostgresTest.PS22 전역 대기100 포화에도 101번째 원문은 FAILED_QUEUE로 보존하고 한자리 뒤 명시retry만 접수한다()",
+    "com.meetme.server.submission.adapter.input.web.PreSubmissionCheckWorkerPostgresTest.PS03 질문 제안은 source 원문을 자동 치환하지 않으며 최종 분석 작업을 만들지 않는다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T19:33:17.005189Z"
+}

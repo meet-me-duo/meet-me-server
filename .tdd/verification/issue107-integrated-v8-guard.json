@@ -1,0 +1,35 @@
+{
+  "workItem": "issue107-integrated-v8-guard",
+  "recordedAt": "2026-10-17T19:06:04.145898+00:00",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "deploy/tests",
+    "-p",
+    "test_v8_release_guard*.py",
+    "-v"
+  ],
+  "tests": 37,
+  "passed": 37,
+  "failed": 0,
+  "log": ".codex/tdd-evidence/issue107-integrated-v8-guard.log",
+  "logSha256": "ae764ff2b639adefc20354479d0f92c8786ad29d80b45e80d49ffe3660e93e3f",
+  "sourceFingerprints": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b7215c98a249d0c5cb5c9a7655f223fe4bd2d980775aba1ebd282b5ad6c8e3a1"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "a1adb5c6ca3c9cc1df3346af2116673e7a7bb4ac664cfe7af8286ddb4a69523c"
+    }
+  ],
+  "scope": "Actual local scripts/files/locks with AWS,Docker,root-owner and process-visibility stubs; not production operational proof."
+}

@@ -7,6 +7,7 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageBat
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserPort
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
+import com.meetme.server.coordination.application.port.output.ParserTransportObservationPort
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import okhttp3.Call
@@ -29,6 +30,7 @@ class OpenAiLunaNaturalLanguageParserAdapter
     constructor(
         private val properties: OpenAiProperties,
         private val objectMapper: ObjectMapper,
+        private val transportObservations: ParserTransportObservationPort? = null,
     ) : NaturalLanguageParserPort {
         private val contract = NaturalLanguageProviderContract(objectMapper)
         private var httpClient: OkHttpClient = OkHttpClient.Builder().build()
@@ -39,12 +41,30 @@ class OpenAiLunaNaturalLanguageParserAdapter
             objectMapper: ObjectMapper,
             httpClient: OkHttpClient,
             endpoint: URI,
-        ) : this(properties, objectMapper) {
+            transportObservations: ParserTransportObservationPort? = null,
+        ) : this(properties, objectMapper, transportObservations) {
             this.httpClient = httpClient
             this.endpoint = endpoint
         }
 
         override fun parse(request: NaturalLanguageBatchRequest): NaturalLanguageBatchResult {
+            val observation =
+                ParserTransportObservationSession(
+                    request.observationContext,
+                    com.meetme.server.coordination.application.port.output.AnalysisProvider.OPENAI,
+                    transportObservations,
+                )
+            try {
+                return parseObserved(request, observation)
+            } finally {
+                observation.finish()
+            }
+        }
+
+        private fun parseObserved(
+            request: NaturalLanguageBatchRequest,
+            observation: ParserTransportObservationSession,
+        ): NaturalLanguageBatchResult {
             if (properties.apiKey.isBlank()) throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
             require(request.inputs.isNotEmpty() && request.inputs.size <= 50)
             require(
@@ -83,6 +103,7 @@ class OpenAiLunaNaturalLanguageParserAdapter
                 val transport =
                     httpClient
                         .newBuilder()
+                        .eventListenerFactory(observation.eventListenerFactory)
                         .retryOnConnectionFailure(false)
                         .followRedirects(false)
                         .followSslRedirects(false)

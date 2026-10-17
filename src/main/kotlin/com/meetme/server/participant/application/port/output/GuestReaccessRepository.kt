@@ -17,6 +17,8 @@ data class GuestReaccessGrant(
     val level: GuestProofLevel,
     val expectedRevision: Int,
     val expiresAt: Instant,
+    val expectedCandidateRevision: Int? = null,
+    val generation: java.util.UUID? = null,
 ) {
     override fun toString(): String = "GuestReaccessGrant(redacted)"
 }

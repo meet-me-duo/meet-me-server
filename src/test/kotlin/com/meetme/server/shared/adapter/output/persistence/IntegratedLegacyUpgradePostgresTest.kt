@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** V8 rows survive V9 recommendations, V10 invocations, V11 ownership and V12 guest protection without automatic linking. */
+/** Existing V8 rows survive exact V1..V16 integration without automatic linking or reanalysis. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,30 +18,23 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly twelve versions and preserves both independent legacy schemas`() {
-        assertEquals(12, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly sixteen versions and validates both independent legacy schemas`() {
+        assertEquals(16, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "12",
+            "16",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("12", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("16", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
                 "SELECT count(*)::text FROM information_schema.tables WHERE table_schema='public' AND table_name IN " +
                     "('recommendation_analyses','recommendation_options','recommendation_variants'," +
                     "'recommendation_variant_participants','recommendation_selections','analysis_invocations')",
-            ),
-        )
-        assertEquals(
-            "2",
-            scalar(
-                "SELECT count(*)::text FROM information_schema.tables WHERE table_schema='public' " +
-                    "AND table_name IN ('guest_participant_passwords','guest_reaccess_grants')",
             ),
         )
     }
@@ -54,11 +47,15 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(4, flyway().migrate().migrationsExecuted)
+        assertEquals(8, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
         assertEquals("0", scalar("SELECT count(*)::text FROM participants WHERE user_id IS NOT NULL"))
+        assertEquals("3", scalar("SELECT count(*)::text FROM meeting_rooms WHERE submission_protocol='LEGACY'"))
+        for (table in listOf("precheck_candidates", "precheck_checks", "precheck_executions", "precheck_operations")) {
+            assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent checks or rewrite saved input")
+        }
         assertEquals("3", scalar("SELECT count(*)::text FROM coordination_attempts"))
         assertEquals(
             "3",
@@ -70,8 +67,6 @@ class IntegratedLegacyUpgradePostgresTest {
         assertEquals("0", scalar("SELECT count(*)::text FROM analysis_invocations"))
         assertEquals("0", scalar("SELECT count(*)::text FROM recommendation_analyses"))
         assertEquals("0", scalar("SELECT count(*)::text FROM recommendation_selections"))
-        assertEquals("0", scalar("SELECT count(*)::text FROM guest_participant_passwords"))
-        assertEquals("0", scalar("SELECT count(*)::text FROM guest_reaccess_grants"))
         assertEquals("1", scalar("SELECT count(*)::text FROM final_confirmations"))
         assertEquals("1", scalar("SELECT count(*)::text FROM input_revision_rounds WHERE status='OPEN'"))
         assertEquals("1", scalar("SELECT count(*)::text FROM input_revision_rounds WHERE status='CONSUMED'"))
@@ -218,6 +213,8 @@ class IntegratedLegacyUpgradePostgresTest {
                     "to_jsonb(t) - 'provider' - 'model' - 'policy_version' - 'invocation_id'"
                 } else if (table == "participants") {
                     "to_jsonb(t) - 'user_id'"
+                } else if (table == "meeting_rooms") {
+                    "to_jsonb(t) - 'submission_protocol'"
                 } else {
                     "to_jsonb(t)"
                 }

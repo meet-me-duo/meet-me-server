@@ -55,6 +55,8 @@ class GuestReaccessService(
     private val accounts: CurrentAccountPort,
     private val ids: IdGenerator,
     private val clock: Clock,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
+    private val blindPrechecks: com.meetme.server.precheck.application.port.input.BlindPreSubmissionCheckUseCase? = null,
 ) : GuestReaccessUseCase {
     @Transactional
     override fun join(
@@ -130,6 +132,14 @@ class GuestReaccessService(
                 grantedLevel,
                 submissions.findByParticipant(target.id)?.latest?.revision ?: 0,
                 session.expiresAt,
+                if (prechecks?.protocol(room.id.value) ==
+                    "PRE_SUBMIT_V1"
+                ) {
+                    prechecks.current(target.id.value)?.candidate?.revision ?: 0
+                } else {
+                    null
+                },
+                if (prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1") ids.next() else null,
             ),
             now,
         )
@@ -154,7 +164,11 @@ class GuestReaccessService(
         if (room.collectionStatus != CollectionStatus.COLLECTING || room.closurePolicy.deadline?.let { clock.instant() >= it } == true) {
             fail(RoomLifecycleErrorCode.ROOM_CLOSED)
         }
-        saveSubmission.save(SaveSubmissionCommand(inviteCode, rawCredential, rawText, locale, blindReplacement = true))
+        if (prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1") {
+            requireNotNull(blindPrechecks).saveBlind(inviteCode, participantId, rawText, rawCredential, locale)
+        } else {
+            saveSubmission.save(SaveSubmissionCommand(inviteCode, rawCredential, rawText, locale, blindReplacement = true))
+        }
     }
 
     private fun room(

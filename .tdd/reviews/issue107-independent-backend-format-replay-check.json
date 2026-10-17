@@ -1,0 +1,328 @@
+{
+  "workItem": "issue107-independent-backend-format-replay-check",
+  "reviewer": "/root/baseline_merge_review",
+  "recordedAt": "2026-10-17T19:39:27.549366Z",
+  "status": "PASS_CURRENT_FINGERPRINTS_ASSERTION_RED_AND_EXACT_RESTORE",
+  "classification": "POST_IMPLEMENTATION_RECONSTRUCTED_RED_SUPPLEMENT",
+  "exactOriginalSkeletonAvailable": false,
+  "limitation": "Exact chronological production skeleton bytes were not preserved. Current tests are byte exact; no-op worker is a reconstructed behavior-absent skeleton, same-source and route omissions replay previously observed missing behaviors. This is not the original chronological RED.",
+  "manifest": ".tdd/history/issue-107-pre-submit-backend-format-replay/manifest.json",
+  "manifestSha256": "6f523a8e45b7436f068b3e50056e069d0013b1650dcda65b86d76c2420c5b5d9",
+  "cycles": [
+    {
+      "cycle": "worker",
+      "canonical": ".tdd/red/issue-107-pre-submit-worker-format-replay.json",
+      "canonicalSchemaValid": true,
+      "currentTestFingerprints": [
+        {
+          "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckWorkerPostgresTest.kt",
+          "sha256": "366dd031be2f2717234025717975451aa7ab9b6715b64a85b4443cf53a271aeb"
+        },
+        {
+          "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt",
+          "sha256": "0ded3b08ddfc9cab3835e5780a23f40a206614f68354a3a02cda36ca438be548"
+        }
+      ],
+      "phases": {
+        "red": {
+          "totals": {
+            "tests": 2,
+            "failures": 2,
+            "errors": 0,
+            "skipped": 0
+          },
+          "failures": [
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PreSubmissionCheckWorkerPostgresTest.PS03 질문 제안은 source 원문을 자동 치환하지 않으며 최종 분석 작업을 만들지 않는다()",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <NEEDS_CHOICE> but was: <QUEUED>"
+            },
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PreSubmissionPrivacyQueuePostgresTest.PS22 전역 대기100 포화에도 101번째 원문은 FAILED_QUEUE로 보존하고 한자리 뒤 명시retry만 접수한다()",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <1> but was: <0>"
+            }
+          ],
+          "xml": [
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-worker-format-replay-TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionCheckWorkerPostgresTest.xml",
+              "sha256": "9283ff2d517ee471a92ac7e712360b862d611def2d0063d86a003ab40deb161f"
+            },
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-worker-format-replay-TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionPrivacyQueuePostgresTest.xml",
+              "sha256": "d64dbe20ff985435debd0a75a1def320f2e3d160ba995427520a48b0bb460a0a"
+            }
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-107-pre-submit-worker-format-replay.log",
+          "rawLogSha256": "e52f9203f85be9b275e78351e39c3c70b199a49e208651b2321ab74fd512f51f",
+          "command": [
+            "flock",
+            "/tmp/meetme-gradle.lock",
+            "bash",
+            "gradlew",
+            "--offline",
+            "--no-daemon",
+            "--max-workers=2",
+            "-I",
+            "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+            "test",
+            "--tests",
+            "*PreSubmissionCheckWorkerPostgresTest.PS03 질문 제안은 source 원문을 자동 치환하지 않으며 최종 분석 작업을 만들지 않는다",
+            "--tests",
+            "*PreSubmissionPrivacyQueuePostgresTest.PS22 전역 대기100 포화에도 101번째 원문은 FAILED_QUEUE로 보존하고 한자리 뒤 명시retry만 접수한다"
+          ]
+        },
+        "restoredGreen": {
+          "totals": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "failures": [],
+          "xml": [
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-worker-format-replay-restored-green-TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionCheckWorkerPostgresTest.xml",
+              "sha256": "608357f47f1eaaa253df86c0672df72c9dfa9d0163037525137d1a6c4eb3a753"
+            },
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-worker-format-replay-restored-green-TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionPrivacyQueuePostgresTest.xml",
+              "sha256": "3d94aea97f5b356a2f0b4ec9314eb13aa5814011516ad1b29472efc6324792b9"
+            }
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-107-pre-submit-worker-format-replay-restored-green.log",
+          "rawLogSha256": "42cbc208178d14a544fa2b62828df75ea0502ebb4ddb85f92517629aa65bd59c",
+          "command": [
+            "flock",
+            "/tmp/meetme-gradle.lock",
+            "bash",
+            "gradlew",
+            "--offline",
+            "--no-daemon",
+            "--max-workers=2",
+            "-I",
+            "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+            "test",
+            "--tests",
+            "*PreSubmissionCheckWorkerPostgresTest.PS03 질문 제안은 source 원문을 자동 치환하지 않으며 최종 분석 작업을 만들지 않는다",
+            "--tests",
+            "*PreSubmissionPrivacyQueuePostgresTest.PS22 전역 대기100 포화에도 101번째 원문은 FAILED_QUEUE로 보존하고 한자리 뒤 명시retry만 접수한다"
+          ]
+        }
+      },
+      "scratchRestorationVerified": [
+        {
+          "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+          "restoredSHA256": "ccc31bb2612b54abb2c450f6f7097848e55093dab5653058ca3a1adac951e764",
+          "reconstructedSHA256": "f76f505d94a86e538c9badfd8d3736558e40fe505c82ae1d35c0cc6b2cecd9ba",
+          "exactDiff": ".tdd/history/issue-107-pre-submit-backend-format-replay/worker-PreSubmissionCheckWorker.kt.diff"
+        }
+      ]
+    },
+    {
+      "cycle": "defense",
+      "canonical": ".tdd/red/issue-107-pre-submit-defense-format-replay.json",
+      "canonicalSchemaValid": true,
+      "currentTestFingerprints": [
+        {
+          "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckDefensiveBoundaryPostgresTest.kt",
+          "sha256": "89275de222afa014b08bb7a5ce6c89ef677fa91ed506637ab177d239c9e674cd"
+        }
+      ],
+      "phases": {
+        "red": {
+          "totals": {
+            "tests": 1,
+            "failures": 1,
+            "errors": 0,
+            "skipped": 0
+          },
+          "failures": [
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest.PS08 source 원문과 같은 제안은 opaque 선택ID가 유효해도 INVALID_RESPONSE다()",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <FAILED> but was: <NEEDS_CHOICE>"
+            }
+          ],
+          "xml": [
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-defense-format-replay-TEST-com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest.xml",
+              "sha256": "9b1cc0bb4eb4d52af0f6b9d95f65515bf1d37630687f2a1a5df4f551c8707426"
+            }
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-107-pre-submit-defense-format-replay.log",
+          "rawLogSha256": "a159d389e06c78bd34afd80494a42a43c37066ee5229904c17490d0ccd11a3fa",
+          "command": [
+            "flock",
+            "/tmp/meetme-gradle.lock",
+            "bash",
+            "gradlew",
+            "--offline",
+            "--no-daemon",
+            "--max-workers=2",
+            "-I",
+            "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+            "test",
+            "--tests",
+            "*PrecheckDefensiveBoundaryPostgresTest.PS08 source 원문과 같은 제안은 opaque 선택ID가 유효해도 INVALID_RESPONSE다"
+          ]
+        },
+        "restoredGreen": {
+          "totals": {
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "failures": [],
+          "xml": [
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-defense-format-replay-restored-green-TEST-com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest.xml",
+              "sha256": "9634640bff875fee8e29938f3648d38354539eff703aa75f4410005c98345b76"
+            }
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-107-pre-submit-defense-format-replay-restored-green.log",
+          "rawLogSha256": "ef8b47395b9d561ea9ec35542a4bf71529f569b1d2d435442a82b847519495e5",
+          "command": [
+            "flock",
+            "/tmp/meetme-gradle.lock",
+            "bash",
+            "gradlew",
+            "--offline",
+            "--no-daemon",
+            "--max-workers=2",
+            "-I",
+            "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+            "test",
+            "--tests",
+            "*PrecheckDefensiveBoundaryPostgresTest.PS08 source 원문과 같은 제안은 opaque 선택ID가 유효해도 INVALID_RESPONSE다"
+          ]
+        }
+      },
+      "scratchRestorationVerified": [
+        {
+          "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+          "restoredSHA256": "ccc31bb2612b54abb2c450f6f7097848e55093dab5653058ca3a1adac951e764",
+          "reconstructedSHA256": "5b173dfe6e06388cdea6ed556c7cb061043026c04eb5e9cc073e447e3df1ec05",
+          "exactDiff": ".tdd/history/issue-107-pre-submit-backend-format-replay/defense-PreSubmissionCheckWorker.kt.diff"
+        }
+      ]
+    },
+    {
+      "cycle": "rate",
+      "canonical": ".tdd/red/issue-107-pre-submit-rate-format-replay.json",
+      "canonicalSchemaValid": true,
+      "currentTestFingerprints": [
+        {
+          "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckRateLimitRoutingContractTest.kt",
+          "sha256": "b056297553ad9677baf3380c6ad64d6dabc728ed10c3b7cb163cd726a30d07bc"
+        }
+      ],
+      "phases": {
+        "red": {
+          "totals": {
+            "tests": 4,
+            "failures": 4,
+            "errors": 0,
+            "skipped": 0
+          },
+          "failures": [
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[1] suffix = \"\"",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <429> but was: <200>"
+            },
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[2] suffix = \"/3f96cc72-4a22-4147-9a29-b6768250c635/answer\"",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <429> but was: <200>"
+            },
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[3] suffix = \"/3f96cc72-4a22-4147-9a29-b6768250c635/retry\"",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <429> but was: <200>"
+            },
+            {
+              "name": "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[4] suffix = \"/3f96cc72-4a22-4147-9a29-b6768250c635/cancel\"",
+              "type": "org.opentest4j.AssertionFailedError",
+              "message": "org.opentest4j.AssertionFailedError: expected: <429> but was: <200>"
+            }
+          ],
+          "xml": [
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-rate-format-replay-TEST-com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.xml",
+              "sha256": "0d7091eaf1c0ab5532d2ce333748ed9d77922d0cf86607afe2fe7e03896076f0"
+            }
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-107-pre-submit-rate-format-replay.log",
+          "rawLogSha256": "32811bcba3ca47964a46a7fcf36da909d956c4b74bebf391327f7d6f8acd303f",
+          "command": [
+            "flock",
+            "/tmp/meetme-gradle.lock",
+            "bash",
+            "gradlew",
+            "--offline",
+            "--no-daemon",
+            "--max-workers=2",
+            "-I",
+            "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+            "test",
+            "--tests",
+            "*PrecheckRateLimitRoutingContractTest.PS09 신규 검사 write 네 경로도 기존 제출 세션 30회 제한을 우회하지 못한다"
+          ]
+        },
+        "restoredGreen": {
+          "totals": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          },
+          "failures": [],
+          "xml": [
+            {
+              "path": ".codex/tdd-evidence/backend-format-replay/issue-107-pre-submit-rate-format-replay-restored-green-TEST-com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.xml",
+              "sha256": "4f82ae88f759e0820f7bd52409899d2de23fee6e8efde4a64f33b721fd3ac465"
+            }
+          ],
+          "rawLog": ".codex/tdd-evidence/issue-107-pre-submit-rate-format-replay-restored-green.log",
+          "rawLogSha256": "cfed3c1ea0f82263892b23a7080a22a484d00b91e6b70d35a4bc10557631809d",
+          "command": [
+            "flock",
+            "/tmp/meetme-gradle.lock",
+            "bash",
+            "gradlew",
+            "--offline",
+            "--no-daemon",
+            "--max-workers=2",
+            "-I",
+            "/tmp/meetme107-backend-format-replay-4w0kajsq/replay.init.gradle",
+            "test",
+            "--tests",
+            "*PrecheckRateLimitRoutingContractTest.PS09 신규 검사 write 네 경로도 기존 제출 세션 30회 제한을 우회하지 못한다"
+          ]
+        }
+      },
+      "scratchRestorationVerified": [
+        {
+          "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/RateLimitFilter.kt",
+          "restoredSHA256": "33d66884003fc4b7e1e20396ebf16ba9e32e15b2104a3d67bb9b28b503a20d52",
+          "reconstructedSHA256": "f83d58e41aced9e848901da26e4577ec9efa13051b46b1fb9ec28fb592b1777d",
+          "exactDiff": ".tdd/history/issue-107-pre-submit-backend-format-replay/rate-RateLimitFilter.kt.diff"
+        }
+      ]
+    }
+  ],
+  "actualAssertionFailures": 7,
+  "restoredGreenTests": 7,
+  "originalMainAndFourTestsEntries": 226,
+  "originalMainAndFourTestsCurrentMismatches": 0,
+  "fullGuardSourceEntries": 417,
+  "fullGuardSourceCurrentMismatches": 0,
+  "historyCheckoutTextAttribute": ".tdd/history/issue-107-pre-submit-backend-format-replay/manifest.json: text: unset",
+  "gitDiffCheckExit": 0,
+  "originalProductEditsByReviewer": 0,
+  "originalTestEditsByReviewer": 0,
+  "externalModelCalls": 0,
+  "realOAuthCalls": 0
+}

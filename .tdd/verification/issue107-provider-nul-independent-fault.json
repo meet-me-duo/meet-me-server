@@ -1,0 +1,39 @@
+{
+  "workItem": "issue107-provider-nul-independent-fault",
+  "recordedAt": "2026-10-17T19:08:48.255738+00:00",
+  "contractSha256": "14df35cbcda7ab31f96bd38bb717faf4828b055067b7b0118ae68461b2160155",
+  "testSha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24",
+  "baseline": {
+    "exitCode": 0,
+    "tests": 18,
+    "failures": [],
+    "log": ".codex/tdd-evidence/issue107-provider-nul-independent-fault/unicode-baseline.log",
+    "logSha256": "230361c7b4c1136e1cfe63cf76089eb877b81cdf6be4cb686e0dd0245421acb5"
+  },
+  "fault": {
+    "exitCode": 1,
+    "tests": 18,
+    "failures": [
+      {
+        "name": "P17 escaped NUL in question prompt is an invalid response()",
+        "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=질문?, sourceExcerpt=7~8시, choices=[PrecheckChoice(id=A, label=오전, proposedText=오전 7~8시), PrecheckChoice(id=B, label=오후, proposedText=오후 7~8시)], inputTokens=null, outputTokens=null, responseBytes=318)>.",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P18 escaped NUL in choice label is an invalid response()",
+        "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=오전과 오후 중 어느 뜻인가요?, sourceExcerpt=7~8시, choices=[PrecheckChoice(id=A, label=오전?, proposedText=오전 7~8시), PrecheckChoice(id=B, label=오후, proposedText=오후 7~8시)], inputTokens=null, outputTokens=null, responseBytes=353)>.",
+        "type": "org.opentest4j.AssertionFailedError"
+      }
+    ],
+    "log": ".codex/tdd-evidence/issue107-provider-nul-independent-fault/unicode-guard-removed.log",
+    "logSha256": "2bf0a5f55a13a9608bd682546d69d08b3de2a559473720d7b9a50a73cf7afe34"
+  },
+  "restored": {
+    "exitCode": 0,
+    "tests": 18,
+    "failures": [],
+    "log": ".codex/tdd-evidence/issue107-provider-nul-independent-fault/unicode-restored.log",
+    "logSha256": "a21418dcca9219f5e26638ee40e05987ef00f2e83e813603b97e0123ddcf8bc6"
+  },
+  "scope": "Isolated provider snapshot; only NUL guard removed. Earlier network adapter source differs from final only in separately reviewed provider/model metadata copy. No production file changes or external provider calls."
+}

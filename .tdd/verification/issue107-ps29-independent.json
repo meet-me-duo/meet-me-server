@@ -1,0 +1,135 @@
+{
+  "workItem": "issue107-ps29-independent-retention-atomicity",
+  "recordedAt": "2026-10-17T18:53:14.760238+00:00",
+  "status": "EIGHT_EXISTING_BEHAVIOR_CONTROLS_GREEN_NO_PRODUCT_RED",
+  "roleSeparation": "Independent PS29 test author; no core/retention/schema implementation or existing frozen-test changes",
+  "testPath": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckRetentionPostgresTest.kt",
+  "testSha256": "cd46fb09a9b162eb715b23e395b381fd499c29111152512def368038ccfca63a",
+  "tests": 8,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "gradleExitCode": 0,
+  "validationScope": "Actual PostgreSQL18, MockMvc, RS256 AccessTokenPort and actual VERIFIED_GUEST password reaccess issuance; synthetic precheck provider only. Focused test source was scratch-only; final repository file is byte-identical. Full product gate remains parent-owned.",
+  "command": "flock /tmp/meetme-gradle.lock bash gradlew --no-daemon --max-workers=2 -I /tmp/meetme-ps29-only.init.gradle test --tests *PreSubmissionCheckRetentionPostgresTest",
+  "evidence": {
+    "log": ".codex/tdd-evidence/issue107-ps29-contract.log",
+    "xml": ".codex/tdd-evidence/issue107-ps29-contract.xml"
+  },
+  "cases": [
+    "R05 PS29 failed answer transaction retains the original question and rolls back every derived provenance row()",
+    "R08 PS29 failure during cascade retention rolls back the room and every private child before safe retry()",
+    "R04 PS29 operation persistence failure does not consume the CREATE idempotency key or leave a head()",
+    "R06 PS29 failure after accepted pointer update cannot commit a version or false completion()",
+    "R03 PS29 failure after execution insert rolls back candidate check execution and operation together()",
+    "R07 PS29 foreign keys reject missing parents and a participant from another room without mutating neighbors()",
+    "R01 PS29 closed anchor removes every private precheck row without extending retention to recent answers()",
+    "R02 PS29 collecting rooms retain the original created anchor and preserve the fresh neighboring room()"
+  ],
+  "failureInjectionReachability": "R03/R04/R05/R06/R08 require actual AFTER-write trigger execution via a nontransactional PostgreSQL sequence marker checked in finally; all five passed.",
+  "fixtureCorrectionsNotProductRed": [
+    {
+      "issue": "generateSequence smartcast generic compile setup",
+      "evidence": ".codex/tdd-evidence/issue107-ps29-compile-only-failure.log"
+    },
+    {
+      "issue": "helper used VERIFIED instead of the published VERIFIED_GUEST proof level; all8 setup failures excluded",
+      "evidence": ".codex/tdd-evidence/issue107-ps29-invalid-proof-fixture.log"
+    },
+    {
+      "issue": "helper assumed candidate.id not exposed in public DTO; corrected by public check.id to declared SQL FK relationship; seven setup errors excluded, R04 existing behavior control already passed",
+      "evidence": ".codex/tdd-evidence/issue107-ps29-invalid-candidate-id-fixture.log"
+    }
+  ],
+  "productionFingerprintsAtRecording": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/RoomDataRetentionRepository.kt",
+      "sha256": "f63c1e37528fdcb818d1e6a9259060cee71f68adc21a3eb821e906f3ed34626b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckController.kt",
+      "sha256": "72870baed0fc5d5efb34e6d53a3ddee8fa9d3d4be3ebf9e582288d52da83e8a4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckNoStoreFilter.kt",
+      "sha256": "1f22ed9cc6130694734dcc2ac6eacf5f3a76bb0cd67f28401f497977dd06e063"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckOpenApiConfiguration.kt",
+      "sha256": "4de45e40849952bc754122ec29eb8d73f72f63b30015fc131923cb745931498e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckWorkerLifecycle.kt",
+      "sha256": "23203b9193fa592eb5b4b2fdaf3b999e31747c5317427bd89d9fbb92b57822e1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/observability/PrecheckMetricsAdapter.kt",
+      "sha256": "235242955d1efc3d2ff4e58283b5355beb5388babf4cc6ebfbd2175dcd8c9083"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "sha256": "1e139f29cd98af7e9566dcd865f4c9b70e98a558f4dca742556272ddb93bbfcd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt",
+      "sha256": "cdf249c54c6375083983ea5609f3c0a633172e12ceb38c70c77d2734eb618f23"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "4eac4cdf703831b0bfc074856c29ed4c07f762d971ecdc79051f15e21a72f1a0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt",
+      "sha256": "941630ad8515c16767a730d924ef52fb2720ea6425fd1c9ed639dff8e01caddd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/input/PreSubmissionCheckUseCase.kt",
+      "sha256": "148de06cc47062f636378f1d8a8059ba1fa5a2c4f95c0eb70a840c5c547434da"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PreSubmissionCheckProvider.kt",
+      "sha256": "af59c2cc74d5f7fc3cbc9ede672a1e5dab700509fe785384673ddc939c51acee"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckMetricsPort.kt",
+      "sha256": "1628c0392ee5bfd6ad2f78163ed8ff8f0303a95c0ce1d55230d8c4b18d4319fd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckOwnershipBindingPort.kt",
+      "sha256": "97d1e5c390b7623d86785ef6ccdcf1e9af539d52285373914f6836446b6bc5a1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckRepository.kt",
+      "sha256": "f737ffa14f28022999039aee44bffecfa6e4751d2698a2fbd67a0d88233d7f71"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt",
+      "sha256": "327fcaea2613a4fd057bdf207e31c61f0be752adf6742f123b2864fac086b4d4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "6895f9a059dd099c21fd05cd5a8b20838751e87e78b15d8e89e009f2578b4571"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "79eda90f2dd2a9fa4ef6b625e37be7117e8911ee2fe794b4f3fde4e1554908ac"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/domain/PrecheckModels.kt",
+      "sha256": "bc6053ec2580e60f76262af8a36102de26842f6def0a225521df4c387302cedd"
+    },
+    {
+      "path": "src/main/resources/db/migration/V16__add_pre_submission_checks.sql",
+      "sha256": "65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e"
+    }
+  ],
+  "productionChangesForPS29": 0,
+  "existingFrozenTestChanges": 0,
+  "externalProviderCalls": 0,
+  "operationalCalls": 0,
+  "remoteWrites": 0
+}

@@ -1,0 +1,242 @@
+{
+  "recordedAt": "2026-10-17T19:37:35.317304+00:00",
+  "scope": "Read-only full audit plus schema projection limited to new #107 records; no schema or validator changes",
+  "checked": 91,
+  "historicalSchemaDrift": [
+    {
+      "path": ".tdd/red/async-final-red.json",
+      "errors": [
+        "Additional properties are not allowed ('allTestBytesUnchanged', 'baselineReplayAfterFormatting', 'productBytesRestored' were unexpected)",
+        "'2026-10-17T15:36:29.669350+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-10-domain.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-10-persistence.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-107-account-integration.json",
+      "errors": [
+        "'2026-10-17T16:01:56.378455+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-109-archive-cache.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-109-migration.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-109-ownership.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-110-analysis-observation.json",
+      "errors": [
+        "'2026-10-17T08:43:28.415128+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-110-operator-query.json",
+      "errors": [
+        "Additional properties are not allowed ('currentPostgresContractEvidence', 'historicalCompleteRecord', 'scopeNote', 'supersededTestFiles' were unexpected)",
+        "'2026-10-17T14:49:34.685954+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-12-domain-security.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-12-persistence.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-14-submission-rules.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-16-boundaries.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)",
+        "'INTENTIONAL_FAULT_DETECTED' is not one of ['MISSING_BEHAVIOR', 'TDD_TODO_REACHED']"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-16-matching-domain.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)",
+        "'ASSERTION_MISMATCH' is not one of ['MISSING_BEHAVIOR', 'TDD_TODO_REACHED']"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-18-api.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)",
+        "'EXPECTED_ASSERTION_FAILURE' is not one of ['MISSING_BEHAVIOR', 'TDD_TODO_REACHED']"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-18-migration.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)",
+        "'EXPECTED_ASSERTION_FAILURE' is not one of ['MISSING_BEHAVIOR', 'TDD_TODO_REACHED']"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-18.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-20-persistence.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-20-rate-limit.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-20-reliability.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-22-openapi-public-status.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-62-structured-condition-json.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-70-compact-candidate-summary.json",
+      "errors": [
+        "Additional properties are not allowed ('$schema' was unexpected)",
+        "'ASSERTION_MISMATCH' is not one of ['MISSING_BEHAVIOR', 'TDD_TODO_REACHED']"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-99-built-image.json",
+      "errors": [
+        "'deploy/tests/built-image-workflow.test.cjs' does not match '^src/test/kotlin/.+\\\\.kt$'",
+        "'node --test --test-reporter=tap deploy/tests/built-image-workflow.test.cjs' is not of type 'array'",
+        "'2026-10-07T12:17:20.081536+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-99-production-preflight.json",
+      "errors": [
+        "'.github/scripts/production-preflight-contract.test.cjs' does not match '^src/test/kotlin/.+\\\\.kt$'",
+        "'env JAVA_HOME=/workspace/toolchains/jdk-17.0.20.1+1 node --test .github/scripts/production-preflight-contract.test.cjs' is not of type 'array'",
+        "'2026-10-07T10:43:05.025633+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/issue-99-runtime-luna.json",
+      "errors": [
+        "'deploy/tests/runtime-provider-env.test.cjs' does not match '^src/test/kotlin/.+\\\\.kt$'",
+        "'node --test --test-reporter=tap deploy/tests/runtime-provider-env.test.cjs' is not of type 'array'",
+        "'2026-10-07T11:26:33.880657+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/operator-contract-final-red.json",
+      "errors": [
+        "Additional properties are not allowed ('allTestBytesUnchanged', 'baselineReplayAfterFormatting', 'productBytesRestored' were unexpected)",
+        "'2026-10-17T15:38:02.946701+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    },
+    {
+      "path": ".tdd/red/transport-final-red.json",
+      "errors": [
+        "Additional properties are not allowed ('allTestBytesUnchanged', 'baselineReplayAfterFormatting', 'productBytesRestored' were unexpected)",
+        "['com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[1] provider = GEMINI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest#[2] provider = OPENAI', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#legacy missing context cannot be attached to a guessed invocation()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#telemetry failure cannot escape completed session boundary()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#call start followed by connection failure is one local client call with unknown HTTP status()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#explicit admission not dispatched is known false with no client calls()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#settled calls retain start order status and bounded failure without exception content()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#parser entry without any started HTTP call is a known zero snapshot()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#overflow of bounded calls leaves snapshot unknown rather than silently truncating count()', 'com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest#unfinished started call leaves observation absent instead of fabricating zero or completeness()'] has non-unique elements",
+        "'2026-10-17T15:35:43.530429+00:00' does not match '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\\\.[0-9]+)?Z$'"
+      ]
+    }
+  ],
+  "new107Records": [
+    {
+      "path": ".tdd/red/issue-107-pre-submit-admission.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-boundary.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-defense-format-replay.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-defense.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-http.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-provider.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-rate-format-replay.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-worker-format-replay.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-provider-final-format.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-provider-format-replay.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-provider-retry-after.json",
+      "valid": true
+    },
+    {
+      "path": ".tdd/red/issue-107-provider-unicode.json",
+      "valid": true
+    }
+  ],
+  "decision": "Historical pre-existing and imported #107/#110 records retain original bytes; not promoted to current new feature evidence and not globally refactored. Final new current RED and FI canonical summaries are schema-compliant; structured detail and chronology kept separately."
+}
