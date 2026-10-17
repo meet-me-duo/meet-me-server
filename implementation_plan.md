@@ -12,7 +12,11 @@
 - [x] [AGENT] unchanged mandatoryguard 전체1197(1193PASS/기존skip4), provider18, 웹unit620/전체browser425PASS·기존skip1, 최종actualnative12PASS
 - [x] [AGENT] 독립coreFI6/각복구·provider경계5+NUL1·웹11종, 형식변경backend7/provider13 유효assertion 사후RED와원복GREEN·원본chronology구분
 - [x] [AGENT] 독립최종로컬게시리뷰 승인: 서버/core·통합·provider·catalog·웹·실서버지문 모두 확인, 새source/test/guard 변경0
-- [ ] [AGENT] commit/push/Draft/exactHEADCI→serverdevelop일반merge/exactmergeCI
+- [x] [AGENT] commit/push/Draft/exactHEADCI: 서버 PR120 HEAD bb62a95 CI39063547650 / 웹 PR31 HEAD02a68d8 CI39063558547 성공. 각 job checkout/tree 확인
+- [x] [AGENT] 서버 PR120 develop 일반merge bb996482a3090739a8ce02c8b093561e2c5c58a2 및 pushCI39064886318 두 job 실제 checkout 동일 SHA·성공 확인. 웹 Draft·미병합 유지
+- [x] [AGENT] main 준비 후속: provider opt-in 코드 부재·동일 API cap 공식 근거 정정, 30개 실제 평가 호출/중단/측정/조건부 비용 명세, 완료된 공개 OAuth 설정 재요구 없는 인증/DB 안내
+- [ ] [AGENT] 기존 API 지원 profile·기본 OFF 활성화/인증 전달 코드·input cap 독립 TDD/리뷰. 근거 없는 verified=true·유료 호출0 유지
+- [ ] [USER/SHARED] 모임 총 AI10원 정책 충돌 결정·입증된 상한으로 별도 유료 평가 승인, 런타임 자격 증명·RS256/JWKS 및 실로그인/운영 읽기·복구·전환 승인. 공개 OAuth 설정은 완료 유지. 운영자 요약은 기본 OFF이며 출시 차단 조건 아님
 - 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
 - 상세상태/다음시작점/역할·검증한계: [새107 Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음
 

@@ -1,5 +1,16 @@
 # 새 #107 구현·통합 Worklog
 
+## develop 이후 아침 승인·활성화 준비 (2026-10-17 UTC)
+
+- [AGENT] 서버 develop `bb996482a3090739a8ce02c8b093561e2c5c58a2`·정확 merge CI39064886318 성공, 웹 Draft PR31 HEAD02a68d8·CI39063558547 성공을 유지한다. main·원본 PR/브랜치는 변경하지 않았다.
+- [AGENT] 별도 `docs/issue-107-main-activation-readiness`를 clean develop switch/pull --ff-only 뒤 만들었다. 제품/테스트/인프라 코드0, 준비 문서만 변경한다. 기존 #107은 develop 자동 lifecycle로 CLOSED이며 이 문서 준비를 위해 새 중복 이슈나 재개방·이전 PR 변경을 하지 않는다.
+- [AGENT] 실제 bean은 default false 생성자 옵션만 사용하며 production opt-in 바인딩이 없음을 확인했다. 동일 GenerateContent 전용 thinking guide에서 합산 cap 근거를 찾아 기존 'Interactions만 근거 있음' 판단을 정정했다. thinkingBudget0 지원/실청구 검증으로 확대하지 않으며 실제 옵션 false·실제 호출0을 유지한다.
+- [AGENT] 독립 provider 경계/평가 설계 리뷰에서 지원 profile·production 바인딩·OFF 호출0·LOW wire 변경의 별도 TDD, 정답 누출 금지·고정 분모·물리 호출 상한/timeout 비용 예약을 확인했다. [평가 준비안](ISSUE_107_REAL_MODEL_EVALUATION_PLAN.md)에 generation30/retry0/count최대30·조건부USD0.32256·현재 최대비용 미입증·중단/측정 명세를 보존했다. p50/p95/정확도 실측값은 없다.
+- [SHARED] PRD 모임당 총AI10원과 새 호출 예산의 최악 비용 충돌은 부모 결정 대상으로 보존한다. 한도/500자/마감/참여 정책을 변경하지 않았다. wire·활성화/인증 전달 제품 코드는 다음 독립 TDD 단위이며 문서로 구현 완료를 대체하지 않는다.
+- [AGENT] [외부 안내](ISSUE_107_EXTERNAL_READINESS_RUNBOOK.md)에 완료한 Google/Kakao 공개 설정 재요구 없이 변수 이름·안전 입력 위치·RS256/JWKS·UID10001/read-only mount·DB/PITR·복구·최소 사용자 순서를 정리했다. 운영자 요약은 기본 OFF·빈 allowlist 유지이며 core 출시 차단 조건이 아니다. 감사 schema/cleanup은 별도라는 한계도 기록했다.
+- [AGENT] 클라우드 연결 종료 알림 뒤 실제 shell/Git 접근 정상·문서 변경 보존·실행 중 테스트/native/browser0·18920/21/22 listen0을 확인했다. 기존 Gradle daemon은 중복 실행/종료하지 않았다. production·OAuth·Secret·DB·paid 호출/변경0.
+- [AGENT] 독립 최종 문서 리뷰의 차단 결함0. provider 단독 평가의 queue/save 지연은 N/A로 보완했다. 고정 fixture30/ASK10/NOASK20·산식·7문서 상대 링크·diff check PASS, develop 대비 제품/테스트/인프라 변경0. 수정 없는 canonical commit guard(self-tests/ktlintCheck/assemble/test) exit0. 문서만 바뀌었으므로 기존 up-to-date 테스트 결과를 새 fresh 실행 수로 주장하지 않는다. 원본·receipt는 ignored `.codex/tdd-evidence/issue107-morning-readiness/`에 보존. Commit/PR: 동일 문서 커밋 예정. 기존 CLOSED #107을 재개방하거나 Draft/병합된 PR을 변경하지 않으며 이 문서 브랜치의 별도 PR/CI 완료를 주장하지 않는다.
+
 ## 현재 범위와 승인
 
 - 사용자가 D1/D2 승인: CLEAR 후 완료 집계, 시각/수동 마감은 마지막 accepted 동결. pending 수정은 이전 accepted, 최초 미확인/미응답은 이번 결과 미반영. AI/답변 때문에 마감 연장0. 마감 직전 입력 미반영 가능 고지 및 경합 회귀 필수.
