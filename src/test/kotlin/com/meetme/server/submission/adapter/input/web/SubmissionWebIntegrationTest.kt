@@ -1,5 +1,7 @@
 package com.meetme.server.submission.adapter.input.web
 
+import com.meetme.server.account.application.port.output.CurrentAccountPort
+import com.meetme.server.shared.testsupport.AccountPrincipalTestFixture
 import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -17,6 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -43,6 +46,9 @@ class SubmissionWebIntegrationTest {
     @Autowired
     private lateinit var jdbcTemplate: JdbcTemplate
 
+    @MockitoBean private lateinit var accountContext: CurrentAccountPort
+    private lateinit var accountFixture: AccountPrincipalTestFixture
+
     @BeforeEach
     fun cleanDatabase() {
         jdbcTemplate.execute(
@@ -51,6 +57,8 @@ class SubmissionWebIntegrationTest {
                 "manual_availability_intervals, submission_versions, submission_heads, participants, " +
                 "meeting_rooms, guest_browser_sessions CASCADE",
         )
+        accountFixture = AccountPrincipalTestFixture(jdbcTemplate, accountContext)
+        accountFixture.install()
     }
 
     @Test
@@ -536,10 +544,12 @@ class SubmissionWebIntegrationTest {
         expectedParticipants: Int?,
         manualOnly: Boolean,
     ): RoomSession {
+        val account = accountFixture.newAccount("주최자")
         val result =
             mockMvc
                 .perform(
                     post("/api/rooms")
+                        .cookie(account)
                         .header("Origin", ALLOWED_ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -555,7 +565,7 @@ class SubmissionWebIntegrationTest {
             result.response.contentAsString
                 .substringAfter("\"invite_code\":\"")
                 .substringBefore('"'),
-            requireNotNull(result.response.getHeader(HttpHeaders.SET_COOKIE)).substringAfter("meet_me_guest=").substringBefore(';'),
+            account.value,
         )
     }
 

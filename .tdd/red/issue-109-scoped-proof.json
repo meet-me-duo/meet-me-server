@@ -1,0 +1,76 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-109-scoped-proof",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/ParticipantOwnershipResolverContractTest.kt",
+      "sha256": "d2dcb55f68aff8a087c6281d4f8745f47e3df563a75489eea80a6766b421e9a5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/ScopedGuestProofWebIntegrationTest.kt",
+      "sha256": "3fe7c60ae6e5afa7fda0963a9c9e51bc57f6e0d87ed079e07cd383ea70627eff"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestCookieOwnershipProofAdapterTest.kt",
+      "sha256": "dc4ea05d08007147453a7e4475cec393e55405f5285040fa8442ade52a2328a5"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "--no-daemon",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*ParticipantOwnershipResolverContractTest",
+    "--tests",
+    "*ScopedGuestProofWebIntegrationTest",
+    "--tests",
+    "*GuestCookieOwnershipProofAdapterTest",
+    "-I",
+    "/tmp/meetme-109-format-proof.gradle",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+  ],
+  "failedTests": [
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] operation = \"READ_OWN\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] operation = \"REPLACE_OWN\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] level = VERIFIED_GUEST",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] level = REPLACE_ONLY",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] operation = \"READ_OWN\", level = \"VERIFIED_GUEST\", expected = \"ALLOW\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] operation = \"REPLACE_OWN\", level = \"VERIFIED_GUEST\", expected = \"ALLOW\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[3] operation = \"HOST_COMMAND\", level = \"VERIFIED_GUEST\", expected = \"ACCOUNT_REQUIRED\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[4] operation = \"CLAIM_ACCOUNT\", level = \"VERIFIED_GUEST\", expected = \"ACCOUNT_REQUIRED\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[5] operation = \"READ_OWN\", level = \"REPLACE_ONLY\", expected = \"GUEST_PROOF_INSUFFICIENT\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[6] operation = \"REPLACE_OWN\", level = \"REPLACE_ONLY\", expected = \"ALLOW\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[7] operation = \"HOST_COMMAND\", level = \"REPLACE_ONLY\", expected = \"ACCOUNT_REQUIRED\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[8] operation = \"CLAIM_ACCOUNT\", level = \"REPLACE_ONLY\", expected = \"ACCOUNT_REQUIRED\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] operation = READ_OWN",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] operation = REPLACE_OWN",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] operation = READ_OWN",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] operation = REPLACE_OWN",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[3] operation = HOST_COMMAND",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] mismatch = \"proof room\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] mismatch = \"loaded room\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[3] mismatch = \"loaded id\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[4] mismatch = \"account owned\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[5] mismatch = \"missing participant\"",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#claim without account fails before the proof is consulted()",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[1] operation = READ_OWN",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#[2] operation = REPLACE_OWN",
+    "com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest#authenticated member never gains host authority through guest host proof()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest#replace only proof cannot claim even after authentication()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest#replace only proof permits replacement but rejects private submission read()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest#proof that now points to account owned row cannot recover stale guest read authority()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest#proof port rejection overrides an otherwise valid legacy cookie()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest#replace only proof can replace without legacy cookie but still cannot read()",
+    "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest#wrong room proof cannot read or replace even with valid cookie()",
+    "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest#missing or blank credential has no proof and never touches persistence()",
+    "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest#unrecognized digest has no proof()",
+    "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest#expiry boundary and expired or revoked sessions never yield proof()",
+    "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest#[1] lock = false",
+    "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest#[2] lock = true",
+    "com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest#valid cookie without room participation is forbidden instead of inventing proof()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:49:23.746724Z"
+}

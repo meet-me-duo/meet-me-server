@@ -5,6 +5,16 @@
 > **저장소:** `meet-me-duo/meet-me-server`  
 > **관련 문서:** `docs/PRD.md`, `docs/ADR.md`
 
+## #109 계정·소유권 경계 (2026-10-17)
+
+사용자 승인 #109는 기존 익명 제출 모드에서 계정 HOST로 전환하는 후속 버전이다. account 영역의 application port 뒤에 Google/Kakao OIDC, RSA JWT, Redis 회전 세션, JDBC 영구 계정 저장을 둔다. Domain에는 공급자·HTTP·Redis 타입을 노출하지 않는다. 계정 생성은 provider+subject unique 및 transaction으로 보호하고 이메일 자동 연결을 하지 않는다. login-only 공급자 토큰은 검증 뒤 폐기하며 Calendar 지속 grant/암호화 저장은 별도 범위다.
+
+participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 아카이브는 PostgreSQL HOST 소유권을 기준으로 읽고 기존 cleanup 기준30일을 expires_at으로 계산한다.
+
+Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 사용한다. provider issuer/audience/kid/signature/time 검증 뒤 서비스 Refresh를 cookie로만 발급하고 fixed frontend callback으로 돌아간다. Redis 회전·가족 폐기는 atomic script로 처리하며 실패 시 갱신을 허용하지 않는다. 서비스 RS256 private key는 mount된 외부 secret file, 검증 current/previous public key는 JWKS로 주입한다. 설정 없는 환경에서 임시 운영키를 만들지 않는다. 실제 앱/키/배포 및 운영 로그인은 별도 검증이다.
+
+[#109 계약과 변경 경계](ISSUE_109_CONTRACT.md), [ADR-051](ADR.md), [외부 설정](ISSUE_109_OAUTH_SETUP.md)를 따른다. 이하 제출 MVP 구조는 과거 버전 설명이며 이번 변경의 실제 완료 여부는 [실행 기록](ISSUE_109_WORKLOG.md)에서 확인한다.
+
 ## 1. 목적과 범위
 
 이 문서는 `meet-me-server`의 기술적 구조, 컴포넌트 책임, 의존성 방향과 외부 시스템 경계를 정의한다. 이 저장소는 백엔드만 포함하며 프론트엔드는 별도 저장소에서 개발한다.

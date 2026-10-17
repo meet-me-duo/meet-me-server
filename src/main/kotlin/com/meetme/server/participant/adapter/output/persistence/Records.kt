@@ -23,10 +23,11 @@ data class GuestSessionRecordDef(
 data class ParticipantRecord(
     val id: UUID,
     val roomId: UUID,
-    val guestSessionId: UUID,
+    val guestSessionId: UUID?,
     val displayName: String,
     val role: String,
     val joinedAt: OffsetDateTime,
+    val userId: UUID? = null,
 )
 
 @KomapperEntityDef(ParticipantRecord::class)

@@ -25,10 +25,8 @@ import com.meetme.server.meetingroom.application.service.CollectionClosureServic
 import com.meetme.server.meetingroom.domain.CollectionStatus
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingRoom
-import com.meetme.server.participant.application.port.output.GuestCredentialPort
-import com.meetme.server.participant.application.port.output.GuestSessionRepository
-import com.meetme.server.participant.application.port.output.ParticipantRepository
-import com.meetme.server.participant.domain.ParticipantRole
+import com.meetme.server.participant.application.service.OwnershipOperation
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CoordinationRunId
 import com.meetme.server.shared.domain.OutboxEventId
@@ -44,17 +42,15 @@ class InputRevisionService(
     private val runs: CoordinationRunRepository,
     private val rounds: InputRevisionRoundRepository,
     private val submissions: SubmissionRepository,
-    private val sessions: GuestSessionRepository,
-    private val participants: ParticipantRepository,
-    private val credentials: GuestCredentialPort,
     private val outbox: OutboxRepository,
     private val ids: IdGenerator,
     private val getRoom: GetRoomUseCase,
     private val clock: Clock,
+    private val ownership: ParticipantOwnershipResolver,
 ) : InputRevisionUseCase {
     @Transactional
     override fun reopen(command: ReopenInputCommand): ReopenedInputView {
-        val room = hostRoom(command.inviteCode, command.rawCredential)
+        val room = hostRoom(command.inviteCode)
         require(command.expectedGeneration >= 0)
         val replay = rounds.findByReopenRequest(room.id, command.requestId)
         if (replay != null) {
@@ -101,7 +97,7 @@ class InputRevisionService(
 
     @Transactional
     override fun analyze(command: AnalyzeRevisionCommand): RevisionAnalysisView {
-        val room = hostRoom(command.inviteCode, command.rawCredential)
+        val room = hostRoom(command.inviteCode)
         val replay = rounds.findByAnalyzeRequest(room.id, command.requestId)
         if (replay != null) {
             if (replay.id != command.revisionRoundId || replay.forceReparse != command.forceReparse) conflict()
@@ -176,21 +172,12 @@ class InputRevisionService(
         getRoom.get(command.inviteCode, command.rawCredential),
     )
 
-    private fun hostRoom(
-        inviteCode: String,
-        credential: String?,
-    ): MeetingRoom {
+    private fun hostRoom(inviteCode: String): MeetingRoom {
         val code =
             runCatching { InviteCode.of(inviteCode) }.getOrNull()
                 ?: throw RoomLifecycleException(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
         val room = rooms.findByInviteCodeForUpdate(code) ?: throw RoomLifecycleException(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
-        if (credential.isNullOrBlank()) throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED)
-        val session =
-            sessions.findByCredentialDigest(credentials.digest(credential))?.takeIf { it.isActive(clock.instant()) }
-                ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_INVALID)
-        if (participants.findByRoomAndGuestSession(room.id, session.id)?.role != ParticipantRole.HOST) {
-            throw RoomLifecycleException(RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED)
-        }
+        ownership.resolve(room.id, null, OwnershipOperation.HOST_COMMAND)
         return room
     }
 

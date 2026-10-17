@@ -1,0 +1,17 @@
+{
+  "workItem": "issue-109-matching-auth-fixture-update",
+  "recordedAt": "2026-10-17T15:05:25.505107+00:00",
+  "classification": "TEST_FIXTURE_CONTEXT_CORRECTION_AND_ACCEPTED_AUTH_CONTRACT_UPDATE",
+  "testFiles": [
+    "src/test/kotlin/com/meetme/server/coordination/application/service/MatchingNaturalLanguageOnlyTest.kt",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/MatchingResultNaturalLanguageOnlyWebTest.kt"
+  ],
+  "observedFailure": "Root whole gate observed member forbidden expectation return 200 because the shared unit fixture incorrectly retained its default HOST account during HTTP requests.",
+  "change": "Resolve mocked HTTP account from request-local synthetic host/member cookie markers; missing or unknown HTTP markers mean anonymous. Direct service unit tests retain explicit viewerAccount/viewAsMember state.",
+  "acceptedContractUpdate": "Unauthenticated HOST_COMMAND retains 401 and now asserts ACCOUNT_REQUIRED under accepted #109 account-required host authorization.",
+  "preservedAssertions": "Member 403 HOST_PERMISSION_REQUIRED and all archived input/raw-text disclosure, candidate quality/state, and owner privacy assertions remain unchanged.",
+  "verification": "Focused regression batch passed: 28 tests across six architecture, matching unit/web, core persistence, migration runner, and integrated legacy upgrade classes; zero failures/errors/skips. Root final whole gate remains separate.",
+  "productionChanged": false,
+  "redEvidence": "No synthetic RED. Existing whole-gate failure identifies the test fixture defect; production authorization is unchanged.",
+  "focusedEvidence": ".tdd/reviews/issue-109-focused-regressions.json"
+}

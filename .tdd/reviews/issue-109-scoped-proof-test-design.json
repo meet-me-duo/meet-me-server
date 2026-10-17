@@ -1,0 +1,44 @@
+{
+  "workItem": "issue-109-scoped-proof",
+  "role": "independent-test-designer",
+  "basis": [
+    "parent #108/#109 shared ownership contract",
+    "latest root message confirming scope and status matrix",
+    ".agents/rules/development.md risk-based TDD"
+  ],
+  "normalAccountPrecedence": "READ_OWN, REPLACE_OWN and HOST_COMMAND use only account participation; no guest fallback",
+  "guestMatrix": {
+    "VERIFIED_GUEST": {
+      "READ_OWN": "allow",
+      "REPLACE_OWN": "allow",
+      "HOST_COMMAND": "401 ACCOUNT_REQUIRED",
+      "CLAIM_ACCOUNT": "requires authenticated account"
+    },
+    "REPLACE_ONLY": {
+      "READ_OWN": "403 GUEST_PROOF_INSUFFICIENT",
+      "REPLACE_OWN": "allow",
+      "HOST_COMMAND": "401 ACCOUNT_REQUIRED",
+      "CLAIM_ACCOUNT": "authenticated account still receives 403 GUEST_PROOF_INSUFFICIENT"
+    }
+  },
+  "proofBinding": "proof requested room, persisted participant id and room must agree; row must remain guest-owned; account-owned and missing rows rejected 403",
+  "claim": "explicit account plus VERIFIED_GUEST proof even if account has its own participation; proof port forUpdate=true; service retains conflict rule",
+  "cookieIndependence": "proof port may resolve replacement-only evidence with null raw cookie; rejected proof cannot fall back to active cookie",
+  "defaultAdapter": "active opaque cookie maps to VERIFIED_GUEST only; exact expiry/revocation invalid; requested lock uses session SELECT FOR UPDATE path",
+  "tests": [
+    "ParticipantOwnershipResolverContractTest",
+    "ScopedGuestProofWebIntegrationTest (real PostgreSQL + MockMvc)",
+    "GuestCookieOwnershipProofAdapterTest"
+  ],
+  "intentionalFaultPlan": [
+    "allow REPLACE_ONLY in READ_OWN -> resolver matrix and private GET fail",
+    "use REPLACE_OWN for submission GET -> HTTP replace-only read rejection fails",
+    "skip guest-owned persisted row check -> stale account-owned proof unit and HTTP fail",
+    "allow REPLACE_ONLY for explicit claim -> claim unit and HTTP fail",
+    "ignore forUpdate=true on default cookie proof -> adapter lock contract test fails"
+  ],
+  "status": "valid RED frozen; original 40 tests GREEN plus 4 independent public viewer/join regressions GREEN; 5 intentional faults detected with fresh compile/XML and exact source restoration; root final full gate pending",
+  "additionalRegressionEvidence": ".tdd/reviews/issue-109-scoped-public-regression.json",
+  "faultEvidence": ".tdd/reviews/issue-109-scoped-proof-faults.json",
+  "integrationLimit": "The real #108 password/request-proof adapter is not present in this isolated #109 workspace. Scope integration is tested through a substituted proof port, while the default active-cookie adapter is directly tested."
+}

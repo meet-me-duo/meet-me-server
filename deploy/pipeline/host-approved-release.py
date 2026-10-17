@@ -200,7 +200,7 @@ def _record():
         _require(type(record[key]) is str and re.fullmatch(r'[1-9][0-9]{0,19}', record[key]))
     _require(type(record['currentImage']) is str and re.fullmatch(
         r'[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(?:\.cn)?/[A-Za-z0-9][A-Za-z0-9._/-]*@sha256:[0-9a-f]{64}', record['currentImage']))
-    _require(type(record['history']) is list and len(record['history']) == 10)
+    _require(type(record['history']) is list and len(record['history']) in (10, 11))
     for version, row in enumerate(record['history'], 1):
         _require(type(row) is dict and set(row) == {'version', 'script', 'checksum', 'success'})
         _require(row['version'] == str(version) and row['success'] is True)

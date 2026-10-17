@@ -1,0 +1,21 @@
+{
+  "workItem": "issue-109-release-catalog",
+  "role": "Independent offline contract test author /root/auth_tests; runtime implementation /root/auth_impl; final evidence review /root/final_review",
+  "authority": "Root-approved #109 V11 publication compatibility contract and existing ADR-050 approval boundary",
+  "test": ".github/scripts/issue109-release-catalog.test.cjs",
+  "red": ".tdd/red/issue-109-release-catalog.json",
+  "oracleReview": ".tdd/reviews/issue-109-release-catalog-cross-review.json",
+  "contract": [
+    "Publisher requires exactly V1..V11 migration source entries; tested missing V11, duplicate version, unknown V12 and symlink rejection",
+    "Consumers and stored approval records support complete immutable catalogs of exactly ten or eleven entries; history prefixes are exact successful V1 through version7..11",
+    "JS byte-wise Flyway-compatible CRC32 independent from Python publisher verifies fixed original10 values and V11 -1822689491, plus actual source/schema/guard/archive SHA-256",
+    "Unchanged matching source schema/guard/history/current image stays AUTO_READY; ordinary automatic refresh-rule state behavior remains intact",
+    "V10 approved host with V11 manifest returns TRANSITION_REQUIRED for automatic/preflight; explicit deploy requires affirmative first-transition approval, both rules DISABLED, zero pending commands, trusted state and exact successful source checksum prefix",
+    "Trusted publication identity remains bound to exact successful main CI source SHA, build run/attempt and repository"
+  ],
+  "hostRecordBoundary": "Import host module without main and replace only _bytes with synthetic JSON; CONTRACT points to an existing temporary local fixture so private stored-record shape/count validation runs. Real root-owned host reads, host write logic and live services are not exercised. Existing original CI/host guard tests remain separate.",
+  "verification": ".tdd/verification/issue-109-release-catalog-faults.json",
+  "status": "PASS original7 plus new9 focusedGREEN; deliberate3faults detected4assertionfailures, exactrestore3sources, finalnew9GREEN; independentreviewer accepted corrected raw evidence",
+  "remaining": "ownership_tests owns final original CI extras; root owns CI step wiring and final publication/PR workflow; no operational deployment is authorized by these tests",
+  "recordedAt": "2026-10-17T15:34:01.077246Z"
+}

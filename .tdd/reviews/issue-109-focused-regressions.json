@@ -1,0 +1,51 @@
+{
+  "workItem": "issue-109-focused-regressions",
+  "recordedAt": "2026-10-17T15:17:42.083652+00:00",
+  "exitCode": 0,
+  "suites": [
+    {
+      "name": "com.meetme.server.architecture.AggregatePackageArchitectureTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.input.web.MatchingResultNaturalLanguageOnlyWebTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0"
+    }
+  ],
+  "localLog": ".codex/tdd-evidence/issue-109-focused-regressions.log",
+  "xmlCopiedWhileGradleLockHeld": true
+}

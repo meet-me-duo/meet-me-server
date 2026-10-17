@@ -30,6 +30,8 @@ import com.meetme.server.coordination.domain.RecommendationAnalysis
 import com.meetme.server.coordination.domain.RecommendationSelection
 import com.meetme.server.coordination.domain.StoredRecommendationOption
 import com.meetme.server.coordination.domain.matching.PlanType
+import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
+import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.CollectionStatus
 import com.meetme.server.meetingroom.domain.InviteCode
@@ -38,6 +40,8 @@ import com.meetme.server.meetingroom.domain.MeetingRoom
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
+import com.meetme.server.participant.application.service.OwnershipOperation
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.participant.domain.Participant
 import com.meetme.server.participant.domain.ParticipantRole
 import com.meetme.server.shared.domain.CandidateId
@@ -68,6 +72,7 @@ class MatchingResultService(
     private val messageSource: MessageSource,
     private val clock: Clock,
     private val recommendations: RecommendationRepository? = null,
+    private val ownership: ParticipantOwnershipResolver,
 ) : GetCandidatesUseCase,
     GetUnappliedInputsUseCase,
     ConfirmCandidateUseCase,
@@ -90,7 +95,7 @@ class MatchingResultService(
         rawCredential: String?,
     ): List<UnappliedInputView> {
         val room = room(inviteCode)
-        val viewer = participant(room.id, rawCredential)
+        val viewer = participant(room.id, rawCredential, OwnershipOperation.HOST_COMMAND)
         if (viewer.role != ParticipantRole.HOST) fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
         val run = completedRun(room)
         val submissions = frozenSubmissions(run)
@@ -117,7 +122,7 @@ class MatchingResultService(
         locale: Locale,
     ): ConfirmedResultView {
         val room = room(inviteCode, lock = true)
-        val viewer = participant(room.id, rawCredential)
+        val viewer = participant(room.id, rawCredential, OwnershipOperation.HOST_COMMAND)
         if (viewer.role != ParticipantRole.HOST) fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
         if (room.activeRevisionRoundId != null) fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
         val run =
@@ -226,7 +231,11 @@ class MatchingResultService(
     @Transactional
     override fun confirm(command: SelectRecommendationCommand): ConfirmedResultView {
         val room = room(command.inviteCode, lock = true)
-        if (participant(room.id, command.rawCredential).role != ParticipantRole.HOST) fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
+        if (participant(room.id, command.rawCredential, OwnershipOperation.HOST_COMMAND).role !=
+            ParticipantRole.HOST
+        ) {
+            fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
+        }
         if (room.activeRevisionRoundId != null || room.collectionStatus != CollectionStatus.CLOSED) {
             fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)
         }
@@ -471,16 +480,19 @@ class MatchingResultService(
     private fun participant(
         roomId: MeetingRoomId,
         rawCredential: String?,
-    ): Participant {
-        if (rawCredential.isNullOrBlank()) fail(MatchingResultErrorCode.GUEST_SESSION_REQUIRED)
-        val session =
-            guestSessionRepository
-                .findByCredentialDigest(credentialPort.digest(rawCredential))
-                ?.takeIf { it.isActive(clock.instant()) }
-                ?: fail(MatchingResultErrorCode.GUEST_SESSION_INVALID)
-        return participantRepository.findByRoomAndGuestSession(roomId, session.id)
-            ?: fail(MatchingResultErrorCode.PARTICIPANT_REQUIRED)
-    }
+        operation: OwnershipOperation = OwnershipOperation.READ_OWN,
+    ): Participant =
+        try {
+            ownership.resolve(roomId, rawCredential, operation)
+        } catch (failure: RoomLifecycleException) {
+            when (failure.code) {
+                RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED -> fail(MatchingResultErrorCode.GUEST_SESSION_REQUIRED)
+                RoomLifecycleErrorCode.GUEST_SESSION_INVALID -> fail(MatchingResultErrorCode.GUEST_SESSION_INVALID)
+                RoomLifecycleErrorCode.PARTICIPANT_REQUIRED -> fail(MatchingResultErrorCode.PARTICIPANT_REQUIRED)
+                RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED -> fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
+                else -> throw failure
+            }
+        }
 
     private fun completedRun(room: MeetingRoom): CoordinationRun {
         if (room.activeRevisionRoundId != null) fail(MatchingResultErrorCode.CANDIDATES_NOT_READY)

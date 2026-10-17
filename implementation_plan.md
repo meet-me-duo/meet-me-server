@@ -1,5 +1,18 @@
 # meet-me-server Implementation Plan
 
+## 현재 #109 실행 목표 (2026-10-17 UTC)
+
+- 사용자 목표일: 2026-10-18 KST. 이 세션은 #109만 담당하며 #107/#108/#110의 완료를 대신 선언하지 않는다.
+- [x] [AGENT] Google/Kakao 서버·웹 로그인과 계정 HOST/회원 참여·본인 방 아카이브
+- [x] [AGENT] 명시적 이중증명 게스트 연결·동일방409·DB경합·30일정책·보안/브라우저 통합
+- [x] [AGENT] 독립 frozen RED/GREEN·결함주입·최종리뷰·전체게이트·OpenAPI/인계
+- [ ] [USER/SHARED] 실제 OAuth 앱·콘솔·키 및 운영 RS256/secret 전달·실제 공급자 검증 (별도 승인)
+- [ ] [USER] push/PR/병합/배포/운영DB 승인 (요청 전 미실행)
+- 기준 서버 develop3232128의 별도 feature, 웹은 원격 develop 부재·고유 지침에 따라 최신 main9b18397에서 local feature 분리(차이를 보고/기록). 독립 구현·테스트·리뷰 역할을 분리했다. 서버773개(실행769PASS/기존skip4), 웹unit364/E2E383PASS+기존skip1, native12와V11 catalog16/추가fault3종을 확인했다. 기존CI부가검사도통과했으며원격exacthead CI는PR/최종receipt를기준으로한다.
+- 상세 계약/증거/복구: [#109 WORKLOG](docs/ISSUE_109_WORKLOG.md), [CONTRACT](docs/ISSUE_109_CONTRACT.md), [OAUTH SETUP](docs/ISSUE_109_OAUTH_SETUP.md).
+- 아래 다른 이슈 기록과 과거 완료/게시 승인은 이번 #109 승인으로 확장하지 않는다.
+
+
 > **상태:** Active  
 > **최종 갱신:** 2026-10-15
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.

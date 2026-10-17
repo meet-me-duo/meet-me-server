@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 data class CreateRoomCommand(
     val rawCredential: String?,
-    val hostDisplayName: String,
+    val hostDisplayName: String?,
     val purpose: String,
     val meetingMode: MeetingMode,
     val expectedParticipants: Int?,
@@ -23,7 +23,7 @@ data class CreateRoomCommand(
 data class JoinRoomCommand(
     val inviteCode: String,
     val rawCredential: String?,
-    val displayName: String,
+    val displayName: String?,
 )
 
 data class CloseRoomCommand(
@@ -120,6 +120,10 @@ interface CloseRoomUseCase {
 }
 
 enum class RoomLifecycleErrorCode {
+    ACCOUNT_REQUIRED,
+    GUEST_PROOF_INSUFFICIENT,
+    PARTICIPANT_REQUIRED,
+    PARTICIPANT_CONFLICT,
     REVISION_CONFLICT,
     CORRECTION_ANALYSIS_LIMIT_REACHED,
     ROOM_NOT_FOUND,

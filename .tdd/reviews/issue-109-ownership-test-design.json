@@ -1,0 +1,52 @@
+{
+  "workItem": "issue-109-ownership",
+  "role": "independent-test-designer",
+  "basis": [
+    "latest delegated issue-109 product decisions",
+    "docs/PRD.md FR-002A/FR-002B/FR-002C",
+    ".agents/rules/development.md risk-based TDD"
+  ],
+  "contract": {
+    "accountIdentity": "provider+subject only, no automatic merge by display name/email/invite",
+    "host": "account required for create and host commands",
+    "guest": "ordinary participation remains anonymous; current valid opaque cookie proves legacy ownership",
+    "claim": "explicit trusted-origin POST plus authenticated account plus active room guest proof; conflicting account room participant returns 409 without mutation; concurrent claims produce one winner",
+    "preservation": "same participant UUID, role, display name, submission versions and head; guest ownership removed only for claimed room",
+    "archive": "own account HOST rows only; expiry = coalesce(closed_at,created_at)+30 days; retention unchanged"
+  },
+  "tests": [
+    "AccountOwnershipMigrationTest: real PostgreSQL V10 upgrade, old guest and submission preservation, provider+subject distinction, exclusive owner XOR, FK and per-room uniqueness",
+    "RoomOwnershipWebIntegrationTest: real PostgreSQL MockMvc account create/join/name waiver, guest join, no implicit claim, proof rejection, explicit claim and data preservation, conflict, concurrent ownership, host command gate, account submissions, own archive and expiry, trusted Origin and OpenAPI"
+  ],
+  "intentionalFaultPlan": [
+    {
+      "fault": "skip account host creation gate",
+      "detector": "host creation requires account even when guest proof and name are valid"
+    },
+    {
+      "fault": "resolve guest cookie before authenticated account",
+      "detector": "login and same display name never implicitly adopt guest records; unrelated logged in account cannot ride host proof"
+    },
+    {
+      "fault": "skip active guest expiry/revocation verification",
+      "detector": "expired and revoked proof cannot claim and failed claims do not mutate owner"
+    },
+    {
+      "fault": "overwrite existing account participant on claim",
+      "detector": "claim with existing account participant conflicts without merging either record"
+    },
+    {
+      "fault": "retain guest_session_id after account linking",
+      "detector": "explicit claim preserves participant and submission then removes guest ownership; PostgreSQL XOR constraint"
+    },
+    {
+      "fault": "remove account HOST archive predicate or anchor expiry to created_at only",
+      "detector": "archive lists only own host rooms and exposes created or closed anchored 30 day expiry"
+    },
+    {
+      "fault": "remove owner exclusive XOR or unique indexes",
+      "detector": "account migration preserves legacy guest and submission while enforcing exclusive unique owners"
+    }
+  ],
+  "status": "independent tests frozen from valid RED; 29 related PostgreSQL/MockMvc/lifecycle tests GREEN; 7 intentional faults detected and source originals restored; final independent reviewer is separate agent"
+}
