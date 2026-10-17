@@ -1,0 +1,145 @@
+{
+  "status": "PASS",
+  "scope": "independent-scratch-only-auth-infrastructure-fault-injection",
+  "at": "2026-10-17T20:50:31.357Z",
+  "faults": [
+    {
+      "id": "atomic-publication-bypassed",
+      "oracle": "deploy/tests/runtime-auth-env.test.cjs",
+      "pattern": "^AR11 ",
+      "mutant": {
+        "exit": 1,
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "cancelled": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "exactRestore": true
+    },
+    {
+      "id": "ancestor-symlink-check-removed",
+      "oracle": "deploy/tests/runtime-auth-env.test.cjs",
+      "pattern": "^AR19 ",
+      "mutant": {
+        "exit": 1,
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "cancelled": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "exactRestore": true
+    },
+    {
+      "id": "aws-diagnostic-masking-removed",
+      "oracle": "deploy/tests/runtime-auth-env.test.cjs",
+      "pattern": "^AR03 required auth refuses a missing secret/google-client-secret ",
+      "mutant": {
+        "exit": 1,
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "cancelled": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "exactRestore": true
+    },
+    {
+      "id": "auth-bind-writable",
+      "oracle": "deploy/tests/runtime-auth-compose.test.cjs",
+      "pattern": "^AC02 ",
+      "mutant": {
+        "exit": 1,
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "cancelled": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "exactRestore": true
+    },
+    {
+      "id": "configured-activation-dropped",
+      "oracle": "deploy/tests/runtime-auth-env.test.cjs",
+      "pattern": "^AR21 ",
+      "mutant": {
+        "exit": 1,
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "cancelled": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "exactRestore": true
+    },
+    {
+      "id": "refresh-auth-lost-after-render",
+      "oracle": "deploy/tests/runtime-auth-env.test.cjs",
+      "pattern": "^AR15 ",
+      "mutant": {
+        "exit": 1,
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "cancelled": 0
+      },
+      "restored": {
+        "exit": 0,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "exactRestore": true
+    }
+  ],
+  "sourceAndTestSha256": {
+    "deploy/scripts/render-runtime-env.sh": "b06cd85ff530681def18824306e65ed2d47fe59f004540f6f2c4e234bf5a85e5",
+    "deploy/scripts/host-release-guard.sh": "57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f",
+    "deploy/compose.production.yml": "359f890940af942dbacacb18d5b07cec6fef7d21bf769cf09eb2e0d22fffbb0c",
+    "deploy/runtime-auth-mode": "30988713daff9e4788a9798036742f3adeb4643a0d3544582632328cb72af20a",
+    "deploy/tests/runtime-auth-env.test.cjs": "5c619e4f6add7a74458d235a0ceb2a65ad46df31bfb4e18013a3062b8ad91fd1",
+    "deploy/tests/runtime-auth-compose.test.cjs": "56469a9272531112ebfb15405b553f35876a51595eabb7125bd06c974720c3d4",
+    "deploy/tests/runtime-auth-raw-json.test.cjs": "0bbef1c68d86be50771cecba6e366c3bdc56278a424a98c21e272b0041cf97e7",
+    "deploy/tests/runtime_auth_refresh_fixture.py": "8708642b373bd6ff889ec68e1321c9159ce21a673b356b94ca640ba317afd84b"
+  },
+  "originalProductTreeMutated": false,
+  "testExpectationChanges": false,
+  "allCopiedTrackedBytesRestored": true,
+  "actualAwsCalls": 0,
+  "actualOAuthProviderCalls": 0,
+  "actualModelCalls": 0,
+  "productionAccess": false,
+  "logs": ".codex/tdd-evidence/issue107-runtime-auth-fi"
+}

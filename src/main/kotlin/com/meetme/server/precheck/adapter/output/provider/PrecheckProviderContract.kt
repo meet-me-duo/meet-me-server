@@ -8,6 +8,7 @@ import com.meetme.server.precheck.domain.PrecheckChoice
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.node.ObjectNode
 
 /** Structural validation only: it cannot prove the model's semantic verdict or proposal quality. */
 internal class PrecheckProviderContract(
@@ -18,7 +19,10 @@ internal class PrecheckProviderContract(
             .readerFor(JsonNode::class.java)
             .with(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
 
-    fun requestBytes(request: PrecheckProviderRequest): ByteArray {
+    fun requestBytes(
+        request: PrecheckProviderRequest,
+        runtime: Boolean = false,
+    ): ByteArray {
         val input =
             mapOf(
                 "input_ref" to request.checkId.toString(),
@@ -37,13 +41,66 @@ internal class PrecheckProviderContract(
                     mapOf(
                         "candidateCount" to 1,
                         "maxOutputTokens" to 2048,
-                        "thinkingConfig" to mapOf("thinkingBudget" to 0),
+                        "thinkingConfig" to if (runtime) mapOf("thinkingLevel" to "LOW") else mapOf("thinkingBudget" to 0),
                         "responseMimeType" to "application/json",
                         "responseJsonSchema" to RESPONSE_SCHEMA,
                     ),
             ),
         )
     }
+
+    fun countRequestBytes(
+        generationBytes: ByteArray,
+        model: String,
+    ): ByteArray {
+        val generation: ObjectNode = reader.readValue(generationBytes)
+        generation.put("model", "models/$model")
+        return mapper.writeValueAsBytes(mapOf("generateContentRequest" to generation))
+    }
+
+    fun parseCount(bytes: ByteArray): Long =
+        try {
+            val envelope: JsonNode = reader.readValue(bytes)
+            if (!envelope.isObject) invalid()
+            val count = token(envelope.path("totalTokens")) ?: invalid()
+            if (count == 0L) invalid()
+            count
+        } catch (exception: PrecheckProviderException) {
+            throw exception
+        } catch (_: RuntimeException) {
+            invalid()
+        }
+
+    /** Returned usage only: neither a token estimate nor proof of an eventual bill. */
+    fun observeUsage(bytes: ByteArray): UsageObservation =
+        try {
+            val envelope: JsonNode = reader.readValue(bytes)
+            if (!envelope.isObject) invalid()
+            val usage = envelope.path("usageMetadata")
+            if (!nullOrMissing(usage) && !usage.isObject) invalid()
+            var invalid = false
+            val tokens =
+                mapOf("INPUT" to "promptTokenCount", "CANDIDATE" to "candidatesTokenCount", "THOUGHT" to "thoughtsTokenCount")
+                    .mapValues { (_, field) ->
+                        val value = usage.path(field)
+                        if (value.isMissingNode) {
+                            null
+                        } else if (!value.isIntegralNumber || !value.canConvertToLong() || value.longValue() < 0) {
+                            invalid = true
+                            null
+                        } else {
+                            value.longValue()
+                        }
+                    }
+            UsageObservation(tokens, invalid)
+        } catch (_: RuntimeException) {
+            UsageObservation(emptyMap(), true)
+        }
+
+    data class UsageObservation(
+        val tokens: Map<String, Long?>,
+        val invalid: Boolean,
+    )
 
     fun parse(
         bytes: ByteArray,

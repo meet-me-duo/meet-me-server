@@ -1,5 +1,27 @@
 # 새 #107 구현·통합 Worklog
 
+## 런타임 전달·기본 OFF 제품 코드 준비 재개 (2026-10-17 UTC)
+
+- [USER] 준비 문서 확인 뒤 외부 설정/비용 정책과 독립인 인증 전달 코드·AI 기본 OFF 구성과 입력/출력 제한 준비의 구현·독립 TDD/FI/리뷰·정확 CI·develop까지 명시 승인했다. 실제 SSM/Secret/개인키/호스트 권한·DB·OAuth·유료 호출/main은 제외한다.
+- [AGENT] clean develop switch/pull --ff-only 뒤 `fix/issue-107-runtime-readiness`를 생성하고 준비 문서03448bb를21a82f6으로 적용했다. 기존 #107을 후속 코드의 정상 issue lifecycle을 위해 재개방했으며 중복 이슈/기존 PR/다른 브랜치 직접 변경0이다. 아래 문서-only 단계의 '재개방0/제품0'은 당시 이력이다.
+- [AGENT] 인증 테스트/구현·catalog 테스트/구현·AI 테스트/구현·독립 최종 리뷰 역할을 분리했다. renderer auth-required/legacy 경계·엄격 JSON/type/CRLF/NUL·원자0600·symlink/실패보존·read-only mount/UID10001·실제 합성 refresh와 승인 catalog17을 먼저 테스트한다. AI는 기본 OFF 실제 바인딩·문서 기반 고정 profile·count4096 gate/사후 known promptUsage 방어·2048 합산 cap/LOW wire·count/gen 공통15초/재시도0을 독립 검증한다.
+- [SHARED] 검사 admission6을 변경하지 않는다. 새 count preflight는 최대6 count+6 generation HTTP와 operation별 관측으로 구분하며 기존6을 전체 HTTP6으로 주장하지 않는다. count 값이 실제 billed input과 정확히 같다는 근거·실청구 상한·제품 모임 총10원 충돌·실모델 평가는 미해결이다. 실제 opt-in은 OFF이며 paid 호출0이다.
+- [AGENT] 인증54/54(원시NUL4 genuine RED 보완 포함), AI새61+기존18=79/79, catalog26/26, 관련provider/catalog45/45·실제 local Compose fidelity·기존 guard credential refresh GREEN. auth6/provider6/catalog3 FI15종을 assertion으로 탐지·정확 원복했고 원본 제품/테스트 지문이 일치한다. Compose JSONfalse 생략의 독립 oracle 보정은 원본/재구성RED/최종GREEN을 구분했다. 수정 없는 필수 전체 guard exit0: fresh179 suite/1,258개 중1,254PASS·기존4SKIP·실패/오류0, source491 before=after=current. V8전체37/37·Nginx 합성 실행도 exit0이며 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음(`docs/verification/issue107-runtime-readiness-independent-review.md`). 게시/새CI/develop merge는 다음 단계다.
+- [AGENT] 전체 Node140/140 PASS. 최초2건의 standalone javac 경로 누락은 실행 환경 오류로 분리하고 JDK17 경로를 지정한 동일 전체 검사에서 통과했다. 기존 성공으로 실패를 덮거나 유효 RED로 표시하지 않는다. CI는 새 auth54/catalog 계약·artifact marker를 연결했고 직전 실제 Quality Gate17분43초에 신규 검증 시간을 더해 제한을20→30분으로 늘렸으며 기존 검사는 유지했다.
+- [AGENT] 전체 guard와 보조 검사 근거: `.tdd/verification/issue107-runtime-readiness-{final-gate,source-manifest,supplemental}.json`. Nginx 첫 로컬 권한 오류와 Node JDK 경로 오류는 성공 실행과 분리했다. FI history의 정확한 `.diff`/`.patch`는 원본 데이터로 보존하며 source diff check에서 해당 archive만 제외한다.
+- [SHARED] optional String `/config/precheck-provider-enabled`는 정확 true/false만 환경변수 `MEETME_PRECHECK_PROVIDER_ENABLED`로 전달한다. 미등록/조회 실패는 false, malformed 성공 응답은 전체 교체 거부이며 refresh에도 유지된다. 실제 Parameter 생성/읽기/true 등록은 수행하지 않았다. 기존 OAuth 공개 설정 완료 인계와 별개로 runtime 자격 증명·서명 파일·실로그인·운영 전환이 남았다.
+
+## develop 이후 아침 승인·활성화 준비 (2026-10-17 UTC)
+
+- [AGENT] 서버 develop `bb996482a3090739a8ce02c8b093561e2c5c58a2`·정확 merge CI39064886318 성공, 웹 Draft PR31 HEAD02a68d8·CI39063558547 성공을 유지한다. main·원본 PR/브랜치는 변경하지 않았다.
+- [AGENT] 별도 `docs/issue-107-main-activation-readiness`를 clean develop switch/pull --ff-only 뒤 만들었다. 제품/테스트/인프라 코드0, 준비 문서만 변경한다. 기존 #107은 develop 자동 lifecycle로 CLOSED이며 이 문서 준비를 위해 새 중복 이슈나 재개방·이전 PR 변경을 하지 않는다.
+- [AGENT] 실제 bean은 default false 생성자 옵션만 사용하며 production opt-in 바인딩이 없음을 확인했다. 동일 GenerateContent 전용 thinking guide에서 합산 cap 근거를 찾아 기존 'Interactions만 근거 있음' 판단을 정정했다. thinkingBudget0 지원/실청구 검증으로 확대하지 않으며 실제 옵션 false·실제 호출0을 유지한다.
+- [AGENT] 독립 provider 경계/평가 설계 리뷰에서 지원 profile·production 바인딩·OFF 호출0·LOW wire 변경의 별도 TDD, 정답 누출 금지·고정 분모·물리 호출 상한/timeout 비용 예약을 확인했다. [평가 준비안](ISSUE_107_REAL_MODEL_EVALUATION_PLAN.md)에 generation30/retry0/count최대30·조건부USD0.32256·현재 최대비용 미입증·중단/측정 명세를 보존했다. p50/p95/정확도 실측값은 없다.
+- [SHARED] PRD 모임당 총AI10원과 새 호출 예산의 최악 비용 충돌은 부모 결정 대상으로 보존한다. 한도/500자/마감/참여 정책을 변경하지 않았다. wire·활성화/인증 전달 제품 코드는 다음 독립 TDD 단위이며 문서로 구현 완료를 대체하지 않는다.
+- [AGENT] [외부 안내](ISSUE_107_EXTERNAL_READINESS_RUNBOOK.md)에 완료한 Google/Kakao 공개 설정 재요구 없이 변수 이름·안전 입력 위치·RS256/JWKS·UID10001/read-only mount·DB/PITR·복구·최소 사용자 순서를 정리했다. 운영자 요약은 기본 OFF·빈 allowlist 유지이며 core 출시 차단 조건이 아니다. 감사 schema/cleanup은 별도라는 한계도 기록했다.
+- [AGENT] 클라우드 연결 종료 알림 뒤 실제 shell/Git 접근 정상·문서 변경 보존·실행 중 테스트/native/browser0·18920/21/22 listen0을 확인했다. 기존 Gradle daemon은 중복 실행/종료하지 않았다. production·OAuth·Secret·DB·paid 호출/변경0.
+- [AGENT] 독립 최종 문서 리뷰의 차단 결함0. provider 단독 평가의 queue/save 지연은 N/A로 보완했다. 고정 fixture30/ASK10/NOASK20·산식·7문서 상대 링크·diff check PASS, develop 대비 제품/테스트/인프라 변경0. 수정 없는 canonical commit guard(self-tests/ktlintCheck/assemble/test) exit0. 문서만 바뀌었으므로 기존 up-to-date 테스트 결과를 새 fresh 실행 수로 주장하지 않는다. 원본·receipt는 ignored `.codex/tdd-evidence/issue107-morning-readiness/`에 보존. Commit/PR: 동일 문서 커밋 예정. 기존 CLOSED #107을 재개방하거나 Draft/병합된 PR을 변경하지 않으며 이 문서 브랜치의 별도 PR/CI 완료를 주장하지 않는다.
+
 ## 현재 범위와 승인
 
 - 사용자가 D1/D2 승인: CLEAR 후 완료 집계, 시각/수동 마감은 마지막 accepted 동결. pending 수정은 이전 accepted, 최초 미확인/미응답은 이번 결과 미반영. AI/답변 때문에 마감 연장0. 마감 직전 입력 미반영 가능 고지 및 경합 회귀 필수.

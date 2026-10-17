@@ -26,7 +26,10 @@ CONTRACT_FILES = tuple(sorted((
     "meet-me-guarded-restart.service", "pipeline/approved_release.py", "pipeline/host-approved-release.py",
     "pipeline/run-approved-release.py", "pipeline/publish_manifest.py", "preflight/host-preflight.sh",
     "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java",
+    "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml",
 )))
+LEGACY_CONTRACT_FILES = tuple(name for name in CONTRACT_FILES if name not in (
+    "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml"))
 
 
 def _require(condition):
@@ -104,9 +107,13 @@ def _verify_package(archive_path, manifest):
     validate_archive(archive_path)
     with tarfile.open(archive_path, "r:gz") as archive:
         files = {member.name: archive.extractfile(member).read() for member in archive.getmembers() if member.isfile()}
-    _require(set(CONTRACT_FILES) | {"migrations/" + row["script"] for row in manifest["migrations"]}
+    contract = LEGACY_CONTRACT_FILES
+    if "runtime-auth-mode" in files:
+        _require(files["runtime-auth-mode"] in (b"oauth-rs256-required", b"oauth-rs256-required\n"))
+        contract = CONTRACT_FILES
+    _require(set(contract) | {"migrations/" + row["script"] for row in manifest["migrations"]}
              | {"preflight/compiled/ReadOnlyFlywayProbe.class", "runtime-provider-mode", "compose.production.yml"} <= set(files))
-    guard = [{"path": relative, "sha256": hashlib.sha256(files[relative]).hexdigest()} for relative in CONTRACT_FILES]
+    guard = [{"path": relative, "sha256": hashlib.sha256(files[relative]).hexdigest()} for relative in contract]
     catalog = []
     for row in manifest["migrations"]:
         raw = files["migrations/" + row["script"]]

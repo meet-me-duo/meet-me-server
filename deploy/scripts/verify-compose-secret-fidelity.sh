@@ -3,16 +3,22 @@ set -euo pipefail
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 runtime_env="$(mktemp)"
+auth_directory="$(mktemp -d)"
+chmod 0755 "$auth_directory"
+printf '%s\n' 'SYNTHETIC_PRIVATE_FILE' >"$auth_directory/signing-private.pem"
+printf '%s\n' '{"keys":[],"fixture":true}' >"$auth_directory/verification.jwks.json"
 project_name="meet-me-secret-fidelity-${RANDOM}"
 
 cleanup() {
   APP_IMAGE='alpine:3.22' \
     RUNTIME_ENV_FILE="$runtime_env" \
+    AUTH_KEYS_DIRECTORY="$auth_directory" \
     docker compose \
       --project-name "$project_name" \
       -f "$repository_root/deploy/compose.production.yml" \
       down --remove-orphans >/dev/null 2>&1 || true
   rm -f "$runtime_env"
+  rm -rf "$auth_directory"
 }
 trap cleanup EXIT
 
@@ -26,6 +32,7 @@ printf 'MEETME_RUNTIME_PROVIDER_MODE=%s\n' "$expected_provider_mode" >>"$runtime
 actual="$(
   APP_IMAGE='alpine:3.22' \
     RUNTIME_ENV_FILE="$runtime_env" \
+    AUTH_KEYS_DIRECTORY="$auth_directory" \
     docker compose \
       --project-name "$project_name" \
       -f "$repository_root/deploy/compose.production.yml" \
@@ -40,6 +47,7 @@ fi
 actual_provider="$(
   APP_IMAGE='alpine:3.22' \
     RUNTIME_ENV_FILE="$runtime_env" \
+    AUTH_KEYS_DIRECTORY="$auth_directory" \
     docker compose \
       --project-name "$project_name" \
       -f "$repository_root/deploy/compose.production.yml" \

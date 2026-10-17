@@ -26,7 +26,7 @@
 | PS18 | REPLACE_ONLY 및 로그인+invalid Bearer+valid guest | 신규 검사 GET/POST/답변/취소/retry 모두 거부, invalid Bearer401. 기존 blind replace만 원계약 유지·비교 oracle0 |
 | PS19 | claim vs 답변/완료/replay·owner binding 변경 | claim 우선이면 옛 grant 쓰기/결과 반영 차단. 완료 먼저면 provenance 보존·명시 연결. 타인 outcome 노출0 |
 | PS20 | 500/501 emoji·trim·내부 공백·배치10000/10001 | 기존 Unicode 기준/오류. 원문 자르기0. 실패 head/집계/작업/비용카운터 불변. A/B도 같은 경계 |
-| PS21 | 질문3회·검사6회·retry1회·중복/취소/revision 초기화 공격 | 영속 상한 우회0. 상한시 원문 보존·불가 사유, 거짓 완료0. V13 질문 이력 포함 |
+| PS21 | 질문3회·검사 admission6회·retry1회·중복/취소/revision 초기화 공격 | 영속 상한 우회0. 상한시 원문 보존·불가 사유, 거짓 완료0. V13 질문 이력 포함. count preflight 경로는 admission당 count1+generation1 이하이며 전체HTTP6이라는 주장은 하지 않음 |
 | PS22 | 큐100 포화·동시 worker·Redis 유실/재시작 | 저장 raw 유실0, FAILED_QUEUE 또는 내구 job 복구. 전역 in-flight≤2. 최종분석 풀 고갈0 |
 | PS23 | 중복 전달·claim 후 crash·lease 만료·늦은 결과 | 동일 execution attempts/deadline 불변, 무허가 재호출0. 명시 retry는 새 execution/generation 한 번만 허용하고 옛 응답 폐기. 외부 불확실 호출도 비용상한 차감 유지. expired 결과 accepted0 |
 | PS24 | queue wait 포함30초·실제 HTTP 느린 본문 | 남은시간-게시3초, call≤15초, 전체deadline 후 게시0. 가짜 clock/backoff와 transport cancel로 검증 |

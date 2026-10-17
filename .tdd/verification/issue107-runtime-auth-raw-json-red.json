@@ -1,0 +1,30 @@
+{
+  "workItem": "issue107-runtime-auth-raw-json",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-auth-raw-json.test.cjs",
+      "sha256": "0bbef1c68d86be50771cecba6e366c3bdc56278a424a98c21e272b0041cf97e7"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "deploy/tests/runtime-auth-raw-json.test.cjs"
+  ],
+  "failedTests": [
+    "RN01 literal NUL inside a required client secret JSON string is rejected without normalization",
+    "RN02 literal NUL inside optional tru-NUL-e must never enable the provider",
+    "RN03 literal NUL inside Parameter Type must never turn into a valid String type",
+    "RN04 literal NUL after a JSON document is rejected rather than trimmed into a valid secret response"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T20:46:38.205Z",
+  "evidenceKind": "NON_KOTLIN_INDEPENDENT_INFRA_CHRONOLOGY",
+  "kotlinCanonicalRedEvidence": false,
+  "provenance": "CHRONOLOGICAL_REQUIREMENT_ASSERTION_RED_ON_FIRST_AUTH_IMPLEMENTATION",
+  "tests": 4,
+  "failed": 4,
+  "setupErrors": 0,
+  "notes": "Separate literal-NUL byte-stream cases, not JSON escaped-NUL values. Actual shell+synthetic AWS executable accepted all malformed responses after Bash stripped NUL. Original50 test bytes unchanged; no product edit by author. Raw output ignored-local only."
+}

@@ -1,0 +1,128 @@
+{
+  "workItem": "issue107-runtime-auth-faults",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "boundary": "Actual independent scratch-only authentication runtime/atomic environment/secret masking/read-only bind/activation/credential refresh fault injections. Metadata projection of the completed execution recorded in .tdd/verification/issue107-runtime-auth-faults.json; no tests rerun or reconstructed execution claimed. Original product tree unchanged; every scoped restore was GREEN. Seven source hashes are actual frozen/copied deploy source bytes; four test hashes are the actual frozen oracle bytes.",
+  "sourceFiles": [
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "b06cd85ff530681def18824306e65ed2d47fe59f004540f6f2c4e234bf5a85e5"
+    },
+    {
+      "path": "deploy/scripts/host-release-guard.sh",
+      "sha256": "57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f"
+    },
+    {
+      "path": "deploy/compose.production.yml",
+      "sha256": "359f890940af942dbacacb18d5b07cec6fef7d21bf769cf09eb2e0d22fffbb0c"
+    },
+    {
+      "path": "deploy/runtime-auth-mode",
+      "sha256": "30988713daff9e4788a9798036742f3adeb4643a0d3544582632328cb72af20a"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-auth-env.test.cjs",
+      "sha256": "5c619e4f6add7a74458d235a0ceb2a65ad46df31bfb4e18013a3062b8ad91fd1"
+    },
+    {
+      "path": "deploy/tests/runtime-auth-compose.test.cjs",
+      "sha256": "56469a9272531112ebfb15405b553f35876a51595eabb7125bd06c974720c3d4"
+    },
+    {
+      "path": "deploy/tests/runtime-auth-raw-json.test.cjs",
+      "sha256": "0bbef1c68d86be50771cecba6e366c3bdc56278a424a98c21e272b0041cf97e7"
+    },
+    {
+      "path": "deploy/tests/runtime_auth_refresh_fixture.py",
+      "sha256": "8708642b373bd6ff889ec68e1321c9159ce21a673b356b94ca640ba317afd84b"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "atomic-publication-bypassed",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^AR11 ",
+        "deploy/tests/runtime-auth-env.test.cjs"
+      ],
+      "detectedBy": "AR11 final rename failure retains old environment and removes all temporary auth files; ERR_ASSERTION: 'Invalid required auth must be rejected'; original mutant exit1/fail1 and identical command restored exit0/pass1/fail0; exact bytes restored. Logs: .codex/tdd-evidence/issue107-runtime-auth-fi/atomic-publication-bypassed-mutant.log, .codex/tdd-evidence/issue107-runtime-auth-fi/atomic-publication-bypassed-restored.log.",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "ancestor-symlink-check-removed",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^AR19 ",
+        "deploy/tests/runtime-auth-env.test.cjs"
+      ],
+      "detectedBy": "AR19 symlink parents and higher ancestors are rejected before changing destination or unrelated files; ERR_ASSERTION: 'A symlink in any destination ancestor must be refused'; original mutant exit1/fail1 and identical command restored exit0/pass1/fail0; exact bytes restored. Logs: .codex/tdd-evidence/issue107-runtime-auth-fi/ancestor-symlink-check-removed-mutant.log, .codex/tdd-evidence/issue107-runtime-auth-fi/ancestor-symlink-check-removed-restored.log.",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "aws-diagnostic-masking-removed",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^AR03 required auth refuses a missing secret/google-client-secret ",
+        "deploy/tests/runtime-auth-env.test.cjs"
+      ],
+      "detectedBy": "AR03 required auth refuses a missing secret/google-client-secret without changing the previous environment; ERR_ASSERTION: 'Runtime values and raw provider diagnostics must never enter stdout/stderr'; original mutant exit1/fail1 and identical command restored exit0/pass1/fail0; exact bytes restored. Logs: .codex/tdd-evidence/issue107-runtime-auth-fi/aws-diagnostic-masking-removed-mutant.log, .codex/tdd-evidence/issue107-runtime-auth-fi/aws-diagnostic-masking-removed-restored.log.",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "auth-bind-writable",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^AC02 ",
+        "deploy/tests/runtime-auth-compose.test.cjs"
+      ],
+      "detectedBy": "AC02 actual UID10001 reads owner-only synthetic key files but cannot write into the read-only bind; ERR_ASSERTION: UID10001 must read the provided files while every bind write is rejected 1 !== 0; original mutant exit1/fail1 and identical command restored exit0/pass1/fail0; exact bytes restored. Logs: .codex/tdd-evidence/issue107-runtime-auth-fi/auth-bind-writable-mutant.log, .codex/tdd-evidence/issue107-runtime-auth-fi/auth-bind-writable-restored.log.",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "configured-activation-dropped",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^AR21 ",
+        "deploy/tests/runtime-auth-env.test.cjs"
+      ],
+      "detectedBy": "AR21 optional activation accepts only exact String true or false and faithfully emits each value; ERR_ASSERTION: The expression evaluated to a falsy value: assert.ok(f.read().includes(`MEETME_PRECHECK_PROVIDER_ENABLED=${Value}\\n`)); original mutant exit1/fail1 and identical command restored exit0/pass1/fail0; exact bytes restored. Logs: .codex/tdd-evidence/issue107-runtime-auth-fi/configured-activation-dropped-mutant.log, .codex/tdd-evidence/issue107-runtime-auth-fi/configured-activation-dropped-restored.log.",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "refresh-auth-lost-after-render",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=^AR15 ",
+        "deploy/tests/runtime-auth-env.test.cjs"
+      ],
+      "detectedBy": "AR15 real guarded DB refresh rerenders the full required auth contract before app recreation; ERR_ASSERTION: DB password refresh must preserve every auth value false !== true; original mutant exit1/fail1 and identical command restored exit0/pass1/fail0; exact bytes restored. Logs: .codex/tdd-evidence/issue107-runtime-auth-fi/refresh-auth-lost-after-render-mutant.log, .codex/tdd-evidence/issue107-runtime-auth-fi/refresh-auth-lost-after-render-restored.log.",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T20:50:31.357Z"
+}

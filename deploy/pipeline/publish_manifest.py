@@ -18,6 +18,7 @@ GUARD_FILES = tuple(sorted((
     "pipeline/host-approved-release.py", "pipeline/run-approved-release.py",
     "pipeline/publish_manifest.py", "preflight/host-preflight.sh",
     "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java",
+    "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml",
 )))
 
 MIGRATION_SCRIPTS = (
@@ -73,6 +74,9 @@ def build_manifest(repo_root, archive_path, environment):
         root = Path(repo_root)
         archive = Path(archive_path)
         if not archive.is_file() or archive.is_symlink():
+            raise ValueError()
+        if source_path(root, "deploy/runtime-auth-mode").read_bytes() not in (
+                b"oauth-rs256-required", b"oauth-rs256-required\n"):
             raise ValueError()
         migration_directory = source_path(root, "src/main/resources/db/migration", directory=True)
         paths = list(migration_directory.iterdir())

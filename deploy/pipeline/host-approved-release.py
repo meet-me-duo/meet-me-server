@@ -36,7 +36,10 @@ BUNDLE = (
     'pipeline/host-approved-release.py', 'pipeline/run-approved-release.py',
     'pipeline/publish_manifest.py', 'preflight/host-preflight.sh',
     'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
+    'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
 )
+LEGACY_BUNDLE = tuple(name for name in BUNDLE if name not in (
+    'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml'))
 ENV = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
        'HOME': '/root', 'LANG': 'C.UTF-8'}
 
@@ -172,6 +175,14 @@ def _unit(expected):
                       'FragmentPath': str(UNIT), 'DropInPaths': ''})
 
 
+def _release_bundle(release):
+    marker = release / 'runtime-auth-mode'
+    if not os.path.lexists(marker):
+        return LEGACY_BUNDLE
+    _require(_bytes(marker, 64) in (b'oauth-rs256-required', b'oauth-rs256-required\n'))
+    return BUNDLE
+
+
 def _installed_catalog(release):
     mapped = {
         'scripts/host-release-guard.sh': LAUNCHER,
@@ -180,7 +191,7 @@ def _installed_catalog(release):
         'meet-me-guarded-restart.service': ROOT / 'guard/meet-me-guarded-restart.service',
     }
     catalog = [{'path': name, 'sha256': _hash(_bytes(mapped.get(name, release / name)))}
-               for name in sorted(BUNDLE)]
+               for name in sorted(_release_bundle(release))]
     _unit(_bytes(ROOT / 'guard/meet-me-guarded-restart.service'))
     return catalog
 
@@ -279,7 +290,8 @@ def _archive(release, manifest):
     archive = release / '.approved-release.tar.gz'
     raw = _bytes(archive, 4 * 1024 * 1024)
     _require(_hash(raw) == manifest['archiveSha256'])
-    required = set(BUNDLE) | {'migrations/' + row['script'] for row in manifest['migrations']}
+    release_bundle = _release_bundle(release)
+    required = set(release_bundle) | {'migrations/' + row['script'] for row in manifest['migrations']}
     required.add('preflight/compiled/ReadOnlyFlywayProbe.class')
     total, seen, files = 0, set(), set()
     with tarfile.open(archive, 'r:gz') as bundle:
@@ -302,7 +314,7 @@ def _archive(release, manifest):
             else:
                 _safe(release / name, directory=True)
     _require(required <= files)
-    catalog = [{'path': name, 'sha256': _hash(_bytes(release / name))} for name in sorted(BUNDLE)]
+    catalog = [{'path': name, 'sha256': _hash(_bytes(release / name))} for name in sorted(release_bundle)]
     _require(_hash(_canonical(catalog)) == manifest['guardFingerprint'])
     _require(_schema(release, manifest['migrations']) == manifest['schemaFingerprint'])
     probe = _bytes(release / 'preflight/compiled/ReadOnlyFlywayProbe.class', 24576)

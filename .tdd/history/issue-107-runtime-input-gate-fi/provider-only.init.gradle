@@ -1,0 +1,5 @@
+allprojects {
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        kotlin.sourceSets.getByName('test').kotlin.setSrcDirs(['src/test/kotlin/com/meetme/server/precheck/adapter/output/provider'])
+    }
+}

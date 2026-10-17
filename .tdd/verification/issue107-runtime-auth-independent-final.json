@@ -1,0 +1,76 @@
+{
+  "status": "PASS_FOR_INDEPENDENT_AUTH_RUNTIME_INFRA_SCOPE",
+  "at": "2026-10-17T20:50:53.182Z",
+  "unitAndContract": {
+    "tests": 54,
+    "passed": 54,
+    "failed": 0,
+    "setupErrors": 0,
+    "log": ".codex/tdd-evidence/issue107-runtime-auth-final-green.log",
+    "executor": "server_precheck_impl; result and frozen bytes independently inspected"
+  },
+  "currentTestSha256": {
+    "deploy/tests/runtime-auth-env.test.cjs": "5c619e4f6add7a74458d235a0ceb2a65ad46df31bfb4e18013a3062b8ad91fd1",
+    "deploy/tests/runtime_auth_refresh_fixture.py": "8708642b373bd6ff889ec68e1321c9159ce21a673b356b94ca640ba317afd84b",
+    "deploy/tests/runtime-auth-compose.test.cjs": "56469a9272531112ebfb15405b553f35876a51595eabb7125bd06c974720c3d4",
+    "deploy/tests/runtime-auth-raw-json.test.cjs": "0bbef1c68d86be50771cecba6e366c3bdc56278a424a98c21e272b0041cf97e7"
+  },
+  "productionSourceFreeze": {
+    "manifest": ".codex/tdd-evidence/issue107-runtime-auth-source-freeze.json",
+    "sha256": "a4992ec6ce8447c9fae795c068d4d106d14ca86079acc111462a132f198d5277",
+    "files": {
+      ".env.example": "e61d7395cd0f2bd44833bb0bde4f883fc9c3b6355fd8612df0bad6d17990a71a",
+      "deploy/runtime-auth-mode": "30988713daff9e4788a9798036742f3adeb4643a0d3544582632328cb72af20a",
+      "deploy/scripts/render-runtime-env.sh": "b06cd85ff530681def18824306e65ed2d47fe59f004540f6f2c4e234bf5a85e5",
+      "deploy/compose.production.yml": "359f890940af942dbacacb18d5b07cec6fef7d21bf769cf09eb2e0d22fffbb0c",
+      "deploy/pipeline/publish_manifest.py": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567",
+      "deploy/pipeline/run-approved-release.py": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce",
+      "deploy/pipeline/host-approved-release.py": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95"
+    },
+    "matchedCurrentTree": true
+  },
+  "tdd": {
+    "env44": "Chronological initial requirement RED40/control4; current bytes unchanged",
+    "rawJson4": "Separate chronological requirement RED4 on first implementation; current bytes unchanged",
+    "compose6": "Original chronology preserved separately; current SHA reconstructed against baseline21a82f6 after false omission oracle correction",
+    "records": [
+      ".tdd/verification/issue107-runtime-auth-env-red.json",
+      ".tdd/verification/issue107-runtime-auth-compose-red.json",
+      ".tdd/verification/issue107-runtime-auth-raw-json-red.json"
+    ],
+    "originalCompose": ".tdd/verification/issue107-runtime-auth-compose-original-red.json",
+    "kotlinCanonicalEvidenceClaim": false
+  },
+  "faultInjection": {
+    "faults": 6,
+    "detected": 6,
+    "allExpectedRequirementAssertions": true,
+    "allScopedRestoresGreen": true,
+    "originalProductTreeMutated": false,
+    "sourceAndTestExactRestore": true,
+    "evidence": ".tdd/verification/issue107-runtime-auth-faults.json",
+    "runner": "docs/verification/issue107-runtime-auth-faults.mjs"
+  },
+  "existingFidelityFixture": {
+    "path": "deploy/scripts/verify-compose-secret-fidelity.sh",
+    "sha256": "55c8bcb87c1785bb59caac7508c8ae097f8debd41d0b53e439b9a7877b6a899d",
+    "expectedAssertionsChanged": false,
+    "change": "Only synthetic auth directory and AUTH_KEYS_DIRECTORY preparation added",
+    "independentRun": "PASS",
+    "log": ".codex/tdd-evidence/issue107-runtime-auth-existing-fidelity.log"
+  },
+  "limits": {
+    "actualAwsCalls": 0,
+    "actualOAuthProviderCalls": 0,
+    "actualModelCalls": 0,
+    "productionAccess": false,
+    "realKeys": false,
+    "actualUidMountEvidence": "Cached local Alpine+synthetic owner-only files; not operational permissions proof",
+    "rootOwnershipRefresh": "Existing logical-host fixture; not installed production guard proof"
+  },
+  "remaining": [
+    "Parent full supplemental gates and independent final review",
+    "Commit/push, exact HEAD CI and develop integration owned by parent",
+    "Actual SSM/keys/host/OAuth/production activation remain unapproved"
+  ]
+}

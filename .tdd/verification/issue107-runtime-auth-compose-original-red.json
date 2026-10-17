@@ -1,0 +1,34 @@
+{
+  "workItem": "issue107-runtime-auth-compose",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-auth-compose.test.cjs",
+      "sha256": "838af7e4e6ce4d8cf8bd87f732f857615722fefa9d9d612aceb79a93ae5f7dba"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "deploy/tests/runtime-auth-compose.test.cjs"
+  ],
+  "failedTests": [
+    "AC01 production Compose declares a required read-only long bind without automatic host-path creation",
+    "AC02 actual UID10001 reads owner-only synthetic key files but cannot write into the read-only bind",
+    "AC03 missing auth bind path is refused without creating a host directory or running the app command"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T20:44:20.021Z",
+  "provenance": "CHRONOLOGICAL_REQUIREMENT_ASSERTION_RED_BEFORE_PRODUCT_IMPLEMENTATION",
+  "tests": 6,
+  "failed": 3,
+  "passedControls": 3,
+  "setupErrors": 0,
+  "actualAwsCalls": 0,
+  "actualOAuthProviderCalls": 0,
+  "productionAccess": false,
+  "notes": "Real cached local Alpine/Compose, synthetic files only; --pull never; UID10001/readonly/missingbind tests. AC02 host byte inspection restores synthetic ownership first. Original normalized-JSON false-field-presence oracle was overconstrained; source explicitfalse and actual missingbind refusal remain required. Current test SHA has reconstructed baseline evidence only.",
+  "evidenceKind": "NON_KOTLIN_INDEPENDENT_INFRA_CHRONOLOGY",
+  "kotlinCanonicalRedEvidence": false,
+  "status": "HISTORICAL_TEST_FINGERPRINT_SUPERSEDED"
+}
