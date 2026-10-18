@@ -1,0 +1,28 @@
+{
+  "workItem": "issue123-thought-signature",
+  "sourceRevision": "b3770438cc5c2095b70dec4e195e406f1ecbe249",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckThoughtSignatureTransportTest.kt",
+      "sha256": "7acddc4e24866fe52d85c2cdbd2c37f11b40aaf4f11dccf6d48af4792ee353e3"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*PrecheckThoughtSignatureTransportTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest.SIG01 optional official bytes metadata preserves exact recorded question and usage and is discarded[2] scenario = \"NULL\"",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest.SIG01 optional official bytes metadata preserves exact recorded question and usage and is discarded[3] scenario = \"EMPTY\"",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest.SIG01 optional official bytes metadata preserves exact recorded question and usage and is discarded[4] scenario = \"STANDARD_PADDED\"",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest.SIG01 optional official bytes metadata preserves exact recorded question and usage and is discarded[5] scenario = \"STANDARD_UNPADDED\"",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest.SIG01 optional official bytes metadata preserves exact recorded question and usage and is discarded[6] scenario = \"URL_PADDED\"",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest.SIG01 optional official bytes metadata preserves exact recorded question and usage and is discarded[7] scenario = \"URL_UNPADDED\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T06:19:47Z"
+}

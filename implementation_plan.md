@@ -2,6 +2,17 @@
 
 ## 현재 #123 영속 공통 AI 예산 후속 (2026-10-18 UTC)
 
+- 최신 후속: 코드 b3770438 commit/push·[Draft PR126](https://github.com/meet-me-duo/meet-me-server/pull/126) 게시, 정확HEAD CI39102015533 Quality Gate/ARM64 및 Lifecycle39102015519 모두 성공했다. 사용자 추가USD1로 이전 전부를 포함한 Gemini+OpenAI **합산USD2**를 승인했다. 이전USD1 중단/예약0.70918144는 당시 이력으로 보존한다.
+- [x] [AGENT] 비유료503/15초 원인 점검·동일payload/count/관측누락과 공식문서 대조. 상세원인확정불가·제품설정변경0
+- [x] [AGENT] 단독B 각60초/최대2·추가A/count0·기존oracle/2048LOW 고정, 최대합산예약USD1.01330944/추가여유USD0.98669056 독립산술 검토
+- [x] [AGENT] 진단runner staticP2 최소보완·격리mock59/59·실행전독립리뷰 뒤 bounded B실제2회: 503 high demand→200/5195.5ms·질문 의미LTS03–07·LTS08 제안의미 독립PASS/UI미검증, 현재 parser metadata호환 LTS02FAIL·fresh15s전체LTS01미실행
+- [x] [AGENT] 공식 optional thoughtSignature만 좁은 호환: 독립 새 RED→최소 구현→격리 actual-response 재생·FI·새 전체guard·최종 독립게시리뷰PASS/미해결P1,P2없음. 원 signature값 추적/로그0, 기존 strict JSON/usage/500/ownership/마감 불변
+- [x] [AGENT] metadata 새26개 genuine RED6/통제20→Contract1file 최소수정→집중328 GREEN/testinventory불변. raw B exact parser·기록A/count 실제TwoStage replay accepted/HTTP0; 첫 harness이름 setup오류는제품실패와분리보존
+- [x] [AGENT] metadata 독립FI3 실제assert6/5/2탐지·각exactrestore7/9/5PASS·최종26PASS/원본source,test지문동일. exactrawreplay 독립질문/대안/usage보존감사PASS·fresh15s/UI미검증유지
+- [x] [AGENT] metadata 후속 새unchanged필수guard exit0: fresh213 suite/1710 중1706PASS·기존4SKIP·실패/오류0, source557 before=after=current. 이전b377 guard/실제parserFAIL이력별도보존
+- [ ] [AGENT] 새 진단상태·근거 docs commit/push→PR126 최신 정확HEAD CI. Commit/PR동일후속커밋예정, 정확SHA/원격결과는Git이력·PR126/ignoredpublicationreceipt에기록. 60초진단을제품15초전체성공으로표시하지않음
+- 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](docs/ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)을 따른다.
+
 - 사용자 최신 승인: 영속 PG 원장·최종/fallback/HOST retry 포함 전체 물리 호출 연결을 독립 TDD·합성 provider·리뷰·필수 guard로 구현한다. Decisions develop/main 병합·배포 제외, 운영 DB/Secret/접근 변경0. 실제 Gemini+OpenAI 합산 USD1 안에서 고정 payload/byte 기반 보수 견적의 격리 Decisions 진단4회·현재 production parser offline 검증을 완료했다. 모호 사례의 raw label 불일치/confidence0.06에서 중단했으며 운영 가격·활성화나 전체 의미 평가는 별도다.
 - [x] [AGENT] 1단계 [PR122](https://github.com/meet-me-duo/meet-me-server/pull/122) e83d5280… 코드 CI39093790134 Quality/ARM64 success·최신 Lifecycle39094909440 success. 완료 범위 #124 / 남은 전체 #123 분리. Refs-only 실패39094466469 이력 보존·workflow 변경0
 - [x] [AGENT] clean develop01d00e7f ff-only 갱신→feature/issue-123-durable-ai-budget 생성→검증된 e83 ff-only 상속. 1단계 PR122 소스 고정
