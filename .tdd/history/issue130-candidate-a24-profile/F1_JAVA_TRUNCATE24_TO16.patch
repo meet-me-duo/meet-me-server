@@ -1,0 +1,11 @@
+--- /workspace/issue123-representative-evaluation/server/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
++++ isolated-mutant
+@@ -136,7 +136,7 @@
+                     Map<String,Object> consumption = map("state", candidate24(setup.plan()) ? "FULL_N24_RESERVATION_HELD" : "FULL_N16_RESERVATION_HELD", "suiteId", text(setup.plan().path("suiteId")), "planSha256", hash(planPath), "maximumNewReservedUsd", maximumNewHeld(setup.plan()), "priorHeldUsd", priorHeld(setup.plan()), "maximumCumulativeReservedUsd", cumulativeHeld(setup.plan()), "startedAt", dependencies.clock().instant().toString());
+                     writeJson(output.resolve(".suite-consumed.json"), consumption);
+                     List<Map<String,Object>> results = new ArrayList<>(); int physical = 0; boolean stopped = false;
+-                    for (int i = 0; i < caseCount(setup.plan()); i++) {
++                    for (int i = 0; i < 16; i++) {
+                         Case item = setup.cases().get(i); String ordinal = String.format(Locale.ROOT, "%02d", i + 1);
+                         Map<String,Object> result;
+                         if (stopped) result = notRun(item);

@@ -1,0 +1,13 @@
+{
+  "classification": "SOURCE_ONLY_PUBLIC_SYNTHETIC_DIAGNOSTIC_ARCHIVE",
+  "files": {
+    "CorrectedA24FixtureServer.java": "59aa457c4073c84c74f3a2ffdbc9e601cf2893144b7160cac26579f698393de3",
+    "Issue130SyntheticNetworkGuard.java": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7",
+    "README.md": "84f91d450301cda02fd51a70f929e2b868b8d4be4e7d8effd07064923cb5c1c1",
+    "StartupGuardCheck.java": "7c30625f7f1d15921101d10eead0803d7ec74a7659be9b6b4c9ba8c14068d83b",
+    "fresh-runtime-provenance.json": "b9f649ce887c2358ebdefcc6538aa859cc29554d64120e8097f187d93e91bcd6",
+    "recorded-synthetic-receipt.json": "821a641aa450bac1d7c7bb876985558667116ab36c62a813d127fe40f0032174",
+    "run.py": "0c8c06894eba4247dbe640c175e37dddd82d1927df6efba4c540d585c88d27f9",
+    "verification.schema.json": "693789545c9fe5e7da1abdd17eb3375dcb5b56daf3f210b768efbc53c0f671c3"
+  }
+}

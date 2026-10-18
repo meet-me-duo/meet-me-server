@@ -1,0 +1,26 @@
+{
+  "status": "VALID_ASSERTION_RED",
+  "tests": 2,
+  "assertionFailures": 2,
+  "errors": 0,
+  "skipped": 0,
+  "testSha256": "c1ce2c0f6b3b58e2954be0838960a3b5bd522961c733f46c8dbd0fb41f2d1995",
+  "resource": {
+    "path": "src/test/resources/precheck/classification/decision-principles-v1-question.json",
+    "sha256": "7c393004c69ff8a8e04657f31626468229c7aaea34568e530816f8288507f6b6"
+  },
+  "approvedInstructionSha256": "267af412fe53b9ac088475d76c1cbe5a90e6f34714efb25cb47ba39c900dd8ec",
+  "approvedCandidateDocumentSha256": "5babb54f2c343472b8fdb9a65d9f9a70e8beba6cd140a874f9c929858a5a6686",
+  "approvedPolicyReviewSha256": "580eec840fbb9b811520012abbf17755d3ae2200a5c14a35c1329eb8663174ef",
+  "oracleBasis": "Reviewed external short candidate instructions and unchanged descriptions; not derived from product implementation.",
+  "failure": "Captured public classifier question still carries old instructions rather than the exact approved independent snapshot. Raw and all context/injection-preservation assertions execute before snapshot comparison.",
+  "testKind": "Wire-contract delivery only; synthetic response is not model meaning/quality evidence.",
+  "originalClassificationTestFilesUnchanged": 6,
+  "allSourceBeforeAfterIdentical": true,
+  "canonicalSha256": "e719054e4b173932b51b2b301be0d7c448056ff80424080f83015f2a1f746a9b",
+  "kotlinRedSchemaAndFormatChecker": "PASS",
+  "initialCompileSetupFailureNotCountedAsRed": true,
+  "noActualModelCalls": true,
+  "old16OrFresh24PayloadReadForTestInputs": false,
+  "recordedAt": "2026-10-18T13:25:28.357587Z"
+}

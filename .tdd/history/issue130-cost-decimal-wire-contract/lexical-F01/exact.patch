@@ -1,0 +1,12 @@
+--- a/evaluation/issue130/run_representative_decisions.py
++++ b/evaluation/issue130/run_representative_decisions.py
+@@ -71,8 +71,7 @@
+ 
+ def amount(node, name):
+     value = node.get(name)
+-    need(isinstance(value, str) and len(value) <= 64 and
+-         re.fullmatch(r'[0-9]+(?:\.[0-9]{1,8})?', value) is not None)
++    need(isinstance(value, str) and len(value) <= 64)
+     result = Decimal(value)
+     need(result.is_finite() and result >= 0)
+     return result

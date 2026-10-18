@@ -1,0 +1,11 @@
+--- /workspace/issue123-representative-evaluation/server/evaluation/issue130/run_representative_decisions.py
++++ isolated-mutant
+@@ -206,7 +206,7 @@
+             return 0
+         need(all((args.plan, args.index, args.output, args.classpath_file)))
+         plan = validate_plan(Path(args.plan), Path(args.index), Path(args.output))
+-        deadline = started + plan['suiteSeconds']
++        deadline = time.monotonic() + plan['suiteSeconds']
+         if not args.execute_frozen:
+             print(json.dumps({'mode': 'DRY_RUN_NO_NETWORK', 'executionPermitted': False, 'caseCount': plan['caseCount'], 'generationCalls': 0, 'countCalls': 0}))
+             return 0

@@ -1,0 +1,11 @@
+--- /workspace/issue123-representative-evaluation/server/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
++++ isolated-mutant
+@@ -260,7 +260,7 @@
+     }
+     private static boolean candidate24(JsonNode plan) {
+         if (!plan.has("evaluationProfile")) return false;
+-        require(text(plan.path("evaluationProfile")).equals("CANDIDATE_A24_USD3_V1") && environmentProxy(plan) && plan.path("environmentCa").isObject(), "CONFIGURATION");
++        require(text(plan.path("evaluationProfile")).equals("CANDIDATE_A24_USD3_V1") && environmentProxy(plan), "CONFIGURATION");
+         return true;
+     }
+     private static int caseCount(JsonNode plan) { return candidate24(plan) ? 24 : 16; }

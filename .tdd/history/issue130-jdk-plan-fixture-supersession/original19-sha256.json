@@ -1,0 +1,21 @@
+{
+  "evaluation/issue130/tests/Issue130EnvironmentCaContractTest.java": "693c4e398b670cb2b23e4fb350434279a8af8f2c9ea85b9b1b854b60f9846105",
+  "evaluation/issue130/tests/Issue130EnvironmentCaRunPlanSupplementTest.java": "58860f5119d46a704ccddc2f899441350c804517de61b5a3450812e5c4945da3",
+  "evaluation/issue130/tests/Issue130EnvironmentCaTlsFixture.java": "660fb9789d2e711909608d9e49947c1b0eaa437a9efa25f16c2e2640f18e5707",
+  "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+  "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+  "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f",
+  "evaluation/issue130/tests/Issue130SyntheticContractTest.java": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79",
+  "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7",
+  "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240",
+  "evaluation/issue130/tests/run_all_synthetic_tests.py": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665",
+  "evaluation/issue130/tests/run_environment_ca_supplement_tests.py": "ca09a5bba2f337a807f9e96ec531c35dbdfff1213eb51ba3ae96bda5b2f6edb0",
+  "evaluation/issue130/tests/run_environment_ca_tests.py": "48ca2ee58c744e683a50a8eec7b9d7b876d93cfe1957b1d507bd0f4d7b0f51ca",
+  "evaluation/issue130/tests/run_environment_proxy_tests.py": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+  "evaluation/issue130/tests/run_synthetic_tests.py": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166",
+  "evaluation/issue130/tests/test_environment_ca.py": "42c39349eff6ed618d35bc40c77cb7111cd9ca0c78e3702dd0e3e89b91f9f935",
+  "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+  "evaluation/issue130/tests/test_jdk_runtime_selection.py": "aeec4bc4b48e9453233f89e5e7c329b7fea5d4c0f4dbf4c9ca74c8b92a91e12f",
+  "evaluation/issue130/tests/test_proxy_failure_reporting.py": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c",
+  "evaluation/issue130/tests/test_representative_decisions.py": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+}

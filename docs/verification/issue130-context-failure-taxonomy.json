@@ -1,0 +1,239 @@
+{
+  "status": "FROZEN_CUSTODIAN_FAILURE_TAXONOMY_NO_NEW_CALLS",
+  "basis": {
+    "frozenSelectionGoldSha256": "20cdf09b48cf6ab16e4e8ca267a9177c7708c08089a4df8b7240bc74910a8435",
+    "executionPlanSha256": "a6a58bb29fc835c91a8ee0c61127344b91034beb36454de84c459df20a7a0323",
+    "correctedAggregateSha256": "f9fb1b3ca33c9c398f95a5acb15be075f5be0e8d9a5fd840cf8c2b345ad66b31",
+    "privatePerCaseEvidenceSha256": "eff59398916cc34458d39af6d1cb8a50462f2004b7b5a3c19d460a2997e8895e",
+    "priorIndependentGoldReviewSha256": "353f7514a4c1d3869ce304d9187814484741df3947cf4ec261d629f4f228d616",
+    "rawGateRemains": "FAIL",
+    "rawExact9of16": true,
+    "rawMiss6of8": true,
+    "unnecessaryB5of8": true,
+    "officialContractReviewSha256": "027e1c5ed881ea0303220e154bbda20cf7a4c27b506d28921c034166f09ce578"
+  },
+  "wireAudit": {
+    "plannedAndObserved": 16,
+    "inputFieldValueExactCounts": {
+      "raw_text": 16,
+      "reference_at": 16,
+      "time_zone": 16,
+      "locale": 16,
+      "search_start_date": 16,
+      "search_end_date": 16
+    },
+    "inputFieldCount": 6,
+    "roomContextFieldsExcludingRawText": 5,
+    "fullInstructionsExactMatchCount": 16,
+    "instructionsSha256": "058256f750ad26439dd58e61ace5a38a9c2a5f698c793e315cb7f4e7f2428010",
+    "singleHolisticChoiceContractExactCount": 16,
+    "frozenRequestAndCapturedResponseHashMatchCount": 16,
+    "actualClientNetworkInterceptorEntries": 16,
+    "sourceWireShapeOrMissingLocalTransmissionEvidence": 0,
+    "automaticTextTransformationEvidence": 0,
+    "limits": "Client application and network interceptors checked exact frozen body bytes. Provider-internal tokenization, attention and prompt use are unobserved; no provider echo or causal rationale is returned."
+  },
+  "contextAdequacy": {
+    "fixedContextProvides": [
+      "Reference instant and timezone for relative dates",
+      "Locale",
+      "Search start/end date bounds"
+    ],
+    "notProvided": [
+      "A default city or meeting venue",
+      "A default morning/evening or narrowed allowed meeting-hours rule",
+      "An externally resolved antecedent or assignment of a date/place to an availability/exclusion window"
+    ],
+    "policy": "Missing personal intent may need a question; already-known approved room facts should first be checked rather than invented. The present evidence establishes only the context actually frozen, not that more real room context exists.",
+    "broadnessProtection": "Intentional breadth is valid. Only the missing application target or contradictory assignment is unresolved.",
+    "actualRoomMetadataNotTransmitted": [
+      "MeetingRoom.purpose",
+      "MeetingRoom.mode (IN_PERSON/REMOTE/EITHER)"
+    ],
+    "actualRoomMetadataSource": "src/main/kotlin/com/meetme/server/meetingroom/domain/MeetingRoom.kt",
+    "contextDesignCaveat": "All six declared input fields were delivered, but this does not prove complete real meeting context. Purpose/mode exist yet are not passed. The original16 do not supply their values, so no missing value may be invented or used to retrospectively alter gold.",
+    "futureContextBoundary": "Adding purpose/mode requires a separate explicit context/privacy/input-bound/wire-hash contract; do not append other participants raw text/questions/answers. No room city or default-meridiem field was found in the reviewed domain."
+  },
+  "groups": {
+    "rawMaterialFalseClear": {
+      "count": 6,
+      "goldNeedsReviewDenominator": 8,
+      "dimensionCounts": {
+        "FLEXIBLE_CONDITION": 1,
+        "DEPENDENCY": 1,
+        "REFERENT": 1,
+        "DATE": 1,
+        "TIME": 1,
+        "PLACE": 1
+      },
+      "families": [
+        {
+          "family": "TEMPORAL_INTERPRETATION",
+          "count": 2,
+          "observation": "Date/weekday competing candidates or an unstated meridiem materially changes availability.",
+          "possibleCause": "Implicit precedence or a likely everyday interpretation may have been treated as settled.",
+          "causality": "UNCONFIRMED_NO_MODEL_RATIONALE"
+        },
+        {
+          "family": "PLACE_ALIAS_RESOLUTION",
+          "count": 1,
+          "observation": "The supplied context does not uniquely locate a nonunique station/venue name; the original oracle requires direct edit.",
+          "possibleCause": "A local/default location may have been assumed, or review may have been conflated with requiring finite choices.",
+          "causality": "UNCONFIRMED_NO_MODEL_RATIONALE"
+        },
+        {
+          "family": "REFERENT_AND_DEPENDENCY_ASSIGNMENT",
+          "count": 2,
+          "observation": "The target of a time/exclusion/conditional relation is not uniquely bound to the stated date/place alternatives.",
+          "possibleCause": "Recognition of a legitimate conditional statement may have replaced checking that its arguments are actually resolved.",
+          "causality": "UNCONFIRMED_NO_MODEL_RATIONALE"
+        },
+        {
+          "family": "FLEXIBLE_CONDITION_APPLICATION_SCOPE",
+          "count": 1,
+          "observation": "The intended broad range is valid, but which date receives the restrictive condition remains unresolved.",
+          "possibleCause": "The instruction protecting broad ranges may have been overgeneralized to an unresolved application scope.",
+          "causality": "UNCONFIRMED_NO_MODEL_RATIONALE"
+        }
+      ],
+      "allSixRoutedToBAfterLowConfidence": true,
+      "thresholdMitigationDoesNotEraseRawFailure": true
+    },
+    "unnecessaryBForGoldClear": {
+      "count": 5,
+      "goldClearDenominator": 8,
+      "dimensionCounts": {
+        "DEPENDENCY": 1,
+        "NEGATION": 1,
+        "DATE": 1,
+        "REFERENT": 1,
+        "EXCEPTION": 1
+      },
+      "mechanismCounts": {
+        "RAW_CORRECT_CLEAR_LOW_CONFIDENCE": 4,
+        "RAW_UNNECESSARY_REVIEW_LOW_CONFIDENCE": 1
+      },
+      "observedMechanism": "All five route through LOW_CONFIDENCE; four raw decisions were already correct CLEAR, while one was a raw unnecessary NEEDS_REVIEW.",
+      "possibleModelSideCauses": [
+        "Difficulty resolving a date from an explicit candidate set and weekday/reference-year context",
+        "Difficulty separating polarity/exception scope or a resolved dependency from true contradiction/ambiguity"
+      ],
+      "causality": "Only the .8 routing rule is a demonstrated mechanical cause. Reasons for the provider confidence and raw error are unobserved.",
+      "notObservedUnnecessaryQuestions": true
+    }
+  },
+  "overlap": {
+    "sharedCases": 0,
+    "unionCases": 11,
+    "casesTotal": 16,
+    "contrastPairsContainingOneCaseFromEachGroup": 3,
+    "distinctPairsTotal": 8,
+    "interpretation": "Case groups are disjoint because their frozen gold classes differ. Pair overlap does not make their errors the same event."
+  },
+  "normalizationAudit": {
+    "rawLabelsConfidenceProbabilitiesAndUsagePreservedInLocalEvidence": 16,
+    "normalizedLowConfidence": 13,
+    "rawIndeterminate": 0,
+    "modelUncertain": 0,
+    "clearStop": 3,
+    "BRequiredNotRun": 13,
+    "rawCorrectClearSuppressed": 4,
+    "unsafeEarlyClear": 0,
+    "expectedRoutingRecomputedMatches": 16,
+    "noParserReversalEvidence": true,
+    "rawTextRewritingObserved": false,
+    "assessmentCollapse": "Raw CLEAR/NEEDS_REVIEW below .8 becomes INDETERMINATE/LOW_CONFIDENCE by the existing policy; this intentional label collapse is not lost original text.",
+    "confidenceInterpretation": "Separate response field from the choice probability distribution. Neither CLEAR probability nor calibrated correctness probability is established; .8 is an application diagnostic rule."
+  },
+  "promptAssessment": {
+    "currentInstructionsAlreadyMention": [
+      "Material ambiguity and whole input context",
+      "Dates/times/places/referents/negation/exceptions/scope/self-contradiction",
+      "Protect broad ranges and valid dependencies",
+      "Relative date anchor and search-range semantics",
+      "No automatic original-text transformation or invented participants"
+    ],
+    "missingInstructionTransmission": false,
+    "strengtheningOpportunity": [
+      "Explicitly require every availability/exclusion condition to have a resolved target date/place/person and polarity",
+      "Distinguish a complete conditional relation from an unresolved assignment of its arguments",
+      "Apply broad-range protection only after resolving which condition applies where",
+      "Resolve unique candidates using the given reference/candidate context before asking",
+      "Do not silently repair a date/weekday contradiction or assume a city/meridiem"
+    ],
+    "promptOnlyCausalityOrFixEffectProven": false,
+    "modelCapacityContextDesignPromptAndCalibrationRemainAlternativeHypotheses": true
+  },
+  "actionsWithoutChangingResults": {
+    "current16Exposure": "DEV_ONLY_FOR_ANY_FURTHER_PROMPT_CONTRACT_OR_THRESHOLD_TUNING",
+    "original16ScoringRemainsImmutable": true,
+    "newHoldoutAuthorship": "Separate author is preparing fresh24/12pairs without old raw/candidate access; this custodian will not author/select those cases.",
+    "futureFreshHoldoutProtocol": [
+      "Freeze gold/context/split and candidate bytes before any new prediction",
+      "Keep holdout raw/gold from prompt/implementation and use root aggregate only",
+      "Run a single preregistered evaluation; keep refusal/error/abstain/UNRUN denominators and no case replacement",
+      "Any later reused or tuned-on set must be labeled DEV/reused, never presented as fresh holdout"
+    ],
+    "newModelCallsByCustodian": 0,
+    "newGoldOrThresholdOrSelectionOrOriginalPromptEdits": 0,
+    "rootAuthorizedOldTimePairExposure": {
+      "cases": 2,
+      "timing": "After completed evaluation and frozen original scoring",
+      "scope": "Only two old TIME inputs plus their frozen context/gold/observations, explicitly requested by parent; no source IDs or new holdout payload disclosed.",
+      "authorizationRecordSha256": "4453fec33fdb963ec4ab45d6496dc804d1e2ac2125cfff09fc55118e7f728c50"
+    }
+  },
+  "financialBoundary": {
+    "retainedReservationUsd": "1.79322880",
+    "latestApprovedAggregateUsd": "3.00",
+    "headroomUsd": "1.20677120",
+    "refunds": 0,
+    "invoiceAmountKnown": false,
+    "newPaidCallsInThisAnalysis": 0,
+    "laterCallsRemainSeparatelyPreregisteredAndRootExecuted": true
+  },
+  "privacy": {
+    "originalTextIndividualIdsGoldLinksOrResponsePayloadInPublicTaxonomy": false,
+    "privateCaseEvidenceMode": "0600",
+    "priorHeldout120Selected": 0,
+    "original16SupplementalPairs": 8
+  },
+  "recordedAt": "2026-10-18T13:11:33.574402Z",
+  "representativeAnalyses": [
+    {
+      "group": "RAW_FALSE_CLEAR",
+      "type": "UNRESOLVED_PLACE_TIME_ASSIGNMENT",
+      "observation": "Two stated candidate places have different permitted time windows, but which place owns which window is unresolved.",
+      "schedulingMateriality": "Different assignments change the feasible place/time intersection.",
+      "contextAdequacy": "Reference/timezone/search bounds cannot supply this private intent.",
+      "requiredResponse": "Resolve the mapping while preserving both allowed places; do not force one preferred place.",
+      "hypothesis": "Protection for legitimate dependencies may have been applied without checking relation arguments.",
+      "causalProof": false
+    },
+    {
+      "group": "RAW_FALSE_CLEAR",
+      "type": "UNRESOLVED_SCOPE_OF_PARTLY_FLEXIBLE_DATE_RULE",
+      "observation": "One of two dates has an afternoon restriction; the other intentionally permits a broad time range, but the restrictive date is not identified.",
+      "schedulingMateriality": "Different date assignments change availability.",
+      "requiredResponse": "Ask which date receives the restriction, not a precise time within the broad range.",
+      "hypothesis": "Broad-range protection may have been overgeneralized to missing application scope.",
+      "causalProof": false
+    },
+    {
+      "group": "UNNECESSARY_B_ROUTE",
+      "type": "UNIQUE_DATE_RESOLVED_FROM_EXPLICIT_CANDIDATES_AND_CALENDAR",
+      "observation": "The stated candidate dates and weekday/reference-year context uniquely determine the intended day. The raw label was already CLEAR.",
+      "contextAdequacy": "The frozen input and calendar context are enough for this case.",
+      "observedRouteCause": "Existing .8 low-confidence policy caused B deferral despite the correct raw label.",
+      "modelConfidenceCause": "UNOBSERVED; do not infer that low confidence proves ambiguity."
+    },
+    {
+      "group": "UNNECESSARY_B_ROUTE",
+      "type": "SEMANTICALLY_REPEATED_AVAILABILITY_NOT_CONTRADICTION",
+      "observation": "The participant repeats the same availability meaning; there is no unresolved additional condition. The raw label was NEEDS_REVIEW.",
+      "requiredResponse": "Distinguish the object/scope of polarity from a real same-target contradiction.",
+      "hypothesis": "Polarity or surface negation may have been mistaken for incompatible availability.",
+      "causalProof": false
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "fault": "remove_B2_amount_lexical_guard",
+  "source": "evaluation/issue130/run_standalone_generation.py",
+  "mutantSha256": "b00e7b82553adad77f9554c80e39dcf4e8f880fede21119b669c1afebf809108",
+  "patchSha256": "1e430e3a9a8130ee7939b0403de789a0545ff6a3e4eb34fc713bfb0f4dc16be4",
+  "mutant": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/tmp/issue130-cost-decimal-independent/verified-02/overlay/evaluation/issue130/tests/test_cost_decimal_wire_contract.py"
+    ],
+    "exitCode": 1,
+    "tests": 56,
+    "assertionFailures": 22,
+    "errors": 0,
+    "detectedBy": [
+      "test_B2_main_prior_reject_exponent",
+      "test_B2_main_prior_reject_fraction_over8",
+      "test_B2_main_prior_reject_leading_dot",
+      "test_B2_main_prior_reject_plus_sign",
+      "test_B2_main_reject_exponent",
+      "test_B2_main_reject_fraction_over8",
+      "test_B2_main_reject_leading_dot",
+      "test_B2_main_reject_leading_whitespace",
+      "test_B2_main_reject_non_ascii_digits",
+      "test_B2_main_reject_plus_sign",
+      "test_B2_main_reject_trailing_whitespace",
+      "test_B2_preflight_prior_reject_exponent",
+      "test_B2_preflight_prior_reject_fraction_over8",
+      "test_B2_preflight_prior_reject_leading_dot",
+      "test_B2_preflight_prior_reject_plus_sign",
+      "test_B2_preflight_reject_exponent",
+      "test_B2_preflight_reject_fraction_over8",
+      "test_B2_preflight_reject_leading_dot",
+      "test_B2_preflight_reject_leading_whitespace",
+      "test_B2_preflight_reject_non_ascii_digits",
+      "test_B2_preflight_reject_plus_sign",
+      "test_B2_preflight_reject_trailing_whitespace"
+    ],
+    "passed": 34
+  },
+  "restored": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/tmp/issue130-cost-decimal-independent/verified-02/overlay/evaluation/issue130/tests/test_cost_decimal_wire_contract.py"
+    ],
+    "exitCode": 0,
+    "tests": 56,
+    "assertionFailures": 0,
+    "errors": 0,
+    "detectedBy": [],
+    "passed": 56
+  },
+  "overlayExactRestore": true,
+  "originalUnchanged": true
+}

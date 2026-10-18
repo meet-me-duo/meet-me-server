@@ -1,0 +1,23 @@
+{
+  "status": "FOCUSED_GREEN",
+  "tests": 45,
+  "newWireContractTests": 2,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "allXmlFresh": true,
+  "sourceBeforeAfterEqual": true,
+  "greenReceiptSha256": "11e1e5faec72eb2dbb37d820f7e6f4c73b23ddbe5fce9b78c04f1c947ecd4921",
+  "testFile": {
+    "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt",
+    "sha256": "c1ce2c0f6b3b58e2954be0838960a3b5bd522961c733f46c8dbd0fb41f2d1995"
+  },
+  "approvedInstructionSha256": "267af412fe53b9ac088475d76c1cbe5a90e6f34714efb25cb47ba39c900dd8ec",
+  "greenSourceSha256": "dade6f8d6e4bcc03bccc822d047e7fdf0c4020d088059fb5443ba08adb789ff2",
+  "subsequentWhitespaceOnlySourceSha256": "bbb36cd731377fccbf0a01e9ee5202e51f62a1790f8dac175ac404f740c54283",
+  "formatSupersession": "Provider removed whitespace on three blank raw-string lines after GREEN; trimIndent instructions remain exactly approved1448bytes. Current full gate pending; historical GREEN source is not relabeled.",
+  "testKind": "Exact approved wire delivery/data preservation only, not business meaning/model quality evidence.",
+  "actualModelCalls": 0,
+  "freshHoldoutRead": false,
+  "recordedAt": "2026-10-18T13:37:14.328813Z"
+}

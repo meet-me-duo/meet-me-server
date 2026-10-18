@@ -1,3 +1,29 @@
+# #130 A24 구성 중단·예약 정산 근거 검토 (2026-10-18 UTC)
+
+- [x] [AGENT] source590·production-only CP1076·정확 plan128ef6/독립수용c99283 뒤 A24를 한 번 시작했다. .34603008 전액 선예약 후 wrapper exit2/CONFIGURATION, suite/case/response 표식과 결과 디렉터리0, source/runtime전후동일이다. 실제 모델 결과0·A24/B2 전원UNRUN·새 의미 gate NOT_EVALUATED이며 기존16 FAIL은 보존한다.
+- [x] [AGENT] 원본 cost parser와 진단 전용 stacktrace-copy로 비용 .10/.01441792/.34603008 표기를 Python만 허용하고 Java가 거부하는 차이를 확인했다. mainClient 객체는 먼저 생성될 수 있으나 cost→validate 실패는 모든 모델 dispatch 전에 발생한다. source/test-independent 감사가 이 경계를 확인했다.
+- [x] [AGENT] 원 경로 Python→javac→Java.main을 DUMMY key와 강제 network/output deny 아래 무과금 재현했다. 그 증거와 원 stack/exit/코드 경로로 이번 .34603008만 proven-unstarted 정산 후보로 보고한다. 원 예약/실패 기록을 고치거나 기존 누적 예약1.79322880(UNKNOWN 포함)을 해제하지 않는다.
+- [x] [AGENT] 추가 public preflight56 validRED44+controls12 뒤 Python amount 두 곳만 기존 Java decimal 문법에 맞추고 GREEN/FI2(44assert)·각복원56·A41/B143 및 무과금 수정 full24 실행/추가replay0을 확인했다. 새 model/원문/정답/threshold/500자/정책 변경0이다.
+- [x] [AGENT] 정산 가능 근거와 기존 USD3 안의 재실행 조건·단계 계획을 기록·보고했다. 아직 실제 재시도/B2/정산 변경0이며 확인된 구성 실패 예약을 실제 과금 소진으로 간주하거나 추가 예산을 요청하지 않는다.
+- [ ] [AGENT] 최종 기록/독립 리뷰/필수 guard 후 동일 Draft132 commit/push 및 정확 HEAD CI를 확인한다. main/deploy/운영 활성화 HOLD.
+
+현재 장부 예약2.13925888 중 기존 유지1.79322880·이번 미실행 정산 검토 .34603008, refund0이다. 청구액0을 직접 계측했다고 주장하지 않는다. [배치 상태](docs/verification/issue130-context-stop-aggregate.json)는 가상 모델 suite가 아니며 의미 분모0을 보존한다.
+
+# #130 원 실행 전 개인 맥락 holdout 사전계획 (역사; 2026-10-18 UTC)
+
+이 절은 첫 A24 실행 전 시점의 사전계획을 보존한다. 현재 STOP·검증·장부 상태는 맨 위 구간을 따른다.
+
+- [USER] 합산 테스트 상한 USD3 승인. 기존 hold1.79322880/여유1.20677120/환급0 유지. 유료 호출은 사전 단계별 비용·중단 조건·독립 검토 뒤 root가 단회 실행하며 운영/Secret/전역 CA 변경은 제외한다.
+- [x] [AGENT] 기존 실제16 raw miss6/8·불필요B5/8·품질FAIL을 보존하고 전송16/필드6·공식choice/confidence·gold 가정/유형별 원인을 독립 점검했다. 전송누락/필드역전 근거0, prompt 단독 인과는 미확정. purpose/mode 추가는 별도 context 계약으로 남긴다.
+- [x] [AGENT] 긴 후보와 리뷰를 역사로 보존하고 instructions만 바꾸는 1448B/190word 원칙형 후보를 독립 정책 리뷰했다. 선택지·6input·500자·.8·마감/참여·최종분석 경계는 유지, 사례 예외 누적0/효과 미측정이다.
+- [x] [AGENT] 짧은지침 wire 독립RED2→집중45PASS, 새A24 독립RED15→41PASS/FI6 탐지·각복구41PASS, CI관측 독립22PASS/FI4 탐지·각복구22PASS를 확인했다. 원래500자/.8/16profile값은유지한다. 원19개 평가test 중 JDK fixture의 고정 plan stub 2필드 보완은 별도 역사·RED를 보존하고, 나머지18개 원문은 유지한다.
+- [x] [AGENT] B-only 품질 하네스 독립143RED(140요구실패+3control)→143GREEN, FI11종/12assert 탐지·각복원·최종143GREEN을 확인했다. 최종source590 guard exit0/전후동일·기존1719XML재사용(1715PASS+기존4SKIP)과 독립 source/runtime 예비리뷰 P1/P2없음을 확인했다. 실제 실행 전 plan/wire/supervisor 수용은 별도다. b677 CI는 Gradle/ARM 성공 후 BASE_FAILED 원인미확정이며, 격리b677+동결productionruntime의단회102PASS는원격실패를소급해결하지않는다. 새CI관측으로실제원인확인이필요하다.
+- [x] [AGENT] 새24/12쌍 inputs-only·두독립gold 원본·실행전조정·사전B2를봉인했다. A14CLEAR/10REVIEW, B14NOTASK/1CHOICE/9EDIT; A초기차0/B8차·정책flag해소를보존하고root/구현자는개별holdout미열람이다. 기존16은DEV/기록FAIL로고정한다.
+- [ ] [AGENT] 새source/runtime/비용/실행계획을 봉인한 뒤 candidateA24 단회→사전지정 standalone productionB2 품질을 단계별 실행한다. 계획 최대 A.34603008+B.60825600/총2.74751488/여유.25248512는 engineering reservation이며 invoice hard cap이 아니다. 추가 예약/실행은 아직0, raw gate와 B 결과 분모를 별도 보고한다.
+- [ ] [AGENT] 최종 독립 리뷰·필수 guard·기록 commit/push·동일 Draft132 정확 새HEAD CI 확인. 기존 FAIL과 B 미검증을 성공으로 소급하지 않으며 main/deploy/운영 활성화 HOLD.
+
+근거: [원인 분석](docs/verification/issue130-context-failure-analysis.md), [공식 계약](docs/verification/issue130-decisions-contract-review.md). Commit/PR: 동일 후속 커밋 예정.
+
 # #130 승인된 로컬 평가 CA1개 적용 (2026-10-18 UTC)
 
 사용자 21:12 KST 승인: 기존 환경 CA1개를 평가 Java 클라이언트 메모리에만 추가하고 정상 인증서·hostname 검증을 유지한다. 무인증 연결 확인 후 기존 불확실 예약을 보존하며 USD2 합산 한도 안에서 동결16건 실제 평가를 진행한다. 전역/JDK/OS/운영/Secret 변경과 내부 진단 공개 재시도는 제외한다.

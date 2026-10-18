@@ -1,0 +1,11 @@
+--- a/evaluation/issue130/Issue130StandaloneGenerationCli.java
++++ b/evaluation/issue130/Issue130StandaloneGenerationCli.java
+@@ -116,7 +116,7 @@
+             }
+             if(extra!=null)addEnvironmentTrust(builder,extra);
+             builder.addInterceptor(chain->{approved(chain.request());return chain.proceed(chain.request());});
+-            builder.addNetworkInterceptor(chain->{approved(chain.request());Response response=chain.proceed(chain.request());if(response.code()!=200){int code=response.code();response.close();throw new AiHttpProviderStatusException(code,null,new byte[0]);}return response;});
++            builder.addNetworkInterceptor(chain->{approved(chain.request());Response response=chain.proceed(chain.request());/* FI: non200 no longer terminal before OkHttp followup */return response;});
+             return builder.build();
+         }catch(Exception failure){throw new EvaluationException("CONFIGURATION");}
+     }

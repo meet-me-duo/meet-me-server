@@ -1,0 +1,616 @@
+{
+  "sourceFiles": {
+    "evaluation/issue130/Issue130StandaloneGenerationCli.java": "49936292adad57cde36d10d4fd6a3776a22f9b7a0bf55da1b1865552fe442341",
+    "evaluation/issue130/run_standalone_generation.py": "b00e7b82553adad77f9554c80e39dcf4e8f880fede21119b669c1afebf809108"
+  },
+  "testFiles": {
+    "evaluation/issue130/standalone_tests/Issue130StandaloneClientTest.java": "7eaaa1fd3bfbe6e6910649a3392eb3fb9fc5704af86509d25f73545f53e13d27",
+    "evaluation/issue130/standalone_tests/Issue130StandaloneGoogleTlsFixture.java": "c50829b613dd243afb23937a13b23981a59a750684767ec3076701dd21dfc7c7",
+    "evaluation/issue130/standalone_tests/Issue130StandaloneNetworkGuard.java": "b5a547c531a1a6f3c60abd1bf4bec77c7d2dedb6a035f3f37661455208292be1",
+    "evaluation/issue130/standalone_tests/Issue130StandalonePrivateCreationTest.java": "a29c5e912a8df85116db6ed92e70381109699d05b7d7c2898be08139d22e186e",
+    "evaluation/issue130/standalone_tests/Issue130StandaloneRuntimeTest.java": "dadb427eac4b1bbc72d7bc94fa9b1c599ed1a8a5fd40c9f838c503e5e465cba9",
+    "evaluation/issue130/standalone_tests/run_standalone_tests.py": "f385938cf7ec4bf2267a662f92c8b66f1284b767cc74c220c820c3442300626e",
+    "evaluation/issue130/standalone_tests/test_standalone_generation.py": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113"
+  },
+  "faults": [
+    {
+      "fault": "F01_CA_lifetime_validation_removed",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "adf0ac80ea3c891079d584a232ea8a09ea5249bdea3cd55addcd366ad881c601",
+      "patchSha256": "3172ac07dd1e44a33b3dc4fbe7807801271bab3e8de559c36af7309461de3a32",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "errors": 0,
+          "passed": 1,
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 1,
+          "actualProviderCalls": 0,
+          "passed": 0,
+          "errors": 0
+        },
+        "detectedBy": [
+          "BT20_invalid_crypto_expired"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "errors": 0,
+          "passed": 1,
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F01_CA_lifetime_validation_removed/receipt.json",
+        "sha256": "dccf04cf5594c1981fc76662af15d340567e23a49af9bc88f43c490c91cbcb45"
+      }
+    },
+    {
+      "fault": "F02_hostname_verification_bypassed",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "f5331b96f46a00af864e9955302f5cf0bcf71d8bdc5977c7ce73f2d46d1fa0d3",
+      "patchSha256": "b7fcbcad118da9144fd30ac0a4d3b7c2bfacec0d1f8f0d35187a3194faae2f68",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1,
+          "errors": 0,
+          "passed": 1
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "actualProviderCalls": 0,
+          "assertionFailures": 1,
+          "sealedDataRead": false,
+          "tests": 1,
+          "errors": 0,
+          "passed": 0
+        },
+        "detectedBy": [
+          "BT07_trusted_CA_wrong_SAN_HTTP_zero"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 1
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F02_hostname_verification_bypassed/receipt.json",
+        "sha256": "7e2edb98818ae1e1e060ffba4702d9c47c9861090d7489dec8414b41283e351e"
+      }
+    },
+    {
+      "fault": "F03_fixed_origin_path_predicate_removed",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "2aeab64b928194773a5c4ea6465fa00887833b0ccbbe321365f7739c7b68e9a7",
+      "patchSha256": "de3c2ab1412afdfd568edb11252e7897f6e102a507f2e49e4604520daa850c56",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "passed": 1,
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "errors": 0,
+          "passed": 0,
+          "actualProviderCalls": 0,
+          "assertionFailures": 1,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": [
+          "BT08_forbidden_URL_7"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 1,
+          "errors": 0
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F03_fixed_origin_path_predicate_removed/receipt.json",
+        "sha256": "a8d89f7c6b8534e5a46c138640ce6aefc07c12b25a15e5d87f429549697349c5"
+      }
+    },
+    {
+      "fault": "F04_retained_hold_and_cost_validation_skipped",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "ff9d4c54e60f4cc6f229f93bd69ccf65a29e4e671e123a939c7f7e24abe32aca",
+      "patchSha256": "2df47f0cbba97c2f712724d6d48cf19af9eededf0925e77b7650a55fc812f204",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "errors": 0,
+          "passed": 1,
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 1,
+          "actualProviderCalls": 0,
+          "passed": 0
+        },
+        "detectedBy": [
+          "BF05_money_rollback_priorHeldUsd"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "errors": 0,
+          "passed": 1,
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F04_retained_hold_and_cost_validation_skipped/receipt.json",
+        "sha256": "6bc14a0f50bc11ca7bb1ccbac48f2546346ccede9ebd8632a8c097be24adf9cb"
+      }
+    },
+    {
+      "fault": "F05_replay_marker_and_CREATE_NEW_bypassed",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "02d5c1ac287e46ab69280188b485d9004683259bc60bd3eb58f70076f867b6ec",
+      "patchSha256": "0e9ec94d8d0d434baefe061e6e00f6cbd5cc02832861852476aa1c4ffab793e5",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 1,
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "passed": 0,
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 1,
+          "actualProviderCalls": 0
+        },
+        "detectedBy": [
+          "BF01_replay_zero_extraHTTP"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 1,
+          "errors": 0
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F05_replay_marker_and_CREATE_NEW_bypassed/receipt.json",
+        "sha256": "7949447e44cb161d67d55a2108807b23cdda5302ca779301ab9abd9f034a1562"
+      }
+    },
+    {
+      "fault": "F06_percase15_expanded_to_batch120",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "794db704139ca0901690c4ac425fa66dcc2e4d909ad9393bf34728df02ea3bb9",
+      "patchSha256": "4bf460f2591e469a2d5cd4e3294a215f5120bd389ffd120a0d5a4a80d1c886dd",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "passed": 2,
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 2,
+          "errors": 0
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "passed": 0,
+          "errors": 0,
+          "tests": 2,
+          "sealedDataRead": false,
+          "assertionFailures": 2,
+          "actualProviderCalls": 0
+        },
+        "detectedBy": [
+          "BL15_late_count_does_not_reset15s_or_generate",
+          "BL16_expiry_at_transport_before_open_HTTP0"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 2,
+          "errors": 0,
+          "tests": 2,
+          "sealedDataRead": false
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F06_percase15_expanded_to_batch120/receipt.json",
+        "sha256": "b47cc9c28b43fdf902b6f7e55ec7ca9df4cb6f54d03cb50043c5f174d2e6a804"
+      }
+    },
+    {
+      "fault": "F07_incomplete_usage_accepted",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "394c24b592cd9b9a0242891a229f9bbf613f332c1e06fa06323f3b04477c1d69",
+      "patchSha256": "2f30cc656f519d5daa6e43fa5283c3ecb0d0297ad33d2a99007f1c72d89b14de",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1,
+          "errors": 0,
+          "passed": 1
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "errors": 0,
+          "passed": 0,
+          "actualProviderCalls": 0,
+          "assertionFailures": 1,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": [
+          "BL10_all_usage_unknown_not_success"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "errors": 0,
+          "passed": 1,
+          "actualProviderCalls": 0,
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F07_incomplete_usage_accepted/receipt.json",
+        "sha256": "2fec1ef9254c38f837f6f70f803831e8a205dc948c995f71aab111074cfb546b"
+      }
+    },
+    {
+      "fault": "F08_count_fullbody_preflight_comparison_removed",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "ffb00287cd1dce9943e376ee7ab5081e672780e039544ca560fe05f09d456ada",
+      "patchSha256": "2ff41f902c411c0c650b9db9356f239b6e9ae62c8d6a96cde48f3d6670c5be00",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "assertionFailures": 0,
+          "sealedDataRead": false,
+          "tests": 1,
+          "errors": 0,
+          "passed": 1,
+          "actualProviderCalls": 0
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "errors": 0,
+          "passed": 0,
+          "actualProviderCalls": 0,
+          "assertionFailures": 1,
+          "sealedDataRead": false,
+          "tests": 1
+        },
+        "detectedBy": [
+          "BF08_count_fullbody_different_resealed_HTTP0"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 1,
+          "errors": 0
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F08_count_fullbody_preflight_comparison_removed/receipt.json",
+        "sha256": "a8dd34fa1bc6c44695568dd7f05a0ec9fe8ccf9b4930119479f9836293e8c66e"
+      }
+    },
+    {
+      "fault": "F09_private_creation_mode_0644",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "6c9fcea7373406299e69abc0014b4e33eed76c67a73887ba483efc50cc6b83ba",
+      "patchSha256": "f33b9dc96dcde9387aaa0bc3e31a6c6182b94620eaca861881934600f198d09a",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "passed": 1,
+          "assertionFailures": 0,
+          "errors": 0,
+          "actualProviderCalls": 0,
+          "sealedDataRead": false
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "actualProviderCalls": 0,
+          "passed": 0,
+          "errors": 0,
+          "reason": "B_PRIVATE_CREATION_PUBLIC_CONTRACT",
+          "tests": 1,
+          "assertionFailures": 1
+        },
+        "detectedBy": [
+          "Issue130StandalonePrivateCreationTest.PRIVATE_CREATION"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "passed": 1,
+          "assertionFailures": 0,
+          "errors": 0,
+          "actualProviderCalls": 0,
+          "sealedDataRead": false
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F09_private_creation_mode_0644/receipt.json",
+        "sha256": "21158e484502797740d2e2735c5b9933055a1d9c750d309251a1db23233199ca"
+      }
+    },
+    {
+      "fault": "F10_wrapper_startup_deadline_reset_after_validation",
+      "source": "evaluation/issue130/run_standalone_generation.py",
+      "mutantSha256": "9fa1702da68271a1adf6782cfd7835bfc9f30984559fc1e036cc53b3d34b60b6",
+      "patchSha256": "5b20e3c2083f4e08470c6e8476ab248e41dfd662b3e7efd51f991c1b23c44455",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "assertionFailures": 0,
+          "errors": 0,
+          "passed": 1
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "tests": 1,
+          "assertionFailures": 1,
+          "errors": 0,
+          "passed": 0
+        },
+        "detectedBy": [
+          "test_BW18_startup_expiry_no_spawn"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "tests": 1,
+          "assertionFailures": 0,
+          "errors": 0,
+          "passed": 1
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F10_wrapper_startup_deadline_reset_after_validation/receipt.json",
+        "sha256": "6b81b96cc3b4b96fb063ac23e8120eb40d80b84029a4360aeb4026bd739d0616"
+      }
+    },
+    {
+      "fault": "F11_503_final_network_terminal_guard_removed",
+      "source": "evaluation/issue130/Issue130StandaloneGenerationCli.java",
+      "mutantSha256": "1e3506e68ed87c0d15243b9671df1ed49e79841d7387680008fb0a39b57ff5a1",
+      "patchSha256": "e4eefa1d72578aed5fca8217e4a676b724b9fd9f9892ceca1920da2f13ff0eeb",
+      "baseline": {
+        "exitCode": 0,
+        "summary": {
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0,
+          "passed": 1,
+          "errors": 0,
+          "tests": 1
+        },
+        "detectedBy": []
+      },
+      "mutant": {
+        "exitCode": 1,
+        "summary": {
+          "passed": 0,
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 1,
+          "actualProviderCalls": 0
+        },
+        "detectedBy": [
+          "BT22_503_retry_after_zero_single_exchange"
+        ]
+      },
+      "restored": {
+        "exitCode": 0,
+        "summary": {
+          "passed": 1,
+          "errors": 0,
+          "tests": 1,
+          "sealedDataRead": false,
+          "assertionFailures": 0,
+          "actualProviderCalls": 0
+        },
+        "detectedBy": []
+      },
+      "overlayRestoredExact": true,
+      "originalUnchanged": true,
+      "exactCommandReceipt": {
+        "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/F11_503_final_network_terminal_guard_removed/receipt.json",
+        "sha256": "af73b536e7e68f57e736617d193b3673cab360cd7d6730f0390c967185be65bc"
+      }
+    }
+  ],
+  "final": [
+    {
+      "exitCode": 0,
+      "summary": {
+        "tests": 45,
+        "sealedDataRead": false,
+        "assertionFailures": 0,
+        "actualProviderCalls": 0,
+        "passed": 45,
+        "errors": 0
+      },
+      "detectedBy": []
+    },
+    {
+      "exitCode": 0,
+      "summary": {
+        "actualProviderCalls": 0,
+        "assertionFailures": 0,
+        "sealedDataRead": false,
+        "tests": 72,
+        "errors": 0,
+        "passed": 72
+      },
+      "detectedBy": []
+    },
+    {
+      "exitCode": 0,
+      "summary": {
+        "tests": 1,
+        "passed": 1,
+        "assertionFailures": 0,
+        "errors": 0,
+        "actualProviderCalls": 0,
+        "sealedDataRead": false
+      },
+      "detectedBy": []
+    },
+    {
+      "exitCode": 0,
+      "summary": {
+        "tests": 25,
+        "assertionFailures": 0,
+        "errors": 0,
+        "passed": 25
+      },
+      "detectedBy": []
+    }
+  ],
+  "rawDetailedReceipt": {
+    "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/receipt.json",
+    "sha256": "fd63c087cb06138871cf0e8bc6044f15049382b283b068fac0ecc7c034579bee"
+  },
+  "originalSourceBeforeAfterEqual": true,
+  "overlayExactRestore": true
+}

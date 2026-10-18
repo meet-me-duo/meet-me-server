@@ -1,0 +1,91 @@
+{
+  "status": "COST_PREFLIGHT_FIX_VERIFIED_REAL_NEW_MODEL_EVALUATION_UNRUN",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "sourceDirtyAtExecution": true,
+  "currentMandatoryGuard": {
+    "scope": "FINAL_SOURCE_FULL_GUARD_AFTER_A24_B2_IMPLEMENTATION",
+    "verificationPhase": "POST_STOP_COST_WIRE_PARITY_FIX",
+    "exitCode": 0,
+    "sourceBeforeAfterEqual": true,
+    "sourceFiles": 591,
+    "sourceManifestSha256": "2f9be98539b987373c94f7418f4ebf8a7d93c04e6f53589ed90f87020be09622",
+    "elapsedSeconds": 11.485,
+    "tests": 1719,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "suites": 215,
+    "allXmlFresh": false,
+    "paidCalls": 0,
+    "keysBlankInSubprocess": true
+  },
+  "currentPythonSourceSha256": {
+    "A": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366",
+    "B": "f9d59b1d838cb2f1ba75dae5b2c2d166e789d8a78021d4dfe67dc243fd5bcc89"
+  },
+  "costRegression": {
+    "redRequirementFailures": 44,
+    "redControlsPassed": 12,
+    "setupErrors": 0,
+    "green": 56,
+    "faultsDetected": 2,
+    "detectingAssertions": 44,
+    "eachRestoreGreen": 56,
+    "finalIndependentReceiptSha256": "7740e425bd7b44f25858437635916e2cdd7538028043ba2ba608ac4adcf78a61"
+  },
+  "otherCurrentRelevantSuites": {
+    "candidateA": 41,
+    "standaloneB": 143,
+    "productionPolicyNode": 13
+  },
+  "originalExactUnpaidNegativeReplay": {
+    "receiptSha256": "b4a40255845a232f36fcc76918b289458023ab61aa0e59a77dad08e0e714fbd4",
+    "exitCode": 2,
+    "failureCode": "CONFIGURATION",
+    "guardSelftestAssertions": 6,
+    "mainClientConstructedBeforeValidate": true,
+    "dnsConnectOutputWriteAttempts": 0,
+    "indexJsonParses": 0,
+    "originalPinnedFiles": 1684,
+    "allOriginalPinsBeforeAfterEqual": true,
+    "retrospectivePacketCaptureClaimed": false
+  },
+  "correctedActualWrapperSyntheticPositivePath": {
+    "receiptSha256": "821a641aa450bac1d7c7bb876985558667116ab36c62a813d127fe40f0032174",
+    "actualPythonWrapperFreshJavacJavaMain": true,
+    "canonicalLocalTlsRequests": 24,
+    "byteExactRequests": 24,
+    "usageComplete": 24,
+    "clearStop": 12,
+    "BRequiredNotRun": 12,
+    "physicalB": 0,
+    "count": 0,
+    "replayExtraRequests": 0,
+    "externalRealModelCalls": 0,
+    "sourceInventoryScope": 261,
+    "sourceBeforeAfterEqual": true,
+    "separateClassloaderInstrumentation": false,
+    "realModelAccuracyEvidence": false
+  },
+  "financial": {
+    "currentLedgerHeldUsd": "2.13925888",
+    "provenUnstartedCancellationCandidateUsd": "0.34603008",
+    "settlementApplied": false,
+    "retainedPriorIncludingUnknownUsd": "1.79322880",
+    "refunds": 0,
+    "invoiceAmountKnown": false,
+    "extraBudgetRequested": false
+  },
+  "realFreshEvaluation": {
+    "APlanned": 24,
+    "AUnrun": 24,
+    "BPlanned": 2,
+    "BUnrun": 2,
+    "semanticDenominator": 0,
+    "rawGate": "NOT_EVALUATED",
+    "old16RawGate": "FAIL_PRESERVED",
+    "actualRetry": 0
+  },
+  "remoteCi": "NEW_HEAD_PENDING_PUBLICATION_PRIOR_B677_BASE_FAILED_CAUSE_UNKNOWN",
+  "mainDeployActivation": "HOLD"
+}

@@ -1,0 +1,11 @@
+--- a/evaluation/issue130/Issue130StandaloneGenerationCli.java
++++ b/evaluation/issue130/Issue130StandaloneGenerationCli.java
+@@ -219,7 +219,7 @@
+         int applications,networks;Integer status;byte[] raw;
+     }
+     private static Map<String,Object> runCase(Case item,Path output,String ordinal,long suiteDeadline,Dependencies deps)throws Exception {
+-        long started=deps.nanoTime().getAsLong(),cutoff=started+Math.min(Duration.ofSeconds(15).toNanos(),remaining(suiteDeadline,deps.nanoTime()));Map<String,Object> result=notRun(item);result.put("outcome","STOP_API_OR_CONTRACT_OR_TIMEOUT");result.put("startedAt",deps.clock().instant().toString());
++        long started=deps.nanoTime().getAsLong(),cutoff=started+Math.min(Duration.ofSeconds(120).toNanos(),remaining(suiteDeadline,deps.nanoTime()));Map<String,Object> result=notRun(item);result.put("outcome","STOP_API_OR_CONTRACT_OR_TIMEOUT");result.put("startedAt",deps.clock().instant().toString());
+         writeJson(output.resolve(ordinal+"-consumed.json"),map("state","UNKNOWN_HELD","callId",item.id(),"perCaseReservedUsd","0.30412800","startedAt",deps.clock().instant().toString()));
+         Observation count=new Observation(),gen=new Observation();
+         OkHttpClient.Builder builder=deps.client().newBuilder().retryOnConnectionFailure(false).followRedirects(false).followSslRedirects(false);

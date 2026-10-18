@@ -1,0 +1,96 @@
+{
+  "status": "PASS_DECIMAL_AND_CURRENT_PRIMARY_PRICES_ONLY_EXECUTION_ACCEPTANCE_PENDING",
+  "recorded_at_utc": "2026-10-18T13:28:44.063297+00:00",
+  "decimal_precision": 40,
+  "approved_arithmetic_cap_usd": "3.00",
+  "retained_prior_usd": "1.79322880",
+  "calculation": {
+    "a_unmultiplied_per_call": "0.00655360",
+    "a_reserved_per_call": "0.01441792",
+    "a_24_calls": "0.34603008",
+    "cumulative_after_a": "2.13925888",
+    "b_input_component_per_operation": "0.06144000",
+    "b_output_component_per_operation": "0.00768000",
+    "b_unmultiplied_per_operation": "0.06912000",
+    "b_reserved_per_operation": "0.15206400",
+    "b_two_count_calls_reserved": "0.30412800",
+    "b_two_generation_calls_reserved": "0.30412800",
+    "b_four_operations_reserved": "0.60825600",
+    "new_a_plus_b_reserved": "0.95428608",
+    "cumulative_after_b": "2.74751488",
+    "remaining": "0.25248512"
+  },
+  "checks": {
+    "a_per_call": true,
+    "a_total": true,
+    "a_cumulative": true,
+    "b_per_operation": true,
+    "b_total": true,
+    "b_cumulative": true,
+    "remaining": true,
+    "within_arithmetic_cap": true
+  },
+  "official_sources": [
+    {
+      "url": "https://developers.openai.com/api/docs/guides/decisions#pricing-and-availability",
+      "retrieved_at_utc": "2026-10-18T13:28:44.063297+00:00",
+      "claims_confirmed": [
+        "gpt-6-luna Decisions input USD0.10 per million",
+        "No output/cache-read/cache-write charges on Decisions",
+        "Regional and long-context multipliers apply"
+      ],
+      "reading": "Official page pricing section, lines2514–2518 via web retrieval; no candidate prompt or production source opened."
+    },
+    {
+      "url": "https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash",
+      "retrieved_at_utc": "2026-10-18T13:28:44.063297+00:00",
+      "claims_confirmed": [
+        "Standard Gemini3.8Flash input USD0.75 per million through2026-12-31",
+        "Standard output USD3.75 per million including thinking through2026-12-31",
+        "From2027-01-01 Standard input1.50/output7.50; other tiers/tools/cache not priced by this formula"
+      ],
+      "reading": "Official pricing table lines190–210."
+    },
+    {
+      "url": "https://ai.google.dev/gemini-api/docs/generate-content/thinking#token-limits-and-max_output_tokens",
+      "retrieved_at_utc": "2026-10-18T13:28:44.063297+00:00",
+      "claims_confirmed": [
+        "max_output_tokens includes thought tokens and is infrastructure-enforced total generation cutoff",
+        "Truncation can still bill generated thought tokens",
+        "LOW reduces thinking; it is not a promise of thinking OFF;3.8Flash minimal unsupported"
+      ],
+      "reading": "Official model table lines425–438 and token-limit section536–541."
+    }
+  ],
+  "reservation_policy": {
+    "refunds": 0,
+    "unknown_holds_released": false,
+    "retain_skipped_and_cheaper_reservations": true,
+    "count_free_assumption": false
+  },
+  "stopping_and_semantics": {
+    "stage_a_physical": 24,
+    "stage_a_count_or_b": 0,
+    "standalone_b_cases": 2,
+    "standalone_b_count": 2,
+    "standalone_b_generation": 2,
+    "standalone_b_a": 0,
+    "technical_api_refusal_invalid_usage_deadline_source_runtime_io_failure_in_a": "STOP_B",
+    "a_semantic_failure": "Keep FAIL recorded; predetermined standalone B diagnosis may proceed without selection/replacement",
+    "b_cases_selected_after_results": false
+  },
+  "pending": [
+    "Exact frozen source/runtime and one-time physical dispatch identities/counts still need root acceptance.",
+    "Actual A/B request bytes<=16384 and text-only, no tools/search/media/cache/tier changes are not inspected in this independent cost review.",
+    "65536/81920 input-token allowances and2.2 factor are inherited engineering proxies, not verified invoice token/cost bounds or proven coverage of every regional/long-context premium.",
+    "CountTokens is reserved at one full generation-operation proxy; its actual charge is not proven here and is not assumed zero.",
+    "Previously held1.79322880 is accepted as the supplied retained ledger input; this review does not audit historic invoices or independently reconstruct historical calls.",
+    "Official prices/model/processing tier and actual2048 thought-inclusive parameter must still match final frozen wire before dispatch."
+  ],
+  "official_invoice_hard_cap_proven": false,
+  "new_model_execution_authorized_by_this_review": false,
+  "new_reservations_created": false,
+  "paid_calls": 0,
+  "originalReviewSha256": "56f26153708754b23d6ff1df69dc2f6818cbb0998fddf1ea2b8330d30fee9672",
+  "phase": "PRE_EXECUTION_PLANNING_NOT_ACTUAL_RESERVATION"
+}

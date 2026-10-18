@@ -1,0 +1,111 @@
+{
+  "status": "NO_CONFIRMED_PARSER_OR_ROUTING_SEMANTIC_BUG_IDENTIFIED_RAW_QUALITY_FAIL_REMAINS",
+  "reviewedAt": "2026-10-18T13:06:47.308596+00:00",
+  "scope": "Independent official-contract/source/public-aggregate analysis only; no individual gold/output causal attribution.",
+  "confirmedNewP1": 0,
+  "confirmedNewP2": 0,
+  "officialSources": [
+    {
+      "url": "https://developers.openai.com/api/docs/guides/decisions",
+      "retrievedThroughWeb": true,
+      "retrievedDateUtc": "2026-10-18",
+      "supportedFact": "Choice/score distribution and confidence are separate; application-labeled examples are needed for threshold selection.",
+      "notEstablished": "No calibrated correctness probability definition or equality with probability of CLEAR was found in the reviewed pages."
+    },
+    {
+      "url": "https://developers.openai.com/api/reference/resources/decisions/methods/create",
+      "retrievedThroughWeb": true,
+      "retrievedDateUtc": "2026-10-18",
+      "supportedFact": "Text input, supplied typed choice options, per-question instructions and ordered answer fields match current request/response paths; named refusals are a distinct answer type."
+    }
+  ],
+  "sourceFingerprints": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "c45fa35de6c7079b13d81f5a1c4d5193b4939a08dd2f3d3b511fc8b390b25334",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt": "1f33e12211eb9b33b96b70ada710e5a0b3da1b0e0ca4fda7c72c704cc60853fe",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassifierOptions.kt": "70c8acff13ead4f9e8df0150c8f61060abf1c6d0b4146ba783a328f463d1cd1e",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt": "d5d97bd7c6f8100736ace583347c5fe5db386b3a371b59a982f4afb8c2bbeef0"
+  },
+  "aggregateSha256": "f9fb1b3ca33c9c398f95a5acb15be075f5be0e8d9a5fd840cf8c2b345ad66b31",
+  "markdownSha256": "027e1c5ed881ea0303220e154bbda20cf7a4c27b506d28921c034166f09ce578",
+  "findings": [
+    {
+      "id": "F01",
+      "classification": "CONTRACT_INTERPRETATION",
+      "conclusion": "Confidence is a separate API output; treating it as P(CLEAR), a predicate probability,1-selectedProbability, or a calibrated correctness probability is unsupported. The code does none of those conversions.",
+      "code": "AmbiguityClassificationContract.kt:132–156"
+    },
+    {
+      "id": "F02",
+      "classification": "CURRENT_POLICY_IMPLEMENTED_CONSISTENTLY",
+      "conclusion": "Explicit uncertainty is MODEL_UNCERTAIN; otherwise confidence<configured threshold yields LOW_CONFIDENCE. TwoStage sends valid non-CLEAR results to B and refuses errors/refusal. Existing0.8 is diagnostic policy, not a vendor default or calibrated operating value.",
+      "code": "AmbiguityClassificationContract.kt:152–158; TwoStagePreSubmissionCheckProvider.kt:163–205,234–248"
+    },
+    {
+      "id": "F03",
+      "classification": "REQUEST_SHAPE_MATCH",
+      "conclusion": "One named choice question with three distinct string options, descriptions and full instructions receives the complete six-field participant/context JSON as a string. No label reversal, missing instruction placement or wrong JSON input type was identified.",
+      "code": "AmbiguityClassificationContract.kt:27–67,222–228",
+      "limitation": "Actual16 request bodies deliberately not opened; custodian canonical integrity is separately relied on."
+    },
+    {
+      "id": "F04",
+      "classification": "MODEL_OUTPUT_VS_GOLD_FAILURE_REMAINS",
+      "conclusion": "Raw9/16 and falseCLEAR6/8 remain failed prior gate; later B routing cannot erase them. Aggregate alone does not isolate model capability,prompt/task framing or gold validity.",
+      "proof": "Public aggregate only; individual gold review owned by custodian."
+    },
+    {
+      "id": "F05",
+      "classification": "POLICY_EFFECT_NOT_CONFIRMED_BUG",
+      "conclusion": "Raw correctCLEAR7 becomes CLEAR_STOP3 plus4low-confidence deferrals; plus1raw opposite review yields5unnecessary B routes. All8review-gold cases route B. This matches the implemented policy but does not prove an optimal threshold or any question-quality success."
+    },
+    {
+      "id": "F06",
+      "classification": "NON_CAUSAL_COMPATIBILITY_CAUTION",
+      "conclusion": "Exact-key validation, sum tolerance1e-6 and selected-choice argmax are extra strict local policies whose full vendor guarantees were not established here. All16 parsed successfully, so these cannot explain this batch raw misclassification."
+    }
+  ],
+  "hypothesesNotProven": [
+    "Composite ambiguity reasoning in one inexpensive choice task may exceed its task/prompt fit.",
+    "Korean/context-sensitive interpretation or abstract option descriptions may contribute.",
+    "Custodian may identify gold ambiguity; original frozen scoring must remain preserved rather than silently relabeled."
+  ],
+  "nextTddSpecificationOnly": {
+    "reuseFirst": [
+      "DCW03 threshold separation",
+      "DCW04 refusal versus explicit uncertainty",
+      "DCW09 low-confidence NEEDS_REVIEW",
+      "DCU01 malformed uncertainty",
+      "TwoStagePrecheckRoutingTest"
+    ],
+    "optionalSyntheticMatrix": [
+      "Hold choice/distribution fixed; vary confidence below/equal/above0.8 and assert only intended normalization changes.",
+      "Hold valid choice/confidence fixed; vary distribution while retaining current argmax/sum guards; assert no inversion through P(CLEAR).",
+      "High-confidence rawINDETERMINATE stays MODEL_UNCERTAIN; refusal/API/schema errors never become CLEAR or successful B.",
+      "Assert canonical request has one named choice, fixed labels/descriptions/instructions and unchanged six-field input using newly authored public synthetic text, not sealed cases."
+    ],
+    "implementedOrExecutedByReviewer": false,
+    "newPaidCallsRequested": false
+  },
+  "limits": {
+    "individualSemanticOrConfidenceRecordsRead": false,
+    "confidenceCorrectnessCalibrationEstablished": false,
+    "operationalThresholdSelected": false,
+    "promptGoldScoresChanged": false,
+    "questionQualityMeasured": false,
+    "generalAccuracyP50P95Established": false,
+    "invoiceHardCapEstablished": false,
+    "reservedUsd": "1.79322880",
+    "headroomUsd": "0.20677120",
+    "refunds": 0,
+    "additionalPaidPermission": false
+  },
+  "reviewerActions": {
+    "officialPublicDocumentationBrowse": true,
+    "actualProviderModelCalls": 0,
+    "rawInputGoldWirePrivateIndexRawResponseReads": 0,
+    "actualCaEnvironmentKeyReads": 0,
+    "sourceTestConfigurationEdits": 0,
+    "testsGradleExecuted": 0,
+    "localArtifactsOnly": true
+  }
+}

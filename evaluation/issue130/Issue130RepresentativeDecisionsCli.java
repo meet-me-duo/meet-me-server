@@ -64,7 +64,15 @@ public final class Issue130RepresentativeDecisionsCli {
             return map("prepared", true, "requestBytes", bytes.length, "requestSha256", sha(bytes), "model", "gpt-6-luna");
         } catch (Exception failure) { throw safe(failure, "INVALID_REQUEST"); }
     }
+    public static Map<String,Object> prepareIndex24(Path inputIndex, Path preparedIndex) throws Exception {
+        return prepareFixedIndex(inputIndex, preparedIndex, 24);
+    }
+
     public static Map<String,Object> prepareIndex(Path inputIndex, Path preparedIndex) throws Exception {
+        return prepareFixedIndex(inputIndex, preparedIndex, 16);
+    }
+
+    private static Map<String,Object> prepareFixedIndex(Path inputIndex, Path preparedIndex, int count) throws Exception {
         try {
             JsonNode index = readJson(inputIndex, 1048576);
             keys(index, Set.of("status", "input_contract", "key_network_access_permitted", "records"));
@@ -74,7 +82,7 @@ public final class Issue130RepresentativeDecisionsCli {
             require(inputContract.isArray() && inputContract.size() == 6, "INVALID_REQUEST");
             Set<String> fields = new HashSet<>(); for (JsonNode n : inputContract) fields.add(text(n));
             require(fields.equals(INPUT_KEYS), "INVALID_REQUEST");
-            JsonNode records = index.path("records"); require(records.isArray() && records.size() == 16, "INVALID_REQUEST");
+            JsonNode records = index.path("records"); require(records.isArray() && records.size() == count, "INVALID_REQUEST");
             List<Map<String,Object>> prepared = new ArrayList<>(); List<Path> targets = new ArrayList<>(); List<byte[]> wires = new ArrayList<>();
             Set<String> ids = new HashSet<>(); Set<Path> outputs = new HashSet<>();
             canonical(preparedIndex); require(!Files.exists(preparedIndex, LinkOption.NOFOLLOW_LINKS), "OUTPUT_CONFLICT");
@@ -91,7 +99,7 @@ public final class Issue130RepresentativeDecisionsCli {
             }
             for (int i = 0; i < targets.size(); i++) writeNew(targets.get(i), wires.get(i));
             writeJson(preparedIndex, map("status", "WIRES_PREPARED_NOT_EXECUTION", "records", prepared));
-            return map("prepared", true, "caseCount", 16, "indexSha256", hash(preparedIndex));
+            return map("prepared", true, "caseCount", count, "indexSha256", hash(preparedIndex));
         } catch (Exception failure) { throw safe(failure, "INVALID_REQUEST"); }
     }
     private static byte[] wire(Path input) throws Exception {
@@ -113,10 +121,10 @@ public final class Issue130RepresentativeDecisionsCli {
     public static Map<String,Object> runSuite(Path planPath, Path preparedIndex, Path outputDirectory, Dependencies dependencies) throws Exception {
         long started = dependencies.nanoTime().getAsLong();
         try {
-            long millis = Long.parseLong(Objects.requireNonNull(dependencies.environment().get("ISSUE130_SUITE_REMAINING_MILLIS")));
-            require(millis > 0 && millis <= 300000, "CONFIGURATION");
-            long deadline = started + millis * 1000000L;
             Setup setup = validate(planPath, preparedIndex, outputDirectory, dependencies.environment());
+            long millis = Long.parseLong(Objects.requireNonNull(dependencies.environment().get("ISSUE130_SUITE_REMAINING_MILLIS")));
+            require(millis > 0 && millis <= suiteSeconds(setup.plan()) * 1000L, "CONFIGURATION");
+            long deadline = started + millis * 1000000L;
             remaining(deadline, dependencies.nanoTime());
             Path output = setup.output(); Files.createDirectories(output, PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"))); canonical(output); canonical(output.resolve(".suite.lock"));
             try (FileChannel lockChannel = FileChannel.open(output.resolve(".suite.lock"), StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
@@ -125,10 +133,10 @@ public final class Issue130RepresentativeDecisionsCli {
                 try { held = lockChannel.tryLock(); } catch (OverlappingFileLockException conflict) { throw new EvaluationException("ALREADY_CONSUMED"); }
                 require(held != null, "ALREADY_CONSUMED");
                 try (FileLock lock = held) {
-                    Map<String,Object> consumption = map("state", "FULL_N16_RESERVATION_HELD", "suiteId", text(setup.plan().path("suiteId")), "planSha256", hash(planPath), "maximumNewReservedUsd", "0.23068672", "priorHeldUsd", priorHeld(setup.plan()), "maximumCumulativeReservedUsd", cumulativeHeld(setup.plan()), "startedAt", dependencies.clock().instant().toString());
+                    Map<String,Object> consumption = map("state", candidate24(setup.plan()) ? "FULL_N24_RESERVATION_HELD" : "FULL_N16_RESERVATION_HELD", "suiteId", text(setup.plan().path("suiteId")), "planSha256", hash(planPath), "maximumNewReservedUsd", maximumNewHeld(setup.plan()), "priorHeldUsd", priorHeld(setup.plan()), "maximumCumulativeReservedUsd", cumulativeHeld(setup.plan()), "startedAt", dependencies.clock().instant().toString());
                     writeJson(output.resolve(".suite-consumed.json"), consumption);
                     List<Map<String,Object>> results = new ArrayList<>(); int physical = 0; boolean stopped = false;
-                    for (int i = 0; i < 16; i++) {
+                    for (int i = 0; i < caseCount(setup.plan()); i++) {
                         Case item = setup.cases().get(i); String ordinal = String.format(Locale.ROOT, "%02d", i + 1);
                         Map<String,Object> result;
                         if (stopped) result = notRun(item);
@@ -144,7 +152,7 @@ public final class Issue130RepresentativeDecisionsCli {
                     }
                     long finished = dependencies.nanoTime().getAsLong();
                     if (finished - deadline >= 0) stopped = true;
-                    Map<String,Object> result = map("status", stopped ? "STOPPED" : "COMPLETED", "results", results, "physicalDecisionsCalls", physical, "physicalGenerationCalls", 0, "countCalls", 0, "maximumNewReservedUsd", "0.23068672", "maximumCumulativeReservedUsd", cumulativeHeld(setup.plan()), "startedNanos", started, "cutoffNanos", deadline, "finishedNanos", finished, "elapsedMs", (finished - started) / 1000000.0, "clock", "JVM_MONOTONIC_NOT_WALL_TIME");
+                    Map<String,Object> result = map("status", stopped ? "STOPPED" : "COMPLETED", "results", results, "physicalDecisionsCalls", physical, "physicalGenerationCalls", 0, "countCalls", 0, "maximumNewReservedUsd", maximumNewHeld(setup.plan()), "maximumCumulativeReservedUsd", cumulativeHeld(setup.plan()), "startedNanos", started, "cutoffNanos", deadline, "finishedNanos", finished, "elapsedMs", (finished - started) / 1000000.0, "clock", "JVM_MONOTONIC_NOT_WALL_TIME");
                     writeJson(output.resolve("suite-result.json"), result);
                     return result;
                 }
@@ -173,16 +181,16 @@ public final class Issue130RepresentativeDecisionsCli {
         require(text(p.path("endpoint")).equals(ENDPOINT.toString()) && text(p.path("model")).equals("gpt-6-luna"), "CONFIGURATION");
         require(p.path("minimumConfidence").isNumber() && p.path("minimumConfidence").doubleValue() == 0.8, "CONFIGURATION");
         require(p.path("operatingConfigurationChanged").isBoolean() && !p.path("operatingConfigurationChanged").asBoolean(), "CONFIGURATION");
-        for (String field : List.of("caseCount", "maximumHttpAttempts")) require(integer(p.path(field)) == 16, "CONFIGURATION");
+        for (String field : List.of("caseCount", "maximumHttpAttempts")) require(integer(p.path(field)) == caseCount(p), "CONFIGURATION");
         for (String field : List.of("requestByteCap", "responseByteCap")) require(integer(p.path(field)) == LIMIT, "CONFIGURATION");
-        require(integer(p.path("perCallSeconds")) == 15 && integer(p.path("suiteSeconds")) == 300 && integer(p.path("concurrency")) == 1, "CONFIGURATION");
+        require(integer(p.path("perCallSeconds")) == 15 && integer(p.path("suiteSeconds")) == suiteSeconds(p) && integer(p.path("concurrency")) == 1, "CONFIGURATION");
         for (String field : List.of("countCalls", "generationCalls", "automaticRetries", "redirects", "fallbacks")) require(integer(p.path(field)) == 0, "CONFIGURATION");
         cost(p);
         Path frozenOutput = canonical(Path.of(text(p.path("outputDirectory")))), output = canonical(outputPath);
         require(frozenOutput.equals(output), "CONFIGURATION");
         require(!Files.exists(output.resolve(".suite-consumed.json"), LinkOption.NOFOLLOW_LINKS), "ALREADY_CONSUMED");
         JsonNode index = readJson(indexPath, 1048576); keys(index, Set.of("status", "records")); require(text(index.path("status")).equals("WIRES_PREPARED_NOT_EXECUTION"), "CONFIGURATION");
-        JsonNode records = index.path("records"); require(records.isArray() && records.size() == 16, "CONFIGURATION");
+        JsonNode records = index.path("records"); require(records.isArray() && records.size() == caseCount(p), "CONFIGURATION");
         List<Case> cases = new ArrayList<>(); Set<String> ids = new HashSet<>(); Set<Path> paths = new HashSet<>();
         for (JsonNode record : records) {
             keys(record, Set.of("opaque_call_id", "request_path", "request_sha256", "request_bytes")); String id = identity(record.path("opaque_call_id")); require(ids.add(id), "CONFIGURATION");
@@ -250,17 +258,25 @@ public final class Issue130RepresentativeDecisionsCli {
         require(text(plan.path("transportMode")).equals("ENVIRONMENT_HTTPS_PROXY"), "CONFIGURATION");
         return true;
     }
-    private static String priorHeld(JsonNode plan) { return environmentProxy(plan) ? "1.56254208" : "1.33185536"; }
-    private static String cumulativeHeld(JsonNode plan) { return environmentProxy(plan) ? "1.79322880" : "1.56254208"; }
+    private static boolean candidate24(JsonNode plan) {
+        if (!plan.has("evaluationProfile")) return false;
+        require(text(plan.path("evaluationProfile")).equals("CANDIDATE_A24_USD3_V1") && environmentProxy(plan) && plan.path("environmentCa").isObject(), "CONFIGURATION");
+        return true;
+    }
+    private static int caseCount(JsonNode plan) { return candidate24(plan) ? 24 : 16; }
+    private static int suiteSeconds(JsonNode plan) { return candidate24(plan) ? 420 : 300; }
+    private static String maximumNewHeld(JsonNode plan) { return candidate24(plan) ? "0.34603008" : "0.23068672"; }
+    private static String priorHeld(JsonNode plan) { return candidate24(plan) ? "1.79322880" : environmentProxy(plan) ? "1.56254208" : "1.33185536"; }
+    private static String cumulativeHeld(JsonNode plan) { return candidate24(plan) ? "2.13925888" : environmentProxy(plan) ? "1.79322880" : "1.56254208"; }
     private static void cost(JsonNode plan) throws Exception {
         boolean proxy = environmentProxy(plan);
         JsonNode c = plan.path("costProfile");
         require(c.isObject(), "CONFIGURATION");
-        Map<String,String> expected = Map.of("inputUsdPerMillion", "0.10", "margin", "2.2", "perCallReservedUsd", "0.01441792", "priorHeldUsd", priorHeld(plan), "maximumNewReservedUsd", "0.23068672", "maximumCumulativeReservedUsd", cumulativeHeld(plan), "approvedAggregateUsd", "2.00");
+        Map<String,String> expected = Map.of("inputUsdPerMillion", "0.10", "margin", "2.2", "perCallReservedUsd", "0.01441792", "priorHeldUsd", priorHeld(plan), "maximumNewReservedUsd", maximumNewHeld(plan), "maximumCumulativeReservedUsd", cumulativeHeld(plan), "approvedAggregateUsd", candidate24(plan) ? "3.00" : "2.00");
         for (Map.Entry<String,String> e : expected.entrySet()) require(decimal(c.path(e.getKey())).compareTo(new BigDecimal(e.getValue())) == 0, "CONFIGURATION");
         require(integer(c.path("inputTokenProxy")) == 65536, "CONFIGURATION");
         require(c.path("officialInvoiceHardCapProven").isBoolean() && !c.path("officialInvoiceHardCapProven").asBoolean(), "CONFIGURATION");
-        require(decimal(c.path("perCallReservedUsd")).multiply(BigDecimal.valueOf(16)).compareTo(decimal(c.path("maximumNewReservedUsd"))) == 0, "CONFIGURATION");
+        require(decimal(c.path("perCallReservedUsd")).multiply(BigDecimal.valueOf(caseCount(plan))).compareTo(decimal(c.path("maximumNewReservedUsd"))) == 0, "CONFIGURATION");
         require(decimal(c.path("priorHeldUsd")).add(decimal(c.path("maximumNewReservedUsd"))).compareTo(decimal(c.path("maximumCumulativeReservedUsd"))) == 0 && decimal(c.path("maximumCumulativeReservedUsd")).compareTo(decimal(c.path("approvedAggregateUsd"))) <= 0, "CONFIGURATION");
         fileEvidence(c.path("review"));
         if (proxy) {
@@ -269,9 +285,10 @@ public final class Issue130RepresentativeDecisionsCli {
             fileEvidence(reference);
             JsonNode previous = readJson(Path.of(text(reference.path("path"))), 4194304);
             require(text(previous.path("status")).equals("FULL_SUITE_RESERVED_BEFORE_EXECUTION"), "CONFIGURATION");
-            Map<String,String> retained = Map.of("previousRetainedReservationUsd", "1.33185536", "newReservationUsd", "0.23068672", "cumulativeReservationUsd", "1.56254208", "approvedAggregateUsd", "2.00");
+            Map<String,String> retained = Map.of("previousRetainedReservationUsd", candidate24(plan) ? "1.56254208" : "1.33185536", "newReservationUsd", "0.23068672", "cumulativeReservationUsd", candidate24(plan) ? "1.79322880" : "1.56254208", "approvedAggregateUsd", "2.00");
             for (Map.Entry<String,String> entry : retained.entrySet()) require(decimal(previous.path(entry.getKey())).compareTo(new BigDecimal(entry.getValue())) == 0, "CONFIGURATION");
             require(integer(previous.path("refunds")) == 0, "CONFIGURATION");
+            if (candidate24(plan)) require(previous.path("retainedUnknownsRefunded").isBoolean() && !previous.path("retainedUnknownsRefunded").asBoolean(), "CONFIGURATION");
         }
     }
 
@@ -373,6 +390,7 @@ public final class Issue130RepresentativeDecisionsCli {
         try {
             Map<String,Object> value;
             if (args.length == 3 && args[0].equals("prepare-one")) value = prepareOne(Path.of(args[1]), Path.of(args[2]));
+            else if (args.length == 3 && args[0].equals("prepare-index24")) value = prepareIndex24(Path.of(args[1]), Path.of(args[2]));
             else if (args.length == 3 && args[0].equals("prepare-index")) value = prepareIndex(Path.of(args[1]), Path.of(args[2]));
             else if (args.length == 4 && args[0].equals("run-suite")) value = runSuite(Path.of(args[1]), Path.of(args[2]), Path.of(args[3]), new Dependencies(mainClient(Path.of(args[1]), System.getenv()), System::nanoTime, Clock.systemUTC(), System.getenv()));
             else throw new EvaluationException("CONFIGURATION");

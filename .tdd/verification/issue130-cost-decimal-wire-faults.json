@@ -1,0 +1,50 @@
+{
+  "workItem": "issue130-cost-decimal-wire-contract",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "boundary": "Python public A24/B2 preflight/main budget decimal lexical format aligned with unchanged Java decimal grammar; before compile/JVM; synthetic only.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366"
+    },
+    {
+      "path": "evaluation/issue130/run_standalone_generation.py",
+      "sha256": "f9d59b1d838cb2f1ba75dae5b2c2d166e789d8a78021d4dfe67dc243fd5bcc89"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_cost_decimal_wire_contract.py",
+      "sha256": "b24ab6d8987c3106c7edfd23a44a679f34e50ef36f7e3cd94490939ec43ac1e7"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "remove_A24_amount_lexical_guard",
+      "command": [
+        "python3",
+        "/tmp/issue130-cost-decimal-independent/run_checks.py",
+        "--source-root",
+        "/workspace/issue123-representative-evaluation/server",
+        "--output",
+        "/tmp/issue130-cost-decimal-independent/verified-02"
+      ],
+      "detectedBy": "CostDecimalWireContract.test_A24_main_prior_reject_exponent, CostDecimalWireContract.test_A24_main_prior_reject_fraction_over8, CostDecimalWireContract.test_A24_main_prior_reject_leading_dot, CostDecimalWireContract.test_A24_main_prior_reject_plus_sign, CostDecimalWireContract.test_A24_main_reject_exponent, CostDecimalWireContract.test_A24_main_reject_fraction_over8, CostDecimalWireContract.test_A24_main_reject_leading_dot, CostDecimalWireContract.test_A24_main_reject_leading_whitespace, CostDecimalWireContract.test_A24_main_reject_non_ascii_digits, CostDecimalWireContract.test_A24_main_reject_plus_sign, CostDecimalWireContract.test_A24_main_reject_trailing_whitespace, CostDecimalWireContract.test_A24_preflight_prior_reject_exponent, CostDecimalWireContract.test_A24_preflight_prior_reject_fraction_over8, CostDecimalWireContract.test_A24_preflight_prior_reject_leading_dot, CostDecimalWireContract.test_A24_preflight_prior_reject_plus_sign, CostDecimalWireContract.test_A24_preflight_reject_exponent, CostDecimalWireContract.test_A24_preflight_reject_fraction_over8, CostDecimalWireContract.test_A24_preflight_reject_leading_dot, CostDecimalWireContract.test_A24_preflight_reject_leading_whitespace, CostDecimalWireContract.test_A24_preflight_reject_non_ascii_digits, CostDecimalWireContract.test_A24_preflight_reject_plus_sign, CostDecimalWireContract.test_A24_preflight_reject_trailing_whitespace",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "remove_B2_amount_lexical_guard",
+      "command": [
+        "python3",
+        "/tmp/issue130-cost-decimal-independent/run_checks.py",
+        "--source-root",
+        "/workspace/issue123-representative-evaluation/server",
+        "--output",
+        "/tmp/issue130-cost-decimal-independent/verified-02"
+      ],
+      "detectedBy": "CostDecimalWireContract.test_B2_main_prior_reject_exponent, CostDecimalWireContract.test_B2_main_prior_reject_fraction_over8, CostDecimalWireContract.test_B2_main_prior_reject_leading_dot, CostDecimalWireContract.test_B2_main_prior_reject_plus_sign, CostDecimalWireContract.test_B2_main_reject_exponent, CostDecimalWireContract.test_B2_main_reject_fraction_over8, CostDecimalWireContract.test_B2_main_reject_leading_dot, CostDecimalWireContract.test_B2_main_reject_leading_whitespace, CostDecimalWireContract.test_B2_main_reject_non_ascii_digits, CostDecimalWireContract.test_B2_main_reject_plus_sign, CostDecimalWireContract.test_B2_main_reject_trailing_whitespace, CostDecimalWireContract.test_B2_preflight_prior_reject_exponent, CostDecimalWireContract.test_B2_preflight_prior_reject_fraction_over8, CostDecimalWireContract.test_B2_preflight_prior_reject_leading_dot, CostDecimalWireContract.test_B2_preflight_prior_reject_plus_sign, CostDecimalWireContract.test_B2_preflight_reject_exponent, CostDecimalWireContract.test_B2_preflight_reject_fraction_over8, CostDecimalWireContract.test_B2_preflight_reject_leading_dot, CostDecimalWireContract.test_B2_preflight_reject_leading_whitespace, CostDecimalWireContract.test_B2_preflight_reject_non_ascii_digits, CostDecimalWireContract.test_B2_preflight_reject_plus_sign, CostDecimalWireContract.test_B2_preflight_reject_trailing_whitespace",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T14:51:03.754206Z"
+}

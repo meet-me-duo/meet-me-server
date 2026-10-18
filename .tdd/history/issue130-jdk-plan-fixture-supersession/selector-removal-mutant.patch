@@ -1,0 +1,11 @@
+--- before/evaluation/issue130/run_representative_decisions.py
++++ mutant/evaluation/issue130/run_representative_decisions.py
+@@ -219,7 +219,7 @@
+         cp = cp_path.read_text().strip()
+         need(bool(cp))
+         root = canonical(plan['sourceRoot'])
+-        javac, java = java_tools(os.environ)
++        javac, java = '/tmp/meetme-jdk17/bin/javac', '/tmp/meetme-jdk17/bin/java'
+         with tempfile.TemporaryDirectory(prefix='issue130-frozen-classes-') as directory:
+             clean_env = {**os.environ, 'OPENAI_API_KEY': '', 'GEMINI_API_KEY': ''}
+             compiled = subprocess.run([javac, '--release', '17', '-encoding', 'UTF-8', '-cp', cp, '-d', directory, str(root / HELPERS[0])], capture_output=True, text=True, env=clean_env, timeout=remaining())

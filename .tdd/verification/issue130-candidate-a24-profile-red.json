@@ -1,0 +1,91 @@
+{
+  "status": "CHRONOLOGICAL_VALID_ASSERTION_RED",
+  "testMethods": 41,
+  "failedMethods": 15,
+  "passedControls": 26,
+  "errors": 0,
+  "java": {
+    "freshHoldoutRead": false,
+    "assertionFailures": 9,
+    "tests": 26,
+    "paidCalls": 0,
+    "errors": 0,
+    "passed": 17
+  },
+  "python": {
+    "tests": 15,
+    "assertionFailures": 6,
+    "errors": 0,
+    "passed": 9
+  },
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130CandidateA24ContractTest.java",
+      "sha256": "31ea29352e5c5fd65a73eecc040f8bbfecf743f4c1d0dc42380fe20dd52fee9d"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24.py",
+      "sha256": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "sha256": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a"
+    }
+  ],
+  "rawEvidence": ".codex/tdd-evidence/issue130-candidate-a24-red",
+  "sourceBeforeAfterEqual": true,
+  "actualModelCalls": 0,
+  "freshHoldoutRead": false,
+  "oracleBasis": "Externally frozen next-stage/spec.md fixed CANDIDATE_A24_USD3_V1, exact24, approved3 monetary profile and 420sec wrapper; no values derived from implementation.",
+  "limitations": [
+    "Invalid A24 plans currently fail at the missing-profile boundary; passed negative controls alone do not yet prove individual guards. FI after GREEN will exercise selected positive-profile guard mutants.",
+    "The existing Kotlin-only RED schema path pattern excludes Java/Python. This seven-field evaluation record is kept under verification rather than misrepresented as schema-valid Kotlin RED.",
+    "420 timeout cases fail at missing A24 validation rather than current timeout behavior; their positive companion350sec distinguishes new420 from old300 after implementation."
+  ],
+  "canonicalSevenFields": {
+    "workItem": "issue130-candidate-a24-profile",
+    "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+    "testFiles": [
+      {
+        "path": "evaluation/issue130/tests/Issue130CandidateA24ContractTest.java",
+        "sha256": "31ea29352e5c5fd65a73eecc040f8bbfecf743f4c1d0dc42380fe20dd52fee9d"
+      },
+      {
+        "path": "evaluation/issue130/tests/test_candidate_a24.py",
+        "sha256": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414"
+      },
+      {
+        "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+        "sha256": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a"
+      }
+    ],
+    "command": [
+      "python3",
+      "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "--production-classpath-file",
+      ".codex/tdd-evidence/issue130-environment-ca-current-green/compile/production-test-runtime.classpath",
+      "--output",
+      ".codex/tdd-evidence/issue130-candidate-a24-red"
+    ],
+    "failedTests": [
+      "A24P01_prepare24_exact_order_canonical_private",
+      "A24P02_prepare23_rejected",
+      "A24P03_prepare25_rejected",
+      "A24P04_duplicate_rejected",
+      "A24P05_CREATE_NEW_preserves_existing",
+      "A24R01_actual24_serial_routes_fullhold_replay0",
+      "A24R02_technical_first_failure_UNRUN23_no_refund",
+      "A24R03_420_startup_consumed_not_fresh_deadline",
+      "A24R04_allow_remaining350000_within420",
+      "test_A24PY01_valid24_amounts_and_historical2",
+      "test_A24PY02_default_dryrun_reports24_and_never_child",
+      "test_A24PY12_350second_validation_has70left_no_reset",
+      "test_A24PY13_421_validation_stops_before_compile",
+      "test_A24PY14_compile_counts_and_late_success_rejected",
+      "test_A24PY15_child_deadline_kills_process_group"
+    ],
+    "expectedFailureCategory": "MISSING_BEHAVIOR",
+    "recordedAt": "2026-10-18T13:35:28Z"
+  },
+  "recordedAt": "2026-10-18T13:35:28Z"
+}

@@ -1,0 +1,40 @@
+{
+  "status": "SHORT_PROMPT_POLICY_PASS_NOT_EFFICACY_OR_EXECUTION_ACCEPTANCE",
+  "reviewedAt": "2026-10-18T13:19:46.303521+00:00",
+  "instructionsUtf8Sha256": "267af412fe53b9ac088475d76c1cbe5a90e6f34714efb25cb47ba39c900dd8ec",
+  "instructionsBytes": 1448,
+  "instructionsWhitespaceWords": 190,
+  "newP1": 0,
+  "newP2": 0,
+  "furtherPromptChangeRequiredForStatedPolicy": false,
+  "policyChecks": {
+    "CLEARMeaning": "Availability/exclusions/preferences/conditional relationships must be faithfully preserved without necessary personal/local facts being guessed or materially different interpretations selected. This permits date-by-24-hour availability ranges plus relationships, not a unique instant/interval or complete personal structuring output.",
+    "rangeAndConditionalPreservation": "Intentional broad/unrestricted optional restrictions and valid other-availability dependencies are expressly allowed; one date/time interval is not forced.",
+    "bindingAndNecessaryMissingFacts": "Material missing facts/references/date-time-place bindings and conflicting own conditions are review candidates. Optional unspecified restrictions do not become mandatory.",
+    "amPm": "No default morning/evening; unqualified time is explicitly not interpreted as intentional permission for both.",
+    "clearNoMatch": "No candidates/outside search dates alone is not ambiguity. No participation or closing policy changes.",
+    "selfConflictVersusRepair": "A flags possible conflict but returns only an existing label, not a generated question or two-choice repair; direct-edit versus choice remains the later generator/gold distinction.",
+    "preservationAndFinalAnalysis": "Polarity, exceptions, scope and original conditions retained; no text rewriting/regex semantic rules/other-input invention/personalAREA merge; final whole-room interpretation remains separate.",
+    "security": "Participant JSON treated as untrusted data; only supplied choice returned, with no questions or extracted/rewritten conditions. Existing strict wire parser/closed label schema remains required.",
+    "unchangedChoiceDescriptions": "Three descriptions are the original production descriptions; only instructions is the prospective change.",
+    "noAdditionalCaseSpecificExamples": true
+  },
+  "unverified": [
+    "Prompt semantic efficacy and raw zero-false-CLEAR gate on new24.",
+    "B question/direct-edit quality; current prospective standalone2 diagnostic must be preselected/frozen and distinguished from conditional TwoStage/managed-financial E2E.",
+    "Final profile24/source/runtime/payload/time/cost/STOP and independent preexecution acceptance."
+  ],
+  "unchangedLimits": {
+    "threshold": "Existing diagnostic0.8, not operating calibration",
+    "labelsSchemaInputFields": true,
+    "raw500AndTimeout": true,
+    "priorGoldScoresFailPreserved": true,
+    "approvedAggregateUsd": "3.00",
+    "retainedUsd": "1.79322880",
+    "planningHeadroomUsd": "1.20677120",
+    "refunds": 0,
+    "newReservationOrPaidCallsByThisReview": 0,
+    "operatingActivation": "OFF"
+  },
+  "originalReviewSha256": "580eec840fbb9b811520012abbf17755d3ae2200a5c14a35c1329eb8663174ef"
+}

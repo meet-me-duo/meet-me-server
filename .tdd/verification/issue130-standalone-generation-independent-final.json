@@ -1,0 +1,123 @@
+{
+  "status": "PASS_INDEPENDENT_SYNTHETIC_TEST_AND_FI_NOT_EXECUTION_PUBLICATION_OR_MODEL_QUALITY_APPROVAL",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "sourceFiles": {
+    "evaluation/issue130/Issue130StandaloneGenerationCli.java": "49936292adad57cde36d10d4fd6a3776a22f9b7a0bf55da1b1865552fe442341",
+    "evaluation/issue130/run_standalone_generation.py": "b00e7b82553adad77f9554c80e39dcf4e8f880fede21119b669c1afebf809108"
+  },
+  "testFiles": {
+    "evaluation/issue130/standalone_tests/Issue130StandaloneClientTest.java": "7eaaa1fd3bfbe6e6910649a3392eb3fb9fc5704af86509d25f73545f53e13d27",
+    "evaluation/issue130/standalone_tests/Issue130StandaloneGoogleTlsFixture.java": "c50829b613dd243afb23937a13b23981a59a750684767ec3076701dd21dfc7c7",
+    "evaluation/issue130/standalone_tests/Issue130StandaloneNetworkGuard.java": "b5a547c531a1a6f3c60abd1bf4bec77c7d2dedb6a035f3f37661455208292be1",
+    "evaluation/issue130/standalone_tests/Issue130StandalonePrivateCreationTest.java": "a29c5e912a8df85116db6ed92e70381109699d05b7d7c2898be08139d22e186e",
+    "evaluation/issue130/standalone_tests/Issue130StandaloneRuntimeTest.java": "dadb427eac4b1bbc72d7bc94fa9b1c599ed1a8a5fd40c9f838c503e5e465cba9",
+    "evaluation/issue130/standalone_tests/run_standalone_tests.py": "f385938cf7ec4bf2267a662f92c8b66f1284b767cc74c220c820c3442300626e",
+    "evaluation/issue130/standalone_tests/test_standalone_generation.py": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113"
+  },
+  "redEvidence": {
+    "path": ".tdd/verification/issue130-standalone-generation-red-evidence.json",
+    "sha256": "5be104cc4e8d847973d4754e85e9acda6e66224b7b1b94491d1afc702d86f6bf",
+    "classification": "SEVEN_FIELD_EVALUATION_RED_EVIDENCE; repository Kotlin-only schema NOT_APPLICABLE"
+  },
+  "correctedRed": "143 methods=140 requirement assertions failed+3 positive controls;167 assertions/errors0; fixture4 chronology and old outputs preserved.",
+  "initialCurrentGreen": {
+    "path": ".codex/tdd-evidence/issue130-standalone-generation-current-green/receipt.json",
+    "sha256": "bce0c3299fe913864af43e01e0de12d3c06a2c266a5f63b60eb71662838505d2",
+    "methods": 143,
+    "errors": 0,
+    "sourceBeforeAfterEqual": true
+  },
+  "faultEvidence": {
+    "path": ".tdd/verification/issue130-standalone-generation-faults.json",
+    "sha256": "58ed0c4df5424ec563fa8dadda4affe7fca9a41dc9b4cbce350ba7a523340f14",
+    "repositorySchema": "PASS_WITH_FORMAT_CHECKER_NO_SCHEMA_CHANGES"
+  },
+  "faultCount": 11,
+  "detectedAssertions": 12,
+  "survivors": 0,
+  "setupErrors": 0,
+  "allRestoredSelectionsGreen": true,
+  "finalMethods": 143,
+  "finalPassed": 143,
+  "finalFailures": 0,
+  "finalErrors": 0,
+  "finalSkips": 0,
+  "finalScope": "Final full143 executed on isolated overlay whose selected B source/test bytes exactly equal workspace; cached production classpath from current-green; no Gradle or original workspace mutation.",
+  "final": [
+    {
+      "exitCode": 0,
+      "summary": {
+        "tests": 45,
+        "sealedDataRead": false,
+        "assertionFailures": 0,
+        "actualProviderCalls": 0,
+        "passed": 45,
+        "errors": 0
+      },
+      "detectedBy": []
+    },
+    {
+      "exitCode": 0,
+      "summary": {
+        "actualProviderCalls": 0,
+        "assertionFailures": 0,
+        "sealedDataRead": false,
+        "tests": 72,
+        "errors": 0,
+        "passed": 72
+      },
+      "detectedBy": []
+    },
+    {
+      "exitCode": 0,
+      "summary": {
+        "tests": 1,
+        "passed": 1,
+        "assertionFailures": 0,
+        "errors": 0,
+        "actualProviderCalls": 0,
+        "sealedDataRead": false
+      },
+      "detectedBy": []
+    },
+    {
+      "exitCode": 0,
+      "summary": {
+        "tests": 25,
+        "assertionFailures": 0,
+        "errors": 0,
+        "passed": 25
+      },
+      "detectedBy": []
+    }
+  ],
+  "sourceOriginalBeforeAfterEqual": true,
+  "sourceInventoryFiles": 260,
+  "overlayExactRestore": true,
+  "cachedClasspath": {
+    "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/cached-production-runtime.classpath",
+    "sha256": "ae72abcdad560b493a14676ededcd36be525713ea1b21cbb51d4e90d6e223bd7"
+  },
+  "rawDetailedReceipt": {
+    "path": ".codex/tdd-evidence/issue130-standalone-generation-fi/receipt.json",
+    "sha256": "fd63c087cb06138871cf0e8bc6044f15049382b283b068fac0ecc7c034579bee"
+  },
+  "portableOrchestration": {
+    "path": ".tdd/history/issue130-standalone-generation-fi/run_faults.py",
+    "sha256": "c7df805d7a818e9920e71bee7c26fc0b3db7a4d40157da4d620781a988ce3055"
+  },
+  "durationSeconds": 150.616,
+  "coverageLimits": [
+    "F08 detects count/generation complete-body preflight comparison removal; it is not a claim that every redundant late body guard was independently removed.",
+    "F11 targets the fixed-client terminal503 guard directly; production runtime also keeps its existing guard and synthetic503 controls.",
+    "Synthetic TLS/normal trust+hostname and actual runtime parser/count+generation behavior; stub labels do not prove semantic model efficacy.",
+    "No A/TwoStage/managed PostgreSQL ledger/UI/operating activation/invoice hard cap/paid execution claim.",
+    "Independent author FI does not replace the separate final source review, root mandatory guard or pre-execution cost/runtime/plan acceptance."
+  ],
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "realCaKeyReads": 0,
+  "sealedInputGoldReads": 0,
+  "recordedAt": "2026-10-18T14:11:37.000423Z",
+  "sourceInventoryScope": "260 files: src/main Kotlin plus evaluation/issue130 Java/Python; selected B test7 exact. Existing src/test Kotlin is unchanged by this process but its full-tree fingerprint gate is root-owned, not asserted by this FI inventory."
+}

@@ -1,0 +1,83 @@
+{
+  "status": "INPUT_GOLD_AND_B_SUBSET_FROZEN_AFTER_INDEPENDENT_LABEL_REVIEW",
+  "cases": 24,
+  "pairs": 12,
+  "a_gold_counts": {
+    "CLEAR": 14,
+    "NEEDS_REVIEW": 10
+  },
+  "b_gold_counts": {
+    "MUST_NOT_ASK": 14,
+    "SAFE_EDIT_ONLY": 9,
+    "MUST_ASK_MATERIAL_CHOICE": 1
+  },
+  "initial_rater_agreement": {
+    "A": {
+      "agree": 24,
+      "disagree": 0
+    },
+    "B": {
+      "agree": 16,
+      "disagree": 8
+    }
+  },
+  "post_adjudication_agreement": {
+    "A": {
+      "agree": 24,
+      "disagree": 0
+    },
+    "B": {
+      "agree": 24,
+      "disagree": 0
+    }
+  },
+  "adjudication_aggregate": {
+    "author_labels_changed": 0,
+    "rater_B_labels_changed": 8,
+    "case_policy_flags_resolved": 1,
+    "unresolved_policies": 0,
+    "originals_unchanged": true
+  },
+  "matrix_counts": {
+    "personal_or_local_context": 10,
+    "deictic_conditional_or_site_context": 6,
+    "room_timezone": 2,
+    "search_window_repetition": 2,
+    "wide_allowance_preference_exclusion": 2,
+    "other_availability_vs_hidden_fact": 2
+  },
+  "b_subset": {
+    "count": 2,
+    "MUST_ASK_MATERIAL_CHOICE": 1,
+    "SAFE_EDIT_ONLY": 1,
+    "CLEAR": 0,
+    "clear_question_avoidance_denominator": 0,
+    "selected_before_model_results": true,
+    "deterministic_fixed_input_order_rule": true
+  },
+  "input_sha256": "005c6740a3211d7fae0e6d93ef2cea459838ae841938595274cd6494b7bb1f1b",
+  "initial_author_gold_sha256": "b589aec34afccd15159f9d27bafbaaa7e4aef7760f1ea06a6565d0ca099aff53",
+  "initial_rater_gold_sha256": "9783daddbc123153a739e51def32d9c702a59a1f5488c4afdd13c2e8609edd04",
+  "adjudicated_gold_sha256": "8facb9c1a51a4e638a7e7443b778e4590fd51669cf1f361a4ade43d8efffc6ca",
+  "b_subset_sha256": "865d5bfdeae7577ac2b909fcf5bc2d2177580dd02695b3fc742ce4645c9795ab",
+  "rater_adjudicated_gold_sha256": "49becfc42834e5af737831dd5d26cedd3cd9d9577a7e46e6617a4be24a5160c2",
+  "rater_adjudication_sha256": "72b5c20620afd831cb54df80cfcc5d6640bb53fe33ea359d04b9f5669845877a",
+  "input_schema_fields": 6,
+  "non_model_case_keys": true,
+  "maximum_raw_unicode_codepoints": 70,
+  "full_payload_duplicates": 0,
+  "private_permissions": "directory0700/files0600",
+  "candidate_A_prompt_or_old16_individuals_read_this_task": false,
+  "existing_B_contract_excerpt_read_after_seals": "207-213 only, explicitly parent-authorized",
+  "root_or_source_prompt_implementer_given_raw_gold_or_case_id_links": false,
+  "author_has_prior_project_synthetic_exposure": true,
+  "wire_runtime_status": "NOT_PREPARED_REQUIRES_LATER_CUSTODY_PREPARATION",
+  "planned_calls_not_execution": {
+    "candidate_A": 24,
+    "baseline_A": 0,
+    "B_quality_max": 2
+  },
+  "model_calls": 0,
+  "paid_calls": 0,
+  "recorded_at": "2026-10-18T13:25:20.749846Z"
+}

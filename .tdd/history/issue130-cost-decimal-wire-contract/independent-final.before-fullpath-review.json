@@ -1,0 +1,99 @@
+{
+  "status": "PASS_INDEPENDENT_DECIMAL_PREFLIGHT_REGRESSION_FI_NOT_PAID_EXECUTION_APPROVAL",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "sourceFiles": {
+    "evaluation/issue130/run_representative_decisions.py": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366",
+    "evaluation/issue130/run_standalone_generation.py": "f9d59b1d838cb2f1ba75dae5b2c2d166e789d8a78021d4dfe67dc243fd5bcc89"
+  },
+  "testFiles": {
+    "evaluation/issue130/tests/test_cost_decimal_wire_contract.py": "b24ab6d8987c3106c7edfd23a44a679f34e50ef36f7e3cd94490939ec43ac1e7"
+  },
+  "redEvidence": {
+    "path": ".tdd/verification/issue130-cost-decimal-wire-red-evidence.json",
+    "sha256": "5727f118dcfe1a042883b359b628a9495472380217ba9b45ee7b27e57fd4e290",
+    "classification": "SEVEN_FIELD_EVALUATION_RED_EVIDENCE; repository Kotlin-only red schema NOT_APPLICABLE"
+  },
+  "red": "56=44 requirementFAIL+12controls/errors0; sourcebeforeafterequal",
+  "implementationScope": "Exactly the existing type/length check gains the unchanged Java lexical regex in both Python amount() functions before Decimal; Java/model/config/profile/limits/public modes unchanged.",
+  "minimalImplementationPatches": [
+    {
+      "path": ".tdd/history/issue130-cost-decimal-wire-contract/run_representative_decisions.implementation.patch",
+      "sha256": "cf7092e6ce95e95859f500bad605d2ca573997ea6a5a0625a5e2ae966279ab79",
+      "beforeSourceSha256": "13b0b8440b53a10ea826f784b19f2480b2535b47bb62dd71995680d2c3a113ca",
+      "currentSourceSha256": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366"
+    },
+    {
+      "path": ".tdd/history/issue130-cost-decimal-wire-contract/run_standalone_generation.implementation.patch",
+      "sha256": "6899aac25132d08cf8cc717b8a37440b7e715597a9d9099b2e6b475aa74e4903",
+      "beforeSourceSha256": "b00e7b82553adad77f9554c80e39dcf4e8f880fede21119b669c1afebf809108",
+      "currentSourceSha256": "f9d59b1d838cb2f1ba75dae5b2c2d166e789d8a78021d4dfe67dc243fd5bcc89"
+    }
+  ],
+  "independentInitialGreen": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/workspace/issue123-representative-evaluation/server/evaluation/issue130/tests/test_cost_decimal_wire_contract.py"
+    ],
+    "exitCode": 0,
+    "tests": 56,
+    "assertionFailures": 0,
+    "errors": 0,
+    "detectedBy": [],
+    "passed": 56
+  },
+  "faultEvidence": {
+    "path": ".tdd/verification/issue130-cost-decimal-wire-faults.json",
+    "sha256": "0ed088252fea2171c57d4138ab0bfd928a84ae3dafae8629c7bbf18b70551ca0",
+    "repositorySchema": "PASS_WITH_FORMAT_CHECKER_UNCHANGED_SCHEMA"
+  },
+  "mutants": 2,
+  "detectedAssertions": 44,
+  "survivors": 0,
+  "mutantErrors": 0,
+  "eachRestoreGreen56": true,
+  "finalIndependentGreen": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/workspace/issue123-representative-evaluation/server/evaluation/issue130/tests/test_cost_decimal_wire_contract.py"
+    ],
+    "exitCode": 0,
+    "tests": 56,
+    "assertionFailures": 0,
+    "errors": 0,
+    "detectedBy": [],
+    "passed": 56
+  },
+  "sourceBeforeAfterEqual": true,
+  "inventoryScope": "src/main Kotlin + evaluation/issue130 Java/Python; root full-tree mandatory gate separate",
+  "sourceInventoryFiles": 261,
+  "overlayExactRestore": true,
+  "exactFaultPatches": [
+    {
+      "path": ".tdd/history/issue130-cost-decimal-wire-contract/lexical-F01/exact.patch",
+      "sha256": "656c555e98bdf4a0469cd77bdbdb20bf294c8612dd1fc79a3d4d129dc3c5dc58"
+    },
+    {
+      "path": ".tdd/history/issue130-cost-decimal-wire-contract/lexical-F02/exact.patch",
+      "sha256": "1e430e3a9a8130ee7939b0403de789a0545ff6a3e4eb34fc713bfb0f4dc16be4"
+    }
+  ],
+  "fixtureMigration": "None: existing A24/B2 fixture amounts already have leading-zero syntax; old A41/B143 and original19 files/oracles unchanged.",
+  "rawReceipt": {
+    "path": ".codex/tdd-evidence/issue130-cost-decimal-independent/receipt.json",
+    "sha256": "b7f1b4d3757e9691aed0b5ded8bf117875589f4995163546fd394eaaf2b9bc5d"
+  },
+  "launcherSetupHistory": ".tdd/history/issue130-cost-decimal-wire-contract/fi-launcher-cached-cp-setup-error/summary.json",
+  "durationSeconds": 20.6,
+  "producerFull24Integration": "PENDING_SEPARATE_PRODUCER_EXECUTION_AND_INDEPENDENT_EVIDENCE_REVIEW",
+  "limits": [
+    "No real frozen plan/index/wire/input/gold/key/CA read; no model/actual remote calls.",
+    "Public main tests assert rejection before compile/JVM using a module-local child observer; valid canonical plan positive controls are preflight/dry-run.",
+    "Actual full Python\u2192fresh javac\u2192main\u2192factory\u219224 synthetic TLS responses/replay0 is separate and must not be inferred from these56 tests.",
+    "Old A41/B143 current regression and root full mandatory gate/publication/cost/execution remain separately owned.",
+    "Original actual STOP evidence/reservation/gold/quality results are not rewritten; this is no paid retry permission."
+  ],
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "privateDataRead": false,
+  "recordedAt": "2026-10-18T14:51:03.754206Z"
+}

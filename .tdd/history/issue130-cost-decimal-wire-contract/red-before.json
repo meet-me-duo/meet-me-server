@@ -1,0 +1,14 @@
+{
+  "sourceFiles": {
+    "evaluation/issue130/run_representative_decisions.py": "13b0b8440b53a10ea826f784b19f2480b2535b47bb62dd71995680d2c3a113ca",
+    "evaluation/issue130/run_standalone_generation.py": "b00e7b82553adad77f9554c80e39dcf4e8f880fede21119b669c1afebf809108"
+  },
+  "testFile": {
+    "path": "evaluation/issue130/tests/test_cost_decimal_wire_contract.py",
+    "sha256": "b24ab6d8987c3106c7edfd23a44a679f34e50ef36f7e3cd94490939ec43ac1e7"
+  },
+  "recordedAt": "2026-10-18T14:38:03.089186Z",
+  "testFixtures": "Existing public A24/B2 canonical leading-zero amounts; no fixture changes. Module-local subprocess delegation keeps actual Git HEAD/source validations and prohibits compile/JVM.",
+  "actualProviderCalls": 0,
+  "privateDataRead": false
+}

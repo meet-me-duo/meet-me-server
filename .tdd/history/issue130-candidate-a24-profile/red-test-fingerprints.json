@@ -1,0 +1,14 @@
+[
+  {
+    "path": "evaluation/issue130/tests/Issue130CandidateA24ContractTest.java",
+    "sha256": "31ea29352e5c5fd65a73eecc040f8bbfecf743f4c1d0dc42380fe20dd52fee9d"
+  },
+  {
+    "path": "evaluation/issue130/tests/test_candidate_a24.py",
+    "sha256": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414"
+  },
+  {
+    "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+    "sha256": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a"
+  }
+]

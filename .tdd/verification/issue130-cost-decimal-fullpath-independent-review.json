@@ -1,0 +1,71 @@
+{
+  "status": "PASS_NO_PAID_SYNTHETIC_FULLPATH_AND_REGRESSION_REVIEW_NOT_QUALITY_OR_EXECUTION_APPROVAL",
+  "blockingFindings": [],
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "currentSourceFiles": {
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c28adf9f81e673ac5b4a93f6925815aa7fa07398a70aa73f826384899a2f14f3",
+    "evaluation/issue130/run_representative_decisions.py": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366",
+    "evaluation/issue130/run_standalone_generation.py": "f9d59b1d838cb2f1ba75dae5b2c2d166e789d8a78021d4dfe67dc243fd5bcc89",
+    "evaluation/issue130/tests/test_cost_decimal_wire_contract.py": "b24ab6d8987c3106c7edfd23a44a679f34e50ef36f7e3cd94490939ec43ac1e7"
+  },
+  "producerReceipt": {
+    "path": "/tmp/issue130-context-live/offline-corrected-fullpath/receipt.json",
+    "sha256": "821a641aa450bac1d7c7bb876985558667116ab36c62a813d127fe40f0032174"
+  },
+  "producerProvenance": {
+    "path": "/tmp/issue130-context-live/offline-corrected-fullpath/fresh-runtime-provenance.json",
+    "sha256": "b9f649ce887c2358ebdefcc6538aa859cc29554d64120e8097f187d93e91bcd6"
+  },
+  "verified": [
+    "Actual unchanged public Python wrapper invoked as a subprocess, not a function mock; current e79 source.",
+    "Wrapper code compiles actual c28 Java helper with fresh javac and places new class directory first in actual JVM command.",
+    "Synthetic fixed api.openai.com:443 CONNECT/TLS, valid SAN/CA1, ordinary PKIX/hostname and actual mainClient retained. No production offline CLI mode.",
+    "24 complete production-canonical request bytes observed as fixed POST /v1/decisions, serial1; actual parser/route yields CLEAR_STOP12+B_REQUIRED_NOT_RUN12 and complete usage24.",
+    "A physically24 synthetic requests; B0/count0. Replay exit2 ALREADY_CONSUMED with cumulative physical24 and addedHTTP0.",
+    "Startup JAVA_TOOL_OPTIONS boot append contains exactly known network guard+its selftest, no evaluation helper. Guard bytes equal cached known fixture guard; DNS/connect rejection selftest passed.",
+    "261 main/eval source fingerprints before=after=current. No original oracle modifications. All declared producer artifact hashes verified.",
+    "Existing current A41=Java26+Python15 and B143=Java118+Python25 passed; B includes real wrapper/javac/normal TLS/count2+gen2/replay0 test."
+  ],
+  "fullpathCounts": {
+    "AphysicalSyntheticPosts": 24,
+    "exactFrozenWires": 24,
+    "usageCompleteCases": 24,
+    "CLEAR_STOP": 12,
+    "B_REQUIRED_NOT_RUN": 12,
+    "Bphysical": 0,
+    "count": 0,
+    "replayAddedHTTP": 0
+  },
+  "producerRegressions": {
+    "A41": {
+      "path": "/workspace/issue123-representative-evaluation/server/.codex/tdd-evidence/issue130-cost-decimal-a24-green/receipt.json",
+      "sha256": "d9c44e41a4dcf0a02d2391cdb7639100d0feda83eef2f206673d099a3203162e",
+      "javaPassed": 26,
+      "pythonPassed": 15
+    },
+    "B143": {
+      "path": "/workspace/issue123-representative-evaluation/server/.codex/tdd-evidence/issue130-cost-decimal-b2-green/receipt.json",
+      "sha256": "343a215ae5dd6805feb09f2b605e0daf850d929fecd2b3bde0af3c243cccd2e4",
+      "passed": 143
+    }
+  },
+  "newLexicalFI": {
+    "path": ".tdd/verification/issue130-cost-decimal-wire-faults.json",
+    "sha256": "0ed088252fea2171c57d4138ab0bfd928a84ae3dafae8629c7bbf18b70551ca0",
+    "mutants": 2,
+    "assertionsDetected": 44,
+    "restoredEach56": true,
+    "finalIndependent56": true
+  },
+  "limits": [
+    "Fresh compilation/classpath order is static execution provenance; no separate ClassFileTransformer classloading measurement or methodentry instrumentation is claimed.",
+    "Normal TLS positive path is observed; negative CA/SAN/origin contracts remain separately covered by original unchanged suites and FI.",
+    "This completed synthetic positive path is separate from the custodian original-real-plan all-network-deny STOP proof; neither replaces the other.",
+    "Stub response labels/usage are synthetic fixtures, not new holdout results, accuracy, recall, latency distribution or invoice proof.",
+    "No original actual STOP/reservation/gold/quality result changed; no unstarted-reservation settlement or paid retry approved by this review.",
+    "Root full-tree mandatory quality gate, final publication/source review, runtime/plan/cost binding and any authorized actual evaluation remain separate."
+  ],
+  "actualPaidCallsByReviewer": 0,
+  "privateInputGoldIndexWireOrRealCaKeyRead": false,
+  "recordedAt": "2026-10-18T14:55:08.650465Z"
+}

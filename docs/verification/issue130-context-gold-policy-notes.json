@@ -1,0 +1,24 @@
+{
+  "status": "ORIGINAL_GOLD_RETAINED_NO_POSTHOC_RELABEL",
+  "priorIndependentReviewSha256": "353f7514a4c1d3869ce304d9187814484741df3947cf4ec261d629f4f228d616",
+  "newConfirmedGoldDefects": 0,
+  "scopeOfCurrentCheck": "Original fixed context, preregistered unknown facts/must-preserve constraints and contrast metadata were checked; no claim of a new independent blind adjudication. Observed model disagreement is not a reason to invalidate gold.",
+  "questionPolicies": {
+    "MUST_NOT_ASK": 8,
+    "MUST_ASK_MATERIAL_CHOICE": 7,
+    "SAFE_EDIT_ONLY": 1
+  },
+  "assumptionsThatMustStayExplicit": [
+    "An unresolved assignment between an availability window and its date/place is material ambiguity even when the broad candidate range itself is intentional.",
+    "A numeric date and weekday pointing to different stated candidates cannot be silently repaired or prioritized without an agreed policy.",
+    "An unresolved place alias with no grounded finite alternatives is edit-only rather than license to invent city choices.",
+    "A context-resolved weekday/date and semantically repeated availability are not clarification requirements."
+  ],
+  "futurePolicyQuestionsNotNewDefaults": [
+    "Does a real room contain approved public locale/city/meeting-window context not present in the current five context fields? Verify existence and privacy scope before proposing additional fields.",
+    "No numeric-date-over-weekday or implicit morning/evening/city precedence is approved. Such a rule would be a product decision, not a free prompt repair."
+  ],
+  "originalRawGate": "FAIL",
+  "scoresUnchanged": true,
+  "recordedAt": "2026-10-18T13:11:33.574402Z"
+}

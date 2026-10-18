@@ -1,0 +1,15 @@
+{
+  "status": "METADATA_LOCATION_CORRECTED_RED_RUN_UNCHANGED",
+  "recordedAt": "2026-10-18T13:44:44.263449Z",
+  "originalPath": ".tdd/red/issue130-standalone-generation.json",
+  "originalSha256": "c70c75e807dba7a8c42559c7dc38e5bb0952ae9f93a4f3cac0d315b3acb1a67b",
+  "preservedOriginal": ".tdd/history/issue130-standalone-generation-red/misplaced-red-evidence.original.json",
+  "currentPath": ".tdd/verification/issue130-standalone-generation-red-evidence.json",
+  "currentSha256": "c70c75e807dba7a8c42559c7dc38e5bb0952ae9f93a4f3cac0d315b3acb1a67b",
+  "byteIdentical": true,
+  "classification": "SEVEN_FIELD_EVALUATION_RED_EVIDENCE",
+  "repositoryKotlinSchema": "NOT_APPLICABLE",
+  "testSourceExpectedResultChanges": false,
+  "repeatRedRequired": false,
+  "actualProviderCalls": 0
+}

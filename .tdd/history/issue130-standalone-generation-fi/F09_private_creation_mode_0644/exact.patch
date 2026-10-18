@@ -1,0 +1,11 @@
+--- a/evaluation/issue130/Issue130StandaloneGenerationCli.java
++++ b/evaluation/issue130/Issue130StandaloneGenerationCli.java
+@@ -259,7 +259,7 @@
+     private static byte[] read(Path path, int limit) throws IOException { canonical(path); try (InputStream in = Files.newInputStream(path)) { byte[] bytes = in.readNBytes(limit+1); require(bytes.length<=limit,"INVALID_REQUEST"); return bytes; } }
+     private static JsonNode readJson(Path p,int limit) throws Exception { return json(read(p,limit)); }
+     private static JsonNode json(byte[] raw) throws Exception { String decoded=StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(raw)).toString(); return READER.readValue(decoded); }
+-    private static void writeNew(Path path,byte[] raw) throws IOException { canonical(path); try (var channel=Files.newByteChannel(path,Set.of(StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE),PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------"))); OutputStream out=Channels.newOutputStream(channel)) { out.write(raw); } }
++    private static void writeNew(Path path,byte[] raw) throws IOException { canonical(path); try (var channel=Files.newByteChannel(path,Set.of(StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE),PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-r--r--"))); OutputStream out=Channels.newOutputStream(channel)) { out.write(raw); } }
+     private static void writeJson(Path path,Object value) throws IOException { writeNew(path,JSON.writeValueAsBytes(value)); }
+     private static String hash(Path path) throws Exception { canonical(path); MessageDigest md=MessageDigest.getInstance("SHA-256"); try(InputStream in=Files.newInputStream(path)){byte[] b=new byte[65536];int n;while((n=in.read(b))!=-1)md.update(b,0,n);}return HexFormat.of().formatHex(md.digest()); }
+     private static String sha(byte[] bytes) throws Exception { return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(bytes)); }

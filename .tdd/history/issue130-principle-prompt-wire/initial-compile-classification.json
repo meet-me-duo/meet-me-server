@@ -1,0 +1,7 @@
+{
+  "classification": "TEST_COMPILE_SETUP_ERROR_VALID_RED_ZERO",
+  "reason": "JsonNode also acts as iterable; += resolved to collection concatenation. Explicit MutableList.add keeps the same single-question expectation.",
+  "oldSha256": "fd7e165febb678d96f9ccba0bebdff6b224e6235259412d52cb64b944268ec34",
+  "newSha256": "c1ce2c0f6b3b58e2954be0838960a3b5bd522961c733f46c8dbd0fb41f2d1995",
+  "resourceOrExpectationsChanged": false
+}

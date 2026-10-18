@@ -1,0 +1,47 @@
+{
+  "status": "VALID_GENUINE_RED_FOR_PYTHON_JAVA_DECIMAL_WIRE_PARITY_NOT_EXECUTION_APPROVAL",
+  "classification": "SEVEN_FIELD_EVALUATION_RED_EVIDENCE",
+  "repositoryKotlinOnlyRedSchema": "NOT_APPLICABLE_UNCHANGED",
+  "evidence": {
+    "path": ".tdd/verification/issue130-cost-decimal-wire-red-evidence.json",
+    "sha256": "5727f118dcfe1a042883b359b628a9495472380217ba9b45ee7b27e57fd4e290"
+  },
+  "sourceFiles": {
+    "evaluation/issue130/run_representative_decisions.py": "13b0b8440b53a10ea826f784b19f2480b2535b47bb62dd71995680d2c3a113ca",
+    "evaluation/issue130/run_standalone_generation.py": "b00e7b82553adad77f9554c80e39dcf4e8f880fede21119b669c1afebf809108"
+  },
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_cost_decimal_wire_contract.py",
+      "sha256": "b24ab6d8987c3106c7edfd23a44a679f34e50ef36f7e3cd94490939ec43ac1e7"
+    }
+  ],
+  "tests": 56,
+  "failedMethods": 44,
+  "positiveControls": [
+    "canonical leading-zero amounts accepted in preflight and main dry-run",
+    "negative amounts rejected already",
+    "nonfinite amounts rejected already"
+  ],
+  "errors": 0,
+  "skips": 0,
+  "sourceBeforeAfterEqual": true,
+  "durationSeconds": 3.029,
+  "behavior": "Public Python validate_plan and main must require existing Java lexical decimal grammar [0-9]+(?:\\.[0-9]{1,8})? before Decimal arithmetic and before compile/JVM. A24/B2 costProfile and priorReservation tested.",
+  "genuineFailures": [
+    "numeric-equivalent leading dot",
+    "numeric-equivalent exponent",
+    "numeric-equivalent plus",
+    "leading/trailing whitespace",
+    "over8 fractional digits",
+    "Unicode decimal digits",
+    "same alternate syntax in hashed prior reservation"
+  ],
+  "unchangedOriginalFixtures": "A24/B2 existing fixtures already use leading-zero canonical strings; no fixture/oracle/source migration was required. Original A41/B143/legacy tests unchanged.",
+  "java": "Existing Java decimal lexical regex unchanged; root actual failure cause is public metadata only. No actual frozen plan/index/wire/input/key/CA was read.",
+  "rawEvidence": ".codex/tdd-evidence/issue130-cost-decimal-red",
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "privateDataRead": false,
+  "next": "Independent implementation owner may add minimal lexical guard to amount() in both Python wrappers. Then new56GREEN/FI plus oldA41/B143 cached regression; separate root mandatory gate and any new execution plan/cost authorization remain pending."
+}

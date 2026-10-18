@@ -1,0 +1,90 @@
+{
+  "workItem": "issue130-base-failure-observation",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_base_failure_reporting.py",
+      "sha256": "54466016ceda45774dd7dfbe6af3d4bd330581a8742d5e97f2c04859993feffd"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/run_all_synthetic_tests_observed.py",
+      "sha256": "7205ec11bfa35ffe2d8a609da67d1e44afeab2e4407fc1a43b6ca1b667c499fa"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "evaluation/issue130/tests",
+    "-p",
+    "test_base_failure_reporting.py",
+    "-v"
+  ],
+  "failedTests": [
+    "test_BF01_java_failure_exact_safe_projection",
+    "test_BF02_python_failure_distinguished_from_java",
+    "test_BF03_combined_failure_keeps_both_fixed_identities",
+    "test_BF04_production_compile_failure_has_no_test_diagnosis",
+    "test_BF05_evaluation_compile_failure_is_separate",
+    "test_BF06_source_drift_not_misreported_as_assertion",
+    "test_BF07_unlisted_java_id_status_and_pass_are_omitted",
+    "test_BF08_unknown_java_error_type_becomes_fixed_generic",
+    "test_BF09_python_private_headers_and_traceback_never_escape",
+    "test_BF10_missing_observations_return_fixed_unknown",
+    "test_BF11_malformed_duplicate_wrongshape_receipt_return_unknown",
+    "test_BF12_oversized_and_invalid_utf8_receipt_return_unknown",
+    "test_BF13_symlink_artifact_and_parent_are_not_read",
+    "test_BF14_nonregular_artifact_not_opened",
+    "test_BF15_invalid_or_incoherent_summary_returns_unknown",
+    "test_BF16_invalid_exit_codes_return_unknown",
+    "test_BF17_inconsistent_success_receipt_not_failed_test_diagnosis",
+    "test_BF18_deduplicates_only_known_fixed_failure_records",
+    "test_BF19_original_public_id_allowlist_covers_static_and_loop_cases",
+    "test_BF20_public_main_preserves_failure_and_real_output_projection",
+    "test_BF21_public_main_success_does_not_replay_child_raw",
+    "test_BF22_child_capture_is_atomically0600_in0700_directory"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-18T13:22:18.747368Z",
+  "result": {
+    "methods": 22,
+    "failedMethods": 22,
+    "assertionFailuresIncludingSubtests": 25,
+    "errors": 0,
+    "compileExitCode": 0
+  },
+  "scope": "Independent newly added Python reporting oracle against root-authored signature-only TODO skeleton. Missing public behavior is converted to fixed assertion failures; no child/JDK/network executed during RED.",
+  "existingOriginal12FilesSha256": {
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f",
+    "evaluation/issue130/tests/Issue130SyntheticContractTest.java": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79",
+    "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7",
+    "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240",
+    "evaluation/issue130/tests/run_all_synthetic_tests.py": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+    "evaluation/issue130/tests/run_synthetic_tests.py": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+    "evaluation/issue130/tests/test_proxy_failure_reporting.py": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c",
+    "evaluation/issue130/tests/test_representative_decisions.py": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+  },
+  "existingOriginal12Unchanged": true,
+  "sourceBeforeAfterEqual": true,
+  "publicIdDerivation": "Java77 public literal registrations plus fixed HTTP/cost loops; Python24 exact public test_CLI method names. No raw corpus/gold/actual model output.",
+  "rawLog": ".codex/tdd-evidence/issue130-base-failure-observation-red.log",
+  "rawLogSha256": "31fab471bda2f33637ae85fe8958748a406e2f4d554984a91b25469e69f5bc73",
+  "rawFilesPrivate0600": true,
+  "privateDataUsed": "Synthetic sentinel only",
+  "actualProviderCalls": 0,
+  "actualNetworkCalls": 0,
+  "keysOrCorpusRead": false,
+  "notes": [
+    "Kotlin-specific RED schema path pattern is not applied to this Python-only verification evidence.",
+    "BF22 observes raw capture descriptor mode before child writes; final atomic creation is additionally source-review/FI scope.",
+    "Remaining malformed/invalid parameter rows are exercised after root implementation; initial TODO failure may stop a parameter loop early."
+  ]
+}

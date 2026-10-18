@@ -1,0 +1,19 @@
+--- a/evaluation/issue130/standalone_tests/test_standalone_generation.py
++++ b/evaluation/issue130/standalone_tests/test_standalone_generation.py
+@@ -134,7 +134,7 @@
+         return {**self.environment,'JAVA_HOME':str(Path(os.environ['ISSUE130_TEST_JAVA']).parent.parent),'GEMINI_API_KEY':'synthetic-b-wrapper-key-MUST-NOT-LEAK','OPENAI_API_KEY':'synthetic-unused-A-key-MUST-NOT-READ','ISSUE130_B_FROZEN_PLAN_SHA256':digest,'ISSUE130_B_EXECUTE_FROZEN':digest}
+ 
+     def exercise(self, *, clock=None, compile_failure=False, child_timeout=False, child_exit=0, child_stdout=None, seal=True, key=True):
+-        env=self.execution_env(); calls=[]; killed=[]; original_run=subprocess.run
++        env=self.execution_env(); calls=[]; killed=[]; original_run=subprocess.run; original_popen=subprocess.Popen
+         if not seal:env.pop('ISSUE130_B_EXECUTE_FROZEN')
+         if not key:env.pop('GEMINI_API_KEY')
+         if child_stdout is None:child_stdout=json.dumps({'status':'COMPLETED','classifierCalls':0,'countCalls':2,'generationCalls':2})
+@@ -154,6 +154,7 @@
+             calls.append(('compile',command,kwargs))
+             return subprocess.CompletedProcess(command,1 if compile_failure else 0,'','')
+         def popen(command,*args,**kwargs):
++            if command[:1]==['git']:return original_popen(command,*args,**kwargs)
+             self.assertIn('Issue130StandaloneGenerationCli',command)
+             self.assertNotIn('Issue130RepresentativeDecisionsCli',command)
+             self.assertTrue(kwargs['start_new_session'],'separate killable process group')

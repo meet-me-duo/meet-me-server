@@ -1,0 +1,11 @@
+--- a/evaluation/issue130/Issue130StandaloneGenerationCli.java
++++ b/evaluation/issue130/Issue130StandaloneGenerationCli.java
+@@ -142,7 +142,7 @@
+             ByteArrayInputStream input = new ByteArrayInputStream(der);
+             X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(input);
+             require(input.available() == 0 && Arrays.equals(der, certificate.getEncoded()), "CONFIGURATION");
+-            certificate.checkValidity();
++            /* FI: lifetime validation removed */
+             require(certificate.getBasicConstraints() >= 0, "CONFIGURATION");
+             boolean[] usage = certificate.getKeyUsage();
+             require(usage == null || (usage.length > 5 && usage[5]), "CONFIGURATION");

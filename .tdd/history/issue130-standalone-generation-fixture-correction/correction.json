@@ -1,0 +1,19 @@
+{
+  "status": "FIXTURE_PROTOCOL_CORRECTION_ONLY_NEW_FULL_RED_REQUIRED",
+  "recordedAt": "2026-10-18T14:01:41.650547Z",
+  "path": "evaluation/issue130/standalone_tests/test_standalone_generation.py",
+  "beforeSha256": "77a08999586f6ae8279f3431f77f5be91d32bd3545f6af3ca437f4e42eee7207",
+  "afterSha256": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113",
+  "changes": "Capture original Popen before patch; exact git invocation delegates to original Popen. All non-git compile/JVM assertions unchanged. No production HEAD/source/rootseal/deadline expectation changes.",
+  "affectedMethods": [
+    "BW15",
+    "BW20",
+    "BW21",
+    "BW22"
+  ],
+  "originalObservedCountsPreserved": true,
+  "original140FailureInterpretation": "Four methods had a latent fixture interception defect masked by TODO. Original observed143=140FAIL+3controls remains recorded; do not interpret all140 as independently sufficient completed behavioral oracles. Fresh corrected full RED supersedes.",
+  "sourceHelpers": "Original exact f8133/8671 TODOs confirmed before edit",
+  "actualProviderCalls": 0,
+  "privateDataRead": false
+}

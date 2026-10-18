@@ -1,0 +1,78 @@
+{
+  "status": "OFFLINE_GUARDS_COMPLETE_ACTUAL_EVALUATION_PENDING",
+  "source": {
+    "revision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+    "dirtySourceAtExecution": true,
+    "files": 590,
+    "manifestSha256": "e365aca430bcf3feb163e33edaae5df4b6ff73fc9f4b8d8ca3f74f669787425b",
+    "beforeAfterEqual": true
+  },
+  "mandatoryGuard": {
+    "scope": "FINAL_SOURCE_FULL_GUARD_AFTER_A24_B2_IMPLEMENTATION",
+    "exitCode": 0,
+    "sourceBeforeAfterEqual": true,
+    "sourceFiles": 590,
+    "sourceManifestSha256": "e365aca430bcf3feb163e33edaae5df4b6ff73fc9f4b8d8ca3f74f669787425b",
+    "elapsedSeconds": 10.739,
+    "tests": 1719,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "suites": 215,
+    "allXmlFresh": false,
+    "paidCalls": 0,
+    "keysBlankInSubprocess": true
+  },
+  "freshEarlierGuard": {
+    "tests": 1719,
+    "passed": 1715,
+    "oldSkipped": 4,
+    "fresh": true,
+    "scope": "preliminary Kotlin full guard before B helper implementation; current mandatory guard reused XML"
+  },
+  "regression": {
+    "original102": "PASS",
+    "proxy63": "PASS",
+    "ca63": "PASS",
+    "caSupplement3": "PASS",
+    "privacy4": "PASS",
+    "ciObservation22": "PASS",
+    "originalAttemptFinalJdk16": "FAIL_2_ASSERTIONS_FIXTURE_MISSING_PLAN_FIELDS",
+    "jdkFixtureCorrected16": "PASS",
+    "jdkLegacyHardcodeFaultAssertions": 14,
+    "jdkFaultControls": 2,
+    "jdkRestored16": "PASS",
+    "originalHistoricalTestFilesUnchanged": 18,
+    "originalHistoricalTestFixtureException": "test_jdk_runtime_selection.py two existing-profile stub fields only",
+    "originalFailureRetained": true
+  },
+  "newIndependentSuites": {
+    "principleWireNewKotlinCases": 2,
+    "candidateA24": {
+      "passed": 41,
+      "detectedFaults": 6
+    },
+    "standaloneB": {
+      "passed": 143,
+      "detectedFaults": 11,
+      "detectingAssertions": 12
+    },
+    "ciObservation": {
+      "passed": 22,
+      "detectedFaults": 4
+    }
+  },
+  "productionRuntime": {
+    "classes": 877,
+    "resources": 24,
+    "jars": 162,
+    "helperClasses": 13,
+    "testClassesIncluded": false,
+    "classpathRegularFiles": 1076
+  },
+  "actualProviderCalls": 0,
+  "newReservationsUsd": "0",
+  "existingHeldUsd": "1.79322880",
+  "operatingActivation": false,
+  "originalRemoteBaseFailureCause": "UNKNOWN"
+}

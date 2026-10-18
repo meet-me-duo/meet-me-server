@@ -1,0 +1,87 @@
+{
+  "status": "INDEPENDENT_A24_PROTOCOL_GREEN_AND_SIX_FAULTS_DETECTED",
+  "testMethods": 41,
+  "javaMethods": 26,
+  "pythonMethods": 15,
+  "finalFailures": 0,
+  "finalErrors": 0,
+  "chronologicalRed": {
+    "methods": 41,
+    "failedMethods": 15,
+    "passedControls": 26,
+    "errors": 0,
+    "summaryPath": ".tdd/verification/issue130-candidate-a24-profile-red.json",
+    "summarySha256": "081d3dc6272e09826501d8b423863d60bf52b4d82211cf38c67724901bef62f1"
+  },
+  "firstImplementationRun": {
+    "methods": 41,
+    "passed": 39,
+    "assertionFailures": 2,
+    "reason": "New A24 profile incorrectly allowed absent environmentCa; unchanged independent tests detected this and provider added presence checks.",
+    "entireSourceInventoryUnchanged": false,
+    "inventoryDelta": [
+      "evaluation/issue130/standalone_tests/Issue130StandaloneClientTest.java"
+    ],
+    "helperAndA24TestFilesUnchangedDuringRun": true,
+    "fullGreenClaimed": false,
+    "receiptSha256": "b119c41bde148a9804ff45b2a4d72c9c8755a766931dd56959c0a5efb1ce726b"
+  },
+  "currentGreen": {
+    "methods": 41,
+    "failures": 0,
+    "errors": 0,
+    "entireSourceInventoryUnchanged": true,
+    "receiptSha256": "2d2ac701470f3aa93ca182c1566670ef55d1d5efa7980942e4d2e4aa3e80d773"
+  },
+  "faultInjection": {
+    "baselineGreen": 41,
+    "faultsDetected": 6,
+    "selectedRestoredGreenCycles": 6,
+    "finalGreen": 41,
+    "workspaceHelperMutated": false,
+    "isolation": "Temporary Java classpath overlay and Python module overlay; original files never modified.",
+    "schemaAndFormatChecker": "PASS",
+    "canonicalPath": ".tdd/verification/issue130-candidate-a24-profile-faults.json",
+    "canonicalSha256": "0ac543876bb3c018731484b6d66f09a6f891dd77e14f869347f531bf3dadf8ab",
+    "rawReceiptSha256": "1fdbadecdd32daa3cacaef5b5e2b53edde4d10ba03bd2f6f3d1bf388aa6d6a9a"
+  },
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/Issue130RepresentativeDecisionsCli.java",
+      "sha256": "c28adf9f81e673ac5b4a93f6925815aa7fa07398a70aa73f826384899a2f14f3"
+    },
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "13b0b8440b53a10ea826f784b19f2480b2535b47bb62dd71995680d2c3a113ca"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130CandidateA24ContractTest.java",
+      "sha256": "31ea29352e5c5fd65a73eecc040f8bbfecf743f4c1d0dc42380fe20dd52fee9d"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24.py",
+      "sha256": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "sha256": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a"
+    }
+  ],
+  "previousFrozenEvaluationTestFilesChecked": 19,
+  "previousFrozenEvaluationTestFilesChanged": 0,
+  "sourceInventoryCount": 260,
+  "allSourceBeforeAfterUnchanged": true,
+  "actualModelCalls": 0,
+  "actualReservationOrOperatingChanges": 0,
+  "freshHoldoutRead": false,
+  "old16GoldRelabeling": false,
+  "meaningQualityClaimed": false,
+  "limits": [
+    "Protocol and wire safeguards only. No actual A24 model outcomes, meaning quality, representative accuracy or latency claims.",
+    "The broader prior suites and current Kotlin whitespace-only source must be validated by the root final gate; this evidence does not relabel cached or historical source runs.",
+    "SourceRevision remains the b677 baseline plus explicit current helper/source hashes; final publication SHA is assigned by root later."
+  ],
+  "recordedAt": "2026-10-18T13:44:01.893544Z"
+}

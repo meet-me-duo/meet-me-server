@@ -1,0 +1,84 @@
+{
+  "workItem": "issue130-base-failure-observation",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "boundary": "New observed launcher only: no raw forwarding, public original77/24 fixed-ID allowlist, Java/Python stage separation and strict integer exits. Original12 tests/launchers immutable.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/run_all_synthetic_tests_observed.py",
+      "sha256": "8f550ebfd9d994a37e5a050a088e3df1c0686378cb98b48a5ebbb77b191f61c3"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_base_failure_reporting.py",
+      "sha256": "54466016ceda45774dd7dfbe6af3d4bd330581a8742d5e97f2c04859993feffd"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "OFI01-raw-forward",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/tmp/issue130-ci-observation/independent-fi/server/evaluation/issue130/tests",
+        "-p",
+        "test_base_failure_reporting.py",
+        "-v"
+      ],
+      "detectedBy": "test_BF20_public_main_preserves_failure_and_real_output_projection; test_BF21_public_main_success_does_not_replay_child_raw; test_BF22_child_capture_is_atomically0600_in0700_directory",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "OFI02-unknown-id-whitelist-bypass",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/tmp/issue130-ci-observation/independent-fi/server/evaluation/issue130/tests",
+        "-p",
+        "test_base_failure_reporting.py",
+        "-v"
+      ],
+      "detectedBy": "test_BF07_unlisted_java_id_status_and_pass_are_omitted",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "OFI03-python-failure-conflated",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/tmp/issue130-ci-observation/independent-fi/server/evaluation/issue130/tests",
+        "-p",
+        "test_base_failure_reporting.py",
+        "-v"
+      ],
+      "detectedBy": "test_BF02_python_failure_distinguished_from_java",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "OFI04-bool-exit-accepted",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/tmp/issue130-ci-observation/independent-fi/server/evaluation/issue130/tests",
+        "-p",
+        "test_base_failure_reporting.py",
+        "-v"
+      ],
+      "detectedBy": "test_BF16_invalid_exit_codes_return_unknown",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T13:27:00.897279Z"
+}

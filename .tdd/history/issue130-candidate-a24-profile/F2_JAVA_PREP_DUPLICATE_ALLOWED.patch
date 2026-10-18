@@ -1,0 +1,11 @@
+--- /workspace/issue123-representative-evaluation/server/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
++++ isolated-mutant
+@@ -88,7 +88,7 @@
+             canonical(preparedIndex); require(!Files.exists(preparedIndex, LinkOption.NOFOLLOW_LINKS), "OUTPUT_CONFLICT");
+             for (JsonNode record : records) {
+                 keys(record, Set.of("opaque_call_id", "canonical_input_sha256", "canonical_input_bytes", "private_input_path", "private_wire_output_path"));
+-                String id = identity(record.path("opaque_call_id")); require(ids.add(id), "INVALID_REQUEST");
++                String id = identity(record.path("opaque_call_id")); ids.add(id);
+                 Path source = canonical(Path.of(text(record.path("private_input_path"))));
+                 byte[] original = read(source, 1048576);
+                 require(original.length == integer(record.path("canonical_input_bytes")) && sha(original).equals(digest(record.path("canonical_input_sha256"))), "INVALID_REQUEST");

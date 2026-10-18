@@ -1,10 +1,28 @@
+# 개인 맥락 A24/B2 최신 실행 상태
+
+2026-10-18 UTC. 실제 A24 시작은 비용 문자열의 Python/Java 문법 차이로 사례 전 CONFIGURATION 중단됐다. 새 모델 결과0·A24/B2 전원UNRUN·새 raw gate NOT_EVALUATED이며 기존16 FAIL은 별도 보존한다. 현재 장부2.13925888, 이번 .34603008의 proven-unstarted 정산 근거 검토 중·기존 누적 예약1.79322880(UNKNOWN 포함) 불변·refund0·추가 예산 요청0이다. client 객체 생성과 HTTP dispatch를 분리하며 청구액0 직접 계측을 주장하지 않는다. [배치 집계](verification/issue130-context-stop-aggregate.json)와 [실행 계획](../implementation_plan.md)의 최신 구간을 따른다.
+
 # #130 Decisions 평가: 실행 검증과 단계별 품질 결과
 
 2026-10-18 UTC. 이 문서는 실제 평가 대상과 기록 게시 커밋을 구별한다. 최초 실행 대상은 production HEAD `3982535765e878875a901dd9d28352358e594f6f`와 미게시 평가 helper Java `7bf79d8cf266e9af84aa292840228535eb117f841d855e0f2e83fcf7a1a2452f`/Python `5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15`다. 이후 게시 HEAD를 실제 실행 당시 HEAD로 소급하지 않는다.
 
 독립 담당자가 별도 supplemental 8대조쌍 16개 전원을 순서·정답과 함께 사전 봉인했다. 기존 개발60/holdout60은 선택0·불변이다. 균형 대조 진단이며 운영 분포의 무작위 표본이 아니다. root·구현자·리뷰어는 선택 원문·개별 정답·비공개 index를 수동 열람하지 않았다. 입력 준비는 현재 production serializer만 사용했으며 16 wire는 2386–2503 bytes/총39006 bytes·0600이었다.
 
-## 최신 결과: TLS 검증 완료, 실제16건의 raw 품질 기준 FAIL
+## 원 실행 전 사전계획: 새24 A와 사전2 B (역사)
+
+사용자가 합산 한도를 USD3으로 늘리고 실제 참가자가 쓸 생활·현장 맥락의 표현을 요청했다. 이 사전계획 당시 hold는USD1.79322880/여유1.20677120/환급0·새 예약/호출0이었다. 현재 STOP과 장부 상태는 문서 맨 위의 최신 구간을 따른다. 기존16의 원점수/FAIL은 보존하고 이후 개선용 DEV로 구분한다. root는 사용자가 명시 요청한 기존 TIME 대조2건만 평가 종료 후 보았으며, 새24 원문·개별gold는 root와 후보 구현자에게 공개하지 않았다.
+
+새12쌍24건은 퇴근/수업/육아/교대/이동, 지시·조건/현장 맥락, 시간대·모임기간으로 해소되는 문맥, 넓은 허용/선호/제외, 유효한 타인 가용성 의존을 포함한다. 두 평가자는 먼저 독립 gold를 봉인했다. A는24/24 일치했고 B는 초기8건 차이가 있었으나, 안전한 두 complete 해석을 만들 수 없으면 NEEDS_EDIT라는 기존 계약을 확인해 실제 응답 보기 전에 조정했다. 원 두 gold와 차이는 보존하고 미해결 정책0으로 봉인했다. 최종 A는CLEAR14/REVIEW10, B는MUST_NOT_ASK14/MUST_ASK_MATERIAL_CHOICE1/SAFE_EDIT_ONLY9다. 작성자·평가자의 과거 별도 합성 자료/프로젝트 노출도 기록하며 완전 무노출 평가자로 부르지 않는다.
+
+**이전의 검토 필요8건과 이번 B2는 같은 후보 집합에서 8→2로 줄인 관계가 아니다.** 이전8은 완료된16 진단의gold(선택필수7/editonly1)이며 여전히B0이다. 이번은 별도 새24의review10건 중 사전 선정2건이다. A24 단회 최대예약.34603008 뒤 B count+generation 한 세트.30412800를2건 실행하면 총2.74751488/여유.25248512다. 세 번째 B까지는 총3.05164288로USD3을 넘으므로2건으로 제한했다. 이는 보수 engineering reservation이며 invoice hard cap이 아니다.
+
+B2 선정은 **유일한 선택형 필요1건 + 고정 입력 순서에서 첫 생활 맥락 직접 수정1건**이다. A 결과를 보거나 잘 맞을 듯한 사례를 선택하지 않았다. 실제 production generator의 count+generation을 독립 실행하는 STANDALONE_B_QUALITY_ONLY이며 새로운A호출/TwoStage/관리형금융/브라우저제출E2E를 검증한 것으로 부르지 않는다. 첫 사례는 질문·서로 다른 A/B 전체제안·다른 조건 보존을, 둘째는 임의 개인 시각 발명 없이 NEEDS_EDIT·질문 없음과 기존 명시 수정 경로를 평가한다. 맞춤 사유 문장은 현재 DTO에 없어 필수 gold로 추가하지 않았다.
+
+B의 나머지 review8건, CLEAR14건의 실제 질문 회피, 최종 제출/UI·전체모임분석·운영 분포의 질문품질은 미검증으로 남는다. A에서 CLEAR군의 불필요B 경로를 측정해도 실제 불필요 질문의 발생률로 바꾸지 않는다. A 기술/API/refusal/schema/usage/timeout/지문/IO오류는STOP·나머지UNRUN으로 B자동진행을 막는다. A 의미FAIL은 그대로 보고하며, 결과 전 정한 독립B2 진단은 의미오답만으로 바꾸거나 재시도하지 않는다. B도 기술실패에서 전체STOP하며 다른 사례로 채우지 않는다.
+
+[사전 집계/노출·라벨조정 기록](verification/issue130-context-holdout-preregistration.json), [이전16 원인 분석](verification/issue130-context-failure-analysis.md), [공식계약 검토](verification/issue130-decisions-contract-review.md)를 따른다. 새 지침1448B/190words는 독립정책리뷰를 통과했고 사례별 예외를 추가하지 않았다. 이 사전계획 당시 source/runtime/실행기 무과금 검증과 실행 전 독립수용은 진행 중이었다. 이후 검증과 실제 구성 중단·수정 경과는 맨 위 최신 구간과 구현 계획에 기록한다.
+
+## 이전 완료 실측16: TLS 검증 완료, raw 품질 기준 FAIL
 
 후속 사용자가 승인한 환경 CA1개를 평가 client 메모리에만 추가하고 정상 TLS·hostname 검증을 확인했다. 전역/JDK/OS/운영/Secret을 변경하지 않았다. 무인증 HEAD1의 HTTP421은 전송 경로만 확인한 증거다. 내부 상세 인증·TLS 진단과 실제 인증서 지문은 게시하지 않는다.
 

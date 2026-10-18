@@ -1,0 +1,41 @@
+{
+  "status": "INDEPENDENT22_GREEN_FI4_ASSERTION_DETECTED_EACH_EXACT_RESTORE22",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/run_all_synthetic_tests_observed.py",
+      "sha256": "8f550ebfd9d994a37e5a050a088e3df1c0686378cb98b48a5ebbb77b191f61c3"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_base_failure_reporting.py",
+      "sha256": "54466016ceda45774dd7dfbe6af3d4bd330581a8742d5e97f2c04859993feffd"
+    }
+  ],
+  "testAuthorAndImplementerSeparated": true,
+  "methods": 22,
+  "errors": 0,
+  "faultsDetected": 4,
+  "eachRestore22Pass": true,
+  "originalSourceAndTestBeforeAfterEqual": true,
+  "original12Unchanged": true,
+  "scratchOnly": true,
+  "sourceReview": "No new P1/P2 in observed launcher reporting scope. Normalized error types/public ID whitelist, bounded regular nonsymlink reads and atomic0600 child capture retained. CI invokes new tests and observer; original launcher runs once with blank provider keys.",
+  "limits": [
+    "CI failure inner cause remains undetermined until actual safe diagnostic evidence appears.",
+    "Original102/63 and actual CA/JDK regressions not rerun by this focused test/FI run.",
+    "Other concurrently prepared profile/helper files outside this two-file snapshot were not frozen or reviewed here.",
+    "BF22 checks mode before child writing; source review separately confirms O_CREAT|O_EXCL|O_NOFOLLOW mode0600."
+  ],
+  "canonicalFI": {
+    "path": ".tdd/verification/issue130-base-failure-observation-faults.json",
+    "sha256": "a788b1061bb428528915bdccd36ced960733eb0cd76b8f1229fd8fad6b9a37a0",
+    "schemaAndFormatChecker": "PASS"
+  },
+  "rawDetailsSha256": "95843b6a212ceb3d0e66e7baadc90fcd1a6c3c93bb200d08c230f41ea5bcd198",
+  "rawArchive": ".codex/tdd-evidence/issue130-base-failure-observation-fi",
+  "actualChildJvmGradleNetworkProviderCalls": 0,
+  "actualKeysOrCorpusRead": false,
+  "recordedAt": "2026-10-18T13:27:35.687947Z"
+}

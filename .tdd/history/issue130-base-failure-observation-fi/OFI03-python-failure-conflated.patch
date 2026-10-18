@@ -1,0 +1,11 @@
+--- original/evaluation/issue130/tests/run_all_synthetic_tests_observed.py
++++ mutant/evaluation/issue130/tests/run_all_synthetic_tests_observed.py
+@@ -175,7 +175,7 @@
+         elif java:
+             result['stage'] = 'JAVA_TESTS'
+         elif python:
+-            result['stage'] = 'PYTHON_TESTS'
++            result['stage'] = 'JAVA_TESTS'
+         else:
+             return unknown()
+         result['javaFailures'] = java_failures(root / 'base/java-tests.jsonl')

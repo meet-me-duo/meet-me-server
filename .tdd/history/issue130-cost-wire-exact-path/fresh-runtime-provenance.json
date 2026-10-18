@@ -1,0 +1,31 @@
+{
+  "status": "FRESH_COMPILE_AND_NO_SHADOWING_STATIC_PROVENANCE",
+  "executionReceiptSha256": "821a641aa450bac1d7c7bb876985558667116ab36c62a813d127fe40f0032174",
+  "wrapperSourceSha256": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366",
+  "javaHelperSourceSha256": "c28adf9f81e673ac5b4a93f6925815aa7fa07398a70aa73f826384899a2f14f3",
+  "actualWrapperInvokedDirectly": true,
+  "subprocessOrJavaToolsMocked": false,
+  "wrapperJavacAlwaysFresh": true,
+  "freshClassDirectoryBeforeCachedClasspath": true,
+  "bootAppendContainsOnlyNetworkGuardAndSelftest": true,
+  "bootClassNames": [
+    "Issue130SyntheticNetworkGuard.class",
+    "StartupGuardCheck.class"
+  ],
+  "bootContainsEvaluationHelper": false,
+  "normalJdkAndTlsValidation": true,
+  "classLoadingOriginSeparatelyInstrumented": false,
+  "provenanceScope": "Direct real wrapper plus fixed javac and classpath order; not a separate ClassFileTransformer measurement",
+  "artifactSha256": {
+    "run.py": "0c8c06894eba4247dbe640c175e37dddd82d1927df6efba4c540d585c88d27f9",
+    "CorrectedA24FixtureServer.java": "59aa457c4073c84c74f3a2ffdbc9e601cf2893144b7160cac26579f698393de3",
+    "CorrectedA24FixtureServer.class": "6bc52facb3ad6927a6db01d092ea7de78ad7f23bd149ff42a41bed75e4c48151",
+    "cached-a24.classpath": "25650d62af4441d5dd7b3957b5e74d2af8dcfc1e3cf494e4fd9d268deef8b680",
+    "StartupGuardCheck.java": "7c30625f7f1d15921101d10eead0803d7ec74a7659be9b6b4c9ba8c14068d83b",
+    "guard-classes/Issue130SyntheticNetworkGuard.class": "5c25c2302636f778177d31272c400e969e674c1750d2deb6f5910e7aed982759",
+    "guard-classes/StartupGuardCheck.class": "d9922ce4584ae6a0416a93bf6905f1b0845bf8a1928b838529d2800bad34bad6"
+  },
+  "originalRepositoryOracleFilesChanged": false,
+  "actualPaidCalls": 0,
+  "privateCustodyRead": false
+}

@@ -71,7 +71,8 @@ def evidence(value):
 
 def amount(node, name):
     value = node.get(name)
-    need(isinstance(value, str) and len(value) <= 64)
+    need(isinstance(value, str) and len(value) <= 64 and
+         re.fullmatch(r'[0-9]+(?:\.[0-9]{1,8})?', value) is not None)
     result = Decimal(value)
     need(result.is_finite() and result >= 0)
     return result
@@ -119,6 +120,11 @@ def validate_plan(plan_path, index_path, output_path, environment=None):
     try:
         plan = load(plan_path)
         need(isinstance(plan, dict) and plan['workItem'] == 'issue130-representative-decisions')
+        candidate = 'evaluationProfile' in plan
+        if candidate:
+            need(plan['evaluationProfile'] == 'CANDIDATE_A24_USD3_V1' and plan.get('transportMode') == 'ENVIRONMENT_HTTPS_PROXY' and isinstance(plan.get('environmentCa'), dict))
+        count = 24 if candidate else 16
+        suite_seconds = 420 if candidate else 300
         root = canonical(plan['sourceRoot'])
         revision = subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'], capture_output=True, text=True)
         need(revision.returncode == 0 and revision.stdout.strip() == plan['sourceRevision'])
@@ -138,7 +144,7 @@ def validate_plan(plan_path, index_path, output_path, environment=None):
         index = load(index_path)
         need(isinstance(index, dict) and set(index) == {'status', 'records'} and index['status'] == 'WIRES_PREPARED_NOT_EXECUTION')
         records = index['records']
-        need(isinstance(records, list) and len(records) == 16)
+        need(isinstance(records, list) and len(records) == count)
         ids = set()
         for record in records:
             need(isinstance(record, dict) and set(record) == {'opaque_call_id', 'request_path', 'request_sha256', 'request_bytes'})
@@ -148,7 +154,7 @@ def validate_plan(plan_path, index_path, output_path, environment=None):
         need(plan['endpoint'] == 'https://api.openai.com/v1/decisions' and plan['model'] == 'gpt-6-luna')
         need(type(plan['minimumConfidence']) in (int, float) and plan['minimumConfidence'] == .8)
         need(plan['operatingConfigurationChanged'] is False)
-        fixed = {'caseCount': 16, 'perCallSeconds': 15, 'suiteSeconds': 300, 'concurrency': 1, 'maximumHttpAttempts': 16, 'countCalls': 0, 'generationCalls': 0, 'automaticRetries': 0, 'redirects': 0, 'fallbacks': 0, 'requestByteCap': 16384, 'responseByteCap': 16384}
+        fixed = {'caseCount': count, 'perCallSeconds': 15, 'suiteSeconds': suite_seconds, 'concurrency': 1, 'maximumHttpAttempts': count, 'countCalls': 0, 'generationCalls': 0, 'automaticRetries': 0, 'redirects': 0, 'fallbacks': 0, 'requestByteCap': 16384, 'responseByteCap': 16384}
         need(all(type(plan.get(key)) is int and plan[key] == value for key, value in fixed.items()))
         validate_environment_ca(plan, environment)
         cost = plan['costProfile']
@@ -156,10 +162,10 @@ def validate_plan(plan_path, index_path, output_path, environment=None):
         proxy = 'transportMode' in plan
         if proxy:
             need(plan['transportMode'] == 'ENVIRONMENT_HTTPS_PROXY')
-        expected = {'inputUsdPerMillion': '.10', 'margin': '2.2', 'perCallReservedUsd': '.01441792', 'priorHeldUsd': '1.56254208' if proxy else '1.33185536', 'maximumNewReservedUsd': '.23068672', 'maximumCumulativeReservedUsd': '1.79322880' if proxy else '1.56254208', 'approvedAggregateUsd': '2.00'}
+        expected = {'inputUsdPerMillion': '.10', 'margin': '2.2', 'perCallReservedUsd': '.01441792', 'priorHeldUsd': '1.79322880' if candidate else '1.56254208' if proxy else '1.33185536', 'maximumNewReservedUsd': '.34603008' if candidate else '.23068672', 'maximumCumulativeReservedUsd': '2.13925888' if candidate else '1.79322880' if proxy else '1.56254208', 'approvedAggregateUsd': '3.00' if candidate else '2.00'}
         need(all(amount(cost, key) == Decimal(value) for key, value in expected.items()))
         need(type(cost['inputTokenProxy']) is int and cost['inputTokenProxy'] == 65536 and cost['officialInvoiceHardCapProven'] is False)
-        need(amount(cost, 'perCallReservedUsd') * 16 == amount(cost, 'maximumNewReservedUsd'))
+        need(amount(cost, 'perCallReservedUsd') * count == amount(cost, 'maximumNewReservedUsd'))
         need(amount(cost, 'priorHeldUsd') + amount(cost, 'maximumNewReservedUsd') == amount(cost, 'maximumCumulativeReservedUsd') <= amount(cost, 'approvedAggregateUsd'))
         evidence(cost['review'])
         if proxy:
@@ -168,9 +174,11 @@ def validate_plan(plan_path, index_path, output_path, environment=None):
             evidence(previous_evidence)
             previous = load(previous_evidence['path'])
             need(isinstance(previous, dict) and previous.get('status') == 'FULL_SUITE_RESERVED_BEFORE_EXECUTION')
-            retained = {'previousRetainedReservationUsd': '1.33185536', 'newReservationUsd': '.23068672', 'cumulativeReservationUsd': '1.56254208', 'approvedAggregateUsd': '2.00'}
+            retained = {'previousRetainedReservationUsd': '1.56254208' if candidate else '1.33185536', 'newReservationUsd': '.23068672', 'cumulativeReservationUsd': '1.79322880' if candidate else '1.56254208', 'approvedAggregateUsd': '2.00'}
             need(all(amount(previous, key) == Decimal(value) for key, value in retained.items()))
             need(type(previous.get('refunds')) is int and previous['refunds'] == 0)
+            if candidate:
+                need(previous.get('retainedUnknownsRefunded') is False)
         need(not (canonical(output_path) / '.suite-consumed.json').exists(), 'ALREADY_CONSUMED')
         return plan
     except EvaluationFailure:
@@ -199,8 +207,9 @@ def main(argv=None):
             return 0
         need(all((args.plan, args.index, args.output, args.classpath_file)))
         plan = validate_plan(Path(args.plan), Path(args.index), Path(args.output))
+        deadline = started + plan['suiteSeconds']
         if not args.execute_frozen:
-            print(json.dumps({'mode': 'DRY_RUN_NO_NETWORK', 'executionPermitted': False, 'caseCount': 16, 'generationCalls': 0, 'countCalls': 0}))
+            print(json.dumps({'mode': 'DRY_RUN_NO_NETWORK', 'executionPermitted': False, 'caseCount': plan['caseCount'], 'generationCalls': 0, 'countCalls': 0}))
             return 0
         remaining()
         digest = sha(args.plan)

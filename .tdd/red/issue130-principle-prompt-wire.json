@@ -1,0 +1,25 @@
+{
+  "workItem": "issue130-principle-prompt-wire",
+  "sourceRevision": "b677339be48067db0eb4309dc2d1002ba0c26f57",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt",
+      "sha256": "c1ce2c0f6b3b58e2954be0838960a3b5bd522961c733f46c8dbd0fb41f2d1995"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*DecisionPrinciplePromptWireContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.classification.DecisionPrinciplePromptWireContractTest.DPW01 public classifier transmits the reviewed short question without old prompt fallback()",
+    "com.meetme.server.precheck.adapter.output.classification.DecisionPrinciplePromptWireContractTest.DPW02 Unicode raw and complete context stay exact while injected instructions remain data()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T13:25:28.357587Z"
+}
