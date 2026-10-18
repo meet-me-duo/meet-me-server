@@ -1,0 +1,9 @@
+{
+  "recordedAt": "2026-10-18T03:12:33.276097+00:00",
+  "status": "INTERRUPTED_NOT_A_PASS",
+  "reason": "Independent review found unbounded BigDecimal probability scale before arithmetic; stop before source safety correction and rerun full guard after new RED/GREEN/FI",
+  "scope": "Unchanged mandatory guard was running; no complete fresh JUnit success is claimed",
+  "sourceBeforeManifestSha256": "37d9a312ce26dc35d5cf1d8044d56c0f689f452af8201e92a2ba6fea017dc59a",
+  "localEvidence": ".codex/tdd-evidence/issue107-decision-final-guard-attempt1-interrupted",
+  "paidOrProductionCalls": 0
+}

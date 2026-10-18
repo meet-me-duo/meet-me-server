@@ -1,0 +1,68 @@
+{
+  "status": "PASS_INDEPENDENT_FINAL79_AND_HISTORICAL6_PLUS_CURRENT1_FAULTS",
+  "author": "/root/web_precheck_impl",
+  "at": "2026-10-18T02:54:02.370799+00:00",
+  "public_spec": [
+    "TS01-TS12",
+    "DC01-DC12",
+    "root-approved global OFF, normalized result shape, stage-specific usage refinements before RED"
+  ],
+  "tests": ".tdd/red/issue-107-two-stage-pipeline.json",
+  "production_edits_by_author": 0,
+  "expectations_derived_from_implementation": false,
+  "test_limitations": [
+    "Synthetic in-memory budget enforces fake room quota and duplicate dispatch contracts; not durable PG ledger proof",
+    "No monetary amount, valid production quote, all-final-analysis dispatch wiring or activation policy is implemented by this test work",
+    "No actual model/API/OAuth/provider credential/production use",
+    "Existing last CLEAR and deadline publication invariants remain owned by existing real PostgreSQL tests; new worker regression here verifies claim scope and interpretation context through actual worker"
+  ],
+  "next": "Root mandatory ktlintCheck/assemble/test and separate final independent review; no publication by this test author.",
+  "original_red": {
+    "counts": {
+      "tests": 73,
+      "failed": 71,
+      "passed": 2
+    },
+    "manifest": ".tdd/history/issue-107-two-stage-original73/red.json"
+  },
+  "current_red": {
+    "counts": {
+      "tests": 79,
+      "failed": 3,
+      "passed": 76
+    },
+    "manifest": ".tdd/red/issue-107-two-stage-pipeline.json"
+  },
+  "current_green": {
+    "tests": 79,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "receipt": ".codex/tdd-evidence/issue-107-two-stage-terminal-usage-green-receipt.json"
+  },
+  "test_fingerprints": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckBudgetTest.kt",
+      "sha256": "3a813a63c7d159ff0eaeb6544e8ac53b429ea9b90cbc23814f1c500b36d69831"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckCompositionTest.kt",
+      "sha256": "68a8b29bc0247e93a93015a1e6b2d846e79d80623cf2b7691b9e5fabfd4da787"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckDeadlineTest.kt",
+      "sha256": "ddc8af8fa9b3fcbd2aa12179eb430ef7730fc75382936b7593ca98cc19e8d7f5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckRoutingTest.kt",
+      "sha256": "2a14d28feae413fe587ab5ac1116a511ca1c5d28e7720c73586871ea7fc5690a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckTerminalUsageWorkerTest.kt",
+      "sha256": "189ffeb359650c0bf6f7ffb176a00c8af23d934586160f743e3e660c67b85e74"
+    }
+  ],
+  "canonical_faults": ".tdd/verification/issue-107-two-stage-pipeline-faults.json",
+  "historical_six_faults": ".tdd/history/issue-107-two-stage-original73/faults.json",
+  "current_supplemental_fault": ".tdd/verification/issue-107-two-stage-terminal-usage-fault.json"
+}

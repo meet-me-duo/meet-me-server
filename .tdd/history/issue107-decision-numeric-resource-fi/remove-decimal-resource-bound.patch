@@ -1,0 +1,10 @@
+--- src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt original
++++ src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt remove-decimal-resource-bound
+@@ -195,7 +195,6 @@
+                 invalid()
+             }
+         // Bound decimal alignment before any value comparison, summation or argmax.
+-        if (value.precision() > 1000 || value.scale() !in -1000..1000) invalid()
+         if (!node.doubleValue().isFinite() || value < BigDecimal.ZERO || value > BigDecimal.ONE) invalid()
+         return value
+     }

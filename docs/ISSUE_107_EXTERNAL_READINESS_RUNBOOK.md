@@ -1,5 +1,7 @@
 # #107 main 전 남은 외부 작업 안내
 
+> 2026-10-18 모델 후속은 [Decisions 2단계 계약](ISSUE_107_TWO_STAGE_CONTRACT.md)·[평가와 키 준비](ISSUE_107_DECISION_EXTERNAL_EVALUATION.md)를 따른다. 아래 단일 Gemini30개 안내는 이전 이력이며 새 평가 호출 수/비용 승인이 아니다. 공개 OAuth 설정 완료와 기존 인증/DB 운영 경계는 계속 유지한다.
+
 2026-10-17 UTC. 실행하지 않은 준비안이다. production 접근·OAuth 실로그인·Secret 생성/조회/입력·DB 변경·main 병합·배포 승인이 아니다. 로컬 합성 RSA/OIDC/provider·PG 검증은 실제 운영 완료 증거가 아니다.
 
 ## 완료 이력

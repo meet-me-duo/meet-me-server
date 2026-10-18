@@ -1,5 +1,29 @@
 # 새 #107 구현·통합 Worklog
 
+## 저비용 결정 모델 공통 경계 준비 (2026-10-18 UTC)
+
+- [AGENT] 최종 새 필수 guard PASS(03:19:49–03:26:17 UTC): 변경 없는 self-tests/ktlintCheck/assemble/test exit0·fresh189 suite/1479개 중1475PASS·기존4SKIP·실패/오류0. source/test/guard512개 before=after=current이며 첫 중단 시도와 구분했다. 분류142+기존18 집중160·pipeline79, 단계별 독립 FI14종의 탐지/각 복구 근거를 보존했다. 최종 독립 local 게시 리뷰 PASS·미해결 P1/P2 없음이며 commit/push/Draft/exactCI는 바로 다음 단계다. Commit/PR은 동일 커밋 예정이고 이후 정확 원격 결과는 PR/Linear·ignored publish receipt에 보존한다.
+
+- [USER] 최신 후속: 이번 실검증 Gemini·OpenAI·재시도/fallback 합산 USD1 이하 예산 승인. 총액 준수를 입증하지 못하면 실행0이며 키 생성·전달·영구 접근 설정/배포는 제외한다. 기존 환경의 두 key 변수는 존재 여부만 값 비출력으로 확인했고 endpoint/계정/세금은 미확인이다. 별도 최신 [실행 계획](ISSUE_107_USD1_EVALUATION_EXECUTION_PLAN.md)을 준비한다.
+- [USER] Decisions는 별도 branch/Draft로 유지·develop에 병합0. 기존 네 이슈의 필요한 비-Decisions 변경은 현재 develop과 별도 worktree에서 대조 후 통합/exact merge CI까지 승인됐다. 이미흡수/중복/폐기된 마감 후 흐름은 다시 병합하지 않는다. PR116/117 본문은 부모가 정리했으므로 수정0이다.
+
+- [USER] 설계·mock 구현·독립 TDD/리뷰·commit/push/Draft/exact HEAD CI까지 위임. 유료 평가·키/운영/runtime·병합/배포 미승인.
+- [USER] Decisions 1차 충분 CLEAR 통과·의심/정상 낮은 확신은 생성 LLM 재판정(재CLEAR 가능)·보완 선택/직접 수정·마지막 전체 분석 유지의 2단계 개발 방향 승인. 유형 안내 전용 API/SQL/web 확장 없이 분류 port·safe result·standalone OFF adapter·기존 생성 bridge·개발/holdout 평가·누적 예산 설계를 진행한다. 원문/전체마감분석·last CLEAR·기존 caps/fence 유지, 선택 후 재검사 생략0.
+- [AGENT] 비-Decisions develop 통합 최종 대조: 실제 미반영 기능0, 추가 merge 불필요. PR115/118/120/121은 조상이며 열린113/116/117/119의 기능은 흡수/새 제출 전 흐름으로 대체됐다. current develop01d00e7f의 실제 merge CI39070926139·두 job 및 checkout 로그 성공을 재확인했다. [독립 대조 보고](verification/issue107-non-decisions-develop-audit.md)에 정확SHA·diff근거·격리를 보존했다. 기존PR 닫기/수정0·Decisions merge0·main/webdevelop변경0이다.
+
+- [AGENT] 원격server develop01d00e7f/main91eb2505·webmain9b183978 대조, clean develop ff-only에서 feature/issue-107-decision-precheck 생성. 기존107 재개방, 다른 PR/branch 직접변경0. 지침/project-architecture·공식 Decisions/Jev 계약·이전인계 확인.
+- [AGENT] 고위험 테스트 작성/구현/리뷰 분리. 이전/tmp JDK17/Gradle cache가 없어 환경 준비를 별도 진행하며 환경 오류를 RED로 세지 않는다. 다음은 공통계약 독립 RED·합성검증. 실제모델/OAuth/키/운영호출0.
+
+- [AGENT] classifier 독립 RED: 최초101개 중99 TODO assertion 실패·composition2PASS·오류/skip0, 별도 uncertainty 형식7개 RED7. 원본4test SHA를 바꾸지 않고 보강 파일을 별도 cycle로 고정했다. 구현자는 RED 뒤 새 adapter/contract/port/options만 배치했고 집중 GREEN·pipeline RED는 전역 Gradle lock으로 순차 진행 중이다.
+- [AGENT] GitHub #107 맨 위에 채택된2단계 목표·단계 체크리스트·미탐/오탐/오류·refusal/마감/중복·예산 검증/별도 승인 대기를 갱신·재조회했다. 기존96/110과 연결하고 이전body를 보존했으며 중복이슈0이다. 새120개 합성 corpus는 개발60/holdout60으로 분리·구조검증했고 의미oracle 독립검토 진행 중, holdout본문은prompt작성자에게 전달0이다.
+
+- [AGENT] 집중 GREEN: 분류108+기존18=126/126, pipeline73/73 모두 실패/오류/skip0. 원본source/test 지문을 동결했고 각 독립author가 scratch 복사본에서 FI6씩 준비 중이다. 실제 PG budget/全final dispatch·price/threshold binding은 구현하지 않았으며 신규기능 default DENY가 활성화를 차단한다. source의 고정 profile fingerprint를 실제 가격·billed cap 증거로 사용하지 않는다.
+- [AGENT] 새120개 사전oracle 독립리뷰 PASS·확정오류0, fixture/정답 수정0·split SHA불변·기존30bytes불변. 일반 분류 경계 보완만 평가문서에 반영했고 holdout본문/개별정답을root·prompt작성자에게 전달0이다. 실제모델정확도·가격/지연 실측 결과가 아니다.
+
+- [AGENT] 독립 교차 리뷰에서 A CLEAR의 Decisions output usage가 기존 생성 결과2048 cap에 걸리는 P2를 발견했다. TS08을 명시하고 기존73 test/RED/FI 이력을 보존한 뒤 수정 Routing+실제 worker6회귀의79개 보완 RED(요구3FAIL/76PASS/error·skip0)를 먼저 확인했다. A terminal output은 N/A/null, 실제 usage는 stage observation에 보존하는 최소 수정만 반영했고 B cap/worker/fencing은 유지했다. 보완79/79 GREEN·실행 전후 전체 main/test5 지문 일치까지 확인했다. A output 복귀 추가 FI1과 필수 전체 guard·최종 리뷰는 다음 확인이다.
+
+- [AGENT] 첫 필수 전체 guard 진행 중 독립 reviewer가 외부 BigDecimal probability의 극단 scale로 합계 연산 자원이 과도해지는 P2를 발견해 해당 실행을 중단했다(exit143·성공 집계0). 원본/log/전 manifest와 interruption receipt를 보존했다. DC06의 내부 decimal precision/scale 상한을 명시하고 기존 테스트를 바꾸지 않은 별도 안전 RED→최소 보완→FI 후 전체 guard를 새로 실행한다. 실제 OOM급 수를 Gradle 주 JVM에서 실행하지 않는다. 새34개 독립 RED는16 genuine assertion FAIL/18 control PASS·오류/skip0이며 기존5개 test/helper는 불변이다. confidence/probability 공통 helper의 precision/scale 검사를 값 비교 전에 추가한 최소 보정만 반영했고 runtime JSON 제약·prompt 변경0이다. 새 집중160/160 GREEN(기존126+숫자34)·source/test 전후 지문 일치까지 확인했다. 독립 cap 제거 FI1에서16 assertion 실패를 탐지했고 정확 복구160 GREEN·원본 source4/test9 지문 일치까지 확인했다. 새 필수 전체 guard를 진행한다.
+
 ## 런타임 전달·기본 OFF 제품 코드 준비 재개 (2026-10-17 UTC)
 
 - [USER] 준비 문서 확인 뒤 외부 설정/비용 정책과 독립인 인증 전달 코드·AI 기본 OFF 구성과 입력/출력 제한 준비의 구현·독립 TDD/FI/리뷰·정확 CI·develop까지 명시 승인했다. 실제 SSM/Secret/개인키/호스트 권한·DB·OAuth·유료 호출/main은 제외한다.

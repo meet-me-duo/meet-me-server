@@ -581,3 +581,14 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **트레이드오프**: 첫 검사 미완료·실패·무응답이면 마감 결과에 빠질 수 있어 미반영 가능성과 기존 완료본을 분명히 안내해야 한다. 영속 상태/queue·추가 migration·호환 frontend/backend 배포가 필요하다. 새 schema와 인증 준비 없이 main을 먼저 병합하지 않는다. 운영 DB migration·Secret·OAuth·유료 호출 권한은 코드 게시/병합 승인에 포함되지 않는다. 설계·독립 검증 기준은 `ISSUE_107_PRE_SUBMIT_DESIGN.md`와 `ISSUE_107_PRE_SUBMIT_TEST_SPEC.md`에 둔다.
 
 **2026-10-17 runtime 준비 보완**: 기본 OFF의 명시 opt-in과 문서 기반 고정 GenerateContent3.8/LOW/2048 profile을 제공한다. 입력 preflight는 전체 요청 count1→generation1을 공통15초 안에 수행하며 count정수1..4096과 사후 known promptUsage를 방어한다. 위 검사6 admission은 변경하지 않으며 총 HTTP는 최대12(count6+generation6)로 별도 관측한다. count를 실제 billed input과 동일하다고 가정하지 않고 제품 모임10원 정책·실청구/실모델 검증·실제 활성화는 보류한다. 이는 새 API/모델·참여/마감 정책 선택이 아니다.
+
+### ADR-054: 모호성 분류 후 필요한 생성 보완의 2단계 개발
+
+**상태**: Accepted for development (실모델 품질·비용·운영 채택/활성화 미검증)
+**날짜**: 2026-10-18
+
+**결정**: 사용자 승인에 따라 각 원문/context를 저비용 Decisions 분류로 검사하고 충분한 CLEAR만 통과 후보로 삼는다. NEEDS_REVIEW·정상 낮은 확신은 생성 LLM이 다시 확인해 CLEAR 또는 기존 질문/직접 수정을 반환한다. API 오류/refusal은 정상 유보와 구분해 실패로 보존한다. OpenAI Decisions를 우선 후보로 하나의 adapter를 준비하고 Jev는 공통 계약/평가 비교만 둔다. 원문·보완 이력과 최종 마감 전체 해석·AREA/결정론적 매칭, 마지막 CLEAR 및 기존 한도·소유권/revision fencing은 유지한다. 공개 API/DB/web을 유형 안내용으로 확장하지 않고 기존 생성 검사 경계를 재사용한다.
+
+**이유**: 생성 모델이 필요하지 않은 입력을 저렴한 판단으로 분리하면서 복잡한 모호성의 구간·안전한 선택지 생성은 기존 생성 검사에서 검증할 수 있다. 분류기가 생성 API라는 잘못된 가정이나 개인 구조화를 최종 전체 분석으로 대체하는 변경을 피한다.
+
+**트레이드오프**: 1차 false CLEAR는 2차의 보정 기회를 없애므로 독립 핵심 회귀와 미튜닝 검증셋이 필요하다. 전원이2차를 사용할 수 있어 평균 절감이 최대 비용 보장이 아니다. 두 단계는 기존15초를 공유하며 정상 유보도 추가 비용을 예약해야 한다. 실제 confidence/모델·청구 상한/금액·소진 행동은 미확정이다. 공통 budget port/default DENY와 합성 검증을 준비하지만 durable PG/all-final dispatch/quote 증명 전에는 모임10원 보장·운영 활성화 완료가 아니다. 기본 OFF·키/유료 평가/운영/병합·배포 보류를 유지한다. 기존 ADR-053의 원문 보존·저장/완료·마감 정책을 대체하지 않는다.

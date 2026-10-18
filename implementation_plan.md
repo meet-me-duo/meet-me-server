@@ -1,5 +1,18 @@
 # meet-me-server Implementation Plan
 
+## 현재 #107 저비용 결정 모델 공통 준비 (2026-10-18 UTC)
+
+- 최신 승인: Decisions 설계·독립 TDD/mock/FI/회귀·리뷰·commit/push/Draft/exact HEAD CI까지이며 Decisions develop/main 병합·배포0. 추가로 실제 검증은 Gemini·OpenAI 통합 USD1 이내·상한 입증 조건부 승인, 키 생성/전달·새 접근/운영 변경0이다. 비-Decisions 기존 네 이슈의 미반영 변경만 별도 격리 대조 후 develop 통합·정확 merge CI까지 승인됐다.
+- 사용자가 2단계(Decisions→의심/정상 낮은 확신만 생성 LLM 재확인) 개발 방향을 승인했다. 유형 안내 전용 API/DB/web 확장은 하지 않고 분류 port·기본 OFF adapter·기존 생성 검사 bridge·공통 평가·누적 예산 설계를 진행한다. 원문/마감 전체 해석·last CLEAR·기존 한도/ownership/fencing은 유지한다.
+- [x] [AGENT] 실제 원격 server develop01d00e7f/main91eb2505, web main9b183978/PR31 Draft 대조·clean develop ff-only 후 feature/issue-107-decision-precheck 생성·기존107 재개방
+- [x] [AGENT] 공식 Decisions guide/create/response와 Jev API/models 확인·공통 내부 계약/2단계 영향 검토
+- [x] [AGENT] 최신 비-Decisions develop 통합 요청: 별도 worktree actual diff 대조 결과 누락0·115/118/120/121 조상·113/116/117/119 기능 흡수/대체·develop01d00e7f exact CI39070926139 재확인, 중복 merge0
+- [x] [AGENT] 독립 개발60/미튜닝 검증60·한국어 정상/모호/문맥/공격 기준과 oracle 독립 리뷰·모임 전체 예산 설계(영속 원장/전체 dispatch 연결 미구현)
+- [x] [AGENT] 분류 adapter/2단계 bridge·shared budget port/default DENY 독립 RED→집중160/79 GREEN·단계별 FI14·전체1479(1475PASS/기존4SKIP)·512지문 일치·독립 최종 local 게시 PASS
+- [ ] [AGENT] commit/push/Draft PR·정확 HEAD CI·Worklog/Linear 인계
+- [ ] [AGENT/SHARED] 승인된 검증 합산 USD1의 비용 상한·호출수·세금·인증 gate 입증. 실제 confidence/운영 예산 정책·키/접근 설정은 별도이며 현재 유료 호출0
+- 상세: [공통 설계](docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md). 아래는 이전 단위의 당시 기록이다. PR121은 develop01d00e7f, exact merge CI39070926139 성공으로 완료됐다.
+
 ## 현재 #107 제출 전 확인·통합 (2026-10-17 UTC)
 
 - 최신 후속 승인: 실제 외부 설정/비용 정책과 독립인 인증 runtime 전달·기본 OFF AI 입력/출력 제한 준비는 제품 코드까지 완료하고 독립 TDD/FI/리뷰·정확 CI·develop까지 진행한다. 기존 main·실제 외부 작업 보류는 유지한다.
@@ -18,7 +31,7 @@
 - [x] [AGENT] main 준비 후속: provider opt-in 코드 부재·동일 API cap 공식 근거 정정, 30개 실제 평가 호출/중단/측정/조건부 비용 명세, 완료된 공개 OAuth 설정 재요구 없는 인증/DB 안내
 - [x] [AGENT] 기존 API 지원 profile·기본 OFF 실제 바인딩/인증 전달·input gate 독립 TDD/FI. 필수 전체1258(1254PASS/기존skip4), Node140·V837·합성 Nginx PASS. 근거 없는 verified=true·유료 호출0 유지
 - [x] [AGENT] runtime 준비 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음 (`docs/verification/issue107-runtime-readiness-independent-review.md`)
-- [ ] [AGENT] runtime 준비 commit/push/Draft→정확 HEAD CI→develop 일반merge·정확 merge CI
+- [x] [AGENT] runtime 준비 PR121 HEAD20fb099·CI39069432900→develop01d00e7f 일반merge·exact merge CI39070926139 완료(최신 격리 대조로 재확인)
 - [ ] [USER/SHARED] 모임 총 AI10원 정책 충돌 결정·입증된 상한으로 별도 유료 평가 승인, 런타임 자격 증명·RS256/JWKS 및 실로그인/운영 읽기·복구·전환 승인. 공개 OAuth 설정은 완료 유지. 운영자 요약은 기본 OFF이며 출시 차단 조건 아님
 - 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
 - 상세상태/다음시작점/역할·검증한계: [새107 Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음

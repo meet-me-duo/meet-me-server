@@ -1,0 +1,287 @@
+{
+  "workItem": "issue-107-two-stage-pipeline",
+  "sourceRevision": "01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df",
+  "boundary": "Independent synthetic port/budget/OFF composition and actual-worker contract FI. Six original73 faults are historical; root-approved TS08 correction changed exactly one Routing assertion and added six worker cases, with new79 RED/GREEN and supplemental current FI7. Original-source author edits0; scoped targets/tests restored exactly. Original broad hash assertion stopped safely for one external whitespace-only classifier formatting change; corrected current-format73 control passed, detailed history discloses it. No PG budget ledger, all-final dispatch wiring, monetary amount, actual provider/model/OAuth call or production activation proof. Root owns final full gates and publication.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckDecisionRoutingProperties.kt",
+      "sha256": "8a1fd60d045b800a91f5acd9f6d1343d52db11503c76c10e56ee01afec937b61"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt",
+      "sha256": "a4539dfef56a7d3e2b1527f46d0cd93cd2d40341296d047e447ded6dbd626cb4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt",
+      "sha256": "d276541d51e822abbea003f90719b6084e632c8cb50df0a4eb575a0f9d5f9f56"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PreSubmissionCheckProvider.kt",
+      "sha256": "d11b75419a9725c7a5635eb4cbe3689b8d68073436a086de4972fc19267b502e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "02717612ec76679e11cb95c3c4b5b012ed42bc688b3e00c3acdda30b19fa33d7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/DefaultDenyAiCallBudget.kt",
+      "sha256": "619e6a68f16f7f0e19902196ec9e0aaad427b325a309e5685bdae98c3f1656b1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/AiCallBudgetPort.kt",
+      "sha256": "f446ece1f6d49f822697b208278633b7802509221a09095152951b11ca020676"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckBudgetTest.kt",
+      "sha256": "3a813a63c7d159ff0eaeb6544e8ac53b429ea9b90cbc23814f1c500b36d69831"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckCompositionTest.kt",
+      "sha256": "68a8b29bc0247e93a93015a1e6b2d846e79d80623cf2b7691b9e5fabfd4da787"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckDeadlineTest.kt",
+      "sha256": "ddc8af8fa9b3fcbd2aa12179eb430ef7730fc75382936b7593ca98cc19e8d7f5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckRoutingTest.kt",
+      "sha256": "2a14d28feae413fe587ab5ac1116a511ca1c5d28e7720c73586871ea7fc5690a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckTerminalUsageWorkerTest.kt",
+      "sha256": "189ffeb359650c0bf6f7ffb176a00c8af23d934586160f743e3e660c67b85e74"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "F1-unverified-quote-dispatch",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckBudgetTest"
+      ],
+      "detectedBy": [
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckBudgetTest#[1] fault = \"UNVERIFIED\""
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 26,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "HISTORICAL_ORIGINAL_73_BEFORE_TS08_CORRECTION",
+      "detailedEvidence": ".tdd/history/issue-107-two-stage-original73/faults.json",
+      "testFingerprintEvidence": ".tdd/history/issue-107-two-stage-original73/red.json"
+    },
+    {
+      "fault": "F2-fresh-deadline-per-call",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckDeadlineTest"
+      ],
+      "detectedBy": [
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#TS04 a smaller caller deadline is not enlarged for either stage()",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#TS04 a late first-stage CLEAR records incurred usage but cannot be accepted()",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#[1] phase = \"A_RESERVE\"",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#[2] phase = \"A_CALL\"",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#[3] phase = \"A_RECORD\"",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#[4] phase = \"B_RESERVE\"",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#[5] phase = \"B_CALL\"",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#[6] phase = \"B_RECORD\"",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest#TS04 classification and generation share one fifteen second ceiling()"
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 11,
+        "failures": 9,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "HISTORICAL_ORIGINAL_73_BEFORE_TS08_CORRECTION",
+      "detailedEvidence": ".tdd/history/issue-107-two-stage-original73/faults.json",
+      "testFingerprintEvidence": ".tdd/history/issue-107-two-stage-original73/red.json"
+    },
+    {
+      "fault": "F3-refusal-enters-generation",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckRoutingTest"
+      ],
+      "detectedBy": [
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckRoutingTest#TS02 refusal is a failure and never automatically requests generation()"
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 28,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 28,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "HISTORICAL_ORIGINAL_73_BEFORE_TS08_CORRECTION",
+      "detailedEvidence": ".tdd/history/issue-107-two-stage-original73/faults.json",
+      "testFingerprintEvidence": ".tdd/history/issue-107-two-stage-original73/red.json"
+    },
+    {
+      "fault": "F4-attributed-aggregate-usage",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckBudgetTest"
+      ],
+      "detectedBy": [
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckBudgetTest#TS08 stage-specific token and model observations remain separate from the terminal result()"
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 26,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 26,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "HISTORICAL_ORIGINAL_73_BEFORE_TS08_CORRECTION",
+      "detailedEvidence": ".tdd/history/issue-107-two-stage-original73/faults.json",
+      "testFingerprintEvidence": ".tdd/history/issue-107-two-stage-original73/red.json"
+    },
+    {
+      "fault": "F5-routing-bypasses-global-OFF",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckCompositionTest"
+      ],
+      "detectedBy": [
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckCompositionTest#TS11 routing flag and injected approvals cannot bypass the existing global provider OFF()"
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 8,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "HISTORICAL_ORIGINAL_73_BEFORE_TS08_CORRECTION",
+      "detailedEvidence": ".tdd/history/issue-107-two-stage-original73/faults.json",
+      "testFingerprintEvidence": ".tdd/history/issue-107-two-stage-original73/red.json"
+    },
+    {
+      "fault": "F6-worker-drops-generation",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckCompositionTest"
+      ],
+      "detectedBy": [
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckCompositionTest#[1] generation = 1",
+        "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckCompositionTest#[2] generation = 7"
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 8,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "HISTORICAL_ORIGINAL_73_BEFORE_TS08_CORRECTION",
+      "detailedEvidence": ".tdd/history/issue-107-two-stage-original73/faults.json",
+      "testFingerprintEvidence": ".tdd/history/issue-107-two-stage-original73/red.json"
+    },
+    {
+      "fault": "F7-classifier-known-output-reintroduced-into-legacy-generation-cap-field",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*TwoStagePrecheckTerminalUsageWorkerTest"
+      ],
+      "detectedBy": [
+        "[1] output = 4",
+        "[2] output = 2049"
+      ],
+      "result": "DETECTED",
+      "counts": {
+        "tests": 6,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0
+      },
+      "restored": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "phase": "CURRENT_TS08_NA_CORRECTION_FIVE_FROZEN_FILES",
+      "detailedEvidence": ".tdd/verification/issue-107-two-stage-terminal-usage-fault.json",
+      "testFingerprintEvidence": ".tdd/red/issue-107-two-stage-pipeline.json"
+    }
+  ],
+  "recordedAt": "2026-10-18T03:10:34.329394+00:00"
+}

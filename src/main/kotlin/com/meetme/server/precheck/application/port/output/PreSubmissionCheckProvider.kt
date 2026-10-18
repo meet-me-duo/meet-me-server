@@ -17,6 +17,8 @@ data class PrecheckProviderRequest(
     val searchEndDate: LocalDate,
     val timeout: Duration,
     val maximumOutputTokens: Int = 2048,
+    val roomId: UUID? = null,
+    val executionGeneration: Int? = null,
 )
 
 enum class PrecheckVerdict { CLEAR, NEEDS_CHOICE, NEEDS_EDIT }

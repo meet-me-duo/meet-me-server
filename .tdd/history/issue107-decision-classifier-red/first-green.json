@@ -1,0 +1,89 @@
+{
+  "totals": {
+    "tests": 126,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "xml": [
+    {
+      "file": "TEST-c-PDM7HLEH3CV1M.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest.xml",
+      "sha256": "9ecefbefa837500b433a7daa77c4ccb9c286d20939601d8ba27c55508f860425",
+      "suite": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest",
+      "tests": 58,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.m-3QQ6LPEE2LLCU.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest.xml",
+      "sha256": "452a49355868bf63b8e3c985fee43a9b050704939dc53d5a6ec8d54cca1c292e",
+      "suite": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.meetme.server.precheck.adapter.output.classification.AmbiguityClassificationCompositionTest.xml",
+      "sha256": "4057d91392bf12a5dde1da6987ee28445e376ef367d72a4e1e01de55d3530251",
+      "suite": "com.meetme.server.precheck.adapter.output.classification.AmbiguityClassificationCompositionTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationSafetyTest.xml",
+      "sha256": "6f7a3f6d0c40f7b04bd79ba006d362f23c0892850240a2f2b24e88f2ad84bf13",
+      "suite": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationSafetyTest",
+      "tests": 41,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRetryAfterContractTest.xml",
+      "sha256": "b987e5cf0b196976027b439eb8fd269e1b8024656355a35e30afe7843f0d6f2f",
+      "suite": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRetryAfterContractTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.xml",
+      "sha256": "30ec49d2aba21c7a0eea4b17a16f393f61b8f6923862fe82e91d96fca58f9511",
+      "suite": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "file": "TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderUnicodeContractTest.xml",
+      "sha256": "8aa7d5bcf8467d17ea47b5c328b401ee3f5f682acdb636bee80cb7862f60e5b4",
+      "suite": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderUnicodeContractTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "sourceAndTestHashes": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassifierOptions.kt": "70c8acff13ead4f9e8df0150c8f61060abf1c6d0b4146ba783a328f463d1cd1e",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "c77a911e1129acc32f711d38cbd5dd6fe44f83982828c51e68b14d79f8614132",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt": "f525efc3e8e2f9d013ea82982d30c6d44961bd0ad4f9455a211868c4875840e6",
+    "src/main/kotlin/com/meetme/server/precheck/application/port/output/AmbiguityClassificationPort.kt": "d0ba39fe0aef03c3490ec99a639201f01c5a08b4bb033132092c0b483155c53a",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationSafetyTest.kt": "4d194a1c69099bec09e1b4181e93a6ac541cf622bbdf39e07b8a37b7aa9e76a6",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationCompositionTest.kt": "9fb2ebc2a806b609268519623e3ac57010636208f0b5c798a61990384d8c2757",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationUncertainValidationTest.kt": "cb12d2978f76a79eb2b6d8d44006c339804c142a961c89f1f696514908926404",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationTransportTest.kt": "35153bb9ed26f95ec7b1fc9059929d361485b39c17d768a673ca3c34cf860622",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+  },
+  "beforeAfterIdentical": true,
+  "rawLog": ".codex/tdd-evidence/issue107-decision-green.log",
+  "rawLogSha256": "999e119ef10ece520022831e7978c38144e3a9ee21b2b0450966808e3bd7507f",
+  "scope": "126 focused tests: classifier108 plus unchanged Gemini18; unrestricted full gate belongs to root.",
+  "externalModelCalls": 0
+}

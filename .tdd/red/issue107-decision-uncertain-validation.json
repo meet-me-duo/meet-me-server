@@ -1,0 +1,33 @@
+{
+  "workItem": "issue107-decision-uncertain-validation",
+  "sourceRevision": "01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationUncertainValidationTest.kt",
+      "sha256": "cb12d2978f76a79eb2b6d8d44006c339804c142a961c89f1f696514908926404"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*OpenAiAmbiguityClassificationUncertainValidationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [1] invalid = \"MISSING_CONFIDENCE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [2] invalid = \"STRING\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [3] invalid = \"NEGATIVE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [4] invalid = \"ABOVE_ONE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [5] invalid = \"NONFINITE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [6] invalid = \"MISSING_PROBABILITIES\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#DCU01 :: [7] invalid = \"INVALID_SUM\""
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-18T02:50:14Z"
+}

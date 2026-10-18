@@ -41,6 +41,8 @@ class PreSubmissionCheckWorker(
                         claim.room.searchRange.startInclusive,
                         claim.room.searchRange.endExclusive,
                         remaining,
+                        roomId = claim.room.id.value,
+                        executionGeneration = check.generation,
                     )
                 result = provider.check(request)
                 validate(result, check.candidate.rawText)

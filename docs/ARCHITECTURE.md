@@ -572,3 +572,9 @@ PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 �
 runtime 준비는 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.
 
 새 release의 `runtime-auth-mode=oauth-rs256-required`는 renderer의 typed OAuth/서명 경로·Origin 및 optional 기본 OFF flag 전달을 요구한다. RSA/JWKS는 고정 `/run/meetme-auth` read-only bind이며 없는 호스트 경로는 생성하지 않는다. marker/renderer/Compose를 current17 guard catalog에 묶고 historical14은 읽기만 지원한다. 기존 guard 승인·migration/drain·부분 signing 거부 정책은 바꾸지 않는다. 실제 Secret/파일/권한·OAuth·DB/운영 전환은 별도 사용자 작업이다.
+
+### #107 2단계 분류·생성 보완 개발 경계 (2026-10-18, ADR-054)
+
+새 AmbiguityClassificationPort는 SDK와 독립인 원문/context→CLEAR/NEEDS_REVIEW/INDETERMINATE 계약이다. OpenAI Decisions 후보 adapter는 단일 holistic choice만 사용하며 자유 구간/질문·개인 구조화/AREA를 생성하지 않는다. standalone adapter의 자동 Spring 등록은 없고 TwoStagePreSubmissionCheckProvider가 명시 조합한다. 충분한 CLEAR만 통과하고 정상 유보·검토 필요는 기존 생성 검사로 재판정(CLEAR 가능), refusal/API 오류는 미완료다. 두 stage는 기존 provider 최대15초를 공유하고 기존 worker가 room/check/generation·owner/deadline 게시 fencing을 유지한다. 공개 API/SQL/web 구조는 확대하지 않는다.
+
+기존 provider OFF와 별도 decision-routing OFF를 유지하며 selector만 켜거나 키만 있어도 default DENY budget 경계로 새 단계 호출을 허용하지 않는다. stage별 호출 전 검증된 quote/reservation이 필요하고 known/partial/unknown usage는 provider/model별로 기록한다. 기존 단일 provider 결과에는 terminal stage metadata만 둔다. 비용 불명·timeout·거부·유실을 무료로 환급하지 않는다. 공통 AiCallBudgetPort/default DENY·fake 검증과 실제 PG 원장/모든 최종 분석 dispatch 연결을 구분한다. 후자는 설계 단계이며 기존 HOST 실패 재시도의 모임 누적 상한 부재를 해결했다고 주장하지 않는다. 실제 금액·quote·profile 검증과 durable 전체 목적 연결 전 유료 활성화를 보류한다. 상세 DC/TS·평가·예산 설계는 ISSUE_107_DECISION_CLASSIFICATION_DESIGN/ISSUE_107_TWO_STAGE_CONTRACT/ISSUE_107_DECISION_EVALUATION/ISSUE_107_SHARED_AI_BUDGET_DESIGN을 따른다.

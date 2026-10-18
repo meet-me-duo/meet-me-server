@@ -1,0 +1,36 @@
+{
+  "status": "INDEPENDENT_73_GREEN_FI_IN_PROGRESS",
+  "author": "/root/web_precheck_impl",
+  "at": "2026-10-18T02:54:02.370799+00:00",
+  "public_spec": [
+    "TS01-TS12",
+    "DC01-DC12",
+    "root-approved global OFF, normalized result shape, stage-specific usage refinements before RED"
+  ],
+  "tests": ".tdd/red/issue-107-two-stage-pipeline.json",
+  "counts": {
+    "tests": 73,
+    "valid_requirement_failures": 71,
+    "baseline_default_off_pass": 2,
+    "errors": 0,
+    "skipped": 0
+  },
+  "production_edits_by_author": 0,
+  "expectations_derived_from_implementation": false,
+  "test_limitations": [
+    "Synthetic in-memory budget enforces fake room quota and duplicate dispatch contracts; not durable PG ledger proof",
+    "No monetary amount, valid production quote, all-final-analysis dispatch wiring or activation policy is implemented by this test work",
+    "No actual model/API/OAuth/provider credential/production use",
+    "Existing last CLEAR and deadline publication invariants remain owned by existing real PostgreSQL tests; new worker regression here verifies claim scope and interpretation context through actual worker"
+  ],
+  "next": "Six isolated mutations and each exact restoration are queued under the shared Gradle lock; root owns final standards/review/publication.",
+  "green": {
+    "tests": 73,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "unchanged_frozen_tests": true,
+    "source_unchanged_during_run": true,
+    "receipt": ".codex/tdd-evidence/issue-107-two-stage-pipeline-green-receipt.json"
+  }
+}
