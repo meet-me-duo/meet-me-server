@@ -1,0 +1,47 @@
+{
+  "workItem": "issue130-managed-browser-runtime-gates",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Protocol-only immutable runtime/source/classpath pins and readiness attestation consistency; scratch mutations only, not actual app/PG/browser execution.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/runtime_pin.py",
+      "sha256": "2a258255f25e3ee948089827a6e0753bb3f1f25876be91a2254baa96e5a14220"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/test_runtime_pin.py",
+      "sha256": "1c69aca23a436221b6df0a9c7b62e5207a04478f3c00b3862dbe0d8be452bdcd"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "RUNTIME_BYTES_UNCHECKED",
+      "command": [
+        "python3",
+        "/tmp/issue130-managed-browser-author/run_pin_fi.py"
+      ],
+      "detectedBy": "test_MLP10_changed_runtime_byte_is_not_immutable_runtime",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "READINESS_DIGEST_UNCHECKED",
+      "command": [
+        "python3",
+        "/tmp/issue130-managed-browser-author/run_pin_fi.py"
+      ],
+      "detectedBy": "test_MLP21_readiness_digest_must_match_validated_manifest",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "JAR_FAKE_CLASS_UNCHECKED",
+      "command": [
+        "python3",
+        "/tmp/issue130-managed-browser-author/run_pin_fi.py"
+      ],
+      "detectedBy": "test_MLP16_old_primary_fake_class_forbidden_in_jar",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T18:01:50.889299Z"
+}

@@ -1,0 +1,421 @@
+{
+  "status": "INDEPENDENT_CONNECTED_THREE_SCOPE_READBACK_PASS",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "recordType": "Portable sanitized projection of immutable actual-run artifacts; local raw files retained separately",
+  "scopes": [
+    {
+      "scope": "new-managed8",
+      "evidenceSha256": "84ce6963b264ecb33cdf0f81fc0d101788b8d26a93767402654d3ca7bcd60609",
+      "playwrightSha256": "ca94b8b99632b48d8a679e3085a1364fe04a675f6a237e2a7687e11b49a52cbf",
+      "managedStateSha256": "143d368f1353cc3506be3e1e290cd3a98899256d730828dae6acf23117853826",
+      "readinessSha256": "e9516531ebab6ebb7cd6261c55382361ca07a7cdefab541ca8850512a699fb08",
+      "specSha256": "817c31d6960d4270997446a5c9fa595824bfee16ac1b113926dc4597784288cc",
+      "testsPassed": 8,
+      "testsSkipped": 0,
+      "testsRetried": 0,
+      "uniqueScenarioCount": 4,
+      "projects": [
+        "desktop",
+        "mobile"
+      ],
+      "durationMs": 120439.076,
+      "sourceCounts": {
+        "webFiles": 304,
+        "serverFiles": 263,
+        "runtimeFiles": 1143
+      },
+      "toolFileCount": 26,
+      "servedAssetCount": 6,
+      "currentSourceRuntimeToolAssetMismatches": 0,
+      "readinessValidatedOffline": true,
+      "observer": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0,
+        "contextsObserved": 18,
+        "requestsObserved": 474,
+        "proofFiles": 3
+      },
+      "ledger": {
+        "reservations": 22,
+        "dispatchClaims": 22,
+        "observations": 22,
+        "missingOrMismatchedDispatches": 0,
+        "operationCounts": {
+          "PRECHECK_CLASSIFICATION": 18,
+          "PRECHECK_COUNT": 2,
+          "PRECHECK_GENERATION": 2,
+          "FINAL_PRIMARY": 0,
+          "FINAL_FALLBACK": 0
+        }
+      },
+      "network": {
+        "localSyntheticCalls": 22,
+        "remoteCalls": 0
+      },
+      "budget": {
+        "held": "72",
+        "epochs": 8,
+        "states": {
+          "READY": 8
+        },
+        "settled": "0"
+      },
+      "product": {
+        "acceptedHeads": 8,
+        "acceptedVersions": 16,
+        "candidates": 20
+      },
+      "cleanup": {
+        "reportedAtCompletion": {
+          "ownedContainersRemaining": 0,
+          "ownedListenersRemaining": 0,
+          "privateTempMaterialRemaining": 0
+        },
+        "oldOwnedContainersRemainingReadOnlyVerified": 0,
+        "oldOwnedPrivateMaterialRemainingVerified": 0,
+        "oldOwnedJvmStillPresent": false,
+        "currentOpenRegisteredPortCount": 0,
+        "currentPortReadbackIsNotUsedToAttributeLaterSuiteListeners": true
+      },
+      "rawEvidence": {
+        "evidence.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/evidence.json",
+          "sha256": "84ce6963b264ecb33cdf0f81fc0d101788b8d26a93767402654d3ca7bcd60609"
+        },
+        "playwright.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/playwright.json",
+          "sha256": "ca94b8b99632b48d8a679e3085a1364fe04a675f6a237e2a7687e11b49a52cbf"
+        },
+        "managed-state.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/managed-state.json",
+          "sha256": "143d368f1353cc3506be3e1e290cd3a98899256d730828dae6acf23117853826"
+        },
+        "backend-readiness.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/backend-readiness.json",
+          "sha256": "e9516531ebab6ebb7cd6261c55382361ca07a7cdefab541ca8850512a699fb08"
+        }
+      },
+      "observerProofs": [
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/observer-proof-1.json",
+          "sha256": "a1b8eac16286aeb76c4c752a9062bfa7ef7ab11661e444313b0deaa709b6f1df"
+        },
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/observer-proof-2.json",
+          "sha256": "916c0d9f0f96a5adb8ecc12c5fc69e1f0363eebeab7e1d84372da8ef11f5f87a"
+        },
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/new-managed8/observer-proof-3.json",
+          "sha256": "916c0d9f0f96a5adb8ecc12c5fc69e1f0363eebeab7e1d84372da8ef11f5f87a"
+        }
+      ],
+      "modelQualityEvidence": false
+    },
+    {
+      "scope": "original-host8",
+      "evidenceSha256": "012e4bdf354592d874f09ee40dab666cdc4f56cb4bd894fa47f5e9e75625bea7",
+      "playwrightSha256": "4400f57aaffface54f0f3544e4ef27ef191f9fa86bfd2cf5401dd822a0df70c8",
+      "managedStateSha256": "6011f2f96b4ca57aea253f5177d941e4cf78b393c72cd84f49b42c5f39060b25",
+      "readinessSha256": "56f4d4769820026d40546d1fa72e3a36912e43397e1602d85c891edd297bb3d8",
+      "specSha256": "cd96223572d0f7a4deb1f670559b7fd62fca017ea70f527ea7396ae23bffbdb9",
+      "testsPassed": 8,
+      "testsSkipped": 0,
+      "testsRetried": 0,
+      "uniqueScenarioCount": 4,
+      "projects": [
+        "desktop",
+        "mobile"
+      ],
+      "durationMs": 106520.247,
+      "sourceCounts": {
+        "webFiles": 304,
+        "serverFiles": 263,
+        "runtimeFiles": 1143
+      },
+      "toolFileCount": 26,
+      "servedAssetCount": 6,
+      "currentSourceRuntimeToolAssetMismatches": 0,
+      "readinessValidatedOffline": true,
+      "observer": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0,
+        "contextsObserved": 18,
+        "requestsObserved": 464,
+        "proofFiles": 3
+      },
+      "ledger": {
+        "dispatchClaims": 14,
+        "observations": 14,
+        "missingOrMismatchedDispatches": 0,
+        "operationCounts": {
+          "PRECHECK_CLASSIFICATION": 14,
+          "PRECHECK_COUNT": 0,
+          "PRECHECK_GENERATION": 0,
+          "FINAL_PRIMARY": 0,
+          "FINAL_FALLBACK": 0
+        },
+        "reservations": 14
+      },
+      "network": {
+        "localSyntheticCalls": 14,
+        "remoteCalls": 0
+      },
+      "budget": {
+        "held": "42",
+        "epochs": 8,
+        "states": {
+          "READY": 8
+        },
+        "settled": "0"
+      },
+      "product": {
+        "acceptedVersions": 14,
+        "candidates": 16,
+        "acceptedHeads": 8
+      },
+      "cleanup": {
+        "reportedAtCompletion": {
+          "ownedContainersRemaining": 0,
+          "ownedListenersRemaining": 0,
+          "privateTempMaterialRemaining": 0
+        },
+        "oldOwnedContainersRemainingReadOnlyVerified": 0,
+        "oldOwnedPrivateMaterialRemainingVerified": 0,
+        "oldOwnedJvmStillPresent": false,
+        "currentOpenRegisteredPortCount": 0,
+        "currentPortReadbackIsNotUsedToAttributeLaterSuiteListeners": true
+      },
+      "rawEvidence": {
+        "evidence.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/evidence.json",
+          "sha256": "012e4bdf354592d874f09ee40dab666cdc4f56cb4bd894fa47f5e9e75625bea7"
+        },
+        "playwright.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/playwright.json",
+          "sha256": "4400f57aaffface54f0f3544e4ef27ef191f9fa86bfd2cf5401dd822a0df70c8"
+        },
+        "managed-state.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/managed-state.json",
+          "sha256": "6011f2f96b4ca57aea253f5177d941e4cf78b393c72cd84f49b42c5f39060b25"
+        },
+        "backend-readiness.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/backend-readiness.json",
+          "sha256": "56f4d4769820026d40546d1fa72e3a36912e43397e1602d85c891edd297bb3d8"
+        }
+      },
+      "observerProofs": [
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/observer-proof-1.json",
+          "sha256": "a1b8eac16286aeb76c4c752a9062bfa7ef7ab11661e444313b0deaa709b6f1df"
+        },
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/observer-proof-2.json",
+          "sha256": "04e0dba88f53355af89874a5a7cb9434c284cd71525f21ca0b1476c37e61cfd3"
+        },
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-host8/observer-proof-3.json",
+          "sha256": "71f7b59f95413ae1ab2923b6c0e00a89919c0c3fa45a8036756c5439f58e827a"
+        }
+      ],
+      "modelQualityEvidence": false
+    },
+    {
+      "scope": "original-recovery6",
+      "evidenceSha256": "5835b4e69c2cb4863bea27b94eded07bfa8b18dfc9ca254e6e9d89c989552779",
+      "playwrightSha256": "81600f8669420535656e52d37b752760dea187d9dacc381d020e748016c0cc14",
+      "managedStateSha256": "5563507cfd37052841b43e773511a09cfb8523ccf12a8fb0b5ef60e195d63367",
+      "readinessSha256": "24057947da301f147c0e223bfb07498180192e6c835580c87d62fff23983058e",
+      "specSha256": "7639afe7ee3426a472e6a3d34962c4c3275432f091a221992a396489f1d5125e",
+      "testsPassed": 6,
+      "testsSkipped": 0,
+      "testsRetried": 0,
+      "uniqueScenarioCount": 3,
+      "projects": [
+        "desktop",
+        "mobile"
+      ],
+      "durationMs": 37435.661,
+      "sourceCounts": {
+        "webFiles": 304,
+        "serverFiles": 263,
+        "runtimeFiles": 1143
+      },
+      "toolFileCount": 26,
+      "servedAssetCount": 6,
+      "currentSourceRuntimeToolAssetMismatches": 0,
+      "readinessValidatedOffline": true,
+      "observer": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0,
+        "contextsObserved": 6,
+        "requestsObserved": 162,
+        "proofFiles": 3
+      },
+      "ledger": {
+        "operationCounts": {
+          "PRECHECK_CLASSIFICATION": 2,
+          "PRECHECK_COUNT": 0,
+          "PRECHECK_GENERATION": 0,
+          "FINAL_PRIMARY": 0,
+          "FINAL_FALLBACK": 0
+        },
+        "reservations": 2,
+        "dispatchClaims": 2,
+        "observations": 2,
+        "missingOrMismatchedDispatches": 0
+      },
+      "network": {
+        "remoteCalls": 0,
+        "localSyntheticCalls": 2
+      },
+      "budget": {
+        "settled": "0",
+        "held": "6",
+        "epochs": 6,
+        "states": {
+          "READY": 6
+        }
+      },
+      "product": {
+        "acceptedHeads": 2,
+        "acceptedVersions": 2,
+        "candidates": 2
+      },
+      "cleanup": {
+        "reportedAtCompletion": {
+          "ownedContainersRemaining": 0,
+          "ownedListenersRemaining": 0,
+          "privateTempMaterialRemaining": 0
+        },
+        "oldOwnedContainersRemainingReadOnlyVerified": 0,
+        "oldOwnedPrivateMaterialRemainingVerified": 0,
+        "oldOwnedJvmStillPresent": false,
+        "currentOpenRegisteredPortCount": 0,
+        "currentPortReadbackIsNotUsedToAttributeLaterSuiteListeners": true
+      },
+      "rawEvidence": {
+        "evidence.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/evidence.json",
+          "sha256": "5835b4e69c2cb4863bea27b94eded07bfa8b18dfc9ca254e6e9d89c989552779"
+        },
+        "playwright.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/playwright.json",
+          "sha256": "81600f8669420535656e52d37b752760dea187d9dacc381d020e748016c0cc14"
+        },
+        "managed-state.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/managed-state.json",
+          "sha256": "5563507cfd37052841b43e773511a09cfb8523ccf12a8fb0b5ef60e195d63367"
+        },
+        "backend-readiness.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/backend-readiness.json",
+          "sha256": "24057947da301f147c0e223bfb07498180192e6c835580c87d62fff23983058e"
+        }
+      },
+      "observerProofs": [
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/observer-proof-1.json",
+          "sha256": "a1b8eac16286aeb76c4c752a9062bfa7ef7ab11661e444313b0deaa709b6f1df"
+        },
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/observer-proof-2.json",
+          "sha256": "46963445e09f4d73e013c8bdf29e2783be943f8431975e1bdfd7470ca9511df9"
+        },
+        {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/original-recovery6/observer-proof-3.json",
+          "sha256": "46963445e09f4d73e013c8bdf29e2783be943f8431975e1bdfd7470ca9511df9"
+        }
+      ],
+      "modelQualityEvidence": false
+    }
+  ],
+  "sourceAndRuntime": {
+    "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+    "digests": {
+      "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+      "sourceSha256": "06bb1c70546837101abb1cdb47c71c5323a373aa9dcba619f1bec9bf7ef46fc4",
+      "runtimeSha256": "3a7c7544217864d3caf671c36f9d94c1c05ace1cba99dfdb026a6d41f94c7085",
+      "classpathSha256": "5f643693e4aa67d4bf836e696a46526dc6ce9f322a3099f7f42ff75a4ff206f7"
+    },
+    "webHead": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+    "serverBaseHead": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "onlyProductionOverlays": {
+      "A": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+      "B": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f"
+    },
+    "eachRunAndCurrentReadbackByteMismatches": 0,
+    "frozenWebFiles": 304,
+    "frozenServerSourceFiles": 263,
+    "frozenRuntimeFiles": 1143,
+    "servedAssetsPerRun": 6,
+    "originalHostAndRecoverySpecsByteUnchanged": true
+  },
+  "actualGraph": {
+    "validatedAgainstImmutableManifestWithExistingOfflineValidator": true,
+    "beanKinds": [
+      "TwoStagePreSubmissionCheckProvider",
+      "OpenAiAmbiguityClassifier",
+      "DurableAiBudgetService",
+      "JdbcDurableAiBudgetRepository",
+      "AiHttpDispatchGate",
+      "PreSubmissionCheckWorker",
+      "JdbcAiBudgetExecutionFence"
+    ],
+    "replacedOnly": "Synthetic test identity/session and physical provider HTTP transport; no Primary fake provider/classifier/budget/worker",
+    "roomReady": "Real CREATE bootstrap, no SQL READY seed"
+  },
+  "observationScope": {
+    "attachmentEvidence": "18/18/6 observed returned contexts and 474/464/162 page requests in separate scopes; source-pinned bridge wraps original returned context factories, existing pages and future pages. Registration/origin counters are actual proof-file sums, not assumed zeros.",
+    "coverageLimit": "Original fixture certificate-manager initialization occurs before returned-context observer attachment; original fixture bytes separately pinned/audited. No page-route fulfillment is introduced.",
+    "sqlSocketScope": "Disposable PostgreSQL database only. Global operation+whole-payload fingerprint multiset compared with actual synthetic TLS request bodies; epoch/policy/owner/execution joins also checked. Per-room accepted/revision/freeze assertions execute read-only SQL in the unchanged/new specs.",
+    "remoteZeroBasis": "remoteCalls/nonLoopbackConnections zero fields are enforced-boundary assertions, not packet-meter counters. Pinned startup Java SecurityManager rejects nonloopback connects before Spring, direct negative guard check passes, exec restricted to selected JDK keytool; browser deny proxy and observed page-origin counters provide separate evidence. Docker local-image policy forbids pulls. No OS-level packet capture or remote-attempt total was collected."
+  },
+  "syntheticBudgetProfile": {
+    "sha256": "07b3c09fef02d4d6d6bf0c6e2fdba6563346e9eb5db59e37b48fd43d67ba4a1a",
+    "unitCode": "TEST_SUBUNIT",
+    "minimumConfidence": 0.73,
+    "scope": "Pinned non-operating synthetic fixture policy only; no production threshold/activation/tuning changed. Holds and settled values are synthetic subunits, never USD/invoice measurements; held balance is retained."
+  },
+  "initialSetupFailure": {
+    "rawEvidence": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/initial-setup-failure.json",
+      "sha256": "16adcceef57d7ddb6e43fb2ffcc668d688c9148f4d466ab3fbbe32b875b1a89b"
+    },
+    "classification": "SETUP_FAILURE_BEFORE_BROWSER_NOT_PRODUCT_RED",
+    "failureCode": "MANAGED_BROWSER_SETUP_OR_EXECUTION_FAILURE",
+    "browserReportPresent": false,
+    "browserCasesRun": 0,
+    "oldRunnerSha256": "00620f8ecbcbf067cbdda2159e33af50ca06a2d1eb9893e22e23c707f2da2161",
+    "correctedRunnerSha256": "cc362d8c97938dae80ae76b32a61c3e72d31b31a73e4f56ed29502e3ecb640d1",
+    "onlyOneLineNullStdoutCorrectionVerified": true,
+    "testExpectationsChanged": false,
+    "subsequentRunIsNewInvocation": true
+  },
+  "cleanupAudit": {
+    "readOnlyOwnedContainerQueries": 6,
+    "fixedDockerEndpoint": "unix:///var/run/docker.sock",
+    "allOldOwnedContainerIdsAbsent": true,
+    "allOldOwnedJvmPidsAbsent": true,
+    "allOldOwnedPrivateMaterialPathsAbsent": true,
+    "allRegisteredListenerPortsClosedAtThisPostThreeSuiteAudit": true,
+    "laterSuitePortReuseIsNotAttributedToOldOwner": true,
+    "noContainerOrProcessWasStoppedByIndependentAudit": true
+  },
+  "limits": [
+    "New managed8, original host8 and original recovery6 are distinct denominators; do not call them22 unique scenarios or replace historical failures.",
+    "Original rapid full-unload refresh401/reuse loss and native automatic-focus residual remain preserved; one successful original8 run does not establish their resolution.",
+    "Recovery6 tests explicit manual recheck after actual401 and local synthetic same-account new-tab login, fresh owner reads, exact in-memory draft/no autoPOST, and beforeunload cancel/confirmed-leave behavior. It does not prove lossless forced full-unload recovery.",
+    "Synthetic semantic responses test graph/transport/lifecycle contracts, not real model ambiguity accuracy, production cost savings, provider latency or real external OAuth.",
+    "Playwright suite duration is local integration elapsed time; no model speed or operating p50/p95 estimate.",
+    "Historical sealed A16/A24/B2 gold/scores and private22 unchanged/unread in this task."
+  ],
+  "actualModelCalls": 0,
+  "actualExternalOAuthCalls": 0,
+  "productionAccess": false,
+  "privateCorpusRead": false,
+  "sourceTestsOrToolsChangedByIndependentAudit": false,
+  "rawAudit": {
+    "path": ".codex/tdd-evidence/issue130-managed-browser-independent-three-scopes/readback.json",
+    "sha256": "85e30806c0d4e33a554e775c1e2394f44ffaa322c43251ef7da9e8948770c9ab"
+  },
+  "recordedAt": "2026-10-18T18:38:42.758360Z"
+}

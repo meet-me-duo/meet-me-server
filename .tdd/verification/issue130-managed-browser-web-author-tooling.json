@@ -1,0 +1,110 @@
+{
+  "status": "FREE_TOOLING_VERIFIED_BROWSER_EXECUTION_PENDING",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "authorFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/runner-contract.test.mjs",
+      "sha256": "af277c1b043ed77bf3a41c6f0f5de2d665503dd27fa67fd4bbc93e6b2fb433ad"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/browser-observation.test.mjs",
+      "sha256": "c519a0d52ed0a3ac3175a6585bfe368813a1d16071e93438c5db31ad7d10864e"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/docker-target.test.mjs",
+      "sha256": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/managed-browser.spec.ts",
+      "sha256": "817c31d6960d4270997446a5c9fa595824bfee16ac1b113926dc4597784288cc"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/PUBLIC_CONTRACT.md",
+      "sha256": "757fdc47321dbd33c7f5e4c0aa2698c5341995620d99f98a1694382f2ae85e2d"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/OBSERVATION_DOCKER_CONTRACT.md",
+      "sha256": "39f01ac7fd17a197000d5923ef0e6738cdfd5083e53080e45d586db96f7ebe46"
+    }
+  ],
+  "implementationModules": [
+    {
+      "path": "evaluation/issue130/managed-browser/runner-contract.mjs",
+      "sha256": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/browser-observation.mjs",
+      "sha256": "8d428e29a16d3abe750a2b6265c8627df096043bd3052ecb9e209ecd17ee8b89"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/docker-target.mjs",
+      "sha256": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1"
+    }
+  ],
+  "independentGreen": {
+    "tests": 54,
+    "pass": 54,
+    "fail": 0,
+    "rawLog": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-independent-web/independent54-green.tap",
+      "sha256": "d969e412ac383b10904ac82d982661d79f31a392a9ffa78a7ac7bfd02531abce"
+    },
+    "scope": "28 attestation +6 observation +20 local Docker predicates only; not actual browser or managed Spring/PG success"
+  },
+  "redEvidence": [
+    {
+      "path": ".tdd/verification/issue130-managed-browser-contract-red.json",
+      "sha256": "db8112a1545d27aefbb8ea68fb049b75512376a31a2175c0ecd0fec255d6b395"
+    },
+    {
+      "path": ".tdd/verification/issue130-managed-browser-observation-docker-red.json",
+      "sha256": "d54512f11e54ef53b1e2e9f0bea37aca66032a0a5cacc90bfe92fc7e8dbde0cf"
+    }
+  ],
+  "independentFaultInjection": {
+    "mutations": 5,
+    "eachDetected": true,
+    "eachRestoredSameFrozenTestsPass": true,
+    "canonicalReceipts": [
+      {
+        "path": ".tdd/verification/issue130-managed-browser-contract-faults.json",
+        "sha256": "3edb4465e5d7f27c3751a72b57c6a2541ed67d28fc0270e7458a3350e561b89a"
+      },
+      {
+        "path": ".tdd/verification/issue130-managed-browser-observer-docker-faults.json",
+        "sha256": "363a770d636dcda5cb08668f66532c703681d5c5c21eabbdb91712c879012106"
+      }
+    ]
+  },
+  "newBrowserSpecPrepared": {
+    "path": ".tdd/verification/issue130-managed-browser-oracle-prepared.json",
+    "sha256": "f5cecb642a55f380fedae9749f8880483567b9d75346de916281d1ebf0ba5cc2"
+  },
+  "browserMatrix": {
+    "newManagedUniqueScenarios": 4,
+    "projects": [
+      "desktop",
+      "mobile"
+    ],
+    "newManagedExecutionsPlanned": 8,
+    "unchangedHistoricalHostExecutionsPlanned": 8,
+    "unchangedHistoricalRecoveryExecutionsPlanned": 6,
+    "eachSuiteMustHaveSeparateResults": true,
+    "new8CannotReplaceHistoricalFailures": true
+  },
+  "historicalBoundary": "Existing rapid full-navigation refresh401 failure and native automatic focus residual remain preserved; stable-control tests do not claim either solved. Original web specs and product sources unchanged.",
+  "actualBrowserRuns": 0,
+  "actualDockerOperationsByAuthor": 0,
+  "actualModelCalls": 0,
+  "realOAuthCalls": 0,
+  "private22Read": false,
+  "authorPriorExposure": "Prior synthetic test/custody author, including previously approved B2 unblinding; not claimed project-naive. No private22 reopening or gold changes in this task.",
+  "productPolicyChanges": false,
+  "remaining": [
+    "Final backend manifest/actual managed readiness and independent backend launcher review",
+    "New managed8 actual HTTPS browser execution",
+    "Unchanged original host8 and recovery6 separate actual attempts, preserving setup gaps/assertion failures",
+    "Final runtime/source/assets/cleanup audit after connected execution"
+  ],
+  "recordedAt": "2026-10-18T18:07:20.057006Z"
+}

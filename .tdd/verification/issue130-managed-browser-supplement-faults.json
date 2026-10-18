@@ -1,0 +1,50 @@
+{
+  "workItem": "issue130-managed-browser-supplemental-safety",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Immutable existing manifest ancestors and per-guard selected JDK keytool; exact pre-fix helper reintroduction in isolated scratch only, direct decisions not real network/exec.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/runtime_pin.py",
+      "sha256": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuard.java",
+      "sha256": "e53e1ab4e630a6fd6dda4743bc1333bfc9a111b2c5cf8ca301927c5822fe3ba8"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/test_runtime_pin_ancestor.py",
+      "sha256": "b1add1679f63c16955b93f50684af5100b0e156b1038019476bcd74b08dcaf93"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/ManagedBrowserGuardJdkPinContractTest.java",
+      "sha256": "4da305e1943c961adefe71073de0df90d8f239a9df1598d85dc3136402899a9c"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/run_supplemental_safety_tests.py",
+      "sha256": "f0e29bc63d42b68d22a1c4c597b3a4c32736074d35515986853d4c938e1de0e1"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "ANCESTOR_SYMLINK_GUARD_REMOVED",
+      "command": [
+        "python3",
+        "/tmp/issue130-managed-browser-author/run_supplement_fi_current.py"
+      ],
+      "detectedBy": "MAP02",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "MUTABLE_JAVA_HOME_EXEC_SELECTION",
+      "command": [
+        "python3",
+        "/tmp/issue130-managed-browser-author/run_supplement_fi_current.py"
+      ],
+      "detectedBy": "MJP02",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T18:08:25.079601Z"
+}

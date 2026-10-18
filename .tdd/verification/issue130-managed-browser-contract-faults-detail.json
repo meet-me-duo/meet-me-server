@@ -1,0 +1,120 @@
+{
+  "status": "DETECTED_AND_RESTORED",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "sourceFiles": {
+    "evaluation/issue130/managed-browser/runner-contract.mjs": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834",
+    "evaluation/issue130/managed-browser/runner-contract.test.mjs": "af277c1b043ed77bf3a41c6f0f5de2d665503dd27fa67fd4bbc93e6b2fb433ad",
+    "evaluation/issue130/managed-browser/managed-browser.spec.ts": "53af87a96e8a7ce7d17fe73a517c61f08c48c70941a5c37152c1094398b5e5e5"
+  },
+  "sourceBeforeAfterEqual": true,
+  "rows": [
+    {
+      "fault": "after-provenance-validation-removed",
+      "phase": "injected",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-contract-faults-5n2o4v_9/after-provenance-validation-removed",
+      "tests": 28,
+      "failedTests": [
+        "MC13 changed source after successful browser fails",
+        "MC14 changed runtime after browser fails"
+      ],
+      "exitCode": 1,
+      "logSha256": "f33c9b92d0132e1063282ac9eb82600536e0b144f4c3c3695e1ae355ffb46580",
+      "restoredSourceSha256": "c41204096867b301f4cb5d862ce296d050e90f626904eaec6618cd65fa5524ca"
+    },
+    {
+      "fault": "after-provenance-validation-removed",
+      "phase": "restored",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-contract-faults-5n2o4v_9/after-provenance-validation-removed",
+      "tests": 28,
+      "failedTests": [],
+      "exitCode": 0,
+      "logSha256": "d7749d637c0374cd927efb12ec4e54acd9c96d7affc2f4a9260b2c398b9269c1",
+      "restoredSourceSha256": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834"
+    },
+    {
+      "fault": "primary-fake-accepted",
+      "phase": "injected",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-contract-faults-5n2o4v_9/primary-fake-accepted",
+      "tests": 28,
+      "failedTests": [
+        "MC07 old Primary fake cannot impersonate managed proof"
+      ],
+      "exitCode": 1,
+      "logSha256": "a30aa3b29ae2ec7a2f96b38952b88d85d141cca60687c9e3a297f6d4d8c3b31c",
+      "restoredSourceSha256": "4783d47bb44fa8ac1f7b12a31c43b02b589e4738a1ca4da78b582b76024774f3"
+    },
+    {
+      "fault": "primary-fake-accepted",
+      "phase": "restored",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-contract-faults-5n2o4v_9/primary-fake-accepted",
+      "tests": 28,
+      "failedTests": [],
+      "exitCode": 0,
+      "logSha256": "4fc80eeb5b32719551ae0cc6cf784c0d8e4b05806b8d96de31b4d3553968cd19",
+      "restoredSourceSha256": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834"
+    },
+    {
+      "fault": "B-generation-ledger-proof-omitted",
+      "phase": "injected",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-contract-faults-5n2o4v_9/B-generation-ledger-proof-omitted",
+      "tests": 28,
+      "failedTests": [
+        "MC22 A-only route cannot prove count and generation"
+      ],
+      "exitCode": 1,
+      "logSha256": "8cf466eb2a5fd2ae438df06bb01ca2197716ebfd7043566a5ad2b41de6458ea5",
+      "restoredSourceSha256": "ad63f64cb9cf1fe43b5572ddf9b011711032bd96b7e432d388dc160b114c661e"
+    },
+    {
+      "fault": "B-generation-ledger-proof-omitted",
+      "phase": "restored",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-contract-faults-5n2o4v_9/B-generation-ledger-proof-omitted",
+      "tests": 28,
+      "failedTests": [],
+      "exitCode": 0,
+      "logSha256": "748e35239c2d3dc26d363feb3c637ae692da2b47cfd9a5e2130b13ef5abb2910",
+      "restoredSourceSha256": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834"
+    }
+  ],
+  "onlyDisposableRunnerContractMutated": true,
+  "actualBrowserRuns": 0,
+  "actualModelCalls": 0,
+  "privateInputsRead": false,
+  "recordedAt": "2026-10-18T17:54:55.289873Z"
+}

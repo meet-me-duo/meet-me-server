@@ -1,0 +1,71 @@
+{
+  "status": "PREPARED_STATIC_ONLY_ACTUAL_BROWSER_NOT_RUN",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "newSpec": {
+    "path": "evaluation/issue130/managed-browser/managed-browser.spec.ts",
+    "sha256": "817c31d6960d4270997446a5c9fa595824bfee16ac1b113926dc4597784288cc"
+  },
+  "uniqueScenarios": 4,
+  "projects": [
+    "desktop",
+    "mobile"
+  ],
+  "expectedExecutions": 8,
+  "typescriptNoEmitExitCode": 0,
+  "playwrightListExitCode": 0,
+  "playwrightListedTests": 8,
+  "logs": {
+    "compile.log": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-oracle-prepare/compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "list.log": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-oracle-prepare/list.log",
+      "sha256": "b3e9c09263dc964eac79bba7793a235b6192c1448e22452091e466ac2fd2a266"
+    },
+    "compile": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-oracle-prepare/compile-readiness-casing.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "list": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-oracle-prepare/list-readiness-casing.log",
+      "sha256": "b3e9c09263dc964eac79bba7793a235b6192c1448e22452091e466ac2fd2a266"
+    }
+  },
+  "isolatedWeb": {
+    "head": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+    "statusPorcelain": "",
+    "originalFiles": {
+      "integration/host-creation/host-creation.spec.ts": "cd96223572d0f7a4deb1f670559b7fd62fca017ea70f527ea7396ae23bffbdb9",
+      "integration/host-creation/auth-recovery.spec.ts": "7639afe7ee3426a472e6a3d34962c4c3275432f091a221992a396489f1d5125e",
+      "integration/host-creation/fixtures.ts": "689397e4b98ce229b2cab8e364b746dbf6b16df50bd4176d9214460e6ee654e3",
+      "integration/host-creation/HostIntegrationServer.java": "ec4b7d647b81010405651f9cec4ae0793d6910a6c2922f630e66a0c78230827c",
+      "scripts/run-host-integration.mjs": "56d6c738608f7c2238194829c65874592fdc9dd11b47d6a4d2e2f662830391ea",
+      "playwright.host-integration.config.ts": "9c36335a8237242682da3701db5cdeb190630b6dbe92890772aaeeb3b9329e8d"
+    }
+  },
+  "isolatedServer": {
+    "head": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "approvedPolicyOverlays": {
+      "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+      "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f"
+    }
+  },
+  "historicalOriginal8Recovery6": {
+    "sourceBytesChanged": false,
+    "requiredSeparateActualAttempts": true,
+    "existingRapidUnloadFailuresPreserved": true,
+    "automaticFocusResidualNotRetestedByThisNew8": true,
+    "setupGapsAreNotSkipsOrSemanticPasses": true
+  },
+  "actualBrowserRuns": 0,
+  "actualModelCalls": 0,
+  "private22Read": false,
+  "realOAuth": false,
+  "syntheticIdentitySessionOnly": true,
+  "recordedAt": "2026-10-18T18:01:51.496532Z",
+  "publicBackendFieldCasingSupersession": {
+    "path": ".codex/tdd-evidence/issue130-managed-browser-oracle-prepare/readiness-casing-supersession.json",
+    "sha256": "277ee678ccfd2b5f903d0e38ecce30b897e2fd475a738fb10bef322d19a9ee64"
+  }
+}

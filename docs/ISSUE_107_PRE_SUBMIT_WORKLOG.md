@@ -1,4 +1,39 @@
+## 2026-10-18 UTC — 실제 관리형 HTTPS 3suite 결과
+
+실제 새 managed8 8/8·원HOST8 8/8·원복구6 6/6을 각각 단회 완료했다. retry/flaky/skip0, 각source263/runtime1143/web304/tools26/assets 전후동일·cleanup3종0이다. builder 전체소스494와 실제snapshot263을 구분한다. 새8의 원장22reserve/claim/observe는 A18+count2+generation2이며 TLS 물리22와operation/bodySHA/epoch/owner 결속 불일치0이다. remote0은 설치된 강제 loopback guard+localTLS 구성 근거이며 별도 packet meter가 아니다. 실제 외부모델/OAuth0·TEST_SUBUNIT 합성 정책일 뿐 의미효능/실금액/운영인증 증명이 아니다.
+
+첫 stdout-fd null trim setup오류와 한줄수정/기존68PASS를 보존했다. 과거 rapid-unload401/autoFocus는 삭제하거나 원인 해결로 단정하지 않는다. [검증 요약](ISSUE_130_MANAGED_BROWSER_VERIFICATION.md)과 [canonical](../.tdd/verification/issue130-managed-browser-actual-suites.json)(bfa86a6e…)을 기준으로 실제3scope 독립readback PASS(41febf29…)와 필수guard exit0/9.486초/source563 전후동일을 확인했다. XML1733은1729PASS+기존4SKIP의 재사용 결과다. 최종 독립 게시 리뷰 후 같은 Draft 정상게시/정확HEADCI를 확인한다. Commit/PR: 동일 후속 커밋 예정.
+
+## 2026-10-18 UTC — 실제 HTTPS 첫 시도·최소 재실행
+
+부모는 범용 도구 확장 없이 실제 시나리오의 구체 성공/실패와 재현 원인 확인에 집중하도록 명확히 했다. 실행 전 한정 리뷰8fde52d8…와 동일 Docker 대상 P2 CLOSED 후 new-managed8을 시작했다. 첫 시도는 정상 tsc stdout을 파일 fd로 보낸 spawnSync 결과가 null인데 trim을 호출한 runner TypeError로 서버/브라우저 전 setup 실패했다(RED0). dist 미생성 ENOENT는 2차 정리 검증 오류로 분리했고 소유 containers/listeners/private 잔여는0이다. 원 실패/소스를 보존하고 반환 null 처리 한 줄만 고친 뒤 기존68PASS·새 고유 workdir/session44236 재실행 중이다. 제품 코드/원 oracle 변경0이며 actual 결과를 준비 검증으로 대체하지 않는다. Commit/PR: 동일 후속 커밋 예정.
+
+## 2026-10-18 UTC — runtime 봉인·재현 빌드 점검
+
+검토된 runtime manifest9d3ea4…의 source263/runtime1143/CP219/fixture11을 root가 verify-only로 직접 확인했다. backend 추가 경계4는 원34와 함께38GREEN·독립FI2/재검토로 두 P2가 CLOSED다. 별도 Docker 대상 일치 P2는 새14 독립RED 후 수정 중이며 실제 앱·브라우저는 아직 기동하지 않았다.
+
+후발 재현 builder의 첫 실제 offline build는 기존 한글 테스트 class 경로 MD5 단계의 setup 실패(RED0)다. 자식 JDK 대조에서 기존 whitelist는 file/native/sun.jnu encoding 모두 ANSI_X3.4-1968, 명시 C.UTF-8은 모두 UTF-8임을 확인했다. source/제품을 수정하지 않고 builder 자식 환경만 고정해 새 출력 경로에서 재빌드 중이다. 기존 검토 runtime9d3은 독립 복사라 변경0이며, 이 사전점검을 실제 Spring/PG/browser 성공으로 표시하지 않는다. Commit/PR: 동일 후속 커밋 예정.
+
+## 2026-10-18 UTC — managed attestation 독립 검증
+
+새 orchestrator 계약은 독립 genuine RED28→GREEN28이다. 별도 FI3는 after-source/runtime 검증 누락2assert·Primaryfake 허용1·B generation 원장 필수 누락1을 탐지했고 각 복구28PASS다. [결함 주입 기록](../.tdd/verification/issue130-managed-browser-contract-faults.json)은 순수 attestation 일관성 검증이며 실제 관리형 서버/브라우저 실행 증명이 아니다. 새 browser4×2는 독립 타입 검사·list8까지 완료했고 실제 실행은 대기 중이다. 서버6046+V2 freshcompile exit0/source 전후동일 보고를 받았지만 runtime snapshot은 아직 launcher/최종manifest 없는 NOT_LAUNCHABLE 단계다. 추가 모델/OAuth 호출0. Commit/PR: 동일 후속 커밋 예정.
+
+## 2026-10-18 UTC — managed browser 준비 증거
+
+정확 web33 `3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6`의 pnpm10.17.1 frozen install·tsc·Vite 격리 build PASS다. 원 source304/lockfile/HEAD 불변·gitclean을 확인했다. [준비 receipt](verification/issue130-managed-browser-web-preparation.json)는 의존성/빌드만 증명하며 실제 managed backend/browser 연결·실모델·OAuth 증거가 아니다. 기존 host/auth-recovery 기대값과 historical FAIL은 유지하고 새 managed 전용 시나리오는 별도 집계한다. 게시27de 정확 CI39149807904는 Quality/ARM64 최종SUCCESS이며 Lifecycle39149824268도SUCCESS다. 실제 literal checkout과 merge 부모/동일tree를 확인했고 [정확 CI receipt](verification/issue130-27de-exact-ci-success.json)에 분리했다. 새 managed browser 결과로 표시하지 않는다. Commit/PR: 동일 후속 커밋 예정.
+
 # 새 #107 구현·통합 Worklog
+
+## #130 무료 managed HTTPS 브라우저 통합 준비·실행 (2026-10-18 UTC)
+
+- [x] [USER] test 전용 managed launcher·정확 runtime 핀·웹33 의존성 복구·기존 HTTPS 브라우저 연결을 승인했다. 실제 모델/OAuth 호출·운영 설정 변경은 제외하고 합성 결과와 실제 관리형 경로 검증을 구분한다.
+- [x] [AGENT] 격리 실행 worktree를 만들었다. 서버 PR133 `6046baf66e49e9382248cd3fb8adb0a8879a7e40`에 최신132 `27de97e137d23a2920d425ea521ee33ec0996a8d`의 V2 A/B 두 파일만 overlay(A a723af8f…/B7e898fcd…)하고, 웹 PR33 `3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6`를 별도 detached worktree로 고정했다. 기존 브랜치·웹 oracle 원본은 변경하지 않는다.
+- [ ] [AGENT] 독립 공개 계약/RED 후 `evaluation/issue130/managed-browser/`에 별도 시험 launcher·불변 runtime manifest·orchestrator를 구현한다. 실제 managed bean/worker/PG 원장/production TwoStage·클라이언트에 loopback 합성 TLS transport·합성 정책만 연결하고 실 provider/OAuth outbound를 차단한다. 원 OFF/Primary fake 실행기를 새 managed 증거로 재사용하지 않는다.
+- [ ] [AGENT] 격리 웹 의존성을 frozen lockfile로 복구하고, 기존 HTTPS 권한·CORS·멱등성·복구·마감 oracle와 고유 실패를 보존해 실제 연결을 검증한다. 새 fake 결과를 모델 의미 정확도나 실제 OAuth/운영 검증으로 표시하지 않는다. 실제 실행 전후 source/runtime/원 oracle 지문·요청 경로·원장/worker 관측을 봉인한다.
+- [ ] [AGENT] 최소 무료 회귀·독립 결함 주입/리뷰·필수 guard 이후 검증 가능한 코드·기록만 정상 게시하고 정확 최종 HEAD CI를 확인한다. 현재27de CI39149807904 결과도 계속 확인한다.
+
+제품 API/UI·DB schema·모델/threshold·500자·참여/마감 정책·비밀정보/운영 설정은 바꾸지 않는다. 합성 identity/JWT fixture는 시험에서만 사용한다. 유지 예약USD2.74751488·추가 유료0·기존 UNKNOWN 유지, V2 실제 의미 효능/운영 정책 미검증으로 main·배포·활성화HOLD다. 다음 시작점은 launcher/runtime 공개 명세·독립RED/웹 의존성 복구다. Commit/PR 동일 후속 커밋 예정. 아래는 각 시점의 기록이다.
+
 
 ## #130 A24 Python fixture 후속 (2026-10-18 UTC)
 

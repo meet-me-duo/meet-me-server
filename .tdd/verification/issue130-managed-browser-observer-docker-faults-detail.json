@@ -1,0 +1,97 @@
+{
+  "status": "DETECTED_AND_RESTORED",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "sourceFiles": {
+    "evaluation/issue130/managed-browser/browser-observation.mjs": "8d428e29a16d3abe750a2b6265c8627df096043bd3052ecb9e209ecd17ee8b89",
+    "evaluation/issue130/managed-browser/browser-observation.test.mjs": "c519a0d52ed0a3ac3175a6585bfe368813a1d16071e93438c5db31ad7d10864e",
+    "evaluation/issue130/managed-browser/docker-target.mjs": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1",
+    "evaluation/issue130/managed-browser/docker-target.test.mjs": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c"
+  },
+  "sourceBeforeAfterEqual": true,
+  "rows": [
+    {
+      "fault": "route-registration-counter-omitted",
+      "module": "browser-observation.mjs",
+      "phase": "injected",
+      "tests": 26,
+      "exitCode": 1,
+      "failedTests": [
+        "BO03 context routing methods count and preserve this arguments and return value",
+        "BO04 existing and future pages are wrapped once even on duplicate context notification",
+        "BO05 upstream route error remains the same error and attempt still counted"
+      ],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "browser-observation.test.mjs",
+        "docker-target.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-observer-docker-faults-8t6ay6vh/route-registration-counter-omitted",
+      "logSha256": "63d0092bbf1a283352f259173b8270d9c2c28fd7a39319da2f3b141baab06935",
+      "moduleSha256": "c001142d1a50e5003b77396530231142962a43a9355f5807bc68c0ebeba0bf1b"
+    },
+    {
+      "fault": "route-registration-counter-omitted",
+      "module": "browser-observation.mjs",
+      "phase": "restored",
+      "tests": 26,
+      "exitCode": 0,
+      "failedTests": [],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "browser-observation.test.mjs",
+        "docker-target.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-observer-docker-faults-8t6ay6vh/route-registration-counter-omitted",
+      "logSha256": "fa1a7cb2f34e8cad1b35d838f4510d43c7ad5a5d9886c05d175e35ce2a4c6653",
+      "moduleSha256": "8d428e29a16d3abe750a2b6265c8627df096043bd3052ecb9e209ecd17ee8b89"
+    },
+    {
+      "fault": "remote-environment-host-ignored",
+      "module": "docker-target.mjs",
+      "phase": "injected",
+      "tests": 26,
+      "exitCode": 1,
+      "failedTests": [
+        "DT05 remote environment cannot hide behind local default context"
+      ],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "browser-observation.test.mjs",
+        "docker-target.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-observer-docker-faults-8t6ay6vh/remote-environment-host-ignored",
+      "logSha256": "6c1219dd3c56d80e44a4596b83cc354e38ba8faecacc9191e3f626a03a97d780",
+      "moduleSha256": "7c489c6c572fab3f8f477dadbdd8323c1f1100635a9cf7d560792ebd2796b81e"
+    },
+    {
+      "fault": "remote-environment-host-ignored",
+      "module": "docker-target.mjs",
+      "phase": "restored",
+      "tests": 26,
+      "exitCode": 0,
+      "failedTests": [],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "browser-observation.test.mjs",
+        "docker-target.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-observer-docker-faults-8t6ay6vh/remote-environment-host-ignored",
+      "logSha256": "d0739f4419dfd8c18e625b8f30aebd8959ca3eeacf889b59d7178df0214de9e3",
+      "moduleSha256": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1"
+    }
+  ],
+  "onlyDisposableModulesMutated": true,
+  "actualBrowserRuns": 0,
+  "actualDockerOperations": 0,
+  "actualModelCalls": 0,
+  "privateInputsRead": false,
+  "recordedAt": "2026-10-18T18:05:20.563108Z"
+}

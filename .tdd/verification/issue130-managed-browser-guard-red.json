@@ -1,0 +1,32 @@
+{
+  "workItem": "issue130-managed-browser-loopback-guard",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuardContractTest.java",
+      "sha256": "133cbfbbbf674f1b72677ab0f8fbde4576dd3288b337c8ff09547202532b74b1"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/run_guard_contract_tests.py",
+      "sha256": "680aaf6e6c7c7ea94ad5c22f20bfc3fdc84d2974eea70eebd92e8378f261de25"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/managed-browser/run_guard_contract_tests.py",
+    "--java",
+    "/tmp/meetme-jdk17/bin/java",
+    "--output",
+    "/tmp/issue130-managed-browser-guard-red"
+  ],
+  "failedTests": [
+    "MLG01",
+    "MLG02",
+    "MLG03",
+    "MLG04",
+    "MLG05",
+    "MLG06"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T18:00:10.316367Z"
+}

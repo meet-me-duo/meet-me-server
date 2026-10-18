@@ -1,0 +1,37 @@
+{
+  "status": "EXACT_PUBLISHED_HEAD_CI_SUCCESS",
+  "recordedAt": "2026-10-18T17:54:07.366564+00:00",
+  "repository": "meet-me-duo/meet-me-server",
+  "pr": 132,
+  "head": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "run": 39149807904,
+  "runUrl": "https://github.com/meet-me-duo/meet-me-server/actions/runs/39149807904",
+  "runConclusion": "success",
+  "quality": {
+    "job": 117740946750,
+    "conclusion": "success",
+    "literalCheckout": "0b0fa0c79dca16a6e7c218c7e6665381c4e8f60e",
+    "literalLogTimestamp": "2026-10-18T17:29:26.3668521Z",
+    "checkoutParents": [
+      "3982535765e878875a901dd9d28352358e594f6f",
+      "27de97e137d23a2920d425ea521ee33ec0996a8d"
+    ],
+    "checkoutTree": "f8741ae6c53b8acfad0089a30fcfbb79522f2b34",
+    "headTree": "f8741ae6c53b8acfad0089a30fcfbb79522f2b34",
+    "treeEqualityVerifiedByGit": true
+  },
+  "arm64": {
+    "job": 117740946630,
+    "conclusion": "success",
+    "literalCheckout": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+    "literalLogTimestamp": "2026-10-18T17:29:28.8543506Z"
+  },
+  "issueLifecycle": {
+    "run": 39151673552,
+    "conclusion": "success",
+    "scope": "latest run after factual PR-body CI update",
+    "priorRun": 39149824268
+  },
+  "proofBoundary": "Published 27de CI only; not new managed HTTPS browser, real model efficacy, real OAuth, production or deployment proof. Prior failed CI remains historical evidence.",
+  "paidAdditionalCalls": 0
+}

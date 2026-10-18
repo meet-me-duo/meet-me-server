@@ -1,0 +1,85 @@
+{
+  "status": "P2_DAEMON_BINDING_INDEPENDENTLY_FIXED_AND_VERIFIED_ACTUAL_LAUNCH_NOT_RUN",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/docker-daemon-binding.mjs",
+      "sha256": "536f73c536ce38a5eeccab2cc3b4fdfacd724e23941d9240f473ecf6e4cb7414"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/docker-daemon-binding.test.mjs",
+      "sha256": "1cf792e10510f3312028a209d46c75d05a5423a910ee10c50a87e1951f03d24e"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/run-managed-browser.mjs",
+      "sha256": "00620f8ecbcbf067cbdda2159e33af50ca06a2d1eb9893e22e23c707f2da2161"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/runtime_pin.py",
+      "sha256": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2"
+    }
+  ],
+  "original54ExpectationAndHelperSourceUnchanged": true,
+  "original54ReceiptPreserved": {
+    "path": ".tdd/verification/issue130-managed-browser-web-author-tooling.json",
+    "sha256": "f9f853f5ff942287b9f5a1bdb982d6fb68c5e20b2e90e07d09e13f5b488dd9c4"
+  },
+  "chronologicalRed": {
+    "path": ".tdd/verification/issue130-managed-browser-docker-binding-red.json",
+    "sha256": "ee41d64dded33595543237c5a75ea2d5f2bde5e04d06ce7d9ff424ff4f47b39e"
+  },
+  "independentGreen": {
+    "tests": 68,
+    "pass": 68,
+    "fail": 0,
+    "counts": "Original54 plus new12 unit/new2 CLI negative =68 unique tool tests, not browser cases",
+    "rawLog": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-docker-binding-faults/independent68-green.tap",
+      "sha256": "1cf12ebb61af7dff91c7986315426cb5a2640f646a1d89c122199b7c6f9a23b2"
+    }
+  },
+  "independentFaults": {
+    "canonical": {
+      "path": ".tdd/verification/issue130-managed-browser-docker-binding-faults.json",
+      "sha256": "48fb058d8cc9b08b40f04f10d3f1e6e1da9a91bb96598213c5c9bb6b6b43c21d"
+    },
+    "detail": {
+      "path": ".tdd/verification/issue130-managed-browser-docker-binding-faults-detail.json",
+      "sha256": "6a466849f5025577e452069316f66de7e83190c361096446c5e988ca38326426"
+    },
+    "mutations": 2,
+    "injectedAssertions": [
+      2,
+      1
+    ],
+    "eachExactRestorationPass": 14,
+    "workspaceSourceBeforeAfterEqual": true
+  },
+  "historicalRunner": {
+    "sha256": "8951589b4f6404bfd17111d1201e401347e8dcacc157ef51aa9f7f14ef41715e",
+    "exactBytes": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-docker-binding-history/runner-895158.reconstructed.source",
+      "sha256": "8951589b4f6404bfd17111d1201e401347e8dcacc157ef51aa9f7f14ef41715e"
+    },
+    "provenance": {
+      "path": ".codex/tdd-evidence/issue130-managed-browser-docker-binding-history/reconstruction.json",
+      "sha256": "00462a84ded71ceaf054402d1469838d35a3cc902f819c40f9db203bbd67a7e4"
+    },
+    "chronology": "EXACT_PRIOR_BYTES_RECONSTRUCTED_AFTER_APPLY_NOT_CHRONOLOGICAL_SOURCE_ARCHIVE",
+    "originalRunRedLogsAndHashWereChronologicallySealed": true
+  },
+  "integrationReadback": {
+    "contextEndpointAndNonemptyAmbientHostSeparatelyBoundToFixedEndpoint": true,
+    "childHostFixed": true,
+    "childContextCleared": true,
+    "runnerInfoAndCleanupInspectExplicitFixedHost": true,
+    "backendFixedSocketPolicyUnchanged": true
+  },
+  "actualDockerOperations": 0,
+  "actualBrowserRuns": 0,
+  "actualModelCalls": 0,
+  "privateInputsRead": false,
+  "productionSourceApiUiPolicyChanges": false,
+  "remaining": "Parent prelaunch review and actual runtime/browser execution are separate; this receipt does not claim actual connected success.",
+  "recordedAt": "2026-10-18T18:21:00.444758Z"
+}

@@ -1,0 +1,63 @@
+{
+  "status": "PASS_FRESH_COMPILE_AND_PIN_PREFLIGHT_NOT_ACTUAL_STARTUP",
+  "actualModelCalls": 0,
+  "actualOAuthCalls": 0,
+  "actualStartup": false,
+  "baseServer": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+  "policyOrigin": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "webHead": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+  "executionSourceCount": 494,
+  "executionSourceUnchanged": true,
+  "sourceBefore": {
+    "BACKEND_CONTRACT.md": "1577be113fc33f176addf660c672606eec9c36552744d9fcd530069adc8a51f3",
+    "Issue130ManagedBrowserServer.java": "983eccd0c6898022cf678637c677cd9cca89d01d3cc2ad57f00a10e57ef963ab",
+    "ManagedBrowserLoopbackGuard.java": "e53e1ab4e630a6fd6dda4743bc1333bfc9a111b2c5cf8ca301927c5822fe3ba8",
+    "runtime_pin.py": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2"
+  },
+  "sourceAfter": {
+    "BACKEND_CONTRACT.md": "1577be113fc33f176addf660c672606eec9c36552744d9fcd530069adc8a51f3",
+    "Issue130ManagedBrowserServer.java": "983eccd0c6898022cf678637c677cd9cca89d01d3cc2ad57f00a10e57ef963ab",
+    "ManagedBrowserLoopbackGuard.java": "e53e1ab4e630a6fd6dda4743bc1333bfc9a111b2c5cf8ca301927c5822fe3ba8",
+    "runtime_pin.py": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2"
+  },
+  "sourceBeforeAfterEqual": true,
+  "launcherCompileExitCode": 0,
+  "launcherCompileLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "freshProductionCompileReceiptSha256": "8e79eb0338257567255701a354bd2bfce2020f29f2c7b10c3521e56f14203763",
+  "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+  "outputFileCount": 1143,
+  "outputBeforeInventorySha256": "78c4dc93a3efe4ea550af23c52c5908e9406220da3550f55e8b64cb5fdffd552",
+  "outputAfterInventorySha256": "78c4dc93a3efe4ea550af23c52c5908e9406220da3550f55e8b64cb5fdffd552",
+  "wholeTestClassesOnClasspath": false,
+  "validated": {
+    "classpathSha256": "5f643693e4aa67d4bf836e696a46526dc6ce9f322a3099f7f42ff75a4ff206f7",
+    "fixture": "issue130-managed-browser-v1",
+    "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+    "policyOriginHead": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+    "runtimeSha256": "3a7c7544217864d3caf671c36f9d94c1c05ace1cba99dfdb026a6d41f94c7085",
+    "serverHead": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "sourceSha256": "06bb1c70546837101abb1cdb47c71c5323a373aa9dcba619f1bec9bf7ef46fc4",
+    "verified": true
+  },
+  "knownLimits": [
+    "No real browser, PG startup or network barrier install observation yet",
+    "Initial AuthKt unused entrypoint was rejected and removed, no allowlist relaxation",
+    "Existing production compile is fresh; no test XML or historical graph result claimed as this runtime run"
+  ],
+  "privateBuildReceiptSha256": "f2974128b4cf31e80d8eac8f755725923095140b860b7bca96423712036bdc99",
+  "jdk": {
+    "version": [
+      "openjdk version \"17.0.20.1\" 2026-08-18",
+      "OpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)",
+      "OpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)"
+    ],
+    "javaSha256": "f5aed21d3a0b0f4b05d3a3f9fe71263916d5bc0d47b53aa52a3340b90f0b4805",
+    "javacSha256": "50d09f424b513525af1f0b05cd948ed7890a8d60fef7f7797e20892705b0067d"
+  },
+  "sourceFiles": 263,
+  "runtimeFiles": 1143,
+  "classpathEntries": 219,
+  "fixtureClasses": 11,
+  "rootIndependentVerifyOnly": "PASS",
+  "scope": "Fresh production/launcher compilation plus immutable pin preflight only; no actual application/PG/browser startup or installed guard/cleanup proof."
+}

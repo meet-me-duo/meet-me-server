@@ -1,0 +1,53 @@
+{
+  "workItem": "issue130-managed-browser-contract",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Pure new-managed8 attestation consistency predicate only; actual launcher/browser/ledger evidence separate. Disposable source mutations; original source/test/spec unchanged.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/runner-contract.mjs",
+      "sha256": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/runner-contract.test.mjs",
+      "sha256": "af277c1b043ed77bf3a41c6f0f5de2d665503dd27fa67fd4bbc93e6b2fb433ad"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "after-provenance-validation-removed",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "detectedBy": "MC13 changed source after successful browser fails; MC14 changed runtime after browser fails",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "primary-fake-accepted",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "detectedBy": "MC07 old Primary fake cannot impersonate managed proof",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "B-generation-ledger-proof-omitted",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "runner-contract.test.mjs"
+      ],
+      "detectedBy": "MC22 A-only route cannot prove count and generation",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T17:54:55.289873Z"
+}

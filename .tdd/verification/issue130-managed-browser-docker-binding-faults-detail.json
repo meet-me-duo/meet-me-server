@@ -1,0 +1,93 @@
+{
+  "status": "DETECTED_AND_RESTORED",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "sourceFiles": {
+    "evaluation/issue130/managed-browser/docker-daemon-binding.mjs": "536f73c536ce38a5eeccab2cc3b4fdfacd724e23941d9240f473ecf6e4cb7414",
+    "evaluation/issue130/managed-browser/docker-daemon-binding.test.mjs": "1cf792e10510f3312028a209d46c75d05a5423a910ee10c50a87e1951f03d24e",
+    "evaluation/issue130/managed-browser/run-managed-browser.mjs": "00620f8ecbcbf067cbdda2159e33af50ca06a2d1eb9893e22e23c707f2da2161",
+    "evaluation/issue130/managed-browser/docker-target.mjs": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1",
+    "evaluation/issue130/managed-browser/docker-target.test.mjs": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c"
+  },
+  "sourceBeforeAfterEqual": true,
+  "rows": [
+    {
+      "fault": "backend-fixed-endpoint-check-omitted",
+      "module": "docker-daemon-binding.mjs",
+      "phase": "injected",
+      "tests": 14,
+      "exitCode": 1,
+      "failedTests": [
+        "DB05 backend endpoint must be the declared fixed profile",
+        "DB06 missing backend binding is not proof"
+      ],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "docker-daemon-binding.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-binding-faults-cvj_rn4n/backend-fixed-endpoint-check-omitted",
+      "logSha256": "59585065cdc8c7b772d22b2e1a9cbdbe7c388efed3cb31ae4919a5b6718d8d1a",
+      "moduleSha256": "058ab407d867a3a38bd96f29c0ec0f1fb15aeccd7983f21a788ddb38231bbe7a"
+    },
+    {
+      "fault": "backend-fixed-endpoint-check-omitted",
+      "module": "docker-daemon-binding.mjs",
+      "phase": "restored",
+      "tests": 14,
+      "exitCode": 0,
+      "failedTests": [],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "docker-daemon-binding.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-binding-faults-cvj_rn4n/backend-fixed-endpoint-check-omitted",
+      "logSha256": "fb8b49950777abf7e2790d7b20e0f3dd8891b4f1ea5f3e6b571828a987ad57e6",
+      "moduleSha256": "536f73c536ce38a5eeccab2cc3b4fdfacd724e23941d9240f473ecf6e4cb7414"
+    },
+    {
+      "fault": "runner-context-binding-call-omitted",
+      "module": "run-managed-browser.mjs",
+      "phase": "injected",
+      "tests": 14,
+      "exitCode": 1,
+      "failedTests": [
+        "DB14 CLI rejects localTCP context before any daemon command"
+      ],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "docker-daemon-binding.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-binding-faults-cvj_rn4n/runner-context-binding-call-omitted",
+      "logSha256": "caa4141d1ed28633bf55f45d0f26b5259925cde8a6712a4d08013e2941febd48",
+      "moduleSha256": "9030c087ab1ed7844fb3110b90134c2841832beac82f0eb1f2fad58e10634f15"
+    },
+    {
+      "fault": "runner-context-binding-call-omitted",
+      "module": "run-managed-browser.mjs",
+      "phase": "restored",
+      "tests": 14,
+      "exitCode": 0,
+      "failedTests": [],
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "docker-daemon-binding.test.mjs"
+      ],
+      "cwd": "/tmp/issue130-managed-binding-faults-cvj_rn4n/runner-context-binding-call-omitted",
+      "logSha256": "4766f435ce547353da1fc69b5bd0c0f46d609fb9e0a43af5e778ed24eba9b796",
+      "moduleSha256": "00620f8ecbcbf067cbdda2159e33af50ca06a2d1eb9893e22e23c707f2da2161"
+    }
+  ],
+  "onlyDisposableModulesMutated": true,
+  "actualDockerOperations": 0,
+  "actualBrowserRuns": 0,
+  "actualModelCalls": 0,
+  "privateInputsRead": false,
+  "recordedAt": "2026-10-18T18:20:07.056123Z"
+}

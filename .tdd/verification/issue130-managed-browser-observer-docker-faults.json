@@ -1,0 +1,52 @@
+{
+  "workItem": "issue130-managed-browser-observer-docker",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Runtime observation and local Docker endpoint predicate; only disposable module mutation, no real Docker/browser/API operation.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/browser-observation.mjs",
+      "sha256": "8d428e29a16d3abe750a2b6265c8627df096043bd3052ecb9e209ecd17ee8b89"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/docker-target.mjs",
+      "sha256": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/browser-observation.test.mjs",
+      "sha256": "c519a0d52ed0a3ac3175a6585bfe368813a1d16071e93438c5db31ad7d10864e"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/docker-target.test.mjs",
+      "sha256": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "route-registration-counter-omitted",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "browser-observation.test.mjs",
+        "docker-target.test.mjs"
+      ],
+      "detectedBy": "BO03 context routing methods count and preserve this arguments and return value; BO04 existing and future pages are wrapped once even on duplicate context notification; BO05 upstream route error remains the same error and attempt still counted",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "remote-environment-host-ignored",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "browser-observation.test.mjs",
+        "docker-target.test.mjs"
+      ],
+      "detectedBy": "DT05 remote environment cannot hide behind local default context",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T18:05:20.563108Z"
+}

@@ -1,0 +1,28 @@
+from pathlib import Path
+import shutil,hashlib,json,subprocess,fcntl,os
+root=Path('/workspace/issue123-representative-evaluation/server');src=root/'evaluation/issue130/managed-browser';out=Path('/tmp/issue130-managed-browser-supplement-fi-current');out.mkdir(exist_ok=False);scratch=out/'server/evaluation/issue130/managed-browser';scratch.mkdir(parents=True)
+names=['runtime_pin.py','test_runtime_pin.py','test_runtime_pin_ancestor.py','ManagedBrowserLoopbackGuard.java','ManagedBrowserGuardJdkPinContractTest.java','run_supplemental_safety_tests.py']
+with open('/tmp/meetme-gradle.lock','a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX)
+ for name in names:shutil.copyfile(src/name,scratch/name)
+ for name in ['classification/AmbiguityClassificationContract.kt','provider/PrecheckProviderContract.kt']:
+  rel=Path('src/main/kotlin/com/meetme/server/precheck/adapter/output')/name;target=out/'server'/rel;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(root/rel,target)
+original={name:(scratch/name).read_bytes() for name in names}
+hashes=lambda folder:{name:hashlib.sha256((folder/name).read_bytes()).hexdigest() for name in names}
+env=dict(os.environ,OPENAI_API_KEY='',GEMINI_API_KEY='',PYTHONDONTWRITEBYTECODE='1')
+def run(label):
+ p=subprocess.run(['python3',str(scratch/'run_supplemental_safety_tests.py'),'--java','/tmp/meetme-jdk17/bin/java','--output',str(out/label)],env=env,capture_output=True,text=True,timeout=90)
+ (out/(label+'-runner.log')).write_text(p.stdout+p.stderr)
+ r=json.loads((out/label/'receipt.json').read_text());r['runnerExitCode']=p.returncode;return r
+report={'scope':'SCRATCH_EXACT_PRE_FIX_HELPER_REINTRODUCTION','sourceBefore':hashes(src),'baseline':run('baseline'),'injections':[]}
+assert report['baseline']['runnerExitCode']==0
+for label,name in [('ANCESTOR_SYMLINK_GUARD_REMOVED','runtime_pin.py'),('MUTABLE_JAVA_HOME_EXEC_SELECTION','ManagedBrowserLoopbackGuard.java')]:
+ old=root/'.tdd/history/issue130-managed-browser-supplement'/(name+'.before.txt')
+ (scratch/name).write_bytes(old.read_bytes());mutant=run(label)
+ if name.endswith('.py'):assert mutant['python']['failures']==1 and mutant['python']['errors']==0 and mutant['java']['failures']==0
+ else:assert mutant['java']['failedTests']==['MJP02'] and mutant['python']['failures']==0
+ (scratch/name).write_bytes(original[name]);restored=run(label+'-restore');assert restored['runnerExitCode']==0
+ report['injections'].append({'fault':label,'preFixSourceSha256':hashlib.sha256(old.read_bytes()).hexdigest(),'mutant':mutant,'restored':restored})
+report['final']=run('final');assert report['final']['runnerExitCode']==0
+report['sourceAfter']=hashes(src);report['workspaceSourceBeforeAfterEqual']=report['sourceBefore']==report['sourceAfter'];report['scratchExactRestore']=all((scratch/name).read_bytes()==original[name] for name in names)
+(out/'receipt.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps({'faultsDetected':len(report['injections']),'finalPython':report['final']['python'],'finalJava':report['final']['java'],'workspaceSourceBeforeAfterEqual':report['workspaceSourceBeforeAfterEqual'],'scratchExactRestore':report['scratchExactRestore']}))

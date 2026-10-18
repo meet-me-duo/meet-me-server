@@ -1,3 +1,17 @@
+# #130 무료 managed HTTPS 브라우저 통합 준비·실행 (2026-10-18 UTC)
+
+- [x] [USER] test 전용 managed launcher·정확 runtime 핀·웹33 의존성 복구·기존 HTTPS 브라우저 연결을 승인했다. 실제 모델/OAuth 호출·운영 설정 변경은 제외하고 합성 결과와 실제 관리형 경로 검증을 구분한다.
+- [x] [AGENT] 격리 실행 worktree를 만들었다. 서버 PR133 `6046baf66e49e9382248cd3fb8adb0a8879a7e40`에 최신132 `27de97e137d23a2920d425ea521ee33ec0996a8d`의 V2 A/B 두 파일만 overlay(A a723af8f…/B7e898fcd…)하고, 웹 PR33 `3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6`를 별도 detached worktree로 고정했다. 기존 브랜치·웹 oracle 원본은 변경하지 않는다.
+- [x] [AGENT] 새 orchestrator attestation 계약28의 독립 genuineRED→GREEN과 FI3(2/1/1assert 탐지·각복구28PASS)를 확인했다. 이는 순수 검증 함수 증거이며 실제 managed/browser 성공으로 합산하지 않는다. 새 browser4×2는 타입 검사·list8까지 완료했다.
+- [x] [AGENT] backend protocol28/guard6 각각 genuineRED→GREEN 및 독립 scratchFI3+1 탐지·각복구를 봉인했다. 실제 Spring/PG/browser와 구분한다. 원 spec을 둘러싼 관측/Docker 로컬경계 추가26 genuineRED→GREEN이며 Node 전체54PASS다. 독립 backend 코드리뷰 P2두건은 추가4 RED→GREEN/FI2·독립 재검토로 CLOSED다. 별도 Docker 대상 P2도 새14 RED→68GREEN/FI2·독립 재검토로 CLOSED다. 실행 전 한정ACCEPTED(8fde52d8…) 후 실제 new8→원host8→복구6을 별도 실행하도록 지시했다. 범용도구 확장 없이 구체 결과·재현 원인 확인에 집중한다.
+- [x] [AGENT] 별도 시험 launcher·runtime manifest·orchestrator 구현과 실행 전 한정 독립 검토를 마쳤다. 실제 graph/원장/HTTPS 결과는 아래 별도 실행으로 판정한다. 실제 managed bean/worker/PG 원장/production TwoStage·클라이언트에 loopback 합성 TLS transport·합성 정책만 연결하고 실 provider/OAuth outbound를 차단한다. 원 OFF/Primary fake 실행기를 새 managed 증거로 재사용하지 않는다.
+- [x] [AGENT] 정확 web33에서 pnpm10.17.1 frozen lockfile 복구·tsc·Vite 격리 빌드 PASS를 확인했다. 원 source304/lockfile/HEAD 전후동일·gitclean이다. 준비 receipt SHA a9e972aa97373fa28d5a9560743accdcd1339149aecee1d237d8b583d87a36a3이며 실제 backend/browser 연결은 아직 미실행이다.
+- [x] [AGENT] 실제 새 managed8 8/8·원HOST8 8/8·원복구6 6/6을 별도 단회 완료했다. 각retry/skip0·전후지문동일·cleanup3종0이다. 원기대값/과거실패보존, model/OAuth0이며 실제의미정확도/rapid unload근본해결로 일반화하지 않는다. 새 fake 결과를 모델 의미 정확도나 실제 OAuth/운영 검증으로 표시하지 않는다. 실제 실행 전후 source/runtime/원 oracle 지문·요청 경로·원장/worker 관측을 봉인한다.
+- [x] [AGENT] Node68·backend38 독립RED/GREEN·FI/복구, 실제3scope 독립readback PASS(41febf29…), 필수guard exit0/9.486초/source563 전후동일을 확인했다. XML1733(1729PASS+기존4SKIP)은 재사용이다.
+- [ ] [AGENT] 최종 독립 게시 리뷰 후 같은 Draft132에 정상 commit/push하고 정확 최종 HEAD CI를 확인한다. 게시27de CI39149807904의 Quality/ARM64와 Lifecycle39149824268 SUCCESS·literal checkout/tree 일치를 확인했다. 새 통합 후속 HEAD의 CI는 별도 확인한다.
+
+제품 API/UI·DB schema·모델/threshold·500자·참여/마감 정책·비밀정보/운영 설정은 바꾸지 않는다. 합성 identity/JWT fixture는 시험에서만 사용한다. 유지 예약USD2.74751488·추가 유료0·기존 UNKNOWN 유지, V2 실제 의미 효능/운영 정책 미검증으로 main·배포·활성화HOLD다. 다음 시작점은 실제3suite 독립 결과검토·필수guard→동일Draft 정상게시/정확새HEADCI다. Commit/PR 동일 후속 커밋 예정. 아래는 각 시점의 기록이다.
+
 # #130 A24 Python fixture 후속 (2026-10-18 UTC)
 
 - [x] [AGENT] V2 정합화/무료 검증·최종 독립 리뷰 뒤 정상 HEAD `e5cd063364d90c7b99234c68abfe3d8c5751fbc2`를 동일 Draft132에 게시했다. exact CI39146763104는 Gradle/bounded/PC01+PJ16/CA+JDK/ARM/Lifecycle PASS 뒤 A24 Java26PASS·Python exit1로 실패했다. 원 runner가 Python 실패ID를 출력하지 않아 원격ID/host filesystem 원인은 미확정이다.

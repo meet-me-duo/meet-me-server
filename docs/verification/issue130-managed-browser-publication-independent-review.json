@@ -1,0 +1,290 @@
+{
+  "status": "LOCAL_PUBLICATION_PASS_FREE_MANAGED_HTTPS_FIXTURE_AND_VERIFIED_RECORDS_ONLY",
+  "recordedAt": "2026-10-18T18:43:07.430084+00:00",
+  "reviewer": "/root/review_pre_submit_design",
+  "publicationP1": 0,
+  "publicationP2": 0,
+  "decision": "Normal commit/push to existing Draft132 and exact new HEAD CI may proceed under prior authorization. This is test tooling and accurately scoped verification-record publication; main/deployment/activation/real-model or external-OAuth approval is not issued.",
+  "declaredCombination": {
+    "serverBase": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "overlayOrigin": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+    "approvedOverlayA": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "approvedOverlayB": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+    "web": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+    "fullPr132MergeClaim": false,
+    "runtimeManifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+    "sourceFiles": 263,
+    "runtimeFiles": 1143,
+    "classpathEntries": 219,
+    "fixtureClasses": 11,
+    "webFiles": 304,
+    "toolFiles": 26
+  },
+  "directChecks": {
+    "candidateManifest": {
+      "path": "/tmp/issue130-managed-browser-publication/candidate-manifest-final.json",
+      "sha256": "64a378cdf31e5ff48850154d9c9de549a9d0b3e2aa9dcabef2a7a134e3aedba2",
+      "files": 67,
+      "allDiskFingerprintsMatch": true,
+      "indexStageIsNextRootAction": true
+    },
+    "mandatoryGuard": {
+      "rawReceiptSha256": "9f549f089dd5bf10bbb9ed029ede12c1da43396aad2bca222cb619dafac431b5",
+      "sourceBeforeAfterCurrentEqual": true,
+      "scope": [
+        "src/main",
+        "src/test",
+        "evaluation",
+        ".codex/hooks",
+        "Gradlebuild/wrapper",
+        ".github/workflows/ci.yml"
+      ],
+      "scopedFiles": 563,
+      "canonicalSourceMapSha256": "014e4c3e93aeb7e5174f14aa597108b5b8cd6a259fab0a82fa490e35cbcfecfd",
+      "exitCode": 0,
+      "elapsedSeconds": 9.486,
+      "testsXmlReused": 1733,
+      "passed": 1729,
+      "historicalSkipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "suites": 216,
+      "fresh1733Claim": false
+    },
+    "productionMainAndTestUnchangedFromPosted27de": true,
+    "prBody": {
+      "path": "/tmp/issue130-managed-browser-publication/pr-body.md",
+      "sha256": "4f48bee5d613516d4a73836fc657f13ad9badf947b1ff4742df635396c070997",
+      "sixTemplateHeadingsExact": true,
+      "closes130SeparateLine": true,
+      "refsBroad123Retained": true
+    },
+    "rootDisclosureScan": "Parent reports actualsecretliteral0/privatekey0/diffcheckPASS; no secret values were read by reviewer to repeat this scan. Reviewed new files contain publicsynthetic tooling/metadata, not private22 payload/gold."
+  },
+  "actualResultAssessment": {
+    "canonical": {
+      "path": ".tdd/verification/issue130-managed-browser-actual-suites.json",
+      "sha256": "bfa86a6e2bd4d676582ebcdca8850daed656f7beb5e0bf03a64b5d3d01de0c16"
+    },
+    "independentReadback": {
+      "path": ".tdd/verification/issue130-managed-browser-three-scopes-independent.json",
+      "sha256": "41febf2951f5cf3dbcf802bcbd9703c28b2dc493771098d153a54c041ba28235"
+    },
+    "separateScopes": [
+      {
+        "scope": "new-managed8",
+        "passed": 8,
+        "skipped": 0,
+        "flaky": 0,
+        "attemptsPerCase": 1,
+        "evidenceSha256": "84ce6963b264ecb33cdf0f81fc0d101788b8d26a93767402654d3ca7bcd60609",
+        "ledger": {
+          "reservations": 22,
+          "dispatchClaims": 22,
+          "observations": 22,
+          "missingOrMismatchedDispatches": 0,
+          "operationCounts": {
+            "PRECHECK_CLASSIFICATION": 18,
+            "PRECHECK_COUNT": 2,
+            "PRECHECK_GENERATION": 2,
+            "FINAL_PRIMARY": 0,
+            "FINAL_FALLBACK": 0
+          }
+        },
+        "physicalSyntheticCalls": 22,
+        "cleanup": {
+          "ownedContainersRemaining": 0,
+          "ownedListenersRemaining": 0,
+          "privateTempMaterialRemaining": 0
+        },
+        "observer": {
+          "routesIntercepted": 0,
+          "unexpectedOrigins": 0,
+          "contextsObserved": 18,
+          "requestsObserved": 474,
+          "workerProofFiles": 3,
+          "scope": "Returned contexts and existing/future pages; original fixture certificate initialization is source-audited before observer attachment."
+        }
+      },
+      {
+        "scope": "original-host8",
+        "passed": 8,
+        "skipped": 0,
+        "flaky": 0,
+        "attemptsPerCase": 1,
+        "evidenceSha256": "012e4bdf354592d874f09ee40dab666cdc4f56cb4bd894fa47f5e9e75625bea7",
+        "ledger": {
+          "dispatchClaims": 14,
+          "observations": 14,
+          "missingOrMismatchedDispatches": 0,
+          "operationCounts": {
+            "PRECHECK_CLASSIFICATION": 14,
+            "PRECHECK_COUNT": 0,
+            "PRECHECK_GENERATION": 0,
+            "FINAL_PRIMARY": 0,
+            "FINAL_FALLBACK": 0
+          },
+          "reservations": 14
+        },
+        "physicalSyntheticCalls": 14,
+        "cleanup": {
+          "ownedContainersRemaining": 0,
+          "ownedListenersRemaining": 0,
+          "privateTempMaterialRemaining": 0
+        },
+        "observer": {
+          "routesIntercepted": 0,
+          "unexpectedOrigins": 0,
+          "contextsObserved": 18,
+          "requestsObserved": 464,
+          "workerProofFiles": 3,
+          "scope": "Returned contexts and existing/future pages; original fixture certificate initialization is source-audited before observer attachment."
+        }
+      },
+      {
+        "scope": "original-recovery6",
+        "passed": 6,
+        "skipped": 0,
+        "flaky": 0,
+        "attemptsPerCase": 1,
+        "evidenceSha256": "5835b4e69c2cb4863bea27b94eded07bfa8b18dfc9ca254e6e9d89c989552779",
+        "ledger": {
+          "operationCounts": {
+            "PRECHECK_CLASSIFICATION": 2,
+            "PRECHECK_COUNT": 0,
+            "PRECHECK_GENERATION": 0,
+            "FINAL_PRIMARY": 0,
+            "FINAL_FALLBACK": 0
+          },
+          "reservations": 2,
+          "dispatchClaims": 2,
+          "observations": 2,
+          "missingOrMismatchedDispatches": 0
+        },
+        "physicalSyntheticCalls": 2,
+        "cleanup": {
+          "ownedContainersRemaining": 0,
+          "ownedListenersRemaining": 0,
+          "privateTempMaterialRemaining": 0
+        },
+        "observer": {
+          "routesIntercepted": 0,
+          "unexpectedOrigins": 0,
+          "contextsObserved": 6,
+          "requestsObserved": 162,
+          "workerProofFiles": 3,
+          "scope": "Returned contexts and existing/future pages; original fixture certificate initialization is source-audited before observer attachment."
+        }
+      }
+    ],
+    "reviewerDirectReadback": "Each canonical artifact file SHA matched. Each actualPlaywright report has exact8/8/6 passed once/no skip/flaky. Actual evidence completedtrue/failureabsent, toolsBefore/After/AfterCleanup all equal current26, provenanceBefore/After/AfterCleanup equal. Independentreadback41feb matches each evidenceSHA and confirms originalownedcontainers/JVM/privatepaths gone andregisteredportsclosed.",
+    "actualPath": "RealCREATE transaction→budgetREADY, realworker/TwoStage/classifier/count/generator/physicalgate/fence/PostgreSQLledger. Only physicalTLS replies and testidentity are synthetic. Owner/revision/idempotency/choiceconfirmation/accepted-onlyclose0/1/2/lateworker policy exercised.",
+    "observabilityLimit": "remote0 is enforcedloopback boundary + source-pinned TLS/denyproxy evidence, not an independentpacketmeter or denied-attempt total. Contextobserver attaches after unchanged originalcertificate initialization; that earlierfixturecode is source-audited.",
+    "historicalLimits": "Newmanaged8, originalhost8 andoriginalrecovery6 are distinct denominators, not22 unique scenarios. Current original8PASS does not erase prior rapidunload401/focus residual or establish arbitrary losslessnavigation. Recovery6 verifies explicitrecheck, not automaticfocus guarantee. No finalanalysis/modeloutput/browserproductionauthentication proof."
+  },
+  "sourceTddAndFixAssessment": {
+    "closedP2s": [
+      "MBR-P2-01 manifestancestorlinks",
+      "MBR-P2-02 mutableJDKexecselection",
+      "MBR-P2-03 DockerCLI/backenddaemonbinding"
+    ],
+    "protocolEvidence": "Node68 (28validator+26Docker/observer+14daemonbinding), Pythonpin28/Java6/supplement4 use independentRED/GREEN/FI with exactrestores. Do not sum these repeats with browser/scenario counts.",
+    "runner": "Currentcc362 differs from reviewed00620 by only stdoutnull fallback; reverse substitution reproduces exact00620SHA. Initialfdstdoutnull setup/browser0 andsecondarydistENOENT retained assetupfailure, not productRED. Corrected68PASS precedes actual3scopes.",
+    "builder": "Consolidatedofflinebuilder andREADME reviewed. FirstASCII nativefilename setupfailure preserved; LANG/LC_ALL C.UTF8-only correction, freshcompile/launchercompile andequivalentclass/JAR/source readback documented. Actualsuites stayed on original9d3; newfab851 differs onlycompilecommandmetadata.",
+    "ci": "Added Node24 and free68/pin28/guard6/supp4 commands only. No actual Docker/browser/model/OAuth CI success claimed; existingpermissions/timeout unchanged. Previous27de Quality/ARM/LifecycleSUCCESS is historical exactHEAD only; currentcode exactCI pending.",
+    "prTemplateFinding": "Initiallywrong5sectionbody corrected to exact6; P2closed without changing source/results."
+  },
+  "privacyQualityCost": {
+    "realModelCalls": 0,
+    "externalOAuthCalls": 0,
+    "productionAccess": false,
+    "private22InputsGoldReadByReviewer": false,
+    "mainApiUiDbSchemaModelThreshold500FencesChanged": false,
+    "scheduledAndFinalAnalysisDispatch": "Disabled/excluded; manual realprecheckworker only.",
+    "syntheticPolicy": "TEST_SUBUNIT/.73 isolatedfixture policy, not productionUSDtariff/thresholdselection. Heldsubunits retained; no invoice-complete/realcost claim.",
+    "retainedEngineeringUsd": "2.74751488",
+    "priorUnknownReleased": false,
+    "newPaidCalls": 0,
+    "oldA16A24B2GoldScores": "Unchanged; V2 real-model semantic efficacy remainsunverified. No generalaccuracy/p50/p95/causalimprovement/productioncostsavings claim."
+  },
+  "boundFiles": {
+    ".github/workflows/ci.yml": "49802ae0edbd06c3f5e4fd58eafd1bf33a644f9ce8e9645dec55e7b09d27a4b5",
+    ".tdd/history/issue130-managed-browser-launch/README.json": "7e7aac4b7d15e36d08e6bf4c623c289aab80fb3ec1ce315808a4ba48a962095a",
+    ".tdd/history/issue130-managed-browser-launch/evaluation-red.schema.json": "259b4a1441face93c13a6467b709630d6920241b94e264ee9f8f6de3a729ea93",
+    ".tdd/history/issue130-managed-browser-launch/run_guard_fi.py.txt": "10816427fea4982b2124afd943d73e1ddf59deb316a0660dc26ad95f9d49342c",
+    ".tdd/history/issue130-managed-browser-launch/run_pin_fi.py.txt": "55facb8cb8054983d1c05307e5249bf6748b97eed9cbf719c68d3f2ed98cbe68",
+    ".tdd/history/issue130-managed-browser-supplement/ManagedBrowserLoopbackGuard.java.before.txt": "74a278a62c84fd4dfbbb05458dec2d98c9b2b3cad40d8c99876f4b127f62833d",
+    ".tdd/history/issue130-managed-browser-supplement/runtime_pin.py.before.txt": "2a258255f25e3ee948089827a6e0753bb3f1f25876be91a2254baa96e5a14220",
+    ".tdd/history/issue130-managed-browser-supplement/scratch_fi_reproduction.py.txt": "d8f667bd5f81e9f78c6692d5fce0645e59b3336c702937724d3905422a1684ef",
+    ".tdd/verification/issue130-managed-browser-actual-suites.json": "bfa86a6e2bd4d676582ebcdca8850daed656f7beb5e0bf03a64b5d3d01de0c16",
+    ".tdd/verification/issue130-managed-browser-backend-independent.json": "81494a7d398474e13582c2e4f79f5850530e14c1c808223ba9cc1ed5ec0cf699",
+    ".tdd/verification/issue130-managed-browser-contract-faults-detail.json": "d472dbba0da19954619f31ea7f27dd06e740cf5c6b40200486d442c9370b18b2",
+    ".tdd/verification/issue130-managed-browser-contract-faults.json": "3edb4465e5d7f27c3751a72b57c6a2541ed67d28fc0270e7458a3350e561b89a",
+    ".tdd/verification/issue130-managed-browser-contract-red.json": "db8112a1545d27aefbb8ea68fb049b75512376a31a2175c0ecd0fec255d6b395",
+    ".tdd/verification/issue130-managed-browser-docker-binding-faults-detail.json": "6a466849f5025577e452069316f66de7e83190c361096446c5e988ca38326426",
+    ".tdd/verification/issue130-managed-browser-docker-binding-faults.json": "48fb058d8cc9b08b40f04f10d3f1e6e1da9a91bb96598213c5c9bb6b6b43c21d",
+    ".tdd/verification/issue130-managed-browser-docker-binding-independent.json": "924c89c0b4e758b984f49fba0f3d7fca0a6476d45feef74ddc6d105fc1aeb972",
+    ".tdd/verification/issue130-managed-browser-docker-binding-red.json": "ee41d64dded33595543237c5a75ea2d5f2bde5e04d06ce7d9ff424ff4f47b39e",
+    ".tdd/verification/issue130-managed-browser-guard-faults.json": "aacc94b87610b568d8b4be6ccc851ad24155b5b1e1f8c22ba2166f1533d4d5d1",
+    ".tdd/verification/issue130-managed-browser-guard-red.json": "e109c74a9334dfa974f07df38e4beaeefc4b75ef470f9be38320fc1679b8bfb4",
+    ".tdd/verification/issue130-managed-browser-observation-docker-red.json": "d54512f11e54ef53b1e2e9f0bea37aca66032a0a5cacc90bfe92fc7e8dbde0cf",
+    ".tdd/verification/issue130-managed-browser-observer-docker-faults-detail.json": "8863d1d6bcccf6844709b29b00976ecd3a4311e07effe9ccdca58fdfc647ba46",
+    ".tdd/verification/issue130-managed-browser-observer-docker-faults.json": "363a770d636dcda5cb08668f66532c703681d5c5c21eabbdb91712c879012106",
+    ".tdd/verification/issue130-managed-browser-oracle-prepared.json": "f5cecb642a55f380fedae9749f8880483567b9d75346de916281d1ebf0ba5cc2",
+    ".tdd/verification/issue130-managed-browser-runtime-faults.json": "151f40390ad82e8fd7379b6764c67522521c5e59cc4d08caeb22aeadd0de9e97",
+    ".tdd/verification/issue130-managed-browser-runtime-red.json": "1b4e2607f7341a7b4570297afb30ae75531283c109fa754feac65168acead980",
+    ".tdd/verification/issue130-managed-browser-supplement-faults.json": "832adabf0964a58b5a3e0e51412db4935cddb75d1373a2716de3684b4ff23ec7",
+    ".tdd/verification/issue130-managed-browser-supplement-independent-final.json": "9abd77040ea4d3294e71db6e3249a2e7f0a4b87d49820dec920044be601ff70b",
+    ".tdd/verification/issue130-managed-browser-supplement-red.json": "2fa13b3784fa5854cf6b45b6abe6ca4c6ac132db219d2a328316298c52787e44",
+    ".tdd/verification/issue130-managed-browser-three-scopes-independent.json": "41febf2951f5cf3dbcf802bcbd9703c28b2dc493771098d153a54c041ba28235",
+    ".tdd/verification/issue130-managed-browser-web-author-tooling.json": "f9f853f5ff942287b9f5a1bdb982d6fb68c5e20b2e90e07d09e13f5b488dd9c4",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "8f32484f806f6b0945a1f754907538bf4aa1f40d24f4edac2b65fffc00068aaa",
+    "docs/ISSUE_130_MANAGED_BROWSER_VERIFICATION.md": "9e3510bcee30b45b721fb4bec3b782ee1e4288c314bb3f8bdb14718398d5ac0c",
+    "docs/verification/issue130-27de-exact-ci-success.json": "856d9b15cffecc2d36e02229add921bed8f36716e99c922c2836792e0c996f89",
+    "docs/verification/issue130-managed-browser-actual-new8.json": "1591aaf5531abc7e76f7ec5fadb88337bbfe3e6e76941493372f922f705daef6",
+    "docs/verification/issue130-managed-browser-actual-original8.json": "9108e677a58871cbeb5e24d40b9c1ec7bf29e7219e65d519e9c00fe345dab1aa",
+    "docs/verification/issue130-managed-browser-actual-recovery6.json": "9a61dbeda03d7139338e7306d12df5dd898202188219af09583481b77c013e6a",
+    "docs/verification/issue130-managed-browser-final-quality.json": "ad48da1513222a42df5e63d5401705fef446864e8e1f386bc56ad3ebecd32165",
+    "docs/verification/issue130-managed-browser-offline-rebuild.json": "ddaada6e739aa7692d36996afb39b95b9efefc718fef553ea9a95eb2b6c725c2",
+    "docs/verification/issue130-managed-browser-runtime-preflight.json": "90f1cc511f44a494a8f8da62e6f6bd2d0b5878a3a7e921ad81e1cb005679fe00",
+    "docs/verification/issue130-managed-browser-web-preparation.json": "1f8ab5b095e58e2d69f1edd4505cbcf910f0a530edb9e7d5968681146d16ed7d",
+    "evaluation/issue130/managed-browser/BACKEND_CONTRACT.md": "1577be113fc33f176addf660c672606eec9c36552744d9fcd530069adc8a51f3",
+    "evaluation/issue130/managed-browser/Issue130ManagedBrowserServer.java": "983eccd0c6898022cf678637c677cd9cca89d01d3cc2ad57f00a10e57ef963ab",
+    "evaluation/issue130/managed-browser/ManagedBrowserGuardJdkPinContractTest.java": "4da305e1943c961adefe71073de0df90d8f239a9df1598d85dc3136402899a9c",
+    "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuard.java": "e53e1ab4e630a6fd6dda4743bc1333bfc9a111b2c5cf8ca301927c5822fe3ba8",
+    "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuardContractTest.java": "133cbfbbbf674f1b72677ab0f8fbde4576dd3288b337c8ff09547202532b74b1",
+    "evaluation/issue130/managed-browser/OBSERVATION_DOCKER_CONTRACT.md": "39f01ac7fd17a197000d5923ef0e6738cdfd5083e53080e45d586db96f7ebe46",
+    "evaluation/issue130/managed-browser/PUBLIC_CONTRACT.md": "757fdc47321dbd33c7f5e4c0aa2698c5341995620d99f98a1694382f2ae85e2d",
+    "evaluation/issue130/managed-browser/README.md": "a42e70b4f66c71a40d761891ce67bfe3d775fbe819f7d072a822424ecd47350a",
+    "evaluation/issue130/managed-browser/browser-observation.mjs": "8d428e29a16d3abe750a2b6265c8627df096043bd3052ecb9e209ecd17ee8b89",
+    "evaluation/issue130/managed-browser/browser-observation.test.mjs": "c519a0d52ed0a3ac3175a6585bfe368813a1d16071e93438c5db31ad7d10864e",
+    "evaluation/issue130/managed-browser/docker-daemon-binding.mjs": "536f73c536ce38a5eeccab2cc3b4fdfacd724e23941d9240f473ecf6e4cb7414",
+    "evaluation/issue130/managed-browser/docker-daemon-binding.test.mjs": "1cf792e10510f3312028a209d46c75d05a5423a910ee10c50a87e1951f03d24e",
+    "evaluation/issue130/managed-browser/docker-target.mjs": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1",
+    "evaluation/issue130/managed-browser/docker-target.test.mjs": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c",
+    "evaluation/issue130/managed-browser/managed-browser.spec.ts": "817c31d6960d4270997446a5c9fa595824bfee16ac1b113926dc4597784288cc",
+    "evaluation/issue130/managed-browser/observed-fixtures.ts": "1d39e1772a4f8e5567e8bd43b2fffd83465cd7d8ead60e0c564f2444e443a342",
+    "evaluation/issue130/managed-browser/playwright.managed.config.mjs": "e800b2b6365d78011a9f1a648d1c3f7a1d56c4bd5c6e699efb5f2b170a99015f",
+    "evaluation/issue130/managed-browser/prepare_runtime.py": "3e287ddc72123056a93269865683cbc4d30fc7f174c4b52312d6f73dfce893d5",
+    "evaluation/issue130/managed-browser/run-managed-browser.mjs": "cc362d8c97938dae80ae76b32a61c3e72d31b31a73e4f56ed29502e3ecb640d1",
+    "evaluation/issue130/managed-browser/run_guard_contract_tests.py": "680aaf6e6c7c7ea94ad5c22f20bfc3fdc84d2974eea70eebd92e8378f261de25",
+    "evaluation/issue130/managed-browser/run_supplemental_safety_tests.py": "f0e29bc63d42b68d22a1c4c597b3a4c32736074d35515986853d4c938e1de0e1",
+    "evaluation/issue130/managed-browser/runner-contract.mjs": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834",
+    "evaluation/issue130/managed-browser/runner-contract.test.mjs": "af277c1b043ed77bf3a41c6f0f5de2d665503dd27fa67fd4bbc93e6b2fb433ad",
+    "evaluation/issue130/managed-browser/runtime_pin.py": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2",
+    "evaluation/issue130/managed-browser/test_runtime_pin.py": "1c69aca23a436221b6df0a9c7b62e5207a04478f3c00b3862dbe0d8be452bdcd",
+    "evaluation/issue130/managed-browser/test_runtime_pin_ancestor.py": "b1add1679f63c16955b93f50684af5100b0e156b1038019476bcd74b08dcaf93",
+    "implementation_plan.md": "dc383db04067c78521e1d75754143e4a398ff7e64a84d05b5b724bd86b30384f"
+  },
+  "remaining": [
+    "Root stage/commit/push and exact new HEAD CI verification; prior27degreen cannot be used for newcode.",
+    "Main/deployment/operatingactivation and extra paid/model/externalOAuth actions remain HOLD.",
+    "Actual model efficacy and operational auth/billing/finalanalysis/deployment proof remain outside this verified scope."
+  ],
+  "reviewerActivity": {
+    "sourceTestCiOrStatusDocEdits": 0,
+    "gradleBrowserDockerNetworkModelRuns": 0,
+    "privateIndividualInputGoldIndexWireRawResponseKeyCaEnvironmentReads": 0,
+    "gitMutations": 0
+  }
+}

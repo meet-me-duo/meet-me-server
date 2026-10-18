@@ -1,0 +1,46 @@
+{
+  "workItem": "issue130-managed-browser-docker-binding",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Strict canonical Docker daemon binding in managed profile and actual runner pre-daemon validation, using disposable fake Docker executable. Original54 tests unchanged; real Docker/browser/model calls zero.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/docker-daemon-binding.mjs",
+      "sha256": "536f73c536ce38a5eeccab2cc3b4fdfacd724e23941d9240f473ecf6e4cb7414"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/run-managed-browser.mjs",
+      "sha256": "00620f8ecbcbf067cbdda2159e33af50ca06a2d1eb9893e22e23c707f2da2161"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/docker-daemon-binding.test.mjs",
+      "sha256": "1cf792e10510f3312028a209d46c75d05a5423a910ee10c50a87e1951f03d24e"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "backend-fixed-endpoint-check-omitted",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "docker-daemon-binding.test.mjs"
+      ],
+      "detectedBy": "DB05 backend endpoint must be the declared fixed profile; DB06 missing backend binding is not proof",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "runner-context-binding-call-omitted",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "docker-daemon-binding.test.mjs"
+      ],
+      "detectedBy": "DB14 CLI rejects localTCP context before any daemon command",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T18:20:07.056123Z"
+}

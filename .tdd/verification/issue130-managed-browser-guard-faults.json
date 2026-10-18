@@ -1,0 +1,33 @@
+{
+  "workItem": "issue130-managed-browser-loopback-guard",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Process-only test guard direct public decisions; no actual app/PG/browser or physical network probe. Scratch-only allow-external-connect mutation.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuard.java",
+      "sha256": "74a278a62c84fd4dfbbb05458dec2d98c9b2b3cad40d8c99876f4b127f62833d"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuardContractTest.java",
+      "sha256": "133cbfbbbf674f1b72677ab0f8fbde4576dd3288b337c8ff09547202532b74b1"
+    },
+    {
+      "path": "evaluation/issue130/managed-browser/run_guard_contract_tests.py",
+      "sha256": "680aaf6e6c7c7ea94ad5c22f20bfc3fdc84d2974eea70eebd92e8378f261de25"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "NON_LOOPBACK_CONNECT_ALLOWED",
+      "command": [
+        "python3",
+        "/tmp/issue130-managed-browser-author/run_guard_fi.py"
+      ],
+      "detectedBy": "MLG02: nonloopback DNS/connect/accept rejection",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T18:03:01.851911Z"
+}

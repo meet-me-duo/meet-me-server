@@ -1,0 +1,31 @@
+{
+  "scope": "PROTOCOL_ONLY_NOT_ACTUAL_SPRING_PG_BROWSER_PROOF",
+  "redSchema": "local evaluation path projection only; .tdd/red Kotlin schema unchanged",
+  "runtimeTests": 28,
+  "runtimeAssertionFailures": 28,
+  "guardTests": 6,
+  "guardAssertionFailures": 6,
+  "errors": 0,
+  "commands": {
+    "python": [
+      "python3",
+      "evaluation/issue130/managed-browser/test_runtime_pin.py"
+    ],
+    "guard": [
+      "python3",
+      "evaluation/issue130/managed-browser/run_guard_contract_tests.py",
+      "--java",
+      "<canonical JDK17>/bin/java",
+      "--output",
+      "<new temporary output directory>"
+    ]
+  },
+  "actualAppRequired": [
+    "complete production classpath/source snapshot",
+    "actual Spring ultimate target beans",
+    "CREATE same-TX READY bootstrap",
+    "actual production TwoStage/worker/client/TLS/PG ledger",
+    "browser flows and old immutable compatibility specs"
+  ],
+  "guardProofLimit": "Direct public SecurityManager decisions; JVM install-before-main, actual denial and container pull refusal need launch evidence."
+}

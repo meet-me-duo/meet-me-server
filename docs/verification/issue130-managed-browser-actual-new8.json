@@ -1,0 +1,105 @@
+{
+  "status": "ACTUAL_SYNTHETIC_MANAGED_HTTPS_8_PASS",
+  "sourceTrio": {
+    "server133": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "policy132": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+    "web33": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6"
+  },
+  "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+  "privateEvidenceSha256": "84ce6963b264ecb33cdf0f81fc0d101788b8d26a93767402654d3ca7bcd60609",
+  "cases": [
+    {
+      "scenario": "M01",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M01",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M02",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M02",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M03",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M03",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M04",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "M04",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    }
+  ],
+  "browserObservation": {
+    "routesIntercepted": 0,
+    "unexpectedOrigins": 0
+  },
+  "ledger": {
+    "reservations": 22,
+    "dispatchClaims": 22,
+    "observations": 22,
+    "missingOrMismatchedDispatches": 0,
+    "operationCounts": {
+      "PRECHECK_CLASSIFICATION": 18,
+      "PRECHECK_COUNT": 2,
+      "PRECHECK_GENERATION": 2,
+      "FINAL_PRIMARY": 0,
+      "FINAL_FALLBACK": 0
+    }
+  },
+  "network": {
+    "localSyntheticCalls": 22,
+    "remoteCalls": 0
+  },
+  "checks": {
+    "managedReadiness": true,
+    "tlsChainAndHostnameVerified": true,
+    "untrustedCaRejected": true,
+    "provenanceStable": true,
+    "assetsStable": true,
+    "toolsStable": true,
+    "manifestStable": true,
+    "completeLifetimeInputsStable": true
+  },
+  "cleanup": {
+    "ownedContainersRemaining": 0,
+    "ownedListenersRemaining": 0,
+    "privateTempMaterialRemaining": 0
+  },
+  "completed": true,
+  "newManagedMatrixVerified": true,
+  "sourceRuntimeBeforeAfterEqual": true,
+  "actualModelCalls": 0,
+  "actualExternalOAuthCalls": 0,
+  "scope": "Real production managed beans/worker/PG ledger and HTTPS browser, synthetic TLS responses and test identities. Not real model meaning, calibrated accuracy/latency/billing, actual OAuth or production proof. Original host8/recovery6 remain separate runs.",
+  "firstAttempt": "Preserved setup failure before server/browser; stdout file-fd null trim fixed minimally; old68 regression PASS; not RED or successful case count.",
+  "remoteCallsEvidence": "Enforced JVM loopback-only guard plus configured local synthetic TLS, not an independent packet counter.",
+  "workerSchedulingScope": "Actual production worker manually drained by test control; scheduled dispatch and final room analysis disabled."
+}

@@ -1,0 +1,39 @@
+{
+  "status": "INDEPENDENT_PROTOCOL_GATES_AND_GUARD_VERIFIED",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "recordedAt": "2026-10-18T18:03:01.851911Z",
+  "testFiles": {
+    "test_runtime_pin.py": "1c69aca23a436221b6df0a9c7b62e5207a04478f3c00b3862dbe0d8be452bdcd",
+    "ManagedBrowserLoopbackGuardContractTest.java": "133cbfbbbf674f1b72677ab0f8fbde4576dd3288b337c8ff09547202532b74b1",
+    "run_guard_contract_tests.py": "680aaf6e6c7c7ea94ad5c22f20bfc3fdc84d2974eea70eebd92e8378f261de25"
+  },
+  "runtimeProtocol": {
+    "tests": 28,
+    "originalRedAssertionFailures": 28,
+    "errors": 0,
+    "green": 28,
+    "faultsDetected": 3,
+    "scope": "file/protocol-only; fake nonexecutable class fixtures explicitly marked"
+  },
+  "guard": {
+    "tests": 6,
+    "originalRedAssertionFailures": 6,
+    "errors": 0,
+    "green": 6,
+    "faultsDetected": 1,
+    "scope": "JDK public SecurityManager decisions; no physical DNS/socket/exec"
+  },
+  "workspaceSourceMutation": false,
+  "expectedValuesChangedAfterRed": false,
+  "evidence": {
+    ".tdd/verification/issue130-managed-browser-runtime-red.json": "1b4e2607f7341a7b4570297afb30ae75531283c109fa754feac65168acead980",
+    ".tdd/verification/issue130-managed-browser-guard-red.json": "e109c74a9334dfa974f07df38e4beaeefc4b75ef470f9be38320fc1679b8bfb4",
+    ".tdd/verification/issue130-managed-browser-runtime-faults.json": "151f40390ad82e8fd7379b6764c67522521c5e59cc4d08caeb22aeadd0de9e97",
+    ".tdd/verification/issue130-managed-browser-guard-faults.json": "aacc94b87610b568d8b4be6ccc851ad24155b5b1e1f8c22ba2166f1533d4d5d1"
+  },
+  "limitations": [
+    "Actual complete production runtime, installed-before-main egress barrier, Spring actual graph, CREATE bootstrap/PG ledger and HTTPS browser executions remain separate uncompleted obligations.",
+    "Readiness self-report consistency does not independently prove actual PG/dispatch facts.",
+    "No real model/OAuth/production settings, no source-policy or old test changes; no model quality claims."
+  ]
+}

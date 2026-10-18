@@ -1,0 +1,27 @@
+{
+  "status": "EXACT_WEB_PREP_BUILD_READY",
+  "recordedAt": "2026-10-18T17:47:10.279423+00:00",
+  "webHead": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+  "typecheckExit": 0,
+  "viteBuildExit": 0,
+  "assets": {
+    "assets/AccountOperationsPage-BqcY0RhA.css": "0f5aa7736566ff093b65786378628c8dbca778dfc42816014d7514590a117adc",
+    "assets/AccountOperationsPage-BrutKOKY.js": "dbc226ee0bb4ac501b3665c2bf2fbf1e0a0b936acf344a4a0f08b14426feceb7",
+    "assets/favicon-DjtCOTlh.svg": "cf1f8ed7dc4da2af8250d48bf63bab813aa9e855d86edda6f833b24db91742bd",
+    "assets/index-D-kvJm0_.css": "57a01d8576de8f2e0afd847d2e8d4b22100ad72186e9998feaa4552a2315c1ed",
+    "assets/index-fSgv3APr.js": "21393729c3c3936dee6627c5f7c8f04ce05cee5915ec54f9ca73a80968d43494",
+    "index.html": "6ae3f2cae764b246e608ae9f889d70fc6ed101da6eb304dea45aeec90250571a"
+  },
+  "source304BeforeAfterEqual": true,
+  "lockfileUnchanged": true,
+  "gitClean": true,
+  "binaries": {
+    "node": "24.19.0",
+    "pnpm": "10.17.1",
+    "chromium": "151.0.7922.173",
+    "java": "17.0.20.1",
+    "docker": "28.4.0"
+  },
+  "scope": "Exact web dependency restoration/typecheck/build and source preservation only; no managed browser/backend/model/OAuth result.",
+  "evidenceSha256": "a9e972aa97373fa28d5a9560743accdcd1339149aecee1d237d8b583d87a36a3"
+}

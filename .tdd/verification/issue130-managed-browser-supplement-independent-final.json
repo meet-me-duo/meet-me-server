@@ -1,0 +1,58 @@
+{
+  "status": "P2_SUPPLEMENTAL_BOUNDARIES_CLOSED",
+  "recordedAt": "2026-10-18T18:08:25.079601Z",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "red": {
+    "tests": 4,
+    "assertionFailures": 2,
+    "passingControls": 2,
+    "errors": 0,
+    "path": ".tdd/verification/issue130-managed-browser-supplement-red.json",
+    "sha256": "2fa13b3784fa5854cf6b45b6abe6ca4c6ac132db219d2a328316298c52787e44"
+  },
+  "final": {
+    "originalProtocol": 28,
+    "originalGuard": 6,
+    "newSupplement": 4,
+    "totalUnique": 38,
+    "failures": 0,
+    "errors": 0,
+    "oldTestBytesUnchanged": true,
+    "sourcePins": [
+      {
+        "path": "evaluation/issue130/managed-browser/runtime_pin.py",
+        "sha256": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2"
+      },
+      {
+        "path": "evaluation/issue130/managed-browser/ManagedBrowserLoopbackGuard.java",
+        "sha256": "e53e1ab4e630a6fd6dda4743bc1333bfc9a111b2c5cf8ca301927c5822fe3ba8"
+      }
+    ],
+    "testPins": [
+      {
+        "path": "evaluation/issue130/managed-browser/test_runtime_pin_ancestor.py",
+        "sha256": "b1add1679f63c16955b93f50684af5100b0e156b1038019476bcd74b08dcaf93"
+      },
+      {
+        "path": "evaluation/issue130/managed-browser/ManagedBrowserGuardJdkPinContractTest.java",
+        "sha256": "4da305e1943c961adefe71073de0df90d8f239a9df1598d85dc3136402899a9c"
+      },
+      {
+        "path": "evaluation/issue130/managed-browser/run_supplemental_safety_tests.py",
+        "sha256": "f0e29bc63d42b68d22a1c4c597b3a4c32736074d35515986853d4c938e1de0e1"
+      }
+    ]
+  },
+  "faults": {
+    "count": 2,
+    "eachDetectedByOneAssertion": true,
+    "eachExactRestoreGreen": true,
+    "workspaceSourceBeforeAfterEqual": true,
+    "scratchExactRestore": true,
+    "record": ".tdd/verification/issue130-managed-browser-supplement-faults.json",
+    "sha256": "832adabf0964a58b5a3e0e51412db4935cddb75d1373a2716de3684b4ff23ec7"
+  },
+  "scope": "Protocol/readiness consistency + direct JDK guard decisions only. Actual Spring/PG/browser execution remains separate.",
+  "chronology": "First supplemental FI used verify-only source97a096; current-source c725 launch-branch was then frozen, and both FI2 and original28 were revalidated. Original34 history and test bytes remain unchanged.",
+  "actualNetworkExecModelOAuthCalls": 0
+}

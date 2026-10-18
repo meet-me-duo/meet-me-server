@@ -1,0 +1,325 @@
+{
+  "schemaVersion": 1,
+  "workItem": "issue130-managed-browser-free-integration",
+  "recordedAt": "2026-10-18T18:34:12.458217+00:00",
+  "status": "THREE_SEPARATE_ACTUAL_HTTPS_SCOPES_PASS",
+  "boundary": {
+    "productionAccess": false,
+    "actualModelCalls": 0,
+    "actualExternalOAuthCalls": 0,
+    "providerTransport": "SYNTHETIC_TLS_WITH_ACTUAL_MANAGED_PRODUCTION_GRAPH",
+    "paidOrModelQualityProof": false,
+    "finalAnalysisWorkerEnabled": false,
+    "browser": "system Chromium desktop/mobile-sized viewports",
+    "retries": 0,
+    "originalWebSourceAndOraclesEdited": false
+  },
+  "pins": {
+    "classpathSha256": "5f643693e4aa67d4bf836e696a46526dc6ce9f322a3099f7f42ff75a4ff206f7",
+    "fixture": "issue130-managed-browser-v1",
+    "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+    "policyOriginHead": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+    "runtimeSha256": "3a7c7544217864d3caf671c36f9d94c1c05ace1cba99dfdb026a6d41f94c7085",
+    "serverHead": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "sourceSha256": "06bb1c70546837101abb1cdb47c71c5323a373aa9dcba619f1bec9bf7ef46fc4",
+    "verified": true
+  },
+  "webHead": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+  "runnerSha256": "cc362d8c97938dae80ae76b32a61c3e72d31b31a73e4f56ed29502e3ecb640d1",
+  "toolCount": 26,
+  "toolFiles": {
+    "BACKEND_CONTRACT.md": "1577be113fc33f176addf660c672606eec9c36552744d9fcd530069adc8a51f3",
+    "Issue130ManagedBrowserServer.java": "983eccd0c6898022cf678637c677cd9cca89d01d3cc2ad57f00a10e57ef963ab",
+    "ManagedBrowserGuardJdkPinContractTest.java": "4da305e1943c961adefe71073de0df90d8f239a9df1598d85dc3136402899a9c",
+    "ManagedBrowserLoopbackGuard.java": "e53e1ab4e630a6fd6dda4743bc1333bfc9a111b2c5cf8ca301927c5822fe3ba8",
+    "ManagedBrowserLoopbackGuardContractTest.java": "133cbfbbbf674f1b72677ab0f8fbde4576dd3288b337c8ff09547202532b74b1",
+    "OBSERVATION_DOCKER_CONTRACT.md": "39f01ac7fd17a197000d5923ef0e6738cdfd5083e53080e45d586db96f7ebe46",
+    "PUBLIC_CONTRACT.md": "757fdc47321dbd33c7f5e4c0aa2698c5341995620d99f98a1694382f2ae85e2d",
+    "README.md": "a42e70b4f66c71a40d761891ce67bfe3d775fbe819f7d072a822424ecd47350a",
+    "browser-observation.mjs": "8d428e29a16d3abe750a2b6265c8627df096043bd3052ecb9e209ecd17ee8b89",
+    "browser-observation.test.mjs": "c519a0d52ed0a3ac3175a6585bfe368813a1d16071e93438c5db31ad7d10864e",
+    "docker-daemon-binding.mjs": "536f73c536ce38a5eeccab2cc3b4fdfacd724e23941d9240f473ecf6e4cb7414",
+    "docker-daemon-binding.test.mjs": "1cf792e10510f3312028a209d46c75d05a5423a910ee10c50a87e1951f03d24e",
+    "docker-target.mjs": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1",
+    "docker-target.test.mjs": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c",
+    "managed-browser.spec.ts": "817c31d6960d4270997446a5c9fa595824bfee16ac1b113926dc4597784288cc",
+    "observed-fixtures.ts": "1d39e1772a4f8e5567e8bd43b2fffd83465cd7d8ead60e0c564f2444e443a342",
+    "playwright.managed.config.mjs": "e800b2b6365d78011a9f1a648d1c3f7a1d56c4bd5c6e699efb5f2b170a99015f",
+    "prepare_runtime.py": "3e287ddc72123056a93269865683cbc4d30fc7f174c4b52312d6f73dfce893d5",
+    "run-managed-browser.mjs": "cc362d8c97938dae80ae76b32a61c3e72d31b31a73e4f56ed29502e3ecb640d1",
+    "run_guard_contract_tests.py": "680aaf6e6c7c7ea94ad5c22f20bfc3fdc84d2974eea70eebd92e8378f261de25",
+    "run_supplemental_safety_tests.py": "f0e29bc63d42b68d22a1c4c597b3a4c32736074d35515986853d4c938e1de0e1",
+    "runner-contract.mjs": "c288eff24ec8f514b520465099f03aa4a4feb4a1285e9293bb9b1d7066d8f834",
+    "runner-contract.test.mjs": "af277c1b043ed77bf3a41c6f0f5de2d665503dd27fa67fd4bbc93e6b2fb433ad",
+    "runtime_pin.py": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2",
+    "test_runtime_pin.py": "1c69aca23a436221b6df0a9c7b62e5207a04478f3c00b3862dbe0d8be452bdcd",
+    "test_runtime_pin_ancestor.py": "b1add1679f63c16955b93f50684af5100b0e156b1038019476bcd74b08dcaf93"
+  },
+  "suiteResults": [
+    {
+      "scope": "new-managed8",
+      "passed": 8,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "attemptsPerCase": 1,
+      "browserExitCode": 0,
+      "durationMs": 120439.076,
+      "checks": {
+        "managedReadiness": true,
+        "tlsChainAndHostnameVerified": true,
+        "untrustedCaRejected": true,
+        "provenanceStable": true,
+        "assetsStable": true,
+        "toolsStable": true,
+        "manifestStable": true,
+        "completeLifetimeInputsStable": true
+      },
+      "cleanup": {
+        "ownedContainersRemaining": 0,
+        "ownedListenersRemaining": 0,
+        "privateTempMaterialRemaining": 0
+      },
+      "browserObservation": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0
+      },
+      "ledger": {
+        "reservations": 22,
+        "dispatchClaims": 22,
+        "observations": 22,
+        "missingOrMismatchedDispatches": 0,
+        "operationCounts": {
+          "PRECHECK_CLASSIFICATION": 18,
+          "PRECHECK_COUNT": 2,
+          "PRECHECK_GENERATION": 2,
+          "FINAL_PRIMARY": 0,
+          "FINAL_FALLBACK": 0
+        }
+      },
+      "network": {
+        "localSyntheticCalls": 22,
+        "remoteCalls": 0
+      },
+      "newManagedMatrixVerified": true,
+      "artifacts": {
+        "evidence.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/new-managed8/evidence.json",
+          "sha256": "84ce6963b264ecb33cdf0f81fc0d101788b8d26a93767402654d3ca7bcd60609"
+        },
+        "playwright.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/new-managed8/playwright.json",
+          "sha256": "ca94b8b99632b48d8a679e3085a1364fe04a675f6a237e2a7687e11b49a52cbf"
+        },
+        "pins.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/new-managed8/pins.json",
+          "sha256": "39c95888ad33a0a4823b55910a86c3b45af57fa2b0812fe5508ac1478c08b7d7"
+        },
+        "backend-readiness.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/new-managed8/backend-readiness.json",
+          "sha256": "e9516531ebab6ebb7cd6261c55382361ca07a7cdefab541ca8850512a699fb08"
+        },
+        "managed-state.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/new-managed8/managed-state.json",
+          "sha256": "143d368f1353cc3506be3e1e290cd3a98899256d730828dae6acf23117853826"
+        }
+      },
+      "observerAttachmentEvidence": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0,
+        "contextsObserved": 18,
+        "requestsObserved": 474,
+        "workerProofFiles": 3,
+        "scope": "Returned contexts and existing/future pages; original fixture certificate initialization is source-audited before observer attachment."
+      }
+    },
+    {
+      "scope": "original-host8",
+      "passed": 8,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "attemptsPerCase": 1,
+      "browserExitCode": 0,
+      "durationMs": 106520.247,
+      "checks": {
+        "managedReadiness": true,
+        "tlsChainAndHostnameVerified": true,
+        "untrustedCaRejected": true,
+        "provenanceStable": true,
+        "assetsStable": true,
+        "toolsStable": true,
+        "manifestStable": true,
+        "completeLifetimeInputsStable": true
+      },
+      "cleanup": {
+        "ownedContainersRemaining": 0,
+        "ownedListenersRemaining": 0,
+        "privateTempMaterialRemaining": 0
+      },
+      "browserObservation": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0
+      },
+      "ledger": {
+        "dispatchClaims": 14,
+        "observations": 14,
+        "missingOrMismatchedDispatches": 0,
+        "operationCounts": {
+          "PRECHECK_CLASSIFICATION": 14,
+          "PRECHECK_COUNT": 0,
+          "PRECHECK_GENERATION": 0,
+          "FINAL_PRIMARY": 0,
+          "FINAL_FALLBACK": 0
+        },
+        "reservations": 14
+      },
+      "network": {
+        "localSyntheticCalls": 14,
+        "remoteCalls": 0
+      },
+      "newManagedMatrixVerified": false,
+      "artifacts": {
+        "evidence.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-host8/evidence.json",
+          "sha256": "012e4bdf354592d874f09ee40dab666cdc4f56cb4bd894fa47f5e9e75625bea7"
+        },
+        "playwright.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-host8/playwright.json",
+          "sha256": "4400f57aaffface54f0f3544e4ef27ef191f9fa86bfd2cf5401dd822a0df70c8"
+        },
+        "pins.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-host8/pins.json",
+          "sha256": "39c95888ad33a0a4823b55910a86c3b45af57fa2b0812fe5508ac1478c08b7d7"
+        },
+        "backend-readiness.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-host8/backend-readiness.json",
+          "sha256": "56f4d4769820026d40546d1fa72e3a36912e43397e1602d85c891edd297bb3d8"
+        },
+        "managed-state.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-host8/managed-state.json",
+          "sha256": "6011f2f96b4ca57aea253f5177d941e4cf78b393c72cd84f49b42c5f39060b25"
+        }
+      },
+      "observerAttachmentEvidence": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0,
+        "contextsObserved": 18,
+        "requestsObserved": 464,
+        "workerProofFiles": 3,
+        "scope": "Returned contexts and existing/future pages; original fixture certificate initialization is source-audited before observer attachment."
+      }
+    },
+    {
+      "scope": "original-recovery6",
+      "passed": 6,
+      "failed": 0,
+      "flaky": 0,
+      "skipped": 0,
+      "attemptsPerCase": 1,
+      "browserExitCode": 0,
+      "durationMs": 37435.661,
+      "checks": {
+        "managedReadiness": true,
+        "tlsChainAndHostnameVerified": true,
+        "untrustedCaRejected": true,
+        "provenanceStable": true,
+        "assetsStable": true,
+        "toolsStable": true,
+        "manifestStable": true,
+        "completeLifetimeInputsStable": true
+      },
+      "cleanup": {
+        "ownedContainersRemaining": 0,
+        "ownedListenersRemaining": 0,
+        "privateTempMaterialRemaining": 0
+      },
+      "browserObservation": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0
+      },
+      "ledger": {
+        "operationCounts": {
+          "PRECHECK_CLASSIFICATION": 2,
+          "PRECHECK_COUNT": 0,
+          "PRECHECK_GENERATION": 0,
+          "FINAL_PRIMARY": 0,
+          "FINAL_FALLBACK": 0
+        },
+        "reservations": 2,
+        "dispatchClaims": 2,
+        "observations": 2,
+        "missingOrMismatchedDispatches": 0
+      },
+      "network": {
+        "remoteCalls": 0,
+        "localSyntheticCalls": 2
+      },
+      "newManagedMatrixVerified": false,
+      "artifacts": {
+        "evidence.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-recovery6/evidence.json",
+          "sha256": "5835b4e69c2cb4863bea27b94eded07bfa8b18dfc9ca254e6e9d89c989552779"
+        },
+        "playwright.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-recovery6/playwright.json",
+          "sha256": "81600f8669420535656e52d37b752760dea187d9dacc381d020e748016c0cc14"
+        },
+        "pins.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-recovery6/pins.json",
+          "sha256": "39c95888ad33a0a4823b55910a86c3b45af57fa2b0812fe5508ac1478c08b7d7"
+        },
+        "backend-readiness.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-recovery6/backend-readiness.json",
+          "sha256": "24057947da301f147c0e223bfb07498180192e6c835580c87d62fff23983058e"
+        },
+        "managed-state.json": {
+          "path": ".codex/tdd-evidence/issue130-managed-browser-actual/final/original-recovery6/managed-state.json",
+          "sha256": "5563507cfd37052841b43e773511a09cfb8523ccf12a8fb0b5ef60e195d63367"
+        }
+      },
+      "observerAttachmentEvidence": {
+        "routesIntercepted": 0,
+        "unexpectedOrigins": 0,
+        "contextsObserved": 6,
+        "requestsObserved": 162,
+        "workerProofFiles": 3,
+        "scope": "Returned contexts and existing/future pages; original fixture certificate initialization is source-audited before observer attachment."
+      }
+    }
+  ],
+  "initialSetupFailure": {
+    "scope": "new-managed8",
+    "browserCasesExecuted": 0,
+    "classifiedAsRequirementRed": false,
+    "cause": "fd stdio gives null stdout; run() called trim",
+    "secondaryFailure": "nonexistent dist lifetime verification ENOENT",
+    "minimalCorrection": "return (result.stdout ?? emptyString).trim()",
+    "existingNodeContractsAfterCorrection": {
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0
+    },
+    "archive": ".codex/tdd-evidence/issue130-managed-browser-actual/final/initial-setup-failure"
+  },
+  "limitations": [
+    "Each suite has its own denominator; new8 does not replace original8 or recovery6.",
+    "Historical rapid full-navigation failures remain recorded; this one passing original8 run does not prove lossless arbitrary unload behavior.",
+    "Recovery6 tests explicit recheck; native automatic focus recovery remains outside this actual-run proof.",
+    "Synthetic transport and identity are used. No paid cost, live model quality or external OAuth was tested.",
+    "Final analysis is disabled; close/frozen accepted cohort is covered, final model output is not."
+  ],
+  "sameToolInventoryAcrossAllThreeRuns": true,
+  "publicationStatus": {
+    "actualRunnerCodePublished": false,
+    "newExactHeadCiClaimed": false,
+    "priorCiGreenAppliesOnlyToPriorHead": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+    "newHeadRequiredBeforeClaimingCurrentCiGreen": true
+  },
+  "provenanceCounts": {
+    "webFiles": 304,
+    "serverFiles": 263,
+    "runtimeFiles": 1143,
+    "toolFiles": 26
+  }
+}

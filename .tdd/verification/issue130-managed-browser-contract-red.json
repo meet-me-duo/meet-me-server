@@ -1,0 +1,31 @@
+{
+  "status": "GENUINE_ASSERTION_RED",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "scope": "Pure orchestrator attestation contract only; no actual browser success claimed",
+  "files": {
+    "evaluation/issue130/managed-browser/runner-contract.test.mjs": "af277c1b043ed77bf3a41c6f0f5de2d665503dd27fa67fd4bbc93e6b2fb433ad",
+    "evaluation/issue130/managed-browser/PUBLIC_CONTRACT.md": "757fdc47321dbd33c7f5e4c0aa2698c5341995620d99f98a1694382f2ae85e2d",
+    "evaluation/issue130/managed-browser/runner-contract.mjs": "7851c9550118ae970e47d5aacf4606bcb0bc0ef54756eb176160bef17af3850d"
+  },
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "evaluation/issue130/managed-browser/runner-contract.test.mjs"
+  ],
+  "tests": 28,
+  "assertionFailures": 28,
+  "compileOrImportOrSetupErrors": 0,
+  "expectedReason": "Named skeleton throws instead of validating required provenance, actual managed graph, loopback egress, exact browser matrix, durable ledger and cleanup. Negative cases require exact public error codes, so generic unconditional throw cannot pass.",
+  "rawLog": {
+    "path": ".codex/tdd-evidence/issue130-managed-browser-contract-red/issue130-managed-browser-contract-red.tap",
+    "sha256": "8fb9b19afc6fb966f132b209aae3d23933bfdeb1326c2851a7173f2c99504432"
+  },
+  "fixtureOracleCorrectionBeforeFinalFreeze": "Initial completion fixture shared before/after object identities; changed only independent after-observation clone before final TAP RED so after-mutation negative controls cannot be satisfied by before-validation alone. Initial log preserved; final test bytes are the only frozen oracle.",
+  "actualBrowserExecutions": 0,
+  "actualModelCalls": 0,
+  "privateInputsRead": false,
+  "historicalSpecOrOracleBytesChanged": false,
+  "recordedAt": "2026-10-18T17:49:44.991422Z",
+  "parentEditorialClarification": "After the actual unchanged28 RED run, parent clarified synthetic identity/session terminology and separate unchanged original8/recovery6 attempts. No executable or test bytes/expectations changed."
+}

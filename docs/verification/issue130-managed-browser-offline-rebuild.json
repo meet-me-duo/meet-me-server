@@ -1,0 +1,38 @@
+{
+  "status": "PASS_OFFLINE_REPRODUCTION_SETUP_FIXED",
+  "privateFinalReviewSha256": "fd77bb6d16484a829a7358c54c55fb9fbc5a489f72265ffca48874ad6db1b69b",
+  "firstAttempt": "Compile setup failure from ASCII JDK native filename encoding; RED0, not product/model failure. Original log retained.",
+  "jdkEncodingControl": {
+    "inheritedWhitelist": "ANSI_X3.4-1968",
+    "explicitCUTF8": "UTF-8",
+    "properties": [
+      "file.encoding",
+      "native.encoding",
+      "sun.jnu.encoding"
+    ]
+  },
+  "fix": "Builder child LANG and LC_ALL explicitly C.UTF-8; no production or original source edit.",
+  "sourceFilesCheckedUnchanged": 494,
+  "freshGradleActions": 8,
+  "launcherCompileExitCode": 0,
+  "oldManifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+  "rebuildManifestSha256": "fab85180923f92336d3a4f728e8f3bf58b9145a28a59a442eecbfb3af9873ffb",
+  "rootIndependentReadback": {
+    "sourcesEqual": true,
+    "classpathEqual": true,
+    "fixturesEqual": true,
+    "graphEqual": true,
+    "runtimeDifference": [
+      "resources/managed-browser-toolchain.json"
+    ],
+    "allClassJarAndOtherResourceBytesEqual": true,
+    "newVerifyOnly": "PASS"
+  },
+  "builderSha256": "3e287ddc72123056a93269865683cbc4d30fc7f174c4b52312d6f73dfce893d5",
+  "readmeSha256": "a42e70b4f66c71a40d761891ce67bfe3d775fbe819f7d072a822424ecd47350a",
+  "actualApplicationStartup": false,
+  "actualBrowser": false,
+  "actualProviderCalls": 0,
+  "actualOAuthCalls": 0,
+  "priorRemoteCiFailureCause": "Not inferred from this local setup failure."
+}

@@ -1,0 +1,60 @@
+{
+  "status": "GENUINE_ASSERTION_RED",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "boundary": "Managed runner and fixed backend must address exact same approved unix daemon, before any daemon API or launch; generic local-Docker20 contract unchanged.",
+  "publicContract": {
+    "function": "validateManagedDockerBinding(selectedEndpoint,backendEndpoint)",
+    "acceptedOnly": "both strings exactly unix:///var/run/docker.sock",
+    "success": {
+      "bound": true
+    },
+    "errorCode": "DOCKER_DAEMON_BINDING_REQUIRED",
+    "actualRunnerIntegration": "Validate both configured context endpoint and nonempty environmentHost independently; set childDOCKER_HOST fixed and clear DOCKER_CONTEXT; use explicit fixed --host for runner info/cleanup."
+  },
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "evaluation/issue130/managed-browser/docker-daemon-binding.test.mjs"
+  ],
+  "files": {
+    "evaluation/issue130/managed-browser/docker-daemon-binding.mjs": "75b1d88d0d31816a81ee335d0146b864fa06b523a5cf823556731bbc2943f94e",
+    "evaluation/issue130/managed-browser/docker-daemon-binding.test.mjs": "1cf792e10510f3312028a209d46c75d05a5423a910ee10c50a87e1951f03d24e",
+    "evaluation/issue130/managed-browser/run-managed-browser.mjs": "8951589b4f6404bfd17111d1201e401347e8dcacc157ef51aa9f7f14ef41715e",
+    "evaluation/issue130/managed-browser/docker-target.mjs": "e9d2977fdccccc44ad68d03893db6ba7d499d22cfbd3433e1e8d71931ab20dc1",
+    "evaluation/issue130/managed-browser/docker-target.test.mjs": "40a679401b16c3b90fa39de96ff4c2d48799482aa6ff10f5cb2fcb8d955b2d9c",
+    "evaluation/issue130/managed-browser/runtime_pin.py": "c725c6286bd6f83943a056c3f4627283094779bc7726f1bf2e47f1610e0511f2"
+  },
+  "tests": 14,
+  "unitCases": 12,
+  "publicCliNegativeCases": 2,
+  "assertionFailures": 14,
+  "compileOrImportSetupErrors": 0,
+  "cliControlledObservations": [
+    {
+      "case": "DB13",
+      "metadataCalls": 1,
+      "daemonCalls": 1,
+      "status": 1,
+      "failureCode": "LOCAL_TOOL_FAILED"
+    },
+    {
+      "case": "DB14",
+      "metadataCalls": 1,
+      "daemonCalls": 1,
+      "status": 1,
+      "failureCode": "LOCAL_TOOL_FAILED"
+    }
+  ],
+  "reason": "12 unit assertions fail import-safe named skeleton. Both original runner CLI paths make one fake Docker info call after accepted local context metadata, violating before-daemon rejection; tests fail exactly daemonCalls1!=0. Fake daemon API exits immediately, so no actual Docker operation, manifest consumption, runtime or browser launch happens.",
+  "rawLog": {
+    "path": ".codex/tdd-evidence/issue130-managed-browser-docker-binding-red/issue130-managed-browser-docker-binding-red-final.tap",
+    "sha256": "51d81709c287b42dac0c85b6f4f518588389a21f59f92bcb7f4516c30e7022f8"
+  },
+  "old54SourceAndExpectationsChanged": false,
+  "actualDockerOperations": 0,
+  "actualBrowserRuns": 0,
+  "actualModelCalls": 0,
+  "privateInputsRead": false,
+  "recordedAt": "2026-10-18T18:17:24.218315Z"
+}

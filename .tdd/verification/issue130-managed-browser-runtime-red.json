@@ -1,0 +1,46 @@
+{
+  "workItem": "issue130-managed-browser-runtime-gates",
+  "sourceRevision": "27de97e137d23a2920d425ea521ee33ec0996a8d",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/managed-browser/test_runtime_pin.py",
+      "sha256": "1c69aca23a436221b6df0a9c7b62e5207a04478f3c00b3862dbe0d8be452bdcd"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/managed-browser/test_runtime_pin.py"
+  ],
+  "failedTests": [
+    "pin_test_for_ids.PinContract.test_MLP01_positive_is_file_only_and_binds_all_four_digests",
+    "pin_test_for_ids.PinContract.test_MLP02_positive_readiness_is_attestation_consistency_only",
+    "pin_test_for_ids.PinContract.test_MLP03_verify_only_cli_safe_exact_fields_and_no_start",
+    "pin_test_for_ids.PinContract.test_MLP04_invalid_cli_is_typed_safe_exit2_without_traceback",
+    "pin_test_for_ids.PinContract.test_MLP05_fixed_identity_and_exact_top_schema",
+    "pin_test_for_ids.PinContract.test_MLP06_bool_version_is_not_integer_version",
+    "pin_test_for_ids.PinContract.test_MLP07_unknown_field_and_duplicate_json_keys_are_rejected",
+    "pin_test_for_ids.PinContract.test_MLP08_relative_path_traversal_is_not_a_pin",
+    "pin_test_for_ids.PinContract.test_MLP09_changed_source_byte_is_not_approved_overlay",
+    "pin_test_for_ids.PinContract.test_MLP10_changed_runtime_byte_is_not_immutable_runtime",
+    "pin_test_for_ids.PinContract.test_MLP11_unlisted_runtime_file_is_not_allowed",
+    "pin_test_for_ids.PinContract.test_MLP12_missing_runtime_file_is_not_allowed",
+    "pin_test_for_ids.PinContract.test_MLP13_external_classpath_and_duplicates_are_not_allowed",
+    "pin_test_for_ids.PinContract.test_MLP14_empty_classpath_directory_is_not_complete",
+    "pin_test_for_ids.PinContract.test_MLP15_old_primary_fake_class_forbidden_in_main_classpath",
+    "pin_test_for_ids.PinContract.test_MLP16_old_primary_fake_class_forbidden_in_jar",
+    "pin_test_for_ids.PinContract.test_MLP17_required_fixture_guard_cannot_be_omitted",
+    "pin_test_for_ids.PinContract.test_MLP18_symlink_source_cannot_be_canonical",
+    "pin_test_for_ids.PinContract.test_MLP19_all_on_flags_and_real_provider_required",
+    "pin_test_for_ids.PinContract.test_MLP20_real_ultimate_target_graph_required",
+    "pin_test_for_ids.PinContract.test_MLP21_readiness_digest_must_match_validated_manifest",
+    "pin_test_for_ids.PinContract.test_MLP22_egress_barrier_must_precede_application_and_negative_probe",
+    "pin_test_for_ids.PinContract.test_MLP23_synthetic_credentials_must_be_explicit",
+    "pin_test_for_ids.PinContract.test_MLP24_old_health_alias_cannot_impersonate_readiness",
+    "pin_test_for_ids.PinContract.test_MLP25_readiness_extra_fields_are_not_a_private_channel",
+    "pin_test_for_ids.PinContract.test_MLP26_unknown_manifest_field_rejected",
+    "pin_test_for_ids.PinContract.test_MLP27_classpath_duplicates_not_counted_twice",
+    "pin_test_for_ids.PinContract.test_MLP28_fixture_class_list_is_exact_and_sorted"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T17:58:29.070711Z"
+}

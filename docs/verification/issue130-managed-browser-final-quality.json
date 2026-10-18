@@ -1,0 +1,26 @@
+{
+  "scope": "FINAL_MANDATORY_GUARD_FOR_MANAGED_HTTPS_FIXTURE_PUBLICATION",
+  "exitCode": 0,
+  "elapsedSeconds": 9.486,
+  "sourceFiles": 563,
+  "sourceBeforeAfterEqual": true,
+  "sourceManifestSha256": "014e4c3e93aeb7e5174f14aa597108b5b8cd6a259fab0a82fa490e35cbcfecfd",
+  "suites": 216,
+  "tests": 1733,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "allXmlFresh": false,
+  "keysBlankInSubprocess": true,
+  "actualModelCalls": 0,
+  "qualityCommand": "tdd_guard hook \u2192 ktlintCheck assemble test",
+  "inventoryScope": [
+    "src/main",
+    "src/test",
+    "evaluation",
+    ".codex/hooks",
+    "Gradle build/wrapper files",
+    ".github/workflows/ci.yml"
+  ],
+  "xmlInterpretation": "1733 existing test results reused (1729 passed, historical4 skipped); not a new fresh1733 run. Gradle ktlintCheck/assemble/test and hook self-tests exit0."
+}

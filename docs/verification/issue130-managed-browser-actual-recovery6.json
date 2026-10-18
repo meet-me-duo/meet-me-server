@@ -1,0 +1,95 @@
+{
+  "scope": "original-recovery6",
+  "completed": true,
+  "suitePassed": true,
+  "browserStats": {
+    "startTime": "2026-10-18T18:32:27.314Z",
+    "duration": 37435.661,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "checks": {
+    "managedReadiness": true,
+    "tlsChainAndHostnameVerified": true,
+    "untrustedCaRejected": true,
+    "provenanceStable": true,
+    "assetsStable": true,
+    "toolsStable": true,
+    "manifestStable": true,
+    "completeLifetimeInputsStable": true
+  },
+  "cleanup": {
+    "ownedContainersRemaining": 0,
+    "ownedListenersRemaining": 0,
+    "privateTempMaterialRemaining": 0
+  },
+  "manifestSha256": "9d3ea4b1212c97157abc660afb69a6ddfc3fb54ce224e89b185a6709072143a3",
+  "actualModelCalls": 0,
+  "actualExternalOAuthCalls": 0,
+  "status": "ACTUAL_ORIGINAL_RECOVERY_6_PASS",
+  "privateEvidenceSha256": "5835b4e69c2cb4863bea27b94eded07bfa8b18dfc9ca254e6e9d89c989552779",
+  "ledger": {
+    "operationCounts": {
+      "PRECHECK_CLASSIFICATION": 2,
+      "PRECHECK_COUNT": 0,
+      "PRECHECK_GENERATION": 0,
+      "FINAL_PRIMARY": 0,
+      "FINAL_FALLBACK": 0
+    },
+    "reservations": 2,
+    "dispatchClaims": 2,
+    "observations": 2,
+    "missingOrMismatchedDispatches": 0
+  },
+  "network": {
+    "remoteCalls": 0,
+    "localSyntheticCalls": 2
+  },
+  "browserCases": [
+    {
+      "scenario": "ORIGINAL_SCOPE",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "ORIGINAL_SCOPE",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "ORIGINAL_SCOPE",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "ORIGINAL_SCOPE",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "ORIGINAL_SCOPE",
+      "project": "desktop",
+      "status": "passed",
+      "attempts": 1
+    },
+    {
+      "scenario": "ORIGINAL_SCOPE",
+      "project": "mobile",
+      "status": "passed",
+      "attempts": 1
+    }
+  ],
+  "routesAndOrigins": {
+    "routesIntercepted": 0,
+    "unexpectedOrigins": 0
+  },
+  "sourceRuntimeBeforeAfterEqual": true,
+  "scopeBoundary": "Original exact recovery6 specification, one run. Separate from newmanaged8/originalhost8 and prior rapid-unload failures. No causal repair or lossless unload guarantee established.",
+  "remoteCallsEvidence": "Enforced JVM loopback-only guard plus configured local synthetic TLS, not an independent packet counter."
+}
