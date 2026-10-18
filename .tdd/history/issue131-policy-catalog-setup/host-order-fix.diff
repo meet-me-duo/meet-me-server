@@ -1,0 +1,11 @@
+--- before
++++ after
+@@ -45,7 +45,7 @@
+   m=load('host-approved-release.py');release=pathlib.Path(v['directory'])/'deploy'
+   # Substitute privileged host file transport only; production catalog/fingerprint/schema selection remains real.
+   m._bytes=lambda p,maximum=512*1024:pathlib.Path(p).read_bytes();m._safe=lambda p,directory=False:pathlib.Path(p)
+-  if action=='hostBundle':result=list(m._release_bundle(release))
++  if action=='hostBundle':result=sorted(m._release_bundle(release))
+   else:m._archive(release,v['manifest']);result=True
+  else:raise AssertionError('Unexpected test harness action')
+  print(json.dumps({'ok':True,'result':result}))

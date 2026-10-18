@@ -1,0 +1,29 @@
+{
+  "purpose": "Current publisher now requires policy18; preserve historical17/14 reader and immutable SQL17 oracles",
+  "files": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "008e4992a876ef004c7ba866d1b254a155cfe9c7d84609ae300bdcff0c8c3f85"
+    },
+    {
+      "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+      "sha256": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3"
+    },
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e"
+    }
+  ],
+  "firstFailure": ".codex/tdd-evidence/issue131-existing-catalog-first-failure/all-node.log",
+  "observed": {
+    "total": 142,
+    "passed": 131,
+    "failed": 11,
+    "catalogAssertions": 9,
+    "environmentJavacSetup": 2
+  }
+}

@@ -1,6 +1,7 @@
 """Build immutable release metadata without external service calls."""
 
 import argparse
+import datetime
 import hashlib
 import importlib.util
 import json
@@ -19,6 +20,7 @@ GUARD_FILES = tuple(sorted((
     "pipeline/publish_manifest.py", "preflight/host-preflight.sh",
     "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java",
     "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml",
+    "runtime-ai-policy.json",
 )))
 
 MIGRATION_SCRIPTS = (
@@ -32,6 +34,60 @@ MIGRATION_SCRIPTS = (
     'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
     'V17__add_durable_ai_room_budgets.sql',
 )
+
+
+def _require(value):
+    if not value:
+        raise ValueError("UNTRUSTED_RELEASE")
+
+
+def _runtime_policy_bytes(raw):
+    """Nonsecret reviewed artifact shape only; historical reading never adopts an operating policy or clock."""
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            _require(key not in result)
+            result[key] = value
+        return result
+    _require(type(raw) is bytes and len(raw) <= 65536)
+    data = json.loads(raw.decode("utf-8"), object_pairs_hook=unique)
+    _require(type(data) is dict and data.get("protocol") == "meetme-managed-ai-policy-v1")
+    if data.get("state") == "UNCONFIGURED":
+        _require(set(data) == {"protocol", "state"})
+        return
+    _require(data.get("state") == "CONFIGURED"
+             and set(data) == {"protocol", "state", "unit", "roomCap", "minimumConfidence", "operations"})
+    unit = data["unit"]
+    _require(type(unit) is dict and set(unit) == {"code", "scale"})
+    code = unit["code"]
+    _require(type(code) is str and bool(code.strip()) and code == code.strip()
+             and len(code.encode("utf-16-le")) // 2 <= 32 and not any(ch in code for ch in ("\x00", "\r", "\n")))
+    _require(type(unit["scale"]) is int and 0 <= unit["scale"] <= 38)
+    amount = lambda value: type(value) is str and re.fullmatch(r"0|[1-9][0-9]{0,37}", value)
+    _require(amount(data["roomCap"]) and int(data["roomCap"]) > 0)
+    threshold = data["minimumConfidence"]
+    _require(type(threshold) in (float, int) and 0 <= threshold <= 1)
+    operations = data["operations"]
+    expected = {
+        "PRECHECK_CLASSIFICATION": "308b2fd0b2d0892f59aa7f953247ea9c855597d0da5a30a6923070596149ec81",
+        "PRECHECK_COUNT": "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
+        "PRECHECK_GENERATION": "b9ce9802d9dc3f4396f49c796cfe173fda708c6a35ac40c79d5bdc5091419363",
+        "FINAL_PRIMARY": "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
+        "FINAL_FALLBACK": "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
+    }
+    _require(type(operations) is list and len(operations) == len(expected))
+    seen = set()
+    for row in operations:
+        _require(type(row) is dict and set(row) == {
+            "operation", "profileFingerprint", "evidenceFingerprint", "maximumAmount", "validUntil"})
+        _require(type(row["operation"]) is str and row["operation"] in expected and row["operation"] not in seen)
+        seen.add(row["operation"])
+        for key in ("profileFingerprint", "evidenceFingerprint"):
+            _require(type(row[key]) is str and re.fullmatch(r"[0-9a-f]{64}", row[key]))
+        _require(row["profileFingerprint"] == expected[row["operation"]])
+        _require(amount(row["maximumAmount"]) and type(row["validUntil"]) is str
+                 and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?Z", row["validUntil"]))
+        datetime.datetime.fromisoformat(row["validUntil"].replace("Z", "+00:00"))
 
 
 def canonical_bytes(value):
@@ -79,6 +135,9 @@ def build_manifest(repo_root, archive_path, environment):
         if source_path(root, "deploy/runtime-auth-mode").read_bytes() not in (
                 b"oauth-rs256-required", b"oauth-rs256-required\n"):
             raise ValueError()
+        policy = source_path(root, "deploy/runtime-ai-policy.json")
+        with policy.open("rb") as source:
+            _runtime_policy_bytes(source.read(65537))
         migration_directory = source_path(root, "src/main/resources/db/migration", directory=True)
         paths = list(migration_directory.iterdir())
         rows, catalog = [], []

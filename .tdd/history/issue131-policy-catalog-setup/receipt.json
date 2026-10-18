@@ -1,0 +1,17 @@
+{
+  "initialToolRun": {
+    "tests": 9,
+    "pass": 1,
+    "fail": 8,
+    "toolOutputTruncated": true
+  },
+  "separateCapturedReproductionExit": 1,
+  "fixtureDefect": "Host BUNDLE tuple order was compared as an ordered contract; only catalog membership is specified. Sort projection preserves independent expected membership.",
+  "affectedTests": [
+    "PC06 historical17",
+    "PC06 historical14"
+  ],
+  "beforeSha256": "9269cc950a121a4ba82eebfad5d80f638c5c9c2e8aceea15055325cfe8e4eb6c",
+  "afterSha256": "8fd662d96c8f8bce55a6287c5cb584e40e75c07753edbc066b774f73c8fdd26b",
+  "assertionExpectedMembershipChanged": false
+}

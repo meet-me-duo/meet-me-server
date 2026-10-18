@@ -1,0 +1,15 @@
+{
+  "classification": "CHRONOLOGICAL_RED",
+  "actual_postgres_tests": 8,
+  "assertion_failures": 3,
+  "errors": 0,
+  "env_binding_tests": 4,
+  "env_binding_result": "INITIAL_PASS_NO_PRODUCT_RED_CLAIM",
+  "negative_pg_pass_controls": 5,
+  "negative_todo_pass_not_guard_proof": true,
+  "before_after_source_identical": true,
+  "loopback_fixture": "CANONICAL_TLS_CONNECT_NO_URL_PROFILE_REWRITE",
+  "positive_ready_sql_seed": false,
+  "paid_calls": 0,
+  "archive": ".codex/tdd-evidence/issue131-runtime-c2-initial"
+}

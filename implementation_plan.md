@@ -1,5 +1,23 @@
 # meet-me-server Implementation Plan
 
+## #131 관리형 AI runtime 연결 보완 (2026-10-18 UTC)
+
+- [USER] 기존 #123의 미완료 runtime 연결을 코드·독립 TDD·합성 검증으로 보완한다. 검증 후 정상 PR/main·정확 CI·실제 배포 승인은 유지하되 실제 운영 활성화·자격 증명/보안 설정·가격·임계값은 임의 확정하지 않는다.
+- [x] clean develop3982535765e878875a901dd9d28352358e594f6f FF 뒤 fix/issue-131-managed-precheck-runtime 분기. 기존 #123 본문을 보존하고 좁은 #131을 연결했다. 다른 브랜치 변경0.
+- [x] 실제 결함 확인: provider flag 단독 ON은 기본 routing OFF의 단일 생성기를 선택하며 production authority는 DENY, 새 room은 UNCONFIGURED다. 토글만으로 Decisions/공통 예산을 활성화했다고 부를 수 없다.
+- [x] 계약 고정·행동 TODO skeleton: 기존 네 flag allOFF는 기존 final 유지/새 개인검사 HTTP0, allON은 동일한 명시 threshold·고정 정책 artifact·실제 5 operation profile 및 durable graph, partialON은 startup 거부. default artifact는 UNCONFIGURED이며 실제 가격·cap·unit·threshold 미선택이다.
+- [x] 독립 C1/C2·환경 바인딩·sanitized HTTP500·INSERT receipt 집중 Kotlin63 GREEN. 실제 managed graph CREATE→개인검사→TwoStage/classifier→TLS 합성3요청→PG held12 검증, Primary authority/provider 대역0. 기존 방 both-touch UPDATE를 거부하고 실제 저장소 INSERT가 발급한 같은 TX one-shot receipt만 허용한다. 외부 OAuth·실제 모델·운영 가격 검증은 아니다.
+- [x] 새 방 생성 시 정책 만료/초기화 실패는 전체 CREATE TX rollback과 해당 내부 예외만 body 없는 HTTP500. POST create Swagger에도 empty500 명시. allOFF 생성·기존 방·참여/마감 정책·기존 공개 오류 코드는 유지한다.
+- [x] 독립 DX29+정책 catalog9 GREEN. release-local 정책 RO bind/파일0644 한정·현재 approval18와 과거17/14 reader 구분. target AUTH marker를 최초/fresh readiness에 전달하고 실제 UID10001 가독성 메타데이터만 검사한다. key 내용·설정 변경0. 기존 catalog fixture 정합은 historical17/14 oracle·SQL V1..17 불변의 별도 currentFixture로 보완해 관련59 GREEN.
+- [x] 기존 범위 독립 FI6 모두 assertion 탐지/매회 exactrestore GREEN, 최종 Kotlin63+DX29=92 PASS/errors·skips0. 이 결과는 후속 savepoint 변경 전 snapshot에 한정한다.
+- [x] 독립 savepoint PG 새2 validRED1/control1→최소 hook 보완→동일2 GREEN. hook 제거 FI1 assertion 탐지/정확 복원 뒤 최종 Kotlin65+DX29=94 PASS, 독립 좁은 리뷰 P2 CLOSED. 현재 source540 불변·FI 총7종 결과는 단계별 snapshot을 구분한다.
+- [x] root 정책 catalog9 포함 집중103·기존 node142·배포 node95 PASS. 첫 전체1782의 기존DB01 Clock DI 회귀는 원본 보존→nullable Clock 최소fix→기존72GREEN→독립FI1 탐지/정확복구로 보완했다. 새 전체필수guard fresh220suites/1782=1778PASS+기존4SKIP·오류/실패0·source571전후동일.
+- [x] 기존 배포 Python66의 준비timeout3은 동일2method/동일15초·기대불변 격리재실행GREEN. Compose fidelity/DB credentialrefresh PASS. Nginx는 checkout publicfile0600과 Docker 자동proxy의localhost403을 로컬fixture/임시empty Docker config로 분리해 exactsource PASS, 전역/운영설정0·원실패보존.
+- [x] 최종 독립 게시리뷰 LOCAL PASS·미해결 P1/P2 없음. source571·fresh1782(1778PASS/기존4SKIP)·단계별 FI8·현재/과거 release 계약과 기본 OFF/UNCONFIGURED 정합을 확인했다.
+- [ ] commit/push/Draft/정확 HEAD CI. 기존 #123과 broad 모델 품질·청구 cap·모임10원·실운영 활성화는 미완료로 유지한다.
+
+현재 이 runtime 단계 유료 추가0·운영 DB/SSM/Secret/OAuth 변경0이다. 별도 #130의 N16 첫 시도는 CONNECTION STOP/1 STARTED_UNKNOWN·15 UNRUN이며 원문/정답평가0, 현재 합산 예약 USD1.56254208/승인USD2/여유USD0.43745792·환급0을 유지한다. JDK env proxy 미사용을 최소 보완해 새63+기존102/FI8 통과했으나 새 무인증 HEAD는 TLS handshake 실패였다. 평가 client 한정 platform 공개 CA 추가는 신뢰 anchor 확장이므로 명시 승인 대기/새 유료 호출0이다. 해당 helper 검증을 runtime 금융 graph 또는 실모델 품질 성공으로 대체하지 않는다. 다음 시작점은 완료된 필수 검증의 최종 독립 게시리뷰·게시다. Commit/PR 동일 후속 커밋 예정.
+
 ## 서버 develop 병합·PR 정리 승인 (2026-10-18 UTC)
 
 - [USER] Decision Model을 포함해 검증을 통과한 서버 변경을 develop까지 병합하고, 대체·중복 PR은 근거를 남겨 정리하도록 명시 승인했다. 아래 과거 병합 제외 기록은 당시 범위다. main·운영 활성화·배포·추가 유료 호출 승인은 아니다. 웹에는 develop이 없으므로 웹 main 병합으로 확대하지 않는다.

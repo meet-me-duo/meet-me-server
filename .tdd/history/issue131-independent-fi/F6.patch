@@ -1,0 +1,11 @@
+--- baseline/deploy/pipeline/run-approved-release.py
++++ mutant/deploy/pipeline/run-approved-release.py
+@@ -443,7 +443,7 @@
+    with os.fdopen(fd,'rb') as stream:
+     metadata=os.fstat(stream.fileno())
+     if not stat.S_ISREG(metadata.st_mode) or stream.read(65537)!=expected_policy:sys.exit(2)
+-    os.fchmod(stream.fileno(),0o644)
++    pass # FI: policy-only read permission normalization omitted
+  # Only the archive-verified reviewed host entrypoint may perform installation/deployment.
+  deployed=subprocess.run(['timeout','--signal=TERM','--kill-after=15s','1440s','python3',str(release/'pipeline/host-approved-release.py'),'--deploy',sys.argv[1],sys.argv[5]],capture_output=True,text=True,timeout=1460)
+  if deployed.returncode or deployed.stderr.strip():sys.exit(2)

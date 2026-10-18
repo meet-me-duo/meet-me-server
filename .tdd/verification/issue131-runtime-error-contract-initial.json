@@ -1,0 +1,23 @@
+{
+  "classification": "INITIAL_PASS_IF_GREEN_NOT_CHRONOLOGICAL_RED",
+  "exit": 0,
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue131ManagedRuntimeErrorContractTest"
+  ],
+  "counts": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "test_file": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeErrorContractTest.kt",
+  "sha256": "17b9e6454cea1454439e145f639e365d42e64370b75b32c1867492683dc5062c",
+  "before_after_source_identical": true,
+  "recorded_at": "2026-10-18T10:35:18.709259Z",
+  "paid_calls": 0
+}

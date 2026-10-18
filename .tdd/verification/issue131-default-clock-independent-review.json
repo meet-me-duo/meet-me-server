@@ -1,0 +1,24 @@
+{
+  "status": "VALID_ASSERTION_RED_INDEPENDENTLY_CONFIRMED",
+  "canonicalRed": ".tdd/red/issue131-default-budget-authority-clock.json",
+  "canonicalRedSha256": "dbc46abcc65afccc8830e22e6d4b16e857940f01fe32f6f94963392fe989b8d7",
+  "testSha256": "17575e4e98a36e12c53114b2f02c618db41cde1e65e2a5ab47b27eae60f7afa5",
+  "failureType": "org.opentest4j.AssertionFailedError",
+  "failureTest": "DB01 production budget adapter scan supplies exactly one default deny authority()",
+  "cause": "Spring supplied null for optional non-null Clock parameter; existing startupFailure assertion fails",
+  "fullGuardSummary": {
+    "tests": 1782,
+    "passed": 1777,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 4,
+    "allXmlFresh": true,
+    "sourceBeforeAfterEqual": true
+  },
+  "xmlSha256": "909df10aceffea0b71c62d96e6aa621995a39b47ef180ca7db48f1da3dc2d6bc",
+  "policyChange": false,
+  "fixScope": "Nullable optional Clock parameter and UTC fallback for enabled configured authority; DENY remains default without Clock bean",
+  "actualProviderCalls": 0,
+  "actualAwsCalls": 0,
+  "sourceEditsByReviewer": 0
+}

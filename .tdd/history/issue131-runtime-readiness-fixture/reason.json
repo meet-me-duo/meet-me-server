@@ -1,0 +1,7 @@
+{
+  "old_sha256": "c4712c51f97c1c6698b322a412e11322de581bce9061afadc0aeec97788ad6f5",
+  "new_sha256": "0a129b275bc284b7a012ef69bb848d361db6c50fe7472002e1f204d7f1bdbcad",
+  "reason": "Temporary BASE must contain the existing trusted run-preflight reader as well as script/probe. One fixture copy added; inputs/expected assertions unchanged. Fresh RED required.",
+  "original_red": "original-delivery-red.json",
+  "paid_calls": 0
+}

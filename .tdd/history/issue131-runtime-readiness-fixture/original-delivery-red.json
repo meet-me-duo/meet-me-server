@@ -1,0 +1,68 @@
+{
+  "workItem": "issue131-runtime-delivery",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "deploy/tests/issue131-runtime-bundle-env.test.cjs",
+      "sha256": "402cb75771ca11ed24f8db4cd459ad1f46fb2ccadb91313ffa26cba5471599e3"
+    },
+    {
+      "path": "deploy/tests/test_issue131_runtime_readiness.py",
+      "sha256": "c4712c51f97c1c6698b322a412e11322de581bce9061afadc0aeec97788ad6f5"
+    }
+  ],
+  "command": [
+    [
+      "node",
+      "--test",
+      "deploy/tests/issue131-runtime-bundle-env.test.cjs"
+    ],
+    [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "deploy/tests",
+      "-p",
+      "test_issue131_runtime_readiness.py",
+      "-v"
+    ]
+  ],
+  "failedTests": [
+    "node:DX01 only explicit opt-in plus complete immutable policy emits the atomic four flags and exact artifact threshold path SHA",
+    "node:DX01 sentinel plus OFF emits all four false without choosing an operating threshold",
+    "node:DX01 missing cannot activate or replace the previous raw environment",
+    "node:DX01 sentinel cannot activate or replace the previous raw environment",
+    "node:DX01 profileMissing cannot activate or replace the previous raw environment",
+    "node:DX01 profileForeign cannot activate or replace the previous raw environment",
+    "node:DX01 unknownField cannot activate or replace the previous raw environment",
+    "node:DX01 duplicateThreshold cannot activate or replace the previous raw environment",
+    "node:DX01 symlink cannot activate or replace the previous raw environment",
+    "node:DX01 target Compose binds the exact approved policy read-only with no host-path auto creation",
+    "python:test_DX02_exact_eleven_typed_auth_parameters_are_required_in_addition_to_provider_metadata (test_issue131_runtime_readiness.Issue131RequiredAuthMetadataTests.test_DX02_exact_eleven_typed_auth_parameters_are_required_in_addition_to_provider_metadata)",
+    "python:test_DX03_actual_host_invocation_declares_target_auth_mode_with_no_key_file_body_commands (test_issue131_runtime_readiness.Issue131RequiredAuthMetadataTests.test_DX03_actual_host_invocation_declares_target_auth_mode_with_no_key_file_body_commands)",
+    "python:test_DX03_legacy_current_without_future_mount_does_not_block_a_complete_prospective_target (test_issue131_runtime_readiness.Issue131RequiredAuthMetadataTests.test_DX03_legacy_current_without_future_mount_does_not_block_a_complete_prospective_target)",
+    "python:test_DX03_reader_accepts_only_the_declared_metadata_and_rejects_key_contents_or_hashes (test_issue131_runtime_readiness.Issue131RequiredAuthMetadataTests.test_DX03_reader_accepts_only_the_declared_metadata_and_rejects_key_contents_or_hashes)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:31:07.564755Z",
+  "classification": {
+    "node": {
+      "tests": 10,
+      "assertionFailures": 10,
+      "errors": 0
+    },
+    "python": {
+      "tests": 10,
+      "assertionFailures": 4,
+      "errors": 0,
+      "todoNegativePassControls": 6
+    },
+    "sourceBeforeAfterIdentical": true,
+    "paidCalls": 0,
+    "actualAwsCalls": 0
+  },
+  "rawEvidence": ".codex/tdd-evidence/issue131-runtime-dx-red",
+  "schemaScopeNote": "Infrastructure evidence is separate from canonical Kotlin RED schema whose testFiles require src/test/kotlin/*.kt."
+}

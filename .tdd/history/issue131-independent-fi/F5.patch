@@ -1,0 +1,11 @@
+--- baseline/deploy/pipeline/run-approved-release.py
++++ mutant/deploy/pipeline/run-approved-release.py
+@@ -352,7 +352,7 @@
+     required = {"secret/openai-api-key": "SecureString"}
+     if auth_required:
+         required.update({
+-            "secret/google-client-id": "SecureString", "secret/google-client-secret": "SecureString",
++            "secret/google-client-id": "SecureString", 
+             "secret/kakao-client-id": "SecureString", "secret/kakao-client-secret": "SecureString",
+             "config/google-redirect-uri": "String", "config/kakao-redirect-uri": "String",
+             "config/auth-signing-key-id": "String", "config/auth-issuer": "String", "config/auth-audience": "String",

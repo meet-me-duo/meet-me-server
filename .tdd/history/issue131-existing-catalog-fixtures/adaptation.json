@@ -1,0 +1,56 @@
+{
+  "classification": "fixture maintenance for approved additive policy18; not new product RED/GREEN evidence",
+  "preserved": [
+    "historical guardFiles17 literal and fixture() bytes",
+    "VC01 independent17 literal/assertions",
+    "VC historical packageRelease17",
+    "RA historical14/auth17 reader fixtures and fingerprints",
+    "immutable V1..V17 SQL oracle",
+    "new PC9 source SHA8fd662d96c8f8bce55a6287c5cb584e40e75c07753edbc066b774f73c8fdd26b unchanged"
+  ],
+  "newCurrentFixture": "currentFixture adds policy artifact only; publisher negatives now have otherwise-valid policy18 baseline",
+  "files": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "beforeSha256": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2",
+      "afterSha256": "6d22daf0e2ba3fbe4f889e5b8db848ef4814f4a95f6f684da17dc21a14952a9d"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "beforeSha256": "008e4992a876ef004c7ba866d1b254a155cfe9c7d84609ae300bdcff0c8c3f85",
+      "afterSha256": "c2dad113a27fcf52c13d1a5c8ad48326a20d7950ef465a7b462bc0b0b5027612"
+    },
+    {
+      "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+      "beforeSha256": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3",
+      "afterSha256": "c5c6e8ffb68a595c1215b955cb9bb658f4c2425727c9c3ff8397246a3f46f59d"
+    },
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "beforeSha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e",
+      "afterSha256": "2f043aa1f5901b52cddf809ed2e4d0b57ba289ddb618de864aa24189fbcf73bb"
+    }
+  ],
+  "diffSha256": "7f0bac3428ef980c1e3184069b6263ff1de794d752374b009fe96f1f3bf8f667",
+  "focused": {
+    "command": "node --test --test-concurrency=1 .github/scripts/issue107-integrated-catalog.test.cjs .github/scripts/issue123-v17-catalog.test.cjs .github/scripts/issue107-runtime-auth-catalog.test.cjs .github/scripts/issue131-policy-catalog.test.cjs",
+    "tests": 59,
+    "passed": 59,
+    "failed": 0,
+    "skipped": 0,
+    "rawLog": ".codex/tdd-evidence/issue131-existing-catalog-first-failure/adapted-focused.log",
+    "rawSha256": "7c9db996eb418b8b75bd239df6f1c277bbc1b5ec7a38beea73c65ef868db6fe0"
+  },
+  "allNodeAfter": {
+    "tests": 142,
+    "passed": 142,
+    "failed": 0,
+    "skipped": 0,
+    "command": "env JAVA_HOME=/tmp/meetme-jdk17 PATH=/tmp/meetme-jdk17/bin:$PATH OPENAI_API_KEY= GEMINI_API_KEY= node --test --test-reporter=tap --test-concurrency=1 .github/scripts/*.test.cjs",
+    "rawLog": ".codex/tdd-evidence/issue131-existing-catalog-first-failure/all-node-after-fixture-adaptation-valid-path.log",
+    "rawSha256": "3f8d244c9bc350309c6fdf946f0f1ae798bda42e27d1c16ca4607e99e9e219fd"
+  },
+  "excludedSetup": {
+    "explicitFixedPathAttempt": "node not found because fixed PATH omitted installed node; exit127 before tests; preserved all-node-after-fixture-adaptation.log; actual PATH retained in valid rerun"
+  }
+}

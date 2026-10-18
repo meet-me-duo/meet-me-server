@@ -584,10 +584,18 @@ runtime 준비는 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini
 
 다음은 확정 계약이다. 원장/실제 DB fence94·managed HTTP/Worker·Processor 문맥98·최종 생애와 동일 방 관통10의 집중 검증을 통과했다. 독립 결함 주입과 필수 전체 검증·게시 상태는 최신 Worklog와 최종 근거를 따른다. 별도 최초 Decisions 진단4회와 추가 실제2단계2시도(각새A200→count200→첫generation503·후속TIMEOUT)는 운영 활성화·실제 질문 의미 검증 완료와 구분한다.
 
-ADR-055와 [구현 계약](ISSUE_123_DURABLE_AI_BUDGET_CONTRACT.md)을 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회이며 현재 생산 구현은 모든 quote/청구 근거를 거부한다.
+ADR-055와 [구현 계약](ISSUE_123_DURABLE_AI_BUDGET_CONTRACT.md)을 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회이며 기본 생산 설정은 모든 quote/청구 근거를 거부한다.
 
 V17의 ai_room_budgets는 기존 방 HISTORICAL_UNKNOWN/신규 방 UNCONFIGURED다. 신규 방 생성과 초기 budget 행은 같은 트랜잭션의 trigger로 원자적이며 request-time lazy zero bootstrap이 없다. ai_budget_profiles는 구조 profile/policy/unit만 보관한다. 입력별 quote·payload/source/context 지문·usage/청구 근거는 방 소유 ai_call_reservations/ai_call_observations에만 두고 기존30일 방 삭제와 함께 cascade 삭제한다. 삭제 뒤 늦은 관측은 원장을 재생성하지 않는다.
 
 새 meetme.ai.budget.enabled 기본 OFF는 기존 final 동작을 보존한다. ON은 개인 Decisions/count/generation과 최종 Gemini/Luna의 다섯 실제 HTTP 작업 모두에서 같은 managed gate를 사용한다. worker/processor는 DB 작업에서 도출한 내부 문맥을 전달하고 fence는 기존 kind별 소유권/상태/현재 version/마감을 재검증한다. adapter의 실제 body를 한 번 고정해 quote와 결속하고 연결 전 예약/dispatch CAS, 실제 request bytes 전 one-shot 검사를 분리한다. 숨은 같은-Call follow-up·SDK 두 번째 Call은 새 권한을 만들지 않는다. 내부 문맥은 provider JSON/header/query나 일반 로그/지표에 전달하지 않는다.
 
 기존 개인15초·final60/Gemini15/Luna27/완료3초와 bounded4+1·질문/입력 상한을 유지한다. 신규 ON은 accepted bounded production composition을 지원하며 과거 nullable/unbounded 생성자 seam은 안전 거절한다. fallback key 공백만으로 정상 primary를 막는 새 조건은 없다. 알려진 token usage는 청구 증명이 아니고 late 금융 관측은 결과 게시 권한이 아니다. UNKNOWN hold는 자동 환급/재전송하지 않는다. 실제 금액·운영 confidence/가격·coverage 증명·소진 UX·과거 비용 조정과 실제 평가/활성화는 별도 남으며, 로컬 검증의 단계별 상태는 Worklog를 따른다. 운영 DB/Secret/접근/Decisions 병합/배포는 수행하지 않는다.
+
+### #131 관리형 runtime 연결 계약
+
+기존 provider/routing/classifier/budget 네 flag를 하나의 시작 시점 선택으로 검증한다. allOFF는 기존 final과 새 개인검사 OFF를 유지하며, partialON은 시작을 거부한다. allON에는 명시 threshold와 일치하는 검토된 고정 정책 파일이 필요하다. 이 계약의 구현·검증 상태는 implementation plan과 Worklog를 따르며 운영 활성화를 의미하지 않는다.
+
+정책은 비밀정보가 아닌 reviewed release artifact이며 `/run/meetme-ai/runtime-ai-policy.json`으로 read-only mount한다. 기본은 UNCONFIGURED다. CONFIGURED 문서는 단위/scale·방 cap·minimumConfidence와 정확히 다섯 operation의 physical profile 지문·근거 지문·최대 금액·UTC 만료를 포함한다. 파일 bytes SHA를 policy fingerprint로 사용하고 등록된 실제 physical profile 및 고정 payload 지문에 quote를 결속한다. 누락·불일치·만료는 거부하며 파일 형식이 가격 근거의 경제적 타당성을 증명하지 않는다. 완전 청구 증명이 없으면 청구 정산 근거는 계속 거부한다. 실제 값과 운영 임계값은 별도 미확정이다.
+
+새 방의 budget 초기화는 Room CREATE의 동일 물리 트랜잭션에서만 수행한다. 실제 저장소 INSERT 성공이 해당 트랜잭션의 private synchronization에 room ID·createdAt 일치 one-shot receipt를 발급하고 초기화가 이를 소비한다. 전체 rollback·완료와 savepoint rollback은 롤백된 INSERT의 권한을 폐기하며 savepoint 전 outer INSERT 권한은 보존한다. room과 trigger budget row의 현재 트랜잭션·v1/zero/UNCONFIGURED, 기존 실행 부재와 create-only callsite도 함께 검증한다. xmin 단독 또는 기존 row의 UPDATE를 원 INSERT 증명으로 취급하지 않는다. 기존 HISTORICAL_UNKNOWN/UNCONFIGURED·held 방을 요청 시 자동 승격하지 않는다. ON의 정책 만료/초기화 실패는 CREATE 전체 rollback과 해당 내부 예외에 한정한 body 없는 HTTP500으로 처리하고 allOFF 생성은 유지한다. POST create Swagger에 empty500을 명시하며 기존 공개 오류 코드·V1–V17 원본·참여/마감 정책은 유지한다. savepoint 보완의 구현·검증 진행 상태는 Worklog를 따른다.

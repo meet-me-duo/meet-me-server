@@ -1,0 +1,11 @@
+--- baseline/src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt
++++ mutant/src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt
+@@ -107,7 +107,7 @@
+                 joinedAt = now,
+             )
+         participantRepository.insert(host)
+-        newRoomAiBudget?.initialize(room.id.value, now)
++        Unit // FI: real CREATE bootstrap handoff omitted
+         return RoomAccessResult(room.toView(host, 0), null, true)
+     }
+ 

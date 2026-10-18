@@ -1,0 +1,66 @@
+{
+  "status": "FIXTURE_MAINTENANCE_INITIAL_GREEN",
+  "classification": "Existing current-renderer fixtures lacked current18 nonsecret policy artifact; the eight failures are fixture preparation defects, not new product RED.",
+  "command": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "deploy/tests/built-image-workflow.test.cjs",
+    "deploy/tests/issue131-runtime-bundle-env.test.cjs",
+    "deploy/tests/runtime-auth-compose.test.cjs",
+    "deploy/tests/runtime-auth-env.test.cjs",
+    "deploy/tests/runtime-auth-raw-json.test.cjs",
+    "deploy/tests/runtime-provider-env.test.cjs"
+  ],
+  "counts": {
+    "tests": 95,
+    "pass": 95,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "elapsedSeconds": 97.02325954600383,
+  "original_failures": [
+    "AR01",
+    "AR02",
+    "AR08",
+    "AR17",
+    "AR20",
+    "AR21",
+    "AR22",
+    "AR24"
+  ],
+  "files": [
+    {
+      "path": "deploy/tests/runtime-auth-env.test.cjs",
+      "originalSha256": "5c619e4f6add7a74458d235a0ceb2a65ad46df31bfb4e18013a3062b8ad91fd1",
+      "preparedSha256": "ac5ac0a7b0205c29d32beaf7fa74570fd4e508693f001dba2de8bb8cc692daef",
+      "unchangedOriginalAtPreparation": true
+    },
+    {
+      "path": "deploy/tests/runtime_auth_refresh_fixture.py",
+      "originalSha256": "8708642b373bd6ff889ec68e1321c9159ce21a673b356b94ca640ba317afd84b",
+      "preparedSha256": "5768e0f2efe6117b12efd699dc10a1a1a354e4ce1a654dbdf1c83a3a5f6de4e2",
+      "unchangedOriginalAtPreparation": true
+    }
+  ],
+  "original_test_assertions_and_names_unchanged": true,
+  "guards_retained": [
+    "All auth negative cases, atomic environment preservation, typed true and false expectations",
+    "Default OFF remains UNCONFIGURED; exact synthetic true has the prior-approved synthetic complete policy",
+    "Actual guarded refresh reuses the same fixture policy bytes"
+  ],
+  "source_before_after_execution_identical": true,
+  "only_two_fixture_files_changed": true,
+  "raw_log": ".codex/tdd-evidence/issue131-runtime-auth-fixture-maintenance/node95.log",
+  "raw_log_sha256": "f2dc67798513789dbe50cd0701cef232683fed4a0d0272be01a178c4411628db",
+  "raw_receipt_sha256": "aa961c8769d3b96ab2d0766423de67d4215e302bf23c5b0647358b64143c5509",
+  "source_before_sha256": "b4cb2dfd8c1ed735e81740e32ae8228bd2384903a08c99421360bf9724dd2c9d",
+  "source_after_sha256": "83bcefe61bfffc31a10cf9ac4926cabdc76ccb57d69a0d28a69f8815d86aa277",
+  "portable_history": ".tdd/history/issue131-runtime-auth-fixture-maintenance",
+  "operational_values_or_activation_changed": false,
+  "paid_calls": 0,
+  "actual_aws_calls": 0,
+  "recordedAt": "2026-10-18T11:25:26.530911Z"
+}

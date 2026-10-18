@@ -32,6 +32,7 @@ import com.meetme.server.participant.domain.Participant
 import com.meetme.server.participant.domain.ParticipantDisplayName
 import com.meetme.server.participant.domain.ParticipantRole
 import com.meetme.server.shared.application.port.output.IdGenerator
+import com.meetme.server.shared.application.port.output.NewRoomAiBudgetPort
 import com.meetme.server.shared.domain.GuestSessionId
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
@@ -58,6 +59,7 @@ class RoomLifecycleService(
     private val currentAccount: CurrentAccountPort = CurrentAccountPort { null },
     private val ownership: ParticipantOwnershipResolver,
     private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
+    private val newRoomAiBudget: NewRoomAiBudgetPort? = null,
 ) : CreateRoomUseCase,
     GetRoomUseCase,
     JoinRoomUseCase,
@@ -105,6 +107,7 @@ class RoomLifecycleService(
                 joinedAt = now,
             )
         participantRepository.insert(host)
+        newRoomAiBudget?.initialize(room.id.value, now)
         return RoomAccessResult(room.toView(host, 0), null, true)
     }
 

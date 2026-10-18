@@ -1,0 +1,55 @@
+{
+  "workItem": "issue131-policy-catalog",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "status": "VALID_ASSERTION_RED",
+  "role": "root independent catalog author; baseline_merge_review implementation",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue131-policy-catalog.test.cjs",
+      "sha256": "8fd662d96c8f8bce55a6287c5cb584e40e75c07753edbc066b774f73c8fdd26b"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "7cf3fffa042f251d18a7f6f0fb8c209ab7318da8af54dad0ca23444138b55683"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "68124e7dd6e6eeaec2011252c8e7c8a0553755ecc3becd185dafa7cd55c64017"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "feb0771aeafe6614532d789f89088e7871d52fec69cf5467f1c2c67c22892379"
+    }
+  ],
+  "command": "node --test --test-reporter=tap .github/scripts/issue131-policy-catalog.test.cjs",
+  "exitCode": 1,
+  "counts": {
+    "tests": 9,
+    "pass": 3,
+    "fail": 6,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "genuineMissingBehaviorFailures": [
+    "PC01 exact18 inventories",
+    "PC02 policy bytes fingerprint",
+    "PC03 missing policy reject",
+    "PC04 invalid policy reject",
+    "PC05 symlink reject",
+    "PC06 current18 package accept"
+  ],
+  "controls": [
+    "PC06 historical17",
+    "PC06 historical14",
+    "PC07 tamper reject"
+  ],
+  "sourceBeforeAfterEqual": true,
+  "fixtureSupersession": ".tdd/history/issue131-policy-catalog-setup/receipt.json",
+  "rawEvidence": "/workspace/issue123-runtime-wiring/server/.codex/tdd-evidence/issue131-policy-catalog-red",
+  "paidCalls": 0,
+  "awsCalls": 0,
+  "privateDataRead": false,
+  "recordedAt": "2026-10-18T10:49:08.211615+00:00"
+}

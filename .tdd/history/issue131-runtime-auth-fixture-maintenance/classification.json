@@ -1,0 +1,86 @@
+{
+  "status": "PREPARED_OUTSIDE_REPOSITORY_AWAIT_ROOT_GUARD_RELEASE",
+  "classification": "FIXTURE_CURRENT_ARTIFACT_INCOMPLETE_NOT_PRODUCT_RED",
+  "failures": [
+    "AR01",
+    "AR02",
+    "AR08",
+    "AR17",
+    "AR20",
+    "AR21",
+    "AR22",
+    "AR24"
+  ],
+  "original_result": {
+    "tests": 95,
+    "passes": 87,
+    "failures": 8,
+    "errors": "Node assertion failures, no harness timeout reported"
+  },
+  "files": [
+    {
+      "path": "deploy/tests/runtime-auth-env.test.cjs",
+      "originalSha256": "5c619e4f6add7a74458d235a0ceb2a65ad46df31bfb4e18013a3062b8ad91fd1",
+      "preparedSha256": "ac5ac0a7b0205c29d32beaf7fa74570fd4e508693f001dba2de8bb8cc692daef",
+      "unchangedOriginalAtPreparation": true
+    },
+    {
+      "path": "deploy/tests/runtime_auth_refresh_fixture.py",
+      "originalSha256": "8708642b373bd6ff889ec68e1321c9159ce21a673b356b94ca640ba317afd84b",
+      "preparedSha256": "5768e0f2efe6117b12efd699dc10a1a1a354e4ce1a654dbdf1c83a3a5f6de4e2",
+      "unchangedOriginalAtPreparation": true
+    }
+  ],
+  "originalLogSha256": "b582f074a9d15a698997241a30db32e7f8cf1cbce703a2a625e97730c9609a53",
+  "invariants": [
+    "All original assertions, test names and counts remain byte-identical",
+    "Default OFF receives explicit UNCONFIGURED sentinel",
+    "Only exact typed synthetic true fixture receives prior-approved complete CONFIGURED policy",
+    "Guarded refresh copies the exact same fixture policy bytes",
+    "No runtime/source/operational policy changes or additional model calls"
+  ],
+  "recordedAt": "2026-10-18T11:19:33.774078Z",
+  "verification": {
+    "status": "FIXTURE_MAINTENANCE_GREEN",
+    "classification": "CURRENT18_ARTIFACT_FIXTURE_MAINTENANCE_NOT_PRODUCT_RED",
+    "command": [
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      "deploy/tests/built-image-workflow.test.cjs",
+      "deploy/tests/issue131-runtime-bundle-env.test.cjs",
+      "deploy/tests/runtime-auth-compose.test.cjs",
+      "deploy/tests/runtime-auth-env.test.cjs",
+      "deploy/tests/runtime-auth-raw-json.test.cjs",
+      "deploy/tests/runtime-provider-env.test.cjs"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 97.02325954600383,
+    "prior": {
+      "tests": 95,
+      "passes": 87,
+      "failures": 8
+    },
+    "files": [
+      {
+        "path": "deploy/tests/runtime-auth-env.test.cjs",
+        "originalSha256": "5c619e4f6add7a74458d235a0ceb2a65ad46df31bfb4e18013a3062b8ad91fd1",
+        "preparedSha256": "ac5ac0a7b0205c29d32beaf7fa74570fd4e508693f001dba2de8bb8cc692daef",
+        "unchangedOriginalAtPreparation": true
+      },
+      {
+        "path": "deploy/tests/runtime_auth_refresh_fixture.py",
+        "originalSha256": "8708642b373bd6ff889ec68e1321c9159ce21a673b356b94ca640ba317afd84b",
+        "preparedSha256": "5768e0f2efe6117b12efd699dc10a1a1a354e4ce1a654dbdf1c83a3a5f6de4e2",
+        "unchangedOriginalAtPreparation": true
+      }
+    ],
+    "only_two_fixture_files_changed": true,
+    "source_before_after_execution_identical": true,
+    "assertions_and_test_count_unchanged": true,
+    "paid_calls": 0,
+    "actual_aws_calls": 0,
+    "raw_log_sha256": "f2dc67798513789dbe50cd0701cef232683fed4a0d0272be01a178c4411628db",
+    "recordedAt": "2026-10-18T11:25:26.530911Z"
+  }
+}

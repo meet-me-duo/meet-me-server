@@ -1,0 +1,108 @@
+{
+  "classification": "CHRONOLOGICAL_SAVEPOINT_FOLLOWUP_FI",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "raw_archive": ".codex/tdd-evidence/issue131-savepoint-independent-fi",
+  "raw_receipt_sha256": "00ce84001bd4c0137697e9bba19f8056bae421a42e3741525fa225431ce099fd",
+  "original_source_inventory": {
+    "files": 540,
+    "before_sha256": "d024faa1de7426ebe41eec636b06ba1c3e05995c82ad64ad8d0f447fc255ecd4",
+    "after_sha256": "d024faa1de7426ebe41eec636b06ba1c3e05995c82ad64ad8d0f447fc255ecd4",
+    "identical": true
+  },
+  "patch": {
+    "path": ".tdd/history/issue131-savepoint-independent-fi/rollback-invalidation.patch",
+    "sha256": "751907727c97b4794e900669d93a6a963675568b4bf1bb5e5eff1c3a28372f77"
+  },
+  "cycles": {
+    "baseline2": {
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeSavepointPostgresTest"
+      ],
+      "exit": 0,
+      "counts": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failed_tests": [],
+      "failure_types": []
+    },
+    "mutant2": {
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeSavepointPostgresTest"
+      ],
+      "exit": 1,
+      "counts": {
+        "tests": 2,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failed_tests": [
+        "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeSavepointPostgresTest.RB03 INSERT rolled back to savepoint cannot authorize raw same-ID insertion later in that transaction()"
+      ],
+      "failure_types": [
+        "org.opentest4j.AssertionFailedError"
+      ]
+    },
+    "restored2": {
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeSavepointPostgresTest"
+      ],
+      "exit": 0,
+      "counts": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failed_tests": [],
+      "failure_types": []
+    },
+    "final65": {
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntime*"
+      ],
+      "exit": 0,
+      "counts": {
+        "tests": 65,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failed_tests": [],
+      "failure_types": []
+    }
+  },
+  "scratch_exact_restored": true,
+  "original_source_edit_count": 0,
+  "paid_calls": 0,
+  "actual_aws_calls": 0,
+  "prior_six_fault_cycle_unchanged": ".tdd/verification/issue131-independent-faults.json",
+  "recordedAt": "2026-10-18T11:12:46.890200Z"
+}

@@ -1,0 +1,160 @@
+{
+  "workItem": "issue131-managed-runtime-independent-faults",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "boundary": "Atomic bundle, immutable profile quote, actual INSERT receipt, CREATE handoff, required auth metadata and policy file readability",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/ManagedAiRuntimeConfiguration.kt",
+      "sha256": "43043d88514a5e47e0fee3f7ba9802be32749de15f6149947ee560d439474ba4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/ConfiguredAiBudgetAuthorityRegistry.kt",
+      "sha256": "c2cff907ce6e44f9474bf5cd866e8a24b1e0fbc05dd29d7649e6f62c83b6cbaf"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcNewRoomAiBudgetAdapter.kt",
+      "sha256": "bc5d98494f5b5b98749050c8b2132c44aeb3470eb7fb50295e004783fde7a942"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt",
+      "sha256": "a236d8c14bb1a77a5e6ff660cea70b24c75795f275e6ffc07d95aa835b72e98a"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "dc94dca736a7e1744b520e76763c3171abaf8f8cc5810c9eaf0235ab53875179"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131CanonicalTlsProxy.kt",
+      "sha256": "156ac7035bcd8e5a3a1dc12f03d22a0a1abca10edfcca363e292bbf78e9e81d0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeInsertReceiptPostgresTest.kt",
+      "sha256": "fe8b7ab77e69b58a5e8a48b41e63c5379311d1b8badc67cacbb273218aa0884e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt",
+      "sha256": "9d91732b8e8622950fdde970e686681a58b38491c5ad753ddef1ab235abd643c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "sha256": "8c45eb9540a9d8e823ad102b6ac74d9a1761d835670acf9d326cf7b2064bba56"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt",
+      "sha256": "68c65bc8e62c9f0067e2909f6e6554d64d759afc7330c91edc7da7d3828e287a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeErrorContractTest.kt",
+      "sha256": "17b9e6454cea1454439e145f639e365d42e64370b75b32c1867492683dc5062c"
+    },
+    {
+      "path": "deploy/tests/issue131-runtime-bundle-env.test.cjs",
+      "sha256": "402cb75771ca11ed24f8db4cd459ad1f46fb2ccadb91313ffa26cba5471599e3"
+    },
+    {
+      "path": "deploy/tests/test_issue131_auth_target_dispatch.py",
+      "sha256": "00fffdf88003e9df6d0b5dfa0ff180d5711d99e3ab976bcf57be2a4b9831c519"
+    },
+    {
+      "path": "deploy/tests/test_issue131_policy_extraction.py",
+      "sha256": "a8ca51e04b97c3d75caaa1a5e76eac8c64978614b5e0c35df4f819a41a6eff1f"
+    },
+    {
+      "path": "deploy/tests/test_issue131_runtime_readiness.py",
+      "sha256": "0a129b275bc284b7a012ef69bb848d361db6c50fe7472002e1f204d7f1bdbcad"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Remove partial-ON startup validation",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeConfigurationTest.MB02*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB02 any nonempty proper subset of the four flags fails startup(int) [1] mask=1",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove authority profile binding",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeConfigurationTest.MB05 foreign*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 foreign policy profile malformed hash and elapsed evidence remain denied()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove fresh INSERT receipt requirement",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeInsertReceiptPostgresTest.RB02 committed*"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeInsertReceiptPostgresTest.RB02 committed room and budget both touched in current transaction are still not a new INSERT()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove actual CREATE budget handoff",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue131ManagedRuntimeRoomPostgresTest.MB06*"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeRoomPostgresTest.MB06 actual CREATE initializes only its own brand new zero ledger from explicit immutable policy()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit one mandatory auth parameter",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_issue131_runtime_readiness.py",
+        "-v"
+      ],
+      "detectedBy": "test_DX02_each_missing_required_auth_parameter_blocks_readiness (test_issue131_runtime_readiness.Issue131RequiredAuthMetadataTests.test_DX02_each_missing_required_auth_parameter_blocks_readiness) (parameter='secret/google-client-secret')",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit policy-only0644 normalization",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_issue131_policy_extraction.py",
+        "-v"
+      ],
+      "detectedBy": "test_DX04_generated_verified_extraction_makes_only_nonsecret_policy_readable_for_UID10001_file_bind (test_issue131_policy_extraction.Issue131PolicyExtractionTests.test_DX04_generated_verified_extraction_makes_only_nonsecret_policy_readable_for_UID10001_file_bind)",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T11:01:46.484184Z"
+}

@@ -1,0 +1,60 @@
+{
+  "workItem": "issue131 baseline deployment setup verification",
+  "nginx": {
+    "sourceBeforeAfterEqual": true,
+    "sourceHashes": {
+      "verify-nginx-runtime.sh": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368",
+      "nginx.conf": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44"
+    },
+    "firstFailuresPreserved": [
+      "/tmp/issue131-deployment-shell-final/2.log",
+      "/tmp/issue131-nginx-permission-fixture/run.log"
+    ],
+    "originalLocalCheckoutMode": "0600/public configuration owned uid1000",
+    "isolatedExactBytesMode": "0644/public config only",
+    "defaultDockerProxyProbeHttp": 403,
+    "sameContainerProxyRemovedProbeExit": 0,
+    "temporaryEmptyDockerClientExactScriptExit": 0,
+    "sameDockerDaemon": true,
+    "globalDockerConfigurationModified": false,
+    "sourceTimeoutExpectationsCapsChanged": false,
+    "remainingOwnedContainers": 0,
+    "rawReceiptSha256": "a0d679a3663c7352db559f0347b14631a11dd8ed720ba44cf8955451ff2f2709"
+  },
+  "python": {
+    "initialRunMethods": 66,
+    "initialSetupTimeoutErrors": 3,
+    "initialRawSha256": "49a4105283a5c7b2d5aef8c81e2d433a6fdeb1a355e8330d7640727d9043a9e6",
+    "isolatedSameSourceSameTimeoutMethods": 2,
+    "isolatedPassed": 2,
+    "isolatedLogSha256": "b9646d237a1c7cba66d3bc6808134dfc0488fb95a5d2c541ccbe74f60e5d044c",
+    "setupErrorsCountAsProductRED": false
+  },
+  "shell": [
+    {
+      "command": [
+        "bash",
+        "deploy/scripts/verify-compose-secret-fidelity.sh"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.438
+    },
+    {
+      "command": [
+        "bash",
+        "deploy/tests/refresh-database-credential.test.sh"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 102.007
+    },
+    {
+      "command": [
+        "bash",
+        "deploy/scripts/verify-nginx-runtime.sh"
+      ],
+      "exitCode": 1,
+      "elapsedSeconds": 6.19
+    }
+  ],
+  "limits": "Nginx original source used in isolated temporary client configuration; the initial environment failures are preserved, not counted as original-run PASS. No production/global trust/credential changes."
+}

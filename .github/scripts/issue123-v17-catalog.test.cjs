@@ -30,6 +30,7 @@ const approvedPaths = [
   'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
   'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
 ].sort();
+const currentApprovedPaths = [...approvedPaths, 'runtime-ai-policy.json'].sort();
 const originalSqlHashes = [
   'f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515',
   '75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7',
@@ -99,12 +100,12 @@ test('VC01 V1 through V16 immutable SQL and separate seventeen-file runtime appr
 });
 
 test('VC02 current publisher accepts exactly V1 through V17 with independent SQL CRC and both inventory fingerprints', () => {
-  const value = fixture();try {
+  const value = f.currentFixture();try {
     const result = publish(value);assert.equal(result.ok, true, 'Frozen additive V17 must be accepted by current publisher');
     assert.deepEqual(result.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(result.result.schemaFingerprint, hash(canonical(sourceCatalog(value))));
-    assert.equal(result.result.guardFingerprint, hash(canonical(approvedPaths.map(name => ({ path: name,
+    assert.equal(result.result.guardFingerprint, hash(canonical(currentApprovedPaths.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     assert.equal(result.result.archiveSha256, hash(fs.readFileSync(value.archive)));
   } finally { value.remove(); }
@@ -112,7 +113,7 @@ test('VC02 current publisher accepts exactly V1 through V17 with independent SQL
 
 test('VC03 publisher rejects each omission duplicate unknown18 noncanonical17 and unapproved physical inventory entry', () => {
   for (const fault of [...range(17).map(v => `missing-${v}`), 'duplicate17', 'unknown18', 'wrong17', 'leadingZero', 'extra', 'directory']) {
-    const value = fixture();try {
+    const value = f.currentFixture();try {
       const last = path.join(value.migrations, scripts[16]);
       if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, scripts[Number(fault.slice(8)) - 1]));
       if (fault === 'duplicate17') fs.copyFileSync(last, path.join(value.migrations, 'V17__duplicate.sql'));
@@ -128,7 +129,7 @@ test('VC03 publisher rejects each omission duplicate unknown18 noncanonical17 an
 
 test('VC04 V17 and its source ancestors cannot be symlinks even when target SQL bytes match', () => {
   for (const relative of [`src/main/resources/db/migration/${scripts[16]}`, 'src/main/resources/db/migration', 'src/main']) {
-    const value = fixture();try {
+    const value = f.currentFixture();try {
       const target = path.join(value.directory, relative), actual = `${target}-actual`;
       fs.renameSync(target, actual);fs.symlinkSync(actual, target, fs.statSync(actual).isDirectory() ? 'dir' : 'file');
       assert.deepEqual(publish(value), untrusted, relative);
@@ -137,7 +138,7 @@ test('VC04 V17 and its source ancestors cannot be symlinks even when target SQL 
 });
 
 test('VC05 V17-only byte changes preserve all prior sixteen checksums and distinguish SQL from runtime fingerprints', () => {
-  const value = fixture();try {
+  const value = f.currentFixture();try {
     const before = publish(value);assert.equal(before.ok, true);
     fs.appendFileSync(path.join(value.migrations, scripts[16]), '\n-- isolated V17 change\n');
     const after = publish(value);assert.equal(after.ok, true);

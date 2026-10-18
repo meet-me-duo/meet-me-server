@@ -1,0 +1,23 @@
+{
+  "workItem": "issue131-runtime-savepoint",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeSavepointPostgresTest.kt",
+      "sha256": "d98c79251df3e4b3f0b0ff26861e219d1996d8e7693efbd14d6c2d91ec6b3be0"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue131ManagedRuntimeSavepointPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeSavepointPostgresTest.RB03 INSERT rolled back to savepoint cannot authorize raw same-ID insertion later in that transaction()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T11:04:02.775001Z"
+}

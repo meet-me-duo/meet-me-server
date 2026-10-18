@@ -1,0 +1,11 @@
+--- baseline/src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcNewRoomAiBudgetAdapter.kt
++++ mutant/src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcNewRoomAiBudgetAdapter.kt
+@@ -28,7 +28,7 @@
+         val policy = selection.policy ?: throw NewRoomAiBudgetUnavailableException()
+         val now = clock.instant()
+         if (policy.operations.values.any { it.validUntil <= now }) throw NewRoomAiBudgetUnavailableException()
+-        if (!NewRoomInsertTransactionReceipts.consume(roomId)) throw NewRoomAiBudgetUnavailableException()
++        // FI: fresh INSERT receipt enforcement omitted
+         // The one-shot INSERT receipt is the creation proof. The row guards are additional CAS defenses.
+         // xmin alone changes on UPDATE and cannot prove an original INSERT.
+         val initialized =

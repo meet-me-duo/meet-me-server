@@ -1,0 +1,22 @@
+{
+  "status": "ALL_SIX_DETECTED_AND_RESTORED",
+  "baseline_and_final": {
+    "kotlin": 63,
+    "dx": 29,
+    "total": 92,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "root_catalog9_separate_not_added": true,
+  "all_six_assertion_detected_and_exact_restored_green": true,
+  "original_before_after_identical": true,
+  "scratch_before_after_identical": true,
+  "source_manifest_sha256": "857a1301863c1c56f1d470907c0e7087e49880e476c21ea1a4c4de1d4b1ecd26",
+  "original_file_count": 539,
+  "canonical_fi_sha256": "8354ad437de8054e58489260ab5f2c0a971d7927f5aece5939f9ded74e2f1f14",
+  "raw_archive": ".codex/tdd-evidence/issue131-independent-fi",
+  "no_paid_or_real_aws_calls": true,
+  "savepoint_followup": "NOT_IN_THIS_63_SCOPE; prepared independently outside repository, no production or test changes during FI",
+  "recordedAt": "2026-10-18T11:01:46.484184Z"
+}

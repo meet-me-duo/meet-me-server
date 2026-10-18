@@ -1,0 +1,37 @@
+{
+  "classification": "GENUINE_PRODUCTION_DI_REGRESSION_NOT_FIXTURE",
+  "original_test_unchanged": true,
+  "failure_type": "org.opentest4j.AssertionFailedError",
+  "reason": "Default-DENY standalone production adapter scan must start without requiring a Clock bean; new optional non-null factory Clock parameter received Spring null and broke the unchanged assertion.",
+  "test_sha256": "17575e4e98a36e12c53114b2f02c618db41cde1e65e2a5ab47b27eae60f7afa5",
+  "source_manifest_sha256": "4336c8a2e45a3f9a5c9d35e58cc3c7e5c9d9443b6f374b1849059ba39401d2f4",
+  "source_files": 571,
+  "full_guard": {
+    "exitCode": 2,
+    "sourceBeforeAfterEqual": true,
+    "sourceFiles": 571,
+    "sourceManifestSha256": "4336c8a2e45a3f9a5c9d35e58cc3c7e5c9d9443b6f374b1849059ba39401d2f4",
+    "elapsedSeconds": 543.538,
+    "tests": 1782,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 4,
+    "suites": 220,
+    "allXmlFresh": true,
+    "paidCalls": 0,
+    "keysBlankInSubprocess": true
+  },
+  "full_guard_start_inventory_written_at": "2026-10-18T11:13:07.142078Z",
+  "failing_suite_timestamp": "2026-10-18T11:18:31.479Z",
+  "command_input": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git commit"
+    }
+  },
+  "canonical_sha256": "dbc46abcc65afccc8830e22e6d4b16e857940f01fe32f6f94963392fe989b8d7",
+  "xml_sha256": "909df10aceffea0b71c62d96e6aa621995a39b47ef180ca7db48f1da3dc2d6bc",
+  "raw_log_sha256": "fb5a1e0e9c608f66f4393dbdf47c370821e51bee1bccf32577bf7ea8b9790cb9",
+  "no_new_test_or_expectation_change": true
+}

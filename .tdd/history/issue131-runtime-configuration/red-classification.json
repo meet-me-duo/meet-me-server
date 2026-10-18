@@ -1,0 +1,18 @@
+{
+  "classification": "CHRONOLOGICAL_RED",
+  "counts": {
+    "tests": 43,
+    "failures": 11,
+    "errors": 0,
+    "skipped": 0
+  },
+  "valid_assertion_failures": 11,
+  "pass_controls": 32,
+  "pass_controls_do_not_prove_validation_implemented": true,
+  "test_sha256": "8c45eb9540a9d8e823ad102b6ac74d9a1761d835670acf9d326cf7b2064bba56",
+  "source_before_after_identical": true,
+  "raw_archive": ".codex/tdd-evidence/issue131-runtime-c1-red-archive",
+  "paid_calls": 0,
+  "threshold_and_money": "SYNTHETIC_TEST_POLICY_ONLY",
+  "c2_bootstrap": "NOT_YET_IMPLEMENTED_OR_CONNECTED"
+}

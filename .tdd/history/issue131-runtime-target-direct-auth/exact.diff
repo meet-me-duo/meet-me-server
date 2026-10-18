@@ -1,0 +1,12 @@
+--- initial7
++++ direct-auth8
+@@ -98,6 +98,9 @@
+     def test_DX02_actual_main_propagates_verified_current_target_auth_to_initial_and_fresh_readiness(self):
+         self.main_case(CURRENT18, True)
+ 
++    def test_DX02_actual_main_propagates_historical_required_auth_to_both_readiness_calls(self):
++        self.main_case(AUTH17, True)
++
+     def test_DX02_actual_main_preserves_legacy_target_auth_for_initial_and_fresh_readiness(self):
+         self.main_case(LEGACY14, False)
+ 

@@ -1,0 +1,10 @@
+--- a/deploy/tests/runtime_auth_refresh_fixture.py
++++ b/deploy/tests/runtime_auth_refresh_fixture.py
+@@ -25,6 +25,7 @@
+                         sandbox.new / "scripts/render-runtime-env.sh")
+         (sandbox.new / "scripts/render-runtime-env.sh").chmod(0o755)
+         (sandbox.new / "runtime-auth-mode").write_text("oauth-rs256-required\n")
++        shutil.copyfile(os.environ["AUTH_TEST_POLICY"], sandbox.new / "runtime-ai-policy.json")
+         parameters = json.loads(Path(os.environ["FAKE_AUTH_SCENARIO"]).read_text())["parameters"]
+         variables = json.loads(os.environ["AUTH_TEST_VARIABLES"])
+         before = "DATABASE_PASSWORD=synthetic-old\n" + "".join(

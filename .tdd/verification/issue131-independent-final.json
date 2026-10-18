@@ -1,0 +1,105 @@
+{
+  "status": "INDEPENDENT_FINAL94_GREEN_WITH_SEVEN_FAULTS_DETECTED_ACROSS_TWO_FROZEN_CYCLES",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "final_focused": {
+    "kotlin": 65,
+    "deployment": 29,
+    "total": 94,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "scope_note": "Root catalog PC9 and root mandatory guard are separate; no result from either is included in this 94. Earlier FI6 used 63 Kotlin plus 29 deployment tests; the new savepoint cycle uses 65 plus 29.",
+  "current_source_inventory": {
+    "files": 540,
+    "before_sha256": "d024faa1de7426ebe41eec636b06ba1c3e05995c82ad64ad8d0f447fc255ecd4",
+    "after_sha256": "d024faa1de7426ebe41eec636b06ba1c3e05995c82ad64ad8d0f447fc255ecd4",
+    "original_before_after_identical": true,
+    "current_files_match_after": true
+  },
+  "fault_cycles": [
+    {
+      "path": ".tdd/verification/issue131-independent-faults.json",
+      "sha256": "8354ad437de8054e58489260ab5f2c0a971d7927f5aece5939f9ded74e2f1f14",
+      "detected": 6,
+      "each_restore_green": true,
+      "scope_kotlin": 63,
+      "scope_deployment": 29
+    },
+    {
+      "path": ".tdd/verification/issue131-savepoint-independent-fault.json",
+      "sha256": "c35dc2bbf5a2d0c1e2d1a5ae20329ffb330ba3966bb84ce5eaea392021b7daa0",
+      "detected": 1,
+      "baseline_tests": 2,
+      "mutant_assertion_failures": 1,
+      "mutant_errors": 0,
+      "restored_tests": 2,
+      "restore_green": true,
+      "scratch_exact_restored": true
+    }
+  ],
+  "history_receipt": {
+    "path": ".tdd/history/issue131-savepoint-independent-fi/receipt.json",
+    "sha256": "5bbfded5fdad79d3e2285af53fb7c09c36b59403e8a6d71baef83a1d8e00e42b"
+  },
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131CanonicalTlsProxy.kt",
+      "sha256": "156ac7035bcd8e5a3a1dc12f03d22a0a1abca10edfcca363e292bbf78e9e81d0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeInsertReceiptPostgresTest.kt",
+      "sha256": "fe8b7ab77e69b58a5e8a48b41e63c5379311d1b8badc67cacbb273218aa0884e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt",
+      "sha256": "9d91732b8e8622950fdde970e686681a58b38491c5ad753ddef1ab235abd643c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeSavepointPostgresTest.kt",
+      "sha256": "d98c79251df3e4b3f0b0ff26861e219d1996d8e7693efbd14d6c2d91ec6b3be0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "sha256": "8c45eb9540a9d8e823ad102b6ac74d9a1761d835670acf9d326cf7b2064bba56"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt",
+      "sha256": "68c65bc8e62c9f0067e2909f6e6554d64d759afc7330c91edc7da7d3828e287a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeErrorContractTest.kt",
+      "sha256": "17b9e6454cea1454439e145f639e365d42e64370b75b32c1867492683dc5062c"
+    },
+    {
+      "path": "deploy/tests/issue131-runtime-bundle-env.test.cjs",
+      "sha256": "402cb75771ca11ed24f8db4cd459ad1f46fb2ccadb91313ffa26cba5471599e3"
+    },
+    {
+      "path": "deploy/tests/test_issue131_auth_target_dispatch.py",
+      "sha256": "00fffdf88003e9df6d0b5dfa0ff180d5711d99e3ab976bcf57be2a4b9831c519"
+    },
+    {
+      "path": "deploy/tests/test_issue131_policy_extraction.py",
+      "sha256": "a8ca51e04b97c3d75caaa1a5e76eac8c64978614b5e0c35df4f819a41a6eff1f"
+    },
+    {
+      "path": "deploy/tests/test_issue131_runtime_readiness.py",
+      "sha256": "0a129b275bc284b7a012ef69bb848d361db6c50fe7472002e1f204d7f1bdbcad"
+    }
+  ],
+  "raw_archive": ".codex/tdd-evidence/issue131-savepoint-independent-fi",
+  "schema_validation": "Both canonical FI files validated with Draft202012Validator and FormatChecker",
+  "actual_services": {
+    "paid_calls": 0,
+    "actual_aws_calls": 0,
+    "actual_oauth_calls": 0,
+    "synthetic_network_only": true
+  },
+  "limitations": [
+    "Operating activation remains OFF; real policy values remain unselected.",
+    "Synthetic canonical TLS/PG integration is not a real model quality or billing validation.",
+    "Root final mandatory guard and independent final publication review remain separately owned and pending at this seal."
+  ],
+  "recordedAt": "2026-10-18T11:12:46.890200Z"
+}

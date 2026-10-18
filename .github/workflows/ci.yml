@@ -59,6 +59,11 @@ jobs:
       - name: Verify auth runtime delivery and isolated key mounts
         run: node --test deploy/tests/runtime-auth-env.test.cjs deploy/tests/runtime-auth-compose.test.cjs deploy/tests/runtime-auth-raw-json.test.cjs
 
+      - name: Verify managed runtime policy and auth readiness metadata
+        run: |
+          node --test deploy/tests/issue131-runtime-bundle-env.test.cjs .github/scripts/issue131-policy-catalog.test.cjs
+          python3 -m unittest discover -s deploy/tests -p 'test_issue131*.py' -v
+
       - name: Verify isolated built image workflow
         run: node --test deploy/tests/built-image-workflow.test.cjs
 

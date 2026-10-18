@@ -1,0 +1,47 @@
+{
+  "workItem": "issue131-target-auth-policy-catalog",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue131_auth_target_dispatch.py",
+      "sha256": "00fffdf88003e9df6d0b5dfa0ff180d5711d99e3ab976bcf57be2a4b9831c519"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "deploy/tests",
+    "-p",
+    "test_issue131_auth_target_dispatch.py",
+    "-v"
+  ],
+  "failedTests": [
+    "test_DX02_actual_main_propagates_historical_required_auth_to_both_readiness_calls (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX02_actual_main_propagates_historical_required_auth_to_both_readiness_calls)",
+    "test_DX02_actual_main_propagates_verified_current_target_auth_to_initial_and_fresh_readiness (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX02_actual_main_propagates_verified_current_target_auth_to_initial_and_fresh_readiness)",
+    "test_DX04_current_eighteen_archive_is_verified_and_declares_required_auth (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_current_eighteen_archive_is_verified_and_declares_required_auth)",
+    "test_DX04_current_publisher_refuses_missing_and_malformed_policy_artifact (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_current_publisher_refuses_missing_and_malformed_policy_artifact) (fault='missing')",
+    "test_DX04_current_publisher_refuses_missing_and_malformed_policy_artifact (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_current_publisher_refuses_missing_and_malformed_policy_artifact) (fault='unknown-protocol')",
+    "test_DX04_current_publisher_refuses_missing_and_malformed_policy_artifact (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_current_publisher_refuses_missing_and_malformed_policy_artifact) (fault='unknown-field')",
+    "test_DX04_historical_fourteen_archive_does_not_gain_new_auth_requirements (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_historical_fourteen_archive_does_not_gain_new_auth_requirements)",
+    "test_DX04_historical_seventeen_archive_keeps_its_exact_bytes_and_auth_declaration (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_historical_seventeen_archive_keeps_its_exact_bytes_and_auth_declaration)",
+    "test_DX04_publisher_fingerprints_exact_current_eighteen_including_exact_policy_bytes (test_issue131_auth_target_dispatch.Issue131TargetAuthDispatchTests.test_DX04_publisher_fingerprints_exact_current_eighteen_including_exact_policy_bytes)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:49:17.015455Z",
+  "classification": {
+    "methods": 8,
+    "failedMethods": 7,
+    "assertionFailuresIncludingSubtests": 9,
+    "initialPassControls": 1,
+    "errors": 0,
+    "sourceBeforeAfterIdentical": true,
+    "paidCalls": 0,
+    "actualAwsCalls": 0
+  },
+  "rawEvidence": ".codex/tdd-evidence/issue131-runtime-target-fresh-red",
+  "history": ".tdd/history/issue131-runtime-target-direct-auth/",
+  "schemaScopeNote": "Infrastructure evidence outside the Kotlin-only RED schema."
+}

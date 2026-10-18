@@ -1,0 +1,67 @@
+{
+  "exitCode": 0,
+  "sourceBeforeAfterEqual": true,
+  "sourceFiles": 571,
+  "sourceManifestSha256": "db1d7557d5605fe3e88599485ab6a328ec743493d20a3e670b4f5e29c9f9b4d3",
+  "elapsedSeconds": 588.589,
+  "tests": 1782,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 220,
+  "allXmlFresh": true,
+  "paidCalls": 0,
+  "keysBlankInSubprocess": true,
+  "classification": "FINAL_FRESH_MANDATORY_GUARD_PASS_AFTER_CLOCK_DI_FIX",
+  "passed": 1778,
+  "firstFullGuardFailure": {
+    "path": "/tmp/issue131-final-guard/receipt.json",
+    "tests": 1782,
+    "passed": 1777,
+    "failures": 1,
+    "skipped": 4,
+    "cause": "Existing DB01 default DENY standalone scan received null Clock; fixed product only, oldtest unchanged"
+  },
+  "independentFocused": {
+    "kotlin": 65,
+    "deployment": 29,
+    "policyCatalog": 9,
+    "clockFocusedIncludingOldTests": 72
+  },
+  "faultInjection": {
+    "earlier": 6,
+    "savepoint": 1,
+    "defaultClock": 1,
+    "scope": "Phase-separated snapshots and exact restores; final full source bound separately"
+  },
+  "oldNodeGitHubScripts": {
+    "tests": 142,
+    "passed": 142,
+    "failed": 0
+  },
+  "deploymentNode": {
+    "tests": 95,
+    "passed": 95,
+    "failed": 0,
+    "fixtureMaintenance": ".tdd/verification/issue131-runtime-auth-fixture-maintenance.json"
+  },
+  "pythonDeployment": {
+    "originalRunMethods": 66,
+    "setupTimeoutErrors": 3,
+    "rawDirectory": "/tmp/issue131-deployment-rest",
+    "isolatedSameTimeoutUnchangedTests": {
+      "methods": 2,
+      "passed": 2,
+      "elapsedSeconds": 102.784,
+      "raw": "/tmp/issue131-deployment-isolated-setup/review-boundaries.log"
+    },
+    "expectationsModified": false
+  },
+  "shell": {
+    "composeSecretFidelity": "PASS",
+    "databaseCredentialRefresh": "PASS",
+    "nginx": "PASS in exact-source isolated public config0644 + empty temporary Docker client config; original failures preserved",
+    "nginxReceipt": "/tmp/issue131-nginx-local-proxy-diagnosis/receipt.json",
+    "productionSettingsChanged": false
+  }
+}

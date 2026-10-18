@@ -1,0 +1,10 @@
+--- original
++++ reader-fixture-corrected
+@@ -176,6 +176,7 @@
+             base = Path(root); (base / "preflight/compiled").mkdir(parents=True)
+             (base / "preflight/compiled/ReadOnlyFlywayProbe.class").write_bytes(bytes.fromhex("cafebabe"))
+             (base / "preflight/host-preflight.sh").write_text((ROOT / "preflight/host-preflight.sh").read_text())
++            (base / "preflight/run-preflight.py").write_text((ROOT / "preflight/run-preflight.py").read_text())
+             observed = host_observation()
+             with patch.object(DRIVER, "BASE", base), patch.object(DRIVER, "_ssm", return_value=observed) as ssm:
+                 try:

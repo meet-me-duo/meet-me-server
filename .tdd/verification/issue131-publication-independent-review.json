@@ -1,0 +1,182 @@
+{
+  "workItem": "issue131-managed-precheck-runtime",
+  "reviewKind": "INDEPENDENT_FINAL_LOCAL_PUBLICATION_REVIEW",
+  "recordedAt": "2026-10-18T11:47:19.603453+00:00",
+  "decision": "PASS_CODE_TESTS_DEPLOYMENT_CONTRACT_AND_DRAFT_SCOPE",
+  "openP1": 0,
+  "openP2": 0,
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "currentChangedSourceAndTestFingerprints": {
+    ".github/scripts/fixtures/integrated-release-catalog.cjs": "6d22daf0e2ba3fbe4f889e5b8db848ef4814f4a95f6f684da17dc21a14952a9d",
+    ".github/scripts/issue107-integrated-catalog.test.cjs": "c2dad113a27fcf52c13d1a5c8ad48326a20d7950ef465a7b462bc0b0b5027612",
+    ".github/scripts/issue107-runtime-auth-catalog.test.cjs": "2f043aa1f5901b52cddf809ed2e4d0b57ba289ddb618de864aa24189fbcf73bb",
+    ".github/scripts/issue123-v17-catalog.test.cjs": "c5c6e8ffb68a595c1215b955cb9bb658f4c2425727c9c3ff8397246a3f46f59d",
+    ".github/scripts/issue131-policy-catalog.test.cjs": "8fd662d96c8f8bce55a6287c5cb584e40e75c07753edbc066b774f73c8fdd26b",
+    ".github/workflows/ci.yml": "2b7d72a971f67783481332088ad5568a12d455780ed3796ac7bb4df676ef6ae9",
+    ".github/workflows/deploy.yml": "31197c6e9792a60621e96d6e6fd5af50cf3b491df814df8fe3a8f8700441f12c",
+    "deploy/compose.production.yml": "e6837c51cfde83d27560d05d2ddf74345d53ca9f45dc1e3d60bdf1a586bbd856",
+    "deploy/pipeline/host-approved-release.py": "76b2677a9fddc707da035f7ba3d65d695ce6c3b84d67e8db2621723231e4a9dd",
+    "deploy/pipeline/publish_manifest.py": "9d7cd76e66ecaad41366ab95b7af2fb991edf9d1abde8d887c92e494d23a0c6e",
+    "deploy/pipeline/run-approved-release.py": "dc94dca736a7e1744b520e76763c3171abaf8f8cc5810c9eaf0235ab53875179",
+    "deploy/preflight/host-preflight.sh": "209d2021e8a91e31c023027335dbe89f87be74cf2cc566e2c5f5ea39de4ee685",
+    "deploy/preflight/run-preflight.py": "03d6d707ba97a600a974140569afd6a43da1e9347352858cd870c9f219b6cc18",
+    "deploy/runtime-ai-policy.json": "0af1dfeff1eb8faf3010b375bbf6f265d86f82b7ec1b018802251f14359e5699",
+    "deploy/scripts/render-runtime-env.sh": "cc3cb5c85004a4c9675dfd1b88c0b8a6e9b51bf6457c8457d9c7d6b79c20afff",
+    "deploy/tests/issue131-runtime-bundle-env.test.cjs": "402cb75771ca11ed24f8db4cd459ad1f46fb2ccadb91313ffa26cba5471599e3",
+    "deploy/tests/runtime-auth-env.test.cjs": "ac5ac0a7b0205c29d32beaf7fa74570fd4e508693f001dba2de8bb8cc692daef",
+    "deploy/tests/runtime_auth_refresh_fixture.py": "5768e0f2efe6117b12efd699dc10a1a1a354e4ce1a654dbdf1c83a3a5f6de4e2",
+    "deploy/tests/test_issue131_auth_target_dispatch.py": "00fffdf88003e9df6d0b5dfa0ff180d5711d99e3ab976bcf57be2a4b9831c519",
+    "deploy/tests/test_issue131_policy_extraction.py": "a8ca51e04b97c3d75caaa1a5e76eac8c64978614b5e0c35df4f819a41a6eff1f",
+    "deploy/tests/test_issue131_runtime_readiness.py": "0a129b275bc284b7a012ef69bb848d361db6c50fe7472002e1f204d7f1bdbcad",
+    "src/main/kotlin/com/meetme/server/config/ManagedAiRuntimeConfiguration.kt": "43043d88514a5e47e0fee3f7ba9802be32749de15f6149947ee560d439474ba4",
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleController.kt": "d56db473f8f078f3ee46d81729129bb923b88a4dfae6949988fe8f55af218f9c",
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/KomapperMeetingRoomRepository.kt": "6107aa4492334cf9247126495f55d02ff49fa6c871067686d9489b55f5b4853a",
+    "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt": "a236d8c14bb1a77a5e6ff660cea70b24c75795f275e6ffc07d95aa835b72e98a",
+    "src/main/kotlin/com/meetme/server/shared/adapter/input/web/ApiExceptionHandler.kt": "3698f0446e6a9f18734477f664b3997cf84a456eed03d50853e8df0c4b4d93db",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/AiBudgetAuthorityConfiguration.kt": "d8e3f8e004e85dddd8339e5a66ca2232121a402292c20acbb2bf32c304aa230c",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/ConfiguredAiBudgetAuthorityRegistry.kt": "c2cff907ce6e44f9474bf5cd866e8a24b1e0fbc05dd29d7649e6f62c83b6cbaf",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcNewRoomAiBudgetAdapter.kt": "bc5d98494f5b5b98749050c8b2132c44aeb3470eb7fb50295e004783fde7a942",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/NewRoomInsertTransactionReceipts.kt": "213986579bf0d197a3241c883e6e08037a39cf7c34a68463c8ab872c967f034f",
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/NewRoomAiBudgetPort.kt": "570f1c225d9ece48e4c5c8e3149dd921bab824beb66a5bb823115bb86e39a6c3",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131CanonicalTlsProxy.kt": "156ac7035bcd8e5a3a1dc12f03d22a0a1abca10edfcca363e292bbf78e9e81d0",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeInsertReceiptPostgresTest.kt": "fe8b7ab77e69b58a5e8a48b41e63c5379311d1b8badc67cacbb273218aa0884e",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt": "9d91732b8e8622950fdde970e686681a58b38491c5ad753ddef1ab235abd643c",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeSavepointPostgresTest.kt": "d98c79251df3e4b3f0b0ff26861e219d1996d8e7693efbd14d6c2d91ec6b3be0",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt": "8c45eb9540a9d8e823ad102b6ac74d9a1761d835670acf9d326cf7b2064bba56",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt": "68c65bc8e62c9f0067e2909f6e6554d64d759afc7330c91edc7da7d3828e287a",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeErrorContractTest.kt": "17b9e6454cea1454439e145f639e365d42e64370b75b32c1867492683dc5062c"
+  },
+  "fullGuard": {
+    "canonicalPath": ".tdd/verification/issue131-final-quality.json",
+    "canonicalSha256": "c3b869d90e3261a3921dadd17eaf7d87b846965f7874f5fd4c04a17c00d8e4eb",
+    "sourceFiles": 571,
+    "manifestSha256": "db1d7557d5605fe3e88599485ab6a328ec743493d20a3e670b4f5e29c9f9b4d3",
+    "beforeAfterCurrentEqual": true,
+    "exitCode": 0,
+    "elapsedSeconds": 588.589,
+    "freshXmlSuites": 220,
+    "tests": 1782,
+    "passed": 1778,
+    "existingSkipped": 4,
+    "failures": 0,
+    "errors": 0,
+    "allXmlFreshIndependentlyChecked": true,
+    "subprocessApiKeysBlank": true
+  },
+  "focusedAndFaultBoundaries": {
+    "beforeSavepoint": {
+      "kotlin": 63,
+      "deployment": 29,
+      "independentFaults": 6
+    },
+    "afterSavepoint": {
+      "kotlin": 65,
+      "deployment": 29,
+      "newSavepointFaults": 1
+    },
+    "separatePolicyCatalog": 9,
+    "clockFixFocusedIncludesExistingTests": 72,
+    "newClockFaults": 1,
+    "totalFaultKindsAcrossSeparateSnapshots": 8,
+    "allDetectedByAssertionsAndRestored": true,
+    "historicalSource540NotClaimedCurrent571": true,
+    "firstFullGuard1782Failure1Preserved": true,
+    "existingClockTestByteUnchangedFromHead": true
+  },
+  "regressionEvidence": {
+    "githubNode": {
+      "passed": 142
+    },
+    "deploymentNode": {
+      "passed": 95,
+      "onlyTwoFixtureMaintenanceFiles": "Default sentinel/synthetic explicit configured policy and exact refresh policy copy; assertions and names unchanged."
+    },
+    "deploymentPython": {
+      "initialMethods": 66,
+      "initialSetupTimeoutErrors": 3,
+      "unchangedIsolatedMethodsPassed": 2,
+      "sameTimeoutSeconds": 15,
+      "notClaimedOriginal66AllPass": true
+    },
+    "composeFidelity": "PASS",
+    "databaseCredentialRefresh": "PASS",
+    "nginx": "Exact-source isolated public-config0644 and temporary empty Docker client PASS; original permission/proxy failures preserved; no global/operating changes."
+  },
+  "evidenceFingerprints": {
+    ".tdd/deployment/issue131-policy-catalog-red.json": "b8494db4d16440b393ac53c0320996123bdf723a0fad4ded05addf80caf7d3a3",
+    ".tdd/deployment/issue131-runtime-delivery-red.json": "5b43862eb432b217dd3f8e16728d2cf1c91e4e43760498b9bb38f40c2a779241",
+    ".tdd/deployment/issue131-target-auth-policy-catalog-red.json": "15eeb39dc7ed350052b63dd1ea0614a78774af8621739c67abc804e630e1ec50",
+    ".tdd/red/issue131-default-budget-authority-clock.json": "dbc46abcc65afccc8830e22e6d4b16e857940f01fe32f6f94963392fe989b8d7",
+    ".tdd/red/issue131-runtime-configuration.json": "46908f6c5963f9c12d968dd5eac456190bb357e1cb3c7fe45d88081ff642cf6f",
+    ".tdd/red/issue131-runtime-insert-receipt.json": "7b0f9a608564bd0c0cc1a6576b962f14c03e04a99819656b9025edb6ea349e3c",
+    ".tdd/red/issue131-runtime-room-bootstrap.json": "0b31167cd7cb205d5d64e2567be450f5b34280f54581bd33e239518b4e4f05ab",
+    ".tdd/red/issue131-runtime-savepoint.json": "c6efd5ba809af230f999efe06d6512bf87d95da092bbb3525932628047c821a5",
+    ".tdd/verification/issue131-default-clock-independent-faults.json": "c3f8b0511a09e4f6915c3083fd2f230fa79b6f7e6bbdb0d46a58fa3993372875",
+    ".tdd/verification/issue131-default-clock-independent-review.json": "0c73ae591ac0987c71ef31e7987c4a51d29f4a4b1dce20f8a3440ebde64c0ac4",
+    ".tdd/verification/issue131-deployment-environment-final.json": "abb65bdbcc2057ab1f89ccc85ff963a8f21b820b2a9600dfd3759b0f9a116500",
+    ".tdd/verification/issue131-final-quality.json": "c3b869d90e3261a3921dadd17eaf7d87b846965f7874f5fd4c04a17c00d8e4eb",
+    ".tdd/verification/issue131-independent-faults.json": "8354ad437de8054e58489260ab5f2c0a971d7927f5aece5939f9ded74e2f1f14",
+    ".tdd/verification/issue131-independent-final.json": "be53f73d6d8522d86b469877cd27ccc7068ec0015611edcd46f028b831d4d47e",
+    ".tdd/verification/issue131-independent-focused.json": "12de5379d6087eec0917aa4d3f119def3abadd744f0b14c47f766eff0c5bc9eb",
+    ".tdd/verification/issue131-runtime-auth-fixture-maintenance.json": "780d2cf6cfdca0298e65ba11c157a9cb2758ab1ca1ea2014aa2c35b2848f8a80",
+    ".tdd/verification/issue131-runtime-error-contract-initial.json": "62f088a11a86b5854d24c2dd08cdc77101b05285f5cb6a3369f095a0d5a6c719",
+    ".tdd/verification/issue131-savepoint-catalog-independent-review.json": "eb0d2d2a39715a1f17c0bfd1112f9bd767649b3f91ab2978488012f0490c14f1",
+    ".tdd/verification/issue131-savepoint-independent-fault.json": "c35dc2bbf5a2d0c1e2d1a5ae20329ffb330ba3966bb84ce5eaea392021b7daa0"
+  },
+  "finalDocumentFingerprints": {
+    "implementation_plan.md": "771f5672e37097d479a72b111bc41958f588d7a335ceb66b4d5362a29341b6f5",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "0ce62d4ec50926e0202301ee30e860d1c1740bf8723dcf81cfb1868089dcb9c2",
+    "docs/ARCHITECTURE.md": "ffa16784edb0d4270cdc345112b06f0b89ef65a78ce5143fe439e6ed8d36ff1e"
+  },
+  "prDraft": {
+    "titleScope": "Managed runtime wiring and new-room durable budget initialization technical unit",
+    "bodySha256": "8d2b77da38b3a63c49965b15656ff0f78c8b05904d80594ac500429df92a0d60",
+    "requiredSixTemplateSections": true,
+    "target": "develop",
+    "draft": true,
+    "closes": [
+      131
+    ],
+    "references": [
+      107,
+      123,
+      130
+    ],
+    "publicationAndExactHeadCi": "PENDING"
+  },
+  "sourceAndContractAssessment": [
+    "All four runtime flags are OFF by default. Partial enablement rejects startup. Complete enablement requires the exact immutable reviewed artifact and matching explicit threshold; the committed artifact is UNCONFIGURED.",
+    "Configured quote authority is local/offline and binds the five fixed actual physical profiles, policy bytes SHA, exact payload hash, unit, maximum amount, evidence hash and expiry. It never claims shape validation proves economic price correctness. Complete bill remains DENY.",
+    "Room CREATE invokes budget bootstrap inside its existing transaction after successful actual repository INSERT. Private transaction synchronization receipt is one-shot, thread/physical-transaction scoped and suspended with REQUIRES_NEW; rollback/completion invalidate it. Savepoint rollback invalidates only receipts for rolled-back INSERTs while retaining earlier outer INSERT authority. Additional SQL CAS/current-transaction/zero guards remain.",
+    "Existing HISTORICAL_UNKNOWN/UNCONFIGURED/held rooms are not adopted or refunded. Initialization failure rolls back CREATE and its typed internal exception alone maps to empty HTTP500. No new public error enum, SQL V1-V17 changes, participation or closing policy changes.",
+    "Current approval catalogue18 includes the nonsecret policy; historical readers17/14 remain explicit. Renderer emits the atomic four-flag bundle and policy fingerprint; deployment normalizes only verified nonsecret policy to0644 for a read-only no-create bind. AUTH readiness reads file/access/SSM name-type-version metadata, not decrypted values.",
+    "Synthetic managed Spring/actual PG/actual TwoStage+classifier/canonical loopback TLS path observes A/count/B sockets3 and same-PG held12 without READY seeding or fake authority/provider. This is not real OAuth, model quality, live pricing or operating deployment validation."
+  ],
+  "reviewerBookkeeping": {
+    "implementationPlan": "Only requested final-review checkbox split into LOCAL PASS and pending commit/push/Draft/exact CI.",
+    "worklog": "Only short final LOCAL PASS/next-step paragraph appended.",
+    "allOtherProductTestCiFilesEditedByReviewer": false,
+    "recursiveStatusUpdateRequired": false
+  },
+  "publicDisclosure": {
+    "candidateFilesScannedBeforeReviewArtifact": 94,
+    "apiKeyLikePatternMatches": 0,
+    "privateCorpusIndexGoldRead": false,
+    "scope": "New public source/tests/history/evidence, architecture/plan/worklog and Draft body; no unnecessary new sensitive diagnostic disclosure found. Static scan is supporting evidence, not a proof of absence of all secrets."
+  },
+  "limitsAndRemainingWork": [
+    "This PASS covers local technical readiness for commit/push and a develop-target Draft, followed by exact published HEAD CI. Publication, remote CI, merge and deployment are not performed or claimed by this review.",
+    "Operational unit/currency, cap/10-won policy, actual verified prices, confidence threshold, financial proof and activation remain unselected; no policy amount or threshold is chosen by this review.",
+    "All flags remain OFF/UNCONFIGURED and default authority DENY; synthetic configured test policy values are not production policy.",
+    "Broad issue123 model quality, actual cost/invoice guarantees and activation remain unfinished. No new paid call, OAuth, AWS value/decryption, Secret or production access is authorized.",
+    "Separate issue130 actual paid run remains CONNECTION STOP/STARTED_UNKNOWN1+UNRUN15/semantic denominator0, retained holdUSD1.56254208/headroomUSD0.43745792/refund0. Its CA expansion is unimplemented/approval-pending and paid retry remains unapproved.",
+    "Prior failed assertions, fixture setup failures and chronological RED/GREEN/FI snapshots remain historical evidence, not relabeled as the final fresh full guard."
+  ],
+  "reviewerActions": {
+    "productSourceTestCiChanges": 0,
+    "GradleOrTestsExecuted": 0,
+    "modelAwsOAuthCalls": 0,
+    "secretReads": 0,
+    "privateInputsPreparedIndexGoldReads": 0
+  }
+}

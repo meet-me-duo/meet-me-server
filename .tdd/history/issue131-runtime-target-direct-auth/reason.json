@@ -1,0 +1,5 @@
+{
+  "old_sha256": "227792e065a2b59bf184692b278ea1e68dcb833ae42a1f6ae01ac61f87bc3e03",
+  "new_sha256": "00fffdf88003e9df6d0b5dfa0ff180d5711d99e3ab976bcf57be2a4b9831c519",
+  "reason": "Add actual historical-auth17 main path so auth readiness propagation is directly observed independently of missing current18 reader prerequisite. No existing input or expectation changed. Original7 retained; fresh8 before product fix."
+}

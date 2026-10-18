@@ -1,0 +1,33 @@
+{
+  "workItem": "issue131-runtime-configuration",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "sha256": "8c45eb9540a9d8e823ad102b6ac74d9a1761d835670acf9d326cf7b2064bba56"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue131ManagedRuntimeConfigurationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB03 all flags and exact explicit policy bind without invented values()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 provider success or caller evidence reference cannot fabricate a complete bill()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 loaded policy is an immutable snapshot rather than a reread of changed file()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB01 all flags default OFF select disabled and keep production authority denying()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 quote binds each fixed profile policy evidence and actual payload hash(AiPhysicalOperation) [1] PRECHECK_CLASSIFICATION",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 quote binds each fixed profile policy evidence and actual payload hash(AiPhysicalOperation) [2] PRECHECK_COUNT",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 quote binds each fixed profile policy evidence and actual payload hash(AiPhysicalOperation) [3] PRECHECK_GENERATION",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 quote binds each fixed profile policy evidence and actual payload hash(AiPhysicalOperation) [4] FINAL_PRIMARY",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 quote binds each fixed profile policy evidence and actual payload hash(AiPhysicalOperation) [5] FINAL_FALLBACK",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB04 the default UNCONFIGURED artifact supplies no financial policy()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB05 foreign policy profile malformed hash and elapsed evidence remain denied()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-18T10:14:05.583525Z"
+}

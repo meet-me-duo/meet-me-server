@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const cp = require('node:child_process');
+const crypto = require('node:crypto');
 const test = require('node:test');
 
 // Independent #107 runtime-readiness oracle, derived from the accepted runbook.
@@ -28,6 +29,23 @@ const privatePaths = {
   AUTH_SIGNING_PRIVATE_KEY_PATH: '/run/meetme-auth/signing-private.pem',
   AUTH_VERIFICATION_JWKS_PATH: '/run/meetme-auth/verification.jwks.json',
 };
+// Synthetic policy values match the independent #131 bundle fixture; they are not operating configuration.
+const profiles = [
+  '308b2fd0b2d0892f59aa7f953247ea9c855597d0da5a30a6923070596149ec81',
+  '658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307',
+  'b9ce9802d9dc3f4396f49c796cfe173fda708c6a35ac40c79d5bdc5091419363',
+  '0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04',
+  '9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab',
+];
+const digest = value => crypto.createHash('sha256').update(value).digest('hex');
+function syntheticManagedPolicy() {
+  return { protocol: 'meetme-managed-ai-policy-v1', state: 'CONFIGURED', unit: { code: 'TEST_SUBUNIT', scale: 0 },
+    roomCap: '1000', minimumConfidence: 0.73,
+    operations: ['PRECHECK_CLASSIFICATION', 'PRECHECK_COUNT', 'PRECHECK_GENERATION', 'FINAL_PRIMARY', 'FINAL_FALLBACK'].map((operation, index) => ({
+      operation, profileFingerprint: profiles[index], evidenceFingerprint: digest(`synthetic:${operation}`),
+      maximumAmount: String(index + 3), validUntil: '2099-01-01T00:00:00Z',
+    })) };
+}
 const awsStub = `#!/usr/bin/env python3
 import json,os,sys
 args=sys.argv[1:]; scenario=json.load(open(os.environ['FAKE_AUTH_SCENARIO']))
@@ -64,6 +82,11 @@ function fixture({ mode = marker, changes = {}, unavailable = [], diagnostic = '
   fs.writeFileSync(path.join(scripts, 'render-runtime-env.sh'), mapLegacyDefault ? source.replaceAll('/opt/meet-me/current/.env.runtime', path.join(root, 'legacy-current.env')) : source);
   fs.writeFileSync(path.join(release, 'runtime-provider-mode'), 'gemini-luna-required\n');
   if (mode !== null) fs.writeFileSync(path.join(release, 'runtime-auth-mode'), mode);
+  const policy = path.join(release, 'runtime-ai-policy.json');
+  const enabled = changes['config/precheck-provider-enabled'];
+  const payload = enabled?.Type === 'String' && enabled.Value === 'true'
+    ? syntheticManagedPolicy() : { protocol: 'meetme-managed-ai-policy-v1', state: 'UNCONFIGURED' };
+  fs.writeFileSync(policy, JSON.stringify(payload) + '\n');
   fs.writeFileSync(destination, oldEnvironment, { mode: 0o600 });
   fs.writeFileSync(path.join(bin, 'aws'), awsStub, { mode: 0o755 });
   fs.writeFileSync(path.join(bin, 'mv'), '#!/bin/sh\nif [ "${FAKE_AUTH_RENAME_FAILURE:-0}" = 1 ]; then exit 91; fi\nexec /usr/bin/mv "$@"\n', { mode: 0o755 });
@@ -74,7 +97,7 @@ function fixture({ mode = marker, changes = {}, unavailable = [], diagnostic = '
     FAKE_AUTH_SCENARIO: path.join(root, 'scenario.json'), FAKE_AUTH_CALLS: path.join(root, 'calls.jsonl'), FAKE_AUTH_DEST: destination,
   };
   return {
-    root, release, bin, destination, environment,
+    root, release, bin, destination, environment, policy,
     mode: path.join(release, 'runtime-auth-mode'),
     render(extra = {}, args = [destination]) { return cp.spawnSync('bash', [path.join(scripts, 'render-runtime-env.sh'), ...args], { env: { ...environment, ...extra }, cwd: root, encoding: 'utf8', timeout: 15_000 }); },
     calls() { return fs.existsSync(environment.FAKE_AUTH_CALLS) ? fs.readFileSync(environment.FAKE_AUTH_CALLS, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse) : []; },
@@ -197,7 +220,7 @@ test('AR14 CI explicitly executes the independent auth runtime contract', () => 
 
 function refreshFixture(f) {
   const result = cp.spawnSync('python3', [path.join(__dirname, 'runtime_auth_refresh_fixture.py')], {
-    env: { ...f.environment, PATH: process.env.PATH, AUTH_TEST_AWS: path.join(f.bin, 'aws'), AUTH_TEST_VARIABLES: JSON.stringify(auth.map(([variable, name]) => [variable, name])) },
+    env: { ...f.environment, PATH: process.env.PATH, AUTH_TEST_AWS: path.join(f.bin, 'aws'), AUTH_TEST_POLICY: f.policy, AUTH_TEST_VARIABLES: JSON.stringify(auth.map(([variable, name]) => [variable, name])) },
     encoding: 'utf8', timeout: 20_000,
   });
   assert.equal(result.error, undefined, 'Refresh fixture must not time out');

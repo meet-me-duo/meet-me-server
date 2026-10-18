@@ -1,0 +1,27 @@
+{
+  "workItem": "issue131-runtime-insert-receipt",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeInsertReceiptPostgresTest.kt",
+      "sha256": "fe8b7ab77e69b58a5e8a48b41e63c5379311d1b8badc67cacbb273218aa0884e"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue131ManagedRuntimeInsertReceiptPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeInsertReceiptPostgresTest.RB02 a consumed INSERT cannot be reused even after a synthetic zero ledger reset in its original transaction()",
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeInsertReceiptPostgresTest.RB03 another thread cannot borrow INSERT authority while the owner transaction remains usable()",
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeInsertReceiptPostgresTest.RB03 REQUIRES_NEW has no outer INSERT authority and resuming the outer transaction preserves its own authority()",
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeInsertReceiptPostgresTest.RB03 rollback discards INSERT authority before a raw same-ID insertion in a later transaction()",
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeInsertReceiptPostgresTest.RB02 committed room and budget both touched in current transaction are still not a new INSERT()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:45:29.022306Z"
+}

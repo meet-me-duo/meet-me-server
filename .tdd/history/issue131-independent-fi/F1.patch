@@ -1,0 +1,11 @@
+--- baseline/src/main/kotlin/com/meetme/server/config/ManagedAiRuntimeConfiguration.kt
++++ mutant/src/main/kotlin/com/meetme/server/config/ManagedAiRuntimeConfiguration.kt
+@@ -196,7 +196,7 @@
+         clock: Clock,
+     ): ManagedAiRuntimeSelection {
+         val flags = listOf(provider.enabled, routing.enabled, classifier.enabled, budget.enabled)
+-        require(flags.all { it } || flags.none { it }) { "Managed AI runtime configuration is incomplete" }
++        // FI: atomic bundle validation omitted
+         if (flags.none { it }) return ManagedAiRuntimeSelection(false, null)
+         val policy = requireNotNull(ManagedAiRuntimePolicyLoader.load(policyProperties, clock)) { "Managed AI policy is required" }
+         val threshold = classifier.minimumConfidence

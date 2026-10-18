@@ -1,0 +1,62 @@
+{
+  "status": "PASS",
+  "mutations": 1,
+  "detectedAssertions": 1,
+  "restoredControlTests": 1,
+  "allRestoresExact": true,
+  "sourcePath": "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/AiBudgetAuthorityConfiguration.kt",
+  "sourceSha256": "d8e3f8e004e85dddd8339e5a66ca2232121a402292c20acbb2bf32c304aa230c",
+  "mutantSourceSha256": "154ebb75d562dc253f89f7d25d3aeda36837d40707a233a74e44e0419f4aa3ce",
+  "testPath": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123DefaultBudgetAuthorityCompositionTest.kt",
+  "testSha256": "17575e4e98a36e12c53114b2f02c618db41cde1e65e2a5ab47b27eae60f7afa5",
+  "originalSourceAndTestsUnchanged": true,
+  "scratchMatchesOriginalAfterRestore": true,
+  "sourceFingerprintCount": 491,
+  "canonicalRed": ".tdd/red/issue131-default-budget-authority-clock.json",
+  "mutant": {
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*Issue123DefaultBudgetAuthorityCompositionTest"
+    ],
+    "exitCode": 1,
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failedTests": [
+      {
+        "name": "DB01 production budget adapter scan supplies exactly one default deny authority()",
+        "type": "org.opentest4j.AssertionFailedError"
+      }
+    ]
+  },
+  "restored": {
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*Issue123DefaultBudgetAuthorityCompositionTest"
+    ],
+    "exitCode": 0,
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failedTests": []
+  },
+  "actualProviderCalls": 0,
+  "actualAwsCalls": 0,
+  "keysBlank": true,
+  "evidence": ".codex/tdd-evidence/issue131-default-clock-independent-fi",
+  "recordedAt": "2026-10-18T11:29:37Z"
+}

@@ -1,0 +1,35 @@
+{
+  "workItem": "issue131-runtime-room-bootstrap",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt",
+      "sha256": "68c65bc8e62c9f0067e2909f6e6554d64d759afc7330c91edc7da7d3828e287a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt",
+      "sha256": "9d91732b8e8622950fdde970e686681a58b38491c5ad753ddef1ab235abd643c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131CanonicalTlsProxy.kt",
+      "sha256": "156ac7035bcd8e5a3a1dc12f03d22a0a1abca10edfcca363e292bbf78e9e81d0"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue131ManagedRuntimeRoomPostgresTest",
+    "--tests",
+    "*Issue131ManagedRuntimeEnvironmentBindingTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeRoomPostgresTest.MB09 actual CREATE then own POST worker A count B uses canonical physical network and same PG budget without seed()",
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeRoomPostgresTest.MB08 policy expiring after startup rolls back actual CREATE room host and ledger as one transaction()",
+    "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeRoomPostgresTest.MB06 actual CREATE initializes only its own brand new zero ledger from explicit immutable policy()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:27:10.650464Z"
+}

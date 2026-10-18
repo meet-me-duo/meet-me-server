@@ -1,5 +1,24 @@
 # 새 #107 구현·통합 Worklog
 
+## 이메일 저장·인증 진단 사실 확인 (2026-10-18 UTC)
+
+develop398의 login-only Google scope는 openid profile, Kakao는 openid,profile_nickname이다. account_users에는 표시 이름, account_identities에는 provider+subject가 저장되며 이메일/Gmail 주소·메일 내용 필드/수집 경로는 없다. sub는 plain string이며 필드 암호화가 없다. 저장소의 subject SHA256은 advisory transaction lock ID용이다. 현재 main91eb에는 이 OAuth 계정 구현이 없다. Terraform RDS storage_encrypted=true/EBS encrypted=true는 선언이며 실제 운영 적용 상태는 조회하지 않았다. DB 개인정보·토큰·Secret을 읽거나 변경하지 않았다.
+
+현재 웹 HTTPS 통합에서 정상 refresh200 뒤 이전 쿠키 alias 재전송→401을 실제 재현했다. 프록시 Set-Cookie 출력은 upstream과 메모리 비교 일치, 정확한 브라우저 수신/unload 시점은 미관측이다. strict replay revoke는 유지하고 원8개 실패를 보존한다. 모델/예산 코드 검증과 별개 출시 차단이며 상세 공개 issue 게시가 자동 검토에서 거절되어 로컬 기록으로 보존했다. PC 자체가 필요한 차단은 확인되지 않았고 실제 본인 OAuth/MFA 검증이 준비되면 최소 행동만 안내한다.
+
+## #131 관리형 AI runtime 연결 보완 (2026-10-18 UTC)
+
+- [USER] 기존 #123의 미완료 runtime 연결을 코드·독립 TDD·합성 검증으로 보완한다. 검증 후 정상 PR/main·정확 CI·실제 배포 승인은 유지하되 실제 운영 활성화·자격 증명/보안 설정·가격·임계값은 임의 확정하지 않는다.
+- [x] clean develop3982535765e878875a901dd9d28352358e594f6f FF 뒤 fix/issue-131-managed-precheck-runtime 분기. 기존 #123 본문을 보존하고 좁은 #131을 연결했다. 다른 브랜치 변경0.
+- [x] 실제 결함 확인: provider flag 단독 ON은 기본 routing OFF의 단일 생성기를 선택하며 production authority는 DENY, 새 room은 UNCONFIGURED다. 토글만으로 Decisions/공통 예산을 활성화했다고 부를 수 없다.
+- [x] 계약 고정·행동 TODO skeleton: 기존 네 flag allOFF는 기존 final 유지/새 개인검사 HTTP0, allON은 동일한 명시 threshold·고정 정책 artifact·실제 5 operation profile 및 durable graph, partialON은 startup 거부. default artifact는 UNCONFIGURED이며 실제 가격·cap·unit·threshold 미선택이다.
+- [ ] 독립 C1 compiled RED→선택/strict bounded loader/authority 최소 GREEN; C2 실제 PostgreSQL CREATE의 같은 TX 초기화 RED→GREEN. 기존 room/UNKNOWN/held는 자동 승격·환급하지 않는다. room과 trigger budget row의 현재 TX·초기 v1/zero 조건과 create-only callsite를 함께 제한하며 xmin 단독으로 원 INSERT를 증명한다고 하지 않는다.
+- [ ] 새 방 생성 시 정책 만료/초기화 실패는 기존 sanitized internal/config 오류와 전체 CREATE TX rollback. allOFF 생성·기존 방·참여/마감 정책과 공개 오류 코드는 유지한다.
+- [ ] 독립 renderer/RO mount·package guard·AUTH readiness metadata RED→최소 변경. 정책은 /run/meetme-ai/runtime-ai-policy.json으로 RO mount, release tar/guard hash에 포함. AUTH는 요구 marker 기반 파일 존재/regular/no symlink/UID10001 가독성 메타데이터만 확인하며 key 내용·설정 변경0, 과거 release reader 호환 유지.
+- [ ] 독립 FI/전체 필수 guard·최종 리뷰→commit/push/Draft/정확 HEAD CI. 기존 #123과 broad 모델 품질·청구 cap·모임10원·실운영 활성화는 미완료로 유지한다.
+
+현재 유료 추가0·운영 DB/SSM/Secret/OAuth 변경0이다. 새 대표 실평가 #130은 별도 branch에서 기존 합산 USD2/UNKNOWN hold를 보존한 채 준비 중이며, 해당 helper 성공을 이 runtime 금융 graph 성공으로 대체하지 않는다. 다음 시작점은 각 독립 RED/최소 GREEN/기록이다. Commit/PR 동일 후속 커밋 예정.
+
 ## 서버 develop 병합 승인·열린 PR 정리 (2026-10-18 UTC)
 
 사용자가 Decision Model 포함 검증 통과 뒤 서버 develop 병합을 명시 승인했다. main·운영 활성화·배포·추가 유료 호출과 웹 main 병합은 승인 범위에 포함하지 않는다. 아래 병합 제외 문구는 이전 단계의 이력이다. PR129의67bad4d0가 PR12618cdb5d와 PR122e83d5280를 정확 ancestor로 포함하므로, 독립 준비 리뷰는 최종 필수 CI/충돌/리뷰 확인 뒤 PR129 단일 normal merge를 권고했다. 검증된 source558·workflow·OFF/DENY는 그대로이며, 전체 통합 범위를 취소 수정 한 조건만으로 축소해 설명하지 않는다.
@@ -256,3 +275,19 @@ core/fence 격리FI4는 baseline94→cap등호허용/중복dispatch app+SQL CAS 
 - [AGENT] 부모가 요청한 bounded 별도attempt2를 고정planb4fe/독립실행리뷰8c48 뒤05:47 UTC 한 번 실행했다. A200/.06LOW/in512out0/394.6ms→count200530/245.3ms→GEN공통15초TIMEOUT childkill. JVM전체15538.3ms(준비포함), 생성HTTPstatus/개별지연/질문/usage는미관측이며genconsumedSTARTED_UNKNOWN_HELD그대로보존·늦은청구환급0. 누계D6/in3085/out0·count2·gen시도2/성공0=평가HTTP10(모델metadata2별도), 알려진D만baseUSD0.0003085/2.2보수USD0.00067870. 기존hold전부유지+총예약0.70918144/추가여유0.29081856. 다음동일full견적0.31854592를추가하면1.02772736으로USD1보다0.02772736초과해추가dependent실제호출중단. 원503/분류FAIL/STOP·oraclec69/threshold.8·prompt/2048LOW/15초변경0, actualquestion의도보존평가여전히불가. `.tdd/verification/issue123-live-two-stage-attempt2-observed.json`과history에보존했고독립감사후게시최종화한다.
 
 - [AGENT] 2026-10-18 최종 게시 리뷰 PASS `issue123-phase2-publication-final-review.md` d545f2fa, 미해결 P1/P2 없음. 원본 fullguard1684=1680PASS/기존4SKIP·556지문·RGR/FI/수정이력·실진단503/TIMEOUT/UNKNOWN와 Closes#125 범위를 모두 봉인했다. Commit/PR: 동일 커밋 예정. 다음 시작점은 feature/issue-123-durable-ai-budget의 의도된 코드·필수 테스트·상태기록 stage/commit/push→별도 develop 대상 Draft→정확 HEAD CI다. 커밋 이후 정확 SHA·PR URL·각 job checkout/tree와 최종CI는 해당 PR/#125/#123의 상태 및 ignored `.codex/tdd-evidence/issue123-publication/result.json`에 보존한다. 현재 실제 생성 질문 의미/운영threshold·가격·활성화·최종 청구 입증은 미완료이고 추가 실제 호출은 예산상중단·Decisions merge/deploy0이다. Linear JIN-72 추가 갱신은 기존 automatic approval review의 민감 구현정보 공개 권한 부족 거절로 보류하며 새승인없는재시도0이다.
+
+
+- [AGENT] 2026-10-18 11:08 UTC #131: 기존 Kotlin63/DX29 최종92 GREEN·독립 FI6 모든 assertion 탐지/각 exactrestore GREEN, src/main/src/test/deploy539 전후동일(후속 savepoint 전 snapshot). 정책 catalog 새9 GREEN 및 현재18/역사17·14 독립 oracle 검토 PASS. 기존 node 전체 첫142 중131PASS/11FAIL은 catalog fixture9와 javac PATH setup2로 분류/원본보존했다. historical17 fixture·VC01·RA17/14 reader·SQL V1..17을 유지하고 publication용 currentFixture18만 추가하여 관련59 GREEN. fixture 원본4·SHA·정확diff는 .tdd/history/issue131-existing-catalog-fixtures/ 보존하며 새 제품 RED로 세지 않는다.
+
+- [AGENT] 같은 시각 추가 독립 savepoint PG2는 rollback INSERT receipt 잔존 genuine assertion RED1/outer INSERT 유지 control1/errors0를 확인했다(test d98c7925, .tdd/red/issue131-runtime-savepoint.json c6efd5ba). 최소 synchronization hook 보완·동일 GREEN·추가 FI1/복원·전체 필수 guard·최종 독립 리뷰는 후속이다. 게시/운영 활성화 완료 주장0, 실제 가격/cap/threshold/coverage 선택0. 별도 #130은 N16 STOP/원문평가0·현재 hold USD1.56254208/여유0.43745792·환급0, proxy 최소 helper165/FI8 통과 후 무인증 HEAD TLS handshake 실패·client 한정 공개 CA 신뢰 확장 승인 대기로 유료 재시도0이다.
+
+
+- [AGENT] 2026-10-18 11:17 UTC #131: savepoint rollback receipt 최소 helper21398657 보완 후 동일PG2 GREEN, 추가 독립 FI1 assertion 탐지/각exactrestore2GREEN 및 최종 Kotlin65+DX29=94PASS/0errors·skips. 원본540 전후·현재 동일, canonical 최종 be53f73d/추가FI c35dc2bb schema PASS. 별도 root catalog9 source8fd662 불변·관련59 및 모든 기존node142PASS(첫setup/oracle정합 원본과 분리), narrow review eb0d2d2a P2 CLOSED/weakening없음. root 필수 전체 guard와 기존 배포 회귀 실행 중이며 최종 게시·정확HEADCI/운영 활성화 완료로 표시하지 않는다.
+
+
+- [AGENT] 2026-10-18 11:42 UTC #131 최종 검증: 첫 전체1782의 DB01 Clock DI assertion1FAIL(기존4SKIP)은 original220XML/guardlog를보존했다. existingtest17575e4e 불변·canonicalREDdbc46abc→nullableClock/ON구성시UTCfallback 1file d8e3f8e0→72GREEN→독립FI1 oldcodeassertion탐지/정확복구GREEN. 최종fresh220suites/1782=1778PASS+기존4SKIP/실패·오류0, source571전후동일/588.589초. 단계별FI총8과 현재fullguard를구분하며 `.tdd/verification/issue131-final-quality.json`에봉인한다.
+
+- [AGENT] 배포 전체 회귀: oldnode142PASS, authfixture2만 sentinel/합성configured artifact 보정뒤 동일node95PASS(원8FAIL/expectation불변·portable780d2cf6 보존). Python66 최초setupTimeout3은관련동일2method/15초불변격리재실행2PASS(102.784s)로분리, sourceassertion실패아님. Composefidelity/DBcredentialrefresh PASS. Nginx는publiccheckout0600로인한capdrop권한과 Docker자동proxy→localhost403을분리하고 exactsource/config 공개644복사+임시emptyDockerclientconfig로PASS; endpoint/daemon/caps/timeout/전역/운영설정변경0·실패2/원본보존·ownedcontainers0. 최종독립리뷰/게시/exactHEADCI는다음단계, Commit/PR 동일커밋예정. actualmodel/OAuth/운영가격/threshold/활성화0 유지.
+
+
+- [AGENT] 2026-10-18 #131 최종 독립 게시리뷰 LOCAL PASS·미해결 P1/P2 없음. 현재 source571 지문과 fresh220suites/1782(1778PASS·기존4SKIP), 단계별 Kotlin65/DX29/catalog9·FI6/savepoint1/Clock1, 원 fixture 정합과 public PR6절을 대조했다. 기본 OFF/UNCONFIGURED·completeBill DENY·기존 방/UNKNOWN 보존과 운영 가격·cap·threshold·실모델 품질/활성화 미완료를 유지한다. 다음은 fix/issue-131-managed-precheck-runtime의 의도된 코드·필수 검증·상태기록 commit/push→develop 대상 Draft→정확 HEAD CI다. Commit/PR 동일 후속 커밋 예정이며 이후 SHA/PR/CI는 Git·PR·로컬 publication receipt에 보존하고 재귀 상태문서 커밋을 만들지 않는다. 새 유료/AWS/OAuth/Secret/운영 변경0.

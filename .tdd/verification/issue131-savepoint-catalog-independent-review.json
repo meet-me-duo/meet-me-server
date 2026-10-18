@@ -1,0 +1,130 @@
+{
+  "workItem": "issue131-savepoint-catalog-independent-review",
+  "status": "NARROW_REVIEW_PASS_NOT_PUBLICATION_APPROVAL",
+  "reviewer": "/root/review_pre_submit_design",
+  "recordedAt": "2026-10-18T11:10:48.209295+00:00",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "openP1": 0,
+  "openP2": 0,
+  "bindings": {
+    "receiptHelper": {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/NewRoomInsertTransactionReceipts.kt",
+      "sha256": "213986579bf0d197a3241c883e6e08037a39cf7c34a68463c8ab872c967f034f"
+    },
+    "savepointTest": {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeSavepointPostgresTest.kt",
+      "sha256": "d98c79251df3e4b3f0b0ff26861e219d1996d8e7693efbd14d6c2d91ec6b3be0"
+    },
+    "savepointRed": {
+      "path": ".tdd/red/issue131-runtime-savepoint.json",
+      "sha256": "c6efd5ba809af230f999efe06d6512bf87d95da092bbb3525932628047c821a5"
+    },
+    "savepointGreenReceipt": {
+      "path": ".codex/tdd-evidence/issue131-runtime-savepoint-green/receipt.json",
+      "sha256": "6dcc06df0730d0ccb1c4832b76efdeaf416990977cb617712bfa53f19f87fd58"
+    },
+    "catalogAdaptation": {
+      "path": ".tdd/history/issue131-existing-catalog-fixtures/adaptation.json",
+      "sha256": "ae7a8086fc57272dbe4ee807d3448295455dc78e1f2c3c46087450ef884e376d"
+    },
+    "catalogExactDiff": {
+      "path": ".tdd/history/issue131-existing-catalog-fixtures/fixtures.patch",
+      "sha256": "7f0bac3428ef980c1e3184069b6263ff1de794d752374b009fe96f1f3bf8f667"
+    },
+    "catalogHistoricalBefore": {
+      "path": ".tdd/history/issue131-existing-catalog-fixtures/before.json",
+      "sha256": "5f4520598c26d30cc9406f509d0c55b5938bc4bf64dbc123dbb6777ffda620f3"
+    },
+    "currentIndependentCatalogTest": {
+      "path": ".github/scripts/issue131-policy-catalog.test.cjs",
+      "sha256": "8fd662d96c8f8bce55a6287c5cb584e40e75c07753edbc066b774f73c8fdd26b"
+    }
+  },
+  "savepoint": {
+    "finding": "Rolled-back repository INSERT receipt survived a database savepoint rollback and could authorize later same-ID insertion in the same transaction.",
+    "disposition": "CLOSED",
+    "sourceAssessment": "Each private receipt records only savepoint identities created after its own INSERT. Rollback invalidates receipts created after that savepoint; earlier outer receipts survive. Consumed authority is never revived; afterCompletion clears state. Existing same-transaction/one-shot/thread/REQUIRES_NEW and SQL CAS defenses remain.",
+    "oracleAssessment": "Independent actual-PG savepoint tests verify denial after INSERT -> rollbackToSavepoint -> raw same-ID insertion, and preservation of an earlier outer INSERT when later work rolls back. Tests use public repository/bootstrap behavior, not private receipt representation.",
+    "validRed": {
+      "tests": 2,
+      "assertionFailures": 1,
+      "positiveControls": 1,
+      "errors": 0
+    },
+    "green": {
+      "tests": 2,
+      "passed": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "sameTestFingerprint": true,
+      "sourceBeforeAfterIdentical": true
+    },
+    "scopeLimit": "Internal creation/coverage contract; no external endpoint exploit is claimed."
+  },
+  "catalog": {
+    "assessment": "PASS_NO_ORACLE_WEAKENING",
+    "historicalContractsPreserved": [
+      "historical guardFiles17 literal and fixture()",
+      "VC01 independent17 assertions",
+      "historical packageRelease17",
+      "RA historical14/auth17 reader fixtures and fingerprints",
+      "immutable SQL V1..V17"
+    ],
+    "currentPublication": "Separate currentFixture/publicationFixture adds the exact policy artifact and current18 approval inventory. Current publisher negative tests now start from an otherwise-valid18 baseline, avoiding false rejection solely because the new required policy was absent.",
+    "currentPC9Unchanged": true,
+    "adaptedFileBindings": [
+      {
+        "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+        "beforeSha256": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2",
+        "afterSha256": "6d22daf0e2ba3fbe4f889e5b8db848ef4814f4a95f6f684da17dc21a14952a9d"
+      },
+      {
+        "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+        "beforeSha256": "008e4992a876ef004c7ba866d1b254a155cfe9c7d84609ae300bdcff0c8c3f85",
+        "afterSha256": "c2dad113a27fcf52c13d1a5c8ad48326a20d7950ef465a7b462bc0b0b5027612"
+      },
+      {
+        "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+        "beforeSha256": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3",
+        "afterSha256": "c5c6e8ffb68a595c1215b955cb9bb658f4c2425727c9c3ff8397246a3f46f59d"
+      },
+      {
+        "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+        "beforeSha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e",
+        "afterSha256": "2f043aa1f5901b52cddf809ed2e4d0b57ba289ddb618de864aa24189fbcf73bb"
+      }
+    ],
+    "focusedCatalogTests": {
+      "tests": 59,
+      "passed": 59,
+      "failed": 0,
+      "skipped": 0,
+      "rawLogSha256": "7c9db996eb418b8b75bd239df6f1c277bbc1b5ec7a38beea73c65ef868db6fe0"
+    },
+    "allNode": {
+      "tests": 142,
+      "passed": 142,
+      "failed": 0,
+      "skipped": 0,
+      "rawLogSha256": "3f8d244c9bc350309c6fdf946f0f1ae798bda42e27d1c16ca4607e99e9e219fd"
+    },
+    "historyClassification": "Initial catalog failures, separate javac setup errors and pre-test node-not-found exit127 are retained; fixture maintenance is not new product RED/GREEN evidence.",
+    "checks": "Current adapted-file SHA bindings and exact-diff SHA match adaptation receipt; recorded focused and all-Node raw-log SHA values match, and all-Node TAP totals match142/142."
+  },
+  "pending": {
+    "savepointIndependentFI1": true,
+    "finalKotlinAndDx94": true,
+    "mandatoryUnchangedFullGuard": true,
+    "finalPublicationReview": true,
+    "commitPushExactHeadCI": true
+  },
+  "authorizationLimits": "No publication, merge, deployment, operating activation, Secret/AWS/OAuth/model call, policy amount or threshold decision is granted by this narrow review.",
+  "reviewerActions": {
+    "sourceTestConfigGitEdits": 0,
+    "GradleOrTestExecutions": 0,
+    "awsOrModelCalls": 0,
+    "privateCorpusInputIndexGoldReads": 0,
+    "newEvidenceFile": ".tdd/verification/issue131-savepoint-catalog-independent-review.json"
+  }
+}
