@@ -1,0 +1,196 @@
+{
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "scope": "109 distinct independently authored dispatch tests: five actual loopback HTTP operations, managed configuration/legacy paths, actual PG final retries/HOST retry/correction/DLQ, and personal A/count/B -> A -> last CLEAR auto close -> final in same actual PG room account.",
+  "uniqueTests": 109,
+  "notAdditiveHistoricalRuns": [
+    78,
+    80,
+    98,
+    108
+  ],
+  "canonicalSourceInventory": ".codex/tdd-evidence/issue123-dispatch-fi/canonical-after.json",
+  "canonicalSourceUnchangedDuringFI": true,
+  "freezeBoundary": "Current full109 baseline to final109 is exact. Historical F1/F2 evidence preceded only the explicitly recorded new equal-byte-length test; production and their selected frozen tests remained identical.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "9753c3b0933d84a14bb52e02e489d6078051f4e93d321422ee7f80c74dc9a800"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "0ea67fce5580fb7701aad58f8dd29b624f6673da56bfc6344b2226298bb1ca60"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt",
+      "sha256": "25c2dbe5f8c6d1bd6597fc3751da06e864203b1c34984941d08e7fe7a2d000cb"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123FinalDispatchLifecyclePostgresTest.kt",
+      "sha256": "352f83b3d518b29cecba6668776893d94e23684e48ed4572d200afe62e2776b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123WholeRoomBudgetPostgresTest.kt",
+      "sha256": "f3b9756c890f8133b3877de325331c7fd583ce9e017520abb1850fbeee560356"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123AiHttpDispatchGateTest.kt",
+      "sha256": "490bc5d4e148ec9df850824624eb56142abda3d94881f4179662fd3f562439c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchEqualLengthBodyTest.kt",
+      "sha256": "1a02b5289fd50f2e1a2b6d6cbfa211643372aa4abd3adf4f99f2981904b421b1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtureControlTest.kt",
+      "sha256": "6dceaefda47a2b7adc5422ffc38f870bc0120a121020aeecae57e3c16411821a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtures.kt",
+      "sha256": "140268c3b45fa61066fe3e3384e21ead9e8baaff09a5b58feff622c66fdd7e79"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchPublicBoundaryTest.kt",
+      "sha256": "160b36f1458983086ecdb1328778ffcc24ab57953f1da130eb6c995c14300c6c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchWriteDeadlineTest.kt",
+      "sha256": "508d021a5e0759a1cc4988810ed1cdec9675a95340c5d0338bf9ffb34ac60188"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123FinalLegacyCompatibilityTest.kt",
+      "sha256": "81515d2e7e8e739667b4081eff9f172653df814c30847c7ac4dbd05a772010dc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ManagedDispatchCompositionTest.kt",
+      "sha256": "24fbf7a042c888a75caf68040c2f88e183227239b430c49d689937ee231666e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ProviderDispatchContractTest.kt",
+      "sha256": "6c0e9b33ceb2c196c8343d5340c8821f3a762cdb3e51ff3733ab37a2129faf10"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123TwoStagePhysicalDispatchTest.kt",
+      "sha256": "cef44a914e78f50267e67b2cfb3ba5fcaf2f3cf02f8c2e14a4394f1d2ed4c8f5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123WorkerDispatchLineageTest.kt",
+      "sha256": "df58be0f972ad37cfd2bc3c43202e299ffe9e0bb0cc1566303dcb7e4d245705a"
+    }
+  ],
+  "currentPG10": {
+    "receipt": ".codex/tdd-evidence/issue123-dispatch-pg-whole-current/receipt.json",
+    "tests": 10,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "independentScratchBaseline": {
+    "command": [
+      "./gradlew",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*Issue123AiHttpDispatchGateTest",
+      "--tests",
+      "*Issue123DispatchFixtureControlTest",
+      "--tests",
+      "*Issue123DispatchPublicBoundaryTest",
+      "--tests",
+      "*Issue123ProviderDispatchContractTest",
+      "--tests",
+      "*Issue123TwoStagePhysicalDispatchTest",
+      "--tests",
+      "*Issue123DispatchWriteDeadlineTest",
+      "--tests",
+      "*Issue123ManagedDispatchCompositionTest",
+      "--tests",
+      "*Issue123WorkerDispatchLineageTest",
+      "--tests",
+      "*Issue123FinalLegacyCompatibilityTest",
+      "--tests",
+      "*Issue123FinalDispatchLifecyclePostgresTest",
+      "--tests",
+      "*Issue123WholeRoomBudgetPostgresTest",
+      "--tests",
+      "*Issue123DispatchEqualLengthBodyTest"
+    ],
+    "cwd": "/tmp/issue123-independent-dispatch-fi",
+    "exit": 0,
+    "tests": 109,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "assertions": []
+  },
+  "independentScratchFinalRestore": {
+    "command": [
+      "./gradlew",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*Issue123AiHttpDispatchGateTest",
+      "--tests",
+      "*Issue123DispatchFixtureControlTest",
+      "--tests",
+      "*Issue123DispatchPublicBoundaryTest",
+      "--tests",
+      "*Issue123ProviderDispatchContractTest",
+      "--tests",
+      "*Issue123TwoStagePhysicalDispatchTest",
+      "--tests",
+      "*Issue123DispatchWriteDeadlineTest",
+      "--tests",
+      "*Issue123ManagedDispatchCompositionTest",
+      "--tests",
+      "*Issue123WorkerDispatchLineageTest",
+      "--tests",
+      "*Issue123FinalLegacyCompatibilityTest",
+      "--tests",
+      "*Issue123FinalDispatchLifecyclePostgresTest",
+      "--tests",
+      "*Issue123WholeRoomBudgetPostgresTest",
+      "--tests",
+      "*Issue123DispatchEqualLengthBodyTest"
+    ],
+    "cwd": "/tmp/issue123-independent-dispatch-fi",
+    "exit": 0,
+    "tests": 109,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "assertions": []
+  },
+  "faultInjection": {
+    "count": 5,
+    "allDetected": true,
+    "eachExactRestoreGreen": true,
+    "canonical": ".tdd/verification/issue123-all-ai-dispatch-faults.json",
+    "detailedRaw": ".codex/tdd-evidence/issue123-dispatch-fi/detailed-receipt.json"
+  },
+  "firstWholeRoomClassification": "INITIAL_PASS; five synthetic loopback requests, epoch preserved, held50 TEST_SUBUNIT, settled0, three distinct executions. No prior chronological RED claimed.",
+  "initialMixedPG10": {
+    "receipt": ".codex/tdd-evidence/issue123-dispatch-pg-whole-initial/receipt.json",
+    "tests": 10,
+    "passed": 9,
+    "fixtureSetupFailures": 1,
+    "productRedFailuresClaimed": 0,
+    "wholeRoom1Passed": true
+  },
+  "outboxFixtureCorrection": ".tdd/history/issue123-dispatch-integration-outbox-fixture/supersession.json",
+  "currentActiveRedFilesShaMatch": true,
+  "actualPaidModelCalls": 0,
+  "paidCallScope": "This independent synthetic verification only; parent-authorized live API smoke runs are recorded separately and are not claimed zero.",
+  "productionDatabaseOAuthSecretOperations": 0,
+  "limits": [
+    "Only explicit synthetic READY policy/authority and synthetic TEST_SUBUNIT quote used. Production price/bill authority remains default DENY; no real money cap or charging accuracy proven.",
+    "No real model ambiguity accuracy/latency or price assertion; no p50/p95 invented.",
+    "Repository full mandatory guard, final independent review, commit/push/CI are parent-owned and not claimed complete by this receipt."
+  ],
+  "recordedAt": "2026-10-18T05:16:01.492557Z"
+}

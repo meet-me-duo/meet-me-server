@@ -1,0 +1,128 @@
+{
+  "recordedAt": "2026-10-18T04:55:46.035968+00:00",
+  "purpose": "Four observed requests in a predeclared maximum-five-case Korean diagnostic; no population accuracy inference",
+  "model": "gpt-6-luna",
+  "endpoint": "POST /v1/decisions",
+  "sourceHeadBeforePhase2Commit": "e83d5280c7c236c99d64165893632920882527fe",
+  "productionContractSourceSha256": "c45fa35de6c7079b13d81f5a1c4d5193b4939a08dd2f3d3b511fc8b390b25334",
+  "predeclaredKoreanCasesSha256": "47390e74ed16237ce3dd9e9fb0002d304827c22e4592a8965f3151a8fcfd2552",
+  "inferenceRequests": 4,
+  "geminiInferenceRequests": 0,
+  "paidCountRequests": 0,
+  "retries": 0,
+  "fallbacks": 0,
+  "modelMetadataReads": {
+    "openai": {
+      "httpStatus": 200,
+      "count": 1
+    },
+    "gemini": {
+      "httpStatus": 200,
+      "count": 1
+    }
+  },
+  "rows": [
+    {
+      "id": "SMOKE-01",
+      "httpStatus": 200,
+      "rawChoice": "CLEAR",
+      "confidence": 0.83,
+      "inputTokens": 518,
+      "outputTokens": 0,
+      "elapsedMs": 1011.1,
+      "rawResponseSha256": "6ff769bca931fcc9bbb816512daf7f044ec2c146b73668e8b3e1df98d3492798",
+      "productionParserOfflineAccepted": true,
+      "expectedRawChoice": "CLEAR",
+      "matchedPredeclaredRawChoice": true
+    },
+    {
+      "id": "LIVE-KO-01",
+      "httpStatus": 200,
+      "rawChoice": "CLEAR",
+      "confidence": 0.88,
+      "inputTokens": 518,
+      "outputTokens": 0,
+      "elapsedMs": 201.9,
+      "rawResponseSha256": "c472c6da304e8d8f8deab6ef0f271e7e169d976cc44c8b79746796b185e86b1e",
+      "productionParserOfflineAccepted": true,
+      "expectedRawChoice": "CLEAR",
+      "matchedPredeclaredRawChoice": true
+    },
+    {
+      "id": "LIVE-KO-02",
+      "httpStatus": 200,
+      "rawChoice": "CLEAR",
+      "confidence": 0.79,
+      "inputTokens": 513,
+      "outputTokens": 0,
+      "elapsedMs": 196.2,
+      "rawResponseSha256": "8110f1d0d2b56429429b005224b1e4f98837ef2e320af925966d4a0355c4cb13",
+      "productionParserOfflineAccepted": true,
+      "expectedRawChoice": "CLEAR",
+      "matchedPredeclaredRawChoice": true
+    },
+    {
+      "id": "LIVE-KO-03",
+      "httpStatus": 200,
+      "rawChoice": "CLEAR",
+      "confidence": 0.06,
+      "inputTokens": 512,
+      "outputTokens": 0,
+      "elapsedMs": 203.6,
+      "rawResponseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+      "productionParserOfflineAccepted": true,
+      "expectedRawChoice": "NEEDS_REVIEW",
+      "matchedPredeclaredRawChoice": false
+    }
+  ],
+  "notExecutedIds": [
+    "LIVE-KO-04"
+  ],
+  "stoppedBecause": "LIVE-KO-03 raw choice CLEAR differs from predeclared NEEDS_REVIEW; confidence0.06",
+  "totalInputTokensObserved": 2061,
+  "totalOutputTokensObserved": 0,
+  "apiUsageAtBasePublishedRateUsd": "0.0002061",
+  "apiUsageWithConservative2p2MultiplierUsd": "0.00045342",
+  "preReservedMaximumFiveRequestTokenQuoteUsd": "0.07208960",
+  "additionalCostHeadroomRetainedUsd": "0.92791040",
+  "invoiceVerified": false,
+  "taxOrPaymentFeesAssumedZero": false,
+  "productionThresholdSelected": false,
+  "offlineLowConfidenceExample": {
+    "hypotheticalThreshold": 0.1,
+    "recordedLiveCase": "LIVE-KO-03",
+    "result": "INDETERMINATE",
+    "reason": "LOW_CONFIDENCE",
+    "extraApiRequests": 0,
+    "doesNotRelabelRawOracleFailure": true
+  },
+  "limits": [
+    "Standalone smoke; does not exercise durable PG authority with actual billing",
+    "No actual generation-stage recheck/Gemini/final analysis tested",
+    "No deployment/merge/production activation",
+    "Existing development/holdout corpus not reread or tuned",
+    "No accuracy percentage or p50/p95 claim",
+    "Conservative byte/protocol estimate, not a server-enforced billing hard cap"
+  ],
+  "officialSources": [
+    "https://developers.openai.com/api/docs/guides/decisions",
+    "https://github.com/openai/tiktoken",
+    "https://developers.openai.com/api/docs/guides/token-counting"
+  ],
+  "smokeRequestSha256": "b36db3e64454215c66ff89b89ae2f854b1cf25ecfeed06238dd8898b5b70d4a7",
+  "recordedResponsePipelineRegression": {
+    "classification": "REGRESSION_INITIAL_PASS",
+    "tests": 2,
+    "failures": 0,
+    "existingSyntheticThreshold": 0.8,
+    "operationalThresholdSelected": false,
+    "generator": "synthetic; one call per case",
+    "outcomes": [
+      "NEEDS_CHOICE",
+      "CLEAR"
+    ],
+    "additionalApiRequests": 0,
+    "evidence": ".tdd/history/issue123-recorded-low-confidence-pipeline/receipt.json",
+    "rawOracleFailurePreserved": true
+  }
+}

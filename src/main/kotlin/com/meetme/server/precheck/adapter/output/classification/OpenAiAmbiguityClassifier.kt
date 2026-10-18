@@ -4,6 +4,16 @@ import com.meetme.server.precheck.application.port.output.AmbiguityClassificatio
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationPort
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationRequest
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationResult
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpProviderStatusException
+import com.meetme.server.shared.adapter.output.aihttp.GatedAiHttpExchange
+import com.meetme.server.shared.adapter.output.aihttp.PreparedAiHttpRequest
+import com.meetme.server.shared.adapter.output.aihttp.physicalProfile
+import com.meetme.server.shared.adapter.output.aihttp.validatePersonalDispatch
+import com.meetme.server.shared.application.port.output.AiBudgetOutcome
+import com.meetme.server.shared.application.port.output.AiBudgetUsage
+import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import io.micrometer.core.instrument.DistributionSummary
 import io.micrometer.core.instrument.MeterRegistry
 import io.micrometer.core.instrument.Tag
@@ -20,6 +30,7 @@ import java.time.DateTimeException
 import java.time.Duration
 import java.util.IllformedLocaleException
 import java.util.Locale
+import java.util.UUID
 
 /** Standalone candidate only: not registered in Spring or connected to submission processing. */
 class OpenAiAmbiguityClassifier(
@@ -28,6 +39,7 @@ class OpenAiAmbiguityClassifier(
     private val options: AmbiguityClassifierOptions = AmbiguityClassifierOptions(),
     client: OkHttpClient = OkHttpClient(),
     private val meterRegistry: MeterRegistry? = null,
+    private val dispatchGate: AiHttpDispatchGate? = null,
 ) : AmbiguityClassificationPort {
     private val contract = AmbiguityClassificationContract(objectMapper)
     private val transport =
@@ -57,6 +69,8 @@ class OpenAiAmbiguityClassifier(
         var usageObserved = false
         var outcome = "FAILED"
         var failure = "NONE"
+        var physical: GatedAiHttpExchange? = null
+        var physicalUsage = AiBudgetUsage()
         try {
             validateConfiguration()
             val budget = minOf(request.timeout, Duration.ofSeconds(15))
@@ -66,6 +80,27 @@ class OpenAiAmbiguityClassifier(
             validateInput(request)
             val payload = contract.requestBytes(request)
             if (payload.size > BODY_BYTE_LIMIT) fail("INVALID_REQUEST")
+            if (dispatchGate?.properties?.enabled == true) {
+                validatePersonalDispatch(
+                    request.dispatchContext,
+                    request.rawText,
+                    request.referenceAt,
+                    request.timeZone,
+                    request.locale,
+                    request.searchStartDate,
+                    request.searchEndDate,
+                )
+                val prepared =
+                    PreparedAiHttpRequest.freeze(
+                        AiPhysicalOperation.PRECHECK_CLASSIFICATION,
+                        1,
+                        null,
+                        physicalProfile(AiPhysicalOperation.PRECHECK_CLASSIFICATION, "gpt-6-luna", options.endpoint, BODY_BYTE_LIMIT),
+                        payload,
+                    )
+                val group = dispatchGate.prepareGroup(request.dispatchContext, listOf(prepared))
+                physical = dispatchGate.forPreparedCall(transport, group, AiPhysicalOperation.PRECHECK_CLASSIFICATION)
+            }
             val httpRequest =
                 Request
                     .Builder()
@@ -74,7 +109,7 @@ class OpenAiAmbiguityClassifier(
                     .post(payload.toRequestBody("application/json; charset=utf-8".toMediaType()))
                     .build()
             val call =
-                transport
+                (physical?.client ?: transport)
                     .newBuilder()
                     .callTimeout(Duration.ofNanos(remaining(expires)))
                     .build()
@@ -106,6 +141,7 @@ class OpenAiAmbiguityClassifier(
                 }
             val envelope = contract.read(bytes)
             val usage = contract.usage(envelope)
+            physicalUsage = AiBudgetUsage(inputTokens = usage.input, outputTokens = usage.output, usageComplete = usage.complete)
             recordUsage(usage)
             usageObserved = true
             val result = contract.parse(envelope, usage, options.minimumConfidence ?: fail("CONFIGURATION"))
@@ -116,6 +152,8 @@ class OpenAiAmbiguityClassifier(
         } catch (exception: Exception) {
             val code =
                 when (exception) {
+                    is AiHttpDispatchException -> "CONFIGURATION"
+                    is AiHttpProviderStatusException -> statusCode(exception.status)
                     is AmbiguityClassificationException -> exception.failureCode.takeIf { it in FAILURE_CODES } ?: "INVALID_RESPONSE"
                     is InterruptedIOException -> "TIMEOUT"
                     is IOException -> if (deadline?.let { it - System.nanoTime() <= 0 } == true) "TIMEOUT" else "CONNECTION"
@@ -128,6 +166,21 @@ class OpenAiAmbiguityClassifier(
         } finally {
             if (attempted && !usageObserved) recordUsage(AmbiguityClassificationContract.UsageSnapshot())
             recordResult(outcome, failure, System.nanoTime() - started)
+            try {
+                physical?.observe(
+                    UUID.randomUUID(),
+                    if (outcome ==
+                        "FAILED"
+                    ) {
+                        AiBudgetOutcome.FAILED
+                    } else {
+                        AiBudgetOutcome.SUCCEEDED
+                    },
+                    physicalUsage,
+                )
+            } catch (_: AiHttpDispatchException) {
+                fail("CONFIGURATION")
+            }
         }
     }
 
@@ -211,15 +264,15 @@ class OpenAiAmbiguityClassifier(
 
     private fun remaining(deadline: Long): Long = (deadline - System.nanoTime()).also { if (it <= 0) fail("TIMEOUT") }
 
-    private fun failStatus(status: Int): Nothing =
-        fail(
-            when (status) {
-                429 -> "RATE_LIMITED"
-                in 500..599 -> "SERVER"
-                400, 401, 403 -> "CONFIGURATION"
-                else -> "INVALID_RESPONSE"
-            },
-        )
+    private fun failStatus(status: Int): Nothing = fail(statusCode(status))
+
+    private fun statusCode(status: Int): String =
+        when (status) {
+            429 -> "RATE_LIMITED"
+            in 500..599 -> "SERVER"
+            400, 401, 403 -> "CONFIGURATION"
+            else -> "INVALID_RESPONSE"
+        }
 
     private fun fail(code: String): Nothing = throw AmbiguityClassificationException(code)
 

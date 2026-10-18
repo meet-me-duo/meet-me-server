@@ -1,5 +1,9 @@
 # 새 #107 구현·통합 Worklog
 
+## 현재 #123 영속 공통 예산 (2026-10-18 UTC)
+
+1단계 PR122 e83d5280의 코드 CI39093790134 Quality/ARM64 및 최신 Lifecycle39094909440은 성공이다. 완료 범위는 #124, 영속 예산·전체 호출·실평가는 #123으로 분리했다. PR122는 Draft·미병합이며 수정하지 않는다. 새 worktree `/workspace/issue123-durable-budget/server`의 feature/issue-123-durable-ai-budget에서 [구현 계약](ISSUE_123_DURABLE_AI_BUDGET_CONTRACT.md)·독립 명세 freeze를 완료했다. 실제 PG 원장/fence94·managed/문맥 포함 dispatch98·최종 생애/같은 방 관통10·기존 provider387 및 실제 V17 catalog72 PASS, 전송/원장 방어 P2 독립 소스 재검토 CLOSED다. core/fence FI4 각탐지·복구/마지막94 GREEN과 provider/관통 FI5 각탐지·복구/마지막109 GREEN을 완료했다. 기록 실응답을 기존 합성 threshold0.8로 재생한 pipeline2도 INITIAL_PASS다. 변경 없는 새 전체 guard는 212suite/1684개 중1680PASS·기존4SKIP·실패/오류0·source556일치로 통과했다. CODE GATE 독립 리뷰도 PASS다. 후속 실제2단계2시도는 각 새A200 LOW_CONFIDENCE→count200530 뒤 첫generation503·후속공통15초TIMEOUT에서 중단했다. 다음 시작점은 관측·503 차단 독립 감사→최종 게시 리뷰·commit/push/Draft/exactCI다. 아직 2단계 commit/push/Draft/정확 HEAD CI는 완료하지 않았다. 아래 앞선 단계의 게시/CI 대기 문구는 당시 이력이며 최신 상태는 이 단락과 맨 아래 #123 후속 기록을 따른다. 원 진단 Decisions4회와 별도 새A2회로 총Decisions6회, Gemini count2·generation시도2(첫HTTP503·후속TIMEOUT/질문미관측), 시도내 자동재시도0·운영 DB/Secret/접근/Decisions 병합/배포0.
+
 ## 저비용 결정 모델 공통 경계 준비 (2026-10-18 UTC)
 
 - [AGENT] 최종 새 필수 guard PASS(03:19:49–03:26:17 UTC): 변경 없는 self-tests/ktlintCheck/assemble/test exit0·fresh189 suite/1479개 중1475PASS·기존4SKIP·실패/오류0. source/test/guard512개 before=after=current이며 첫 중단 시도와 구분했다. 분류142+기존18 집중160·pipeline79, 단계별 독립 FI14종의 탐지/각 복구 근거를 보존했다. 최종 독립 local 게시 리뷰 PASS·미해결 P1/P2 없음이며 commit/push/Draft/exactCI는 바로 다음 단계다. Commit/PR은 동일 커밋 예정이고 이후 정확 원격 결과는 PR/Linear·ignored publish receipt에 보존한다.
@@ -139,3 +143,82 @@
 - 로컬필수/독립검증완료뒤최종리뷰마감·게시준비. 새원격branch/PR은아직없고원본PR117/119/28/29브랜치변경/닫기/forcepush0. PR115/118의develop일반merge·정확mergeCI성공은앞단계실적이며새기능CI와별개다.
 
 - 19:40 UTC 독립최종로컬게시승인확정: server-core/최종integration·backend재구성provenance·provider/canonical·catalog·web/실서버최종source를결합감사했고승인범위는기존허용commit/push/Draft이다. 게시후exactHEAD CI를merge전게이트로구분한다. `issue107-independent-server-core-review.json`, `issue107-final-integration-review.md`, `issue107-independent-backend-format-replay-check.json` 참조. main/실모델활성화/운영준비는승인범위에추가되지않는다.
+
+
+## 2026-10-18 UTC — 1단계 봉인·#123 영속 공통 예산 착수
+
+PR122 HEAD `e83d5280c7c236c99d64165893632920882527fe` 코드 CI39093790134의 Quality Gate/ARM64가 모두 성공했다. Quality checkout synthetic `f2cd9f92fda64f2ea36446cf4dc523d03141c78a` tree는 HEAD와 동일하며 ARM64 직접 HEAD checkout을 로그로 확인했다. 실제 완료한 adapter/bridge/합성 검증 준비를 #124로 분리해 `Closes #124`, #107/#123은 Refs로 유지했다. Refs-only Lifecycle39094466469 실패를 실제 범위 분리로 보정한39094821627은 성공이며 workflow/보호규칙은 변경하지 않았다. PR은 Draft·미병합이다. #107 본문 갱신 API는 전체 기록 교체 위험으로 자동검토 거절되어 재시도하지 않으며 새 이슈/PR에 최신 연결을 보존한다.
+
+다음 작업은 #123 영속 PG 모임 원장·최종 분석/fallback/HOST 재시도 등 전체 물리 dispatch 연결이다. clean develop01d00e7f ff-only 갱신 후 새 `feature/issue-123-durable-ai-budget`를 만들고 검증된 e83만 ff-only 상속했다. 독립 예산 DB01–24 및 전체 dispatch 41묶음 명세/구현 설계를 작성했으며, OFF 중 미계상 이력 UNKNOWN·기존30일 방 삭제 유지/새원장cascade·물리 전송 직전 single-use gate의 계약을 freeze 중이다. 이 기록 시점 새 소스/테스트 구현과 RED는 아직 없다. 금액/가격·청구 증명·활성화/소진 UX는 선택하지 않는다. 실제 모델0회·합산 USD1 비용 증명 차단·키/운영/병합/배포0. 다음 시작점은 공개 계약 freeze와 독립 PG/네트워크 RED다.
+
+
+## 2026-10-18 UTC — #123 계약 freeze·catalog 독립 RED/GREEN/FI
+
+독립 설계 리뷰 freeze PASS·미해결 P1/P2 없음. 신규 계약은 FINAL generation=실제runVersion(상수0으로 대체하지 않음), CONFIGURATION nonretryable, final SDK32MiB snapshot resource ceiling(청구 cap 아님), 기존 kind별 마감 guard·마지막 lock 뒤 fresh expiry, immutable 실제 송신 bytes·관측 실패의 제품 success 금지를 확정했다. 초안 DB06/20/21/24/10 보정은 독립 작성자가 RED 전에 원본/diff/이유로 보존했다. 실제 금액/운영 quote/활성화 경로는 추가하지 않는다.
+
+V17 catalog는 임시 합성 fixture11개 중 유효 assertion RED7/controlPASS4/준비오류0을 먼저 봉인했다. root의3 Python 최소 패치 후11/11GREEN, 독립 source review PASS·격리 FI3종(publisher 누락17/host 역사16/명시 승인 우회)을 각각 탐지하고 매번11GREEN·원본 지문 복구했다. 신규 test는 기존CI test entry에서 require하며 workflow/보호규칙은 변경하지 않았다. 실제 V17 SQL의 VC12·실제PG와 필수 전체 gate는 아직 미실행이다. Budget/dispatch compile skeleton과 독립 신규 tests를 추가 중이며 동작 구현은 해당 RED 뒤만 진행한다. 실제 모델/운영/병합/배포0.
+
+
+## 2026-10-18 UTC — #123 집중 GREEN·독립 소스 보완
+
+원장 initial8+money44의 frozen6test 지문으로 실제PG focused52 PASS/실패·오류·skip0을 확인했다. V17 SHA `912b8f227e6ea7c20fc05cf96d705982fb9737c5051c7c07e771494df482834b`는 이 단계에서 불변이며 실제 SQL 포함catalog72 PASS와 별도다. 독립 source review는 P1없음·P2 3건(foreign reservation 잠금/공유profile 대기 뒤 quote expiry/누적합 overflow의 알려진 C 보존)을 발견했고 새 파일 RED 전에는 수정하지 않는다.
+
+게이트/5물리HTTP/TwoStage 집중78 PASS·기존provider387 PASS/실패·오류·skip0, frozen6test 및 10source 지문 일치다. 독립 fixture 검토에서 locale와fake physical ID충돌을 고쳐 원본76/locale76 이력·수정이유를 보존했고 fixturecontrols2 PASS 뒤 현재78의 RED/GREEN을 새로 봉인했다. 독립 리뷰의 전송 직전 permit wall/effective monotonic 재검사 P2도 별도 새RED로 보완한다. 실제PGfence/Worker·Processor 문맥/managedconstructor 보완은 다음 통합 cycle이며 아직 전체 gate/최종 리뷰/게시 완료가 아니다.
+
+Application이 adapter의 gate/property에 의존하지 않도록 pure AiDispatchModePort와 기존 생성자 끝 nullable seam만 skeleton으로 추가했다. OFF는 과거 request context=null 동작을 유지하고 ON의 mode는 금융 허가가 아니며 실제 quote/dispatch 권한이 별도로 필요하다. 새로운41 fence/coverage/회계 방어 및 managed/orchestration/clock tests의 준비·컴파일 실패는 RED0으로 분리한다. 모든 유료모델/운영/Decisions merge/배포0을 유지한다.
+
+### 전송 만료 보완·외부 상태 기록 경계
+
+전송 직전 permit wall/effective monotonic 검사의 새 독립 assertion RED2 뒤 gate만 최소 수정했다. 기존78+신규2=80 GREEN/실패·오류·skip0, frozen7test SHA를 유지했고 독립 재검토에서 DISPATCH-P2-01 CLOSED를 확인했다. `docs/verification/issue123-dispatch-write-review.md`와 `.tdd/history/issue123-dispatch-write-deadline-green/receipt.json`을 따른다. FI·전체 guard·managed/context/fence는 별도 남아 있다.
+
+Linear JIN-72에 이번 집중 검증 진행을 prepend하는 작업은 자동 승인 검토가 해당 목적지의 구현·테스트 상세 게시 명시 승인 부족으로 거절했다. 재시도/우회 없이 기존 Linear 기록을 보존했고 추가 게시 허가 질문을 남겼다. 이 차단은 로컬 구현·검증·Worklog 기록에 적용되지 않는다. 실제 모델0·운영/병합/배포0을 유지한다.
+
+### #123 추가 통합·최소 실제 smoke 준비
+
+원장 실제 PG 기존52+회계 방어3+coverage7+foreign1+기본 authority 구성1=64 GREEN/실패·오류0을 확인했다. 독립 소스 재검토의 기존 CORE-P2 세 건도 source상 CLOSED이며 FI·전체 guard는 남는다. managed 구성·mode·Worker 문맥·기존 OFF trace를 포함한 집중98(기존80+13+3+2)도 실패·오류·skip0이다. 실제 DB fence·최종 생애9·같은 방 개인검사→자동마감→최종 분석 관통1은 별도 검증 중이며 이 수치에 포함하지 않는다. fixture 준비 오류와 유효 assertion RED는 이력에서 분리한다.
+
+부모 최신 지시에 따라 전체 영속 원장 완성을 실제 smoke의 선행 조건으로 삼지 않는다. 기존 키를 비밀값 비출력으로 사용한 OpenAI `GET /v1/models/gpt-6-luna`와 Gemini `GET /v1beta/models/gemini-3.8-flash` 메타데이터 조회는 각각 HTTP200이다. 이는 조회 접근만 확인하며 추론 요청/응답·실제 endpoint 사용 권한·청구 검증은 아니다. 실제 추론은 아직0회, 합산 USD1 승인은 유지한다. 새 credential handoff·키/결제/운영 설정 변경0이다.
+
+짧은 새 한국어 합성 입력·현재 분류 질문1·실제 HTTP1·retry/redirect/fallback/count/tools0의 Decisions smoke payload2431B를 고정했다. 일반 Luna 문맥 한도와 long/region 배수를 적용한 USD0.231은 명시적 추론을 포함한 보수 quote이며 Decisions 전용 billed hard cap으로 표시하지 않는다. 별도 공식 검토는 count 없는 Gemini GenerateContent1의 전체 입력 한도/출력2048·Standard 요율 기반 token quote≤USD0.794112를 제시했다(`docs/verification/issue123-minimal-smoke-gemini-cost.md`). count의 FAQ GetTokens 명칭 대응은 추론으로 구분했다. 계정별 세금/환산/결제 수수료를0으로 가정하지 않으며 USD1 계산 범위(API사용요금 또는 부대비용 포함) 질문은 대기 중이다. 실제 호출은 명확한 실행 근거가 확보될 때만 진행한다.
+
+### 04:52 UTC — 최소 실제 Decisions smoke 성공
+
+부모의 최신 지시에 따라 모델 전체 context 대신 실제 고정2431B의 일반 BPE byte 상한에 프로토콜 여유를 더한65,536token으로 보수 산정했다. 공식 token-counting guide의 local role/boundary 누락 가능성을 고려한 여유이며 서버 hard cap/정확 token count라고 주장하지 않는다. input USD0.10/M·long/region2.2배를 적용한 token quote는USD0.01441792, 기존USD1의 나머지USD0.98558208은 세금/결제 등 추가비용 여유로 남겼다. 계정별 비용을0으로 만들거나 새 금액·키·결제를 승인하지 않았다. tiktoken의 Luna 매핑 부재·선택적 vocabulary 다운로드 proxy403은 우회 없이 N/A로 기록했다. 독립 sanity 검토도 이 단일 소액 견적의 합리성과 한계를 확인했다.
+
+고정 새 한국어 절대 날짜/시간/장소 사례의 실제 `POST /v1/decisions` 1회는 HTTP200·choice CLEAR·confidence0.83·input518/output0/total518·약1011.1ms다. retry/fallback/count/tools0, Gemini 추론0이다. 실제 응답 raw SHA `6ff769bca931fcc9bbb816512daf7f044ec2c146b73668e8b3e1df98d3492798`는 현재 production `AmbiguityClassificationContract`의 read/usage/parse를 추가 API 없이 통과했고 usageComplete=true다. threshold0은 raw 응답 검사용 seam일 뿐 운영 confidence 선택이 아니다. 보고 usage의 기본 단가 환산USD0.0000518(2.2배 보수USD0.00011396)은 invoice/세금 완결 증명이 아니며 여유를 반환하지 않았다.
+
+실제 모델 총1회다. 1표본의 정확도/p50/p95를 만들지 않으며 운영 flags/OFF·authority DENY·Decisions 미병합을 유지한다. 다음 실제 평가는 기존 corpus/holdout을 읽지 않는 독립 신규 한국어4개 사전oracle 동결→동일USD1 누계·최대4개 추가 HTTP·무재시도 계획으로 한정한다. 추가 실행 전 manifest를 고정하고 불일치/오류/불명 usage면 중단한다.
+
+### 04:55 UTC — 한국어 진단 불일치에서 중단
+
+신규 독립4case oracle SHA `47390e74ed16237ce3dd9e9fb0002d304827c22e4592a8965f3151a8fcfd2552`와 최대합산5HTTP manifest를 먼저 고정했다. 추가3회는 주말 종일CLEAR/0.88, 문맥상오후3~5시CLEAR/0.79, 오전오후미지정8~9시rawCLEAR/0.06이다. 마지막은 사전NEEDS_REVIEW와 달라 FAIL/STOP을 유지하고 부정·예외4번째 사례는 호출하지 않았다. 기존smoke포함 총4회/input2061/output0·4응답 production parser offline PASS다. 기본 공개 단가 환산USD0.0002061/2.2배보수USD0.00045342는 최종invoice가 아니며 추가비용 여유는 반환하지 않았다.
+
+같은 모호 사례 기록을 가정threshold0.1로 offline검사하면 기존 parser가 INDETERMINATE/LOW_CONFIDENCE를 반환한다. 운영 임계값을 정하거나 raworacle실패를 성공으로 바꾼 것이 아니고 실제 B생성을 호출하지 않았다. [실제 진단](ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)·[독립 결과 감사](verification/issue123-live-korean-review.md)에 지문/latency4표본/미실행과 한계를 남겼다. 기존corpus/holdout재열람·프롬프트튜닝·재시도0이며 Decisions 운영활성화/병합/배포0이다.
+
+### #123 실제 PG 통합·core/fence 독립 FI 완료
+
+최종 min2-cohort를 정합한 real fence30+기존core64=94 GREEN/실패·오류·skip0, scoped 전체475file 전후 지문이 같다. 같은 방 개인3+1 HTTP→자동마감→최종1 HTTP의 관통1은 초회PASS이고 최종 분석/HOST retry/correction/DLQ9와 합쳐 최신10/10 GREEN이다. DLQ fixture의 구정렬컬럼 created_at을 V1정본 occurred_at으로 고친1token은 원본/diff/이유로 보존하고 기존 RED를 소급 수정하지 않는다.
+
+core/fence 격리FI4는 baseline94→cap등호허용/중복dispatch app+SQL CAS 제거/UNKNOWN환급/실제account binding우회를 각각 genuine assertion으로 탐지했다. 각 exactrestore의 선택1/1/1/13 GREEN과 마지막94 GREEN·원본475file불변을 확인했다. FI canonical7field·schema/FormatChecker PASS이며 real fence의 중복 parameterized 표시명만 원래 failure stack의 상위method를 붙여30unique로 정합했다(결과/시각/테스트지문0변경). 다음은 provider/관통 독립FI5·current RED provenance 정합→최종 독립 리뷰/필수 전체guard→승인된게시다.
+
+- [AGENT] 05:17 UTC 새 기록 응답 회귀2 INITIAL_PASS: 실제 classifier와 TwoStage가 raw CLEAR/confidence0.06을 LOW_CONFIDENCE로 처리하고 합성 생성기1회의 NEEDS_CHOICE/CLEAR 결과를 보존한다. threshold0.8은 e83 기존 테스트 값이며 운영 null/OFF 유지·추가 실제 호출0/누계4. 원장94/FI4·dispatch109/FI5 봉인 이후 새 테스트1파일만 추가했고 기존 제품/테스트 변경0이다. active #123 RED10개·FI3개 schema와 현재 testFiles26지문이 일치한다. 원본 hook 전체 guard와 최종 독립 리뷰를 시작했다.
+
+- [AGENT] 부모 후속: 최초 분류 진단 FAIL/STOP을 보존하면서 전체 guard/리뷰 뒤 별도 실제 저확신 2단계 생성 재확인 목표를 준비한다. 사전 oracle·기존 합성 threshold0.8·전체 payload/count·출력2048/LOW·최대 추가3HTTP·동일USD1 누계/중단 조건을 실행 전에 고정하며, 현재 추가 호출0/총4다. 운영 정책/코드·기존 corpus/실패 oracle는 변경하지 않는다. 실제 생성 결과의 의미 평가는 별도 독립 검토한다.
+
+- [AGENT] 첫 #123 전체 guard 05:18:57–05:26:33 UTC exit2: fresh212 suite/1684개 중1679PASS/1assertionFAIL/기존4SKIP/error0, source556 before=after. 유일 실패는 legacy upgrade 테스트의 신규 ai_room_budgets0 기대와 V17의 과거3방 HISTORICAL_UNKNOWN seed 계약 충돌이다. 제품/SQL 결함 또는 유효 RED로 세지 않는다. exact XML·guard/source manifest는 ignored `issue123-durable-budget-first-guard-failed/`, tracked `.tdd/history/issue123-first-full-guard/`에 보존했다. 독립 작성자의 unknown 상태·null 활성화 필드·금액0·예약/관측0 정합 보정과 집중 검사 뒤 전체 guard를 새로 실행한다. 새 실제 AI 호출0/총4 유지.
+
+- [AGENT] legacy oracle 정합2 INITIAL_PASS+ktlint PASS26s, 독립 inverse diff/SHA 검토 PASS·기존 assertion/SQL/제품 변경0. 05:29 UTC 변경 없는 전체 guard를 새로 실행했다. 실제2단계 후속은 독립 oraclec69/plan368b 동결·A2397/count3172/gen3111B·최대추가3HTTP·2048/LOW·공통15초·각single-use, 누적 보수예약USD0.39063552/추가여유USD0.60936448로 준비했고 하네스/비용/독립 실행 전 검토를 연결한다. 새 API호출0/총4, fullguard/review통과뒤만호출한다.
+
+- [AGENT] 새 필수 fullguard 05:29:32–05:36:40 UTC exit0: 수정 없는 hook self-tests/ktlintCheck/assemble/test, fresh212suite/1684개 중1680PASS·기존4SKIP·실패/오류0. source556 before=after/current, manifest3103634acd501621a7133b3168460570d47334672724a2d95cfadc751c2a2072. 첫 실패1684/1FAIL과 합산하지 않는다. 새 실제 모델 검증은 이후 CODE GATE 봉인 뒤 실행하며 현재누계4다.
+
+- [AGENT] CODE GATE 독립 리뷰 d2dd9321 PASS 뒤 고정 plan368b/oraclec69를 05:37:50 UTC 한 번 실행했다. 실제TwoStage→새A200/.06/LOW_CONFIDENCE(in512/out0,855ms)→count200/530(225.9ms)→generation503(347.8ms)에서 중단·retry/fallback0. JVM전체2177.7ms. 총Decisions5/in2573/out0, count1/gen시도1·성공생성응답0. evalwrapper CONFIGURATION은 callback실패 요약이며 실제 공급자 원인은503이다. 성공 생성 응답/usage 증거를 확보하지 못해 질문의 의도 보존 독립평가는 차단됐고 의미PASS/오류로 단정하지 않는다. 원래rawFAIL/STOP보존/threshold정책변경0. 관측Decisions만 baseUSD0.0002573/보수2.2x0.00056606, Gemini청구/생성usageUNKNOWN·총예약USD0.39063552/추가여유USD0.60936448 유지·환급/fees0가정0. 구조화 관측 `.tdd/verification/issue123-live-two-stage-observed.json` 및 실제생성차단 문서·single-usehistory에 보존하고 독립감사를 요청했다.
+
+- [AGENT] 관측 감사 표현 보정: callback은503 오류 본문을 저장하지 않았다. 성공한 생성 질문/usage 증거가 없다는 뜻이며 공급자503 본문이 비었다고 주장하지 않는다.
+
+- [AGENT] 완료된 영속 원장/전체 전송 권한 기술 범위를 실제 [#125](https://github.com/meet-me-duo/meet-me-server/issues/125)에 분리했다. 새 PR은 Closes#125, #107/#123/#124는 Refs로 두고 운영 가격/confidence·실제 생성 의미 검증/활성화가 남은 #123을 닫지 않는다. PR122/e83·server develop01d00e7f/main91eb2505 및 다른 브랜치는 변경0, 신규feature remote ref는 아직없음. 다음은 관측 독립감사/최종 게시 리뷰 뒤 commit/push/Draft/exactCI이며 Commit/PR은 동일커밋예정이다.
+
+- [AGENT] 부모503 bounded retry 명시 후 기존UNKNOWN/hold0.39063552 유지·같은3HTTP 견적0.31854592를 더한0.70918144/추가여유0.29081856 산술을 독립 확인했다. 그다음같은full시도1.02772736은USD1초과로금지. 최초503후7분이상간격의새dir/planb4fe·sameoraclec69/3payloadexact/threshold.8/harness757/내부15s·retry0를준비했고정적실행review후1회만실행한다. 현재attempt2추가calls0/기존누계7HTTP보존. 제품/test556불변·새guard불필요한문서/격리검증후속이다.
+
+- [AGENT] 부모가 요청한 bounded 별도attempt2를 고정planb4fe/독립실행리뷰8c48 뒤05:47 UTC 한 번 실행했다. A200/.06LOW/in512out0/394.6ms→count200530/245.3ms→GEN공통15초TIMEOUT childkill. JVM전체15538.3ms(준비포함), 생성HTTPstatus/개별지연/질문/usage는미관측이며genconsumedSTARTED_UNKNOWN_HELD그대로보존·늦은청구환급0. 누계D6/in3085/out0·count2·gen시도2/성공0=평가HTTP10(모델metadata2별도), 알려진D만baseUSD0.0003085/2.2보수USD0.00067870. 기존hold전부유지+총예약0.70918144/추가여유0.29081856. 다음동일full견적0.31854592를추가하면1.02772736으로USD1보다0.02772736초과해추가dependent실제호출중단. 원503/분류FAIL/STOP·oraclec69/threshold.8·prompt/2048LOW/15초변경0, actualquestion의도보존평가여전히불가. `.tdd/verification/issue123-live-two-stage-attempt2-observed.json`과history에보존했고독립감사후게시최종화한다.
+
+- [AGENT] 2026-10-18 최종 게시 리뷰 PASS `issue123-phase2-publication-final-review.md` d545f2fa, 미해결 P1/P2 없음. 원본 fullguard1684=1680PASS/기존4SKIP·556지문·RGR/FI/수정이력·실진단503/TIMEOUT/UNKNOWN와 Closes#125 범위를 모두 봉인했다. Commit/PR: 동일 커밋 예정. 다음 시작점은 feature/issue-123-durable-ai-budget의 의도된 코드·필수 테스트·상태기록 stage/commit/push→별도 develop 대상 Draft→정확 HEAD CI다. 커밋 이후 정확 SHA·PR URL·각 job checkout/tree와 최종CI는 해당 PR/#125/#123의 상태 및 ignored `.codex/tdd-evidence/issue123-publication/result.json`에 보존한다. 현재 실제 생성 질문 의미/운영threshold·가격·활성화·최종 청구 입증은 미완료이고 추가 실제 호출은 예산상중단·Decisions merge/deploy0이다. Linear JIN-72 추가 갱신은 기존 automatic approval review의 민감 구현정보 공개 권한 부족 거절로 보류하며 새승인없는재시도0이다.

@@ -1,5 +1,6 @@
 package com.meetme.server.precheck.application.port.output
 
+import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -13,6 +14,7 @@ data class AmbiguityClassificationRequest(
     val searchStartDate: LocalDate,
     val searchEndDate: LocalDate,
     val timeout: Duration,
+    val dispatchContext: AiProviderDispatchContext? = null,
 )
 
 enum class AmbiguityAssessment {

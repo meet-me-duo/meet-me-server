@@ -1,0 +1,29 @@
+{
+  "workItem": "issue123-dispatch-write-deadline",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchWriteDeadlineTest.kt",
+      "sha256": "508d021a5e0759a1cc4988810ed1cdec9675a95340c5d0338bf9ffb34ac60188"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtures.kt",
+      "sha256": "140268c3b45fa61066fe3e3384e21ead9e8baaff09a5b58feff622c66fdd7e79"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue123DispatchWriteDeadlineTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchWriteDeadlineTest#TM02 network write rechecks claimed expiry after downstream application delay(String) [1] \"forward-wall\"",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchWriteDeadlineTest#TM02 network write rechecks claimed expiry after downstream application delay(String) [2] \"backward-wall-after-tightened-monotonic\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T04:29:28.616235Z"
+}

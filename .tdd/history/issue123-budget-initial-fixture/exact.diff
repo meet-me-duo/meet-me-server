@@ -1,0 +1,10 @@
+--- initial-target16
++++ migrate-all
+@@ -72,7 +72,6 @@
+         Flyway
+             .configure()
+             .dataSource(dataSource)
+-            .target("16")
+             .load()
+             .migrate()
+         jdbc.execute("TRUNCATE meeting_rooms CASCADE")

@@ -1,5 +1,23 @@
 # #107 합산 USD 1 평가 실행 계획 후보
 
+## 최신 최소 smoke 검토 (2026-10-18 UTC)
+
+현재 최종 상태: 부모가 허용한 별도 후속1회를 포함한 실제2단계2시도는 생성에서 첫503·후속공통15초TIMEOUT으로 중단했다. 누계Decisions6/count2/generation시도2(성공0), D보고usage3085/0의 기본환산USD0.0003085/보수2.2배USD0.00067870이며 Gemini청구UNKNOWN이다. 누적예약USD0.70918144/추가여유USD0.29081856를유지하고 다음동일full견적USD0.31854592를더한USD1.02772736이승인USD1을초과하므로 추가dependent실제호출은중단한다. 아래503/5회문단과원래4회문단은각당시이력이고 [최종 실검증 기록](ISSUE_123_LIVE_TWO_STAGE_VALIDATION.md)을따른다.
+
+이후 별도 [실제2단계 검증](ISSUE_123_LIVE_TWO_STAGE_VALIDATION.md)은 사전 oracle/plan 고정과 전체 guard/CODE GATE 통과 뒤 새A200 LOW_CONFIDENCE→count200/530→generationHTTP503에서 재시도 없이 중단했다. 누계Decisions5·count1·생성시도1이며 성공 생성 질문/usage 증거는 미확보다. 원래4회 FAIL/STOP은 보존한다. 알려진Decisions usage2573/0의 보수 환산USD0.00056606·Gemini청구UNKNOWN, 누적 예약USD0.39063552/추가 비용 여유USD0.60936448를 유지했다. 아래 첫 smoke 문단은 최초4회 평가의 결과이며 전체 현재 단계와 구분한다.
+
+최신 실행 결과는 [#123 실제 Decisions 진단](ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)을 따른다. 전체 context 견적 대신 고정2397~2479B/질문1에 BPE byte 상한과65,536token framing 여유·2.2배 단가를 적용했고 독립 sanity 검토 뒤 실제 Decisions4회를 실행했다. HTTP/production parser는4회 모두 통과했으나 오전/오후 사례가 rawCLEAR/confidence0.06으로 사전 기대와 달라 중단했고 마지막1개는 미호출이다. 운영 threshold·실제2단계/생성/최종 분석·invoice 검증 완료는 아니다. 아래0회/미실행/계산범위 대기는 이 실행 전의 이력이다. 기존USD1 합산과 세금/결제 여유는 유지하며 새 금액 승인을 요청하지 않는다.
+
+아래 5개/최대15 HTTP는 이전 후보이며 현재 우선 범위는 짧은 새 합성 입력1·질문1·retry/fallback0의 격리 단일 추론이다. 전체 영속 원장 구현 완료를 이 독립 smoke의 선행 조건으로 삼지 않는다. 기존 합산 USD1 승인은 유지하며 금액 재승인을 요청하지 않는다.
+
+기존 키의 OpenAI Luna/Gemini3.8Flash 모델 메타데이터 GET은 각각200이며 비밀값은 출력·저장하지 않았다. 조회 접근 확인과 실제 추론 endpoint 권한/계약 검증은 다르며 추론은 아직0회다. 새 계정·키·결제·운영 설정 변경은 없다.
+
+Decisions는 공식 입력 전용 요금과 일반 Luna 전체 문맥/long·region 배수를 적용하면 USD0.231의 보수 quote가 가능하지만, 문맥 한도를 Decisions 청구 상한에 적용하는 부분은 추론이다. 전용 hard cap이 확인됐다고 표현하지 않는다. [별도 Gemini 공식 검토](verification/issue123-minimal-smoke-gemini-cost.md)는 count 없는 직접 GenerateContent1에 전체 입력 한도1,048,576·thought 포함 출력2048·Standard 요율을 적용해 token quote≤USD0.794112를 제시한다. 제품 count gate나 production DENY를 우회해 활성화한다는 뜻은 아니다.
+
+count는 불명 과금을0으로 잡지 않고 단일 smoke에서 제외할 수 있다. 계정별 세금·환산/결제 수수료는 미확인이므로 USD1이 공급자 API 사용요금 기준인지 해당 부대비용 포함인지 확인 질문을 남겼다. 금액 증액 질문이 아니다. all-in 기준이면 공급자 세금/결제 조건에서 잔여 범위 내 비용 상한을 확인해야 한다. 기본 응답 shape와 실제 production parser의 offline 검증·usage·단일 지연 표본은 분리해 기록하고 작은 사례를 정확도/p50/p95 성과로 확대하지 않는다.
+
+아래는 최소안으로 좁히기 전의 공식 근거와 이전 계획 이력이다.
+
 2026-10-18 UTC. 기존 코드 기준 HEAD `01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df`; 병렬 작성 중인 새 구현의 검증 완료를 뜻하지 않는다. **현재 판정: 비용 증명 및 실제 권한 확인 전 BLOCKED, 모델 호출 0.**
 
 최신 사용자 승인은 Gemini와 OpenAI를 합쳐 **평가 전체 USD 1 이하**다. Decisions·생성 보완·최종 분석·count/부속 HTTP·재시도/fallback·실패/응답 유실·세금/불확실성을 모두 포함한다. 공급자별 USD 1이나 run마다 새 USD 1이 아니다. 이 금액 승인을 제품 모임 예산·키/설정 변경·운영 활성화·배포 승인으로 확장하지 않는다. 기존 문서의 “금액 미승인”은 이 최신 평가 금액 승인으로 대체되지만 **옛 12개/최대 36 HTTP 제안의 실행 횟수·scope·비용 증명은 승인된 것이 아니다**.

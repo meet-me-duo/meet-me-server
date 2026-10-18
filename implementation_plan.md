@@ -1,16 +1,37 @@
 # meet-me-server Implementation Plan
 
-## 현재 #107 저비용 결정 모델 공통 준비 (2026-10-18 UTC)
+## 현재 #123 영속 공통 AI 예산 후속 (2026-10-18 UTC)
+
+- 사용자 최신 승인: 영속 PG 원장·최종/fallback/HOST retry 포함 전체 물리 호출 연결을 독립 TDD·합성 provider·리뷰·필수 guard로 구현한다. Decisions develop/main 병합·배포 제외, 운영 DB/Secret/접근 변경0. 실제 Gemini+OpenAI 합산 USD1 안에서 고정 payload/byte 기반 보수 견적의 격리 Decisions 진단4회·현재 production parser offline 검증을 완료했다. 모호 사례의 raw label 불일치/confidence0.06에서 중단했으며 운영 가격·활성화나 전체 의미 평가는 별도다.
+- [x] [AGENT] 1단계 [PR122](https://github.com/meet-me-duo/meet-me-server/pull/122) e83d5280… 코드 CI39093790134 Quality/ARM64 success·최신 Lifecycle39094909440 success. 완료 범위 #124 / 남은 전체 #123 분리. Refs-only 실패39094466469 이력 보존·workflow 변경0
+- [x] [AGENT] clean develop01d00e7f ff-only 갱신→feature/issue-123-durable-ai-budget 생성→검증된 e83 ff-only 상속. 1단계 PR122 소스 고정
+- [x] [AGENT] 독립 예산/물리 dispatch 명세·공개 계약 freeze: OFF 미계상 이력 UNKNOWN, 현재30일삭제/cascade 유지, 실제 quote 미구성 DENY
+- [x] [AGENT] 독립 PG/네트워크 RED→원자 예약/one-shot dispatch/UNKNOWN/늦은 usage·전체 경로 구현. 원장/실제 fence94·managed/문맥98 GREEN, 같은 방 개인검사→마감최종 관통1 초회PASS
+- [x] [AGENT] 최종 PG생애/DLQ fixture 정합·같은 방 전체 관통10 GREEN. core/fence 독립 FI4 탐지/각복구/마지막94 GREEN
+- [x] [AGENT] provider/관통 독립 FI5 탐지·각복구·최종109 GREEN. 동일 길이 본문 변이 oracle 보완과 최초 생존 이력 보존
+- [x] [AGENT] 기록된 실제 응답의 classifier→TwoStage 회귀2 INITIAL_PASS. 기존 합성 threshold0.8 재사용·생성기 합성·추가 실제 호출0
+- [x] [AGENT] 변경 없는 전체 guard 새 실행 PASS: fresh212 suite/1684개 중1680PASS·기존4SKIP·실패/오류0, source556 before=after. 최초 legacy oracle1 실패는 원본 보존 후 독립 정합2PASS로 분리
+- [x] [AGENT] 현재 source/test/FI/전체 guard 독립 CODE GATE PASS·미해결 P1/P2 없음
+- [x] [AGENT] 최소 실제 Decisions 진단4회·production parser offline PASS·독립 결과 감사. raw label 불일치/confidence0.06에서 중단·1case미호출, 운영 confidence/실제 B생성/전체 의미 평가 미완료
+- [x] [AGENT] 별도 실제2단계2시도: 각 A200 LOW_CONFIDENCE→count200/530 뒤 생성이 첫503·후속 공통15초TIMEOUT에서 중단. 원본/기대/threshold 유지, 누계Decisions6·Gemini count2·생성시도2/성공0
+- [ ] [AGENT] 실제 생성 질문의 원문 의도 보존 평가: 첫503·후속TIMEOUT으로 성공 생성 응답/usage 증거 미확보로 차단. 누적 예약USD0.70918144·다음 동일 검증USD1.02772736으로 예산 초과/추가 실제 호출 중단. 원래 분류 FAIL/STOP·독립 oracle·기존 합성 threshold0.8 유지
+- [x] [AGENT] 실제 관측·원문 의도 평가 가능 여부 독립 감사 PASS. 실진단 결과는 공급자503/질문 평가 미완료로 보존
+- [x] [AGENT] 최종 게시 리뷰 PASS·미해결 P1/P2 없음. source556/현재 PR6절/Closes125 및 실제 실패·UNKNOWN/예산중단 범위 일치
+- [x] [AGENT] 완료 기술 범위 [#125](https://github.com/meet-me-duo/meet-me-server/issues/125) 분리. broad#123/원요구#107은 열림 유지
+- [ ] [AGENT] 상태 기록·최종 게시 리뷰·commit/push/Draft/정확 HEAD CI. 실모델·운영 활성화 완료로 표시하지 않음
+- 실제 B/가격·청구 cap/운영 confidence·예산 소진 UX/보호된 최종 분석 할당·과거 UNKNOWN 해제는 TBD. 현재 참여/마감/500자/last CLEAR/소유권/fencing/최종 AREA 전체 분석을 유지한다.
+
+## #107 저비용 결정 모델 1단계 봉인 기록 (2026-10-18 UTC)
 
 - 최신 승인: Decisions 설계·독립 TDD/mock/FI/회귀·리뷰·commit/push/Draft/exact HEAD CI까지이며 Decisions develop/main 병합·배포0. 추가로 실제 검증은 Gemini·OpenAI 통합 USD1 이내·상한 입증 조건부 승인, 키 생성/전달·새 접근/운영 변경0이다. 비-Decisions 기존 네 이슈의 미반영 변경만 별도 격리 대조 후 develop 통합·정확 merge CI까지 승인됐다.
 - 사용자가 2단계(Decisions→의심/정상 낮은 확신만 생성 LLM 재확인) 개발 방향을 승인했다. 유형 안내 전용 API/DB/web 확장은 하지 않고 분류 port·기본 OFF adapter·기존 생성 검사 bridge·공통 평가·누적 예산 설계를 진행한다. 원문/마감 전체 해석·last CLEAR·기존 한도/ownership/fencing은 유지한다.
 - [x] [AGENT] 실제 원격 server develop01d00e7f/main91eb2505, web main9b183978/PR31 Draft 대조·clean develop ff-only 후 feature/issue-107-decision-precheck 생성·기존107 재개방
 - [x] [AGENT] 공식 Decisions guide/create/response와 Jev API/models 확인·공통 내부 계약/2단계 영향 검토
 - [x] [AGENT] 최신 비-Decisions develop 통합 요청: 별도 worktree actual diff 대조 결과 누락0·115/118/120/121 조상·113/116/117/119 기능 흡수/대체·develop01d00e7f exact CI39070926139 재확인, 중복 merge0
-- [x] [AGENT] 독립 개발60/미튜닝 검증60·한국어 정상/모호/문맥/공격 기준과 oracle 독립 리뷰·모임 전체 예산 설계(영속 원장/전체 dispatch 연결 미구현)
+- [x] [AGENT] 독립 개발60/미튜닝 검증60·한국어 정상/모호/문맥/공격 기준과 oracle 독립 리뷰·모임 전체 예산 설계(영속 원장/전체 dispatch는 PR122 봉인 당시 제외 범위이며 현재 #123에서 구현·독립 검증 중)
 - [x] [AGENT] 분류 adapter/2단계 bridge·shared budget port/default DENY 독립 RED→집중160/79 GREEN·단계별 FI14·전체1479(1475PASS/기존4SKIP)·512지문 일치·독립 최종 local 게시 PASS
-- [ ] [AGENT] commit/push/Draft PR·정확 HEAD CI·Worklog/Linear 인계
-- [ ] [AGENT/SHARED] 승인된 검증 합산 USD1의 비용 상한·호출수·세금·인증 gate 입증. 실제 confidence/운영 예산 정책·키/접근 설정은 별도이며 현재 유료 호출0
+- [x] [AGENT] commit/push/Draft PR122 e83d5280…·정확 HEAD CI39093790134 success·Lifecycle39094821627 success·Worklog/Linear 인계
+- [AGENT/SHARED] 당시 실제 호출 전 보류 기록. 현재 최소 실제4회와 보수 견적·중단 결과는 맨 위 #123 및 실제 진단 문서를 따른다. 최종 청구/운영 confidence·예산 정책/활성화는 미확정
 - 상세: [공통 설계](docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md). 아래는 이전 단위의 당시 기록이다. PR121은 develop01d00e7f, exact merge CI39070926139 성공으로 완료됐다.
 
 ## 현재 #107 제출 전 확인·통합 (2026-10-17 UTC)
@@ -53,7 +74,7 @@
 
 
 > **상태:** Active  
-> **최종 갱신:** 2026-10-17
+> **최종 갱신:** 2026-10-18
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
 
 ## #110 전담 완료 목표 — 운영자 요약 조회 (2026-10-17 재개, 목표 2026-10-18)

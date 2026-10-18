@@ -11,6 +11,7 @@ import com.meetme.server.precheck.application.port.output.PrecheckProviderExcept
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
 import com.meetme.server.shared.adapter.output.budget.DefaultDenyAiCallBudget
 import com.meetme.server.shared.application.port.output.AiCallBudgetPort
 import com.meetme.server.shared.application.port.output.AiCallBudgetRequest
@@ -28,8 +29,10 @@ class TwoStagePreSubmissionCheckProvider(
     private val generator: PreSubmissionCheckProvider,
     private val budget: AiCallBudgetPort = DefaultDenyAiCallBudget(),
     private val nanoTime: LongSupplier = LongSupplier(System::nanoTime),
+    private val physicalDispatch: AiHttpDispatchGate? = null,
 ) : PreSubmissionCheckProvider {
     override fun check(request: PrecheckProviderRequest): PrecheckProviderResult {
+        if (physicalDispatch?.properties?.enabled == true) return checkPhysical(request)
         val started = nanoTime.asLong
         val timeout = request.timeout.coerceAtMost(Duration.ofSeconds(15))
         if (timeout.isNegative || timeout.isZero) fail("TIMEOUT")
@@ -155,6 +158,52 @@ class TwoStagePreSubmissionCheckProvider(
                 )
             },
         )
+    }
+
+    private fun checkPhysical(request: PrecheckProviderRequest): PrecheckProviderResult {
+        val timeout = request.timeout.coerceAtMost(Duration.ofSeconds(15))
+        if (timeout.isNegative || timeout.isZero) fail("TIMEOUT")
+        val started = nanoTime.asLong
+        val localCutoff = started + timeout.toNanos()
+        val original = request.dispatchContext ?: fail("CONFIGURATION")
+        val cutoff = if (original.deadlineNanos - localCutoff <= 0) original.deadlineNanos else localCutoff
+        val context = original.copy(deadlineNanos = cutoff)
+
+        fun remaining(): Duration {
+            val nanos = cutoff - nanoTime.asLong
+            if (nanos <= 0) fail("TIMEOUT")
+            return Duration.ofNanos(nanos)
+        }
+        try {
+            val first =
+                classifier.classify(
+                    AmbiguityClassificationRequest(
+                        request.rawText,
+                        request.referenceAt,
+                        request.timeZone,
+                        request.locale,
+                        request.searchStartDate,
+                        request.searchEndDate,
+                        remaining(),
+                        dispatchContext = context,
+                    ),
+                )
+            validate(first)
+            remaining()
+            if (first.assessment ==
+                AmbiguityAssessment.CLEAR
+            ) {
+                return PrecheckProviderResult(
+                    PrecheckVerdict.CLEAR,
+                    inputTokens = first.inputTokens,
+                    provider = first.provider,
+                    model = first.model,
+                )
+            }
+            return generator.check(request.copy(timeout = remaining(), dispatchContext = context)).also { remaining() }
+        } catch (exception: Exception) {
+            fail(failureCode(exception))
+        }
     }
 
     private fun <T> invoke(

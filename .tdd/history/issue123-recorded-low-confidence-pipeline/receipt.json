@@ -1,0 +1,74 @@
+{
+  "workItem": "issue123-recorded-low-confidence-pipeline",
+  "classification": "REGRESSION_INITIAL_PASS",
+  "recordedAt": "2026-10-18T05:17:14Z",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue123RecordedLowConfidencePipelineTest"
+  ],
+  "totals": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "testFile": {
+    "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue123RecordedLowConfidencePipelineTest.kt",
+    "sha256": "487ed1ecf4950cf4da8c18169ba734846ae5239e27e4a015cd5b9c705d4dfb6c"
+  },
+  "recordedProviderResponse": {
+    "source": "local .codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-03-response.raw.json",
+    "sha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+    "inputIsPredeclaredSyntheticSchedule": true,
+    "rawChoice": "CLEAR",
+    "confidence": 0.06,
+    "clearProbability": 0.37,
+    "inputTokens": 512,
+    "outputTokens": 0,
+    "sourceResponseContainsNoCredentialsOrParticipantIdentity": true
+  },
+  "syntheticThresholdProvenance": {
+    "value": 0.8,
+    "source": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+    "line": 118,
+    "gitRevision": "e83d5280c7c236c99d64165893632920882527fe",
+    "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197",
+    "gitCommitTime": "2026-10-18T03:28:55Z",
+    "currentBytesEqualGit": true,
+    "chosenBeforeRecordedResponse": true,
+    "productionThresholdSelected": false
+  },
+  "observableResults": {
+    "actualClassifierAssessment": "INDETERMINATE",
+    "reason": "LOW_CONFIDENCE",
+    "generatorCallsPerCase": 1,
+    "classifierLoopbackRequestsPerCase": 1,
+    "syntheticGeneratorFinalVerdicts": [
+      "NEEDS_CHOICE",
+      "CLEAR"
+    ],
+    "finalResultUsesGeneratorMetadata": true
+  },
+  "productionFilesChanged": 0,
+  "existingTestFilesChanged": 0,
+  "newTestFiles": 1,
+  "sourceTestBeforeAfterUnchanged": true,
+  "additionalExternalApiCalls": 0,
+  "additionalPaidCalls": 0,
+  "parentPreviouslyRecordedDecisionsCalls": 4,
+  "productionFlagsOrThresholdChanged": false,
+  "limitations": [
+    "Actual classifier and pipeline replay the recorded response; generator and budget are synthetic.",
+    "Not a real two-model success or semantic accuracy result; raw-choice mismatch remains FAIL/STOP.",
+    "Confidence 0.06 is separate from CLEAR probability 0.37; no undocumented confidence formula assumed.",
+    "Core94/FI4 and dispatch109/FI5 freeze points precede this one new file; final full guard is owned by root."
+  ],
+  "localEvidence": ".codex/tdd-evidence/issue123-recorded-low-confidence-pipeline",
+  "xmlSha256": "a2c738cf03e7b1da28b324b251bbb8f58bcbad1596a71b8f8cc14f22bb7a9f3e",
+  "logSha256": "55fff3d9b2f426473e7b6e776d0fb12965b5acb60f154a9ff72bafe865d191be"
+}

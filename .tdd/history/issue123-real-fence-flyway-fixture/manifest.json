@@ -1,0 +1,5 @@
+{
+  "originalSha256": "4c7dfc2b31d36a406824b4b45eb07965bf6570ed976a646ed26a8a1510f64fc8",
+  "correctedSha256": "27416ad1bf6880f2c61db1dd1a5b5b6bbfcdfbaa25c5b6d22d013f8b32cd8ce8",
+  "reason": "Existing project defaults Flyway OFF for external migrations. Real PG Spring test must explicitly run migrations before its fixture. All 30 public behavioral oracles unchanged; prior relation-not-found failures are setup RED0."
+}

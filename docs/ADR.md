@@ -592,3 +592,15 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: 생성 모델이 필요하지 않은 입력을 저렴한 판단으로 분리하면서 복잡한 모호성의 구간·안전한 선택지 생성은 기존 생성 검사에서 검증할 수 있다. 분류기가 생성 API라는 잘못된 가정이나 개인 구조화를 최종 전체 분석으로 대체하는 변경을 피한다.
 
 **트레이드오프**: 1차 false CLEAR는 2차의 보정 기회를 없애므로 독립 핵심 회귀와 미튜닝 검증셋이 필요하다. 전원이2차를 사용할 수 있어 평균 절감이 최대 비용 보장이 아니다. 두 단계는 기존15초를 공유하며 정상 유보도 추가 비용을 예약해야 한다. 실제 confidence/모델·청구 상한/금액·소진 행동은 미확정이다. 공통 budget port/default DENY와 합성 검증을 준비하지만 durable PG/all-final dispatch/quote 증명 전에는 모임10원 보장·운영 활성화 완료가 아니다. 기본 OFF·키/유료 평가/운영/병합·배포 보류를 유지한다. 기존 ADR-053의 원문 보존·저장/완료·마감 정책을 대체하지 않는다.
+
+2026-10-18 후속 합산USD1 승인으로 격리 Decisions 진단4회를 실행했다. 낮은 확신의 rawCLEAR 사례에서 사전oracle 불일치를 보존하고 중단했으며 실제 생성 단계·운영 threshold/가격·활성화·Decisions 병합은 검증/선택하지 않았다. 위 유료 평가 보류는 이 한정 승인 이전 이력이고 장기 운영 경계는 그대로다. [실제 진단 근거](ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)를 따른다.
+
+### ADR-055: 같은 방의 영속 AI 예약과 단일 물리 전송 경계
+
+**날짜**: 2026-10-18
+
+**결정**: 사용자 후속 범위에 따라 개인 분류/count/generation과 최종 primary/fallback·HOST retry/correction/DLQ를 같은 PostgreSQL 방 예산에 연결한다. V17은 기존 방을 HISTORICAL_UNKNOWN, 새 방을 생성 트랜잭션에서 UNCONFIGURED로 남긴다. 새 enforcement는 기본 OFF이며 ON은 실제 payload/API/model/profile과 결속한 신뢰 registry의 quote·원자 예약·한 번의 dispatch CAS를 요구한다. 생산 registry는 검증된 실제 정책/가격/cap이 없으면 거부한다. usage와 완전 청구 근거는 구별하고 불확실한 전송은 hold를 유지한다. 실제 money/profile·활성화 경로를 이 결정으로 승인하거나 seed하지 않는다.
+
+**이유**: invocation/revision별 상한만으로는 모임 전체 누적 비용을 제한할 수 없고, 논리 호출이나 OkHttp Call 관측만으로 숨은 실제 HTTP 재전송을 차단할 수 없다. Application 트랜잭션이 room→기존 claim→budget 잠금과 현재 권한/시간을 검증하며 adapter는 immutable 실제 송신 bytes를 한 번만 허용한다. HTTP 동안 DB lock을 보유하지 않는다. 늦은 금융 관측은 원래 요청에만 붙고 현재 제출/최종 결과를 게시할 권한이 아니다.
+
+**트레이드오프**: DB와 외부 공급자를 원자 커밋할 수 없어 crash/응답 유실은 UNKNOWN이고 자동 환급/재전송하지 않는다. strict 미만 예산·NUMERIC38의 기술 저장 상한·검증된 정산을 사용하며 표현 범위 초과는 잘라 기록하지 않고 FROZEN/미정산으로 남긴다. 기존30일 방 삭제는 원장도 cascade 삭제하며 공유 profile에는 입력/방별 지문을 남기지 않는다. OFF는 기존 final 동작을 보존하므로 그 구간의 호출이 계상됐다고 주장하지 않는다. 실제 가격·소진 UX·과거 UNKNOWN 해제·활성화와 방10원 충족은 별도 검증/결정이며 구현 진행/증거는 [#123 계약](ISSUE_123_DURABLE_AI_BUDGET_CONTRACT.md)과 Worklog에 둔다. 기존 참여/마감/원문/500자/last CLEAR·시간/재시도 한도와 결정론적 matching은 유지한다.

@@ -1,6 +1,7 @@
 package com.meetme.server.precheck.application.port.output
 
 import com.meetme.server.precheck.domain.PrecheckChoice
+import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -19,6 +20,7 @@ data class PrecheckProviderRequest(
     val maximumOutputTokens: Int = 2048,
     val roomId: UUID? = null,
     val executionGeneration: Int? = null,
+    val dispatchContext: AiProviderDispatchContext? = null,
 )
 
 enum class PrecheckVerdict { CLEAR, NEEDS_CHOICE, NEEDS_EDIT }

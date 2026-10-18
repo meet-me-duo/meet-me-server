@@ -1,0 +1,60 @@
+{
+  "classification": "INDEPENDENT_FI_ORACLE_GAP_SUPPLEMENT",
+  "survivedMutation": ".codex/tdd-evidence/issue123-dispatch-fi/F3-network-body-hash-omitted/receipt.json",
+  "initialOriginal27Result": "27PASS under deleted network hash check; SURVIVED, not DETECTED",
+  "cause": "Old different-length mutation was rejected incidentally by OkHttp Content-Length rather than uniquely by the budget body hash boundary",
+  "newTest": {
+    "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchEqualLengthBodyTest.kt",
+    "sha256": "1a02b5289fd50f2e1a2b6d6cbfa211643372aa4abd3adf4f99f2981904b421b1"
+  },
+  "priorFrozenTestsChanged": false,
+  "productionChanged": false,
+  "firstExecutionPending": false,
+  "recordedAt": "2026-10-18T05:16:01.492557Z",
+  "newIndependentInitialPass": ".codex/tdd-evidence/issue123-dispatch-equal-body-initial/receipt.json",
+  "newIndependentInitialClassification": "INITIAL_PASS 1/1; no production change or fabricated chronological RED",
+  "sameHashDeletionDetectedByNewTest": {
+    "command": [
+      "./gradlew",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*Issue123DispatchEqualLengthBodyTest"
+    ],
+    "cwd": "/tmp/issue123-independent-dispatch-fi",
+    "exit": 1,
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "assertions": [
+      {
+        "test": "com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchEqualLengthBodyTest#BD10 same byte length downstream mutation is denied by exact body authority before HTTP()",
+        "type": "org.opentest4j.AssertionFailedError",
+        "message": "org.opentest4j.AssertionFailedError: Expected value to be of type <com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException>, actual <null>."
+      }
+    ]
+  },
+  "sameExactRestorePass": {
+    "command": [
+      "./gradlew",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*Issue123DispatchEqualLengthBodyTest"
+    ],
+    "cwd": "/tmp/issue123-independent-dispatch-fi",
+    "exit": 0,
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "assertions": []
+  },
+  "finalUniqueScope": 109,
+  "historicalPreSupplement108StillPreserved": true
+}

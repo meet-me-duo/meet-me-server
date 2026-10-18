@@ -21,6 +21,12 @@ import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.RetryDelayPort
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
+import com.meetme.server.shared.application.port.output.AiBudgetExecution
+import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
+import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
+import com.meetme.server.shared.application.port.output.AiDispatchInputSnapshot
+import com.meetme.server.shared.application.port.output.AiDispatchModePort
+import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
 import com.meetme.server.shared.application.port.output.AnalysisAttemptObservation
 import com.meetme.server.shared.application.port.output.AnalysisExecutionObservation
 import com.meetme.server.shared.application.port.output.AnalysisExecutionOutcome
@@ -58,8 +64,15 @@ class GeminiBatchProcessor(
     private val invocationRepository: AnalysisInvocationRepository? = null,
     private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
     private val transportObservations: ParserTransportObservationPort? = null,
+    private val dispatchMode: AiDispatchModePort? = null,
 ) {
     fun process(batchId: SubmissionBatchId) {
+        val physicalMode = dispatchMode?.isEnabled() == true
+        if (physicalMode &&
+            (invocationRepository == null || fallbackParser == null)
+        ) {
+            throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+        }
         val processingStarted = monotonicTime.nanoTime()
         val deadlineNanos = processingStarted + TOTAL_TIMEOUT.toNanos()
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
@@ -127,6 +140,7 @@ class GeminiBatchProcessor(
         ): CallOutcome? {
             if (!persistence.isCurrent(run)) return null
             if (remaining(providerDeadline).toMillis() < 1) return null
+            val attemptStartedNanos = if (physicalMode) monotonicTime.nanoTime() else 0L
             val attempt =
                 CoordinationAttempt(
                     idGenerator.next(),
@@ -164,7 +178,16 @@ class GeminiBatchProcessor(
                     AnalysisProvider.GEMINI -> CALL_TIMEOUT
                     AnalysisProvider.OPENAI -> LUNA_TIMEOUT
                 }
-            val timeout = remaining(providerDeadline).coerceAtMost(maximumCallTimeout)
+            val effectiveDeadline =
+                if (physicalMode) {
+                    minOf(
+                        providerDeadline,
+                        attemptStartedNanos + maximumCallTimeout.toNanos(),
+                    )
+                } else {
+                    providerDeadline
+                }
+            val timeout = remaining(effectiveDeadline).coerceAtMost(maximumCallTimeout)
             val transportContext = invocation?.let { ParserObservationContext(it.id, attempt.id) }
             if (timeout.toMillis() < 1) {
                 if (transportContext != null) {
@@ -181,7 +204,45 @@ class GeminiBatchProcessor(
             observedAttempts[observationIndex] = observedAttempts[observationIndex].copy(parserDispatched = true)
             val callStarted = monotonicTime.nanoTime()
             return try {
-                val result = port.parse(request.copy(callTimeout = timeout, observationContext = transportContext))
+                val dispatchContext =
+                    if (physicalMode) {
+                        val owned = invocation ?: throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                        val inputs =
+                            request.inputs.map {
+                                AiDispatchInputSnapshot(
+                                    it.inputRef,
+                                    it.rawText,
+                                    it.locale.toLanguageTag(),
+                                    it.referenceDate,
+                                )
+                            }
+                        AiProviderDispatchContext(
+                            AiBudgetExecution(
+                                room.id.value,
+                                AiBudgetExecutionKind.FINAL_ANALYSIS,
+                                owned.id,
+                                owned.runVersion,
+                                owned.ownerToken,
+                                owned.runVersion,
+                                AiDispatchFingerprints.batchSource(inputs),
+                                AiDispatchFingerprints.batchContext(
+                                    request.timeZone,
+                                    request.searchStartDate,
+                                    request.searchEndDate,
+                                    inputs,
+                                ),
+                            ),
+                            effectiveDeadline,
+                            attempt.id,
+                            if (provider == AnalysisProvider.GEMINI) admittedAttempts else 1,
+                        )
+                    } else {
+                        null
+                    }
+                val result =
+                    port.parse(
+                        request.copy(callTimeout = timeout, observationContext = transportContext, dispatchContext = dispatchContext),
+                    )
                 // Even a discarded late response may contain known, billable usage.
                 observedAttempts[observationIndex] =
                     observedAttempts[observationIndex].copy(

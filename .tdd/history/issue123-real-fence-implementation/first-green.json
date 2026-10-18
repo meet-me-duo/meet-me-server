@@ -1,0 +1,19 @@
+{
+  "tests": 94,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "fenceTests": 30,
+  "controlTests": 64,
+  "sourceFiles": {
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt": "9a816338c3187805fe5bab6aefa053a0af5add45a1a04954e9e01e8538eeadd8"
+  },
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue123ExecutionFencePostgresTest.kt",
+      "sha256": "c67870981321407aec23f3606bf59af17ba8330df92e9d5b37d5f9dacd921600"
+    }
+  ],
+  "evidencePath": ".codex/tdd-evidence/issue123-budget-fence-first-green",
+  "scope": "Independent author PostgreSQL30 fence + existing64 controls; first GREEN. No price policy activation, live inference, or billing-bound proof."
+}

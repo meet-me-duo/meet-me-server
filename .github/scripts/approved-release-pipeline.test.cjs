@@ -93,7 +93,7 @@ test('immutable main release metadata retains historical V10 publication identit
   // in issue107-integrated-catalog.test.cjs C02; archived source expectations remain immutable.
 });
 
-test('actual integrated source publishes exactly V1 through V16 with independent source checksums', () => {
+test('actual integrated source publishes exactly V1 through V17 with independent source checksums', () => {
   const integrated = require('./fixtures/integrated-release-catalog.cjs');
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...integrated.scripts].sort());
   const fixture = archiveFixture([{ name: 'scripts', kind: 'dir' }, { name: 'scripts/fixture.sh', content: 'fixture\n' }]);

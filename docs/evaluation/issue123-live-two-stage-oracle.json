@@ -1,0 +1,165 @@
+{
+  "status": "FINAL_PRE_EXECUTION",
+  "proposedTrackedPath": "docs/evaluation/issue123-live-two-stage-oracle.json",
+  "purpose": "One fixed LIVE-KO-03 follow-up of material AM/PM ambiguity. Predeclare semantic and structural outcomes before any new paid generation. This author performs no external calls or source edits.",
+  "case": {
+    "id": "LIVE-KO-03",
+    "rawText": "10월 24일 토요일 8시부터 9시까지 가능해요.",
+    "referenceAt": "2026-10-18T04:00:00Z",
+    "timeZone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "searchStartDate": "2026-10-24",
+    "searchEndDate": "2026-10-25",
+    "predeclaredClassification": "NEEDS_REVIEW",
+    "expectedGenerationVerdict": "NEEDS_CHOICE",
+    "reason": "Without an AM/PM qualifier, 08:00–09:00 and 20:00–21:00 on 2026-10-24 materially differ. The search dates do not resolve AM/PM.",
+    "originalOraclePath": "docs/evaluation/issue123-live-korean-diagnostic-cases.json",
+    "originalOracleSha256": "47390e74ed16237ce3dd9e9fb0002d304827c22e4592a8965f3151a8fcfd2552"
+  },
+  "classificationEvidence": {
+    "recordedResponseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+    "recordedRawChoice": "CLEAR",
+    "recordedConfidence": 0.06,
+    "recordedClearProbability": 0.37,
+    "confidenceIsNotClearProbability": true,
+    "confidenceFormulaVerified": false,
+    "syntheticMinimumConfidence": 0.8,
+    "productionThresholdSelected": false,
+    "provenance": {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "line": 118,
+      "gitRevision": "e83d5280c7c236c99d64165893632920882527fe",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197",
+      "gitCommitTime": "2026-10-18T03:28:55Z"
+    },
+    "expectedNormalizedAssessment": "INDETERMINATE",
+    "expectedNormalizedReason": "LOW_CONFIDENCE",
+    "originalRawLabelMismatchRemains": "FAIL_STOP; successful later generation never converts the original raw-choice oracle to PASS",
+    "scope": "Historical recorded-A evidence and unchanged synthetic-threshold provenance, not expected raw fields for a fresh A response."
+  },
+  "preExecutionRootDeclaration": {
+    "stageAMode": "FRESH_A_PLUS_LIVE_B; at most one fresh actual Decisions classification. This is separate from recorded-A replay.",
+    "recordedAReferenceOnly": "Recorded raw CLEAR/confidence0.06/CLEAR probability0.37 remains original FAIL_STOP evidence. Its existing normalization at synthetic0.8 is LOW_CONFIDENCE. Do not require a fresh model response to repeat those numeric values or raw choice.",
+    "freshAMode": "Preserve all new raw fields and current actual-classifier normalized result. Proceed to B only for legitimate current TwoStage NEEDS_REVIEW or INDETERMINATE with LOW_CONFIDENCE/MODEL_UNCERTAIN. A raw NEEDS_REVIEW may be a normal route even when its confidence differs from historical0.06. A fresh confident CLEAR is FAIL_STOP for this fixed ambiguous case and must result in count0/generation0. Refusal/API/structural/configuration/deadline failures stop with no B. No manual relabeling or force-B override.",
+    "generationMode": "Actual current runtime path countTokens at most1 then GenerateContent at most1, same frozen full generation prompt/schema input. Count must be valid1..4096 before generation. Fixed gemini-3.8-flash/candidate1/maxOutput2048/thinkingLevel LOW; no legacy thinkingBudget0.",
+    "aggregateBudget": "Same approved combined Gemini+OpenAI USD1, including prior four actual Decisions requests, known spend and all unknown holds. Root owns the already chosen price/profile/count-fee/all-in quote execution gate; no budget reset or new amount is selected by this oracle."
+  },
+  "successCriteria": [
+    {
+      "id": "LTS01",
+      "requirement": "Same rawText, referenceAt, timeZone, locale, searchStartDate and searchEndDate reach fresh A and B unchanged. Record fresh A choice/confidence/probabilities independently of historical recorded A. Actual classifier and actual TwoStage must take only a legitimate NEEDS_REVIEW or LOW_CONFIDENCE/MODEL_UNCERTAIN route defined in freshARoutingOracle; no forced equality to recorded CLEAR/confidence0.06. Historical recorded-A normalization at the same synthetic0.8 remains separate evidence."
+    },
+    {
+      "id": "LTS02",
+      "requirement": "The current production structural parser accepts one candidate with finishReason STOP and one text part; exact JSON schema shape only. No partial/truncated/duplicate/unknown-field response is a success."
+    },
+    {
+      "id": "LTS03",
+      "requirement": "B returns NEEDS_CHOICE with one focused AM/PM clarification, not an automatic choice or statement that the participant meant one side."
+    },
+    {
+      "id": "LTS04",
+      "requirement": "prompt is nonblank1..160 Unicode codepoints; sourceExcerpt is an exact nonblank1..200 codepoint original substring and semantically anchors the unresolved 8-to-9 time phrase; no fabricated/normalized excerpt."
+    },
+    {
+      "id": "LTS05",
+      "requirement": "Exactly two choice objects, IDs A/B (order arbitrary), each exactly id/label/proposedText. Labels are understandable and distinguish the two periods. Labels1..160, complete proposedText1..500 codepoints, no NUL; full proposals distinct from each other and the rawText."
+    },
+    {
+      "id": "LTS06",
+      "requirement": "The unordered pair of complete proposal meanings is 2026-10-24 08:00–09:00 and 2026-10-24 20:00–21:00 in Asia/Seoul. Natural Korean 오전8시부터9시/오후8시부터9시 or equivalent24-hour wording is acceptable without exact-string grading. Only the missing period is made explicit; availability polarity and date remain unchanged."
+    },
+    {
+      "id": "LTS07",
+      "requirement": "No invented location/person/extra date/weekday/timezone, changed duration, removed condition, next-day or mixed AM/PM span. No extra availability or matching/AREA/final scheduling results."
+    },
+    {
+      "id": "LTS08",
+      "requirement": "Both proposals are suggestions requiring explicit later participant acceptance; original input remains preserved. No autoanswer, auto-original replacement, accepted submission, final-room matching or UI completion is claimed from this smoke."
+    }
+  ],
+  "outcomeClassification": {
+    "PASS_LIMITED_QUESTION_RECONFIRMATION": "Every LTS01–08 passes; actual B produced the expected focused safe choice. Report only this single predeclared case, not general accuracy/production readiness.",
+    "FAIL_SEMANTIC_CLEAR": "B returns structurally valid CLEAR: legal pipeline verdict generally, but fails this predeclared unresolved AM/PM oracle. Preserve raw result and stop; no repeated model calls or oracle edits.",
+    "SAFE_ABSTENTION_TASK_INCOMPLETE": "B returns structurally valid NEEDS_EDIT with no question fields. Existing safe fallback is respected; it is not successful question generation and does not resolve this evaluation. Stop and preserve it.",
+    "FAIL_UNSAFE_OR_IRRELEVANT_QUESTION": "Structurally valid NEEDS_CHOICE violates any semantic criterion; do not promote to completion or fix proposals by hand.",
+    "FAIL_PROVIDER_OR_STRUCTURAL": "Timeout/refusal/API status/malformed output/cap/profile error: no semantic success or free-call assumption, no retry/fallback. Preserve known usage and unknown exposure separately.",
+    "INCONCLUSIVE_MISSING_EVIDENCE": "Missing raw request/response, exact parser result, call count or declared execution mode prevents the corresponding success claim.",
+    "FAIL_FRESH_A_CONFIDENT_CLEAR": "Fresh A normalizes to sufficiently confident CLEAR: fixed-case semantic FAIL_STOP and B count0/generation0. Do not call B to rescue or relabel this failure."
+  },
+  "directEditBoundary": {
+    "providerSchema": "There is no direct-edit response field. Adding directEdit/answer/candidate/time-structure fields violates current additionalProperties=false schema.",
+    "applicationContract": "NEEDS_CHOICE must continue to offer A/B or direct editing; NEEDS_EDIT requires direct editing. This isolated provider smoke does not exercise the UI, answer persistence, accepted revision or ownership fences.",
+    "evaluationRule": "Do not fail a valid model question merely because it omits a nonexistent direct-edit JSON flag; do not claim UI direct-edit availability was live-verified. User selection/direct edit/recheck calls are outside this one generation."
+  },
+  "limitsAndStop": {
+    "sourceChanges": 0,
+    "authorExternalCalls": 0,
+    "runtimeProductionFlagsChanged": false,
+    "maximumNewGenerationRequests": 1,
+    "retryRedirectFallbackContinuation": 0,
+    "profile": {
+      "provider": "GEMINI",
+      "model": "gemini-3.8-flash",
+      "api": "GenerateContent",
+      "candidateCount": 1,
+      "maxOutputTokensIncludingThoughts": 2048,
+      "thinkingLevel": "LOW",
+      "thinkingBudget0": false,
+      "requestAndResponseUtf8ByteLimit": 16384,
+      "rawUnicodeCodepointLimit": 500
+    },
+    "deadline": "Fresh actual A/count/B retain the existing pipeline single absolute maximum15-second budget across all selected stages; count/generation receive only the remaining absolute deadline. No new now+15 after A or count, and no deadline refresh on an error.",
+    "runtimeInputGate": "Actual runtime count1..4096 is required before generation; count failure or over-limit produces generation0. The count estimate is not exact billed-input proof; known post-usage input over4096 rejects without canceling billing.",
+    "stopAtFirstFailure": true,
+    "doNot": "No prompt/oracle/threshold/proposal editing after seeing output, no retry on semantic failure, no new corpus/holdout retrieval or extra cases, no actual user/room/production data. Unknown timeout/usage/bill amounts remain unknown and held.",
+    "maximumNewCountRequests": 1,
+    "maximumNewDecisionsRequests": 1,
+    "maximumAdditionalHttpRequests": 3
+  },
+  "evidenceToPreserve": [
+    "Frozen final oracle SHA and FRESH_A_PLUS_LIVE_B/runtime count1+generation1 execution modes before dispatch",
+    "Exact original raw text/context and immutable full prompt/schema/profile/payload hashes",
+    "Exact raw B envelope plus parser result, question/sourceExcerpt/A/B proposals; unknown usage stays null rather than0",
+    "Each actual HTTP operation count, stage latency, overall newly executed interval, reported input/candidate/thought usage and incomplete fields separately",
+    "Independent LTS01–08 semantic rubric with one result and reason per criterion, including failures; no response-based oracle rewriting",
+    "Previous actual Decisions results remain four calls with latencies1011.1/201.9/196.2/203.6ms and input518/518/513/512, output0. Do not replace these with simulated or newly measured values; no p50/p95 or calibrated accuracy inference"
+  ],
+  "currentContractReferences": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "72cfaa26b4a671fd8b87aa654d16d899a2b63c13e44c2baeae747ec9e14da2a1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "16fba187e8f04dbaf4c3f00db0a14d49183743dcf1dc22c7fe2ee78528ce9075"
+    },
+    {
+      "path": "docs/ISSUE_107_PRE_SUBMIT_DESIGN.md",
+      "sha256": "ec8a7ea9fb199bde10a160f27dfa212bb23fb83cb6412e7b7cb578718266f48a"
+    }
+  ],
+  "observedNewGenerationResult": null,
+  "frozenAt": "2026-10-18T05:26:01Z",
+  "supersedesDraftSha256": "39dd815d245486a0023444b4295563edd66c8acf76b392cacb4e4691e2f25753",
+  "executionMode": {
+    "stageA": "FRESH_A_PLUS_LIVE_B",
+    "generation": "RUNTIME_COUNT1_PLUS_GENERATION1",
+    "maximumAdditionalHttpRequests": 3,
+    "maximumAdditionalDecisionsRequests": 1,
+    "maximumAdditionalCountRequests": 1,
+    "maximumAdditionalGenerationRequests": 1,
+    "retryRedirectFallbackContinuation": 0
+  },
+  "freshARoutingOracle": {
+    "expectedSameInputAndContext": true,
+    "rawClearBelowSyntheticThreshold": "Current classifier normalizes CLEAR with confidence<0.8 to INDETERMINATE/LOW_CONFIDENCE; legitimate B route.",
+    "rawNeedsReview": "Current classifier NEEDS_REVIEW is a legitimate B route; below0.8 it may normalize to LOW_CONFIDENCE, otherwise NEEDS_REVIEW. No forced historical numeric/choice equality.",
+    "rawIndeterminate": "Current classifier INDETERMINATE/MODEL_UNCERTAIN with structurally valid finite confidence is a legitimate B route.",
+    "rawClearAtOrAboveSyntheticThreshold": "Semantic FAIL_STOP for this fixed unresolved AM/PM case; count0/generation0 even though sufficiently confident CLEAR is a legal general pipeline result.",
+    "refusedOrApiOrInvalidOrTimeout": "STOP with count0/generation0, preserve typed failure and known/unknown usage. Never reinterpret errors as normal uncertainty.",
+    "thresholdPolicy": "Reuse frozen synthetic0.8 exactly; no tuning after fresh output. Production threshold remains unselected/null and application activation remains OFF."
+  },
+  "observedFreshAResult": null,
+  "freezeIntegrity": "Success LTS02–LTS08 and the fixed original case are unchanged from the accepted draft. Only mode selection and historical-versus-fresh A routing have been clarified before observing any new output. Do not rewrite this oracle after execution."
+}

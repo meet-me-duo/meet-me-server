@@ -18,6 +18,15 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguagePar
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.application.port.output.ParserTransportObservationPort
 import com.meetme.server.coordination.application.port.output.ParserUsage
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpProviderStatusException
+import com.meetme.server.shared.adapter.output.aihttp.GatedAiHttpExchange
+import com.meetme.server.shared.adapter.output.aihttp.physicalProfile
+import com.meetme.server.shared.adapter.output.aihttp.validateFinalDispatch
+import com.meetme.server.shared.application.port.output.AiBudgetOutcome
+import com.meetme.server.shared.application.port.output.AiBudgetUsage
+import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,25 +35,36 @@ import org.springframework.stereotype.Component
 import tools.jackson.databind.ObjectMapper
 import java.net.URI
 import java.time.Duration
+import java.util.UUID
 
 @Component
 @Primary
 class GeminiNaturalLanguageParserAdapter
-    @Autowired
     constructor(
         private val properties: GeminiProperties,
         objectMapper: ObjectMapper,
         private val transportObservations: ParserTransportObservationPort? = null,
+        private val dispatchGate: AiHttpDispatchGate? = null,
     ) : NaturalLanguageParserPort {
         private val contract = NaturalLanguageProviderContract(objectMapper)
+        private val mapper = objectMapper
         private var endpoint: URI? = null
+
+        @Autowired
+        constructor(
+            properties: GeminiProperties,
+            objectMapper: ObjectMapper,
+            managedDispatchGate: AiHttpDispatchGate,
+            transportObservations: ParserTransportObservationPort? = null,
+        ) : this(properties, objectMapper, transportObservations, managedDispatchGate)
 
         internal constructor(
             properties: GeminiProperties,
             objectMapper: ObjectMapper,
             endpoint: URI,
             transportObservations: ParserTransportObservationPort? = null,
-        ) : this(properties, objectMapper, transportObservations) {
+            dispatchGate: AiHttpDispatchGate? = null,
+        ) : this(properties, objectMapper, transportObservations, dispatchGate) {
             this.endpoint = endpoint
         }
 
@@ -77,6 +97,9 @@ class GeminiNaturalLanguageParserAdapter
             val budget = minOf(request.callTimeout, Duration.ofMillis(CALL_TIMEOUT_MILLIS.toLong()))
             if (budget.toMillis() <= 0) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
             val deadline = System.nanoTime() + budget.toNanos()
+            var physical: GatedAiHttpExchange? = null
+            var physicalUsage = AiBudgetUsage()
+            var completed = false
             try {
                 val retryOptions =
                     HttpRetryOptions
@@ -100,13 +123,34 @@ class GeminiNaturalLanguageParserAdapter
                         .writeTimeout(Duration.ZERO)
                         .callTimeout(budget)
                         .build()
+                if (dispatchGate?.properties?.enabled == true) {
+                    validateFinalDispatch(request)
+                    val wireEndpoint =
+                        (
+                            endpoint ?: URI(
+                                "https://generativelanguage.googleapis.com",
+                            )
+                        ).resolve("/v1beta/models/${properties.model}:generateContent")
+                    physical =
+                        dispatchGate.forLazySingleCall(
+                            transport,
+                            request.dispatchContext,
+                            AiPhysicalOperation.FINAL_PRIMARY,
+                            physicalProfile(
+                                AiPhysicalOperation.FINAL_PRIMARY,
+                                properties.model,
+                                wireEndpoint,
+                                32 * 1024 * 1024,
+                            ),
+                        )
+                }
                 // Client creation stays on the caller thread, including synthetic SDK factory tests.
                 val response =
                     Client
                         .builder()
                         .apiKey(properties.apiKey)
                         .vertexAI(false)
-                        .clientOptions(ClientOptions.builder().customHttpClient(transport).build())
+                        .clientOptions(ClientOptions.builder().customHttpClient(physical?.client ?: transport).build())
                         .httpOptions(httpOptions.build())
                         .build()
                         .use { client ->
@@ -129,6 +173,35 @@ class GeminiNaturalLanguageParserAdapter
                                     .build()
                             client.models.generateContent(properties.model, prompt(request), config)
                         }
+                val observedUsage = response.usageMetadata().orElse(null)
+                val input =
+                    observedUsage
+                        ?.promptTokenCount()
+                        ?.orElse(null)
+                        ?.toLong()
+                        ?.takeIf { it >= 0 }
+                val candidate =
+                    observedUsage
+                        ?.candidatesTokenCount()
+                        ?.orElse(null)
+                        ?.toLong()
+                        ?.takeIf { it >= 0 }
+                val thought =
+                    observedUsage
+                        ?.thoughtsTokenCount()
+                        ?.orElse(null)
+                        ?.toLong()
+                        ?.takeIf { it >= 0 }
+                val output =
+                    if (candidate != null &&
+                        thought != null &&
+                        candidate <= Long.MAX_VALUE - thought
+                    ) {
+                        candidate + thought
+                    } else {
+                        null
+                    }
+                physicalUsage = AiBudgetUsage(inputTokens = input, outputTokens = output, reasoningTokens = thought)
                 if (System.nanoTime() >= deadline) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                 val candidates = response.candidates().orElse(null)
                 if (candidates?.size != 1 ||
@@ -146,6 +219,7 @@ class GeminiNaturalLanguageParserAdapter
                 val parsed = contract.parseProviderResponse(text, request, strict = true)
                 if (System.nanoTime() >= deadline) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                 val usage = response.usageMetadata().orElse(null)
+                completed = true
                 return NaturalLanguageBatchResult(
                     parsed,
                     ParserUsage(
@@ -156,10 +230,42 @@ class GeminiNaturalLanguageParserAdapter
                 )
             } catch (exception: NaturalLanguageParserException) {
                 throw exception
-            } catch (exception: RuntimeException) {
+            } catch (exception: Exception) {
+                val causes = generateSequence<Throwable>(exception) { it.cause }.take(16).toList()
+                if (causes.any { it is AiHttpDispatchException }) throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                val httpStatus = causes.filterIsInstance<AiHttpProviderStatusException>().firstOrNull()
+                if (httpStatus != null) {
+                    val error = runCatching { mapper.readTree(httpStatus.responseBytes)["error"] }.getOrNull()
+                    val code =
+                        error?.get("status")?.takeIf { it.isString }?.asString() ?: error?.get("code")?.takeIf { it.isString }?.asString()
+                    val type = error?.get("type")?.takeIf { it.isString }?.asString()
+                    val statusKind = ProviderFailureClassifier.classifyStatus(httpStatus.status, code, type)
+                    throw NaturalLanguageParserException(
+                        statusKind,
+                        if (statusKind in
+                            TRANSIENT_KINDS
+                        ) {
+                            httpStatus.retryAfterMillis
+                        } else {
+                            null
+                        },
+                    )
+                }
                 val kind = ProviderFailureClassifier.classify(exception)
-                val retryAfter = if (kind in TRANSIENT_KINDS) extractRetryAfterMillis(exception) else null
+                val retryAfter = if (kind in TRANSIENT_KINDS && exception is RuntimeException) extractRetryAfterMillis(exception) else null
                 throw NaturalLanguageParserException(kind, retryAfter, exception)
+            } finally {
+                try {
+                    physical?.observe(
+                        UUID.randomUUID(),
+                        if (completed) AiBudgetOutcome.SUCCEEDED else AiBudgetOutcome.FAILED,
+                        physicalUsage,
+                    )
+                } catch (
+                    _: AiHttpDispatchException,
+                ) {
+                    throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                }
             }
         }
 
