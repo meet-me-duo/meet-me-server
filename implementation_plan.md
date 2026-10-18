@@ -1,5 +1,21 @@
 # meet-me-server Implementation Plan
 
+## #123 UI 계약·사전 정답 평가 준비 후속 (2026-10-18 UTC)
+
+- 부모가 추가 유료 호출 없이 현재 서버와 웹 PR31의 입력→모호성 질문→선택/직접 수정→재검사/제출 UI 계약·기존 시나리오와 로컬 누락 검증을 점검하도록 지시했다. 서버 기준18cdb5ddec4f9e09db50feb54337aae9516a0108/PR126, 웹02a68d8e50680e87dd153156e8bb7ea884a794cc/PR31을 원격 재확인했고 둘 다 Draft·미병합이다. 아래 fresh15초 단계는 완료된 이전 단위다.
+- [x] [AGENT] 기존 UI·서버 상태/인증/마감/비공개 계약과 테스트 대응표·누락 범위 독립 점검. 기존5paths/12states 정합, 취소 후 retained question P2를 발견해 별도128/32에 격리
+- [x] [AGENT] 기존 웹02 집중157unit/22browser PASS·원본268불변. 새후보 전체627unit/425browser+기존skip1 PASS/retry0. 현재수정 source native14 PASS/실API154·APIrouteMock0·외부/실AI/OAuth0. Primary합성provider가TwoStage/금융graph우회함을명시
+- [x] [AGENT] 8범주 사전정답 기존개발60/holdout60불변·별도8쌍16/단계gold overlay 봉인. 독립DRAFT P2 4그룹 보정/재reviewPASS·원본보존, 최종manifest1d15a4e·136ID. 구조/PROTOCOL_ONLY·DRAFT/변조거절PASS/실모델0, rootblind유지
+- [x] [AGENT] 발견된 누락 최소 독립 TDD/FI·현재native/전체guard·상태기록·최종독립게시review LOCAL PASS/미해결P1P2없음. 기존PR126/31보존·새128/32 격리
+- 발견 P2: NEEDS_CHOICE 취소 뒤 persisted question이 snapshot에 남아 웹의 새 입력/직접 수정 진입을 막음. 서버#128/웹#32로 좁게 분리하고 clean develop/main ff-only 후 server18/web02를 상속한 `/workspace/issue128-cancel-question/{server,web}`를 준비했다. 기존 PR126/31 worktree는 그대로 보존한다.
+- [x] [AGENT] 취소 후 server1조건·web1조건 최소수정: 서버7 RED1/통제6→7GREEN/FI2 assertion1·5탐지/각복구7PASS; 웹7 RED4/통제3→7GREEN·기존67포함74/FI4탐지·원복7. 기존기대값·DB질문이력·상한·500자·참여/마감·last CLEAR불변
+- [x] [AGENT] 현재 수정 source 실제HTTP/PG/browser native14 PASS, 실제OpenAPI36paths/61schemas JSON동일, source482/runtime1559/deps216/웹자산전후동일·포트/컨테이너정상종료. 준비경로오류는별도보존·정정후검증. classifier/금융graph 성공 주장0
+- [x] [AGENT] 서버 unchanged필수전체guard exit0/source558전후동일·새214suites/1717중1713PASS·기존4SKIP/실패·오류0·실AI/OAuth0
+- [x] [AGENT] 최종독립게시review LOCAL PASS·미해결P1P2없음
+- [ ] [AGENT] server#128/web#32 별도Draft·정확HEADCI. Commit/PR 동일커밋예정, 평가/구현원본HEAD와게시SHA구분
+- 현재 새 실제 호출0. 기존 UNKNOWN 환급0·누적 예약USD1.33185536/합산USD2·보수여유USD0.66814464 유지. 작은 실제 호출계획·사전 상한이 고정되기 전 유료 실행0, 결과맞춤 threshold변경0. Linear는 부모가 담당한다.
+- README 생성 이미지·편집은 선행 검증 후 #127로 진행하며 지금 시작하지 않는다. 병합·운영활성화·배포0.
+
 ## 최신 수정 HEAD fresh 15초 실제 경로 검증 (2026-10-18 UTC)
 
 - 부모가 HEAD `4101038fd421351affa2a1fcdd5741083cb1a6b6`의 사전 고정 단일 LIVE-KO-03에서 fresh Decisions→필요시 count→generation→parser/실제 TwoStage 검증을 기존 합산USD2 안에서 추가 승인했다. 해당 HEAD의 CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공, PR126 Draft·미병합과 source557 guard는 유지한다. 아래 b377/metadata 게시 예정 기록은 당시 이력이다.

@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "status": "FINAL_PRE_EXECUTION_ASSETS_VALIDATED_NOT_EXECUTED",
+  "files": [
+    {
+      "path": ".tdd/history/issue123-classification-evaluation-oracle/development-stage-gold-overlay.json.seal.diff",
+      "sha256": "43ca3dda185658d7c1fecf7ffcdf1b079aaee1b04a9102a184da45f454bfd7f8"
+    },
+    {
+      "path": ".tdd/history/issue123-classification-evaluation-oracle/holdout-stage-gold-overlay.json.seal.diff",
+      "sha256": "c9427683144691897477cfb2d273e87f88c1c823d7d7236a8e6b28d96dd03954"
+    },
+    {
+      "path": ".tdd/history/issue123-classification-evaluation-oracle/index.json",
+      "sha256": "aa5ee03fdcbb08bc13fc617cf2c02abbf05a1d6333caca183a9e0ee3a8a37a09"
+    },
+    {
+      "path": ".tdd/history/issue123-classification-evaluation-oracle/supplemental-pairs.json.seal.diff",
+      "sha256": "4b493d59c8e26d27cb40c352b5919ea7b10d4cb75a0ca54da62e037f41780258"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/README.md",
+      "sha256": "8ca77eb016a39c306a78dd01371b7e316c8cb767181be32cfe182ce940274bd1"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/assets.json",
+      "sha256": "40a1fe31a969285e647a09369f552a0ae9d4ae51e1560e3aedbc4721e9987719"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/coverage.json",
+      "sha256": "3d8dd1c482e0ad61ea06edd464e48f04eb86b3a0207aa09f8c0212801307ac70"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/exposure.json",
+      "sha256": "4f45eeadc37ef09cde74fee14419e2ca846fb64e9e05b69161ad93d0985ac988"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/protocol-only-sanity.json",
+      "sha256": "5bafc76c58deed6af0920f9398932ed52cff660acc40ab9ef279b2b63786c86e"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/protocol_sanity.py",
+      "sha256": "4f00f19a5742c8b01c92a1add9df9c060a2b47ccdc2f1162b82edfe7fc763fce"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/review-summary.json",
+      "sha256": "a35bf46f59b5f05cf743e5c7757dae9be67ca715e7e0eaea46ef58ee64894fac"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/scoring-contract.json",
+      "sha256": "66857bff4f5e68e0b36bd0d4c21f8991eecd3c12e7e7c4311fc8a87ec1109c4b"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/structural-validation.json",
+      "sha256": "0905675447d069235af7f88b781cca7a8f76b0895f690d09c247c763ab0f99a9"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/validate.py",
+      "sha256": "8ed29464ddccead0e2220f1648c6de66bde2afbef3ff0287873c33726036beef"
+    },
+    {
+      "path": "docs/evaluation/issue123-classification-evaluation/validator-controls.json",
+      "sha256": "620973dfae5da4731238cc1f053edc0aaed65c7447d661145fe9008a91e0a8d4"
+    },
+    {
+      "path": "docs/fixtures/issue-123-ui-evaluation-development-overlay.json",
+      "sha256": "337fd05e1b23435e8b9633e6518a25eab2abb5b3545288dfec224b82f7be779b"
+    },
+    {
+      "path": "docs/fixtures/issue-123-ui-evaluation-holdout-overlay.json",
+      "sha256": "82460043b0ede12bba72d43285b94c4cc94854265f9822687a9d7aef32aad18b"
+    },
+    {
+      "path": "docs/fixtures/issue-123-ui-evaluation-supplemental-pairs.json",
+      "sha256": "1bf192223986cc7b98885d98bb97cecdbda5ec5d6e3769104519dcd675b97472"
+    }
+  ],
+  "original_development_sha256": "34f7ad4f06120c6cba6e1869e3e9ef5a9b250e1687765367ae28be96be7323a0",
+  "original_holdout_sha256": "da6569ee860561dd0d1cb2019ec142bea5b0f8d649f81964ebc3ac0f7ec7c407",
+  "counts": {
+    "original_development": 60,
+    "original_holdout": 60,
+    "supplemental_cases": 16,
+    "supplemental_pairs": 8
+  },
+  "validation": {
+    "structural": "PASS",
+    "protocol": "PASS_PROTOCOL_ONLY",
+    "DRAFT_rejection": "PASS",
+    "SHA_tamper_rejection": "PASS",
+    "independent_review": "PASS_NO_OPEN_P1_P2"
+  },
+  "calls": {
+    "model": 0,
+    "http": 0,
+    "gradle": 0
+  },
+  "accuracy_measured": false,
+  "old_corpus_or_real_results_or_thresholds_changed": false
+}

@@ -1,5 +1,15 @@
 # 새 #107 구현·통합 Worklog
 
+## #123 UI 계약·분류 평가 준비 재개 (2026-10-18 UTC)
+
+현재 새후보 검증: backend snapshot1조건/web activequestion1조건 최소 수정 후 독립 server7 RED1/controls6→7GREEN/FI2(assert1·5)/매복구7PASS, web7 RED4/controls3→7GREEN/기존67포함74PASS/FIassert4·복구7을 완료했다. 현재웹전체 api/lint/typecheck/build/627unit·425browser+기존skip1/실패·flaky·retry0 PASS다. 원본PR31의집중157/22와중복합산하지않는다. Native14도수정source에서실API154·routeMock0·외부/실AI/OAuth0 PASS, 실제OpenAPI JSON동일·source482/runtime1559/deps216·자산전후동일·정상종료를확인했다. Primary합성provider가TwoStage/classifier/금융graph를우회함을명시한다. 사전정답은기존120불변+새8쌍16/overlay·manifest1d15a4e/독립reviewPASS/structural·PROTOCOL_ONLY·DRAFT/변조거절PASS로봉인했고모델결과는추가하지않았다. 상세는 [UI·평가 준비 검증](ISSUE_123_UI_AND_EVALUATION_VERIFICATION.md)이다. 서버 unchanged전체guard도 exit0/source558전후동일·새214suites/1717중1713PASS·기존4SKIP/실패·오류0으로완료했다. 최종독립게시review도LOCAL PASS/미해결P1P2없음으로봉인됐다. 다음시작점은별도server/web Draft·정확HEADCI다. Commit/PR 동일커밋예정으로기록하며원격상태는Git/PR/로컬receipt에서이어확인한다.
+
+독립 계약 감사에서 NEEDS_CHOICE 취소 후 snapshot의 질문과 웹 활성 controls가 남아 새 입력을 막는 P2를 발견했다. 기존67/core+관련90 unit,22 browser는 현재원본PR31에서 재PASS했지만 이 조합은 기존 oracle에 없었다. 서버#128·웹#32와 별도 격리 branch에 independent regression→최소projection/UI guard를 준비하며, 취소한 질문의 DB 이력·3회상한은 삭제/환급하지 않는다. 기존 PR126/31 원본branch는 변경하지 않는다. 새 native는 수정 source를 대상으로 재준비하고 기존 하네스의 Primary synthetic provider 우회 범위를 명시한다.
+
+부모의 추가 지시로 유료 호출 없이 서버18cdb5d/웹PR31의02a68d8을 원격 재확인하고 UI 상태/질문·선택·직접 수정·제출·마감·비공개 계약 및 기존 시나리오를 역할 분리해 점검한다. 기존 unit620/browser425와 native12는 이전 당시 증거로 보존하고, 이번 집중 재실행이나 새 source의 관통 성공으로 합산하지 않는다. 현재18920/18921/18922 fixture는 미기동이며 현 source 재준비 가능성을 먼저 확인한다. 기존 사전 정답 개발60/holdout60의 요청된8차원 coverage와 양성/음성 기준을 독립 점검하고, 원 corpus/정답/기존 실증·threshold를 고치지 않는다. holdout본문은 prompt/구현 담당에게 공개하지 않는다.
+
+다음 시작점은 기존 테스트/계약 대응표→가능한 로컬·격리 집중 검증→필요한 누락의 최소 독립 검증 및 평가 준비 봉인→리뷰/상태 기록이다. 새 유료호출0·UNKNOWN환급0·누적예약USD1.33185536/합산USD2·보수여유USD0.66814464를 유지한다. 작은 호출계획/상한 고정 전 실제 추가평가0, 임계값 결과맞춤0이다. 제품 추가 수정이 필요하면 격리된 승인 범위에서 진행하며 기존 PR31/다른 브랜치 덮어쓰기·병합·운영활성화·배포0이다. README후속#127은 선행검증이후, Linear는 부모 전용 동기화 담당으로 유지한다.
+
 ## 최신 수정 HEAD fresh 15초 경로 검증 (2026-10-18 UTC)
 
 부모가 승인한 정확 HEAD `4101038fd421351affa2a1fcdd5741083cb1a6b6`/source557에서 사전 고정 LIVE-KO-03 한 건을 실행했다. 원문·문맥·LOW2048·500자·공통15초·사전 합성threshold0.8을 바꾸지 않았다. 새 helper의 독립 whole-CLI mock25/25 및 실행 전 ACCEPTED 뒤 root가 07:21:29–07:21:37 UTC에 A/count/generation 각1회만 호출했고 모두 HTTP200, retry/fallback/redirect0이다. 만료 직전 pre-open P2는 최소 수정·같은 독립 재현HTTP0으로 닫았고 원실패와 초기fixture오류를 별도 보존했다.

@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "counts": {
+    "development": {
+      "count": 60,
+      "gold_counts": {
+        "NEEDS_REVIEW": 24,
+        "CLEAR": 24,
+        "INDETERMINATE": 12
+      },
+      "group_counts": {
+        "AMBIGUOUS": 24,
+        "NORMAL": 10,
+        "CONTEXT_RESOLVED": 14,
+        "ADVERSARIAL": 6,
+        "UNINTERPRETABLE": 6
+      },
+      "dimension_counts": {
+        "PLACE": 12,
+        "DATE": 12,
+        "TIME": 15,
+        "NEGATION": 6,
+        "CONTEXT": 14,
+        "CONTRADICTION": 3,
+        "EXCEPTION": 6,
+        "SCOPE": 4,
+        "INTENTIONAL_BREADTH": 5,
+        "ATTACK": 6,
+        "INVALID_INPUT": 6,
+        "PERSONAL_REFERENCE": 1,
+        "REFERENCE": 8,
+        "PREFERENCE": 1,
+        "DEPENDENCY": 2
+      },
+      "dimension_gold_counts": {
+        "ATTACK": {
+          "INDETERMINATE": 6
+        },
+        "CONTEXT": {
+          "CLEAR": 14
+        },
+        "CONTRADICTION": {
+          "NEEDS_REVIEW": 3
+        },
+        "DATE": {
+          "CLEAR": 8,
+          "NEEDS_REVIEW": 4
+        },
+        "DEPENDENCY": {
+          "CLEAR": 2
+        },
+        "EXCEPTION": {
+          "NEEDS_REVIEW": 3,
+          "CLEAR": 3
+        },
+        "INTENTIONAL_BREADTH": {
+          "CLEAR": 5
+        },
+        "INVALID_INPUT": {
+          "INDETERMINATE": 6
+        },
+        "NEGATION": {
+          "CLEAR": 2,
+          "NEEDS_REVIEW": 4
+        },
+        "PERSONAL_REFERENCE": {
+          "CLEAR": 1
+        },
+        "PLACE": {
+          "NEEDS_REVIEW": 6,
+          "CLEAR": 6
+        },
+        "PREFERENCE": {
+          "CLEAR": 1
+        },
+        "REFERENCE": {
+          "CLEAR": 3,
+          "NEEDS_REVIEW": 5
+        },
+        "SCOPE": {
+          "NEEDS_REVIEW": 4
+        },
+        "TIME": {
+          "CLEAR": 11,
+          "NEEDS_REVIEW": 4
+        }
+      },
+      "core_gate_count": 36,
+      "explicit_pair_count": 0,
+      "explicit_stage_b_gold_count": 0,
+      "reason_present_count": 60,
+      "preserve_present_count": 60,
+      "raw_codepoint_range": [
+        18,
+        65
+      ],
+      "raw_nul_count": 0
+    },
+    "holdout": {
+      "count": 60,
+      "gold_counts": {
+        "NEEDS_REVIEW": 24,
+        "CLEAR": 24,
+        "INDETERMINATE": 12
+      },
+      "group_counts": {
+        "AMBIGUOUS": 24,
+        "NORMAL": 10,
+        "UNINTERPRETABLE": 6,
+        "CONTEXT_RESOLVED": 14,
+        "ADVERSARIAL": 6
+      },
+      "dimension_counts": {
+        "PLACE": 11,
+        "DATE": 11,
+        "TIME": 14,
+        "INVALID_INPUT": 6,
+        "CONTRADICTION": 3,
+        "REFERENCE": 8,
+        "CONTEXT": 14,
+        "PREFERENCE": 1,
+        "EXCEPTION": 6,
+        "DEPENDENCY": 2,
+        "NEGATION": 7,
+        "INTENTIONAL_BREADTH": 5,
+        "SCOPE": 5,
+        "ATTACK": 6,
+        "PERSONAL_REFERENCE": 1
+      },
+      "dimension_gold_counts": {
+        "ATTACK": {
+          "INDETERMINATE": 6
+        },
+        "CONTEXT": {
+          "CLEAR": 14
+        },
+        "CONTRADICTION": {
+          "NEEDS_REVIEW": 3
+        },
+        "DATE": {
+          "CLEAR": 7,
+          "NEEDS_REVIEW": 4
+        },
+        "DEPENDENCY": {
+          "CLEAR": 2
+        },
+        "EXCEPTION": {
+          "CLEAR": 3,
+          "NEEDS_REVIEW": 3
+        },
+        "INTENTIONAL_BREADTH": {
+          "CLEAR": 5
+        },
+        "INVALID_INPUT": {
+          "INDETERMINATE": 6
+        },
+        "NEGATION": {
+          "CLEAR": 3,
+          "NEEDS_REVIEW": 4
+        },
+        "PERSONAL_REFERENCE": {
+          "CLEAR": 1
+        },
+        "PLACE": {
+          "NEEDS_REVIEW": 5,
+          "CLEAR": 6
+        },
+        "PREFERENCE": {
+          "CLEAR": 1
+        },
+        "REFERENCE": {
+          "NEEDS_REVIEW": 5,
+          "CLEAR": 3
+        },
+        "SCOPE": {
+          "CLEAR": 1,
+          "NEEDS_REVIEW": 4
+        },
+        "TIME": {
+          "CLEAR": 10,
+          "NEEDS_REVIEW": 4
+        }
+      },
+      "core_gate_count": 36,
+      "explicit_pair_count": 0,
+      "explicit_stage_b_gold_count": 0,
+      "reason_present_count": 60,
+      "preserve_present_count": 60,
+      "raw_codepoint_range": [
+        19,
+        71
+      ],
+      "raw_nul_count": 0
+    }
+  },
+  "interpretation": [
+    "Dimensions overlap; do not sum them as samples.",
+    "Gold counts are existing A semantic oracle, not predicted/model outcomes.",
+    "Dependency and intentional breadth CLEAR examples protect valid broad/dependent intent; no artificial positive balancing.",
+    "Explicit pair count zero does not prove no possible semantic pair exists. Existing similar examples have not been certified as minimal contrasts.",
+    "B gold/question-policy gap is annotation coverage, not proof all raw text must be replaced."
+  ]
+}
