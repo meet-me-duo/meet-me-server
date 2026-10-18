@@ -1,0 +1,36 @@
+{
+  "workItem": "issue130-representative-harness",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticContractTest.java",
+      "sha256": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java",
+      "sha256": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java",
+      "sha256": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_synthetic_tests.py",
+      "sha256": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/run_synthetic_tests.py",
+    "--java-test",
+    "L01_missing_root_seal_outbound0",
+    "--java-test",
+    "L02_wrong_root_seal_outbound0"
+  ],
+  "failedTests": [
+    "Issue130SyntheticContractTest#L01_missing_root_seal_outbound0",
+    "Issue130SyntheticContractTest#L02_wrong_root_seal_outbound0"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T09:53:50Z"
+}

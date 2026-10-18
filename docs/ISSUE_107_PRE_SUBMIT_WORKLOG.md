@@ -1,5 +1,31 @@
 # 새 #107 구현·통합 Worklog
 
+## #130 단회 실측 STOP·도구 검증 완료 (2026-10-18 UTC)
+
+- [x] 독립102 합성 GREEN·FI7/8assert 및 실제 CLI→canonical TLS 합성16/replay추가0, 소스234+CI/root235 동결. 파일 원자0600·startup cutoff kill 별도 유효 RED와 원본 fixture 오류 보존
+- [x] 비용review8fb3·실행전review9de9 ACCEPTED·planb381/compiledruntime 지문 고정 후 root 단회 실행. STARTED1/CONNECTION(outerCONFIGURATION)/관측network0·status0·응답0, UNRUN15. 채점분모0/정확도·FP/FN·p50/p95 미산출, 재시도0
+- [x] 기존hold1.33185536+전체추가.23068672=USD1.56254208 유지·여유.43745792·환급0. interceptor0을청구0증명으로쓰지 않으며 unknown1을보존. gold/선택/STOP/.8 불변
+- [x] 현재root130 전체필수guard exit0·fresh214suites/1717중1713PASS+기존4SKIP·source235전후동일/454.85s를확인했다.
+- [ ] 최종 독립 게시review·기록commit/push/Draft/정확HEADCI. 미완료대표의미평가/#123와운영활성화는그대로 열림. 별도131 runtime C1은43GREEN/C2·배포전달 독립TDD중이다
+
+상세는 [대표 평가 기록](ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md)이다. 실제 평가대상398+미게시helper해시와미래게시commit을구별한다. 추가 실제 호출은중단했으며 소스변경없는전송환경대조만진행한다. Commit/PR 동일후속커밋예정.
+
+## 이메일 저장·인증 진단 사실 확인 (2026-10-18 UTC)
+
+develop398의 login-only Google scope는 openid profile, Kakao는 openid,profile_nickname이다. account_users에는 표시 이름, account_identities에는 provider+subject가 저장되며 이메일/Gmail 주소·메일 내용 필드/수집 경로는 없다. sub는 plain string이며 필드 암호화가 없다. 저장소의 subject SHA256은 advisory transaction lock ID용이다. 현재 main91eb에는 이 OAuth 계정 구현이 없다. Terraform RDS storage_encrypted=true/EBS encrypted=true는 선언이며 실제 운영 적용 상태는 조회하지 않았다. DB 개인정보·토큰·Secret을 읽거나 변경하지 않았다.
+
+현재 웹 HTTPS 통합에서 정상 refresh200 뒤 이전 쿠키 alias 재전송→401을 실제 재현했다. 프록시 Set-Cookie 출력은 upstream과 메모리 비교 일치, 정확한 브라우저 수신/unload 시점은 미관측이다. strict replay revoke는 유지하고 원8개 실패를 보존한다. 모델/예산 코드 검증과 별개 출시 차단이며 상세 공개 issue 게시가 자동 검토에서 거절되어 로컬 기록으로 보존했다. PC 자체가 필요한 차단은 확인되지 않았고 실제 본인 OAuth/MFA 검증이 준비되면 최소 행동만 안내한다.
+
+## #130 대표 실평가·웹 HTTPS·조건부 main/배포 승인 (2026-10-18 UTC)
+
+서버129 normal merge39825357와 정확 push CI39113901061 Quality/ARM64/literalSHA 및 122/126 간접merged·openPR0/원격branch정리·Lifecycle성공을 완료했다. 새 사용자 지시로 웹25–31의 대체 근거를 재검증하고 PR33 링크/이유와 함께 closed-unmerged 처리했으며24/33은 Draft다. 고유 HTTPS 원7파일은 byte그대로 archive, 현계정/202→CLEAR·TLS/CORS·0/1/2accepted 마감8개를 역할분리해 통합 검증한다. 과거8/native14와 새8을 합산하지 않는다.
+
+사용자는 검증 뒤 main 정상PR·정확CI·실제배포·가입/로그인 확인까지 승인했다. security/Secrets/admin 변경과 미검증모델활성화 정책 결정은 제외한다. 공개 OAuth 설정완료 인계는 유지하나 실제 AUTH/RS256/JWKS 전달·실로그인·DB V1–V17 전환/복구 상태는 미확인이다. 현환경 AWS도구/프로필은 없고 실제운영조회0, 과거 main 배포성공/실패를 새 릴리스 검증으로 대신하지 않는다. OFF상태에서auth검증은 가능하지만 새 precheck accepted완료는 안되며 provider단일flag도 안전한2단계/authority활성화가 아니다. 구체차단을 보고하고 임의토글·가격seed·LEGACY우회하지 않는다.
+
+별도 issue130/clean398 feature에서 봉인 supplemental8쌍16건 A-only평가를 준비한다. 원120불변/선택0/rootblind, manifestd5be33cd/source1d15a4e·정답/순서/STOP사전고정이다. 전체300초는wrapper시작·JVMstartup을 포함하고 A16/Bcount0/retry0/serial1/15초·wholewire16KiB·500자·fixedoutputsingle-use를 독립 RED/mock으로 확인한 뒤 실행한다. rawsemantic오분류는 수정없이16을 계속하고 refusal/HTTP/contract/usage불명/timeout/예산fence는STOP한다. .8은기존진단fixture일뿐 운영threshold는null/OFF이며 B_NOT_RUN은질문성공이아니다.
+
+현재 actual추가0·UNKNOWN환급0·heldUSD1.33185536/총USD2 유지. 추가계획hold.23068672/합1.56254208/여유.43745792는공식invoicehardcap아닌보수proxy이며 실행직전동결·예약한다. 다음시작점은 HTTPS8와평가기계mock/사전리뷰→제한실측/독립성적·지연/비용감사→검증기록/정확CI→출시준비차단판단이다. README127은실증에맞춘Engineering구도만준비하며이미지는부모인계, Linear부모담당이다.
+
 ## 서버 develop 병합 승인·열린 PR 정리 (2026-10-18 UTC)
 
 사용자가 Decision Model 포함 검증 통과 뒤 서버 develop 병합을 명시 승인했다. main·운영 활성화·배포·추가 유료 호출과 웹 main 병합은 승인 범위에 포함하지 않는다. 아래 병합 제외 문구는 이전 단계의 이력이다. PR129의67bad4d0가 PR12618cdb5d와 PR122e83d5280를 정확 ancestor로 포함하므로, 독립 준비 리뷰는 최종 필수 CI/충돌/리뷰 확인 뒤 PR129 단일 normal merge를 권고했다. 검증된 source558·workflow·OFF/DENY는 그대로이며, 전체 통합 범위를 취소 수정 한 조건만으로 축소해 설명하지 않는다.
@@ -256,3 +282,12 @@ core/fence 격리FI4는 baseline94→cap등호허용/중복dispatch app+SQL CAS 
 - [AGENT] 부모가 요청한 bounded 별도attempt2를 고정planb4fe/독립실행리뷰8c48 뒤05:47 UTC 한 번 실행했다. A200/.06LOW/in512out0/394.6ms→count200530/245.3ms→GEN공통15초TIMEOUT childkill. JVM전체15538.3ms(준비포함), 생성HTTPstatus/개별지연/질문/usage는미관측이며genconsumedSTARTED_UNKNOWN_HELD그대로보존·늦은청구환급0. 누계D6/in3085/out0·count2·gen시도2/성공0=평가HTTP10(모델metadata2별도), 알려진D만baseUSD0.0003085/2.2보수USD0.00067870. 기존hold전부유지+총예약0.70918144/추가여유0.29081856. 다음동일full견적0.31854592를추가하면1.02772736으로USD1보다0.02772736초과해추가dependent실제호출중단. 원503/분류FAIL/STOP·oraclec69/threshold.8·prompt/2048LOW/15초변경0, actualquestion의도보존평가여전히불가. `.tdd/verification/issue123-live-two-stage-attempt2-observed.json`과history에보존했고독립감사후게시최종화한다.
 
 - [AGENT] 2026-10-18 최종 게시 리뷰 PASS `issue123-phase2-publication-final-review.md` d545f2fa, 미해결 P1/P2 없음. 원본 fullguard1684=1680PASS/기존4SKIP·556지문·RGR/FI/수정이력·실진단503/TIMEOUT/UNKNOWN와 Closes#125 범위를 모두 봉인했다. Commit/PR: 동일 커밋 예정. 다음 시작점은 feature/issue-123-durable-ai-budget의 의도된 코드·필수 테스트·상태기록 stage/commit/push→별도 develop 대상 Draft→정확 HEAD CI다. 커밋 이후 정확 SHA·PR URL·각 job checkout/tree와 최종CI는 해당 PR/#125/#123의 상태 및 ignored `.codex/tdd-evidence/issue123-publication/result.json`에 보존한다. 현재 실제 생성 질문 의미/운영threshold·가격·활성화·최종 청구 입증은 미완료이고 추가 실제 호출은 예산상중단·Decisions merge/deploy0이다. Linear JIN-72 추가 갱신은 기존 automatic approval review의 민감 구현정보 공개 권한 부족 거절로 보류하며 새승인없는재시도0이다.
+
+
+- [AGENT] 2026-10-18 11:10 UTC #130 후속: JDK DIRECT/동일JDK DNS실패·Python환경proxy 무인증HEAD421 대조 후 helper 명시 ENVIRONMENT_HTTPS_PROXY만 최소 보완. 새 독립63 validRED42+control21→63GREEN·unchanged102GREEN·FI8 exactrestore 모두PASS, budget previous1.56254208/원예약증거 필수로 과거hold rollback거부. 새factory 무인증HEAD1은 proxy연결/TLSstart 뒤 SSLHandshakeException/HTTP미관측이었다. 기존 공개CA client한정 추가도 trust anchor확장이므로 명시승인대기·CAcode/운영/전역설정/새유료0. 현재holdUSD1.56254208/여유0.43745792/환급0, retry0.23068672는 제안일뿐 미예약/미실행. 최신 proxy source 전체guard/게시리뷰와 CA선택·실제의미평가는 후속이며 최초235source guard결과를 새source로 소급하지 않는다.
+
+
+- [AGENT] 2026-10-18 11:22 UTC #130 updated proxy source 필수 hook selftests/ktlintCheck/assemble/test exit0·source566 전후동일(11.398초). 기존XML1717=1713PASS/기존4SKIP 재사용으로 fresh전체실행 주장0, 원래fresh235source guard와별도독립165/FI8을구분한다. `.tdd/verification/issue130-proxy-source-final-quality.json` SHA8d7b53f4. 현재paid0추가·hold1.56254208/여유0.43745792·환급0/CA신뢰추가승인대기 유지. 실제대표의미 미측정·최종게시review는후속이다.
+
+
+- [AGENT] 2026-10-18 11:34 UTC #130 최종 독립 기술게시review LOCAL PASS(미해결P1/P2없음). current566source·집중13파일·165합성/FI8·필수6절PR본문과 STOP/분모0/hold1.56254208/CA대기/paid추가0 정합을확인했다. Commit/PR 동일커밋예정이며 다음단계는feature/issue-130-representative-decisions의의도된 실행기·필수검증·상태기록 commit/push→별도Draft→정확HEADCI다. 실제품질/가격/threshold/운영활성화완료·추가유료승인으로확대하지않으며이후SHA/PR/CI는Git·PR·로컬publicationreceipt에기록해재귀상태커밋을만들지않는다.

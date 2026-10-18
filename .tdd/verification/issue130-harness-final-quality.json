@@ -1,0 +1,45 @@
+{
+  "workItem": "issue130-representative-decisions",
+  "status": "PASS",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "sourceState": "production baseline plus frozen unpublished evaluation helper; future publication head is distinct",
+  "command": "JAVA_HOME=/tmp/meetme-jdk17 GRADLE_USER_HOME=/tmp/meetme-gradle-home OPENAI_API_KEY= GEMINI_API_KEY= python3 .codex/hooks/tdd_guard.py < commit-event.json",
+  "hookEvent": {
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git commit"
+    }
+  },
+  "requiredTasks": [
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "receipt": {
+    "exitCode": 0,
+    "sourceBeforeAfterEqual": true,
+    "sourceFiles": 235,
+    "elapsedSeconds": 454.85,
+    "tests": 1717,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "suites": 214,
+    "allXmlFresh": true,
+    "paidCalls": 0,
+    "keysBlankInSubprocess": true
+  },
+  "rawEvidence": "/tmp/issue130-full-guard",
+  "evidenceSha256": {
+    "receipt.json": "7a0db1f7d93403eef372129e33eaed2cea21ea5a9ea14afbf52e6a97eec81cf6",
+    "suite-inventory.json": "9171e38adafbc7f3537c2d56f4e31c0b3f136c17405117db104c2032bf8271c7",
+    "source-after.json": "e3ac3a55acdf04832dab2e9275e87bb5cb4fcf976ce8b2d6caaf4e3a89bc7a0d",
+    "guard.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source-before.json": "e3ac3a55acdf04832dab2e9275e87bb5cb4fcf976ce8b2d6caaf4e3a89bc7a0d",
+    "run.py": "e6851670fddbd9005da8f4903a5952965d0225aa28865146281133f33cd0b069"
+  },
+  "interpretedPassCount": 1713,
+  "existingSkipCount": 4,
+  "realModelQualityClaim": false
+}

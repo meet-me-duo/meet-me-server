@@ -1,0 +1,63 @@
+test_CLI01_validate_valid_synthetic_plan (__main__.RunnerContract.test_CLI01_validate_valid_synthetic_plan) ... ok
+test_CLI02_default_dry_run_no_java_key_or_consumption (__main__.RunnerContract.test_CLI02_default_dry_run_no_java_key_or_consumption) ... ok
+test_CLI03_explicit_execution_without_root_seal_rejected (__main__.RunnerContract.test_CLI03_explicit_execution_without_root_seal_rejected) ... ERROR
+test_CLI04_missing_cost_rejected (__main__.RunnerContract.test_CLI04_missing_cost_rejected) ... ok
+test_CLI05_null_cost_rejected (__main__.RunnerContract.test_CLI05_null_cost_rejected) ... ok
+test_CLI06_inexact_budget_amount_rejected (__main__.RunnerContract.test_CLI06_inexact_budget_amount_rejected) ... ok
+test_CLI07_over_approved_ceiling_rejected (__main__.RunnerContract.test_CLI07_over_approved_ceiling_rejected) ... ok
+test_CLI08_missing_cost_evidence_rejected (__main__.RunnerContract.test_CLI08_missing_cost_evidence_rejected) ... ok
+test_CLI09_wrong_cost_evidence_hash_rejected (__main__.RunnerContract.test_CLI09_wrong_cost_evidence_hash_rejected) ... ok
+test_CLI10_changed_source_manifest_rejected (__main__.RunnerContract.test_CLI10_changed_source_manifest_rejected) ... ok
+test_CLI11_changed_runtime_helper_hash_rejected (__main__.RunnerContract.test_CLI11_changed_runtime_helper_hash_rejected) ... ok
+test_CLI12_changed_index_hash_rejected (__main__.RunnerContract.test_CLI12_changed_index_hash_rejected) ... ok
+test_CLI13_wrong_output_binding_rejected (__main__.RunnerContract.test_CLI13_wrong_output_binding_rejected) ... ok
+test_CLI14_output_symlink_rejected (__main__.RunnerContract.test_CLI14_output_symlink_rejected) ... ok
+test_CLI15_canonical_endpoint_override_rejected (__main__.RunnerContract.test_CLI15_canonical_endpoint_override_rejected) ... ok
+test_CLI16_fixed_threshold_override_rejected (__main__.RunnerContract.test_CLI16_fixed_threshold_override_rejected) ... ok
+test_CLI17_larger_case_limit_rejected (__main__.RunnerContract.test_CLI17_larger_case_limit_rejected) ... ok
+test_CLI18_retry_redirect_flags_rejected (__main__.RunnerContract.test_CLI18_retry_redirect_flags_rejected) ... ok
+test_CLI19_malformed_plan_is_bounded_safe_failure (__main__.RunnerContract.test_CLI19_malformed_plan_is_bounded_safe_failure) ... ok
+test_CLI20_freeze_validation_counts_in_whole300 (__main__.RunnerContract.test_CLI20_freeze_validation_counts_in_whole300) ... ok
+test_CLI21_compilation_counts_before_java_spawn (__main__.RunnerContract.test_CLI21_compilation_counts_before_java_spawn) ... ok
+test_CLI22_late_child_success_never_accepted_after300 (__main__.RunnerContract.test_CLI22_late_child_success_never_accepted_after300) ... ERROR
+test_CLI23_child_timeout_no_second_java_or_retry (__main__.RunnerContract.test_CLI23_child_timeout_no_second_java_or_retry) ... ok
+
+======================================================================
+ERROR: test_CLI03_explicit_execution_without_root_seal_rejected (__main__.RunnerContract.test_CLI03_explicit_execution_without_root_seal_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/issue123-representative-evaluation/server/evaluation/issue130/run_representative_decisions.py", line 154, in main
+    need(os.environ.get('ISSUE130_FROZEN_PLAN_SHA256') == digest and os.environ.get('ISSUE130_EXECUTE_FROZEN') == digest)
+  File "/workspace/issue123-representative-evaluation/server/evaluation/issue130/run_representative_decisions.py", line 28, in need
+    raise EvaluationFailure(code)
+issue130_runner_under_test.EvaluationFailure: CONFIGURATION
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/issue123-representative-evaluation/server/evaluation/issue130/tests/test_representative_decisions.py", line 102, in test_CLI03_explicit_execution_without_root_seal_rejected
+    code, _ = self.main([*self.args, '--execute-frozen'])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/issue123-representative-evaluation/server/evaluation/issue130/tests/test_representative_decisions.py", line 60, in main
+    code = RUNNER.main(self.args if args is None else args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/issue123-representative-evaluation/server/evaluation/issue130/run_representative_decisions.py", line 192, in main
+    except subprocess.TimeoutExpired:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'types.SimpleNamespace' object has no attribute 'TimeoutExpired'
+
+======================================================================
+ERROR: test_CLI22_late_child_success_never_accepted_after300 (__main__.RunnerContract.test_CLI22_late_child_success_never_accepted_after300)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/issue123-representative-evaluation/server/evaluation/issue130/tests/test_representative_decisions.py", line 258, in test_CLI22_late_child_success_never_accepted_after300
+    self.assertLessEqual(java_timeout, 280.01)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/case.py", line 1261, in assertLessEqual
+    if not a <= b:
+           ^^^^^^
+TypeError: '<=' not supported between instances of 'NoneType' and 'float'
+
+----------------------------------------------------------------------
+Ran 23 tests in 17.499s
+
+FAILED (errors=2)

@@ -1,0 +1,24 @@
+{
+  "workItem": "issue130-private-creation",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java",
+      "sha256": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_all_synthetic_tests.py",
+      "sha256": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/run_all_synthetic_tests.py",
+    "--private-only"
+  ],
+  "failedTests": [
+    "Issue130PrivateCreationContractTest#prepare wire is private from creation before any chmod"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:08:33Z"
+}

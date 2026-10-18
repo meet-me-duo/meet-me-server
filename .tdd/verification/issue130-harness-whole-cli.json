@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": "actual Python CLI -> javac -> actual child Java -> production canonical classifier/parser/TwoStage -> localTLSsynthetic16",
+  "requests": 16,
+  "maximumConcurrent": 1,
+  "replayExtraRequests": 0,
+  "defaultDryRun": {
+    "mode": "DRY_RUN_NO_NETWORK",
+    "executionPermitted": false
+  },
+  "wrapperSeconds": 3.046,
+  "sourceBeforeAfterEqual": true,
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "paidCalls": 0,
+  "sealedDataRead": false,
+  "bootstrapExternalNetworkTripwire": true
+}

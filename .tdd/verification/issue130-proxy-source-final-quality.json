@@ -1,0 +1,31 @@
+{
+  "exitCode": 0,
+  "sourceBeforeAfterEqual": true,
+  "sourceFiles": 566,
+  "sourceManifestSha256": "d3185384dfda1fcd5575108787cdfb1e9e431998646b73f21bc51949e6a9861b",
+  "elapsedSeconds": 11.398,
+  "tests": 1717,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 214,
+  "allXmlFresh": false,
+  "paidCalls": 0,
+  "keysBlankInSubprocess": true,
+  "classification": "UPDATED_PROXY_SOURCE_MANDATORY_GUARD_PASS_PRIOR_TEST_XML_REUSED_NOT_NEW_FRESH1717",
+  "actualSourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "helperJavaSha256": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+  "helperPythonSha256": "b2f01a76fc2384f29c8eecf4658ff4f41f9096d844822a005f26213914c3f409",
+  "priorFreshFullGuard": {
+    "path": "/tmp/issue130-full-guard/receipt.json",
+    "tests": 1717,
+    "passed": 1713,
+    "skipped": 4
+  },
+  "newIndependentSyntheticTests": {
+    "legacy": 102,
+    "environmentProxy": 63,
+    "faults": 8
+  },
+  "guardLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

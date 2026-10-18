@@ -1,0 +1,37 @@
+{
+  "kind": "AUTHOR_FIXTURE_STRENGTHENING",
+  "expectationsChanged": false,
+  "changes": "Only missing/wrong root-seal is invalid; remaining budget and synthetic key are otherwise valid",
+  "original100Red": "historical original test file hashes; not current-file full100 RED",
+  "currentFreshRed": {
+    "tests": 3,
+    "assertionFailures": 3,
+    "errors": 0
+  },
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticContractTest.java",
+      "sha256": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java",
+      "sha256": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java",
+      "sha256": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_synthetic_tests.py",
+      "sha256": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_representative_decisions.py",
+      "sha256": "e420226a9a8f017fae90416ffd63046066dece2fa0b4a757a060a1df7c653648"
+    }
+  ],
+  "sourceBeforeAfterEqual": true,
+  "paidCalls": 0,
+  "sealedDataRead": false,
+  "testSourceFrozen": true
+}

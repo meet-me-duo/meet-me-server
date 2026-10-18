@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "tests": 102,
+  "passed": 102,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "originalSevenTestBytesUnchanged": true,
+  "sourceBeforeAfterEqual": true,
+  "newModeTestsNotCountedAsLegacy": true,
+  "base101DurationSeconds": 62.32,
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "sealedDataRead": false,
+  "evidence": ".codex/tdd-evidence/issue130-environment-proxy-legacy-102"
+}

@@ -1,0 +1,72 @@
+{
+  "workItem": "issue130-environment-proxy",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java",
+      "sha256": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java",
+      "sha256": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_environment_proxy.py",
+      "sha256": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_proxy_tests.py",
+      "sha256": "ad60f620d13f8add1101c3d2500a3b0204cefc74f1c8bb46044d541740411ecf"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py"
+  ],
+  "failedTests": [
+    "Issue130EnvironmentProxyContractTest#PX01_lowercase_selected_unresolved",
+    "Issue130EnvironmentProxyContractTest#PX02_uppercase_only_selected",
+    "Issue130EnvironmentProxyContractTest#PX03_absent_port_defaults80",
+    "Issue130EnvironmentProxyContractTest#PX04_root_path_allowed",
+    "Issue130EnvironmentProxyContractTest#PX05_NO_PROXY_never_selects_DIRECT",
+    "Issue130EnvironmentProxyContractTest#PX06_legacy_does_not_infer_env_mode",
+    "Issue130EnvironmentProxyContractTest#PX07_factory_never_reads_API_keys",
+    "Issue130EnvironmentProxyContractTest#PX08_missing_proxy_rejects_no_DIRECT",
+    "Issue130EnvironmentProxyContractTest#PX09_invalid_lower_never_falls_back_upper",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_9",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_10",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_11",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_12",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_13",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_14",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_15",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_16",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_17",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_18",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_19",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_20",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_21",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_22",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_URI_23",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_MODE_24",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_MODE_25",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_MODE_26",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_MODE_27",
+    "Issue130EnvironmentProxyContractTest#PX_BAD_MODE_28",
+    "Issue130EnvironmentProxyContractTest#PB01_new_mode_valid_profile_and_hold_persisted",
+    "Issue130EnvironmentProxyContractTest#PB02_new_mode_rejects_old_hold_rollback",
+    "Issue130EnvironmentProxyContractTest#PB07_unknown_mode_not_legacy_profile",
+    "Issue130EnvironmentProxyContractTest#PB08_new_profile_connection_failure_holds_total",
+    "Issue130EnvironmentProxyContractTest#PC01_actual_Python_CLI_ENV_proxy_TLS16_and_replay0",
+    "Issue130EnvironmentProxyContractTest#PC02_untrusted_CA_never_emits_POST_or_DIRECT",
+    "Issue130EnvironmentProxyContractTest#PC03_wrong_hostname_even_trusted_CA_rejected",
+    "Issue130EnvironmentProxyContractTest#PC04_503_retryafter0_one_POST",
+    "Issue130EnvironmentProxyContractTest#PC05_redirect_one_POST_no_follow",
+    "EnvironmentProxyCostContract#test_PE01_valid_new_profile_and_previous_hold",
+    "EnvironmentProxyCostContract#test_PE02_old_prior_rollback_rejected",
+    "EnvironmentProxyCostContract#test_PE11_unknown_mode_not_legacy_profile",
+    "EnvironmentProxyCostContract#test_PE13_new_mode_dry_run_does_not_execute"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:49:17Z"
+}

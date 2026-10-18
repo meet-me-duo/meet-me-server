@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "syntheticTests": 102,
+  "syntheticFailures": 0,
+  "syntheticErrors": 0,
+  "faultsDetected": 7,
+  "wholeCliSyntheticRequests": 16,
+  "maximumConcurrent": 1,
+  "replayExtraRequests": 0,
+  "sourceAndTestsFrozenUnchanged": true,
+  "actualModelCalls": 0,
+  "actualOAuthCalls": 0,
+  "productionAccess": false,
+  "sealedInputOrGoldRead": false,
+  "evidence": [
+    ".tdd/verification/issue130-harness-final-green.json",
+    ".tdd/verification/issue130-harness-independent-faults.json",
+    ".tdd/verification/issue130-harness-whole-cli.json"
+  ],
+  "limitations": [
+    "No actual service usage/invoice or semantic accuracy evidence",
+    "Cost profile remains proxy reservation estimate rather than proven invoice hard cap",
+    "Unchanged mandatory full guard, independent final source review and root execution seal are parent-owned prerequisites"
+  ],
+  "sourceFingerprints": {
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "7bf79d8cf266e9af84aa292840228535eb117f841d855e0f2e83fcf7a1a2452f",
+    "evaluation/issue130/run_representative_decisions.py": "5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15",
+    "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f",
+    "evaluation/issue130/tests/Issue130SyntheticContractTest.java": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79",
+    "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7",
+    "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240",
+    "evaluation/issue130/tests/run_all_synthetic_tests.py": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665",
+    "evaluation/issue130/tests/run_synthetic_tests.py": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166",
+    "evaluation/issue130/tests/test_representative_decisions.py": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+  }
+}

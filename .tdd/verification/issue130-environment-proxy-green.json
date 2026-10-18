@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "tests": 63,
+  "passed": 63,
+  "assertionFailures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "javaTests": 49,
+  "pythonTests": 14,
+  "sourceBeforeAfterEqual": true,
+  "frozenRedTestBytesUnchanged": true,
+  "durationSeconds": 37.986,
+  "sourceFingerprints": {
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "ad60f620d13f8add1101c3d2500a3b0204cefc74f1c8bb46044d541740411ecf",
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+    "evaluation/issue130/run_representative_decisions.py": "b2f01a76fc2384f29c8eecf4658ff4f41f9096d844822a005f26213914c3f409"
+  },
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "sealedDataRead": false,
+  "evidence": ".codex/tdd-evidence/issue130-environment-proxy-green",
+  "coverage": "new ENV mode canonical TLS synthetic CLI plus supplied-client/classifier controls; not actual proxy/service availability or invoice enforcement"
+}

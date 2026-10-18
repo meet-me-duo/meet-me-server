@@ -1,0 +1,271 @@
+"""Independent CLI/default-dry-run/frozen-plan tests. All case material is synthetic."""
+import contextlib
+import importlib.util
+import io
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+import types
+import unittest
+from unittest import mock
+
+REPO = Path(os.environ['ISSUE130_TEST_SOURCE_ROOT'])
+JAVA = os.environ['ISSUE130_TEST_JAVA']
+CP = os.environ['ISSUE130_TEST_CLASSPATH']
+SPEC = importlib.util.spec_from_file_location('issue130_runner_under_test', REPO / 'evaluation/issue130/run_representative_decisions.py')
+RUNNER = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(RUNNER)
+
+
+class RunnerContract(unittest.TestCase):
+    def setUp(self):
+        self.private = Path(tempfile.mkdtemp(prefix='issue130-python-synthetic-'))
+        self.private.chmod(0o700)
+        exported = self.private / 'fixture.json'
+        run = subprocess.run([JAVA, f'-Dissue130.sourceRoot={REPO}', '-cp', CP,
+                              'Issue130SyntheticContractTest', '--export-fixture', str(exported)],
+                             capture_output=True, text=True, timeout=15)
+        if run.returncode:
+            raise RuntimeError('SYNTHETIC_FIXTURE_EXPORT_FAILED')
+        self.fixture = json.loads(exported.read_text())
+        self.plan = Path(self.fixture['plan'])
+        self.index = Path(self.fixture['index'])
+        self.output = Path(self.fixture['output'])
+        self.cpfile = next(Path(path) for path in self.fixture['config']['runtimeFiles'] if path.endswith('/runtime.classpath'))
+        self.args = ['--plan', str(self.plan), '--index', str(self.index), '--output', str(self.output),
+                     '--classpath-file', str(self.cpfile)]
+
+    def update(self, operation):
+        value = json.loads(self.plan.read_text())
+        operation(value)
+        self.plan.write_text(json.dumps(value))
+
+    def reject_validate(self):
+        try:
+            RUNNER.validate_plan(self.plan, self.index, self.output)
+        except AssertionError:
+            raise
+        except Exception as error:
+            text = str(error)
+            self.assertNotIn(str(self.plan), text)
+            self.assertNotIn('synthetic-issue130', text)
+            return
+        self.fail('Invalid frozen plan must fail closed')
+
+    def main(self, args=None):
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            code = RUNNER.main(self.args if args is None else args)
+        text = stdout.getvalue() + stderr.getvalue()
+        self.assertNotIn(str(self.plan), text)
+        self.assertNotIn(str(self.index), text)
+        self.assertNotIn(str(self.output), text)
+        self.assertNotIn('SYNTHETIC_PRIVATE_RAW_', text)
+        self.assertNotIn('synthetic-issue130-key-MUST-NOT-LEAK', text)
+        self.assertNotIn('Traceback', text)
+        return code, text
+
+    def test_CLI01_validate_valid_synthetic_plan(self):
+        result = RUNNER.validate_plan(self.plan, self.index, self.output)
+        self.assertIsInstance(result, dict)
+
+    def test_CLI02_default_dry_run_no_java_key_or_consumption(self):
+        def forbidden(*args, **kwargs):
+            raise AssertionError('DRY_RUN_MUST_NOT_START_CHILD')
+        def git_only(command, *args, **kwargs):
+            if command and Path(str(command[0])).name == 'git':
+                return subprocess.run(command, *args, **kwargs)
+            return forbidden(command, *args, **kwargs)
+        fake = types.SimpleNamespace(run=git_only, Popen=forbidden, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
+        original_getenv = os.getenv
+        def getenv(key, default=None):
+            if key in ('OPENAI_API_KEY', 'GEMINI_API_KEY'):
+                raise AssertionError('DRY_RUN_MUST_NOT_READ_KEYS')
+            return original_getenv(key, default)
+        with mock.patch.object(RUNNER, 'subprocess', fake, create=True), mock.patch('os.getenv', getenv):
+            code, text = self.main()
+        self.assertEqual(0, code)
+        self.assertIn('DRY_RUN', text.upper())
+        self.assertFalse((self.output / '.suite-consumed.json').exists())
+
+    def test_CLI03_explicit_execution_without_root_seal_rejected(self):
+        def forbidden(*args, **kwargs):
+            raise AssertionError('NO_SEAL_MUST_NOT_START_CHILD')
+        def git_only(command, *args, **kwargs):
+            if command and Path(str(command[0])).name == 'git':
+                return subprocess.run(command, *args, **kwargs)
+            return forbidden(command, *args, **kwargs)
+        fake = types.SimpleNamespace(run=git_only, Popen=forbidden, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
+        with mock.patch.dict(os.environ, {'OPENAI_API_KEY': '', 'GEMINI_API_KEY': ''}, clear=True), mock.patch.object(RUNNER, 'subprocess', fake, create=True):
+            code, _ = self.main([*self.args, '--execute-frozen'])
+        self.assertNotEqual(0, code)
+        self.assertFalse((self.output / '.suite-consumed.json').exists())
+
+    def test_CLI04_missing_cost_rejected(self):
+        self.update(lambda plan: plan.pop('costProfile'))
+        self.reject_validate()
+
+    def test_CLI05_null_cost_rejected(self):
+        self.update(lambda plan: plan.update(costProfile=None))
+        self.reject_validate()
+
+    def test_CLI06_inexact_budget_amount_rejected(self):
+        self.update(lambda plan: plan['costProfile'].update(maximumNewReservedUsd='0.00000001'))
+        self.reject_validate()
+
+    def test_CLI07_over_approved_ceiling_rejected(self):
+        self.update(lambda plan: plan['costProfile'].update(approvedAggregateUsd='1.56254207'))
+        self.reject_validate()
+
+    def test_CLI08_missing_cost_evidence_rejected(self):
+        self.update(lambda plan: plan['costProfile'].pop('review'))
+        self.reject_validate()
+
+    def test_CLI09_wrong_cost_evidence_hash_rejected(self):
+        self.update(lambda plan: plan['costProfile']['review'].update(sha256='0' * 64))
+        self.reject_validate()
+
+    def test_CLI10_changed_source_manifest_rejected(self):
+        config = json.loads(self.plan.read_text())
+        Path(config['sourceManifest']['path']).write_text('{}')
+        self.reject_validate()
+
+    def test_CLI11_changed_runtime_helper_hash_rejected(self):
+        def change(plan):
+            plan['runtimeFiles'][str(REPO / 'evaluation/issue130/Issue130RepresentativeDecisionsCli.java')] = '0' * 64
+        self.update(change)
+        self.reject_validate()
+
+    def test_CLI12_changed_index_hash_rejected(self):
+        self.index.write_text('{}')
+        self.reject_validate()
+
+    def test_CLI13_wrong_output_binding_rejected(self):
+        wrong = self.private / 'other-output'
+        wrong.mkdir()
+        try:
+            RUNNER.validate_plan(self.plan, self.index, wrong)
+        except AssertionError:
+            raise
+        except Exception:
+            return
+        self.fail('Alternate output consumption store must be rejected')
+
+    def test_CLI14_output_symlink_rejected(self):
+        link = self.private / 'linked-output'
+        link.symlink_to(self.output, target_is_directory=True)
+        self.update(lambda plan: plan.update(outputDirectory=str(link)))
+        self.reject_validate()
+
+    def test_CLI15_canonical_endpoint_override_rejected(self):
+        self.update(lambda plan: plan.update(endpoint='http://127.0.0.1:1/v1/decisions'))
+        self.reject_validate()
+
+    def test_CLI16_fixed_threshold_override_rejected(self):
+        self.update(lambda plan: plan.update(minimumConfidence=0.7))
+        self.reject_validate()
+
+    def test_CLI17_larger_case_limit_rejected(self):
+        self.update(lambda plan: plan.update(caseCount=17, maximumHttpAttempts=17))
+        self.reject_validate()
+
+    def test_CLI18_retry_redirect_flags_rejected(self):
+        self.update(lambda plan: plan.update(automaticRetries=1, redirects=1))
+        self.reject_validate()
+
+    def deadline_execution(self, validation_seconds=0, compile_seconds=0, java_seconds=0, timed_out=False):
+        import hashlib
+        state = {'now': 100.0, 'commands': [], 'timeouts': [], 'kills': 0}
+        original_validate = RUNNER.validate_plan
+        def validate(*args):
+            value = original_validate(*args)
+            state['now'] += validation_seconds
+            return value
+        def fake_run(command, *args, **kwargs):
+            name = Path(str(command[0])).name
+            if name == 'git':
+                return subprocess.run(command, *args, **kwargs)
+            if name not in ('java', 'javac'):
+                raise AssertionError('UNEXPECTED_CHILD_COMMAND')
+            state['commands'].append(name)
+            state['timeouts'].append(kwargs.get('timeout'))
+            if name == 'javac':
+                state['now'] += compile_seconds
+            else:
+                state['now'] += java_seconds
+                if timed_out:
+                    raise subprocess.TimeoutExpired(command, kwargs.get('timeout', 1))
+            return subprocess.CompletedProcess(command, 0, stdout='{"status":"COMPLETED"}', stderr='')
+        class FakeProcess:
+            def __init__(self, command, *args, **kwargs):
+                self.args = command
+                self.pid = 987654321
+                self.returncode = None
+                self.stdout = io.StringIO('{"status":"COMPLETED"}')
+                self.stderr = io.StringIO('')
+                self.result = fake_run(command, *args, **kwargs)
+            def communicate(self, *args, **kwargs):
+                if timed_out and Path(str(self.args[0])).name == 'java' and state['kills'] == 0:
+                    raise subprocess.TimeoutExpired(self.args, kwargs.get('timeout', 1))
+                self.returncode = self.result.returncode
+                return self.result.stdout, self.result.stderr
+            def wait(self, *args, **kwargs):
+                self.communicate(*args, **kwargs)
+                return self.returncode
+            def poll(self):
+                return self.returncode
+            def kill(self):
+                state['kills'] += 1
+                self.returncode = -9
+            terminate = kill
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return False
+        fake = types.SimpleNamespace(run=fake_run, Popen=FakeProcess,
+                                     PIPE=subprocess.PIPE, STDOUT=subprocess.STDOUT,
+                                     TimeoutExpired=subprocess.TimeoutExpired,
+                                     CalledProcessError=subprocess.CalledProcessError,
+                                     check_output=lambda command, **kw: fake_run(command, stdout=subprocess.PIPE, **kw).stdout)
+        digest = hashlib.sha256(self.plan.read_bytes()).hexdigest()
+        env = {'OPENAI_API_KEY': 'synthetic-issue130-key-MUST-NOT-LEAK',
+               'GEMINI_API_KEY': '', 'ISSUE130_FROZEN_PLAN_SHA256': digest,
+               'ISSUE130_EXECUTE_FROZEN': digest}
+        with mock.patch.object(RUNNER, 'validate_plan', validate), mock.patch.object(RUNNER, 'subprocess', fake, create=True), \
+             mock.patch('time.monotonic', lambda: state['now']), \
+             mock.patch('time.monotonic_ns', lambda: int(state['now'] * 1_000_000_000)), \
+             mock.patch.dict(os.environ, env), mock.patch('os.killpg', lambda *args: state.update(kills=state['kills'] + 1)):
+            code, text = self.main([*self.args, '--execute-frozen'])
+        self.assertNotEqual(0, code)
+        self.assertIn('TIMEOUT', text.upper())
+        return state
+
+    def test_CLI20_freeze_validation_counts_in_whole300(self):
+        state = self.deadline_execution(validation_seconds=301)
+        self.assertEqual([], state['commands'])
+
+    def test_CLI21_compilation_counts_before_java_spawn(self):
+        state = self.deadline_execution(validation_seconds=299, compile_seconds=2)
+        self.assertEqual(['javac'], state['commands'])
+        self.assertLessEqual(state['timeouts'][0], 1.01)
+
+    def test_CLI22_late_child_success_never_accepted_after300(self):
+        state = self.deadline_execution(validation_seconds=10, compile_seconds=10, java_seconds=281)
+        self.assertEqual(1, state['commands'].count('java'))
+        java_timeout = state['timeouts'][state['commands'].index('java')]
+        self.assertLessEqual(java_timeout, 280.01)
+
+    def test_CLI23_child_timeout_no_second_java_or_retry(self):
+        state = self.deadline_execution(validation_seconds=1, java_seconds=300, timed_out=True)
+        self.assertEqual(1, state['commands'].count('java'))
+
+    def test_CLI19_malformed_plan_is_bounded_safe_failure(self):
+        self.plan.write_text('{SYNTHETIC_PRIVATE_RAW_bad_json')
+        code, _ = self.main()
+        self.assertNotEqual(0, code)
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)

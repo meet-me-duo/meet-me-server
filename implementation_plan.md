@@ -1,5 +1,41 @@
 # meet-me-server Implementation Plan
 
+## #130 환경 proxy 보완·TLS 승인 대기 (2026-10-18 11:10 UTC)
+
+- [x] 원래 첫 N16 CONNECTION STOP/1STARTED_UNKNOWN·15UNRUN/의미분모0·hold1.56254208·여유0.43745792·환급0 원본 보존. JDK DIRECT/같은JDK DNS실패와 환경 proxy 무인증HEAD421만 확인, 모델 가용성·청구0 증명 아님.
+- [x] 평가 helper에만 명시 ENVIRONMENT_HTTPS_PROXY mode 독립63 validRED42/controls21→GREEN·기존102 unchanged GREEN·FI8 탐지/정확복구. 새mode는 이전 실제 예약 증거와 previous1.56254208 고정으로 budget rollback 거부. oldsource/102기대값 보존. CI 두 합성 명령 연결.
+- [x] 새factory 무인증 HEAD1은 proxy연결/TLS시작 뒤 SSLHandshakeException·HTTP미관측. 전역/JDK/OS/운영 보안 설정 변경0, 새paid0.
+- [ ] 기존 공개 환경 CA bundle hash 고정·평가 client 한정 추가는 신뢰 anchor 확장이므로 명시 선택 대기. 승인 전 CA skeleton/구현/활성화0. 승인 뒤에도 새독립TLS계약/FI·unauthprobe·최신guard/source/runtime/cost/실행전review 선행.
+- [x] 후속 proxy source 필수guard exit0/source566 전후동일·11.398초. 기존 XML1717 재사용(1713PASS/기존4SKIP), 새fresh1717 주장0. 별도 새proxy63+기존102/FI8 실행 통과.
+- [x] 기술 실행기·검증·중단결과 범위 최종 독립게시review LOCAL PASS/미해결P1P2없음. 실제 품질분모0·CA미구현/명시선택대기·유료추가0과 currenthold 유지.
+- [ ] commit/push/Draft/exactHEADCI. 운영threshold/가격/활성화·#123 품질 미완료.
+
+새16회 retry 제안0.23068672를 추가하면1.79322880/여유0.20677120이지만 아직 예약·실행하지 않았다. 실제 current hold는 **1.56254208**이다. 독립 원문/gold/선택·기술STOP/.8 fixture 불변. 아래 guard완료는 최초 helper snapshot이다.
+
+## #130 단회 실측 STOP·도구 검증 완료 (2026-10-18 UTC)
+
+- [x] 독립102 합성 GREEN·FI7/8assert 및 실제 CLI→canonical TLS 합성16/replay추가0, 소스234+CI/root235 동결. 파일 원자0600·startup cutoff kill 별도 유효 RED와 원본 fixture 오류 보존
+- [x] 비용review8fb3·실행전review9de9 ACCEPTED·planb381/compiledruntime 지문 고정 후 root 단회 실행. STARTED1/CONNECTION(outerCONFIGURATION)/관측network0·status0·응답0, UNRUN15. 채점분모0/정확도·FP/FN·p50/p95 미산출, 재시도0
+- [x] 기존hold1.33185536+전체추가.23068672=USD1.56254208 유지·여유.43745792·환급0. interceptor0을청구0증명으로쓰지 않으며 unknown1을보존. gold/선택/STOP/.8 불변
+- [x] 현재root130 전체필수guard exit0·fresh214suites/1717중1713PASS+기존4SKIP·source235전후동일/454.85s를확인했다.
+- [ ] 최종 독립 게시review·기록commit/push/Draft/정확HEADCI. 미완료대표의미평가/#123와운영활성화는그대로 열림. 별도131 runtime C1은43GREEN/C2·배포전달 독립TDD중이다
+
+상세는 [대표 평가 기록](docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md)이다. 실제 평가대상398+미게시helper해시와미래게시commit을구별한다. 추가 실제 호출은중단했으며 소스변경없는전송환경대조만진행한다. Commit/PR 동일후속커밋예정.
+
+## #130 대표 Decisions 평가·HTTPS 통합·출시 준비 후속 (2026-10-18 UTC)
+
+- [USER] 검증 후 서버/웹 main 정상 PR 병합·정확 병합 CI·실제 배포·가입/로그인 확인까지 명시 승인했다. 이전 main 보류는 이 조건부 승인으로 대체한다. 보안 설정·자격 증명·관리자 승격은 제외하며, 미검증 모델 임계값/비용 정책·활성화는 임의 확정하지 않는다.
+- [x] [AGENT] PR129 HEAD3591cce6 normal merge3982535765e878875a901dd9d28352358e594f6f/treee8c1c1f5와 정확 develop CI39113901061 Quality/ARM64 SUCCESS·literal checkout을 확인했다. PR122/126 간접 merged, 서버 openPR0/원격 작업branch3개 없음, Lifecycle3개 SUCCESS. #124/125/128 완료·#123 미완료 보존
+- [x] [AGENT] 웹25–31 정확HEAD·33의CI39111519165·독립 대체 근거 재확인 후 이유/PR33 링크를 댓글로 남겨 closed-unmerged 처리. PR24/33만 Draft로 유지. PR24 원7파일 exactbytes/SHA는 docs/history/issue-24-https-original에 archive하고 현재 계정/확인 계약용 HTTPS8은 별도 oracle/실행기로 준비
+- [ ] [AGENT] 현재 server398/web33 계약의 실제 TLS/CA·CORS/OPTIONS·accountHOST·accepted0/1/2 마감·UUID replay·guestproof HTTPS8 통합, 독립 FI/전체 웹 gate/정확 HEAD CI. 기존 native14(실API154)·과거 HTTPS8과 중복 합산하지 않음
+- [x] [AGENT] 새 좁은 issue130 생성 후 clean develop FF398에서 feature/issue-130-representative-decisions 분기. 독립 custodian이 supplemental8쌍16건 전원을 순서·gold와 함께 사전 봉인. 원120선택0/원corpus불변/rootblind. 공개 manifest d5be33cd, source manifest1d15a4e. 균형 대조 진단이며 운영분포 대표성/일반정확도 아님
+- [ ] [AGENT] A-only16·B/count/retry/redirect0·serial1·percall15초/전체300초·500자/wholewire16KiB·출력경로결속/single-use 실행기 독립 RED/mock/FI·비용/실행전 리뷰 뒤 root 단독 실측. raw class/normalization/.8 진단 routing과 B질문 미실행을 구분. 의미오답은 재라벨 없이 전수 기록, refusal/기술/usage불명/예산·fence 실패는 전체 STOP
+- [AGENT] 기존 UNKNOWN hold USD1.33185536/총USD2/환급0 유지. 추가16×0.01441792=USD0.23068672는 기존65536토큰×공식input단가×2.2 proxy 기반 사전 예약 제안으로, 합계1.56254208/여유0.43745792다. 공식 청구 hardcap 입증이 아니며 실제 실행 직전에 봉인·예약한다. 이 기록 시 새 실제 호출0이다.
+- [x] [AGENT] dev/admin 질문 읽기 전용 대조: 공개 dev URL/현재 실행 SHA 확인 증거 없음, 웹 staging/develop 없음. 운영 요약은 별도 /operations·서버 verified account UUID allowlist+enabled true, 기본OFF/빈목록·role승격 UI/API 없음. 계정/DB/권한 변경0
+- [ ] [AGENT] 출시 차단 확인: AUTH/Google/Kakao/RS256/JWKS 실제 전달·실로그인 미확인, 실제 DB history와 V1–V17 first-transition/복구 메타데이터 필요. 현환경 AWS CLI/config/credentialfile 없음·workflowdispatch callable 없음. 기존 과거 배포 이력은 새 릴리스 준비 완료 증거가 아님
+- [AGENT] 개인 AI OFF는 PRE_SUBMIT_V1 저장202 뒤 CONFIGURATION 실패로 새 accepted/CLEAR 완료를 막는다. provider flag만true는 기본 routing=false의 단일Gemini를 열 수 있고 classifier thresholdnull/authorityDENY·운영가격미구성이라 안전한 2단계 활성화가 아니다. auth/signup/login만은 AI OFF와 독립 검증 가능하나 전체 신규 모임 출시PASS로 확대하지 않는다. 임의 토글/가격seed/LEGACYfallback0
+- [ ] [AGENT] 위 검증 뒤 준비된 대응 변경만 main 정상 PR/정확 CI/실제 배포로 진행한다. 차단은 구체 근거와 필요한 사용자 행동으로 보고하며 현재 main·운영 설정/권한 변경0. README127은 관측 사실과 한계에 맞춰 Engineering 구도·필요파일을 준비하고 이미지는 부모가 생성할 수 있게 인계
+
 ## 서버 develop 병합·PR 정리 승인 (2026-10-18 UTC)
 
 - [USER] Decision Model을 포함해 검증을 통과한 서버 변경을 develop까지 병합하고, 대체·중복 PR은 근거를 남겨 정리하도록 명시 승인했다. 아래 과거 병합 제외 기록은 당시 범위다. main·운영 활성화·배포·추가 유료 호출 승인은 아니다. 웹에는 develop이 없으므로 웹 main 병합으로 확대하지 않는다.

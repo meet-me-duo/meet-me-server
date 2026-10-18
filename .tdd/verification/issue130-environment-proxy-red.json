@@ -1,0 +1,43 @@
+{
+  "status": "VALID_ASSERTION_RED",
+  "tests": 63,
+  "assertionFailures": 42,
+  "passedControls": 21,
+  "errors": 0,
+  "skipped": 0,
+  "java": {
+    "paidCalls": 0,
+    "tests": 49,
+    "sealedDataRead": false,
+    "assertionFailures": 38,
+    "passed": 11,
+    "errors": 0
+  },
+  "python": {
+    "tests": 14,
+    "failures": 4,
+    "passed": 10,
+    "errors": 0
+  },
+  "sourceBeforeAfterEqual": true,
+  "original102TestBytesUnchanged": true,
+  "publicContractSha256": "3d1125c83736925fc91573b52ffbca9983200360c1c8786cf5bea39374b16d2f",
+  "testFingerprints": {
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "ad60f620d13f8add1101c3d2500a3b0204cefc74f1c8bb46044d541740411ecf"
+  },
+  "helperFingerprints": {
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "6b0374fa8cbff39ccee78f5a2b69436acc9af27051ae5920605fed6e50833cfb",
+    "evaluation/issue130/run_representative_decisions.py": "5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15"
+  },
+  "durationSeconds": 36.094,
+  "evidence": ".codex/tdd-evidence/issue130-environment-proxy-red",
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "sealedDataRead": false,
+  "recordedAt": "2026-10-18T10:49:17Z",
+  "first61HistoricalRun": "/tmp/issue130-environment-proxy-independent/red-first",
+  "scope": "synthetic canonical TLS/actual production classifier controls; new pure proxy factory/mode/evidence/profile behavior missing"
+}

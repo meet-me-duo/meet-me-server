@@ -1,0 +1,11 @@
+--- test_representative_decisions.py.before
++++ test_representative_decisions.py.after
+@@ -98,7 +98,7 @@
+                 return subprocess.run(command, *args, **kwargs)
+             return forbidden(command, *args, **kwargs)
+         fake = types.SimpleNamespace(run=git_only, Popen=forbidden, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
+-        with mock.patch.dict(os.environ, {'OPENAI_API_KEY': '', 'GEMINI_API_KEY': ''}, clear=True), mock.patch.object(RUNNER, 'subprocess', fake, create=True):
++        with mock.patch.dict(os.environ, {'OPENAI_API_KEY': 'synthetic-issue130-key-MUST-NOT-LEAK', 'GEMINI_API_KEY': '', 'ISSUE130_FROZEN_PLAN_SHA256': '', 'ISSUE130_EXECUTE_FROZEN': ''}), mock.patch.object(RUNNER, 'subprocess', fake, create=True):
+             code, _ = self.main([*self.args, '--execute-frozen'])
+         self.assertNotEqual(0, code)
+         self.assertFalse((self.output / '.suite-consumed.json').exists())

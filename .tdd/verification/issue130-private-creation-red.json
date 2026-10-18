@@ -1,0 +1,23 @@
+{
+  "tests": 1,
+  "assertionFailures": 1,
+  "errors": 0,
+  "original101TestFilesUnchanged": true,
+  "sourceBeforeAfterEqual": true,
+  "umask": "022",
+  "fault": "CREATE_NEW file observed mode0644 before chmod0600",
+  "helperJavaSha256": "b8ac8109ed22f2ae69676644529be9fbcd60a6a3901421cf46134e444cb16a5d",
+  "helperPythonSha256": "5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java",
+      "sha256": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_all_synthetic_tests.py",
+      "sha256": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665"
+    }
+  ],
+  "paidCalls": 0,
+  "sealedDataRead": false
+}

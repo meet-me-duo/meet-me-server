@@ -1,0 +1,52 @@
+{
+  "workItem": "issue130-representative-harness",
+  "phase": "RED_SEALED",
+  "totalTests": 100,
+  "assertionFailures": 99,
+  "passedControls": 1,
+  "setupErrors": 0,
+  "skipped": 0,
+  "java": {
+    "errors": 0,
+    "passed": 1,
+    "actualProviderCalls": 0,
+    "assertionFailures": 76,
+    "sealedDataRead": false,
+    "tests": 77
+  },
+  "python": {
+    "tests": 23,
+    "failures": 23,
+    "errors": 0
+  },
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticContractTest.java",
+      "sha256": "8b44c9a17f843927253e21343055281c38c687ef0d7a1791758b2b551f8517f6"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java",
+      "sha256": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java",
+      "sha256": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_synthetic_tests.py",
+      "sha256": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_representative_decisions.py",
+      "sha256": "74b427959ca961efb33762ff949067780483194ff9a2067f43d80f953b47d0a2"
+    }
+  ],
+  "sourceBeforeAfterEqual": true,
+  "runtimeAndSourceBasedOn": "3982535765e878875a901dd9d28352358e594f6f",
+  "paidCalls": 0,
+  "sealedInputOrGoldRead": false,
+  "outbound": "loopback TLS synthetic only; external tripwire installed",
+  "canonicalLog": ".codex/tdd-evidence/issue130-representative-harness.log",
+  "archive": ".codex/tdd-evidence/issue130-representative-harness-red",
+  "publicContractSha256": "680b700f10a83b8761a85b7e47e46ca1f000e4d1cebb1065a2cd9a152d7707cd"
+}

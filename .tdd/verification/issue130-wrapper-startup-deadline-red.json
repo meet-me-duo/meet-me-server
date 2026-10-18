@@ -1,0 +1,22 @@
+{
+  "tests": 24,
+  "passed": 23,
+  "assertionFailures": 1,
+  "errors": 0,
+  "failure": "already-created Java child is not killed when startup crosses parent deadline before communicate()",
+  "helperSourceSha256": "55f1d7fe2042123578c89234da988bf7b033d406bd50c4e1d1fa1699210e9d80",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_representative_decisions.py",
+      "sha256": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+    }
+  ],
+  "sourceBeforeAfterEqual": true,
+  "first100Attempt": "Java77 PASS / Python21 PASS +2 mock fixture errors; errors counted as RED0",
+  "mockCorrections": "Supply stdlib TimeoutExpired in subprocess double; consume child execution duration in communicate(), distinct from startup delay",
+  "priorTestSourceSuperseded": true,
+  "expectationsWeakened": false,
+  "totalNextFocusedTests": 101,
+  "paidCalls": 0,
+  "sealedDataRead": false
+}

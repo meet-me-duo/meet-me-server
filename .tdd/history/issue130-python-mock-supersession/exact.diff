@@ -1,0 +1,68 @@
+--- before
++++ after
+@@ -78,7 +78,7 @@
+             if command and Path(str(command[0])).name == 'git':
+                 return subprocess.run(command, *args, **kwargs)
+             return forbidden(command, *args, **kwargs)
+-        fake = types.SimpleNamespace(run=git_only, Popen=forbidden, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
++        fake = types.SimpleNamespace(run=git_only, Popen=forbidden, TimeoutExpired=subprocess.TimeoutExpired, CalledProcessError=subprocess.CalledProcessError, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
+         original_getenv = os.getenv
+         def getenv(key, default=None):
+             if key in ('OPENAI_API_KEY', 'GEMINI_API_KEY'):
+@@ -97,7 +97,7 @@
+             if command and Path(str(command[0])).name == 'git':
+                 return subprocess.run(command, *args, **kwargs)
+             return forbidden(command, *args, **kwargs)
+-        fake = types.SimpleNamespace(run=git_only, Popen=forbidden, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
++        fake = types.SimpleNamespace(run=git_only, Popen=forbidden, TimeoutExpired=subprocess.TimeoutExpired, CalledProcessError=subprocess.CalledProcessError, check_output=lambda command, **kw: git_only(command, stdout=subprocess.PIPE, **kw).stdout)
+         with mock.patch.dict(os.environ, {'OPENAI_API_KEY': 'synthetic-issue130-key-MUST-NOT-LEAK', 'GEMINI_API_KEY': '', 'ISSUE130_FROZEN_PLAN_SHA256': '', 'ISSUE130_EXECUTE_FROZEN': ''}), mock.patch.object(RUNNER, 'subprocess', fake, create=True):
+             code, _ = self.main([*self.args, '--execute-frozen'])
+         self.assertNotEqual(0, code)
+@@ -175,7 +175,7 @@
+         self.update(lambda plan: plan.update(automaticRetries=1, redirects=1))
+         self.reject_validate()
+ 
+-    def deadline_execution(self, validation_seconds=0, compile_seconds=0, java_seconds=0, timed_out=False):
++    def deadline_execution(self, validation_seconds=0, compile_seconds=0, java_seconds=0, timed_out=False, startup_seconds=0):
+         import hashlib
+         state = {'now': 100.0, 'commands': [], 'timeouts': [], 'kills': 0}
+         original_validate = RUNNER.validate_plan
+@@ -205,10 +205,23 @@
+                 self.returncode = None
+                 self.stdout = io.StringIO('{"status":"COMPLETED"}')
+                 self.stderr = io.StringIO('')
+-                self.result = fake_run(command, *args, **kwargs)
++                self.communicated = False
++                if Path(str(command[0])).name == 'java':
++                    self.position = len(state['commands'])
++                    state['commands'].append('java')
++                    state['timeouts'].append(None)
++                    state['now'] += startup_seconds
++                    self.result = subprocess.CompletedProcess(command, 0, stdout='{"status":"COMPLETED"}', stderr='')
++                else:
++                    self.position = None
++                    self.result = fake_run(command, *args, **kwargs)
+             def communicate(self, *args, **kwargs):
+-                if timed_out and Path(str(self.args[0])).name == 'java' and state['kills'] == 0:
+-                    raise subprocess.TimeoutExpired(self.args, kwargs.get('timeout', 1))
++                if self.position is not None and not self.communicated:
++                    state['timeouts'][self.position] = kwargs.get('timeout')
++                    state['now'] += java_seconds
++                    self.communicated = True
++                    if timed_out and state['kills'] == 0:
++                        raise subprocess.TimeoutExpired(self.args, kwargs.get('timeout', 1))
+                 self.returncode = self.result.returncode
+                 return self.result.stdout, self.result.stderr
+             def wait(self, *args, **kwargs):
+@@ -261,6 +274,11 @@
+         state = self.deadline_execution(validation_seconds=1, java_seconds=300, timed_out=True)
+         self.assertEqual(1, state['commands'].count('java'))
+ 
++    def test_CLI24_startup_crosses_deadline_kills_created_child(self):
++        state = self.deadline_execution(validation_seconds=10, compile_seconds=10, startup_seconds=281)
++        self.assertEqual(1, state['commands'].count('java'))
++        self.assertGreaterEqual(state['kills'], 1, 'Already-created child must be killed when startup consumes whole deadline')
++
+     def test_CLI19_malformed_plan_is_bounded_safe_failure(self):
+         self.plan.write_text('{SYNTHETIC_PRIVATE_RAW_bad_json')
+         code, _ = self.main()

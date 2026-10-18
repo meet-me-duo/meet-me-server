@@ -1,0 +1,152 @@
+{
+  "workItem": "issue130-representative-decisions",
+  "reviewKind": "INDEPENDENT_FINAL_LOCAL_PUBLICATION_REVIEW",
+  "recordedAt": "2026-10-18T11:33:43.330996+00:00",
+  "decision": "PASS_TECHNICAL_EVALUATION_TOOL_AND_OBSERVED_STOP_RECORD_ONLY",
+  "openP1": 0,
+  "openP2": 0,
+  "permittedNextStep": "Commit/push the reviewed technical/evaluation-record scope and create a Draft PR under existing authorization; verify CI on its exact published HEAD. This is not merge, deployment, trust-anchor expansion or paid execution authorization.",
+  "productionBaseline": "3982535765e878875a901dd9d28352358e594f6f",
+  "productionSourceAndDeploymentChanges": false,
+  "currentSourceAndTestFingerprints": {
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+    "evaluation/issue130/run_representative_decisions.py": "b2f01a76fc2384f29c8eecf4658ff4f41f9096d844822a005f26213914c3f409",
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f",
+    "evaluation/issue130/tests/Issue130SyntheticContractTest.java": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79",
+    "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7",
+    "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240",
+    "evaluation/issue130/tests/run_all_synthetic_tests.py": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "ad60f620d13f8add1101c3d2500a3b0204cefc74f1c8bb46044d541740411ecf",
+    "evaluation/issue130/tests/run_synthetic_tests.py": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+    "evaluation/issue130/tests/test_representative_decisions.py": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+  },
+  "ciFingerprint": {
+    ".github/workflows/ci.yml": "aa495f4315634225d53490d25df83be46541089d7d194cb30e2a759fd79f4c1e"
+  },
+  "evidenceFingerprints": {
+    ".tdd/verification/issue130-representative-harness-red.json": "b5f276ffcbcc2f180682ec0742be173098e9305f81a34bf51a9294506ca32978",
+    ".tdd/verification/issue130-wrapper-startup-deadline-red.json": "49b482535b27540963f9633a104cd0426fc0f3ebef65bc015ad668b4d7996c51",
+    ".tdd/verification/issue130-private-creation-red.json": "4364632e85a2938727ba637d5b43b76c69cda78f98a14bf98ccb320be2665af3",
+    ".tdd/verification/issue130-harness-final-green.json": "4b46c583058e7e2455e1b35a4420f7a91c2ece1a8821164a9e6ac7eb67cc204c",
+    ".tdd/verification/issue130-harness-independent-faults.json": "057f4b904ef0f815f6c1679d77626fd177f4b43b5fc718707b42bd866e4a03a9",
+    ".tdd/verification/issue130-harness-whole-cli.json": "3cb80f0c121d5450c967694d9e2c7352e3a0200d0f8f32684547f71411fbeb46",
+    ".tdd/verification/issue130-harness-independent-final.json": "bf2d842823ea43aa32f08eaffed6a9bfc3c2b21c732a143aa547a1c7252afa9c",
+    ".tdd/verification/issue130-harness-final-quality.json": "5e48d7110d21d6cabe33f9991f53b3c099aec92148696bcfbaccd77a045817f8",
+    ".tdd/verification/issue130-environment-proxy-red.json": "efd8b28b2d846335537ff42f56c0864154450cae4adee83561827fc74505c048",
+    ".tdd/verification/issue130-environment-proxy-green.json": "e5effc7a7d869fe5f958a950cac37248e2e724c87c44026118ba19b9b2d8ff45",
+    ".tdd/verification/issue130-environment-proxy-legacy-compatibility.json": "5440b7106f0344b17e83629b96a485b2e4d7826613a18c836d2b2780ef909424",
+    ".tdd/verification/issue130-environment-proxy-independent-faults.json": "18f3538c470d8979f1d702d71ccd85b41dcf572440adcff28e06e2c69960574e",
+    ".tdd/verification/issue130-environment-proxy-independent-final.json": "5bc8cefd601ccbf190d0041187a5469ba8d1a3cc6e32f893770dd64d16689667",
+    ".tdd/verification/issue130-proxy-source-final-quality.json": "8d7b53f474d9da0be2be68884601e41564ee4c588e491fecb0db9bdd73176464"
+  },
+  "documentFingerprints": {
+    "docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md": "ec77433a3d20d2dcbe899b059e20ce28a03677db7f01f08f8787cabc29f28712",
+    "docs/verification/issue130-representative-decisions-cost-review.md": "8fb3cb41a74c1abceb14a9edbf87a64a36f03fd8a5c45b9f4203570613f95cf0",
+    "implementation_plan.md": "2f4f2f736d19154e4d6c8a4a1c20d25c56cd213d96cd24fc817efaa7c38485ba",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "1579f99b56cd7fd49e2bdb685a1439c5a885bdb7d0aa2fecd634f8a798a1f9a1"
+  },
+  "prDraft": {
+    "title": "test: 봉인된 Decisions 대표 평가 실행기와 중단 결과 기록",
+    "bodySha256": "c85eb62edf3aff961e4f2f9f6f0ed828b442b206afeb5b2eb7c244c195654058",
+    "requiredSixTemplateSections": true,
+    "closes": [
+      130
+    ],
+    "references": [
+      107,
+      123
+    ],
+    "publicationCommitAndExactHeadCi": "PENDING"
+  },
+  "verified": {
+    "currentGuardManifestFiles": 566,
+    "currentManifestAllFilesMatched": true,
+    "beforeAfterEqual": true,
+    "guardManifestSha256": "d3185384dfda1fcd5575108787cdfb1e9e431998646b73f21bc51949e6a9861b",
+    "updatedGuardExitCode": 0,
+    "updatedGuardElapsedSeconds": 11.398,
+    "updatedGuardXmlClassification": "REUSED_PRIOR_1717_XML_NOT_FRESH",
+    "historicalFreshGuard": {
+      "tests": 1717,
+      "passed": 1713,
+      "existingSkipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "sourceFiles": 235,
+      "elapsedSeconds": 454.85
+    },
+    "legacySyntheticTestsOnCurrentHelpers": 102,
+    "newProxySyntheticTests": 63,
+    "distinctSyntheticTotal": 165,
+    "newProxyAssertionRed": 42,
+    "newProxyRedControls": 21,
+    "newProxyRedErrors": 0,
+    "proxyFaultMutationsDetected": 8,
+    "proxyFaultAssertionsDetected": 8,
+    "allFaultRestoresExact": true,
+    "historicalHarnessFaultMutationsDetected": 7,
+    "historicalHarnessFaultAssertionsDetected": 8,
+    "actualCliCanonicalLoopbackTlsAndReplayZeroExercised": true,
+    "explicitProxyModeOnly": true,
+    "proxySelectionNoDirectFallback": true,
+    "defaultCertificateAndHostnameValidationRetained": true,
+    "priorUnknownReservationEvidenceAndNoRefundValidated": true,
+    "original102TestBytesPreserved": true,
+    "ciBlankKeySyntheticStepsOnly": true
+  },
+  "actualPaidObservation": {
+    "executedPlanSha256": "b381bb4cd2b7a043d04a900bdb2b213a53e5b51e8f415229b7a80e5bff9a585b",
+    "executedHelperJavaSha256": "7bf79d8cf266e9af84aa292840228535eb117f841d855e0f2e83fcf7a1a2452f",
+    "executedHelperPythonSha256": "5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15",
+    "rootReceiptSha256": "1038bc3d07ee364ea84be369021ffbe0b5c4204334b5fb81d588bf333369b8c2",
+    "independentPublicAggregateSha256": "a1d407aa6de6d9920bba4a87e90e3cb168d97cde6d143138f040634ba8e96e7c",
+    "status": "STOPPED_CONNECTION_OUTER_CONFIGURATION",
+    "startedUnknown": 1,
+    "unrun": 15,
+    "observedNetworkInterceptorEntries": 0,
+    "observedHttpStatuses": 0,
+    "responseEnvelopes": 0,
+    "semanticDenominator": 0,
+    "routingDenominator": 0,
+    "physicalBAndCountCalls": 0,
+    "additionalPaidRunsApprovedByThisReview": 0,
+    "currentRetainedReservationUsd": "1.56254208",
+    "planningHeadroomUsd": "0.43745792",
+    "refunds": 0,
+    "rootProcessMs": 4387.52,
+    "suiteEngineeringIntervalMs": 541.536936,
+    "firstCombinedCaseEngineeringIntervalMs": 100.397499,
+    "zeroNetworkObservationProvesProviderOrInvoiceZero": false,
+    "futureProxyMaximumCumulativeReservationUsd": "1.79322880",
+    "futureProxyReservationOrExecutionOccurred": false
+  },
+  "limitationsAndRemainingBlockers": [
+    "Actual model quality remains BLOCKED: no classification, accuracy, false-CLEAR, excess-clarification, question-quality or p50/p95 result was obtained. Broad issue123 remains open.",
+    "The fixed 0.8 diagnostic threshold is inherited fixture policy, not an operational threshold or confidence calibration.",
+    "65536 tokens and 2.2 margin are engineering reservation proxies, not enforced billed-token limits or an official invoice/tax/fee hard cap.",
+    "STARTED failure remains UNKNOWN; all16 reservations remain held. Post-usage stopping cannot retroactively cap billing.",
+    "Proxy synthetic TLS success does not establish actual proxy/CA/provider availability. The unauthenticated HEAD TLS failure is not a confirmed missing-CA diagnosis.",
+    "CA opt-in is not implemented; trust-anchor expansion/security-scope approval and a newly frozen independently reviewed execution plan remain required before further paid work.",
+    "Original paid execution used historical helper hashes. Current proxy helper validation does not relabel that execution or authorize replay.",
+    "No production authority, operating price/threshold/activation, PG financial integration, UI end-to-end or OAuth completion claim.",
+    "Commit/push/Draft creation and exact published HEAD CI are subsequent steps, not completed by this local review."
+  ],
+  "publicDisclosureReview": {
+    "privateInputsPreparedIndexAndIndividualGoldManuallyRead": false,
+    "scope": "Public source/tests, aggregate preregistration/evidence/docs and PR draft only; original ignored result was audited in the earlier result review using aggregate-safe projections.",
+    "candidateFilesStaticPatternScan": 61,
+    "apiKeyLikePatternMatches": 0,
+    "privatePreparedIndexRawResponseOrGoldNamedPublicationCandidates": 0,
+    "claim": "No unnecessary new sensitive diagnostic disclosure found in reviewed publication candidates; pattern scan is supporting evidence rather than proof of absence of all secrets."
+  },
+  "reviewerActions": {
+    "sourceTestConfigurationGitChanges": false,
+    "testOrGradleExecution": false,
+    "paidCalls": 0,
+    "keyOrSecretReads": false
+  },
+  "expectedBookkeepingOnlyAfterSeal": "Plan/Worklog may record this review and later publication/CI outcomes truthfully. Any source/test/helper/CI or substantive result/budget claim change requires renewed review of that delta."
+}

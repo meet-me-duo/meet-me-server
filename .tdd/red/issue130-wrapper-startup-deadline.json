@@ -1,0 +1,19 @@
+{
+  "workItem": "issue130-wrapper-startup-deadline",
+  "sourceRevision": "3982535765e878875a901dd9d28352358e594f6f",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_representative_decisions.py",
+      "sha256": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/test_representative_decisions.py"
+  ],
+  "failedTests": [
+    "RunnerContract#test_CLI24_startup_crosses_deadline_kills_created_child"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T10:03:51Z"
+}
