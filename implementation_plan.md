@@ -1,5 +1,14 @@
 # meet-me-server Implementation Plan
 
+## 서버 develop 병합·PR 정리 승인 (2026-10-18 UTC)
+
+- [USER] Decision Model을 포함해 검증을 통과한 서버 변경을 develop까지 병합하고, 대체·중복 PR은 근거를 남겨 정리하도록 명시 승인했다. 아래 과거 병합 제외 기록은 당시 범위다. main·운영 활성화·배포·추가 유료 호출 승인은 아니다. 웹에는 develop이 없으므로 웹 main 병합으로 확대하지 않는다.
+- [x] [AGENT] 서버 PR129 코드 HEAD67bad4d0에 PR126의18cdb5d 및 PR122의e83d5280가 정확 ancestor임을 확인했다. develop01d00e7 대비 workflow 변경0·기본 OFF/default DENY·검증 source558 불변, 독립 병합 준비 리뷰 P1/P2 없음이다. 이번 통합 병합 범위는 취소 수정뿐 아니라 Decisions·영속 공통 예산 V17·물리 전송 권한·응답 호환 전체다.
+- [x] [AGENT] 별도 Draft PR129/웹 PR33 게시. 웹 exactf08aaa98 CI39111519165 SUCCESS(627unit/425browser·기존skip1), 합성 merge14677b4b tree가 게시 HEAD와 같다. 서버 코드 HEAD67bad4d0 CI39111507712의 ARM64 SUCCESS, Quality Gate는 기록 시 진행 중이다.
+- [ ] [AGENT] 이 승인·진행 기록만 반영한 후속 게시 HEAD의 필수 CI·Lifecycle·최종 base/충돌/리뷰 경계를 확인하고 PR129를 normal merge한다. 코드/테스트/fixture/정답 자산 변경0이며 원래67bad4d0의 CI 결과와 새 기록 HEAD의 CI를 구분한다. Commit/PR 동일후속커밋예정, 기존 PR129 유지.
+- [ ] [AGENT] 실제 develop merge SHA·부모·tree와 해당 push CI를 검증한 뒤 PR122/126 상태를 재조회한다. 간접 merged 상태는 그대로 두고, 남아 있는 대체 PR에 PR129·정확 merge SHA 근거를 댓글로 남겨 정리한다. #123의 모델 품질·가격·임계값·활성화 미완료는 유지한다. 확정 원격 결과는 PR 대화·Git 이력·로컬 publication/merge receipt에 기록하여 상태 기록만을 위한 재귀 커밋을 만들지 않는다.
+- 웹 정리 계획은 읽기 전용 대조로 부모에게 전달한다. PR33은 PR31/30/25의 정확 descendant이고, PR29의 자체 변경30파일 중27은 동일 blob이며 나머지는 통합 계획·OpenAPI·생성 타입이다. PR28/27의 옛 질문 흐름과 PR26의 독립 운영 화면은 통합·인증 계약으로 대체되었으나 단순 ancestor라고 부르지 않는다. 별도 PR24의 HTTPS 회귀7파일은 PR33에 없으므로 보존한다. 웹 main 병합·유효 미완료 작업 일괄 종료0이다.
+
 ## #123 UI 계약·사전 정답 평가 준비 후속 (2026-10-18 UTC)
 
 - 부모가 추가 유료 호출 없이 현재 서버와 웹 PR31의 입력→모호성 질문→선택/직접 수정→재검사/제출 UI 계약·기존 시나리오와 로컬 누락 검증을 점검하도록 지시했다. 서버 기준18cdb5ddec4f9e09db50feb54337aae9516a0108/PR126, 웹02a68d8e50680e87dd153156e8bb7ea884a794cc/PR31을 원격 재확인했고 둘 다 Draft·미병합이다. 아래 fresh15초 단계는 완료된 이전 단위다.

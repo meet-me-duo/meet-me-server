@@ -1,5 +1,13 @@
 # 새 #107 구현·통합 Worklog
 
+## 서버 develop 병합 승인·열린 PR 정리 (2026-10-18 UTC)
+
+사용자가 Decision Model 포함 검증 통과 뒤 서버 develop 병합을 명시 승인했다. main·운영 활성화·배포·추가 유료 호출과 웹 main 병합은 승인 범위에 포함하지 않는다. 아래 병합 제외 문구는 이전 단계의 이력이다. PR129의67bad4d0가 PR12618cdb5d와 PR122e83d5280를 정확 ancestor로 포함하므로, 독립 준비 리뷰는 최종 필수 CI/충돌/리뷰 확인 뒤 PR129 단일 normal merge를 권고했다. 검증된 source558·workflow·OFF/DENY는 그대로이며, 전체 통합 범위를 취소 수정 한 조건만으로 축소해 설명하지 않는다.
+
+별도 Draft 서버129/웹33을 게시했다. 웹f08aaa98의 exact CI39111519165는 전체 SUCCESS이며 실제 checkout14677b4b의 부모 main9b183978/HEADf08aaa98 및 tree 동일을 확인했다. 서버67bad4d0 CI39111507712는 ARM64 SUCCESS·Quality 진행 중이다. 이 새 승인과 현재 상태만 기록하는 후속 commit 전 unchanged 필수 guard를 확인하고, 후속 HEAD의 CI를 별도로 기다린다. 제품/테스트/fixture/정답 자산과 비용 예약은 변경하지 않는다.
+
+다음 시작점은 최종 HEAD CI/Lifecycle→PR129 normal merge→실제 develop merge SHA·tree·push CI 확인→PR122/126의 간접 merged 여부 재조회와 열린 대체 PR만 근거 댓글 정리다. #123 미완료·모델 품질/운영 가격·threshold/활성화 보류를 유지한다. 실제 merge/정리 결과는 PR 대화·Git 이력·로컬 receipt에 이어 기록한다. 웹은 읽기 전용 포함 관계를 부모에게 보고하며, PR24의 별도 HTTPS 회귀7파일을 보존한다. README#127·Linear 부모 담당·유료 호출0/UNKNOWN 환급0/합산USD2 예약USD1.33185536 유지다.
+
 ## #123 UI 계약·분류 평가 준비 재개 (2026-10-18 UTC)
 
 현재 새후보 검증: backend snapshot1조건/web activequestion1조건 최소 수정 후 독립 server7 RED1/controls6→7GREEN/FI2(assert1·5)/매복구7PASS, web7 RED4/controls3→7GREEN/기존67포함74PASS/FIassert4·복구7을 완료했다. 현재웹전체 api/lint/typecheck/build/627unit·425browser+기존skip1/실패·flaky·retry0 PASS다. 원본PR31의집중157/22와중복합산하지않는다. Native14도수정source에서실API154·routeMock0·외부/실AI/OAuth0 PASS, 실제OpenAPI JSON동일·source482/runtime1559/deps216·자산전후동일·정상종료를확인했다. Primary합성provider가TwoStage/classifier/금융graph를우회함을명시한다. 사전정답은기존120불변+새8쌍16/overlay·manifest1d15a4e/독립reviewPASS/structural·PROTOCOL_ONLY·DRAFT/변조거절PASS로봉인했고모델결과는추가하지않았다. 상세는 [UI·평가 준비 검증](ISSUE_123_UI_AND_EVALUATION_VERIFICATION.md)이다. 서버 unchanged전체guard도 exit0/source558전후동일·새214suites/1717중1713PASS·기존4SKIP/실패·오류0으로완료했다. 최종독립게시review도LOCAL PASS/미해결P1P2없음으로봉인됐다. 다음시작점은별도server/web Draft·정확HEADCI다. Commit/PR 동일커밋예정으로기록하며원격상태는Git/PR/로컬receipt에서이어확인한다.
