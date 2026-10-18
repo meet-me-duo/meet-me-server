@@ -1,0 +1,96 @@
+{
+  "status": "EXACT_POLICY_V2_ON_PR133_MANAGED_COMBINATION_SYNTHETIC_REGRESSION_PASS",
+  "scope": "Detached PR133 production6046 plus only exact final V2 A/B source overlays; existing independent managedbootstrap8 and separately existing managedclose3. This is distinct from current PR132/base398 unit runs and from V1 integration history.",
+  "baseSourceRevision": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+  "overlaySources": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f"
+  },
+  "testSourcesUnchanged": {
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue130ManagedClosePostgresTest.kt": "6e12a36a139970eeefb55517c3176650053191272182d57774a2d90d04a2d635",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt": "9d91732b8e8622950fdde970e686681a58b38491c5ad753ddef1ab235abd643c"
+  },
+  "newCloseTestHistoricalReproduction": {
+    "path": ".tdd/history/issue130-final-combination/Issue130ManagedClosePostgresTest.kt.txt",
+    "sha256": "6e12a36a139970eeefb55517c3176650053191272182d57774a2d90d04a2d635",
+    "meaning": "Executable-test source reproduction only; not a claim this history copy is compiled on PR132/base398."
+  },
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue131ManagedRuntimeRoomPostgresTest",
+    "--tests",
+    "*Issue130ManagedClosePostgresTest"
+  ],
+  "run": {
+    "exitCode": 0,
+    "managedBootstrapTests": 8,
+    "managedCloseTests": 3,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsedSeconds": 49.889,
+    "freshSelectedXmlOnly": true,
+    "sourceMainAndTestFiles": 492,
+    "sourceBeforeAfterEqual": true,
+    "currentIsolatedSourceMatchesRun": true,
+    "keysBlankInSubprocess": true,
+    "globalGradleLock": "/tmp/meetme-gradle.lock",
+    "originalSharedSourceAndTestsEditedByThisRun": false
+  },
+  "freshXmlBindings": [
+    {
+      "suite": "com.meetme.server.coordination.adapter.input.web.Issue130ManagedClosePostgresTest",
+      "sha256": "b9bd485e5fa779462d7df88364a2fb23c43eda01557fdbb0230b21c1fa623754",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeRoomPostgresTest",
+      "sha256": "9be7f60178db25f460b8e4b3d0d395fc8fd483037a25b9f8221f0826910758bf",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "localEvidence": {
+    "receiptSha256": "33b84c72e2eb6019fe6cb784580671a1da742fdde0e26976c556026705b1deb7",
+    "sourceBeforeSha256": "1ebe7746a67db4549796e61a53054a22ba4b09de9136f1145c76d65578dcb4fd",
+    "sourceAfterSha256": "1ebe7746a67db4549796e61a53054a22ba4b09de9136f1145c76d65578dcb4fd",
+    "preparedSha256": "96e1663c4449203e46af64fa51e3e861888766bd1a7f74984917b02a95fb68b8"
+  },
+  "historicalV1Preserved": {
+    "integrationFinalSha256": "e630efe1cfd09e665f29c26971b8be5abdc7242a6b62a5ce5b7c29123a3085bd",
+    "expected": "e630efe1cfd09e665f29c26971b8be5abdc7242a6b62a5ce5b7c29123a3085bd",
+    "old69Plus3RecountedAsNew": false,
+    "oldRuntimeSourceFilesPreservedBeforeOverlay": true
+  },
+  "verifiedBehavior": [
+    "Actual CREATE transaction initializes durableREADY from explicit synthetic approved policy; no READY SQLseed.",
+    "Actual worker/classifier/TwoStage/count/generator/physical gate/PG ledger with only external provider transport replaced by canonical loopbackTLS synthetic replies.",
+    "V2 source bytes compile and traverse actual managed path, including per-operation full-payload reservations; no separate captured expected V2 instruction-byte-hash assertion is claimed beyond independent wire unit tests.",
+    "Unsubmitted HOST plus accepted MEMBER counts0,1,2: early-confirm409, confirmedclose insufficient0,1/no batchrunitems or analyzing2/exact lastaccepted UUIDcohort.",
+    "Pending initial/edit, stale409, unrelatedowner403 privacy, closed lateworker/post no new socket/reservation/usage/version/cohort.",
+    "Existing bootstrap controls retain oldUNCONFIGURED/UNKNOWN/holds, repeated-init refusal, expired-policy CREATE rollback and expired operation no provider socket."
+  ],
+  "limits": [
+    "Synthetic model replies verify contract handling and graph/fencing, not actual V2 semantic effectiveness, falseCLEAR rate or question quality.",
+    "No actual provider/model, production, OAuth or secret-value access by this run.",
+    "No browser/UI/screenshot/HTTPS-recovery run; original server398 Primaryfake native/recovery evidence is not relabeled managed V2 success.",
+    "No final whole-room model dispatch or operational billing proof.",
+    "No API/UI/DB/schema/model/threshold/cap/operatingflag changes from this regression.",
+    "Old V1 model scores/golds and FAIL remain preserved; this regression does not authorize operating activation/main deploy.",
+    "Root final mandatory guard and exact posted/merged HEAD CI remain separate required gates."
+  ],
+  "actualModelCalls": 0,
+  "actualOAuthProviderCalls": 0,
+  "productionAccess": false,
+  "recordedAt": "2026-10-18T16:37:57.889979Z"
+}

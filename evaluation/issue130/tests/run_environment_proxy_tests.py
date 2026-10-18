@@ -73,6 +73,30 @@ SAFE_JAVA_ERROR_TYPES = frozenset({
 })
 
 
+def safe_child_observation(value):
+    """Reconstruct a fixed projection; never return arbitrary child diagnostics."""
+    if type(value) is not dict:
+        return None
+    if type(value.get('phase')) is not str or value['phase'] not in {'PYTHON_CLI', 'JAVA_CLI', 'REPLAY'}:
+        return None
+    if type(value.get('stage')) is not str or value['stage'] not in {'CHILD_START_FAILED', 'CHILD_TIMEOUT', 'STDOUT_REJECTED',
+                                'STDERR_REJECTED', 'EXIT_NONZERO', 'MISSING_COMPLETED', 'FINISHED'}:
+        return None
+    numbers = {'exitCode': (-255, 255), 'stdoutBytes': (0, 1048576),
+               'stderrBytes': (0, 1048576)}
+    booleans = ('inheritedHomePresent', 'inheritedHomeCanonical', 'selectedHomeDirectory',
+                'selectedHomeCanonical', 'selectedJavaRegular', 'selectedJavacRegular')
+    for name, (minimum, maximum) in numbers.items():
+        if name not in value:
+            return None
+        item = value[name]
+        if item is not None and (type(item) is not int or not minimum <= item <= maximum):
+            return None
+    if any(type(value.get(name)) is not bool for name in booleans):
+        return None
+    return {name: value[name] for name in ('phase', 'stage', *numbers, *booleans)}
+
+
 def safe_java_failures(rows):
     """Only frozen public case identifiers and fixed labels may reach CI stdout."""
     failures = []
@@ -88,7 +112,11 @@ def safe_java_failures(rows):
                 kind = 'UNEXPECTED_ERROR'
         else:
             continue
-        failures.append({'test': row['test'], 'status': status, 'type': kind})
+        failure = {'test': row['test'], 'status': status, 'type': kind}
+        child = safe_child_observation(row.get('childObservation'))
+        if child is not None:
+            failure['childObservation'] = child
+        failures.append(failure)
     return failures
 
 

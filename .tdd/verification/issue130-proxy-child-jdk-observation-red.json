@@ -1,0 +1,47 @@
+{
+  "status": "INDEPENDENT_VALID_ASSERTION_RED_FROZEN",
+  "tests": 16,
+  "validAssertionFailures": 9,
+  "errors": 0,
+  "controlsPassed": 7,
+  "breakdown": {
+    "currentJvmChildIsolationMissingAndSymlink": 2,
+    "newWhitelistedObservation": 7,
+    "validJdkControl": 1,
+    "existingReportingControls": 4,
+    "additionalNegativeProjectionControls": 2
+  },
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_jdk.py",
+      "sha256": "25901acbc468ed762af028dacb7ecd356e7984bcb50934eb9e7784d8e36a53e9"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_observation.py",
+      "sha256": "898eb097bef681546bfb8d2187be3cceba00c93e67851fa6b981eb4805ebe75f"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_proxy_child_jdk_tests.py",
+      "sha256": "8937fc8824ea6441b4bbb1ecd6c1550ce89c473b8198f3f652598431cece9a0c"
+    }
+  ],
+  "redEvidenceSha256": "2812bedc76ba3857082b48dc76ecf69e119c0897bf6ec180eb0aa5b4530b2937",
+  "rawReceipt": {
+    "path": "/tmp/issue130-pc01-independent/red-final/receipt.json",
+    "sha256": "3265e5539ea46e19262f34713cdaefbffb8030d974a3c64acbf5706becbf31fc"
+  },
+  "rawLog": {
+    "path": "/tmp/issue130-pc01-independent/red-final/run.log",
+    "sha256": "eb34c4f49125bee1b8348f5bd5896ceb933a1d9c148d5cd22a012a4992157d81"
+  },
+  "assertionAstBefore": {
+    "path": "/tmp/issue130-pc01-independent/assertion-ast-before.json",
+    "sha256": "f82fd564f40b32a39c9416c5a93cd9991ac9a2ddb5aa8207c013c63be6c67f5b"
+  },
+  "initialRedSuperseded": "Initial16/9assert/errors0 before enum wrongtype boundary addition; exact three testfiles and logs preserved. Only final16 evidence active.",
+  "schemaScope": "Evaluation-path local projection validated with FormatChecker; repo Kotlin-only schema unchanged and canonical .tdd/red eligibility not claimed.",
+  "remoteCiCauseConfirmed": false,
+  "actualProviderCalls": 0,
+  "existingRF4Changed": false,
+  "recordedAt": "2026-10-18T16:09:45.551499Z"
+}

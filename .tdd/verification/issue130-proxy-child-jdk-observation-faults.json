@@ -1,0 +1,59 @@
+{
+  "workItem": "issue130-proxy-child-jdk-observation",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "boundary": "Synthetic PC01 child JAVA_HOME fixture isolation and whitelist-only bounded CI observation; original assertions/privacy/timeout remain unchanged.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java",
+      "sha256": "d69c96740f940856ed1df1887eaa766d95f9bbdc1b051e0a0a7ceecda8491772"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_proxy_tests.py",
+      "sha256": "9ddacbf26b29fc5081895e1b48d9c950cc64f8cd79f2272352648d2293218733"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_jdk.py",
+      "sha256": "25901acbc468ed762af028dacb7ecd356e7984bcb50934eb9e7784d8e36a53e9"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_observation.py",
+      "sha256": "898eb097bef681546bfb8d2187be3cceba00c93e67851fa6b981eb4805ebe75f"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_proxy_child_jdk_tests.py",
+      "sha256": "8937fc8824ea6441b4bbb1ecd6c1550ce89c473b8198f3f652598431cece9a0c"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "F1_CHILD_JAVA_HOME_PIN_REMOVED",
+      "command": [
+        "python3",
+        "/tmp/issue130-pc01-independent/run_fi.py"
+      ],
+      "detectedBy": "PJ01 and PJ02 actual whole PC01 assertions",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F2_EXTRA_UNTRUSTED_FIELDS_FORWARDED",
+      "command": [
+        "python3",
+        "/tmp/issue130-pc01-independent/run_fi.py"
+      ],
+      "detectedBy": "CO02 exact projection rejects private canaries",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F3_BOOLEAN_ACCEPTED_AS_NUMERIC_COUNT",
+      "command": [
+        "python3",
+        "/tmp/issue130-pc01-independent/run_fi.py"
+      ],
+      "detectedBy": "CO05 strict numeric type rejects bool-as-int",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T16:14:46.024302Z"
+}

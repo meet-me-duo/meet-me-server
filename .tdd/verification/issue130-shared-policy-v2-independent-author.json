@@ -1,0 +1,144 @@
+{
+  "status": "INDEPENDENT_AUTHOR_TDD_AND_POLICY_WIRE_FI_COMPLETE_FINAL_GUARD_SEPARATE",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "boundary": "Policy V2 instruction/choice delivery, exact original/context forwarding and unchanged transport/parser caps only. Synthetic responses do not establish model semantic quality.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+      "sha256": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/SharedPrecheckPolicyV2WireTest.kt",
+      "sha256": "84a54f08246b28503ce86ab439f49ae84e4e5cfd3fbc9a9e13b0abab6b4eb1b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt",
+      "sha256": "4cbf81f8999f5f5b8f08c87dd57e0eed44c309305bf84eb064c7837d718349be"
+    }
+  ],
+  "authorAssets": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/SharedPrecheckPolicyV2WireTest.kt",
+      "sha256": "84a54f08246b28503ce86ab439f49ae84e4e5cfd3fbc9a9e13b0abab6b4eb1b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt",
+      "sha256": "4cbf81f8999f5f5b8f08c87dd57e0eed44c309305bf84eb064c7837d718349be"
+    },
+    {
+      "path": "src/test/resources/precheck/shared-policy-v2-development.json",
+      "sha256": "25743159be6002921afc345e3c9300a75dde26b639807baea8fdeddbb7f88469"
+    },
+    {
+      "path": "src/test/resources/precheck/classification/decision-principles-v2-question.json",
+      "sha256": "ce73f2e07796e26ff37fde75283e5ca2f14c95e25adf8010ed794f1081b13209"
+    },
+    {
+      "path": "docs/ISSUE_130_SHARED_POLICY_V2_EVALUATION.md",
+      "sha256": "b7bb13665e8ab0065719adc5b4f70ebdb90a7044dbf9f499be2ccdfab5eb42d5"
+    }
+  ],
+  "red": {
+    "path": ".tdd/red/issue130-shared-policy-v2-wire.json",
+    "sha256": "1c8880c0bebd12ba3b9a7af391f909888d71cfd0589a0fdd0f07da1a55b775a2",
+    "tests": 16,
+    "validAssertionFailures": 11,
+    "controlPasses": 5,
+    "compileOrSetupErrors": 0,
+    "schemaValidated": true
+  },
+  "focusedGreen": {
+    "receiptSha256": "3c0fc5fb91b6a629eed230197d4100e85b31b3d1b43c94aec3f95fb36f65c47d",
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "relatedRegression": {
+    "receiptSha256": "e311b3566d703e2d8a2411474601692ff9462ec3034f071f4b4f885bddb3f2d5",
+    "suites": 16,
+    "tests": 245,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "includesFocused16": true
+  },
+  "countsOverlap": "Do not add focused16 or restored FI runs to related245 coverage.",
+  "independentFaultInjection": {
+    "canonical": {
+      "path": ".tdd/verification/issue130-shared-policy-v2-faults.json",
+      "sha256": "9caeeede33931df6ee4fcaef32cd1044258f062ac811589821c81872818f5706"
+    },
+    "detail": {
+      "path": ".tdd/verification/issue130-shared-policy-v2-faults-detail.json",
+      "sha256": "ebae403496a417da29c3204aafa29b5f20553613e72c0550998765b1263ae73e"
+    },
+    "schemaValidated": true,
+    "faults": [
+      {
+        "fault": "FI-V2-A-CLEAR-DESCRIPTION",
+        "detectedAssertionFailures": 3,
+        "exactRestoreGreen": 16
+      },
+      {
+        "fault": "FI-V2-B-REQUIRED-FACT-CLAUSE",
+        "detectedAssertionFailures": 1,
+        "exactRestoreGreen": 16
+      }
+    ],
+    "scratchOnly": true,
+    "liveSourceTestResourcesBeforeAfterEqual": true
+  },
+  "implementationReceipt": {
+    "path": ".tdd/verification/issue130-shared-policy-v2-implementation.json",
+    "sha256": "37a645d6035a01b66c8de71e4aa7df9556205df07817ea3aec0f54590707a766"
+  },
+  "historicalV1": {
+    "resourcePath": "src/test/resources/precheck/classification/decision-principles-v1-question.json",
+    "resourceSha256": "7c393004c69ff8a8e04657f31626468229c7aaea34568e530816f8288507f6b6",
+    "originalTestArchivePath": ".tdd/history/issue130-shared-policy-v2/DecisionPrinciplePromptWireContractTest.kt.source",
+    "originalTestSha256": "c1ce2c0f6b3b58e2954be0838960a3b5bd522961c733f46c8dbd0fb41f2d1995",
+    "originalAssertionsPreservedExceptThreeExplicitActiveV2PointerPins": true,
+    "originalResourceUnchanged": true
+  },
+  "oldArtifactHashOnlyReadback": {
+    "A24Input": "005c6740a3211d7fae0e6d93ef2cea459838ae841938595274cd6494b7bb1f1b",
+    "A24AdjudicatedGold": "8facb9c1a51a4e638a7e7443b778e4590fd51669cf1f361a4ade43d8efffc6ca",
+    "B2PredeclaredSubset": "865d5bfdeae7577ac2b909fcf5bc2d2177580dd02695b3fc742ce4645c9795ab",
+    "A24OriginalScore": "750c044101e3b13c161effe1eb2aaf85c77539b104e44dbaa7c90b1adab53639",
+    "B2OriginalFinalScore": "93d0f6eda24d0b62c142dc168381537a1dd49d93960f3f6735e1ab8d66a0d912"
+  },
+  "oldA16ArtifactsNotWritten": true,
+  "oldGoldScoreLabelsOrThresholdsChanged": false,
+  "remainingPrivate22TextNotReadOrDisclosedForPolicyV2": true,
+  "freshBlindHoldoutClaim": false,
+  "authorExposure": "Previously authored/custodied old synthetic holdout; saw A24 aggregates and actual B2/gold. New V2 data are public DEV only.",
+  "newPublicDev": {
+    "cases": 12,
+    "a": {
+      "CLEAR": 9,
+      "NEEDS_REVIEW": 3
+    },
+    "b": {
+      "CLEAR": 9,
+      "NEEDS_CHOICE": 1,
+      "NEEDS_EDIT": 2
+    },
+    "explicitDelegationNegativeContrastPresent": true,
+    "privacyMinimumPlaceContextAndUnsupportedOnlyContrastsPresent": true,
+    "modelSemanticQualityMeasured": false
+  },
+  "productionApiUiDbModelThreshold500CapsOrFencesChanged": false,
+  "authorProductionEdits": 0,
+  "newPaidOrRealModelCalls": 0,
+  "actualOAuthOrProductionAccess": false,
+  "testSourceResourceFinalFreeze": true,
+  "rootFullGuardAndPublicationReview": "PENDING_SEPARATE_ROOT_RESULT",
+  "recordedAt": "2026-10-18T16:38:09.691094Z"
+}

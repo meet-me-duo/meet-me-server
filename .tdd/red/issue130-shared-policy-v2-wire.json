@@ -1,0 +1,48 @@
+{
+  "workItem": "issue130-shared-policy-v2-wire",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/SharedPrecheckPolicyV2WireTest.kt",
+      "sha256": "84a54f08246b28503ce86ab439f49ae84e4e5cfd3fbc9a9e13b0abab6b4eb1b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt",
+      "sha256": "4cbf81f8999f5f5b8f08c87dd57e0eed44c309305bf84eb064c7837d718349be"
+    }
+  ],
+  "command": [
+    "flock",
+    "/tmp/meetme-gradle.lock",
+    "env",
+    "JAVA_HOME=/tmp/meetme-jdk17",
+    "GRADLE_USER_HOME=/tmp/meetme-gradle-home",
+    "./gradlew",
+    "ktlintTestSourceSetCheck",
+    "test",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.classification.SharedPrecheckPolicyV2WireTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.classification.DecisionPrinciplePromptWireContractTest",
+    "--init-script",
+    "/tmp/issue130-policy-v2-author/scoped-ktlint.init.gradle",
+    "--offline",
+    "--no-daemon",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "SharedPrecheckPolicyV2WireTest.SPV203 A CLEAR description cannot imply unconditional private fact dependence is clear()",
+    "SharedPrecheckPolicyV2WireTest.SPV202/[1] clause = 0",
+    "SharedPrecheckPolicyV2WireTest.SPV202/[2] clause = 1",
+    "SharedPrecheckPolicyV2WireTest.SPV202/[3] clause = 2",
+    "SharedPrecheckPolicyV2WireTest.SPV202/[4] clause = 3",
+    "SharedPrecheckPolicyV2WireTest.SPV201/[1] clause = 0",
+    "SharedPrecheckPolicyV2WireTest.SPV201/[2] clause = 1",
+    "SharedPrecheckPolicyV2WireTest.SPV201/[3] clause = 2",
+    "SharedPrecheckPolicyV2WireTest.SPV201/[4] clause = 3",
+    "DecisionPrinciplePromptWireContractTest.DPW01 public classifier transmits the reviewed short question without old prompt fallback()",
+    "DecisionPrinciplePromptWireContractTest.DPW02 Unicode raw and complete context stay exact while injected instructions remain data()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T16:26:10.246010Z"
+}

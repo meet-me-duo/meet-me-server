@@ -1,0 +1,74 @@
+{
+  "status": "INDEPENDENT_VALID_RED9_THEN_GREEN16_FI3_ALL_DETECTED_RESTORED_FINAL16_GREEN",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java",
+      "sha256": "d69c96740f940856ed1df1887eaa766d95f9bbdc1b051e0a0a7ceecda8491772"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_proxy_tests.py",
+      "sha256": "9ddacbf26b29fc5081895e1b48d9c950cc64f8cd79f2272352648d2293218733"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_jdk.py",
+      "sha256": "25901acbc468ed762af028dacb7ecd356e7984bcb50934eb9e7784d8e36a53e9"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_observation.py",
+      "sha256": "898eb097bef681546bfb8d2187be3cceba00c93e67851fa6b981eb4805ebe75f"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_proxy_child_jdk_tests.py",
+      "sha256": "8937fc8824ea6441b4bbb1ecd6c1550ce89c473b8198f3f652598431cece9a0c"
+    }
+  ],
+  "chronologicalRed": {
+    "tests": 16,
+    "failures": 9,
+    "errors": 0,
+    "passedControls": 7,
+    "evidence": ".tdd/verification/issue130-proxy-child-jdk-observation-red-evidence.json",
+    "sha256": "2812bedc76ba3857082b48dc76ecf69e119c0897bf6ec180eb0aa5b4530b2937"
+  },
+  "currentAndFinalGreen": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "allFrozenNewTestShaUnchanged": true
+  },
+  "faults": {
+    "file": ".tdd/verification/issue130-proxy-child-jdk-observation-faults.json",
+    "sha256": "23ee135fba3f8b12f161b9e068ce50392cd8e69977affe9dc8aaa2d03f638bf4",
+    "faults": 3,
+    "detected": 3,
+    "survived": 0,
+    "everyRestoreGreen": true,
+    "workspaceMutation": false,
+    "rawReceiptSha256": "0ffa8b8fa9b1a808aed532e8b6fe7254ff6f316634544411f27bd05789808999"
+  },
+  "assertionPreservation": {
+    "oldJavaAssertionAstNodes": 43,
+    "originalAndCurrentAstSha256": "82db0d73a563a172a02251b3b0cc726433f2eee5d57ce0573a4799c781de6a81",
+    "wholeCli16PostReplay0Timeout30PrivacyAssertionsUnchanged": true,
+    "oldReporting4TestBytesUnchanged": true
+  },
+  "observabilityPrivacy": {
+    "onlyFixedPhasesStagesBoundedExitByteCountsAndSixJdkBooleans": true,
+    "byteCountsCappedAt1048576": true,
+    "rawPathsEnvironmentValuesProxyBodyKeyTraceNotForwarded": true,
+    "malformedObservationOmittedWithoutHidingOriginalFailure": true
+  },
+  "limits": [
+    "Remote CI JAVA_HOME filesystem metadata was not observed; missing/symlink is a proven local reproduced fixture failure, not confirmed cause of all prior CI failures.",
+    "Pipe saturation hypothesis has no support in current local successful child stdout211B/stderr0 observation.",
+    "Production java_tools and model/prompt/threshold/gold/operating configuration unchanged.",
+    "Full original proxy49/14 regression is being collected separately by implementation author; this receipt covers frozen16+FI3 only.",
+    "No actual model call, operating key/CA, private corpus or deployment."
+  ],
+  "rawEvidence": ".codex/tdd-evidence/issue130-proxy-child-jdk-independent-fi",
+  "recordedAt": "2026-10-18T16:14:46.024302Z"
+}

@@ -1,0 +1,36 @@
+{
+  "status": "NARROW_PC01_FIXTURE_OBSERVABILITY_CI_REVIEW_PASS_NOT_PUBLICATION_APPROVAL",
+  "recordedAt": "2026-10-18T16:23:35.096153+00:00",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "reviewer": "/root/review_pre_submit_design",
+  "P1": 0,
+  "P2": 0,
+  "checked": [
+    "Synthetic child JAVA_HOME is pinned to current real JVM only; no production java_tools change or deadline extension.",
+    "Original Java/Python archive bytes match HEAD2bf; existing RF4 remains byte-identical. Original43 Java assertion AST preservation is independently recorded and diff leaves old check calls unchanged.",
+    "Optional childObservation reconstructs fixed phase/stage enums, bounded strict integer-or-null fields and six exact boolean fields. Unknown fields removed, malformed optional value omitted without hiding original parent failure.",
+    "Output byte metadata is capped, not a raw-body precision claim or executable-JDK proof. No raw path/env/proxy/key/body/stacktrace forwarded through this projection.",
+    "CI keeps RF4 and proxy63, then runs new16 against the same fresh synthetic compiled fixture classpath. No permissions/job timeout change.",
+    "All implementation3/test3 hashes and final/FI reference hashes directly matched current disk."
+  ],
+  "evidence": "Independent genuineRED9/control7 -> GREEN16; FI3 detects2/1/1 assertions with each restore, final16. Separate proxy49+14 regression63PASS. Review did not rerun these tests.",
+  "limitations": [
+    "Remote hosted JDK filesystem cause remains unconfirmed; local reproduction alone does not establish old PC01 or b677 causal identity.",
+    "Old child stdout/stderr pipe handling and30second timeout were not broadened; this scope does not establish saturation causation.",
+    "Separate V2 policy source/test cycle and final full guard still pending; no combined final-publication PASS here.",
+    "No paid/provider/real key/CA/private corpus/gold/index/rawresponse reads or network/Gradle/source/test/CI mutations by reviewer."
+  ],
+  "boundFiles": {
+    ".tdd/verification/issue130-proxy-child-jdk-implementation.json": "558137ce9c42ddedc77415f211ccfdf84b3523b416b6149fffca3c17387e73e2",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-red-evidence.json": "2812bedc76ba3857082b48dc76ecf69e119c0897bf6ec180eb0aa5b4530b2937",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-independent-final.json": "dcfe530c2ad3b7136866e7fb4b0339d056a16445fcf62a62d811d33a2a45af32",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-faults.json": "23ee135fba3f8b12f161b9e068ce50392cd8e69977affe9dc8aaa2d03f638bf4",
+    ".github/workflows/ci.yml": "0d2dd165c55594f6391502ec25545f78900a51172a4370ad864c102f4994cae4",
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "d69c96740f940856ed1df1887eaa766d95f9bbdc1b051e0a0a7ceecda8491772",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "9ddacbf26b29fc5081895e1b48d9c950cc64f8cd79f2272352648d2293218733",
+    "evaluation/issue130/tests/test_proxy_child_jdk.py": "25901acbc468ed762af028dacb7ecd356e7984bcb50934eb9e7784d8e36a53e9",
+    "evaluation/issue130/tests/test_proxy_child_observation.py": "898eb097bef681546bfb8d2187be3cceba00c93e67851fa6b981eb4805ebe75f",
+    "evaluation/issue130/tests/run_proxy_child_jdk_tests.py": "8937fc8824ea6441b4bbb1ecd6c1550ce89c473b8198f3f652598431cece9a0c",
+    "evaluation/issue130/tests/test_proxy_failure_reporting.py": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c"
+  }
+}

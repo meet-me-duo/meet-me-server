@@ -1,5 +1,7 @@
 # #107 단일 모호성 분류의 독립 평가 설계
 
+현재 A/B 모호성 의미의 세부 경계는 사용자 승인 후 분리한 [공통 정책 V2](ISSUE_130_SHARED_POLICY_V2_EVALUATION.md)를 따른다. 필요한 개인 사실의 미제공과 명시적 넓은 허용·타인 가용성 의존·날짜/방식 선택권 위임을 구분한다. 아래는 해당 작성 시점의 설계·평가 이력이며 기존 corpus/gold/성적은 소급 수정하지 않는다. 현재 실행·예산·게시 상태는 [Worklog](ISSUE_107_PRE_SUBMIT_WORKLOG.md)를 따른다.
+
 2026-10-18 UTC. 기준 `01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df`. **평가 설계·합성 corpus 준비 문서다.** 최신 합산 USD1 예산은 승인됐으나 비용 상한 입증 전 실제 실행은 보류하며 [최신 실행 계획](ISSUE_107_USD1_EVALUATION_EXECUTION_PLAN.md)을 따른다. 실제 모델/외부 호출0, 사용자 입력/비밀정보0, 정확도·실청구·p50/p95 실측0이다. 제품·adapter·prompt·테스트·브랜치는 이 평가 작성자가 변경하지 않는다.
 
 공개 계약은 [DC01–DC12](ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md), 제품 의미는 PRD/ADR-053을 따른다. `CLEAR | NEEDS_REVIEW | INDETERMINATE`라는 전체 입력의 단일 판단만 평가한다. 평가자의 dimension/group 표시는 정답 층화용 metadata이며 모델이 category/구간/질문/수정 후보를 반환해야 한다는 계약이 아니다. standalone adapter 자동 등록0과 승인 TS bridge의 기본 OFF/DENY 구현을 구분하며 운영 활성화 완료로 표시하지 않는다.

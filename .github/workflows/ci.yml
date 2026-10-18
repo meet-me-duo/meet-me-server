@@ -54,7 +54,11 @@ jobs:
           GRADLE_USER_HOME: /home/runner/.gradle
         run: |
           python3 evaluation/issue130/tests/test_proxy_failure_reporting.py
-          python3 evaluation/issue130/tests/run_environment_proxy_tests.py
+          python3 evaluation/issue130/tests/run_environment_proxy_tests.py --output "$RUNNER_TEMP/issue130-proxy"
+          python3 evaluation/issue130/tests/run_proxy_child_jdk_tests.py \
+            --evaluation-classpath-file "$RUNNER_TEMP/issue130-proxy/compile/evaluation-runtime.classpath" \
+            --java "$JAVA_HOME/bin/java" \
+            --output "$RUNNER_TEMP/issue130-proxy-jdk"
 
       - name: Verify client-scoped environment CA and JDK selection
         env:

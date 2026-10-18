@@ -1,4 +1,6 @@
-# 현재 Decisions 코드 계약 인계 (2026-10-18 UTC)
+# Decisions V1 실제 평가 코드 계약 인계 (역사; 2026-10-18 UTC)
+
+현재 승인된 문구 정합화는 [공통 정책 V2](../ISSUE_130_SHARED_POLICY_V2_EVALUATION.md)를 따른다. 아래 190word 지침·선택지·합성 요청 예시는 실제 A24/B2 실행 HEAD9d9의 V1 역사다. V2는 A CLEAR 설명과 A/B 지침만 바꾸며 모델·choice3·6입력·parser·confidence/argmax 정책을 유지한다. V2 실제 모델 효능은 미검증이며 아래 실제 결과를 새 정책 성적으로 재사용하지 않는다.
 
 이 문서는 코드 관측이다. 부모의 최신 공식 문서 조사와 대조하기 전 결론을 확정하지 않는다. 유료 호출·프롬프트/threshold 튜닝은0이다. 기준은 실제 실행 HEAD `9d9c934fd8f999f0bd4a1723bd8987b9efd86b93`이며 이후 CI fixture 변경은 production contract를 바꾸지 않았다.
 

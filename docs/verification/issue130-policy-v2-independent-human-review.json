@@ -1,0 +1,53 @@
+{
+  "status": "AUTHOR_ALIGNED_FINAL_A216_B319_POLICY_REVIEW_PASS_NOT_MODEL_EFFICACY",
+  "priorRefinedReview": {
+    "path": "/tmp/issue130-policy-v2-human-review.json",
+    "sha256": "8c44f24cd02b605791ef8d35785aa45faf38bc066f46fce1077d951c3cc675c3",
+    "preserved": true
+  },
+  "finalCandidateManifest": {
+    "path": "/tmp/issue130-policy-v2-implementation/author-aligned/scratch-manifest.json",
+    "sha256": "eae4c7f8652998d4727c818ff7aac883117ffef76172b046f7d2dd66742a6f9d"
+  },
+  "independentPublicQuestion": {
+    "path": "/tmp/issue130-policy-v2-author/decision-principles-v2-question.json",
+    "sha256": "ce73f2e07796e26ff37fde75283e5ca2f14c95e25adf8010ed794f1081b13209",
+    "instructionBytesExact": true,
+    "instructionBytes": 1649,
+    "instructionWords": 216,
+    "instructionSha256": "8b9f74fe133e91d8f8c358557d61d69369f7b735afe07da11b7c94a7fe4eeef5",
+    "allChoiceDescriptionsAndValuesExact": true,
+    "questionTypeNameExact": true
+  },
+  "finalSources": {
+    "A": {
+      "path": "/tmp/issue130-policy-v2-implementation/author-aligned/AmbiguityClassificationContract.kt",
+      "sha256": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+      "patchSha256": "2072381be7828723d44342339726b061ec6a823bf04464815451a788eede4bd6"
+    },
+    "B": {
+      "path": "/tmp/issue130-policy-v2-implementation/author-aligned/PrecheckProviderContract.kt",
+      "sha256": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+      "patchSha256": "963a55f149f5726c8a9ebb9c2981d1480048cd21df06c579bda718d9f86ce2b3"
+    }
+  },
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "assessment": "The A216 alignment relocates context use and spells out material facts/bindings and intentional-alternative preservation more directly. Four shared principles remain byte-identical in A/B. Preservation of all original conditions plus explicit shared polarity/exception/scope rule retains negation/conditional/exception obligations. B319 unchanged. No reversal of prior human policy assessment.",
+  "preservedNegativeControls": [
+    "Date-choice delegation is not mode-choice delegation; online-only/offline exclusion remains intact.",
+    "A minimum starting reference is conditional on genuine material necessity, not a reason to ask for location in online-only conditions.",
+    "Intentional breadth and valid dependencies are not narrowed; necessary unknown private/personal facts are not resolved by mere symbolic copying.",
+    "Missing numbers, schema limits, no-match and out-of-range alone are not ambiguity."
+  ],
+  "limits": [
+    "No independent RED/GREEN or model efficacy claim from this human review; root/author apply ordering remains required.",
+    "Original gold/scores/oldFAIL unchanged; reused B2 is DEV/reused, not fresh blind evaluation.",
+    "No live source edits, Gradle/tests, model/API calls, private corpus/gold/raw reads, new operating policy or release activation.",
+    "The later V2 overlay managed-bootstrap8 and managed-close3 regression is not executed yet."
+  ],
+  "reviewUtilityNote": "An initial local trimIndent reconstruction retained a trailing blank line and failed its own equality check. Correct Kotlin trimIndent blank-edge handling yielded exact1649bytes. No candidate/source correction or test execution occurred.",
+  "recordedAt": "2026-10-18T16:23:35.568100Z"
+}

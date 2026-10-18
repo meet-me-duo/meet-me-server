@@ -1,0 +1,159 @@
+{
+  "status": "LOCAL_PUBLICATION_PASS_SHARED_POLICY_V2_AND_PC01_FIXTURE_NOT_OPERATING_QUALITY_APPROVAL",
+  "recordedAt": "2026-10-18T16:48:50.866425+00:00",
+  "reviewer": "/root/review_pre_submit_design",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "publicationP1": 0,
+  "publicationP2": 0,
+  "decision": "Normal followup commit/push to the existing Draft132 and exact new HEAD CI verification may proceed within existing authorization. Main merge, release/deployment, operating activation and further actual model calls remain HOLD.",
+  "directMatches": {
+    "finalPreReviewStagedManifest": {
+      "path": "/tmp/issue130-policy-v2-publication/final-staged-manifest.json",
+      "sha256": "64c085f5f50f9fe2c3d4c7e4c7f577552888b4a4bf0df8807bc9254153957145",
+      "files": 51,
+      "diskAndIndexAllMatchedBeforeReviewerBookkeeping": true
+    },
+    "mandatoryGuard": {
+      "rawReceiptSha256": "e6464c467053b0996364f5e34796a944fc12c748a598039dca8205592d608826",
+      "trackedReceiptPath": "docs/verification/issue130-shared-policy-v2-final-quality.json",
+      "trackedReceiptSha256": "8dbd966780f3f8137e4713dcbcf85178ab0181ad5e335cde3aa768d53034a5e7",
+      "sourceManifestSha256": "8978c148f19c8b2de8c369bfac52fb8709684d4c04081ef3567f6358594c84eb",
+      "sourceBeforeAfterCurrentAllEqual": true,
+      "sourceFiles": 597,
+      "exitCode": 0,
+      "elapsedSeconds": 516.447,
+      "freshXmlSuites": 216,
+      "tests": 1733,
+      "passed": 1729,
+      "historicalSkipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "allSuiteInventoryModifiedAfterStart": true,
+      "keysBlank": true,
+      "paidCalls": 0
+    },
+    "prTemplateSixHeadingsExact": true,
+    "prTitle": {
+      "value": "fix: 제출 전 모호성 정책과 평가 정의 정합화",
+      "sha256": "1e460f276d94ec07540ddc030af239e91977256ec91a2d57b9555b0235d2d542"
+    },
+    "prBody": {
+      "path": "/tmp/issue130-policy-v2-publication/pr-body.md",
+      "sha256": "adb098443785cfca2ef68960629b9199ee5d97528d03b02960b93b43d0e03160",
+      "guardResultActual": true,
+      "focused16IncludedIn245Explicit": true,
+      "closes130IndependentLine": true
+    },
+    "historicalReport": "Only active-V2/history notice prepended; complete HEAD report body remains byte-exact suffix."
+  },
+  "sourceAndPolicyAssessment": {
+    "A": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "B": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+    "outsideApprovedInstructionAndClearDescriptionLiteralsHeadExact": true,
+    "preserved": "Explicit breadth, alternatives, preferences, exclusions, valid other-availability dependency and group choice delegation remain allowed. Only material missing necessary personal/local facts or bindings need clarification; symbolic copying does not resolve necessary hidden facts. No exact home address demand, invented routine times or locations. Schema limits/no-match/missing numbers/out-of-range alone are not ambiguity.",
+    "unchanged": "Model, confidence normalization/parser, thresholds, public API/UI/DB,500Unicode, choice3,6input fields, caps,auth/ownership/revision/deadline fences, original privacy, final whole-room/AREA contracts.",
+    "V2Efficacy": "NOT_MEASURED; publicDEV12 and fixed synthetic wire replies are not a fresh blind holdout or semantic accuracy result."
+  },
+  "evidenceCountsAndHistory": {
+    "V2": "Independent16 RED11 assertionFAIL/5controls -> focused16GREEN; related245 already includes16. FI2 detects3/1 assertions and each exact restore16GREEN. Initial format-only supersession and V1 test/resource originals preserved.",
+    "PC01": "Independent16 includes newPJ3/CO9 plus oldRF4 controls. RED9/7controls -> GREEN16; FI3 detects2/1/1 and each restore. Separate proxyJava49+Python14 regression63PASS. Original43assert/30second/16POST/replay0 and RF4 bytes preserved.",
+    "managed": "Exact6046 plusV2 overlay separately compiles bootstrap8 and close3, fresh11PASS at492unchanged source/test files. No summing with historicalV1 69+3 or presenting as current398 compiled coverage. Canonical TLS synthetic replies only; no actual final-model/browser/OAuth/release proof.",
+    "historicalQuality": "A16/A24/B2 individual inputs/gold/first ratings/scores/V1 wire data unchanged. A24 raw17/24 and normalizedB24/skip0 remain NOT_ESTABLISHED utility; frozenB2 correct0/2 persists with policy ambiguity vs model-only cause distinguished. No causal improvement or general accuracy inference.",
+    "priorExactCi": "2bf PC01 assertion failure retained. Local missing/symlink JDK reproduction is not confirmed hosted filesystem cause; no timeout relaxation or speculative cause closure."
+  },
+  "privacyAndCost": {
+    "observation": "Fixed enums, bounded strict numeric metadata and six exact booleans only; unknown/raw paths/env/proxy/body/key/trace are not forwarded. Malformed optional metadata omitted without hiding failure.",
+    "sourceAndArchives": "Only public syntheticDEV/test/history and safe summarized evidence in reviewed changes. No additional origins/address data demands.",
+    "rootScanBeforeGuard": {
+      "path": "/tmp/issue130-policy-v2-publication/privacy-before-guard.json",
+      "sha256": "2565b57ac0092f2da28220cd8557b7efeb1f8eeb4069b65de0730f65866beb63",
+      "files": 49,
+      "secretMatchesReported": 0,
+      "privateCorpusPathsAdded": false
+    },
+    "finalAddedMetadata": "The other2 files are guard summary and activeV2 historical banner; no private payload or secret values introduced. Reviewer does not read environment/key values to repeat secret-value scans.",
+    "heldReservationUsd": "2.74751488",
+    "engineeringHeadroomUsd": "0.25248512",
+    "unknownHoldsPreserved": true,
+    "invoiceHardCapProven": false,
+    "newPaidCalls": 0
+  },
+  "authorizedReviewerBookkeeping": {
+    "onlyChangedPaths": [
+      "implementation_plan.md",
+      "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md"
+    ],
+    "change": "Only current top pending independent-review bullet markedPASS; sameDraft normal followup publication/exactHEADCI remain explicitly pending. Historical blocks and source/test/CI unchanged.",
+    "postReviewDiskHashes": {
+      "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "3d1c8e159b050e1a90039a3584a810c2413967f6139d7a8558341a4ee6691bcc",
+      "implementation_plan.md": "3bca02e46d56560d9ba1df8f9a4a3358755cae07c1725f8e220f426bcb9f3f9c"
+    },
+    "rootNextAction": "Stage these2 final status-doc bytes and this review; verify index matches boundFiles before normal commit/push. Do not rewrite this approval as exact remote CI success."
+  },
+  "boundFiles": {
+    ".github/workflows/ci.yml": "0d2dd165c55594f6391502ec25545f78900a51172a4370ad864c102f4994cae4",
+    ".tdd/history/issue130-proxy-child-jdk/AssertionAst.java.txt": "256182f7b80bea72c6f1e69d8ccfd61c9fedff3bf24d4f39c2f5e06e732d7f6c",
+    ".tdd/history/issue130-proxy-child-jdk/Issue130EnvironmentProxyContractTest.java.original": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    ".tdd/history/issue130-proxy-child-jdk/README.md": "dfd950b5eb4ae494d900a5147b2343ccdd364d15ef37e2de056666eca791e1bf",
+    ".tdd/history/issue130-proxy-child-jdk/ci.yml.original": "2392fe0f2cfba4001d9a8aeb512ec26a4a012f2cce1be5d2cf03e357843a4af2",
+    ".tdd/history/issue130-proxy-child-jdk/freeze-exception-and-implementation.json": "558137ce9c42ddedc77415f211ccfdf84b3523b416b6149fffca3c17387e73e2",
+    ".tdd/history/issue130-proxy-child-jdk/independent-fi-local-reproduction.py.txt": "c3d3d879e5e45581b0027fd8ffb1ed64a77f5a1cb1654783bc97cf601e0491e0",
+    ".tdd/history/issue130-proxy-child-jdk/original-source-manifest.json": "473611cae8992546d0e25b033aac406c8d3a84c9c17f38a92be66d60f77cf854",
+    ".tdd/history/issue130-proxy-child-jdk/run_environment_proxy_tests.py.original": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+    ".tdd/history/issue130-shared-policy-v2/DecisionPrinciplePromptWireContractTest.kt.source": "c1ce2c0f6b3b58e2954be0838960a3b5bd522961c733f46c8dbd0fb41f2d1995",
+    ".tdd/history/issue130-shared-policy-v2/SharedPrecheckPolicyV2WireTest.initial-red.kt.source": "a4e62d1143daa18da84d804105bb8244e639fec6274536e1dc16ee1e9adb86d6",
+    ".tdd/history/issue130-shared-policy-v2/initial-red-format-supersession.json": "3930d8fce8d801db712bdf972ab00150c7a37c23b25c9283c342aac889cb2076",
+    ".tdd/history/issue130-shared-policy-v2/supersession.json": "a68492dd18718844a63f17116bfa081a97eb6b02c7e8fdeeb69892b2cf96584b",
+    ".tdd/red/issue130-shared-policy-v2-wire.json": "1c8880c0bebd12ba3b9a7af391f909888d71cfd0589a0fdd0f07da1a55b775a2",
+    ".tdd/verification/issue130-proxy-child-jdk-implementation.json": "558137ce9c42ddedc77415f211ccfdf84b3523b416b6149fffca3c17387e73e2",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-faults.json": "23ee135fba3f8b12f161b9e068ce50392cd8e69977affe9dc8aaa2d03f638bf4",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-independent-final.json": "dcfe530c2ad3b7136866e7fb4b0339d056a16445fcf62a62d811d33a2a45af32",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-red-evidence.json": "2812bedc76ba3857082b48dc76ecf69e119c0897bf6ec180eb0aa5b4530b2937",
+    ".tdd/verification/issue130-proxy-child-jdk-observation-red.json": "74f013f5e6cff59aea316a5a46a37b91ae00ef1447480574a3715934f0e439b5",
+    ".tdd/verification/issue130-shared-policy-v2-faults-detail.json": "ebae403496a417da29c3204aafa29b5f20553613e72c0550998765b1263ae73e",
+    ".tdd/verification/issue130-shared-policy-v2-faults.json": "9caeeede33931df6ee4fcaef32cd1044258f062ac811589821c81872818f5706",
+    ".tdd/verification/issue130-shared-policy-v2-implementation.json": "37a645d6035a01b66c8de71e4aa7df9556205df07817ea3aec0f54590707a766",
+    ".tdd/verification/issue130-shared-policy-v2-independent-author.json": "c2abd277a8cd9950dcfcf409a9ce9ce62b3e5c600a2e48a8389c95d5d8af479c",
+    ".tdd/verification/issue130-shared-policy-v2-wire-red.json": "f3a6c4298ccf079deed452cd350bb721932ba1f810ea05b987e45f93a0d6c6f1",
+    "docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md": "92e727b2677c91db60de794ec5ec95a12d96977c77acf1962296238da3975852",
+    "docs/ISSUE_107_DECISION_EVALUATION.md": "316b23c59027eb8474df9b7d919460482cb39f1a501977f254067f8a3c00c69a",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "3d1c8e159b050e1a90039a3584a810c2413967f6139d7a8558341a4ee6691bcc",
+    "docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md": "dd0a9d481e38b4b5eb523221532cc7879582a104508dbaf31e5b9b1f88b6de39",
+    "docs/ISSUE_130_SHARED_POLICY_V2_EVALUATION.md": "b7bb13665e8ab0065719adc5b4f70ebdb90a7044dbf9f499be2ccdfab5eb42d5",
+    "docs/verification/issue130-2bf-exact-ci-failure.json": "5f43308d4df6f49785b96f2a972f34653d93ddfbef65a16dbd27460e0d749cd4",
+    "docs/verification/issue130-decisions-current-contract-handoff.md": "a30c446cb61651e1b24eb9b18f42c3b89271cf62990816549e5d9586e9e6184c",
+    "docs/verification/issue130-pc01-code-independent-review.json": "83ef67affe9c45b43dc3c8e793b0e0db8446507b96ad5578ae528fadf3db63c5",
+    "docs/verification/issue130-policy-v2-ci-impact-assessment.json": "3cd4a3578632b9937bf1f857ccf201f491fb67c2fc6cb7a425357d71d230ffb1",
+    "docs/verification/issue130-policy-v2-independent-human-review.json": "fb7742140c23bd717cba220d6beff736b0efacdfe0f3fb44b9fa8b8b0d92910c",
+    "docs/verification/issue130-shared-policy-independent-review.json": "a9e04eef6943aa63d132b67e31e37d941e580aa71a18f7e92cd8b01f86e8447c",
+    "docs/verification/issue130-shared-policy-proposal.md": "7309579c6274acbdabac903ad40ba09c8ef6ef89fa5827a0aac6ca29f4563aae",
+    "docs/verification/issue130-shared-policy-v2-code-independent-review.json": "71ae167b671902e5842875c83599a3096cc5967c17a4b2c4524938599bd22c83",
+    "docs/verification/issue130-shared-policy-v2-final-quality.json": "8dbd966780f3f8137e4713dcbcf85178ab0181ad5e335cde3aa768d53034a5e7",
+    "docs/verification/issue130-shared-policy-v2-managed-combination.json": "dce1004daa536f9732ca7ca636d3ae11295d0c2f616d2c9105a28407958c8606",
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "d69c96740f940856ed1df1887eaa766d95f9bbdc1b051e0a0a7ceecda8491772",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "9ddacbf26b29fc5081895e1b48d9c950cc64f8cd79f2272352648d2293218733",
+    "evaluation/issue130/tests/run_proxy_child_jdk_tests.py": "8937fc8824ea6441b4bbb1ecd6c1550ce89c473b8198f3f652598431cece9a0c",
+    "evaluation/issue130/tests/test_proxy_child_jdk.py": "25901acbc468ed762af028dacb7ecd356e7984bcb50934eb9e7784d8e36a53e9",
+    "evaluation/issue130/tests/test_proxy_child_observation.py": "898eb097bef681546bfb8d2187be3cceba00c93e67851fa6b981eb4805ebe75f",
+    "implementation_plan.md": "3bca02e46d56560d9ba1df8f9a4a3358755cae07c1725f8e220f426bcb9f3f9c",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt": "4cbf81f8999f5f5b8f08c87dd57e0eed44c309305bf84eb064c7837d718349be",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/SharedPrecheckPolicyV2WireTest.kt": "84a54f08246b28503ce86ab439f49ae84e4e5cfd3fbc9a9e13b0abab6b4eb1b3",
+    "src/test/resources/precheck/classification/decision-principles-v2-question.json": "ce73f2e07796e26ff37fde75283e5ca2f14c95e25adf8010ed794f1081b13209",
+    "src/test/resources/precheck/shared-policy-v2-development.json": "25743159be6002921afc345e3c9300a75dde26b639807baea8fdeddbb7f88469"
+  },
+  "pending": [
+    "Normal commit/push and new exact HEAD CI.",
+    "V2 actual-model efficacy, falseCLEAR/excess-clarification/question-quality validation and operating policy/price/threshold selection remain unproved.",
+    "Main merge/deployment/operating activation remain HOLD. No further actual call authorization from this review.",
+    "Managed final browser/current web OpenAPI create500 sync and broader release limitations remain separate work."
+  ],
+  "reviewerActivity": {
+    "sourceTestCiEdits": 0,
+    "statusDocsOnly": 2,
+    "networkModelGradleRuns": 0,
+    "privateIndividualGoldInputIndexWireRawResponseCaEnvironmentKeyReads": 0,
+    "commitPushMergeDeploy": 0
+  }
+}

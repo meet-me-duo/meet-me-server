@@ -1,0 +1,222 @@
+{
+  "policy_version": "SHARED_PRECHECK_POLICY_V2",
+  "split": "PUBLIC_DEVELOPMENT_NOT_HOLDOUT",
+  "scope": "manual semantic specification plus outbound wire/transport regression; not model quality evidence",
+  "input_fields": [
+    "raw_text",
+    "reference_at",
+    "time_zone",
+    "locale",
+    "search_start_date",
+    "search_end_date"
+  ],
+  "common_normative_clauses": [
+    "Preserve explicit flexibility, alternatives, soft preferences, exclusions, valid dependencies on other participants' availability, and permission for the group to choose dates or modes.",
+    "Clarify only an unresolved required personal/local fact or date/time/place/mode/polarity/exception/scope binding that changes the allowed conditions across plausible interpretations.",
+    "Copying a symbolic personal boundary does not resolve its necessary missing value. Do not guess routine/event times or private locations, or require an exact home address; only the minimum usable starting-place reference may be needed.",
+    "Missing numbers, unsupported schema shape, no matching candidates, or conditions outside the search period alone are not ambiguity."
+  ],
+  "clear_choice_description": "Text and supplied context determine the allowed conditions, including explicit flexibility and availability dependencies, without guessing a necessary private fact.",
+  "cases": [
+    {
+      "case_id": "DEV-V2-01",
+      "policy_rule": "EXPLICIT_FLEXIBILITY",
+      "input": {
+        "raw_text": "월요일부터 금요일은 18시 이후면 돼요. 수요일만 빼고, 금요일이면 더 좋아요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "허용 범위·제외·부드러운 선호가 이미 정해져 있으며 한 시각을 강제하지 않는다."
+    },
+    {
+      "case_id": "DEV-V2-02",
+      "policy_rule": "REQUIRED_PERSONAL_FACT",
+      "input": {
+        "raw_text": "목요일은 교대가 끝난 다음부터만 만날 수 있어요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "NEEDS_REVIEW",
+      "expected_b": "NEEDS_EDIT",
+      "independent_rationale": "참여 시작 경계를 바꾸는 개인 교대 종료 시각이 제공되지 않았다. 임의 두 시각을 만들지 않는다.",
+      "contrast_pair": "PERSONAL_BOUNDARY"
+    },
+    {
+      "case_id": "DEV-V2-03",
+      "policy_rule": "CONTEXT_RESOLVED_FACT",
+      "input": {
+        "raw_text": "목요일 교대는 17시에 끝나요. 그날은 17시 이후만 만날 수 있어요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "필수 개인 종료 경계가 같은 본문에 제공돼 추가 질문이 필요 없다.",
+      "contrast_pair": "PERSONAL_BOUNDARY"
+    },
+    {
+      "case_id": "DEV-V2-04",
+      "policy_rule": "UNRESOLVED_BINDING",
+      "input": {
+        "raw_text": "수요일과 목요일 20~22시는 가능해요. 하루는 온라인만 되고, 다른 하루는 온라인과 대면 모두 돼요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "NEEDS_REVIEW",
+      "expected_b": "NEEDS_CHOICE",
+      "independent_rationale": "요일은 기간으로 유일하게 정해지나 온라인 전용 제약이 붙는 날짜가 빠져 있다. 원문의 두 날짜에 대한 완전 해석을 제공할 수 있다.",
+      "contrast_pair": "BINDING_OR_DELEGATION",
+      "safe_complete_proposals": [
+        {
+          "id": "A",
+          "label": "수요일 온라인 전용",
+          "proposedText": "수요일 20~22시는 온라인만 되고, 목요일 20~22시는 온라인과 대면 모두 돼요."
+        },
+        {
+          "id": "B",
+          "label": "목요일 온라인 전용",
+          "proposedText": "수요일 20~22시는 온라인과 대면 모두 되고, 목요일 20~22시는 온라인만 돼요."
+        }
+      ]
+    },
+    {
+      "case_id": "DEV-V2-05",
+      "policy_rule": "EXPLICIT_DELEGATION",
+      "input": {
+        "raw_text": "수요일과 목요일 20~22시는 가능해요. 두 날 중 어느 날을 온라인 전용으로 할지는 주최자가 정해도 돼요. 나머지 날은 온라인과 대면 모두 괜찮아요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "미제공된 개인 사실이 아니라 두 배치 중 선택권을 주최자에게 명시적으로 위임한 허용 대안이다. 어느 날인지 되묻지 않는다.",
+      "contrast_pair": "BINDING_OR_DELEGATION"
+    },
+    {
+      "case_id": "DEV-V2-06",
+      "policy_rule": "VALID_AVAILABILITY_DEPENDENCY",
+      "input": {
+        "raw_text": "다른 참여자들이 모두 겹치는 시간으로 정해 주세요. 저는 이번 주 추가 제한이 없어요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "타인 가용성은 최종 전체 분석에서 평가할 수 있는 유효 관계이며 본인에게 숨은 필수 사실이 없다."
+    },
+    {
+      "case_id": "DEV-V2-07",
+      "policy_rule": "MISSING_STARTING_REFERENCE",
+      "input": {
+        "raw_text": "집에서 도보로 15분 안에 갈 수 있는 곳이면 괜찮아요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "NEEDS_REVIEW",
+      "expected_b": "NEEDS_EDIT",
+      "independent_rationale": "필수 출발 기준점이 빠져 있다. 최소한의 사용 가능한 장소 기준만 보완하고 정확한 집 주소를 요구하거나 추측하지 않는다.",
+      "contrast_pair": "PLACE_REFERENCE"
+    },
+    {
+      "case_id": "DEV-V2-08",
+      "policy_rule": "UNSUPPORTED_ONLY",
+      "input": {
+        "raw_text": "동대문역에서 출발해서 도보로 15분 안에 도착하는 장소면 괜찮아요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "출발 기준과 이동 방식 및 범위가 정해졌다. 거리 계산/최종 스키마 지원 여부만으로 모호성 질문을 만들지 않는다.",
+      "contrast_pair": "PLACE_REFERENCE"
+    },
+    {
+      "case_id": "DEV-V2-09",
+      "policy_rule": "UNSUPPORTED_ONLY",
+      "input": {
+        "raw_text": "화요일 9~11시는 합정역에서만, 14~16시는 시청역에서만 가능해요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "시간별 장소 결속이 모두 명시됐다. 평평한 최종 구조화 스키마의 한계와 개인 의미 모호성은 구분한다."
+    },
+    {
+      "case_id": "DEV-V2-10",
+      "policy_rule": "EMPTY_ALLOWED_SET",
+      "input": {
+        "raw_text": "이번 탐색 기간에는 가능한 날이 전혀 없어요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "허용 집합이 빈 것으로 결정됐다. 참여 날짜를 억지로 추가하게 하지 않는다."
+    },
+    {
+      "case_id": "DEV-V2-11",
+      "policy_rule": "OUTSIDE_WINDOW_ONLY",
+      "input": {
+        "raw_text": "12월 21일 10~12시에만 참석할 수 있어요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "검색 기간 밖이라는 사실만으로 해석을 모호하다고 바꾸지 않는다."
+    },
+    {
+      "case_id": "DEV-V2-12",
+      "policy_rule": "CONTEXT_RESOLVED_REFERENCE",
+      "input": {
+        "raw_text": "내일은 19시부터 21시까지 가능해요.",
+        "reference_at": "2026-12-06T23:30:00Z",
+        "time_zone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "search_start_date": "2026-12-07",
+        "search_end_date": "2026-12-14"
+      },
+      "expected_a": "CLEAR",
+      "expected_b": "CLEAR",
+      "independent_rationale": "서울 기준 12월 7일의 내일은 12월 8일로 유일하게 정해지며 시간 경계도 제공됐다."
+    }
+  ],
+  "old_gold_or_scores_superseded": false,
+  "actual_model_calls": 0
+}

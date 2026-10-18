@@ -1,0 +1,8 @@
+{
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "files": {
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182"
+  },
+  "recordedAt": "2026-10-18T16:05:37.363036+00:00"
+}

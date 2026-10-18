@@ -1,3 +1,31 @@
+# #130 공통 정책 V2 정합화·무료 검증 (2026-10-18 UTC)
+
+- [x] [USER] A CLEAR 설명·A/B 지침·평가 정의 정합화와 무료 회귀를 승인했다. API/UI·DB·모델·threshold·유료 호출 변경은 제외한다.
+- [x] [AGENT] A 선택지 설명의 광범위한 person-dependent 허용과 A/B 지침·기존 평가 정의 사이의 긴장을 확인했다. 미제공 필수 개인 사실과 명시적 넓은 허용·타인 가용성 의존·날짜/방식 선택권 위임을 구분하는 [V2 정의](docs/ISSUE_130_SHARED_POLICY_V2_EVALUATION.md)를 분리했다. 기존 A16/A24/B2 입력·gold·최초 점수와 V1 resource는 불변이다.
+- [x] [AGENT] 독립 공개 DEV12와 wire 기대를 먼저 봉인하고 genuine RED16(11 assertion실패/5 control통과)을 확인했다. A CLEAR 설명과 A/B 지침 두 파일만 최소 적용해 focused16 GREEN이다. 독립 인간 정책 검토 PASS이며 실제 모델 효능 검증은 아니다.
+- [x] [AGENT] PC01 fixture는 선택 JVM의 실제 JDK만 자식에 고정하고, 실패 관측은 고정 enum/상한 숫자/boolean만 허용했다. 독립 RED16(9실패/7controls)→GREEN16, FI3 탐지2/1/1·각복구, 기존 proxy49+Python14 PASS를 보존한다. 원43 assertion·30초/16POST/replay0·제품JDK검증은 유지한다. exact2bf CI실패의 원격 원인은 미확정이다.
+- [x] [AGENT] V2 관련 회귀245(집중16 포함)·독립 FI2(A회귀3assert/B필수정보문장누락1assert, 매복구16PASS)·6046 관리형 bootstrap8/기존 close3를 완료했다. 새11개 조합 결과를 V1의69+3 역사와 합산하지 않는다.
+- [x] [AGENT] 최종 source597 동결 필수 guard PASS(516.447초): ktlintCheck/assemble/test exit0·216 suites/1733 fresh 중1729PASS·기존4SKIP·실패오류0·전후지문동일이다.
+- [x] [AGENT] 최종 독립 게시 리뷰 PASS를 봉인했다. 같은 Draft132의 정상 후속 게시·정확 HEAD CI는 다음 단계이며 아직 대기 중이다.
+- [ ] [AGENT] 동일 Draft132 정상 후속 commit/push 후 정확 새 HEAD CI를 확인한다. Commit/PR 동일 후속 커밋 예정.
+
+현재 유지 예약 USD2.74751488/기존 UNKNOWN 유지·이번 추가 유료0. 실제 V1 품질 FAIL/효용 미입증과 V2 실모델 미검증으로 main/운영 활성화/배포 HOLD다. 다음 시작점은 최종 독립 게시 리뷰→같은 Draft 정상 후속 게시·정확 HEAD CI다. 아래는 각 시점의 역사다.
+
+# #130 PC01 후속 무료 CI 검증·공통 정책 검토안 (2026-10-18 UTC)
+
+- [x] [AGENT] 동일 Draft132에 정상 후속 HEAD `2bf62c7677b6a63e8ebfa292456be94a84070b8d`를 게시했다. 최종 독립 게시 리뷰·필수 guard·source591 지문·privacy/diff검사를 통과했다. 실제 모델 평가 HEAD9d9와 이후 기록 게시 HEAD를 구별한다.
+- [x] [AGENT] exact2bf CI39141877988에서 Gradle/이전 CLI21–24 포함 bounded 실행기/ARM/Lifecycle는 PASS이나 proxy Java49 중 PC01 assertion1로 실패했다(Python exit0). literal checkout45c669/부모develop398+HEAD2bf/tree동일을 확인하고 실패를 보존한다.
+- [x] [AGENT] 원PC01 localPASS4.813s, 고정JVM+missing/symlink inheritedJAVA_HOME에서 같은 earlyCONFIG 실패를 무과금 재현했다. 성공stdout211B로 pipe포화 가설은 지지되지 않는다. 원격 JDK 파일 메타/실패분기는 미관측이어서 정확 원인을 소급 확정하지 않는다.
+- [ ] [AGENT] 독립 genuineRED·privacy projection 명세 뒤 fixture의 선택 JDK만 명시 고정하고 고정 실패분기/크기/boolean 관측을 최소 추가한다. 제품 JDK 보안·timeout·16POST/replay0/assertion·모델/500자/gold/점수는 유지한다. 이후 필수 guard·독립 리뷰·같은 Draft 정상 후속 게시·정확HEADCI를 확인한다.
+- [x] [AGENT] [A/B 공통 정책 검토안 v0.1](docs/verification/issue130-shared-policy-proposal.md)과 독립 명세 검토PASS를 별도 보존했다. 12개 공개 합성/기존B2 재사용 행에 문맥·미확정사실·허용집합 영향·A→B 이유·최소확인을 기록했다. **제안이며 미적용**: 현재 코드/prompt/gold/score/threshold 변경0, API/UI 확장·참여/마감 변경0이다. 부모에게 표와 후속 문구 정합화 범위를 먼저 보고했고 모델 동작 수정은 보류한다.
+
+- [x] [USER] 공통 정책표 방향의 A 설명·A/B 지침·평가 정의 정합화와 무료 회귀를 승인했다. 명시적 온라인 날짜/방식 선택권 위임은 질문하지 않는 대조군을 포함하고 필요한 개인 기준점 보완은 불필요한 주소 요구를 금지한다. API/UI·DB·모델·threshold·유료 호출은 변경하지 않는다.
+- [ ] [AGENT] 새 정책V2의 독립 DEV/실제 wire 계약 RED→짧은 공통 지침 최소 변경→무료 회귀·독립 정책/코드/FI 검증을 진행한다. 기존 A16/A24/B2 입력·gold·score·V1 wire 자료는 불변 역사로 보존하고 새 V2의 실제 의미 효능은 미검증으로 둔다. PC01 source/runtime 동결 종료 후에만 A/B 문자열을 적용한다.
+
+현재 예약 USD2.74751488/기존 UNKNOWN 유지·추가 유료 호출0. 정책 명시성 긴장과 fixedgold 불일치/모델 단독 원인을 분리한다. 모델 품질·운영 정책·실OAuth/DB전환·최종managed UI 등 차단으로 main/deploy/활성화 HOLD다. 다음 시작점은 PC01 독립 fixture/privacy TDD→최소수정/검증→정확 새HEADCI이며 공통 정책안은 별도 검토 후에만 후속 모델 변경 범위를 정한다. Commit/PR 동일 후속 커밋 예정.
+
+이하 기존 기록은 각 시점의 상태다.
+
 # #130 A24·B2 실제 평가와 출시 차단 (2026-10-18 UTC)
 
 - [x] [USER] 첫 구성 중단의 미실행 예약 USD0.34603008만 근거·사유를 보존해 정산하고, 기존 USD3 안에서 새 봉인 A24→사전 B2를 각 한 번 실행하도록 승인했다. 기존 UNKNOWN 포함 USD1.79322880은 유지하며 추가 예산을 요청하지 않는다. 최종 품질·보안 게이트를 조건으로 통합·병합·실배포·로그인·README 작업도 승인됐고 새 자격증명/보안 확대는 제외됐다.

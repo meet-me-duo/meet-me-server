@@ -1,0 +1,20 @@
+import com.sun.source.tree.*;
+import com.sun.source.util.*;
+import javax.tools.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.*;
+public class AssertionAst {
+ public static void main(String[] args)throws Exception {
+  JavaCompiler c=ToolProvider.getSystemJavaCompiler();List<String> assertions=new ArrayList<>();
+  try(StandardJavaFileManager m=c.getStandardFileManager(null,null,null)){
+   JavacTask t=(JavacTask)c.getTask(null,m,null,List.of("-proc:none"),null,m.getJavaFileObjects(args[0]));
+   for(CompilationUnitTree tree:t.parse())new TreeScanner<Void,Void>() {
+    public Void visitMethodInvocation(MethodInvocationTree n,Void p){String name=n.getMethodSelect().toString();if(name.equals("check")||name.equals("eq"))assertions.add(n.toString());return super.visitMethodInvocation(n,p);}
+    public Void visitNewClass(NewClassTree n,Void p){if(n.getIdentifier().toString().equals("AssertionError"))assertions.add(n.toString());return super.visitNewClass(n,p);}
+   }.scan(tree,null);
+  }
+  String hash=HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(String.join("\n",assertions).getBytes(StandardCharsets.UTF_8)));
+  System.out.println("{\"assertionAstNodes\":"+assertions.size()+",\"sha256\":\""+hash+"\"}");
+ }
+}

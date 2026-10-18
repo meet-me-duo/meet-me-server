@@ -1,0 +1,13 @@
+{
+  "status": "VALID_INITIAL_RED_RECOLLECTED_AFTER_SCOPED_FORMAT_ONLY",
+  "initial_tests": 16,
+  "initial_assertion_failures": 11,
+  "initial_control_passes": 5,
+  "initial_raw_log": ".codex/tdd-evidence/issue130-shared-policy-v2-wire-initial-red.log",
+  "initial_test_sha256": "a4e62d1143daa18da84d804105bb8244e639fec6274536e1dc16ee1e9adb86d6",
+  "test_expectations_or_fixture_semantics_changed": false,
+  "formatter_scope": "new SharedPrecheckPolicyV2WireTest.kt only",
+  "formatter_attempt1": "standalone CLI classpath incomplete, no source write, not RED",
+  "formatter_attempt2": "Gradle autoformatted new source; reported initial style violations; final scoped check follows",
+  "final_canonical_RED_pending_recollection": true
+}

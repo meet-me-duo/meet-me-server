@@ -1,0 +1,16 @@
+{
+  "status": "READ_ONLY_NO_FIXED_V1_CONFLICT_FOUND",
+  "asOf": "2026-10-18T16:34:08.871095+00:00",
+  "reviewer": "/root/precheck_provider_impl",
+  "scope": "PC01 proxy63 and PJ16 after A/B policy text change",
+  "findings": [
+    "Fixture productionWire uses current production requestBytes; wire bytes/SHA/count and source/runtime hashes are derived fresh.",
+    "Python14 verifies environment mode, retained reservation, Decimal/evidence and fixed diagnostic .8/16/300; no V1 instruction/description expectation.",
+    "PJ16 reuses PC01 fixture/projection and fake B sentinel, not actual generation provider.",
+    "Fresh compile in new exact HEAD CI required; old cached V1 classes/wires are not V2 evidence."
+  ],
+  "changes": 0,
+  "testRuns": 0,
+  "actualProviderCalls": 0,
+  "costConstantSemantics": "Historical diagnostic profile constants unchanged; no invoice hard-cap proof or new paid execution."
+}

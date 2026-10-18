@@ -1,3 +1,7 @@
+# 현재 후속: 공통 정책 V2 무료 정합화 (2026-10-18 UTC)
+
+사용자 승인으로 [공통 정책 V2](ISSUE_130_SHARED_POLICY_V2_EVALUATION.md)의 A CLEAR 설명·A/B 지침·평가 정의 정합화를 별도 수행한다. 아래 실제 A16/A24/B2는 **V2 이전 각 source의 실행·고정 gold/점수 역사**이며 V2 성적으로 재사용하지 않는다. 당시 지침 변경0·CI 대기·예산 문구는 해당 시점을 나타낸다. V2 추가 실모델 호출은0이고 의미 효능은 미검증이다. 최신 무료 검증·게시·정확 CI 상태와 다음 시작점은 [Worklog](ISSUE_107_PRE_SUBMIT_WORKLOG.md)·PR132를 따른다.
+
 # 개인 맥락 A24/B2 실제 결과 (2026-10-18 UTC)
 
 새 봉인 입력·gold로 정확 게시 HEAD `9d9c934fd8f999f0bd4a1723bd8987b9efd86b93`에서 A24와 사전 지정 standalone B2를 각 한 번 실행했다. Decisions24·count2·generation2 전수 기술 완료/usage 확인, source/runtime 전후동일·자동 retry/redirect/fallback0이다. 원 첫 CONFIGURATION 중단과 원 예약·계획·실패는 보존한다. 이번 실행 뒤 게시할 기록 커밋을 실제 실행 당시 HEAD로 소급하지 않는다.

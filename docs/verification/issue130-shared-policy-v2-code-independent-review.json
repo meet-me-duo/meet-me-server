@@ -1,0 +1,62 @@
+{
+  "status": "NARROW_AUTHORIZED_V2_POLICY_LITERAL_SOURCE_REVIEW_PASS_NOT_MODEL_EFFICACY_OR_PUBLICATION_APPROVAL",
+  "recordedAt": "2026-10-18T16:30:31.728432+00:00",
+  "reviewer": "/root/review_pre_submit_design",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "P1": 0,
+  "P2": 0,
+  "directSourceProof": {
+    "aSha256": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "bSha256": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+    "aSourceOutsideInstructionsAndClearDescriptionEqualToHead": true,
+    "bSourceOutsideInstructionsEqualToHead": true,
+    "v1ResourceHeadByteEqual": true,
+    "aJavaAndPythonEvaluationHelpersHeadByteEqual": true,
+    "modelThresholdParserRuntimeApiUiDbCaps500OwnershipRevisionDeadlineFencesChanged": false
+  },
+  "policyAssessment": [
+    "Shared four normative clauses distinguish necessary missing personal/local facts and material bindings from deliberate breadth, soft preference, exclusions, alternatives and valid other-availability dependency.",
+    "Explicit group choice of dates or modes remains valid; the requirement to preserve every other condition prevents date-choice delegation from silently permitting mode-choice.",
+    "Symbolic copying alone cannot resolve a necessary hidden fact, but missing numbers or extraction-schema limits alone are not ambiguity. Text/context-resolved facts are not re-asked.",
+    "No private event time/location may be invented. Minimum usable starting reference is conditional on material necessity; exact home address is explicitly not required. No extra origin/raw-owner-identification request is introduced.",
+    "NEEDS_CHOICE requires two source-grounded safe complete interpretations preserving all other conditions, polarity and preference. Otherwise questionless NEEDS_EDIT; no new reason/API field or automatic text replacement.",
+    "Untrusted data boundary, original-text preservation, final whole-room analysis and AREA separation, participation and closing policy protection remain explicit."
+  ],
+  "testReview": {
+    "publicDevCases": 12,
+    "notFreshHoldout": true,
+    "wireChecks": "Actual loopback A body and B full-count/generation bodies, shared clauses,6input fields/raw preservation,CLEARdescription,500Unicode/501rejection,LOW2048/candidate1/schema,proposal forwarding and questionlessNEEDS_EDIT.",
+    "semanticAccuracyClaim": false,
+    "fixedResponsesIndependentOfDevGold": true,
+    "dpwUpdate": "Only versioned resource pointer plus two exact fingerprints change; V1 resource retained.",
+    "red": "Independent16:11 assertion failures plus5controls; selected test SHA directly match evidence. GREEN/FI/fullguard not asserted by this review."
+  },
+  "humanReview": {
+    "path": "/tmp/issue130-policy-v2-author-aligned-human-review.json",
+    "sha256": "fb7742140c23bd717cba220d6beff736b0efacdfe0f3fb44b9fa8b8b0d92910c",
+    "notSubstituteForTests": true
+  },
+  "boundFiles": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+    "docs/ISSUE_130_SHARED_POLICY_V2_EVALUATION.md": "b7bb13665e8ab0065719adc5b4f70ebdb90a7044dbf9f499be2ccdfab5eb42d5",
+    "src/test/resources/precheck/shared-policy-v2-development.json": "25743159be6002921afc345e3c9300a75dde26b639807baea8fdeddbb7f88469",
+    "src/test/resources/precheck/classification/decision-principles-v2-question.json": "ce73f2e07796e26ff37fde75283e5ca2f14c95e25adf8010ed794f1081b13209",
+    "src/test/resources/precheck/classification/decision-principles-v1-question.json": "7c393004c69ff8a8e04657f31626468229c7aaea34568e530816f8288507f6b6",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/SharedPrecheckPolicyV2WireTest.kt": "84a54f08246b28503ce86ab439f49ae84e4e5cfd3fbc9a9e13b0abab6b4eb1b3",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt": "4cbf81f8999f5f5b8f08c87dd57e0eed44c309305bf84eb064c7837d718349be",
+    ".tdd/red/issue130-shared-policy-v2-wire.json": "1c8880c0bebd12ba3b9a7af391f909888d71cfd0589a0fdd0f07da1a55b775a2"
+  },
+  "pending": [
+    "Independent focusedGREEN/FI and final guard receipts.",
+    "Final managed integration and complete publication record/scope review.",
+    "No real-model efficacy, falseCLEAR/falseREVIEW improvement or question quality established by prompt literals/wire tests.",
+    "Original observed A16/A24/B2 gold/score/results remain historical unchanged; V2DEV is not a retroactive re-score."
+  ],
+  "reviewerActivity": {
+    "sourceTestCiEdits": 0,
+    "gradleRuns": 0,
+    "modelNetworkCalls": 0,
+    "privateFreshInputGoldRawIndexOrKeyCaReads": 0
+  }
+}

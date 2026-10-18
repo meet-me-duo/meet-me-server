@@ -93,12 +93,30 @@ public final class Issue130EnvironmentProxyContractTest {
     }
   }
   static Map<String,Object> lastReport=Map.of();
+  static Map<String,Object> lastChildObservation=Map.of();
+  static boolean canonicalMetadata(String value){
+    if(value==null||value.isEmpty())return false;
+    try{Path path=Path.of(value);if(!path.isAbsolute()||!path.equals(path.normalize()))return false;for(Path current=path;current!=null;current=current.getParent())if(Files.isSymbolicLink(current))return false;return true;}catch(RuntimeException ignored){return false;}
+  }
+  static void observeChild(String phase,String stage,Integer exit,Integer stdoutBytes,Integer stderrBytes,Map<String,Object> jdk){
+    Map<String,Object> value=new LinkedHashMap<>(jdk);value.put("phase",phase);value.put("stage",stage);value.put("exitCode",exit);value.put("stdoutBytes",stdoutBytes==null?null:Math.min(stdoutBytes,1048576));value.put("stderrBytes",stderrBytes==null?null:Math.min(stderrBytes,1048576));lastChildObservation=Collections.unmodifiableMap(value);
+  }
+  static Map<String,Object> withChildObservation(Map<String,Object> row){Map<String,Object> value=new LinkedHashMap<>(row);if(!lastChildObservation.isEmpty())value.put("childObservation",lastChildObservation);return value;}
   static int child(List<String> command,Map<String,String> selected,boolean expectSuccess)throws Exception{
-    ProcessBuilder b=new ProcessBuilder(command);b.environment().remove("https_proxy");b.environment().remove("HTTPS_PROXY");b.environment().putAll(selected);b.environment().put("GEMINI_API_KEY","");Process process=b.start();
-    if(!process.waitFor(30,TimeUnit.SECONDS)){process.destroyForcibly();throw new AssertionError("SYNTHETIC_CHILD_TIMEOUT");}
-    String stdout=new String(process.getInputStream().readAllBytes(),StandardCharsets.UTF_8),stderr=new String(process.getErrorStream().readAllBytes(),StandardCharsets.UTF_8);
+    ProcessBuilder b=new ProcessBuilder(command);b.environment().remove("https_proxy");b.environment().remove("HTTPS_PROXY");b.environment().putAll(selected);b.environment().put("GEMINI_API_KEY","");
+    String inherited=b.environment().get("JAVA_HOME");Path selectedHome=Path.of(System.getProperty("java.home")).toRealPath();
+    Map<String,Object> jdk=Map.of("inheritedHomePresent",inherited!=null,"inheritedHomeCanonical",canonicalMetadata(inherited),"selectedHomeDirectory",Files.isDirectory(selectedHome),"selectedHomeCanonical",canonicalMetadata(selectedHome.toString()),"selectedJavaRegular",Files.isRegularFile(selectedHome.resolve("bin/java"),LinkOption.NOFOLLOW_LINKS),"selectedJavacRegular",Files.isRegularFile(selectedHome.resolve("bin/javac"),LinkOption.NOFOLLOW_LINKS));
+    b.environment().put("JAVA_HOME",selectedHome.toString());
+    String phase=Path.of(command.get(0)).getFileName().toString().equals("python3")?(expectSuccess?"PYTHON_CLI":"REPLAY"):"JAVA_CLI";
+    Process process;try{process=b.start();}catch(IOException e){observeChild(phase,"CHILD_START_FAILED",null,null,null,jdk);throw e;}
+    if(!process.waitFor(30,TimeUnit.SECONDS)){observeChild(phase,"CHILD_TIMEOUT",null,null,null,jdk);process.destroyForcibly();throw new AssertionError("SYNTHETIC_CHILD_TIMEOUT");}
+    byte[] stdoutRaw=process.getInputStream().readAllBytes(),stderrRaw=process.getErrorStream().readAllBytes();
+    String stdout=new String(stdoutRaw,StandardCharsets.UTF_8),stderr=new String(stderrRaw,StandardCharsets.UTF_8);
+    observeChild(phase,process.exitValue()!=0?"EXIT_NONZERO":expectSuccess&&!stdout.contains("COMPLETED")?"MISSING_COMPLETED":"FINISHED",process.exitValue(),stdoutRaw.length,stderrRaw.length,jdk);
+    if(stdout.contains("SYNTHETIC_PRIVATE_RAW_")||stdout.contains(Issue130SyntheticContractTest.KEY)||stdout.contains("http://127.0.0.1:"))observeChild(phase,"STDOUT_REJECTED",process.exitValue(),stdoutRaw.length,stderrRaw.length,jdk);
     check(!stdout.contains("SYNTHETIC_PRIVATE_RAW_")&&!stdout.contains(Issue130SyntheticContractTest.KEY)&&!stdout.contains("http://127.0.0.1:"),"safe CLI stdout excludes proxy/raw/key");
     try{lastReport=map(JSON.readValue(stdout,Map.class));}catch(Exception ignored){lastReport=Map.of();}
+    if(stderr.contains(Issue130SyntheticContractTest.KEY)||stderr.contains(selected.getOrDefault("https_proxy","FORBIDDEN_PROXY_SENTINEL")))observeChild(phase,"STDERR_REJECTED",process.exitValue(),stdoutRaw.length,stderrRaw.length,jdk);
     check(!stderr.contains(Issue130SyntheticContractTest.KEY)&&!stderr.contains(selected.getOrDefault("https_proxy","FORBIDDEN_PROXY_SENTINEL")),"safe stderr excludes proxy/key");
     if(expectSuccess)check(process.exitValue()==0&&stdout.contains("COMPLETED"),"NEW_MODE_WHOLE_CLI_MUST_SUCCEED");return process.exitValue();
   }
@@ -106,7 +124,7 @@ public final class Issue130EnvironmentProxyContractTest {
     System.setSecurityManager(new Issue130SyntheticNetworkGuard());
     if(args.length==2&&args[0].equals("--export-environment-fixture")){try(Fixture f=new Fixture()){Issue130SyntheticContractTest.write(Path.of(args[1]),Map.of("plan",f.base.plan.toString(),"index",f.base.index.toString(),"output",f.base.output.toString(),"root",f.base.root.toString(),"config",f.base.config));}return;}
     List<String> names=args.length==0?List.copyOf(TESTS.keySet()):List.of(args);int pass=0,fail=0,error=0;
-    for(String name:names){try{TESTS.get(name).run();pass++;System.out.println(JSON.writeValueAsString(Map.of("test",name,"status","PASS")));}catch(AssertionError e){fail++;System.out.println(JSON.writeValueAsString(Map.of("test",name,"status","ASSERTION_FAILURE","reason",String.valueOf(e.getMessage()).startsWith("TDD RED:")?e.getMessage():"PUBLIC_PROXY_CONTRACT_ASSERTION")));}catch(Throwable e){error++;System.out.println(JSON.writeValueAsString(Map.of("test",name,"status","SETUP_OR_UNEXPECTED_ERROR","type",e.getClass().getSimpleName())));}}
+    for(String name:names){lastChildObservation=Map.of();try{TESTS.get(name).run();pass++;System.out.println(JSON.writeValueAsString(Map.of("test",name,"status","PASS")));}catch(AssertionError e){fail++;System.out.println(JSON.writeValueAsString(withChildObservation(Map.of("test",name,"status","ASSERTION_FAILURE","reason",String.valueOf(e.getMessage()).startsWith("TDD RED:")?e.getMessage():"PUBLIC_PROXY_CONTRACT_ASSERTION"))));}catch(Throwable e){error++;System.out.println(JSON.writeValueAsString(withChildObservation(Map.of("test",name,"status","SETUP_OR_UNEXPECTED_ERROR","type",e.getClass().getSimpleName()))));}}
     System.out.println(JSON.writeValueAsString(Map.of("tests",names.size(),"passed",pass,"assertionFailures",fail,"errors",error,"paidCalls",0,"sealedDataRead",false)));if(fail+error!=0)System.exit(1);
   }
 }

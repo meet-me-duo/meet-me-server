@@ -1,0 +1,80 @@
+{
+  "status": "IMPLEMENTATION_GREEN_SOURCE_FROZEN_INDEPENDENT_FI_AND_FINAL_GATES_SEPARATE",
+  "recordedAt": "2026-10-18T16:32:12.398877+00:00",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "scope": "A/B shared policy V2 instructions and the single A CLEAR description only",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+      "before": "bbb36cd731377fccbf0a01e9ee5202e51f62a1790f8dac175ac404f740c54283",
+      "after": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+      "outside_approved_strings_exact": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "before": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880",
+      "after": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f",
+      "outside_approved_strings_exact": true
+    }
+  ],
+  "red": {
+    "tests": 16,
+    "assertionFailures": 11,
+    "controlPasses": 5,
+    "setupErrors": 0
+  },
+  "focusedGreen": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "relatedRegression": {
+    "suites": 16,
+    "tests": 245,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "includesFocused16": true
+  },
+  "ktlintMain": "PASS",
+  "countsOverlap": "245 related tests include the focused16; do not add them",
+  "sourceFileCount": 484,
+  "sourceBeforeAfterEqual": true,
+  "outsideApprovedStringsExact": true,
+  "authorTestsResourcesAndHistoricalV1Unchanged": true,
+  "evidence": {
+    "apply": {
+      "path": ".codex/tdd-evidence/issue130-policy-v2-apply/receipt.json",
+      "sha256": "c188417b4df5803bb0762283d3b8e106089c34543eadb60da68e8c8b1cbed074"
+    },
+    "focusedGreen": {
+      "path": ".codex/tdd-evidence/issue130-policy-v2-green/receipt.json",
+      "sha256": "3c0fc5fb91b6a629eed230197d4100e85b31b3d1b43c94aec3f95fb36f65c47d"
+    },
+    "relatedRegression": {
+      "path": ".codex/tdd-evidence/issue130-policy-v2-related-regression/receipt.json",
+      "sha256": "e311b3566d703e2d8a2411474601692ff9462ec3034f071f4b4f885bddb3f2d5"
+    },
+    "validRed": {
+      "path": ".tdd/red/issue130-shared-policy-v2-wire.json",
+      "sha256": "1c8880c0bebd12ba3b9a7af391f909888d71cfd0589a0fdd0f07da1a55b775a2"
+    },
+    "detailedRed": {
+      "path": ".tdd/verification/issue130-shared-policy-v2-wire-red.json",
+      "sha256": "f3a6c4298ccf079deed452cd350bb721932ba1f810ea05b987e45f93a0d6c6f1"
+    }
+  },
+  "localImplementationReceiptSha256": "640ddf5fa9801091a18445fc38af675cb1ae4112d3d002f08497bcbb778f5192",
+  "independentHumanReviewSha256": "fb7742140c23bd717cba220d6beff736b0efacdfe0f3fb44b9fa8b8b0d92910c",
+  "schemaApiUiDbModelThresholdCapsFencesChanged": false,
+  "historicalInputsGoldsAndScoresChanged": false,
+  "actualModelCalls": 0,
+  "semanticEfficacyEstablished": false,
+  "remaining": [
+    "Independent fault injection",
+    "Detached managed integration regression",
+    "Root mandatory fullguard and final review",
+    "Normal follow-up publication and exact HEAD CI"
+  ]
+}

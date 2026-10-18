@@ -1,5 +1,31 @@
 # 새 #107 구현·통합 Worklog
 
+## #130 공통 정책 V2 정합화·무료 검증 (2026-10-18 UTC)
+
+- [x] [USER] A CLEAR 설명·A/B 지침·평가 정의 정합화와 무료 회귀를 승인했다. API/UI·DB·모델·threshold·유료 호출 변경은 제외한다.
+- [x] [AGENT] A 선택지 설명의 광범위한 person-dependent 허용과 A/B 지침·기존 평가 정의 사이의 긴장을 확인했다. 미제공 필수 개인 사실과 명시적 넓은 허용·타인 가용성 의존·날짜/방식 선택권 위임을 구분하는 [V2 정의](ISSUE_130_SHARED_POLICY_V2_EVALUATION.md)를 분리했다. 기존 A16/A24/B2 입력·gold·최초 점수와 V1 resource는 불변이다.
+- [x] [AGENT] 독립 공개 DEV12와 wire 기대를 먼저 봉인하고 genuine RED16(11 assertion실패/5 control통과)을 확인했다. A CLEAR 설명과 A/B 지침 두 파일만 최소 적용해 focused16 GREEN이다. 독립 인간 정책 검토 PASS이며 실제 모델 효능 검증은 아니다.
+- [x] [AGENT] PC01 fixture는 선택 JVM의 실제 JDK만 자식에 고정하고, 실패 관측은 고정 enum/상한 숫자/boolean만 허용했다. 독립 RED16(9실패/7controls)→GREEN16, FI3 탐지2/1/1·각복구, 기존 proxy49+Python14 PASS를 보존한다. 원43 assertion·30초/16POST/replay0·제품JDK검증은 유지한다. exact2bf CI실패의 원격 원인은 미확정이다.
+- [x] [AGENT] V2 관련 회귀245(집중16 포함)·독립 FI2(A회귀3assert/B필수정보문장누락1assert, 매복구16PASS)·6046 관리형 bootstrap8/기존 close3를 완료했다. 새11개 조합 결과를 V1의69+3 역사와 합산하지 않는다.
+- [x] [AGENT] 최종 source597 동결 필수 guard PASS(516.447초): ktlintCheck/assemble/test exit0·216 suites/1733 fresh 중1729PASS·기존4SKIP·실패오류0·전후지문동일이다.
+- [x] [AGENT] 최종 독립 게시 리뷰 PASS를 봉인했다. 같은 Draft132의 정상 후속 게시·정확 HEAD CI는 다음 단계이며 아직 대기 중이다.
+- [ ] [AGENT] 동일 Draft132 정상 후속 commit/push 후 정확 새 HEAD CI를 확인한다. Commit/PR 동일 후속 커밋 예정.
+
+현재 유지 예약 USD2.74751488/기존 UNKNOWN 유지·이번 추가 유료0. 실제 V1 품질 FAIL/효용 미입증과 V2 실모델 미검증으로 main/운영 활성화/배포 HOLD다. 다음 시작점은 최종 독립 게시 리뷰→같은 Draft 정상 후속 게시·정확 HEAD CI다. 아래는 각 시점의 역사다.
+
+
+## 공통 정책V2 문구 정합화 승인 (2026-10-18 UTC)
+
+부모를 통해사용자가 A설명·A/B지침·평가정의 정합화+무료회귀를승인했다. 필요개인사실/적용대상미확정과명시적유연성·타인가용성·선택권위임/앱표현한계를구분하며온라인날짜위임negative대조를추가한다. 주소등불필요정보요구0·API/UI/DB/model/threshold/500/caps/fences변경0·추가유료0이다. 원A16/A24/B2gold/score/V1wire는역사불변, 새정책V2DEV/wire검증으로분리한다. 현재PC01fixture독립RED후최소핀+관측GREEN/FI중이며그sourcefreeze종료후policy문구만적용한다. 이승인은운영활성화/실모델합격이아니다.
+
+
+## #130 exact2bf PC01 실패와 공통 정책 검토안 (2026-10-18 UTC)
+
+정상 후속 HEAD2bf62c7/동일Draft132의 exactCI39141877988은 Gradle·bounded102(이전CLI21–24 포함)·ARM/Lifecycle PASS 뒤 proxyPC01 assertion1로실패했다(Java48/49·Pythonexit0). checkout45c669의 부모398+2bf/tree동일·literal로그를확인하고 새실패를보존한다. 로컬원PC01 PASS4.813s/정상stdout211B, parentJAVA_HOMEmissing/symlink일때earlyCONFIGFAIL을재현했으나원격FS/실패branch미관측으로정확원인미확정이다. 독립fixture/privacy RED 이후선택currentJVM JDK명시·bounded stage/exit/크기/boolean 관측을최소검증하며 제품/30초/16POST/replay/assertions는완화하지않는다.
+
+[공통정책검토안](verification/issue130-shared-policy-proposal.md)은독립specPASS의미적용문서다. 명시적유연성/필수개인사실/조건결속/앱표현한계를12행표로분리했고NEEDS_EDIT현재질문reason없음을명시했다. 기존gold/점수/prompt와추가modelcall변경0·현재예약2.74751488/UNKNOWN유지·main/deploy활성화HOLD. 부모에먼저표와코드변경범위제안을보고했으며이문서는모델수정승인이아니다. 다음은무료CI최소수정/검증·최종리뷰/후속게시·정확HEADCI다. Commit/PR 동일 후속 커밋 예정.
+
+
 ## #130 새 A24·B2 단회 실제 완료 (2026-10-18 UTC)
 
 첫 비용 문법 구성 중단의 USD0.34603008만 사용자 승인으로 미실행 예약 정산했고 기존1.79322880/UNKNOWN은 유지했다. 정상 게시 HEAD9d9·source/runtime·원문/gold·새 계획/단계별 독립 수용을 봉인한 뒤 A24 Decisions24, 사전 B2 count2/generation2를 각 한 번 기술 완료했다. 추가 실제 호출/자동 재시도0·현재 예약2.74751488/승인3 안 여유.25248512이며 실제 청구 환급이나 invoice hard cap을 주장하지 않는다.

@@ -75,13 +75,13 @@ class DecisionPrinciplePromptWireContractTest {
 
     private fun approvedQuestion(): JsonNode {
         val bytes =
-            requireNotNull(javaClass.getResourceAsStream("/precheck/classification/decision-principles-v1-question.json")).use {
+            requireNotNull(javaClass.getResourceAsStream("/precheck/classification/decision-principles-v2-question.json")).use {
                 it.readBytes()
             }
-        assertEquals("7c393004c69ff8a8e04657f31626468229c7aaea34568e530816f8288507f6b6", digest(bytes))
+        assertEquals("ce73f2e07796e26ff37fde75283e5ca2f14c95e25adf8010ed794f1081b13209", digest(bytes))
         val question = mapper.readTree(bytes)
         assertEquals(
-            "267af412fe53b9ac088475d76c1cbe5a90e6f34714efb25cb47ba39c900dd8ec",
+            "8b9f74fe133e91d8f8c358557d61d69369f7b735afe07da11b7c94a7fe4eeef5",
             digest(question.path("instructions").asText().toByteArray(Charsets.UTF_8)),
         )
         return question

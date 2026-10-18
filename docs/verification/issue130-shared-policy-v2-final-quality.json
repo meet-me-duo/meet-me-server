@@ -1,0 +1,27 @@
+{
+  "scope": "FINAL_SOURCE_FULL_GUARD_AFTER_SHARED_POLICY_V2_AND_PC01_FIXTURE",
+  "verificationPhase": "SHARED_POLICY_V2_FREE_WIRE_REGRESSION",
+  "exitCode": 0,
+  "sourceBeforeAfterEqual": true,
+  "sourceFiles": 597,
+  "sourceManifestSha256": "8978c148f19c8b2de8c369bfac52fb8709684d4c04081ef3567f6358594c84eb",
+  "elapsedSeconds": 516.447,
+  "tests": 1733,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 216,
+  "allXmlFresh": true,
+  "paidCalls": 0,
+  "keysBlankInSubprocess": true,
+  "passed": 1729,
+  "gradleTasks": [
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "mandatoryGuard": ".codex/hooks/tdd_guard.py",
+  "historicalResultsUnchanged": true,
+  "modelSemanticEfficacyEstablished": false,
+  "managedCombinationSeparateTests": 11
+}

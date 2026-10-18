@@ -1,0 +1,42 @@
+{
+  "status": "HISTORICAL_FAILURE_PRESERVED",
+  "head": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "runId": 39141877988,
+  "qualityJobId": 117717803954,
+  "qualityConclusion": "failure",
+  "armJobId": 117717803629,
+  "armConclusion": "success",
+  "checkout": "45c669e290bcea833dc052d9cbd516a8c09b0afe",
+  "checkoutParents": [
+    "3982535765e878875a901dd9d28352358e594f6f",
+    "2bf62c7677b6a63e8ebfa292456be94a84070b8d"
+  ],
+  "headAndCheckoutTree": "22cac5eb93f068e58e9953cd29d3541ab11d65fd",
+  "headTreeMatchesCheckout": true,
+  "qualityLogLiteralCheckoutVerified": true,
+  "armLogLiteralHeadVerified": true,
+  "gradleGate": "success",
+  "boundedHarness": "success",
+  "failedStep": "Verify environment proxy and retained evaluation budget",
+  "proxyJava": {
+    "tests": 49,
+    "passed": 48,
+    "assertionFailures": 1,
+    "errors": 0
+  },
+  "proxyPythonExitCode": 0,
+  "javaFailureIds": [
+    "PC01_actual_Python_CLI_ENV_proxy_TLS16_and_replay0"
+  ],
+  "sourceBeforeAfterEqual": true,
+  "laterHarnessSteps": "skipped",
+  "localOriginalPC01": "PASS in4.813s; actual sanitized wrapper stdout211bytes",
+  "controlledMissingOrSymlinkParentJavaHome": "Same PC01 early CONFIGURATION failure, while valid current JVM Java can launch; not proof of exact remote cause.",
+  "hostedJdkFilesystemMetadata": "NOT_OBSERVED",
+  "remoteExactCause": "NOT_ESTABLISHED",
+  "pipeSaturationHypothesis": "NOT_SUPPORTED_BY_OBSERVED211BYTE_SUCCESS_OUTPUT",
+  "diagnosisReceiptSha256": "3230c14edee428a7acf4ff3a0d1ab02cc4151bba68fe43d3bd53070dd961c62d",
+  "priorCli21To24FixVerifiedByNewBoundedHarnessPass": true,
+  "newModelCalls": 0,
+  "policyPromptGoldOrScoreChanges": 0
+}

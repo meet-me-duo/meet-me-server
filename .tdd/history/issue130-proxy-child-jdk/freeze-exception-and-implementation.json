@@ -1,0 +1,98 @@
+{
+  "status": "FIXTURE_JDK_PIN_AND_WHITELIST_OBSERVATION_GREEN_FREEZE",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "scope": "PC01 synthetic fixture child JDK pin, static bounded CI observation and mandatory additive regression; no production/provider/model policy changes in this cycle.",
+  "implementationFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java",
+      "sha256": "d69c96740f940856ed1df1887eaa766d95f9bbdc1b051e0a0a7ceecda8491772"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_proxy_tests.py",
+      "sha256": "9ddacbf26b29fc5081895e1b48d9c950cc64f8cd79f2272352648d2293218733"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "0d2dd165c55594f6391502ec25545f78900a51172a4370ad864c102f4994cae4"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_jdk.py",
+      "sha256": "25901acbc468ed762af028dacb7ecd356e7984bcb50934eb9e7784d8e36a53e9"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_proxy_child_observation.py",
+      "sha256": "898eb097bef681546bfb8d2187be3cceba00c93e67851fa6b981eb4805ebe75f"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_proxy_child_jdk_tests.py",
+      "sha256": "8937fc8824ea6441b4bbb1ecd6c1550ce89c473b8198f3f652598431cece9a0c"
+    }
+  ],
+  "sourceFreezeExceptions": [
+    {
+      "file": "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java",
+      "originalSha256": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+      "exception": "Root explicitly approved only child environment JDK isolation and fixed safe diagnostic metadata; original43 assertion AST, timeout30,16POST,replay0 and privacy checks unchanged."
+    },
+    {
+      "file": "evaluation/issue130/tests/run_environment_proxy_tests.py",
+      "originalSha256": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+      "exception": "Optional strictly reconstructed childObservation added; original fixed case/status/error whitelist and RF4 behavior retained."
+    }
+  ],
+  "firstGreen16": {
+    "file": "/tmp/issue130-pc01-independent/first-green/receipt.json",
+    "sha256": "96af849385da23e34377d3093b919ddb3349e5c3d3949e0bdc896a053c0dde32",
+    "tests": 16,
+    "failures": 0,
+    "errors": 0
+  },
+  "originalProxyRegression63": {
+    "javaTests": 49,
+    "pythonTests": 14,
+    "failures": 0,
+    "errors": 0,
+    "sourceBeforeAfterEqual": true,
+    "receiptSha256": "6ffc8619c64ec2c61f990631b8ee14ff9b5e4970e2139e812c5a66413781a287",
+    "rawEvidence": ".codex/tdd-evidence/issue130-proxy-child-jdk-implementation/regression63"
+  },
+  "independentFinal": {
+    "file": ".tdd/verification/issue130-proxy-child-jdk-observation-independent-final.json",
+    "sha256": "dcfe530c2ad3b7136866e7fb4b0339d056a16445fcf62a62d811d33a2a45af32"
+  },
+  "independentFI": {
+    "file": ".tdd/verification/issue130-proxy-child-jdk-observation-faults.json",
+    "sha256": "23ee135fba3f8b12f161b9e068ce50392cd8e69977affe9dc8aaa2d03f638bf4",
+    "schemaAndFormatChecker": "PASS",
+    "faults": 3,
+    "assertionDetections": 4,
+    "everyRestoreGreen": true
+  },
+  "ciBinding": {
+    "onlyExistingProxyStepRunChanged": true,
+    "existingRF4CommandRetained": true,
+    "providerKeysBlank": true,
+    "proxyCompileOutput": "$RUNNER_TEMP/issue130-proxy",
+    "newRunnerConsumesSameCompiledFixtureClasspath": true,
+    "permissionsTimeoutsOtherStepsUnchanged": true,
+    "yamlParse": "PASS",
+    "deploymentWorkflowContracts4": "PASS",
+    "diffCheck": "PASS"
+  },
+  "observationSemantics": {
+    "HomeCanonical": "absolute and normalized path without symbolic-link ancestors; not evidence that an inherited JDK exists or is executable",
+    "selectedRegularFields": "non-symlink regular tool files; not a replacement for production java_tools permission validation",
+    "byteCounts": "Capped at1048576; nullable before child exit, not a raw-byte exactness claim above cap",
+    "visibility": "Failure rows only, strict fixed enums and six boolean metadata; malformed optional observation is omitted without hiding parent failure"
+  },
+  "sourceMainBeforeNextPolicyCycleUnchanged": true,
+  "remoteCiCauseConfirmed": false,
+  "olderCiCause": "UNDETERMINED_SEPARATE_SCOPE",
+  "actualProviderCalls": 0,
+  "privateInputsOrGoldRead": false,
+  "actualKeyValuesRead": false,
+  "commitOrPush": false,
+  "recordedAt": "2026-10-18T16:16:35.125908+00:00"
+}

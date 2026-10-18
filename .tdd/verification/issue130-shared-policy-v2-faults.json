@@ -1,0 +1,76 @@
+{
+  "workItem": "issue130-shared-policy-v2-wire",
+  "sourceRevision": "2bf62c7677b6a63e8ebfa292456be94a84070b8d",
+  "boundary": "Actual outbound A CLEAR policy description and B required-fact/binding instruction delivery only; no model inference efficacy claim. Each isolated mutation detected and exact source restore returned 16/16 GREEN.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+      "sha256": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/SharedPrecheckPolicyV2WireTest.kt",
+      "sha256": "84a54f08246b28503ce86ab439f49ae84e4e5cfd3fbc9a9e13b0abab6b4eb1b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionPrinciplePromptWireContractTest.kt",
+      "sha256": "4cbf81f8999f5f5b8f08c87dd57e0eed44c309305bf84eb064c7837d718349be"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "FI-V2-A-CLEAR-DESCRIPTION",
+      "command": [
+        "env",
+        "-i",
+        "JAVA_HOME=/tmp/meetme-jdk17",
+        "GRADLE_USER_HOME=/tmp/meetme-gradle-home",
+        "PATH=/usr/local/bin:/usr/bin:/bin",
+        "LANG=C.UTF-8",
+        "/tmp/issue130-policy-v2-author/faults/scratch/gradlew",
+        "--project-dir",
+        "/tmp/issue130-policy-v2-author/faults/scratch",
+        "test",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.classification.SharedPrecheckPolicyV2WireTest",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.classification.DecisionPrinciplePromptWireContractTest",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ],
+      "detectedBy": "SharedPrecheckPolicyV2WireTest.SPV203 A CLEAR description cannot imply unconditional private fact dependence is clear(); DecisionPrinciplePromptWireContractTest.DPW01 public classifier transmits the reviewed short question without old prompt fallback(); DecisionPrinciplePromptWireContractTest.DPW02 Unicode raw and complete context stay exact while injected instructions remain data()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "FI-V2-B-REQUIRED-FACT-CLAUSE",
+      "command": [
+        "env",
+        "-i",
+        "JAVA_HOME=/tmp/meetme-jdk17",
+        "GRADLE_USER_HOME=/tmp/meetme-gradle-home",
+        "PATH=/usr/local/bin:/usr/bin:/bin",
+        "LANG=C.UTF-8",
+        "/tmp/issue130-policy-v2-author/faults/scratch/gradlew",
+        "--project-dir",
+        "/tmp/issue130-policy-v2-author/faults/scratch",
+        "test",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.classification.SharedPrecheckPolicyV2WireTest",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.classification.DecisionPrinciplePromptWireContractTest",
+        "--offline",
+        "--no-daemon",
+        "--console=plain"
+      ],
+      "detectedBy": "SharedPrecheckPolicyV2WireTest.SPV202/[2] clause = 1",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T16:35:15.772861Z"
+}
