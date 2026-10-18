@@ -1,0 +1,245 @@
+{
+  "status": "A_ONLY_COMPLETED_RAW_QUALITY_GATE_FAIL_B_UNMEASURED",
+  "evaluationKind": "A_ONLY_BALANCED_8_PAIR_CONTRAST_DIAGNOSTIC",
+  "basis": {
+    "executionPlanSha256": "a6a58bb29fc835c91a8ee0c61127344b91034beb36454de84c459df20a7a0323",
+    "publicPreregistrationManifestSha256": "863c039f2a8ee9d7bdf0043de0b4ee4f7ad39e4f5b3c8ec9c61f1cd31a948682",
+    "scoringPreregistrationSha256": "3f9b7d1a99469fc579bffd34c43b33ecb1d7fec7708d503d81ab74b38d16b98a",
+    "custodianIntegritySha256": "742c8761b5582efd39d47b7dc511c5a730220d876efd55bec7f6170b904a6a11",
+    "privateSelectionGoldArtifactUnchanged": true,
+    "privateScoringArtifactSha256": "b49ce0632337d66fcdf400f0c6fdebe357a9708e2554850ca4fa7389b73cf43c",
+    "noGoldThresholdPromptSelectionOrCriterionChanges": true
+  },
+  "scope": {
+    "planned": 16,
+    "supplementalContrastPairs": 8,
+    "oldDevelopmentSelected": 0,
+    "oldHoldoutSelected": 0,
+    "original120Selected": 0,
+    "categoriesCovered": 8,
+    "balancedNonrandomDiagnostic": true,
+    "populationAccuracyEstimate": "NOT_ESTIMATED",
+    "oracleAuthorExposureAndPostLiveAuthorshipRemainDisclosed": true
+  },
+  "denominators": {
+    "plannedA": 16,
+    "attemptedA": 16,
+    "validRawChoices": 16,
+    "validNormalizedRoutes": 16,
+    "http200": 16,
+    "usageComplete": 16,
+    "rawRefusal": 0,
+    "technicalError": 0,
+    "unknownUsageStarted": 0,
+    "AUnrun": 0,
+    "actualGeneratedQuestions": 0,
+    "actualBCalls": 0,
+    "countCalls": 0,
+    "automaticRetries": 0,
+    "redirects": 0,
+    "fallbacks": 0
+  },
+  "rawClassification": {
+    "goldRowsObservedColumns": {
+      "CLEAR": {
+        "CLEAR": 7,
+        "NEEDS_REVIEW": 1,
+        "INDETERMINATE": 0
+      },
+      "NEEDS_REVIEW": {
+        "CLEAR": 6,
+        "NEEDS_REVIEW": 2,
+        "INDETERMINATE": 0
+      },
+      "INDETERMINATE": {
+        "CLEAR": 0,
+        "NEEDS_REVIEW": 0,
+        "INDETERMINATE": 0
+      }
+    },
+    "exactLabels": {
+      "numerator": 9,
+      "denominator": 16,
+      "interpretation": "Exact-label agreement in this fixed diagnostic only, not general model accuracy"
+    },
+    "materialMissRawClear": {
+      "numerator": 6,
+      "plannedNeedsReviewDenominator": 8,
+      "validNeedsReviewDenominator": 8
+    },
+    "oppositeRawReview": {
+      "numerator": 1,
+      "plannedClearDenominator": 8,
+      "validClearDenominator": 8
+    },
+    "rawAbstention": 0,
+    "indeterminateGoldRecall": "N/A; gold denominator0"
+  },
+  "normalizedRouting": {
+    "observedOutcomeCounts": {
+      "CLEAR_STOP": 3,
+      "B_REQUIRED_NOT_RUN": 13
+    },
+    "assessmentCounts": {
+      "CLEAR": 3,
+      "INDETERMINATE": 13
+    },
+    "normalizationReasonCounts": {
+      "NONE": 3,
+      "LOW_CONFIDENCE": 13
+    },
+    "goldConditionedRouteCounts": {
+      "CORRECT_CLEAR_STOP": 3,
+      "UNNECESSARY_REVIEW_ROUTE_INCOMPLETE": 5,
+      "CORRECT_REVIEW_ROUTE_SAFE_INCOMPLETE": 8
+    },
+    "unnecessaryReviewRoute": {
+      "numerator": 5,
+      "plannedClearDenominator": 8,
+      "validClearRouteDenominator": 8,
+      "notAnObservedUnnecessaryQuestion": true
+    },
+    "unsafeEarlyClear": {
+      "numerator": 0,
+      "plannedNeedsReviewDenominator": 8,
+      "validNeedsReviewRouteDenominator": 8
+    },
+    "rawMissesMitigatedButNotErased": 6,
+    "rawCorrectClearSuppressedByLowConfidence": 4,
+    "rawAbstention": 0,
+    "lowConfidenceNormalization": 13,
+    "modelUncertain": 0,
+    "refusal": 0,
+    "technicalError": 0,
+    "unknownRoute": 0,
+    "fixtureThreshold": ".8",
+    "operationalThreshold": "UNCHANGED_NULL_TBD",
+    "operationalActivation": "UNCHANGED_OFF",
+    "confidenceIsNotTheProbabilityOfCLEAR": true
+  },
+  "stageBGoldGroups": {
+    "MUST_NOT_ASK": {
+      "planned": 8,
+      "validRaw": 8,
+      "validRoute": 8,
+      "rawClear": 7,
+      "rawReview": 1,
+      "rawAbstain": 0,
+      "clearStop": 3,
+      "BRequiredNotRun": 5
+    },
+    "MUST_ASK_MATERIAL_CHOICE": {
+      "planned": 7,
+      "validRaw": 7,
+      "validRoute": 7,
+      "rawClear": 5,
+      "rawReview": 2,
+      "rawAbstain": 0,
+      "clearStop": 0,
+      "BRequiredNotRun": 7
+    },
+    "SAFE_EDIT_ONLY": {
+      "planned": 1,
+      "validRaw": 1,
+      "validRoute": 1,
+      "rawClear": true,
+      "rawReview": false,
+      "rawAbstain": false,
+      "clearStop": false,
+      "BRequiredNotRun": true
+    }
+  },
+  "questionInterpretation": {
+    "mustNotAskClearGroup": 8,
+    "materialChoiceRequiredGroup": 7,
+    "safeEditOnlyGroup": 1,
+    "reviewGoldEightMustNotBeRelabeledAsEightRequiredChoiceQuestions": true,
+    "actualQuestionQualityDenominator": 0,
+    "actualQuestionQuality": "NOT_MEASURED_B_NOT_RUN",
+    "BRequiredButUnrun": 13,
+    "choiceQuestionFalsePositiveRate": "N/A no questions generated",
+    "choiceQuestionFalseNegativeRate": "N/A no questions generated",
+    "rawRequiredChoiceMisses": {
+      "numerator": 5,
+      "denominator": 7,
+      "kind": "A-stage raw CLEAR; not an observed missing generated question"
+    },
+    "editOnlyRawMisses": {
+      "numerator": true,
+      "denominator": 1
+    },
+    "normalizedRequiredChoiceUnsafeClear": 0,
+    "UIChoiceDirectEditFinalSubmission": "UNTESTED"
+  },
+  "pairs": {
+    "planned": 8,
+    "bothMembersValid": 8,
+    "incomplete": 0,
+    "rawExactDiscrimination": 1,
+    "normalizedRouteDiscrimination": 3,
+    "rawAndRouteDiscriminationAreSeparate": true
+  },
+  "predeclaredQualityGate": {
+    "zeroObservedFalseClearRawGate": "FAIL",
+    "observedFalseClear": 6,
+    "needsReviewDenominator": 8,
+    "confidenceMitigationDoesNotChangeRawGateResult": true,
+    "notOverallQualitySuccess": true,
+    "noOperatingApprovalOrThresholdCalibration": true
+  },
+  "usage": {
+    "inputTokens": 8395,
+    "outputTokens": 0,
+    "totalTokens": 8395,
+    "cachedInputTokens": 0,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "completeCases": 16,
+    "unknownCases": 0,
+    "providerReturnedUsageNotInvoice": true,
+    "outputTokensObservedRatherThanForcedByOutputFreePrice": true
+  },
+  "cost": {
+    "officialInputOnlyRateUsdPerMillion": "0.10",
+    "observedInputOnlyListPriceEstimateUsd": "0.0008395",
+    "estimateIsNotInvoiceOrCompleteBill": true,
+    "doesNotApplyCacheDiscountTaxCurrencyConversionOrOtherFees": true,
+    "priorRetainedReservationUsd": "1.56254208",
+    "newWholeSuiteReservationUsd": ".23068672",
+    "cumulativeReservationUsd": "1.79322880",
+    "remainingApprovedHeadroomUsd": "0.20677120",
+    "refunds": 0,
+    "invoiceAmountKnown": false,
+    "noFurtherCallsAuthorizedByThisAudit": true
+  },
+  "timing": {
+    "perCase": {
+      "n": 16,
+      "clock": "JVM_MONOTONIC_NOT_WALL_TIME",
+      "scope": "Combined actual Decisions A plus local actualTwoStage route observer",
+      "minimumMs": 108.483095,
+      "arithmeticMeanMs": 213.7269821875,
+      "maximumMs": 1092.399537,
+      "separateHttpAdapterClassifierProbeStageLatency": "NOT_MEASURED"
+    },
+    "suiteElapsedMs": 3827.969504,
+    "rootGuardElapsedMs": 6693.6758140000165,
+    "allObservedCasesWithinFrozen15Seconds": true,
+    "suiteWithinFrozen300Seconds": true,
+    "operationsP50P95": "NOT_ESTIMATED",
+    "noStageSplitOrLatencySumInference": true,
+    "priorOneCase7029ms": "SEPARATE_NOT_POOLED"
+  },
+  "executionEvidence": {
+    "rootReceiptSha256": "db1b950d1d196f101421d9b3fe82bd84de2ef9a15830198e3cc6b1e85426cd80",
+    "suiteResultSha256": "9a446465b94c9ce986ecce1ed2ccecffdec9d229f90582f62bea30e73fb1ae0c",
+    "sourceRuntimeBeforeAfterEqual": true,
+    "rawWireResponseAndNormalizedRecordsIndependentlyCrossChecked": true,
+    "priorFailedSuiteNotRelabeled": true
+  },
+  "privacy": {
+    "selectedIdsRawTextIndividualGoldResponseOrGoldOutputJoinsEmitted": false,
+    "rootPromptImplDoNotReadPrivateRows": true
+  },
+  "recordedAt": "2026-10-18T12:48:13.328733Z"
+}

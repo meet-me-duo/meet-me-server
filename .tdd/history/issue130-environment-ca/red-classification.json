@@ -1,0 +1,8 @@
+{
+  "summarySha256": "6dbe46e8957dfa8b2e6a57c0bff76cc9636c9af9071ea1a39642b205f7e03993",
+  "initialAccountingOnlyCorrection": true,
+  "firstReceiptSha256": "b55c9b7e86a4c2219d910e63e82b3c38a52c0a0b0c34d538f6c0274ec5cd646b",
+  "sealedReceiptSha256": "34bcd3033bfa86af3aa838180e94a7693c158bb43e4a4af13c33b1f0de196bab",
+  "oldEvaluationManifestSha256": "c41a77e476fb5f8292ac606667c95bb346335c6427d440e52d3f3d60fab2cbdd",
+  "canonicalNamespaceNote": "Evaluation-only Java/Python paths follow prior issue130 evidence shape; existing red-evidence.schema.json constrains Kotlin paths. No Kotlin-only schema PASS is claimed, and existing schema/oracles are untouched."
+}

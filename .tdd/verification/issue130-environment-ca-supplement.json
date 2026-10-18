@@ -1,0 +1,88 @@
+{
+  "status": "INITIAL_PASS3_RECONSTRUCTED_RED3_CURRENT_GREEN3_FI_DETECTED3_FINAL_GREEN3",
+  "chronology": "Supplement authored after Java CA implementation was placed. Initial current implementation PASS; exact preserved pre-CA helper replay is post-hoc RECONSTRUCTED_PREIMPLEMENTATION_RED, not chronological RED.",
+  "currentHelperSha256": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2",
+  "preCAHelperSha256": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaRunPlanSupplementTest.java",
+      "sha256": "58860f5119d46a704ccddc2f899441350c804517de61b5a3450812e5c4945da3"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_ca_supplement_tests.py",
+      "sha256": "ca09a5bba2f337a807f9e96ec531c35dbdfff1213eb51ba3ae96bda5b2f6edb0"
+    }
+  ],
+  "steps": [
+    {
+      "stage": "CURRENT_IMPLEMENTATION_INITIAL_PASS",
+      "counts": {
+        "assertionFailures": 0,
+        "sealedDataRead": false,
+        "tests": 3,
+        "paidCalls": 0,
+        "errors": 0,
+        "passed": 3
+      }
+    },
+    {
+      "stage": "RECONSTRUCTED_PREIMPLEMENTATION_RED",
+      "counts": {
+        "paidCalls": 0,
+        "tests": 3,
+        "sealedDataRead": false,
+        "assertionFailures": 3,
+        "passed": 0,
+        "errors": 0
+      }
+    },
+    {
+      "stage": "CURRENT_RESTORE_GREEN",
+      "counts": {
+        "paidCalls": 0,
+        "tests": 3,
+        "sealedDataRead": false,
+        "assertionFailures": 0,
+        "passed": 3,
+        "errors": 0
+      }
+    },
+    {
+      "stage": "RUNPLAN_CRYPTO_BYPASS_FAULT",
+      "counts": {
+        "errors": 0,
+        "passed": 0,
+        "assertionFailures": 3,
+        "sealedDataRead": false,
+        "tests": 3,
+        "paidCalls": 0
+      },
+      "detectedBy": [
+        "CS01_exact_PEM_pin_wrong_DER_injected_client_denied",
+        "CS02_exact_PEM_DER_expired_CA_injected_client_denied",
+        "CS03_exact_PEM_DER_nonCA_injected_client_denied"
+      ]
+    },
+    {
+      "stage": "FINAL_CURRENT_GREEN",
+      "counts": {
+        "paidCalls": 0,
+        "errors": 0,
+        "passed": 3,
+        "assertionFailures": 0,
+        "sealedDataRead": false,
+        "tests": 3
+      }
+    }
+  ],
+  "factoryAndRunPlanShareFullCryptoContract": true,
+  "allInvalidCasesRequireConfigurationBeforeHTTPAndConsumption": true,
+  "originalCA63FilesUnchanged": true,
+  "workspaceProductEdits": 0,
+  "rawArchive": ".codex/tdd-evidence/issue130-environment-ca-supplement-history",
+  "rawReceiptSha256": "f1f3e3888637e6a6da1b1f6fbadf43e8ee0860c3e67e841634885f09c7d94f05",
+  "originalBeforeAfterIdentical": true,
+  "actualProviderCalls": 0,
+  "sealedDataRead": false,
+  "recordedAt": "2026-10-18T12:28:48.793708Z"
+}

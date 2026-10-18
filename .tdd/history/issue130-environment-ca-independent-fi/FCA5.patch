@@ -1,0 +1,11 @@
+--- baseline/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
++++ mutant/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
+@@ -233,7 +233,7 @@
+     }
+     private static void addEnvironmentTrust(OkHttpClient.Builder builder, X509Certificate extra) throws Exception {
+         KeyStore anchors = KeyStore.getInstance(KeyStore.getDefaultType()); anchors.load(null, null);
+-        for (X509Certificate certificate : trustManager(null).getAcceptedIssuers()) anchors.setCertificateEntry(sha(certificate.getEncoded()), certificate);
++        // FI: JDK trust anchor preservation omitted
+         anchors.setCertificateEntry(sha(extra.getEncoded()), extra);
+         X509TrustManager trust = trustManager(anchors);
+         SSLContext context = SSLContext.getInstance("TLS"); context.init(null, new TrustManager[]{trust}, null);

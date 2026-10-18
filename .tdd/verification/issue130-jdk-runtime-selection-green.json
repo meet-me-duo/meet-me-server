@@ -1,0 +1,50 @@
+{
+  "workItem": "issue130-jdk-runtime-selection",
+  "sourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "34b144149ed894218db8e046ec04f6dde9df62e251d2c4083833e376f3616e6a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_jdk_runtime_selection.py",
+      "sha256": "aeec4bc4b48e9453233f89e5e7c329b7fea5d4c0f4dbf4c9ca74c8b92a91e12f"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "evaluation/issue130/tests",
+    "-p",
+    "test_jdk_runtime_selection.py",
+    "-v"
+  ],
+  "cwd": "/workspace/issue123-representative-evaluation/server",
+  "result": {
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "errors": 0
+  },
+  "rawLog": "/tmp/issue130-provider-contract/jdk-selection-author/green-fi/independent-original-green.log",
+  "sourceBeforeAfterEqual": true,
+  "testBeforeAfterEqual": true,
+  "faultInjection": {
+    "detected": 3,
+    "restored16GreenEach": true,
+    "canonicalSchemaValidated": true,
+    "detail": "/tmp/issue130-provider-contract/jdk-selection-author/green-fi/details.json"
+  },
+  "existingTestsChanged": false,
+  "existingPc01DeadlineChanged": false,
+  "actualJavaOrJavac": 0,
+  "actualExternalCalls": 0,
+  "actualKeysRead": 0,
+  "corpusRead": false,
+  "recordedAt": "2026-10-18T12:29:28.138647Z"
+}

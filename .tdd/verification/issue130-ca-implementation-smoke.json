@@ -1,0 +1,29 @@
+{
+  "status": "IMPLEMENTATION_SMOKE_PASS_NOT_FINAL_INDEPENDENT_GATE",
+  "javaSmokeTests": 5,
+  "javaSmokePassed": 5,
+  "jdkSelectionTests": 16,
+  "jdkSelectionPassed": 16,
+  "productionAndEvaluationCompilationPassed": true,
+  "helperFingerprints": {
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2",
+    "evaluation/issue130/run_representative_decisions.py": "34b144149ed894218db8e046ec04f6dde9df62e251d2c4083833e376f3616e6a"
+  },
+  "frozenCaTestSourcesUnchanged": true,
+  "frozenJdkTestSourceUnchanged": true,
+  "changedProductFiles": [
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java",
+    "evaluation/issue130/run_representative_decisions.py"
+  ],
+  "independentFullGreenAndFaultInjectionPending": true,
+  "actualEnvironmentCaRead": false,
+  "actualProviderCalls": 0,
+  "externalNetworkCalls": 0,
+  "sealedDataRead": false,
+  "publicContracts": {
+    "ca": "0e00ee247e2342ea55fd865770d7ed6687d507c5362b3081a415c889e0ccaf5e",
+    "jdk": "cb51f5a96f2dd7e85435518c184f993e4b64514a8d8a61b7f5b6deff714e9f4d"
+  },
+  "evidence": ".codex/tdd-evidence/issue130-ca-implementation-smoke",
+  "recordedAt": "2026-10-18T12:28:43Z"
+}

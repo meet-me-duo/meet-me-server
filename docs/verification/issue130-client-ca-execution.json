@@ -1,0 +1,127 @@
+{
+  "workItem": "issue130-approved-client-ca-a16",
+  "status": "ACTUAL_A16_COMPLETED_RAW_QUALITY_GATE_FAIL_B_UNMEASURED",
+  "executionSourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "productionSourceBase": "3982535765e878875a901dd9d28352358e594f6f",
+  "dirtySourceSnapshotExplicitlyFrozenBeforeExecution": true,
+  "helperFingerprints": {
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2",
+    "evaluation/issue130/run_representative_decisions.py": "34b144149ed894218db8e046ec04f6dde9df62e251d2c4083833e376f3616e6a"
+  },
+  "sourceFiles": 271,
+  "runtimeFiles": 1403,
+  "sourceManifestSha256": "5ad78bc404f4ccc5ac6178775ee49c73a2cb3ee50dd74ee703bc9311eccb645a",
+  "candidateManifestSha256": "45ae9cc5f0e9ca746952f5e6a942637689e0e64c44619a1821b7ddd05bb58035",
+  "executionPlanSha256": "a6a58bb29fc835c91a8ee0c61127344b91034beb36454de84c459df20a7a0323",
+  "preExecutionReviewSha256": "90efeb3c83cff55e101b8f0860f1e153eedaf3bab9e43965123f99d6e7037b4a",
+  "rootExecutionReceiptSha256": "db1b950d1d196f101421d9b3fe82bd84de2ef9a15830198e3cc6b1e85426cd80",
+  "inputIntegrityReceiptSha256": "742c8761b5582efd39d47b7dc511c5a730220d876efd55bec7f6170b904a6a11",
+  "sourceAndRuntimeBeforeAfterEqual": true,
+  "inputScope": {
+    "supplementalContrastPairs": 8,
+    "cases": 16,
+    "original120Selected": 0,
+    "randomOperatingDistributionSample": false,
+    "originalInputContextOrderWireGoldUnchanged": true,
+    "publicPreregistrationManifestSha256": "863c039f2a8ee9d7bdf0043de0b4ee4f7ad39e4f5b3c8ec9c61f1cd31a948682"
+  },
+  "transport": {
+    "existingEnvironmentCaAddedClientMemoryOnly": 1,
+    "normalCertificateAndHostnameValidation": true,
+    "globalJdkOsProductionOrSecretChanged": false,
+    "unauthHeadLogicalCalls": 1,
+    "unauthHeadHttpStatus": 421,
+    "headVerifiesTransportOnly": true,
+    "internalCertificateOrDiagnosticDetailsPublished": false
+  },
+  "observedExecution": {
+    "suiteStatus": "COMPLETED",
+    "caseCount": 16,
+    "caseStarts": 16,
+    "outcomes": {
+      "CLEAR_STOP": 3,
+      "B_REQUIRED_NOT_RUN": 13
+    },
+    "observedNetworkEntries": 16,
+    "physicalGenerationCalls": 0,
+    "countCalls": 0,
+    "receivedHttpStatusCounts": {
+      "200": 16
+    },
+    "usageCompleteCases": 16,
+    "unknownUsageStartedCases": 0
+  },
+  "actualAdditionalGenerationCalls": 0,
+  "actualAdditionalCountCalls": 0,
+  "automaticRetries": 0,
+  "redirects": 0,
+  "fallbacks": 0,
+  "financial": {
+    "previousHeldUsd": "1.56254208",
+    "fullNewReservationUsd": "0.23068672",
+    "cumulativeHeldUsd": "1.79322880",
+    "headroomUsd": "0.20677120",
+    "approvedAggregateUsd": "2.00",
+    "refunds": 0,
+    "priorUnknownRetained": true,
+    "invoiceAmountKnown": false,
+    "invoiceHardCapProven": false,
+    "usageCountsAndPublishedInputPriceEstimate": {
+      "inputTokens": 8395,
+      "outputTokens": 0,
+      "inputOnlyListPriceEstimateUsd": "0.0008395",
+      "notInvoiceOrCompleteBill": true
+    }
+  },
+  "timing": {
+    "rootGuardElapsedMs": 6693.6758140000165,
+    "rootGuardIsNotModelStageOrOperatingLatency": true,
+    "operatingP50": null,
+    "operatingP95": null,
+    "controlledCombinedAAndLocalRoutePerCase": {
+      "n": 16,
+      "clock": "JVM_MONOTONIC_NOT_WALL_TIME",
+      "scope": "Combined actual Decisions A plus local actualTwoStage route observer",
+      "minimumMs": 108.483095,
+      "arithmeticMeanMs": 213.7269821875,
+      "maximumMs": 1092.399537,
+      "separateHttpAdapterClassifierProbeStageLatency": "NOT_MEASURED"
+    },
+    "suiteElapsedMs": 3827.969504
+  },
+  "semanticAudit": {
+    "path": "docs/verification/issue130-client-ca-aggregate-result.json",
+    "sha256": "f9fb1b3ca33c9c398f95a5acb15be075f5be0e8d9a5fd840cf8c2b345ad66b31",
+    "rawExact": {
+      "numerator": 9,
+      "denominator": 16
+    },
+    "rawMaterialMiss": {
+      "numerator": 6,
+      "denominator": 8
+    },
+    "rawUnnecessaryReview": {
+      "numerator": 1,
+      "denominator": 8
+    },
+    "normalizedUnsafeEarlyClear": {
+      "numerator": 0,
+      "denominator": 8
+    },
+    "normalizedUnnecessaryBRoute": {
+      "numerator": 5,
+      "denominator": 8
+    },
+    "predeclaredRawGate": "FAIL",
+    "questionQualityDenominator": 0,
+    "choiceRequiredGold": 7,
+    "safeEditOnlyGold": 1,
+    "notGeneralAccuracyOrOperatingApproval": true
+  },
+  "limits": [
+    "A-only actual classifier and local TwoStage routing; B generation/count0",
+    "No generated question quality or whole application/managed financial runtime E2E claim",
+    "No operating threshold, actual price registry or activation choice",
+    "First failed batch and both prior failed CI runs preserved; not rewritten as successful"
+  ]
+}

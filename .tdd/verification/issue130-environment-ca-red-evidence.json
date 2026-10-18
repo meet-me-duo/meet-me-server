@@ -1,0 +1,85 @@
+{
+  "workItem": "issue130-environment-ca",
+  "sourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaContractTest.java",
+      "sha256": "693c4e398b670cb2b23e4fb350434279a8af8f2c9ea85b9b1b854b60f9846105"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaTlsFixture.java",
+      "sha256": "660fb9789d2e711909608d9e49947c1b0eaa437a9efa25f16c2e2640f18e5707"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_environment_ca.py",
+      "sha256": "42c39349eff6ed618d35bc40c77cb7111cd9ca0c78e3702dd0e3e89b91f9f935"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_ca_tests.py",
+      "sha256": "48ca2ee58c744e683a50a8eec7b9d7b876d93cfe1957b1d507bd0f4d7b0f51ca"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/run_environment_ca_tests.py",
+    "--output",
+    ".codex/tdd-evidence/issue130-environment-ca-red-sealed"
+  ],
+  "failedTests": [
+    "CA01_valid_client_adds_one_CA_retains_JDK_anchors",
+    "CA05_missing_environmentVariable",
+    "CA06_wrong_type_environmentVariable",
+    "CA05_missing_pemFileSha256",
+    "CA06_wrong_type_pemFileSha256",
+    "CA05_missing_certificateDerSha256",
+    "CA06_wrong_type_certificateDerSha256",
+    "CA07_null_optin_reject",
+    "CA08_unknown_field_reject",
+    "CA09_alternate_env_variable_reject",
+    "CA10_optin_without_ENV_proxy_reject",
+    "CA11_env_file_missing_reject",
+    "CA12_bad_path_15",
+    "CA12_bad_path_16",
+    "CA12_bad_path_17",
+    "CA13_pem_pin_mismatch",
+    "CA14_DER_pin_mismatch",
+    "CA15_uppercase_hash_reject",
+    "CA16_leaf_symlink_reject",
+    "CA17_parent_symlink_reject",
+    "CA18_directory_reject",
+    "CA19_malformed_24",
+    "CA19_malformed_25",
+    "CA19_malformed_26",
+    "CA20_concatenated_two_certificates_reject",
+    "CA21_nonwhitespace_suffix_reject",
+    "CA22_binary_DER_reject",
+    "CA23_oversize16385_reject",
+    "CA25_invalid_certificate_leaf",
+    "CA25_invalid_certificate_expired",
+    "CA25_invalid_certificate_future",
+    "CA25_invalid_certificate_noKeyCertSign",
+    "CA26_invalid_self_signature_reject",
+    "CA27_valid_HEAD_canonical_root_no_auth",
+    "CA30_origin_confinement_40",
+    "CA30_origin_confinement_41",
+    "CA30_origin_confinement_42",
+    "CA31_runplan_injected_transport_cannot_bypass_invalid_CA",
+    "test_CE01_valid_explicit_environment_parameter",
+    "test_CE02_missing_CA_environment_rejects",
+    "test_CE03_exact_metadata_fields",
+    "test_CE04_unknown_metadata_field",
+    "test_CE05_null_optin",
+    "test_CE06_fixed_environment_name",
+    "test_CE07_metadata_types_and_lowercase_digest",
+    "test_CE08_actual_PEM_byte_pin",
+    "test_CE09_leaf_symlink",
+    "test_CE10_parent_symlink",
+    "test_CE11_directory",
+    "test_CE12_empty_or_relative_path",
+    "test_CE13_size_and_ASCII_PEM_structure",
+    "test_CE15_CA_forbidden_without_environment_proxy_mode",
+    "test_CE18_no_consumption_on_invalid_CA"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T12:21:57.089543Z"
+}

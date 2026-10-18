@@ -1,0 +1,151 @@
+{
+  "workItem": "Issue130 client CA/JDK and actual A16 evaluation record follow-up publication",
+  "result": "LOCAL_PUBLICATION_PASS",
+  "qualityResult": "FAIL",
+  "unresolvedNewPublicationP1P2": [],
+  "reviewedAt": "2026-10-18T12:58:18.308609Z",
+  "independentRole": "Reviewer authored none of the reviewed production helpers, CI additions, seven new tests, scoring fixture or prompt. Read-only source/evidence/aggregate review; only permitted plan review checkbox and short Worklog PASS bookkeeping changed.",
+  "baseRevision": "289429579a961f29e271e8155463676edde934f0",
+  "target": "Normal follow-up to existing Draft PR132; exact newly published HEAD CI is subsequent.",
+  "sourceBinding": {
+    "currentFiles": 574,
+    "beforeAfterCurrentMismatch": 0,
+    "inventorySha256": "99685b8ca3b6bbd6308a551ae0e12fef76bb5d42110aa69bf9d2e4017d3a445c",
+    "productsAndCiSha256": {
+      "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2",
+      "evaluation/issue130/run_representative_decisions.py": "34b144149ed894218db8e046ec04f6dde9df62e251d2c4083833e376f3616e6a",
+      ".github/workflows/ci.yml": "e125f88d5a1d765662f73f7ccd7695d5d69ee5a1b0ed3ce4ac8b1b3bb582b5e4"
+    },
+    "newSevenTestSha256": {
+      "evaluation/issue130/tests/Issue130EnvironmentCaContractTest.java": "693c4e398b670cb2b23e4fb350434279a8af8f2c9ea85b9b1b854b60f9846105",
+      "evaluation/issue130/tests/Issue130EnvironmentCaRunPlanSupplementTest.java": "58860f5119d46a704ccddc2f899441350c804517de61b5a3450812e5c4945da3",
+      "evaluation/issue130/tests/Issue130EnvironmentCaTlsFixture.java": "660fb9789d2e711909608d9e49947c1b0eaa437a9efa25f16c2e2640f18e5707",
+      "evaluation/issue130/tests/run_environment_ca_supplement_tests.py": "ca09a5bba2f337a807f9e96ec531c35dbdfff1213eb51ba3ae96bda5b2f6edb0",
+      "evaluation/issue130/tests/run_environment_ca_tests.py": "48ca2ee58c744e683a50a8eec7b9d7b876d93cfe1957b1d507bd0f4d7b0f51ca",
+      "evaluation/issue130/tests/test_environment_ca.py": "42c39349eff6ed618d35bc40c77cb7111cd9ca0c78e3702dd0e3e89b91f9f935",
+      "evaluation/issue130/tests/test_jdk_runtime_selection.py": "aeec4bc4b48e9453233f89e5e7c329b7fea5d4c0f4dbf4c9ca74c8b92a91e12f"
+    },
+    "oldTwelveTestsSha256": {
+      "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+      "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+      "evaluation/issue130/tests/Issue130PrivateCreationContractTest.java": "62f893e18731789e0c1b9829c97a8211f75736b6f3653763d3ac6812ddc93f5f",
+      "evaluation/issue130/tests/Issue130SyntheticContractTest.java": "2d63ba84b49706a60c97821d37fe40561245bbd1e0f4988c81f25c6fda830a79",
+      "evaluation/issue130/tests/Issue130SyntheticNetworkGuard.java": "3cc244e28afd90ca26278401fc19a0c99a93e4ead35142c57f9b7c925dcfdef7",
+      "evaluation/issue130/tests/Issue130SyntheticTlsProxy.java": "9b55da4e76611c20b53400aedb5e962706a10628a67b5faf63e9cc3858144240",
+      "evaluation/issue130/tests/run_all_synthetic_tests.py": "93c914c095970ca335913ed1cfbf88b737a8b3f06c5ab233b4d481feef9d3665",
+      "evaluation/issue130/tests/run_environment_proxy_tests.py": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+      "evaluation/issue130/tests/run_synthetic_tests.py": "a74772696cc826c5c21470f80cc5e6afddf07f5bd4d4ab0d32cc1ef321e99166",
+      "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+      "evaluation/issue130/tests/test_proxy_failure_reporting.py": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c",
+      "evaluation/issue130/tests/test_representative_decisions.py": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7"
+    },
+    "oldTestAndTimeoutExpectationsUnchanged": true
+  },
+  "finalDocumentationSha256": {
+    "implementation_plan.md": "ff0a06897fc6b2482f257808c9dc257e9fd1e80afefca065ba3a5aaaaaf23129",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "51c96f69ee6ce8b31fea8d1ffc21ca9f0856b81fcf13276f48d070759b1ae78f",
+    "docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md": "8088ea0b13cb7589d79828c9bace5e7976498426948ab4d5bd185425c1b5b430",
+    "docs/verification/issue130-client-environment-ca.md": "a161150aa9ae43ea88ed847ad10bf6374ef309a3073cf05a5dc3b8af99cb2cfd",
+    "docs/verification/issue130-client-ca-execution.json": "4ff10f752e227c296a0fd677c608c4cc41cddc074e4eac709aa8983069c4bd2d",
+    "docs/verification/issue130-client-ca-aggregate-result.json": "f9fb1b3ca33c9c398f95a5acb15be075f5be0e8d9a5fd840cf8c2b345ad66b31",
+    "docs/verification/issue130-client-ca-result-audit.md": "b471792b3df7aaa9f1ab4a5c08bb71f410f2225673b0c864c1c0e16dee2f54a5",
+    ".tdd/history/issue130-client-ca-result-audit/README.md": "fa00bb291c1ad99e34611237d6865ee9d8a4ac233d0ed6179cb63b2eb3431acb",
+    ".tdd/history/issue130-client-ca-result-audit/README.source.md": "4e44e2a83dc2539dbedf795997585c04e4dfdc272dec91770ca6871dbef772e5"
+  },
+  "reviewedPrBodySha256": "1bcf038055815dac993b9cb18cb7f105cba731889b281c2185b22ab4d6d1968c",
+  "evidenceSha256": {
+    ".tdd/verification/issue130-client-ca-current-quality.json": "22e7f957cfe0131bb06640334fd6bfeba80c79a6e5c81b3a5bae0badfb656c1b",
+    ".tdd/verification/issue130-environment-ca-independent-final.json": "04c749c3cf3000b4b59f3194a40afbdc353916520c8c9f13d4c79421df2154a2",
+    ".tdd/verification/issue130-environment-ca-independent-faults.json": "6bf921015e35ef18f44726c2a2219c6455ef262a9fc7a502944df751439da462",
+    ".tdd/verification/issue130-environment-ca-supplement.json": "7526d8b1ccb1190dc4f0958884cc7e96282fae35e92f0ff70103ee9bd1bdcec2",
+    ".tdd/verification/issue130-jdk-runtime-selection-green.json": "7479d22c456d58f0a12317f6924d798716119aafcf2f8fff41c7b124ced6a4ed",
+    ".tdd/verification/issue130-jdk-runtime-selection-faults.json": "93ad7f009427516fb55a94e0e454aca16f2c252f69fc1ba475c9c8d4b161d9b5",
+    ".tdd/verification/issue130-environment-ca-red.json": "6dbe46e8957dfa8b2e6a57c0bff76cc9636c9af9071ea1a39642b205f7e03993",
+    ".tdd/verification/issue130-jdk-runtime-selection-red.json": "6570ee9d220b8c2a1c380ab03bfef8ad3866fdbe37028d406f8b4a4e63140dbd"
+  },
+  "separateSemanticResultReview": {
+    "status": "PASS_RECORDING_FAIL_NOT_QUALITY",
+    "sha256": "45eed7b7171e5284bcc3bb1a5ed8bd60463f21a523aa6c38ed608d03790bb8a5",
+    "reviewerDidNotReadPrivateGoldOrRawInputs": true
+  },
+  "verifiedCounts": {
+    "distinctSyntheticPass": 251,
+    "originalRegression": 169,
+    "newCA": 66,
+    "newJDK": 16,
+    "newCAFIDetectedAndExactRestored": 6,
+    "newJDKFIDetectedAndExactRestored": 3,
+    "mandatoryExitCode": 0,
+    "mandatoryXmlTotal": 1717,
+    "mandatoryXmlPass": 1713,
+    "oldSkip": 4,
+    "allMandatoryXmlFresh": false,
+    "actualA": 16,
+    "actualHttp200": 16,
+    "usageComplete": 16,
+    "actualB": 0,
+    "count": 0,
+    "automaticRetries": 0,
+    "redirects": 0,
+    "fallbacks": 0
+  },
+  "reportedSemanticResults": {
+    "rawExact": "9/16",
+    "rawMaterialMiss": "6/8",
+    "rawUnnecessaryReview": "1/8",
+    "predeclaredRawGate": "FAIL",
+    "normalizedUnsafeEarlyClear": "0/8",
+    "normalizedUnnecessaryBRoute": "5/8",
+    "lowConfidence": 13,
+    "clearStop": 3,
+    "BRequiredNotRun": 13,
+    "BGoldGroups": {
+      "MUST_NOT_ASK": 8,
+      "MATERIAL_CHOICE": 7,
+      "SAFE_EDIT_ONLY": 1
+    },
+    "actualGeneratedQuestionQualityDenominator": 0,
+    "notGeneralAccuracy": true,
+    "operatingThreshold": "UNCHANGED_NULL_TBD",
+    "productionDefault": "OFF_UNCONFIGURED"
+  },
+  "financial": {
+    "observedInputTokens": 8395,
+    "observedOutputTokens": 0,
+    "inputListPriceEstimateUsd": "0.0008395",
+    "estimateIsNotInvoiceOrCompleteBill": true,
+    "previousHeldUsd": "1.56254208",
+    "newWholeSuiteHeldUsd": "0.23068672",
+    "cumulativeHeldUsd": "1.79322880",
+    "approvedHeadroomUsd": "0.20677120",
+    "refunds": 0,
+    "priorUnknownRetained": true,
+    "invoiceHardCapProven": false
+  },
+  "disclosureReview": {
+    "publicCandidateFilesBeforeBookkeeping": 50,
+    "actualKnownCertificateFingerprintOrInternalDiagnosticIdentifierHits": 0,
+    "certificateOrPrivateKeyArtifactFiles": 0,
+    "rawInputGoldResponseOrIndividualLinkageNotIncluded": true,
+    "internalDetailedAuthTlsDiagnosticsRemainLocal": true
+  },
+  "limitations": [
+    "Record publication PASS is not model quality PASS. Raw quality gate FAIL is preserved.",
+    "No B/question/choice/direct-edit/final-submit UI quality or managed financial full-app E2E claim.",
+    "Normal no-auth HEAD proves transport only; no provider availability or free-billing inference.",
+    "Mandatory1717 XML reused, not a fresh full1717 run.",
+    "Earlier first connection STOP and both CI failures remain; exact internal old PC01 failure attribution unproven.",
+    "Earlier CA63 chronological RED53/controls10, JDK16 RED14/controls2 and supplement3 INITIAL_PASS/reconstructed RED are distinct.",
+    "Cost is an estimate and retained reservation, not invoice or official hard cap. No further paid call authorized by this review."
+  ],
+  "releaseDecision": {
+    "mainMerge": "HOLD",
+    "deployment": "HOLD",
+    "operatingActivation": "HOLD",
+    "reason": "Quality FAIL, B unmeasured and operating policy unresolved.",
+    "postPublicationExactHeadCi": "PENDING_PARENT_ACTION"
+  },
+  "reviewerActualCAEnvValueKeyChainRawCorpusGoldRead": false,
+  "reviewerNetworkOrPaidCalls": 0,
+  "reviewerSourceTestOrCIChanges": 0
+}

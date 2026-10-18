@@ -1,0 +1,79 @@
+{
+  "workItem": "issue130-jdk-runtime-selection",
+  "sourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "contract": {
+    "path": "/tmp/issue130-provider-contract/JDK_RUNTIME_SELECTION_CONTRACT.md",
+    "sha256": "cb51f5a96f2dd7e85435518c184f993e4b64514a8d8a61b7f5b6deff714e9f4d"
+  },
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "b2f01a76fc2384f29c8eecf4658ff4f41f9096d844822a005f26213914c3f409"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_jdk_runtime_selection.py",
+      "sha256": "aeec4bc4b48e9453233f89e5e7c329b7fea5d4c0f4dbf4c9ca74c8b92a91e12f"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "evaluation/issue130/tests",
+    "-p",
+    "test_jdk_runtime_selection.py",
+    "-v"
+  ],
+  "compileCheck": [
+    "python3",
+    "-m",
+    "py_compile",
+    "evaluation/issue130/tests/test_jdk_runtime_selection.py"
+  ],
+  "compileExitCode": 0,
+  "result": {
+    "total": 16,
+    "assertionFailures": 14,
+    "passingControls": 2,
+    "setupErrors": 0
+  },
+  "failedTests": [
+    "test_JDK01_explicit_canonical_home_selects_both_real_child_standins",
+    "test_JDK03_explicit_empty_is_not_absent",
+    "test_JDK04_relative_home_is_rejected_even_with_working_PATH_tools",
+    "test_JDK05_missing_home_is_rejected",
+    "test_JDK06_missing_java_rejects_before_compiler",
+    "test_JDK07_missing_javac_is_rejected",
+    "test_JDK08_nonexecutable_java_rejects_before_compiler",
+    "test_JDK09_nonexecutable_javac_is_rejected",
+    "test_JDK10_directory_instead_of_binary_is_rejected",
+    "test_JDK11_symlink_home_is_rejected",
+    "test_JDK12_symlink_ancestor_is_rejected",
+    "test_JDK13_symlink_tool_is_rejected",
+    "test_JDK14_noncanonical_parent_traversal_is_rejected",
+    "test_JDK16_absent_default_missing_java_rejects_before_any_tool"
+  ],
+  "passingControls": [
+    "test_JDK02_absent_home_preserves_legacy_pair_without_PATH_selection",
+    "test_JDK15_no_execution_dry_run_does_not_start_jdk_even_for_invalid_home"
+  ],
+  "redClassification": "Chronological genuine public main assertion RED: configured home ignored; invalid explicit or missing legacy tool must reject before child invocation. Both passing controls execute real disposable fake compiler/JVM children.",
+  "isolation": "Plan validation seam stub isolates JDK contract. Legacy-prefix filesystem metadata (stat/lstat/access) and legacy/PATH executable invocation project to disposable actual JDK stand-ins, independent of shared /tmp installation. Configured and other invalid paths remain real. No global JDK writes or host executables.",
+  "priorHarnessAttempt": "red.log retained; missing subprocess.PIPE in test process namespace caused a failing legacy control, not claimed valid RED. Corrected before final SHA freeze.",
+  "existingTestsChanged": false,
+  "existingPc01DeadlineChanged": false,
+  "actualModelCalls": 0,
+  "actualExternalCalls": 0,
+  "sealedCorpusRead": false,
+  "recordedAt": "2026-10-18T12:25:54.675595Z",
+  "supersedes": {
+    "initial13Path": "/tmp/issue130-provider-contract/jdk-selection-author/initial13-local-legacy-dependent",
+    "initialTestSha256": "a4ab43c3299ce4f6ad05e928b34730c1c570bd5f1a4bbefe26b713b6938fa6af",
+    "reason": "Initial13RED+2controls valid locally but legacy metadata depended on actual /tmp installation; strengthened portable fixture and added default-missing-java noinvoke test, original source/log/evidence preserved."
+  },
+  "rawLog": "/tmp/issue130-provider-contract/jdk-selection-author/red-final16.log"
+}

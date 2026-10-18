@@ -20,6 +20,13 @@ import java.nio.charset.*;
 import java.nio.file.*;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.security.MessageDigest;
+import java.security.KeyStore;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -184,8 +191,60 @@ public final class Issue130RepresentativeDecisionsCli {
             JsonNode outer = json(bytes); AmbiguityClassificationRequest request = input(json(text(outer.path("input")).getBytes(StandardCharsets.UTF_8)), Duration.ofSeconds(15));
             require(Arrays.equals(CONTRACT.requestBytes(request), bytes), "CONFIGURATION"); cases.add(new Case(id, wirePath, bytes, sha, request));
         }
+        environmentCertificate(p, environment);
         return new Setup(p, output, cases);
     }
+    private static X509Certificate environmentCertificate(JsonNode plan, Map<String,String> environment) throws Exception {
+        if (!plan.has("environmentCa")) return null;
+        try {
+            require(environmentProxy(plan), "CONFIGURATION");
+            JsonNode metadata = plan.path("environmentCa");
+            keys(metadata, Set.of("environmentVariable", "pemFileSha256", "certificateDerSha256"));
+            require(text(metadata.path("environmentVariable")).equals("NODE_EXTRA_CA_CERTS"), "CONFIGURATION");
+            String pemPin = digest(metadata.path("pemFileSha256")), derPin = digest(metadata.path("certificateDerSha256"));
+            String value = environment.get("NODE_EXTRA_CA_CERTS");
+            require(value != null && !value.isBlank(), "CONFIGURATION");
+            Path path = Path.of(value); require(path.isAbsolute(), "CONFIGURATION"); canonical(path);
+            require(Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS), "CONFIGURATION");
+            byte[] raw = read(path, LIMIT); require(raw.length > 0 && sha(raw).equals(pemPin), "CONFIGURATION");
+            for (byte b : raw) require(b >= 0, "CONFIGURATION");
+            String pem = new String(raw, StandardCharsets.US_ASCII);
+            var match = java.util.regex.Pattern.compile("\\s*-----BEGIN CERTIFICATE-----\\s*([A-Za-z0-9+/=\\s]+?)\\s*-----END CERTIFICATE-----\\s*").matcher(pem);
+            require(match.matches(), "CONFIGURATION");
+            byte[] der = Base64.getDecoder().decode(match.group(1).replaceAll("\\s", ""));
+            require(der.length > 0 && sha(der).equals(derPin), "CONFIGURATION");
+            ByteArrayInputStream input = new ByteArrayInputStream(der);
+            X509Certificate certificate = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(input);
+            require(input.available() == 0 && Arrays.equals(der, certificate.getEncoded()), "CONFIGURATION");
+            certificate.checkValidity();
+            require(certificate.getBasicConstraints() >= 0, "CONFIGURATION");
+            boolean[] usage = certificate.getKeyUsage();
+            require(usage == null || (usage.length > 5 && usage[5]), "CONFIGURATION");
+            require(certificate.getSubjectX500Principal().equals(certificate.getIssuerX500Principal()), "CONFIGURATION");
+            certificate.verify(certificate.getPublicKey());
+            return certificate;
+        } catch (Exception failure) { throw new EvaluationException("CONFIGURATION"); }
+    }
+    private static X509TrustManager trustManager(KeyStore anchors) throws Exception {
+        TrustManagerFactory factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        factory.init(anchors);
+        for (TrustManager manager : factory.getTrustManagers()) if (manager instanceof X509TrustManager x509) return x509;
+        throw new EvaluationException("CONFIGURATION");
+    }
+    private static void addEnvironmentTrust(OkHttpClient.Builder builder, X509Certificate extra) throws Exception {
+        KeyStore anchors = KeyStore.getInstance(KeyStore.getDefaultType()); anchors.load(null, null);
+        for (X509Certificate certificate : trustManager(null).getAcceptedIssuers()) anchors.setCertificateEntry(sha(certificate.getEncoded()), certificate);
+        anchors.setCertificateEntry(sha(extra.getEncoded()), extra);
+        X509TrustManager trust = trustManager(anchors);
+        SSLContext context = SSLContext.getInstance("TLS"); context.init(null, new TrustManager[]{trust}, null);
+        builder.sslSocketFactory(context.getSocketFactory(), trust);
+        builder.addInterceptor(chain -> {
+            HttpUrl url = chain.request().url();
+            requireIo(url.scheme().equals("https") && url.host().equals("api.openai.com") && url.port() == 443, "CONFIGURATION");
+            return chain.proceed(chain.request());
+        });
+    }
+
     private static boolean environmentProxy(JsonNode plan) {
         if (!plan.has("transportMode")) return false;
         require(text(plan.path("transportMode")).equals("ENVIRONMENT_HTTPS_PROXY"), "CONFIGURATION");
@@ -292,6 +351,7 @@ public final class Issue130RepresentativeDecisionsCli {
     public static OkHttpClient mainClient(Path planPath, Map<String,String> environment) throws Exception {
         try {
             JsonNode plan = readJson(planPath, 4194304);
+            X509Certificate extra = environmentCertificate(plan, environment);
             if (!environmentProxy(plan)) return new OkHttpClient();
             String value = environment.containsKey("https_proxy") ? environment.get("https_proxy") : environment.get("HTTPS_PROXY");
             require(value != null && !value.isEmpty() && value.codePoints().noneMatch(c -> Character.isWhitespace(c) || Character.isISOControl(c)), "CONFIGURATION");
@@ -303,7 +363,9 @@ public final class Issue130RepresentativeDecisionsCli {
             int port = uri.getPort() == -1 ? 80 : uri.getPort();
             require(port > 0 && port <= 65535, "CONFIGURATION");
             java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, java.net.InetSocketAddress.createUnresolved(uri.getHost(), port));
-            return new OkHttpClient.Builder().proxy(proxy).retryOnConnectionFailure(false).followRedirects(false).followSslRedirects(false).build();
+            OkHttpClient.Builder builder = new OkHttpClient.Builder().proxy(proxy).retryOnConnectionFailure(false).followRedirects(false).followSslRedirects(false);
+            if (extra != null) addEnvironmentTrust(builder, extra);
+            return builder.build();
         } catch (Exception failure) { throw safe(failure, "CONFIGURATION"); }
     }
 

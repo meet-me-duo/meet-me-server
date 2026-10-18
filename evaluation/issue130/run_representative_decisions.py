@@ -1,9 +1,11 @@
 """Bounded evaluation-only root runner; no production activation or model calls by default."""
 import argparse
+import base64
 from decimal import Decimal
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import signal
 import subprocess
@@ -75,7 +77,45 @@ def amount(node, name):
     return result
 
 
-def validate_plan(plan_path, index_path, output_path):
+def validate_environment_ca(plan, environment=None):
+    if 'environmentCa' not in plan:
+        return
+    need(plan.get('transportMode') == 'ENVIRONMENT_HTTPS_PROXY')
+    metadata = plan['environmentCa']
+    need(isinstance(metadata, dict) and set(metadata) == {'environmentVariable', 'pemFileSha256', 'certificateDerSha256'})
+    need(metadata['environmentVariable'] == 'NODE_EXTRA_CA_CERTS')
+    for name in ('pemFileSha256', 'certificateDerSha256'):
+        need(isinstance(metadata[name], str) and re.fullmatch('[0-9a-f]{64}', metadata[name]) is not None)
+    source = os.environ if environment is None else environment
+    value = source.get('NODE_EXTRA_CA_CERTS')
+    need(isinstance(value, str) and bool(value) and not value.isspace() and Path(value).is_absolute())
+    path = canonical(value)
+    need(path.is_file())
+    with path.open('rb') as handle:
+        raw = handle.read(16385)
+    need(0 < len(raw) <= 16384 and hashlib.sha256(raw).hexdigest() == metadata['pemFileSha256'])
+    pem = raw.decode('ascii')
+    block = re.fullmatch(r'\s*-----BEGIN CERTIFICATE-----\s*([A-Za-z0-9+/=\s]+?)\s*-----END CERTIFICATE-----\s*', pem, flags=re.ASCII)
+    need(block is not None)
+    der = base64.b64decode(re.sub(r'\s', '', block.group(1), flags=re.ASCII), validate=True)
+    need(bool(der) and hashlib.sha256(der).hexdigest() == metadata['certificateDerSha256'])
+    # X.509 lifetime, CA usage and self-signature validation is performed by Java before HTTP.
+
+
+def java_tools(environment):
+    value = environment['JAVA_HOME'] if 'JAVA_HOME' in environment else '/tmp/meetme-jdk17'
+    need(isinstance(value, str) and bool(value) and os.path.isabs(value))
+    home = canonical(value)
+    need(home.is_dir())
+    tools = []
+    for name in ('javac', 'java'):
+        tool = canonical(home / 'bin' / name)
+        need(tool.is_file() and os.access(tool, os.X_OK))
+        tools.append(str(tool))
+    return tuple(tools)
+
+
+def validate_plan(plan_path, index_path, output_path, environment=None):
     try:
         plan = load(plan_path)
         need(isinstance(plan, dict) and plan['workItem'] == 'issue130-representative-decisions')
@@ -110,6 +150,7 @@ def validate_plan(plan_path, index_path, output_path):
         need(plan['operatingConfigurationChanged'] is False)
         fixed = {'caseCount': 16, 'perCallSeconds': 15, 'suiteSeconds': 300, 'concurrency': 1, 'maximumHttpAttempts': 16, 'countCalls': 0, 'generationCalls': 0, 'automaticRetries': 0, 'redirects': 0, 'fallbacks': 0, 'requestByteCap': 16384, 'responseByteCap': 16384}
         need(all(type(plan.get(key)) is int and plan[key] == value for key, value in fixed.items()))
+        validate_environment_ca(plan, environment)
         cost = plan['costProfile']
         need(isinstance(cost, dict))
         proxy = 'transportMode' in plan
@@ -170,7 +211,7 @@ def main(argv=None):
         cp = cp_path.read_text().strip()
         need(bool(cp))
         root = canonical(plan['sourceRoot'])
-        javac, java = '/tmp/meetme-jdk17/bin/javac', '/tmp/meetme-jdk17/bin/java'
+        javac, java = java_tools(os.environ)
         with tempfile.TemporaryDirectory(prefix='issue130-frozen-classes-') as directory:
             clean_env = {**os.environ, 'OPENAI_API_KEY': '', 'GEMINI_API_KEY': ''}
             compiled = subprocess.run([javac, '--release', '17', '-encoding', 'UTF-8', '-cp', cp, '-d', directory, str(root / HELPERS[0])], capture_output=True, text=True, env=clean_env, timeout=remaining())

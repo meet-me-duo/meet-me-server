@@ -297,3 +297,31 @@ core/fence 격리FI4는 baseline94→cap등호허용/중복dispatch app+SQL CAS 
 
 
 - [AGENT] 2026-10-18 #130 CI 관측 보완 한정 최종독립리뷰 LOCAL PASS·미해결 P1/P2 없음. 고정49 ID와 status/type만 공개하는 projection, 새privacy4 RED→GREEN, 기존49/14/TLS/helper 불변·63GREEN, source567 필수guard 전후동일/기존1717XML재사용을 확인했다. 첫CI assertion1의 case/원인은 여전히 미확정이며 기대값·timeout·factory를 고친 결과가 아니다. 다음은 동일DraftPR132 정상후속commit/push·새정확HEADCI이고 정확SHA/상태는Git·PR·로컬receipt에기록한다. 실제품질분모0·CA미구현/승인대기·추가유료0·hold1.56254208/여유.43745792/환급0 유지. Commit/PR 동일후속커밋예정.
+
+
+### 2026-10-18 UTC — 승인된 평가 client CA1개와 단회 재평가 준비
+
+[USER] 21:12 KST에 기존 환경 CA1개를 이번 로컬 평가 Java 클라이언트 메모리에만 추가하고 정상 인증서·hostname 검증을 유지하는 범위를 승인했다. 무인증 연결 확인 후 기존 불확실 예약을 유지하며 합산 USD2 내 동결16건 실제 평가를 진행한다. 전역/JDK/OS/운영/Secret 변경·임의 CA 설치·내부 인증 진단 공개 재시도는 범위 밖이다.
+
+[AGENT] 기존 helper·원문/gold·prompt·500자·운영 임계값을 바꾸지 않는 additive opt-in 계약을 작성했다. 구현자와 독립 테스트 작성자를 분리했고 새 RED→GREEN·FI/리뷰를 준비 중이다. 현재 예약1.56254208/여유.43745792/환급0이며 새 실행 시작 전에만 .23068672를 추가 예약한다. 실제 CA 추가·무인증 확인·추가 유료 실행은 아직0이다. Commit/PR: 동일 Draft132 후속 커밋 예정.
+
+
+### 2026-10-18 UTC — client CA·JDK 독립 검증과 비유료 연결 확인
+
+승인된 helper2개만 최소 수정했다. CA66·JDK16·기존169 회귀 PASS와 새 CA FI6/JDK FI3 탐지·각 정확 복구를 확인했다. 기존 PC01 기대값/30초·원문/prompt/500자·15/300초·source/runtime/예약 fence는 유지했다. runSuite crypto 보완3의 사후 작성과 재구성 RED를 최초63 RED와 구분했다. 필수 guard source574 전후동일/exit0, 기존1717 XML 재사용을 명시한다.
+
+source271/runtime1401 후보를 고정한 뒤 독립 ACCEPTED에 따라 무인증 HEAD1을 실행했다. 정상 TLS·hostname 검증이 완료됐고 HTTP421을 받았다. 전송 경로만 확인했으며 모델 서비스/품질 성공으로 부르지 않는다. 기존 환경 CA1개만 client 메모리에 추가했고 전역/운영/Secret 변경0이다. 예약1.56254208/환급0 유지, 별도 동결16 실행 계획은 최종 독립 검토 중이며 추가 유료0이다. 내부 상세 진단은 로컬만 보존한다. Commit/PR: 동일 Draft132 후속 커밋 예정.
+
+
+### 2026-10-18 UTC — 승인된 실제 A16 완료·독립 품질 FAIL
+
+별도봉인plan a6a58bb2/독립ACCEPTED90efeb3c/입력무결성742c8761 뒤root가1회만실행했다. HTTP20016/usage16/source-runtime전후동일, technical/refusal/UNRUN/B/count/retry0이다. 이전UNKNOWN포함1.56254208+.23068672 전액을유지해예약1.79322880/여유.20677120/환급0이다. input8395/output0의입력단가전용추정.0008395는invoice가아니다.
+
+독립custodian은사전원문/gold/순서/prompt/threshold/채점규칙을유지해raw9/16·materialmiss6/8·불필요rawreview1/8과zero-false-CLEAR gate FAIL을기록했다. 진단.8 정규화는LOW_CONF13/CLEAR_STOP3/B_REQUIRED13, 검토군unsafeearlyCLEAR0/8·명확군불필요B5/8이며rawmiss를지우지않는다. B gold질문금지8/선택필수7/editonly1을구분하고실제질문품질분모0을유지한다. single-member집계6필드의bool→int형식만정정해원본06029/정정f9fb1와diff를보존했고수치·판정·audit서술은불변이다.
+
+기존169+CA66+JDK16=251합성PASS·새FI9 탐지/복구·mandatorysource574PASS를확인했다. 다음은최종기록/게시독립리뷰→동일Draft132정상후속commit/push→정확HEAD CI다. 실제모델추가호출·운영threshold/가격선택·활성화·merge/deploy0이며품질FAIL/B미검증은잔여로남긴다. Commit/PR: 동일후속커밋예정.
+
+
+### 2026-10-18 UTC — client CA/JDK·실제 A16 기록 게시 전 독립 리뷰 PASS
+
+독립 읽기 검토로 helper2/CI 신규 합성 단계·7test와 source574 현재 지문, 기존169·CA66·JDK16/FI9 복구 근거 및 공개 집계·비용 산술을 대조했다. 기존 test12개 bytes와 기대/timeout 불변, 실제 CA 지문·체인·원문/gold·응답을 공개 후보에 포함하지 않았으며 새 P1/P2는 없다. 필수 guard의 기존1717 XML 재사용을 명시하고 새 fresh 실행으로 확대하지 않는다. 기술·기록 게시 LOCAL PASS이며 raw품질FAIL/B질문분모0·청구미확정·전액예약1.79322880/환급0을 유지한다. main 병합·배포·운영 활성화는 HOLD, 별도 의미 결과 최종 감사 및 동일 Draft132 후속 commit/push·정확 HEAD CI는 부모가 결합한다. 리뷰어의 실제 CA/키/코퍼스 접근·추가 네트워크·제품/테스트 변경0이다.

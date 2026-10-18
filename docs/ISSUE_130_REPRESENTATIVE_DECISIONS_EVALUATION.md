@@ -1,8 +1,31 @@
-# #130 대표 Decisions 평가: 도구 검증과 단회 중단 기록
+# #130 Decisions 평가: 실행 검증과 단계별 품질 결과
 
-2026-10-18 UTC. 이 문서는 실제 평가 대상과 기록 게시 커밋을 구별한다. 대상은 production HEAD `3982535765e878875a901dd9d28352358e594f6f`와 미게시 평가 helper Java `7bf79d8cf266e9af84aa292840228535eb117f841d855e0f2e83fcf7a1a2452f`/Python `5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15`다. 이후 게시 HEAD를 실제 실행 당시 HEAD로 소급하지 않는다.
+2026-10-18 UTC. 이 문서는 실제 평가 대상과 기록 게시 커밋을 구별한다. 최초 실행 대상은 production HEAD `3982535765e878875a901dd9d28352358e594f6f`와 미게시 평가 helper Java `7bf79d8cf266e9af84aa292840228535eb117f841d855e0f2e83fcf7a1a2452f`/Python `5933f3c7bd8d1508dafe26089304a336fb17064328fa996377d5ccda18bdec15`다. 이후 게시 HEAD를 실제 실행 당시 HEAD로 소급하지 않는다.
 
 독립 담당자가 별도 supplemental 8대조쌍 16개 전원을 순서·정답과 함께 사전 봉인했다. 기존 개발60/holdout60은 선택0·불변이다. 균형 대조 진단이며 운영 분포의 무작위 표본이 아니다. root·구현자·리뷰어는 선택 원문·개별 정답·비공개 index를 수동 열람하지 않았다. 입력 준비는 현재 production serializer만 사용했으며 16 wire는 2386–2503 bytes/총39006 bytes·0600이었다.
+
+## 최신 결과: TLS 검증 완료, 실제16건의 raw 품질 기준 FAIL
+
+후속 사용자가 승인한 환경 CA1개를 평가 client 메모리에만 추가하고 정상 TLS·hostname 검증을 확인했다. 전역/JDK/OS/운영/Secret을 변경하지 않았다. 무인증 HEAD1의 HTTP421은 전송 경로만 확인한 증거다. 내부 상세 인증·TLS 진단과 실제 인증서 지문은 게시하지 않는다.
+
+그 뒤 별도로 봉인한 계획으로 root가 실제 A16건을 단회 실행했다. HTTP200·유효 raw 분류·정규화 경로·완전 usage가 각각16, technical/refusal/UNRUN0·B/count/retry0이다. 실행 당시 Git HEAD는28942957이며 미커밋 helper Java c5b07a6f/Python34b14414의 정확 source271/runtime1403/계획 a6a58bb2를 별도 고정했다. 게시 후 HEAD를 실행 당시 코드로 소급하지 않는다.
+
+| 사전 gold | raw CLEAR | raw NEEDS_REVIEW |
+| --- | ---: | ---: |
+| CLEAR8 | 7 | 1 |
+| NEEDS_REVIEW8 | 6 | 2 |
+
+raw 일치는9/16이고 검토 필요8건 중 raw CLEAR 누락6건이다. 사전 zero-observed-false-CLEAR raw 기준은 **FAIL**이다. 고정 진단 임계값.8은13건을 LOW_CONFIDENCE로 유보해 CLEAR_STOP3/B_REQUIRED_NOT_RUN13을 만들었다. 검토 필요군의 unsafe early CLEAR0/8이 raw miss6/8을 지우지 않으며, 명확한 군8건 중5건은 불필요한 B 경로로 갔다. 이5건은 실제 잘못 생성된 질문5건이라는 뜻이 아니다.
+
+B gold는 질문 금지8·선택 질문 필수7·SAFE_EDIT_ONLY1이다. 검토 필요8건을 모두 선택 질문 필수로 바꾸지 않았다. 실제 B를 실행하지 않아 생성 질문·선택지·직접 수정·최종 제출·UI 품질 분모는0이다. raw 대조쌍 구분1/8과 정규화 경로 구분3/8도 별도 기록한다. 입력·gold·threshold·prompt·채점 기준을 결과에 맞춰 변경하지 않았다. 이전 실모델 결과와 source/prompt 노출이 있는 담당자가 작성한 보완 대조집합이며, 원래 개발60/holdout60에서 선택한 사례0·모집단 무작위 표본이 아니다.
+
+반환 usage input8395/output0에 고정 공식 입력단가만 적용한 추정은USD0.0008395다. invoice·완전 청구액이 아니며 기존 UNKNOWN과 두 배치 전액 예약을 합한 **USD1.79322880/여유USD0.20677120/환급0**을 보존한다. controlled A+local route 구간은108.483095–1092.399537ms, suite3827.969504ms/root guard6693.675814ms다. 모델 내부/HTTP/adapter 별 시간과 운영 p50/p95를 추정하지 않는다.
+
+기존169·CA66·JDK16 합성 검증, 새 CA FI6/JDK FI3 탐지·정확 복구가 완료됐다. 필수 guard source574 전후동일/exit0이며 기존1717 XML을 재사용했다. 기존 두 CI 실패와 첫 연결 중단 기록은 그대로 보존한다. 이후 정확 게시 HEAD CI는 별도 확인한다. 분류 품질 FAIL·B 미검증·운영 threshold/정책 미결 때문에 #123 품질·운영 활성화는 미완료다. 다음 유료 호출을 이 결과로 자동 승인하지 않는다.
+
+[실행 증거](verification/issue130-client-ca-execution.json) · [독립 집계](verification/issue130-client-ca-aggregate-result.json) · [독립 감사](verification/issue130-client-ca-result-audit.md) · [client CA/JDK 검증](verification/issue130-client-environment-ca.md)
+
+이하 첫 실행과 proxy/관측 보완은 당시 상태를 보존한 역사 기록이다. 현재 상태를 과거 단계의 CA 미구현·의미 분모0과 혼동하지 않는다.
 
 ## 도구 검증
 
@@ -46,7 +69,7 @@ raw 의미/정규화 routing의 채점 분모는 각각0이다. 계획 분모16�
 
 ## 첫 게시 CI의 단일 합성 실패와 관측 보완
 
-Draft PR132의 최초 HEAD62f47bb/CI39123972026은 ARM64와 Gradle1717 및 기존102 합성을 통과했지만 proxy Java49 중48PASS/assertion1FAIL(Python14PASS)에서 중단했다. 첫 로그에는 개별 실패 ID가 없어 원인을 확정할 수 없다. 동일 테스트의 깨끗한 CI 유사 로컬 실행1회와 관측 보완 뒤 실행은 각각63PASS였으나 첫 실패를 성공으로 소급하지 않는다.
+Draft PR132의 최초 HEAD62f47bb/CI39123972026은 ARM64와 Gradle 빌드 및 기존102 합성을 통과했지만 proxy Java49 중48PASS/assertion1FAIL(Python14PASS)에서 중단했다. 첫 로그에는 개별 실패 ID가 없어 원인을 확정할 수 없다. 동일 테스트의 깨끗한 CI 유사 로컬 실행1회와 관측 보완 뒤 실행은 각각63PASS였으나 첫 실패를 성공으로 소급하지 않는다.
 
 원래49/14 입력·기대값·TLS fixture 및 helper2개는 그대로 두었다. 별도 privacy4 RED→GREEN으로 확인한 고정49 test ID·상태·허용 오류 종류만 출력한다. raw 오류 설명·환경·body·key를 로그로 복사하지 않는다. 테스트 timeout이나 oracle을 바꾸지 않았으며 첫 CI 실패를 해결했다고 주장하지 않는다. 다음 정확 HEAD CI에서 실제 실패 ID를 확인할 수 있게 하는 관측 보완이다.
 

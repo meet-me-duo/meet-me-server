@@ -1,12 +1,29 @@
+# #130 승인된 로컬 평가 CA1개 적용 (2026-10-18 UTC)
+
+사용자 21:12 KST 승인: 기존 환경 CA1개를 평가 Java 클라이언트 메모리에만 추가하고 정상 인증서·hostname 검증을 유지한다. 무인증 연결 확인 후 기존 불확실 예약을 보존하며 USD2 합산 한도 안에서 동결16건 실제 평가를 진행한다. 전역/JDK/OS/운영/Secret 변경과 내부 진단 공개 재시도는 제외한다.
+
+- [x] [USER] CA1개 client-only 범위·무인증 선행·합산 USD2 실제 평가 승인
+- [x] [AGENT] additive pre-RED 공개 계약 확정(로컬 ENVIRONMENT_CA_CONTRACT.md), 기존 원문·gold·500자·운영 정책 불변
+- [x] [AGENT] 역할 분리 신규 RED→최소 구현→GREEN: CA66/JDK16/기존169 PASS, 신규CAFI6/JDKFI3 탐지·정확복구·독립검토
+- [x] [AGENT] candidate source271/runtime1401/CA pin 봉인·무인증 HEAD1 정상TLS/hostname·HTTP421(전송만) 확인
+- [x] [AGENT] 별도 N16 source/runtime/plan·입력무결성·비용·실행전 독립 ACCEPTED 후단회실행: HTTP20016/usage16/technical0/Bcountretry0
+- [x] [AGENT] 독립 채점: raw9/16·materialmiss6/8→사전품질FAIL, 정규화unsafeCLEAR0/8·불필요B5/8, 질문품질분모0/B미실행을분리·원gold/rule유지
+- [x] [AGENT] 최종 기술·기록 게시 전 독립 리뷰 LOCAL PASS: helper2/CI/신규7test·source574·251합성/FI9·공개 집계와 비용/검증 한계 정합, 새 P1/P2 없음. 기존1717 XML 재사용·품질FAIL/B미검증을 유지한다.
+- [ ] [AGENT] 동일 Draft132 정상 후속 commit/push·정확 게시 HEAD CI. 품질 FAIL·B 미검증·운영 정책 미결로 main 병합·배포·운영 활성화 HOLD.
+
+현재 예약 USD1.79322880/여유0.20677120/환급0. 이전1.56254208을보존하고새16건시작전에.23068672를전액추가예약했다. 실제A16/추가Bcount0이며관측입력8395의단순단가추정USD0.0008395는invoice가아니다. 품질FAIL과B미검증을숨기지않고운영활성화0을유지한다. 첫CI는 assertion1개 ID미관측, 28942957 후속CI도PC01 assertion1개로실패했다. 실제Python실행기의로컬JDK하드코딩결함을별도RED로확인·보완했으며 기존실패를성공으로소급하지않는다. Commit/PR: 동일 후속 커밋 예정.
+
 # meet-me-server Implementation Plan
+
+이하 이전 단계는 당시 상태를 보존한 기록이다. 현재 승인·예약·실행·품질 상태는 위 최신 구간을 따른다.
 
 ## #130 첫 CI 실패 관측 보완 (2026-10-18 UTC)
 
-- [x] 기술기록 DraftPR132/HEAD62f47bb 게시. CI39123972026은 ARM64·Gradle1717·기존합성102 성공 후 새proxy Java49중assertion1실패(Python14PASS/설정오류0)로중단했다. 원caseID가로그에없어원인확정0, 원실패/HEAD를보존한다.
+- [x] 기술기록 DraftPR132/HEAD62f47bb 게시. CI39123972026은 ARM64·Gradle빌드·기존합성102 성공 후 새proxy Java49중assertion1실패(Python14PASS/설정오류0)로중단했다. 원caseID가로그에없어원인확정0, 원실패/HEAD를보존한다.
 - [x] CI-like clean1회63PASS·관측보완뒤63PASS, 기존49/14/TLSfixture/helperc243/b2f bytes불변. 새ID whitelist/privacy4 compiledRED→4GREEN 후 CI에연결. rawreason/env/body/key출력0, 원의미·timeout·expected상한변경0.
 - [x] 후속source567 필수guard exit0/8.718초·전후동일. 기존1717XML재사용/새fresh주장0.
 - [x] 관측 보완 한정 후속독립리뷰 LOCAL PASS·미해결 P1/P2 없음. 고정49 ID/status/type privacy projection과 기존 oracle/실행 경계 불변을 확인했다. 첫 CI 실패 원인 해결 판정은 아니다.
-- [ ] 동일PR132 정상commit/push·새정확HEADCI. 다음실패시고정ID/종류만안전하게확인한다. 실제paid/CA변경0·hold1.56254208/여유.43745792/환급0 유지.
+- [x] 동일PR132 정상commit/push·정확HEAD28942957/CI39125812870 확인. PC01만assertion실패를식별했으며상단의별도JDK결함보완으로이어간다. 이역사단계의paid/CA변경0·당시hold1.56254208을보존한다.
 
 ## #130 환경 proxy 보완·TLS 승인 대기 (2026-10-18 11:10 UTC)
 

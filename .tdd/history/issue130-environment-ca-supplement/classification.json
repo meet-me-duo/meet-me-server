@@ -1,0 +1,9 @@
+{
+  "chronology": "Supplement authored after Java CA implementation was placed. Initial current implementation PASS; exact preserved pre-CA helper replay is post-hoc RECONSTRUCTED_PREIMPLEMENTATION_RED, not chronological RED.",
+  "preCAHelperGitRevision": "289429579a961f29e271e8155463676edde934f0",
+  "preCAHelperSha256": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+  "currentHelperSha256": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2",
+  "overlayMechanism": "Only the preserved helper compiled to a temporary directory preceding current runtime classpath. Workspace helper was never rolled back. Same new three public-contract cases ran on both implementations.",
+  "summarySha256": "7526d8b1ccb1190dc4f0958884cc7e96282fae35e92f0ff70103ee9bd1bdcec2",
+  "patchSha256": "93502d758c7d6cc4ba4e36ee230f4825a89d558dc5cdbbc423d32095c3e76e84"
+}

@@ -1,0 +1,11 @@
+--- baseline/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
++++ mutant/evaluation/issue130/Issue130RepresentativeDecisionsCli.java
+@@ -191,7 +191,7 @@
+             JsonNode outer = json(bytes); AmbiguityClassificationRequest request = input(json(text(outer.path("input")).getBytes(StandardCharsets.UTF_8)), Duration.ofSeconds(15));
+             require(Arrays.equals(CONTRACT.requestBytes(request), bytes), "CONFIGURATION"); cases.add(new Case(id, wirePath, bytes, sha, request));
+         }
+-        environmentCertificate(p, environment);
++        // FI: injected-client run plan skips environment CA cryptographic validation
+         return new Setup(p, output, cases);
+     }
+     private static X509Certificate environmentCertificate(JsonNode plan, Map<String,String> environment) throws Exception {

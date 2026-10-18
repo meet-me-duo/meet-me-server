@@ -1,0 +1,96 @@
+{
+  "status": "CA66_GREEN_FI6_DETECTED_AND_EXACT_RESTORED",
+  "sourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "currentHelpers": [
+    {
+      "path": "evaluation/issue130/Issue130RepresentativeDecisionsCli.java",
+      "sha256": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2"
+    },
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "34b144149ed894218db8e046ec04f6dde9df62e251d2c4083833e376f3616e6a"
+    }
+  ],
+  "counts": {
+    "java": 45,
+    "python": 18,
+    "supplement": 3,
+    "total": 66,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "scope": "CA45 Java +18 Python +3 run-plan supplement. Original169 compatibility and separate JDK16/its FI remain separately owned, not added here.",
+  "initialChronologicalRed": {
+    "methods": 63,
+    "failedMethods": 53,
+    "passedControls": 10,
+    "assertionFailuresIncludingSubtests": 65,
+    "errors": 0,
+    "summary": ".tdd/verification/issue130-environment-ca-red.json",
+    "sha256": "6dbe46e8957dfa8b2e6a57c0bff76cc9636c9af9071ea1a39642b205f7e03993"
+  },
+  "supplementChronology": {
+    "initialCurrentPass": 3,
+    "reconstructedExactPreCAAssertionFailures": 3,
+    "errors": 0,
+    "explicitlyNotChronologicalRed": true,
+    "summary": ".tdd/verification/issue130-environment-ca-supplement.json",
+    "sha256": "7526d8b1ccb1190dc4f0958884cc7e96282fae35e92f0ff70103ee9bd1bdcec2"
+  },
+  "newCAFIMutations": 6,
+  "priorProxyFIMutationsSeparate": 8,
+  "canonicalFI": {
+    "path": ".tdd/verification/issue130-environment-ca-independent-faults.json",
+    "sha256": "6bf921015e35ef18f44726c2a2219c6455ef262a9fc7a502944df751439da462",
+    "schemaWithFormatChecker": "PASS"
+  },
+  "allSixFaultsAssertionDetected": true,
+  "eachExactRestoredTargetGreen": true,
+  "originalCA63FingerprintsUnchanged": true,
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaContractTest.java",
+      "sha256": "693c4e398b670cb2b23e4fb350434279a8af8f2c9ea85b9b1b854b60f9846105"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaTlsFixture.java",
+      "sha256": "660fb9789d2e711909608d9e49947c1b0eaa437a9efa25f16c2e2640f18e5707"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_environment_ca.py",
+      "sha256": "42c39349eff6ed618d35bc40c77cb7111cd9ca0c78e3702dd0e3e89b91f9f935"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_ca_tests.py",
+      "sha256": "48ca2ee58c744e683a50a8eec7b9d7b876d93cfe1957b1d507bd0f4d7b0f51ca"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaRunPlanSupplementTest.java",
+      "sha256": "58860f5119d46a704ccddc2f899441350c804517de61b5a3450812e5c4945da3"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_ca_supplement_tests.py",
+      "sha256": "ca09a5bba2f337a807f9e96ec531c35dbdfff1213eb51ba3ae96bda5b2f6edb0"
+    }
+  ],
+  "evaluationInventory": {
+    "files": 21,
+    "beforeSha256": "bc316e6f98596cbe914decaedaa23d32881d13980c0c59fa67e4cd989f19ac0a",
+    "afterSha256": "bc316e6f98596cbe914decaedaa23d32881d13980c0c59fa67e4cd989f19ac0a",
+    "beforeAfterIdentical": true,
+    "currentFilesMatch": true
+  },
+  "rawArchive": ".codex/tdd-evidence/issue130-environment-ca-independent-fi",
+  "rawReceiptSha256": "4933915232a70a35a35f71543b2734ec09cc09ce6abc987ce7f45ac21d08f480",
+  "workspaceProductEditsByAuthor": 0,
+  "allScratchVariantsExactRestored": true,
+  "actualProviderCalls": 0,
+  "actualEnvironmentCARead": false,
+  "sealedDataRead": false,
+  "limitations": [
+    "Synthetic CA/loopback evidence establishes the local contract only; no unauthenticated real check or paid rerun performed by this author.",
+    "JDK runtime selection verification, historical169 regression and root final CI/review are separate scopes."
+  ],
+  "recordedAt": "2026-10-18T12:32:16.698541Z"
+}

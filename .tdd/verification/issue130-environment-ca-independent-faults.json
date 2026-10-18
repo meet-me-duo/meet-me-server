@@ -1,0 +1,94 @@
+{
+  "workItem": "issue130-environment-ca-independent-faults",
+  "sourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "boundary": "Evaluation-only CA PEM pin, certificate lifetime, default hostname verification, fixed HTTPS origin, retained JDK roots and injected-client full-crypto run-plan gate",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/Issue130RepresentativeDecisionsCli.java",
+      "sha256": "c5b07a6fe7637591a272db6d270faf459e2d93a64025e08b365938777a05c7c2"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaContractTest.java",
+      "sha256": "693c4e398b670cb2b23e4fb350434279a8af8f2c9ea85b9b1b854b60f9846105"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaTlsFixture.java",
+      "sha256": "660fb9789d2e711909608d9e49947c1b0eaa437a9efa25f16c2e2640f18e5707"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_environment_ca.py",
+      "sha256": "42c39349eff6ed618d35bc40c77cb7111cd9ca0c78e3702dd0e3e89b91f9f935"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_ca_tests.py",
+      "sha256": "48ca2ee58c744e683a50a8eec7b9d7b876d93cfe1957b1d507bd0f4d7b0f51ca"
+    },
+    {
+      "path": "evaluation/issue130/tests/Issue130EnvironmentCaRunPlanSupplementTest.java",
+      "sha256": "58860f5119d46a704ccddc2f899441350c804517de61b5a3450812e5c4945da3"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_environment_ca_supplement_tests.py",
+      "sha256": "ca09a5bba2f337a807f9e96ec531c35dbdfff1213eb51ba3ae96bda5b2f6edb0"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Remove exact PEM byte pin",
+      "command": [
+        "python3",
+        "/tmp/issue130-ca-tests/run_fi5.py"
+      ],
+      "detectedBy": "Issue130EnvironmentCaContractTest.CA13_pem_pin_mismatch",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Ignore certificate current validity",
+      "command": [
+        "python3",
+        "/tmp/issue130-ca-tests/run_fi5.py"
+      ],
+      "detectedBy": "Issue130EnvironmentCaContractTest.CA25_invalid_certificate_expired",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Replace default hostname verification with permissive verifier",
+      "command": [
+        "python3",
+        "/tmp/issue130-ca-tests/run_fi5.py"
+      ],
+      "detectedBy": "Issue130EnvironmentCaContractTest.CA28_same_CA_wrong_hostname_reject",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove fixed provider origin confinement",
+      "command": [
+        "python3",
+        "/tmp/issue130-ca-tests/run_fi5.py"
+      ],
+      "detectedBy": "Issue130EnvironmentCaContractTest.CA30_origin_confinement_40",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Drop all existing JDK trust anchors",
+      "command": [
+        "python3",
+        "/tmp/issue130-ca-tests/run_fi5.py"
+      ],
+      "detectedBy": "Issue130EnvironmentCaContractTest.CA01_valid_client_adds_one_CA_retains_JDK_anchors",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Bypass full cryptographic CA validation for injected runSuite client",
+      "command": [
+        "python3",
+        "/tmp/issue130-ca-tests/reconstruct_and_fi.py"
+      ],
+      "detectedBy": "Issue130EnvironmentCaRunPlanSupplementTest.CS01_exact_PEM_pin_wrong_DER_injected_client_denied",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T12:32:16.698541Z"
+}

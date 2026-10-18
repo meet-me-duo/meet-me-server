@@ -54,6 +54,16 @@ jobs:
           python3 evaluation/issue130/tests/test_proxy_failure_reporting.py
           python3 evaluation/issue130/tests/run_environment_proxy_tests.py
 
+      - name: Verify client-scoped environment CA and JDK selection
+        env:
+          OPENAI_API_KEY: ""
+          GEMINI_API_KEY: ""
+          GRADLE_USER_HOME: /home/runner/.gradle
+        run: |
+          python3 evaluation/issue130/tests/test_jdk_runtime_selection.py
+          python3 evaluation/issue130/tests/run_environment_ca_tests.py
+          python3 evaluation/issue130/tests/run_environment_ca_supplement_tests.py
+
       - name: Verify production deployment policy
         run: node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs
 

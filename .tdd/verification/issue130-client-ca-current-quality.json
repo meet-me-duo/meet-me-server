@@ -1,0 +1,63 @@
+{
+  "status": "SOURCE574_MANDATORY_AND_DISTINCT_SYNTHETIC251_PASS",
+  "mandatory": {
+    "exitCode": 0,
+    "sourceBeforeAfterEqual": true,
+    "sourceFiles": 574,
+    "sourceManifestSha256": "99685b8ca3b6bbd6308a551ae0e12fef76bb5d42110aa69bf9d2e4017d3a445c",
+    "elapsedSeconds": 9.451,
+    "tests": 1717,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "suites": 214,
+    "allXmlFresh": false,
+    "paidCalls": 0,
+    "keysBlankInSubprocess": true
+  },
+  "mandatoryReceiptSha256": "609d3dcc0128d994055a9a88b9c2145761e0574d7272702db1d10df7d338f25e",
+  "originalRegression": {
+    "results": [
+      {
+        "name": "original102",
+        "exitCode": 0,
+        "elapsedSeconds": 65.48
+      },
+      {
+        "name": "proxy63",
+        "exitCode": 0,
+        "elapsedSeconds": 85.147
+      },
+      {
+        "name": "privacy4",
+        "exitCode": 0,
+        "elapsedSeconds": 0.114
+      }
+    ],
+    "keysBlank": true,
+    "modelCalls": 0,
+    "oldTestsOraclesModified": false
+  },
+  "originalRegressionReceiptSha256": "1670a174c0e415de4773f980b639e8f0922866530cf8372d9c953ec3661099f0",
+  "newCA66": {
+    "evidence": ".tdd/verification/issue130-environment-ca-independent-final.json",
+    "sha256": "04c749c3cf3000b4b59f3194a40afbdc353916520c8c9f13d4c79421df2154a2"
+  },
+  "newJDK16": {
+    "evidence": ".tdd/verification/issue130-jdk-runtime-selection-green.json",
+    "sha256": "7479d22c456d58f0a12317f6924d798716119aafcf2f8fff41c7b124ced6a4ed"
+  },
+  "distinctSyntheticMethods": {
+    "original": 169,
+    "newCA": 66,
+    "newJDK": 16,
+    "total": 251
+  },
+  "existingOriginalTestFilesUnchanged": 12,
+  "existingOriginalHelperFilesIntentionallyChanged": 2,
+  "existingOriginalTestOraclesAndTimeoutsUnchanged": true,
+  "source574CurrentManifestCheck": "before==after checked; final publication reviewer also binds current files",
+  "freshGradleXmlRun": false,
+  "gradleXmlInterpretation": "1717 reused total=1713PASS+existing4SKIP; no fresh1717 claim",
+  "paidCallsInTheseTests": 0
+}

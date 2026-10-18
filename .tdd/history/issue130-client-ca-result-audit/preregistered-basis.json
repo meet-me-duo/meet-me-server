@@ -1,0 +1,9 @@
+{
+  "planSha256": "a6a58bb29fc835c91a8ee0c61127344b91034beb36454de84c459df20a7a0323",
+  "selectionManifestSha256": "8571fdccaa9785cacf40c6fbc2aea62e78d8a7acdd8b0cd1333de4c600982626",
+  "publicManifestSha256": "863c039f2a8ee9d7bdf0043de0b4ee4f7ad39e4f5b3c8ec9c61f1cd31a948682",
+  "scoringPreregistrationSha256": "3f9b7d1a99469fc579bffd34c43b33ecb1d7fec7708d503d81ab74b38d16b98a",
+  "scoringProtocolAppliedWithoutAmendment": true,
+  "privatePayloadOrLinkageExcluded": true,
+  "recordedAt": "2026-10-18T12:48:13.328733Z"
+}

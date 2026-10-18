@@ -1,0 +1,68 @@
+{
+  "workItem": "issue130-jdk-runtime-selection",
+  "sourceRevision": "289429579a961f29e271e8155463676edde934f0",
+  "boundary": "Evaluation-only Python main JDK selection; explicit JAVA_HOME, failclosed invalid setting and same-install compiler/JVM; copy-only local fake-child FI, no actual JDK/network/key/corpus",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "34b144149ed894218db8e046ec04f6dde9df62e251d2c4083833e376f3616e6a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_jdk_runtime_selection.py",
+      "sha256": "aeec4bc4b48e9453233f89e5e7c329b7fea5d4c0f4dbf4c9ca74c8b92a91e12f"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "JFI01-explicit-home-ignored-legacy-hardcode",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "evaluation/issue130/tests",
+        "-p",
+        "test_jdk_runtime_selection.py",
+        "-v"
+      ],
+      "detectedBy": "test_JDK01_explicit_canonical_home_selects_both_real_child_standins; test_JDK03_explicit_empty_is_not_absent; test_JDK04_relative_home_is_rejected_even_with_working_PATH_tools; test_JDK05_missing_home_is_rejected; test_JDK06_missing_java_rejects_before_compiler; test_JDK07_missing_javac_is_rejected; test_JDK08_nonexecutable_java_rejects_before_compiler; test_JDK09_nonexecutable_javac_is_rejected; test_JDK10_directory_instead_of_binary_is_rejected; test_JDK11_symlink_home_is_rejected; test_JDK12_symlink_ancestor_is_rejected; test_JDK13_symlink_tool_is_rejected; test_JDK14_noncanonical_parent_traversal_is_rejected; test_JDK16_absent_default_missing_java_rejects_before_any_tool",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "JFI02-invalid-explicit-fallback",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "evaluation/issue130/tests",
+        "-p",
+        "test_jdk_runtime_selection.py",
+        "-v"
+      ],
+      "detectedBy": "test_JDK03_explicit_empty_is_not_absent; test_JDK04_relative_home_is_rejected_even_with_working_PATH_tools; test_JDK05_missing_home_is_rejected; test_JDK06_missing_java_rejects_before_compiler; test_JDK07_missing_javac_is_rejected; test_JDK08_nonexecutable_java_rejects_before_compiler; test_JDK09_nonexecutable_javac_is_rejected; test_JDK10_directory_instead_of_binary_is_rejected; test_JDK11_symlink_home_is_rejected; test_JDK12_symlink_ancestor_is_rejected; test_JDK13_symlink_tool_is_rejected; test_JDK14_noncanonical_parent_traversal_is_rejected",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "JFI03-compiler-jvm-home-split",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "evaluation/issue130/tests",
+        "-p",
+        "test_jdk_runtime_selection.py",
+        "-v"
+      ],
+      "detectedBy": "test_JDK01_explicit_canonical_home_selects_both_real_child_standins",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T12:29:28.138647Z"
+}
