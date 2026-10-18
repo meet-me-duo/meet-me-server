@@ -1,0 +1,42 @@
+{
+  "workItem": "issue130-standalone-b-child-jdk",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "boundary": "Selected executable fixture portability. Product strict JAVA_HOME validation and original25 wrapper expectations unchanged; only disposable test fixture mutated.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/standalone_tests/test_standalone_generation.py",
+      "sha256": "3bf5f6ab54e62513697c0a6aa87fa39e2da21e07ff3fe074e56a87abad8bcbc5"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py",
+      "sha256": "cb267263c2e4551cc4ea120a74ebc9fe49480297feaf343e6e6be0574206b474"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "execution-env-canonicalization-omitted",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/issue130-b-python-jdk-independent/faults/run_outer.py",
+        "/workspace/issue123-representative-evaluation/server/evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py",
+        "/tmp/issue130-b-python-jdk-independent/faults/test_standalone_generation.py"
+      ],
+      "detectedBy": "BCJ02 outer assertion with original25: test_BW15_wrapper_targets_B_only_and_preserves_120, test_BW20_timeout_kills_process_group_no_retry, test_BW21_failed_compile_no_JVM_or_retry, test_BW22_failed_child_not_success",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "whole-cli-canonicalization-omitted",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/tmp/issue130-b-python-jdk-independent/faults/run_outer.py",
+        "/workspace/issue123-representative-evaluation/server/evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py",
+        "/tmp/issue130-b-python-jdk-independent/faults/test_standalone_generation.py"
+      ],
+      "detectedBy": "BCJ02 outer assertion with original25: test_BW25_actual_wrapper_compile_JVM_normal_TLS_and_replay_HTTP0",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T17:19:15.697352Z"
+}

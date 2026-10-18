@@ -1,0 +1,41 @@
+{
+  "status": "HISTORICAL_EXACT_CI_FAILURE_PRESERVED",
+  "head": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "runId": 39146763104,
+  "qualityJobId": 117732074960,
+  "qualityConclusion": "failure",
+  "armJobId": 117732075164,
+  "armConclusion": "success",
+  "checkout": "4d4e32059fd9f206d1be97c736157fb63dc0a937",
+  "checkoutParents": [
+    "3982535765e878875a901dd9d28352358e594f6f",
+    "e5cd063364d90c7b99234c68abfe3d8c5751fbc2"
+  ],
+  "headAndCheckoutTree": "f04c43f2e7e0e69f8970520493e139564c450dba",
+  "headTreeMatchesCheckout": true,
+  "qualityLiteralCheckoutVerified": true,
+  "armLiteralHeadVerified": true,
+  "passedSteps": [
+    "Gradle ktlintCheck assemble test",
+    "bounded Decisions harness",
+    "environment proxy including PC01 and additive PJ16",
+    "client-scoped environment CA and JDK selection"
+  ],
+  "failedStep": "Verify contextual A24 evaluation profile",
+  "a24Java": {
+    "tests": 26,
+    "passed": 26,
+    "assertionFailures": 0,
+    "errors": 0,
+    "exitCode": 0
+  },
+  "a24PythonExitCode": 1,
+  "a24PythonFailureIds": "NOT_EMITTED_BY_ORIGINAL_RUNNER",
+  "sourceBeforeAfterEqual": true,
+  "laterHarnessSteps": "skipped",
+  "remoteExactCause": "NOT_ESTABLISHED",
+  "hostedFilesystemMetadata": "NOT_OBSERVED",
+  "actualModelCalls": 0,
+  "freshHoldoutRead": false,
+  "V2SemanticQualityInference": "NONE; synthetic harness failure is not a measured V2 model verdict."
+}

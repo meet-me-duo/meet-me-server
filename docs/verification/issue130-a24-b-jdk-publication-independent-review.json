@@ -1,0 +1,140 @@
+{
+  "status": "LOCAL_PUBLICATION_PASS_FREE_CI_FIXTURE_MAINTENANCE_ONLY",
+  "recordedAt": "2026-10-18T17:28:39.600314+00:00",
+  "reviewer": "/root/review_pre_submit_design",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "publicationP1": 0,
+  "publicationP2": 0,
+  "decision": "Existing authorization covers normal followup commit/push to the same Draft132 and exact new HEAD CI verification. Operating quality/main/deploy/activation and further paid execution remain HOLD.",
+  "directBindings": {
+    "stagedManifest": {
+      "path": "/tmp/issue130-evaluation-jdk-followup/staged-manifest.json",
+      "sha256": "8f2df510464349e5849deed0221938b73212e8d790a8030292b706163f4ee87a",
+      "files": 38,
+      "diskAndIndexMatchedBeforeReviewerStatusUpdate": true
+    },
+    "guard": {
+      "rawReceiptSha256": "e9fe2c69fe9f2ce125f79bc4d5d952378dea6f1002c1b34f1fea171dd8de0f37",
+      "trackedReceiptPath": "docs/verification/issue130-a24-b-jdk-final-quality.json",
+      "trackedReceiptSha256": "48ad0d46ee7b4e06b885e7416721b0ef495e925322aa92975a93e94a0f8b214f",
+      "sourceFiles": 602,
+      "sourceBeforeAfterCurrentEqual": true,
+      "sourceManifestSha256": "9763898f7995b909ef2c1ec70b72f3859eb40436011a7e03aa8a744b78675542",
+      "exitCode": 0,
+      "elapsedSeconds": 9.812,
+      "xmlReused": 1733,
+      "passed": 1729,
+      "oldSkipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "suites": 216,
+      "allXmlFresh": false,
+      "fresh1733Claim": false
+    },
+    "prBody": {
+      "path": "/tmp/issue130-evaluation-jdk-followup/pr-body.md",
+      "sha256": "c09e4b90fb2c083dae7f119571b8cb19b64b3acd5fd3a4781224d7af3028c880",
+      "sixTemplateHeadingsExact": true,
+      "closes130IndependentLine": true
+    },
+    "prTitle": {
+      "value": "fix: 제출 전 모호성 정책과 평가 정의 정합화",
+      "sha256": "1e460f276d94ec07540ddc030af239e91977256ec91a2d57b9555b0235d2d542"
+    },
+    "rootPrivacyCheck": {
+      "path": "/tmp/issue130-evaluation-jdk-followup/privacy-and-diff-check.json",
+      "sha256": "9c46a44178a4ac4ce26aed72f563e6babea9111e6c888b5201e3d25c3319e08a",
+      "status": "PASS38/secretMatches0/privateCorpusPaths0/diffCheckPASS; reviewer did not read secret values"
+    }
+  },
+  "codeAssessment": {
+    "kotlinMainAndTestHeadByteUnchanged": true,
+    "v2PolicyModelParserThresholdApiUiDbCaps500FencesChanged": false,
+    "aFixture": "Only mocked child JAVA_HOME derives from selectedJava.resolve(strict=True). Original24 assertion-call ASTs directly equal; original15 cases and420second/24calls/cost/kill/seal expectations retained. Original test and runner archives match execution HEAD.",
+    "bFixture": "Removing exactly two .resolve(strict=True) calls reproduces the entire original B fixture bytes. Product strict java_tools remains unchanged.",
+    "failureProjection": "Pure boundedUTF8 parser permits only15 fixed original unittest methodIDs and fixed status/type labels, rejects malformed/unlisted IDs, de-duplicates and never forwards raw body/trace/path/env/key or untrusted counts. Unrecognized setup failure keeps original python nonzero exit and parent failure decision.",
+    "ci": "Only existingA/B step run commands extended; explicit blank provider keys, permissions and job timeouts unchanged. NewA driver uses compiled A classpath; separate unknownID sanity command retained. B context test uses compiled B classpath.",
+    "remoteAttribution": "Exacte5cd priorJava26PASS/Pythonexit1 and preceding successful steps preserved. Hosted methodIDs/filesystem cause remain unobserved. B skipped remotely, independently demonstrated latent fixture defect is not described as hosted B failure."
+  },
+  "evidenceAssessment": {
+    "aAuthor": "Genuine RED11=10assertFAIL+1control, then11GREEN. Well-formed unknown-ID additive1 is INITIAL_PASS, not retroactiveRED12. Final12GREEN; FI3 detects2/1/4 assertions with each exact restore.",
+    "bAuthor": "Outer2 tests each execute original25 cases:25unique/50nested. RED1outerFAIL+1control with5nestedassertFAIL/errors0, thenbothGREEN; FI2 detects4/1 originalassertions and each exactrestore.",
+    "regression": "A41PASS; freshBJava118=45+72+1 PASS plus earlier independentPython25 passing receipt reused. Original143unique across separate runs, not a singlefresh143. Cost56/workflow4PASS.",
+    "overlap": "Repeated15x3 and25x2 context executions are not new unique methods or model accuracy observations.",
+    "bindings": "Current implementation4/test/source fingerprints in implementation and independentA/B/FI artifacts directly match disk."
+  },
+  "historyQualityAndCost": {
+    "oldV1GoldScoresAndV2Sources": "Unchanged; prior model quality failures and post-result disclosure history retained.",
+    "v2ModelEfficacy": "UNVERIFIED; no new model/paid execution from this cycle.",
+    "heldUsd": "2.74751488",
+    "engineeringHeadroomUsd": "0.25248512",
+    "unknownReleased": false,
+    "invoiceHardCapProven": false,
+    "generalAccuracyLatencyP50P95OrCostSavingClaim": false
+  },
+  "reviewerBookkeeping": {
+    "onlyUpdatedLatestReviewBulletPaths": [
+      "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md",
+      "implementation_plan.md"
+    ],
+    "postUpdateDocHashes": {
+      "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "da2735d4f2aa6468408b66616e5658f511683380d7e18bc05af98f7c54f038bb",
+      "implementation_plan.md": "90a0938f39b09ee06f885a353f93abbdfdf2c05debd88d4008ca6a1de18fe427"
+    },
+    "postingAndNewExactHeadCi": "EXPLICITLY_PENDING",
+    "rootMustStageTheseDiskBytesAndReview": true,
+    "sourceTestCiChangesByReviewer": 0
+  },
+  "boundFiles": {
+    ".github/workflows/ci.yml": "506807e437b3909e9e98bc7b1ed16048b41d79a514fc74c769047a8d795ca89e",
+    ".tdd/history/issue130-a24-b-child-jdk-joint/apply-manifest.json": "ec183c6fc9d9c75761991271f50ca004aba0452c7000df147e1e4e589d09321f",
+    ".tdd/history/issue130-a24-b-child-jdk-joint/ci.yml.original.txt": "0d2dd165c55594f6391502ec25545f78900a51172a4370ad864c102f4994cae4",
+    ".tdd/history/issue130-a24-b-child-jdk-joint/run_candidate_a24_tests.py.original.txt": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+    ".tdd/history/issue130-a24-b-child-jdk-joint/test_candidate_a24.py.original.txt": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+    ".tdd/history/issue130-a24-b-child-jdk-joint/test_standalone_generation.py.original.txt": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113",
+    ".tdd/history/issue130-candidate-a24-python-ci/assertion-ast-after.json": "5242c8dee98d0efb1e78d4d64066217ad09592b847319d0bbc6e446f9028a653",
+    ".tdd/history/issue130-candidate-a24-python-ci/assertion-ast-before.json": "5242c8dee98d0efb1e78d4d64066217ad09592b847319d0bbc6e446f9028a653",
+    ".tdd/history/issue130-candidate-a24-python-ci/assertion-ast-original.json": "5242c8dee98d0efb1e78d4d64066217ad09592b847319d0bbc6e446f9028a653",
+    ".tdd/history/issue130-candidate-a24-python-ci/independent-fi-local-reproduction.py.txt": "fca1f0a1cd468375e3bd9eee68d73884d0d36688ae992f5ba2d38f1b9e866be5",
+    ".tdd/history/issue130-candidate-a24-python-ci/run_candidate_a24_tests.py.diff": "b0ce202d7f7fe3aed0f4a5c083f7362f00bbc27e9006237da6c6ef44fbd077af",
+    ".tdd/history/issue130-candidate-a24-python-ci/run_candidate_a24_tests.py.original.txt": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+    ".tdd/history/issue130-candidate-a24-python-ci/semantic-ast-preservation.json": "a22441336bfed2a32a719bf7ec25dfc9282128b77841397e2cf5a8444e4f4905",
+    ".tdd/history/issue130-candidate-a24-python-ci/test_candidate_a24.py.diff": "244451d9e97eb0a0e02d06506af12e97c2b9fa66693cc4c446d66bc3e50671e6",
+    ".tdd/history/issue130-candidate-a24-python-ci/test_candidate_a24.py.original.txt": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+    ".tdd/history/issue130-standalone-b-child-jdk/supersession.json": "be6fa5ad69a13fc787a08a8066e1e015ceb0fedd73bca6f169b406e830201f25",
+    ".tdd/history/issue130-standalone-b-child-jdk/test_standalone_generation.py.source": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113",
+    ".tdd/verification/issue130-a24-b-jdk-implementation.json": "0ec8330613c4a30185205dbe1f9108e5e27ee40d15cafe7912ca7ceed1d8bade",
+    ".tdd/verification/issue130-candidate-a24-python-ci-faults.json": "9c50b2fe93252c7443493be6a25b65e8380381cec31840d45a83307fdbb8dfa1",
+    ".tdd/verification/issue130-candidate-a24-python-ci-independent-final.json": "291b28ea6504968dd8baaa6ef66e6aeadfc57ec7f6458aabe51cdd8949aed2a5",
+    ".tdd/verification/issue130-candidate-a24-python-ci-red-evidence.json": "7ffe7991022eddd6a796cd8af91b29de6a3deb5a981eea6893c0c03148a1b1fa",
+    ".tdd/verification/issue130-candidate-a24-python-ci-red.json": "4f1d1fd6075866cd507e2d604332752eb020e13e8bb669f6f04c1b54ca55755c",
+    ".tdd/verification/issue130-standalone-b-child-jdk-faults.json": "f3508d3ceff37cb4a9ddf1bfae6850510307e570168a425bfa835b5abc8cbaae",
+    ".tdd/verification/issue130-standalone-b-child-jdk-independent.json": "413455a684b30fdb73f3dc805ae3883c0b55920a550ccb2168cb2b3004ffdb49",
+    ".tdd/verification/issue130-standalone-b-child-jdk-red.json": "13b8aebbdacaab1f625a0e97af45ed25f5de9912e2e1a2c2ca4ce195f6dfaf4a",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "da2735d4f2aa6468408b66616e5658f511683380d7e18bc05af98f7c54f038bb",
+    "docs/verification/issue130-a24-b-jdk-final-quality.json": "48ad0d46ee7b4e06b885e7416721b0ef495e925322aa92975a93e94a0f8b214f",
+    "docs/verification/issue130-a24-fixture-jdk-readonly-diagnosis.json": "82e46911a5dd9ec96d33663dca77cf87111a113064071b0d09ff0af2216a2feb",
+    "docs/verification/issue130-e5cd-exact-ci-failure.json": "926e3df3c279aefd3a1c38e09602e90c6b883ae73f78050feafaeae9374cc7f7",
+    "evaluation/issue130/standalone_tests/test_standalone_generation.py": "3bf5f6ab54e62513697c0a6aa87fa39e2da21e07ff3fe074e56a87abad8bcbc5",
+    "evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py": "cb267263c2e4551cc4ea120a74ebc9fe49480297feaf343e6e6be0574206b474",
+    "evaluation/issue130/tests/run_candidate_a24_ci_tests.py": "4243619b532587dfb2b26d1483b629168c7cca1c58a784e572735790de99abf3",
+    "evaluation/issue130/tests/run_candidate_a24_tests.py": "de47a1b12ddd65de03385522a76bbab4369861dadab0d42c25309c489fa0aea6",
+    "evaluation/issue130/tests/test_candidate_a24.py": "d9b8771fba7dc208284a4301fe865db04bc7621a8296b098cdda23ed2abdc491",
+    "evaluation/issue130/tests/test_candidate_a24_child_jdk.py": "5fc2161961d8d178252eec76a6fb255996253b0aa0056edb940eca2e1c0c5022",
+    "evaluation/issue130/tests/test_candidate_a24_failure_reporting.py": "f22315603d3c738587cde64908eb1de64d3d40caa99a76711b746edbc5707d7c",
+    "evaluation/issue130/tests/test_candidate_a24_unknown_id.py": "ea05851b3a8ada7f1a8388faf835405a6321c53a1c87ee7bf32b6b4d90297a58",
+    "implementation_plan.md": "90a0938f39b09ee06f885a353f93abbdfdf2c05debd88d4008ca6a1de18fe427"
+  },
+  "remaining": [
+    "Normal root commit/push and exact new HEAD CI.",
+    "Hosted prior failure cause is still not conclusively established; new safe output may identify future failing IDs.",
+    "V2 real semantic quality, question quality, operating price/threshold and release gates remain unresolved.",
+    "No main merge/deploy/activation or paid-call permission is issued by this local review."
+  ],
+  "reviewerActivity": {
+    "testsGradleNetworkModelRuns": 0,
+    "private22GoldInputIndexWireRawResponseKeyCaEnvironmentReads": 0,
+    "sourceTestCiEdits": 0,
+    "commitPushMergeDeploy": 0
+  }
+}

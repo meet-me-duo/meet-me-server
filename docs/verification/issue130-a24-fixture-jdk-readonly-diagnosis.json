@@ -1,0 +1,62 @@
+{
+  "status": "READ_ONLY_CONTEXT_SPLIT_COMPLETE",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "contexts": [
+    {
+      "context": "valid",
+      "tests": 15,
+      "exitCode": 0,
+      "failureIds": [],
+      "errorIds": [],
+      "elapsedMs": 1477.1885619993554,
+      "logSha256": "4d1026c841825648baa623b646a1027a2a7da79d3d9742855eb01d10a18427f6"
+    },
+    {
+      "context": "missing",
+      "tests": 15,
+      "exitCode": 1,
+      "failureIds": [
+        "test_A24PY12_350second_validation_has70left_no_reset",
+        "test_A24PY14_compile_counts_and_late_success_rejected",
+        "test_A24PY15_child_deadline_kills_process_group"
+      ],
+      "errorIds": [],
+      "elapsedMs": 1528.8800800044555,
+      "logSha256": "dbf8a802d82f586096d50dc0dcde1b2333e5f732350ba1e87cac247a057d3536"
+    },
+    {
+      "context": "symlink",
+      "tests": 15,
+      "exitCode": 1,
+      "failureIds": [
+        "test_A24PY12_350second_validation_has70left_no_reset",
+        "test_A24PY14_compile_counts_and_late_success_rejected",
+        "test_A24PY15_child_deadline_kills_process_group"
+      ],
+      "errorIds": [],
+      "elapsedMs": 1574.6195370011264,
+      "logSha256": "aec2333a445bc8f9645ef1e6556a35a47480bf54ba7b41a4bede9e04cc275d01"
+    }
+  ],
+  "sourceBeforeAfterEqual": true,
+  "files": {
+    "evaluation/issue130/tests/test_candidate_a24.py": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+    "evaluation/issue130/tests/run_candidate_a24_tests.py": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+    "evaluation/issue130/tests/Issue130CandidateA24ContractTest.java": "31ea29352e5c5fd65a73eecc040f8bbfecf743f4c1d0dc42380fe20dd52fee9d",
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c28adf9f81e673ac5b4a93f6925815aa7fa07398a70aa73f826384899a2f14f3",
+    "evaluation/issue130/run_representative_decisions.py": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt": "a723af8f453ad56770d0d141e6f222f21bae3729b245f735bb67e68fe794ece5",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt": "7e898fcdc0476739ff855f8ae2f62f0d32d5b4660ac58527efe55312cf7af53f"
+  },
+  "compileExitCode": 0,
+  "freshSyntheticJavaFixtures": true,
+  "productionClassUsesV2Marker": true,
+  "productionClasspathSha256": "7570fffba93c1ed80dd9b4bb659cd3962f03d8e457aa3f7729d7a74a4f04fceb",
+  "currentClasspathFileSha256": "7a9b50d3935ab4b03637c96089b19847b66371a033cafea9206105a94fcd72d5",
+  "elapsedSeconds": 7.062,
+  "actualProviderCalls": 0,
+  "privateInputsOrGoldRead": false,
+  "remoteFailureIdsKnown": false,
+  "remoteJavaHomeFilesystemCauseEstablished": false,
+  "limitation": "Local controlled missing/symlink home failures identify fixture coupling; remote CI exposes Python exit1 only. This is not remote causal proof."
+}

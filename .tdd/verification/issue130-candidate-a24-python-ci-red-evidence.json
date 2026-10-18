@@ -1,0 +1,42 @@
+{
+  "workItem": "issue130-candidate-a24-python-ci",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_child_jdk.py",
+      "sha256": "5fc2161961d8d178252eec76a6fb255996253b0aa0056edb940eca2e1c0c5022"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_failure_reporting.py",
+      "sha256": "f22315603d3c738587cde64908eb1de64d3d40caa99a76711b746edbc5707d7c"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_ci_tests.py",
+      "sha256": "4243619b532587dfb2b26d1483b629168c7cca1c58a784e572735790de99abf3"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/run_candidate_a24_ci_tests.py",
+    "--evaluation-classpath-file",
+    "/tmp/issue130-a24-python-readonly-diagnosis/evaluation-runtime.classpath",
+    "--java",
+    "/tmp/meetme-jdk17/bin/java",
+    "--output",
+    "/tmp/issue130-a24-python-independent/red"
+  ],
+  "failedTests": [
+    "test_ACJ01_missing_parent_home_original15 (test_candidate_a24_child_jdk.CandidateChildJdkContract.test_ACJ01_missing_parent_home_original15)",
+    "test_ACJ02_symlink_parent_home_original15 (test_candidate_a24_child_jdk.CandidateChildJdkContract.test_ACJ02_symlink_parent_home_original15)",
+    "test_APR01_fixed_failure_and_error_headers_only (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR01_fixed_failure_and_error_headers_only)",
+    "test_APR02_raw_paths_env_body_trace_never_emitted (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR02_raw_paths_env_body_trace_never_emitted)",
+    "test_APR03_unknown_ids_malformed_headers_and_prefix_ignored (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR03_unknown_ids_malformed_headers_and_prefix_ignored)",
+    "test_APR04_duplicate_ids_do_not_invent_multiple_failures (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR04_duplicate_ids_do_not_invent_multiple_failures)",
+    "test_APR05_unknown_setupclass_and_counts_not_invented (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR05_unknown_setupclass_and_counts_not_invented)",
+    "test_APR06_nontext_and_bounded_utf8_input (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR06_nontext_and_bounded_utf8_input)",
+    "test_APR07_valid_old15_ids_all_supported_without_body_type_guess (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR07_valid_old15_ids_all_supported_without_body_type_guess)",
+    "test_APR08_actual_runner_preserves_unrecognized_setup_exit (test_candidate_a24_failure_reporting.CandidateFailureReportingContract.test_APR08_actual_runner_preserves_unrecognized_setup_exit)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T17:10:38.448026Z"
+}

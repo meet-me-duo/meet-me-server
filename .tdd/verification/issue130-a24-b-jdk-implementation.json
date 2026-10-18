@@ -1,0 +1,107 @@
+{
+  "status": "FIXTURE_ONLY_JDK_PINS_SAFE_REPORTING_ADDITIVE_CI_GREEN_FREEZE",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "scope": "A24 mocked child JDK environment canonicalized; B fixture two selected-JDK canonicalizations; bounded fixed15 Python failure projection; additive checks in existing A24/B steps. Production/model/policy behavior unchanged.",
+  "implementationFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24.py",
+      "sha256": "d9b8771fba7dc208284a4301fe865db04bc7621a8296b098cdda23ed2abdc491"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "sha256": "de47a1b12ddd65de03385522a76bbab4369861dadab0d42c25309c489fa0aea6"
+    },
+    {
+      "path": "evaluation/issue130/standalone_tests/test_standalone_generation.py",
+      "sha256": "3bf5f6ab54e62513697c0a6aa87fa39e2da21e07ff3fe074e56a87abad8bcbc5"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "506807e437b3909e9e98bc7b1ed16048b41d79a514fc74c769047a8d795ca89e"
+    }
+  ],
+  "originalHistory": ".tdd/history/issue130-a24-b-child-jdk-joint",
+  "sourceFreezeExceptions": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24.py",
+      "originalSha256": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+      "allowedDelta": "One mocked JAVA_HOME keyword; original24 assertion AST remains96f8e27e91ac6dc91f11c20afad09a95ac5cd3e478e1bc402115e99c608e5c21."
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "originalSha256": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+      "allowedDelta": "Strict fixed15 method/status/type projection; original pythonExitCode and failure decision unchanged."
+    },
+    {
+      "path": "evaluation/issue130/standalone_tests/test_standalone_generation.py",
+      "originalSha256": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113",
+      "allowedDelta": "Exactly two resolve(strict=True) calls; all other bytes preserved."
+    }
+  ],
+  "independentA": {
+    "path": ".tdd/verification/issue130-candidate-a24-python-ci-independent-final.json",
+    "sha256": "291b28ea6504968dd8baaa6ef66e6aeadfc57ec7f6458aabe51cdd8949aed2a5"
+  },
+  "independentB": {
+    "path": ".tdd/verification/issue130-standalone-b-child-jdk-independent.json",
+    "sha256": "413455a684b30fdb73f3dc805ae3883c0b55920a550ccb2168cb2b3004ffdb49"
+  },
+  "independentScope": {
+    "A": "ChronologicalRED11 then GREEN11; separate valid-shape unknown-ID INITIALPASS1; FI3 all detected and exact restored final12PASS. Not RED12.",
+    "B": "Outer2 contexts each original25PASS; 25unique/50nested, FI2 detects4/1 original assertions and restores. Not143Python tests."
+  },
+  "originalA41Regression": {
+    "java26": 26,
+    "python15": 15,
+    "failures": 0,
+    "errors": 0,
+    "sourceBeforeAfterEqual": true,
+    "receipt": {
+      "path": ".codex/tdd-evidence/issue130-a24-b-jdk-implementation/a41/receipt.json",
+      "sha256": "c4a06f22566d97c94e68605a60c3de176de08cef8ad1655cdc2398d05b310613"
+    }
+  },
+  "originalB143SeparatedEvidence": {
+    "freshJavaMethods": 118,
+    "client45": 45,
+    "runtime72": 72,
+    "private1": 1,
+    "python25ReusedFromIndependentB": true,
+    "uniqueMethodsAcrossSeparatePassingRuns": 143,
+    "freshWhole143Invocation": false,
+    "reusedPythonPrecededOnlyAdditivePrivacyFileAndCIChange": true,
+    "bFixtureSha256": "3bf5f6ab54e62513697c0a6aa87fa39e2da21e07ff3fe074e56a87abad8bcbc5",
+    "bClasspathFileSha256": "122492e4c5616baab7e810e32d0e82b29ef445eb288f2ad416fa33707fa60480",
+    "failures": 0,
+    "errors": 0
+  },
+  "cost56Regression": {
+    "methods": 56,
+    "exitCode": 0,
+    "sourceUnchanged": true
+  },
+  "remainingRegressionReceipt": {
+    "path": ".codex/tdd-evidence/issue130-a24-b-jdk-implementation/remaining-receipt.json",
+    "sha256": "37110fdec75b5b578388d898421a0d0b78b5c8a72317563c29c18f81ac9dc70e"
+  },
+  "ciBinding": {
+    "yamlParse": "PASS",
+    "onlyA24AndBExistingStepRunChanged": true,
+    "otherStepPropertiesPermissionsTimeoutsUnchanged": true,
+    "allProviderKeysBlank": true,
+    "cachedEvaluationClasspathReusedByAdditiveChecks": true,
+    "addedUnknownIdInvokedDirectlyWithoutChangingOriginal11Driver": true,
+    "workflowContractTests4": "PASS",
+    "diffCheck": "PASS"
+  },
+  "sourceMainUnchangedFromHead": true,
+  "sourceEvaluationBeforeAfterEqual": true,
+  "remoteCiCauseConfirmed": false,
+  "remoteCiLimit": "Exact e5cd CI exposed A24Python exit1 only. Locally controlled inherited missing/symlink home reproduces PY12/PY14/PY15; remote IDs/filesystem cause not established. B was skipped remotely; latent B fixture defect independently reproduced.",
+  "actualModelCalls": 0,
+  "privateCasesGoldOrKeysRead": false,
+  "gradleRunByProducer": false,
+  "commitPush": false,
+  "rawEvidence": ".codex/tdd-evidence/issue130-a24-b-jdk-implementation",
+  "recordedAt": "2026-10-18T17:24:59.601756+00:00"
+}

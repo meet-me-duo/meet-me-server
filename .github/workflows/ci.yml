@@ -75,17 +75,27 @@ jobs:
           OPENAI_API_KEY: ""
           GEMINI_API_KEY: ""
           GRADLE_USER_HOME: /home/runner/.gradle
-        run: >-
-          python3 evaluation/issue130/tests/run_candidate_a24_tests.py
-          --production-classpath-file "$RUNNER_TEMP/issue130-base/original/base/production-test-runtime.classpath"
-          --output "$RUNNER_TEMP/issue130-a24"
+        run: |
+          python3 evaluation/issue130/tests/run_candidate_a24_tests.py \
+            --production-classpath-file "$RUNNER_TEMP/issue130-base/original/base/production-test-runtime.classpath" \
+            --output "$RUNNER_TEMP/issue130-a24"
+          python3 evaluation/issue130/tests/run_candidate_a24_ci_tests.py \
+            --evaluation-classpath-file "$RUNNER_TEMP/issue130-a24/evaluation-runtime.classpath" \
+            --java "$JAVA_HOME/bin/java" \
+            --output "$RUNNER_TEMP/issue130-a24-ci"
+          python3 evaluation/issue130/tests/test_candidate_a24_unknown_id.py
 
       - name: Verify standalone B quality evaluation harness
         env:
           OPENAI_API_KEY: ""
           GEMINI_API_KEY: ""
           GRADLE_USER_HOME: /home/runner/.gradle
-        run: python3 evaluation/issue130/standalone_tests/run_standalone_tests.py --output "$RUNNER_TEMP/issue130-b2"
+        run: |
+          python3 evaluation/issue130/standalone_tests/run_standalone_tests.py --output "$RUNNER_TEMP/issue130-b2"
+          ISSUE130_B_CONTEXT_JAVA="$JAVA_HOME/bin/java" \
+          ISSUE130_B_CONTEXT_CLASSPATH_FILE="$RUNNER_TEMP/issue130-b2/evaluation-runtime.classpath" \
+          ISSUE130_B_CONTEXT_OUTPUT="$RUNNER_TEMP/issue130-b2-contexts" \
+          python3 evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py
 
       - name: Verify evaluation cost wire syntax before dispatch
         env:

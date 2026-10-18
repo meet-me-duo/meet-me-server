@@ -1,0 +1,56 @@
+--- run_candidate_a24_tests.py.original
++++ run_candidate_a24_tests.py
+@@ -1,11 +1,37 @@
+ #!/usr/bin/env python3
+ """A24 synthetic-only runner. Reuses cached production classpath; never calls paid APIs."""
+-import argparse,fcntl,hashlib,json,os,subprocess,sys,tempfile,time
++import argparse,fcntl,hashlib,json,os,re,subprocess,sys,tempfile,time
+ from pathlib import Path
+ REPO=Path(__file__).resolve().parents[3]
+ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+ def inventory():
+     return {str(p.relative_to(REPO)):sha(p) for directory in [REPO/'src/main',REPO/'evaluation/issue130'] for p in sorted(directory.rglob('*')) if p.is_file() and p.suffix in ('.kt','.java','.py')}
++SAFE_PYTHON_TEST_IDS = frozenset(('test_A24PY01_valid24_amounts_and_historical2', 'test_A24PY02_default_dryrun_reports24_and_never_child', 'test_A24PY03_exact_profile_unknown_type_or_value', 'test_A24PY04_old16_cannot_borrow_new_profile', 'test_A24PY05_new24_requires_discriminator', 'test_A24PY06_old_hold_and_cap_rejected', 'test_A24PY07_CA_required', 'test_A24PY08_ENV_proxy_required', 'test_A24PY09_prior_evidence_hash_pinned', 'test_A24PY10_wrong24_timeout_fixed', 'test_A24PY11_untrusted_threshold_and_retry_unchanged', 'test_A24PY12_350second_validation_has70left_no_reset', 'test_A24PY13_421_validation_stops_before_compile', 'test_A24PY14_compile_counts_and_late_success_rejected', 'test_A24PY15_child_deadline_kills_process_group'))
++
++def safe_python_failures(text):
++    """Return only fixed original method IDs and status/type labels."""
++    if type(text) is not str:
++        return []
++    try:
++        if len(text.encode('utf-8')) > 1048576:
++            return []
++    except UnicodeError:
++        return []
++    result = []
++    seen = set()
++    for line in text.splitlines():
++        match = re.fullmatch(r'(FAIL|ERROR): (test_A24PY[A-Za-z0-9_]+) \(__main__\.CandidateA24Contract\.\2\)', line)
++        if match is None:
++            continue
++        kind, name = match.groups()
++        if name not in SAFE_PYTHON_TEST_IDS or name in seen:
++            continue
++        seen.add(name)
++        result.append({'test': name,
++                       'status': 'ASSERTION_FAILURE' if kind == 'FAIL' else 'SETUP_OR_UNEXPECTED_ERROR',
++                       'type': 'AssertionError' if kind == 'FAIL' else 'UNEXPECTED_ERROR'})
++    return result
++
+ def main():
+     parser=argparse.ArgumentParser();parser.add_argument('--production-classpath-file',required=True);parser.add_argument('--output',required=True);args=parser.parse_args()
+     out=Path(args.output).absolute();out.mkdir(parents=True,exist_ok=True);out.chmod(0o700)
+@@ -22,11 +48,13 @@
+         selected=dict(env,ISSUE130_TEST_JAVA=java,ISSUE130_TEST_SOURCE_ROOT=str(REPO),ISSUE130_TEST_CLASSPATH=runtime)
+         with (out/'java.jsonl').open('w') as log:j=subprocess.run([java,f'-Dissue130.sourceRoot={REPO}','-cp',runtime,'Issue130CandidateA24ContractTest'],cwd=REPO,env=selected,stdout=log,stderr=subprocess.STDOUT,timeout=140)
+         with (out/'python.log').open('w') as log:p=subprocess.run([sys.executable,str(REPO/'evaluation/issue130/tests/test_candidate_a24.py')],cwd=REPO,env=selected,stdout=log,stderr=subprocess.STDOUT,timeout=90)
++        with (out/'python.log').open('rb') as log:raw_python=log.read(1048577)
++        python_failures=safe_python_failures(raw_python.decode('utf-8',errors='replace')) if len(raw_python)<=1048576 else []
+         rows=[]
+         for line in (out/'java.jsonl').read_text().splitlines():
+             try:rows.append(json.loads(line))
+             except ValueError:pass
+         after=inventory();(out/'source-after.json').write_text(json.dumps(after,indent=2)+'\n')
+-        receipt={'javaExitCode':j.returncode,'pythonExitCode':p.returncode,'javaSummary':rows[-1] if rows else None,'sourceBeforeAfterEqual':before==after,'startedUtc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime(started)),'finishedUtc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'actualModelCalls':0,'freshHoldoutRead':False,'productionClasspathFileSha256':sha(Path(args.production_classpath_file))}
++        receipt={'javaExitCode':j.returncode,'pythonExitCode':p.returncode,'pythonFailures':python_failures,'javaSummary':rows[-1] if rows else None,'sourceBeforeAfterEqual':before==after,'startedUtc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime(started)),'finishedUtc':time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),'actualModelCalls':0,'freshHoldoutRead':False,'productionClasspathFileSha256':sha(Path(args.production_classpath_file))}
+         (out/'receipt.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt));return 0 if before==after and not(j.returncode or p.returncode) else 1
+ if __name__=='__main__':raise SystemExit(main())

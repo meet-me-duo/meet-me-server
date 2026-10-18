@@ -1,0 +1,107 @@
+{
+  "status": "INDEPENDENT_RED11_THEN_A11_GREEN_ADDENDUM1_INITIAL_PASS_FI3_ALL_DETECTED_RESTORED_FINAL12_GREEN",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24.py",
+      "sha256": "d9b8771fba7dc208284a4301fe865db04bc7621a8296b098cdda23ed2abdc491"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "sha256": "de47a1b12ddd65de03385522a76bbab4369861dadab0d42c25309c489fa0aea6"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_child_jdk.py",
+      "sha256": "5fc2161961d8d178252eec76a6fb255996253b0aa0056edb940eca2e1c0c5022"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_failure_reporting.py",
+      "sha256": "f22315603d3c738587cde64908eb1de64d3d40caa99a76711b746edbc5707d7c"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_ci_tests.py",
+      "sha256": "4243619b532587dfb2b26d1483b629168c7cca1c58a784e572735790de99abf3"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_unknown_id.py",
+      "sha256": "ea05851b3a8ada7f1a8388faf835405a6321c53a1c87ee7bf32b6b4d90297a58"
+    }
+  ],
+  "chronologicalRed": {
+    "tests": 11,
+    "assertionFailures": 10,
+    "errors": 0,
+    "controlsPassed": 1,
+    "evidence": ".tdd/verification/issue130-candidate-a24-python-ci-red-evidence.json",
+    "sha256": "7ffe7991022eddd6a796cd8af91b29de6a3deb5a981eea6893c0c03148a1b1fa",
+    "oldRedAndFrozenThreeFilesUnchanged": true
+  },
+  "addendum": {
+    "test": "APRX01",
+    "source": {
+      "path": "evaluation/issue130/tests/test_candidate_a24_unknown_id.py",
+      "sha256": "ea05851b3a8ada7f1a8388faf835405a6321c53a1c87ee7bf32b6b4d90297a58"
+    },
+    "classification": "INITIAL_PASS after initial A11 GREEN; no retroactive chronologicalRED claim.",
+    "why": "A malformed-format unknown ID could not alone prove the fixed15 whitelist. New well-formed unlisted ID closes that oracle gap.",
+    "oldThreeFilesChanged": false,
+    "ciInvocation": [
+      "python3",
+      "evaluation/issue130/tests/test_candidate_a24_unknown_id.py"
+    ]
+  },
+  "finalTests": {
+    "outerJdkContextTests": 3,
+    "newPrivacyTests": 9,
+    "uniqueAdditionalTests": 12,
+    "originalUniqueWrapperTests": 15,
+    "maximumNestedExecutionsPerFullOuter3": 45,
+    "not45NewUniqueTests": true,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "faults": {
+    "summary": ".tdd/verification/issue130-candidate-a24-python-ci-faults.json",
+    "sha256": "9c50b2fe93252c7443493be6a25b65e8380381cec31840d45a83307fdbb8dfa1",
+    "injected": 3,
+    "detected": 3,
+    "survived": 0,
+    "eachExactRestoreGreen": true,
+    "final12Green": true,
+    "workspaceMutations": 0,
+    "receiptSha256": "1cc8c00dc551e1ea13a2a6a8c50d31cac160ea019f3598f3650ac62def6d19a0"
+  },
+  "originalOracleSupersession": {
+    "oldPython15Sha256": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+    "oldRunnerSha256": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+    "originalBytesArchived": ".tdd/history/issue130-candidate-a24-python-ci",
+    "old24AssertionAstSha256": "96f8e27e91ac6dc91f11c20afad09a95ac5cd3e478e1bc402115e99c608e5c21",
+    "current24AssertionAstIdentical": true,
+    "removeOnlyNewFixtureCanonicalJavaHomeKeywordRestoresExactWholeOldTestAst": true,
+    "removeOnlyAppendedObservationStatementsAndKeyRestoresExactOldRunnerMainAst": true,
+    "timing420Count24CostHoldSealsKillAssertionsUnchanged": true,
+    "productJavaToolsUnchanged": true
+  },
+  "privacy": {
+    "fixedOriginal15IdsOnly": true,
+    "fixedStatusesAndErrorTypesOnly": true,
+    "utf8TextLimit": 1048576,
+    "noRawCountsUsedAsDenominators": true,
+    "unrecognizedSetupStillOriginalNonzeroPythonExit": true,
+    "noRawPathEnvBodyKeyTraceCopied": true
+  },
+  "setupFailureExcluded": "Initial exec-server transport disconnect failed before process creation, no fi directory/test invocation or mutant; rerun succeeded. Never counted as RED or fault detection.",
+  "sourceBeforeAfterEqual": true,
+  "remoteCiCauseConfirmed": false,
+  "limits": [
+    "Missing/symlink inherited home locally reproduces exact PY12/14/15 failure; remote IDs/filesystem metadata remain unobserved.",
+    "This scope does not assert full originalA41/B143/cost56 regression; producer records those separately.",
+    "No main Kotlin/API/UI/DB/model/policy/threshold/gold/private22/paid changes."
+  ],
+  "rawEvidence": ".codex/tdd-evidence/issue130-candidate-a24-python-ci",
+  "actualModelCalls": 0,
+  "recordedAt": "2026-10-18T17:22:16.780935Z"
+}

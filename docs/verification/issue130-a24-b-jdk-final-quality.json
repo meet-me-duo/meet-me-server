@@ -1,0 +1,26 @@
+{
+  "scope": "FINAL_SOURCE_FULL_GUARD_AFTER_A24_AND_B_FIXTURE_JDK_ISOLATION",
+  "verificationPhase": "FREE_SYNTHETIC_EVALUATION_FIXTURE_MAINTENANCE",
+  "exitCode": 0,
+  "sourceBeforeAfterEqual": true,
+  "sourceFiles": 602,
+  "sourceManifestSha256": "9763898f7995b909ef2c1ec70b72f3859eb40436011a7e03aa8a744b78675542",
+  "elapsedSeconds": 9.812,
+  "tests": 1733,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 216,
+  "allXmlFresh": false,
+  "paidCalls": 0,
+  "keysBlankInSubprocess": true,
+  "passed": 1729,
+  "kotlinSourceAndTestsUnchangedFromE5cd": true,
+  "gradleTasks": [
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "xmlReuse": "Existing1733 XML, not a new fresh1733 execution; prior V2 fresh result separately preserved.",
+  "actualProviderCallsAdded": 0
+}

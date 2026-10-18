@@ -1,0 +1,86 @@
+{
+  "status": "INDEPENDENT_RED_GREEN_FI_COMPLETE",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "boundary": "Free CI fixture portability; original B Python has25 unique methods, two contexts50 nested executions, not143 Python methods. Product Java selection and model meaning policy unchanged.",
+  "sourceFiles": {
+    "evaluation/issue130/standalone_tests/test_standalone_generation.py": "3bf5f6ab54e62513697c0a6aa87fa39e2da21e07ff3fe074e56a87abad8bcbc5",
+    "evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py": "cb267263c2e4551cc4ea120a74ebc9fe49480297feaf343e6e6be0574206b474",
+    "evaluation/issue130/run_standalone_generation.py": "f9d59b1d838cb2f1ba75dae5b2c2d166e789d8a78021d4dfe67dc243fd5bcc89",
+    "evaluation/issue130/Issue130StandaloneGenerationCli.java": "49936292adad57cde36d10d4fd6a3776a22f9b7a0bf55da1b1865552fe442341"
+  },
+  "testFile": {
+    "path": "evaluation/issue130/standalone_tests/test_standalone_generation_child_jdk.py",
+    "sha256": "cb267263c2e4551cc4ea120a74ebc9fe49480297feaf343e6e6be0574206b474"
+  },
+  "originalHistory": {
+    "path": ".tdd/history/issue130-standalone-b-child-jdk/test_standalone_generation.py.source",
+    "sha256": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113"
+  },
+  "twoExpressionSupersession": {
+    "path": ".tdd/history/issue130-standalone-b-child-jdk/supersession.json",
+    "sha256": "be6fa5ad69a13fc787a08a8066e1e015ceb0fedd73bca6f169b406e830201f25"
+  },
+  "originalAssertionsTimeoutsSchemaCountsUnchanged": true,
+  "red": {
+    "receipt": {
+      "path": ".codex/tdd-evidence/issue130-standalone-b-child-jdk/red/receipt.json",
+      "sha256": "948eebd1ae2d3d6ff58d25170224c5059118e4c5a4421be9451f3b312eef0c42"
+    },
+    "canonicalOriginal25Pass": true,
+    "symbolicOriginal25AssertionFailures": 5,
+    "errors": 0,
+    "outerTests": 2,
+    "outerFailures": 1,
+    "outerControlsPass": 1
+  },
+  "green": {
+    "receipt": {
+      "path": ".codex/tdd-evidence/issue130-standalone-b-child-jdk/green/receipt.json",
+      "sha256": "86f87c03718f5544d6ca0ee0bcfa2959c7389bdcbc7d5eaf6964bae702599467"
+    },
+    "contexts": 2,
+    "originalUniqueMethods": 25,
+    "nestedExecutions": 50,
+    "originalMethodFailures": 0,
+    "outerTests": 2,
+    "outerFailures": 0,
+    "errors": 0
+  },
+  "faultInjection": {
+    "canonical": {
+      "path": ".tdd/verification/issue130-standalone-b-child-jdk-faults.json",
+      "sha256": "f3508d3ceff37cb4a9ddf1bfae6850510307e570168a425bfa835b5abc8cbaae"
+    },
+    "rawReceipt": {
+      "path": ".codex/tdd-evidence/issue130-standalone-b-child-jdk/faults/receipt.json",
+      "sha256": "af7e8292384cb512862c1ca48cf6f34862a578e010d90116c6888f039ce3b786"
+    },
+    "mutations": 2,
+    "firstDetectedByOriginalAssertions": 4,
+    "secondDetectedByOriginalAssertions": 1,
+    "eachExactRestorationOuterTestsPass": 2,
+    "eachExactRestorationNestedOriginalCasesPass": 50,
+    "onlyDisposableFixtureMutated": true,
+    "originalSourceBeforeAfterEqual": true,
+    "frozenRuntimeBeforeAfterEqual": true
+  },
+  "runtimePreparation": {
+    "path": ".codex/tdd-evidence/issue130-standalone-b-child-jdk/prepare-receipt.json",
+    "sha256": "74e89ce9876efa51a076cd2b781b74e1fbc0a97cd7e4835352e549c6e9c1b2b4"
+  },
+  "frozenRuntimeInventory": {
+    "path": ".codex/tdd-evidence/issue130-standalone-b-child-jdk/runtime-inventory.json",
+    "sha256": "887598426b16ca942037237ca8d0b604c3e9840527aedbb8f630e2e9b567cd5f"
+  },
+  "gradleRun": false,
+  "actualModelCalls": 0,
+  "privateInputsGoldIndexRead": false,
+  "realKeysRead": false,
+  "remoteCiBStageCauseConfirmed": false,
+  "limits": [
+    "Local canonical/symlink comparison establishes a latent fixture defect, not proof remote CI reached or failed B stage.",
+    "Public synthetic B fixtures and frozen production classes only; no inference quality or paid evaluation claim.",
+    "Whole repository/CI checks remain root owned."
+  ],
+  "recordedAt": "2026-10-18T17:19:33.705564Z"
+}

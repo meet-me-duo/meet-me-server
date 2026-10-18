@@ -131,7 +131,7 @@ class StandaloneGenerationPlanTest(unittest.TestCase):
 
     def execution_env(self):
         digest=hashlib.sha256(self.plan.read_bytes()).hexdigest()
-        return {**self.environment,'JAVA_HOME':str(Path(os.environ['ISSUE130_TEST_JAVA']).parent.parent),'GEMINI_API_KEY':'synthetic-b-wrapper-key-MUST-NOT-LEAK','OPENAI_API_KEY':'synthetic-unused-A-key-MUST-NOT-READ','ISSUE130_B_FROZEN_PLAN_SHA256':digest,'ISSUE130_B_EXECUTE_FROZEN':digest}
+        return {**self.environment,'JAVA_HOME':str(Path(os.environ['ISSUE130_TEST_JAVA']).resolve(strict=True).parent.parent),'GEMINI_API_KEY':'synthetic-b-wrapper-key-MUST-NOT-LEAK','OPENAI_API_KEY':'synthetic-unused-A-key-MUST-NOT-READ','ISSUE130_B_FROZEN_PLAN_SHA256':digest,'ISSUE130_B_EXECUTE_FROZEN':digest}
 
     def exercise(self, *, clock=None, compile_failure=False, child_timeout=False, child_exit=0, child_stdout=None, seal=True, key=True):
         env=self.execution_env(); calls=[]; killed=[]; original_run=subprocess.run; original_popen=subprocess.Popen
@@ -224,7 +224,7 @@ class StandaloneGenerationPlanTest(unittest.TestCase):
             self.assertTrue(target.exists(),'SYNTHETIC_WHOLE_CLI_FIXTURE_READY')
             fixture=json.loads(target.read_text()); config=fixture['config']; cp=next(path for path in config['runtimeFiles'] if path.endswith('runtime.classpath'))
             args=['--plan',fixture['plan'],'--index',fixture['index'],'--output',fixture['output'],'--classpath-file',cp,'--execute-frozen']
-            environment=dict(os.environ,**fixture['environment'],JAVA_HOME=str(Path(os.environ['ISSUE130_TEST_JAVA']).parent.parent),OPENAI_API_KEY='')
+            environment=dict(os.environ,**fixture['environment'],JAVA_HOME=str(Path(os.environ['ISSUE130_TEST_JAVA']).resolve(strict=True).parent.parent),OPENAI_API_KEY='')
             original_popen=subprocess.Popen
             def guarded(command,*a,**kw):
                 if isinstance(command,list) and 'Issue130StandaloneGenerationCli' in command:

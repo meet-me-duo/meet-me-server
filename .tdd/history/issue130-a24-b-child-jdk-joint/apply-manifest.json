@@ -1,0 +1,17 @@
+{
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "before": {
+    "evaluation/issue130/tests/test_candidate_a24.py": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+    "evaluation/issue130/tests/run_candidate_a24_tests.py": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+    "evaluation/issue130/standalone_tests/test_standalone_generation.py": "6d388be34d299163699172dfbccbced7ebdcc291ad4ecd6616c0b88f5c591113",
+    ".github/workflows/ci.yml": "0d2dd165c55594f6391502ec25545f78900a51172a4370ad864c102f4994cae4"
+  },
+  "after": {
+    "evaluation/issue130/tests/test_candidate_a24.py": "d9b8771fba7dc208284a4301fe865db04bc7621a8296b098cdda23ed2abdc491",
+    "evaluation/issue130/tests/run_candidate_a24_tests.py": "de47a1b12ddd65de03385522a76bbab4369861dadab0d42c25309c489fa0aea6",
+    "evaluation/issue130/standalone_tests/test_standalone_generation.py": "3bf5f6ab54e62513697c0a6aa87fa39e2da21e07ff3fe074e56a87abad8bcbc5",
+    ".github/workflows/ci.yml": "a09d51597bd63961f03cf05bb4986a4d9820e67f5558e4c4049fc8a4b44cec1b"
+  },
+  "recordedAt": "2026-10-18T17:14:19.982230+00:00",
+  "scope": "Only A mock JDK home pin + safe fixed15 CI projection, two B fixture selected-home canonicalizations and additive existing-step CI invocations; no production/model/policy/time/count/kill/oracle changes."
+}

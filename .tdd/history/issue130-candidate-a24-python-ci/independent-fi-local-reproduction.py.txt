@@ -1,0 +1,49 @@
+from pathlib import Path
+import hashlib,json,subprocess,importlib.util,unittest,io,fcntl,os,sys,shutil
+from unittest import mock
+R=Path('/workspace/issue123-representative-evaluation/server');T=R/'evaluation/issue130/tests';B=Path('/tmp/issue130-a24-python-independent/fi');B.mkdir(exist_ok=False)
+H=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
+CP=Path('/tmp/issue130-a24-python-readonly-diagnosis/evaluation-runtime.classpath')
+os.environ.update(OPENAI_API_KEY='',GEMINI_API_KEY='',ISSUE130_CI_JAVA=str(Path('/tmp/meetme-jdk17/bin/java').resolve()),ISSUE130_CI_CLASSPATH_FILE=str(CP),ISSUE130_CI_PYTHON=sys.executable)
+NAMES=['test_candidate_a24_child_jdk.py','test_candidate_a24_failure_reporting.py','test_candidate_a24_unknown_id.py'];phases=[]
+tracked=[T/n for n in NAMES+['run_candidate_a24_ci_tests.py','test_candidate_a24.py','run_candidate_a24_tests.py']]
+
+def run(label,root=T,selected=None,redirect=None):
+ suite=unittest.TestSuite()
+ for name in NAMES:
+  if selected and name not in selected:continue
+  spec=importlib.util.spec_from_file_location(label+'_'+name[:-3],root/name);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+  if selected and selected[name]:
+   for method in selected[name]:suite.addTest(m.CandidateChildJdkContract(method))
+  else:suite.addTests(unittest.defaultTestLoader.loadTestsFromModule(m))
+ log=io.StringIO();realrun=subprocess.run
+ def invoke(command,*args,**kwargs):
+  if len(command)>1 and str(command[1])==str(T/'test_candidate_a24.py'):
+   command=[*command];command[1]=str(redirect)
+  return realrun(command,*args,**kwargs)
+ with mock.patch.object(subprocess,'run',side_effect=invoke) if redirect else mock.patch.dict(os.environ,{}):
+  result=unittest.TextTestRunner(stream=log,verbosity=2).run(suite)
+ (B/(label+'.log')).write_text(log.getvalue())
+ d={'phase':label,'tests':result.testsRun,'failures':len(result.failures),'errors':len(result.errors),'passed':result.wasSuccessful(),'failedTests':[str(t) for t,_ in result.failures],'logSha256':H(B/(label+'.log'))};phases.append(d);return d
+
+with open('/tmp/meetme-gradle.lock','a') as lock:
+ fcntl.flock(lock,fcntl.LOCK_EX);before={str(p.relative_to(R)):H(p) for p in tracked}
+ initial=run('initial12_including_new1');assert initial['passed'] and initial['tests']==12
+ source=(T/'test_candidate_a24.py').read_text();needle="JAVA_HOME=str(Path(os.environ['ISSUE130_TEST_JAVA']).resolve(strict=True).parent.parent),";assert source.count(needle)==1
+ mutated=B/'a24-fixture-without-jdk-pin.py';mutated.write_text(source.replace(needle,''))
+ selected={'test_candidate_a24_child_jdk.py':['test_ACJ01_missing_parent_home_original15','test_ACJ02_symlink_parent_home_original15']}
+ f=run('F1_fixture_pin_removed',selected=selected,redirect=mutated);assert f['failures']==2 and f['errors']==0
+ assert run('F1_exact_restore',selected=selected)['passed']
+ original=(T/'run_candidate_a24_tests.py').read_text()
+ faults=[('F2_whitelist_removed','if name not in SAFE_PYTHON_TEST_IDS or name in seen:','if name in seen:'),('F3_raw_failure_forwarded',"result.append({'test': name,","result.append({'raw': text, 'test': name,")]
+ for label,needle,replacement in faults:
+  assert original.count(needle)==1;directory=B/label;directory.mkdir()
+  for name in NAMES[1:]:shutil.copyfile(T/name,directory/name)
+  target=directory/'run_candidate_a24_tests.py';target.write_text(original.replace(needle,replacement))
+  f=run(label,root=directory,selected={name:None for name in NAMES[1:]});assert f['failures']>=1 and f['errors']==0
+  target.write_text(original);assert H(target)==H(T/'run_candidate_a24_tests.py')
+  assert run(label+'_exact_restore',root=directory,selected={name:None for name in NAMES[1:]})['passed']
+ final=run('final12');assert final['passed'] and final['tests']==12
+ after={str(p.relative_to(R)):H(p) for p in tracked};assert before==after
+ result={'status':'FI3_ALL_DETECTED_EXACT_RESTORES_FINAL_A11_PLUS1_GREEN','phases':phases,'sourceBefore':before,'sourceAfter':after,'sourceBeforeAfterEqual':True,'workspaceMutations':0,'originalUniqueWrapperTests':15,'maximumNestedExecutionsPerFullOuter3':45,'newTests':12,'chronology':'New valid-shape unknown-ID1 is INITIAL_PASS after A11 GREEN; not chronological preimplementationRED.','actualModelCalls':0,'privateCasesRead':False,'remoteCiCauseConfirmed':False}
+ (B/'receipt.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps({'status':result['status'],'phases':[{k:v for k,v in d.items() if k in ['phase','tests','failures','errors']} for d in phases],'receiptSha256':H(B/'receipt.json')}))

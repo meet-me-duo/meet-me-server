@@ -1,0 +1,63 @@
+{
+  "workItem": "issue130-candidate-a24-python-ci",
+  "sourceRevision": "e5cd063364d90c7b99234c68abfe3d8c5751fbc2",
+  "boundary": "Synthetic fixture canonical child JDK and fixed original15-ID failure projection; no product java_tools, time/budget/kill/assertion weakening.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24.py",
+      "sha256": "d9b8771fba7dc208284a4301fe865db04bc7621a8296b098cdda23ed2abdc491"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_tests.py",
+      "sha256": "de47a1b12ddd65de03385522a76bbab4369861dadab0d42c25309c489fa0aea6"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_child_jdk.py",
+      "sha256": "5fc2161961d8d178252eec76a6fb255996253b0aa0056edb940eca2e1c0c5022"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_failure_reporting.py",
+      "sha256": "f22315603d3c738587cde64908eb1de64d3d40caa99a76711b746edbc5707d7c"
+    },
+    {
+      "path": "evaluation/issue130/tests/run_candidate_a24_ci_tests.py",
+      "sha256": "4243619b532587dfb2b26d1483b629168c7cca1c58a784e572735790de99abf3"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_candidate_a24_unknown_id.py",
+      "sha256": "ea05851b3a8ada7f1a8388faf835405a6321c53a1c87ee7bf32b6b4d90297a58"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "F1_CANONICAL_FIXTURE_JAVA_HOME_PIN_REMOVED",
+      "command": [
+        "python3",
+        "/tmp/issue130-a24-python-independent/run_fi.py"
+      ],
+      "detectedBy": "ACJ01/ACJ02 original15 under missing/symlink parent JDK",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F2_FIXED_TEST_ID_WHITELIST_REMOVED",
+      "command": [
+        "python3",
+        "/tmp/issue130-a24-python-independent/run_fi.py"
+      ],
+      "detectedBy": "APRX01 valid-shape but unlisted synthetic ID",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F3_RAW_FAILURE_TEXT_FORWARDED",
+      "command": [
+        "python3",
+        "/tmp/issue130-a24-python-independent/run_fi.py"
+      ],
+      "detectedBy": "APR01/APR02/APR04/APR07 exact fixed-only output",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T17:22:16.780935Z"
+}

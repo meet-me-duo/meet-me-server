@@ -1,0 +1,39 @@
+{
+  "status": "INDEPENDENT_ASSERTION_RED10_FROZEN",
+  "redEvidence": {
+    "path": ".tdd/verification/issue130-candidate-a24-python-ci-red-evidence.json",
+    "sha256": "7ffe7991022eddd6a796cd8af91b29de6a3deb5a981eea6893c0c03148a1b1fa"
+  },
+  "tests": 11,
+  "assertionFailures": 10,
+  "errors": 0,
+  "controlsPassed": 1,
+  "denominators": {
+    "outerJdkContexts": 3,
+    "originalUniqueWrapperTests": 15,
+    "maximumNestedExecutions": 45,
+    "newPrivacyTests": 8,
+    "doNotClaim45NewUniqueTests": true
+  },
+  "originalsBeforeImplementation": {
+    "test_candidate_a24.py": "10e2be252aada462c0343a4446c05b9e0f95f775fd43a724b08890ef7d7f9414",
+    "run_candidate_a24_tests.py": "d6219685ae244fa2e95e4691ef37e76fd7d11945b3399de13b770d485852965a",
+    "assertionAst": {
+      "assertionAstNodes": 24,
+      "sha256": "96f8e27e91ac6dc91f11c20afad09a95ac5cd3e478e1bc402115e99c608e5c21"
+    }
+  },
+  "fixtureMaintenanceException": "Only selected canonical ISSUE130_TEST_JAVA home may be added to old wrapper mock environment; all prior assertions, absolute420/24/budget/kill policy unchanged. Full old testbytes preserved with explicit supersession after the fix.",
+  "privacyContract": "Pure fixed15method IDs/status/type only; no counts from raw output, no setup-class inventedID, no paths/env/body/key/trace; existing nonzero python exit remains decisive.",
+  "rawReceipt": {
+    "path": "/tmp/issue130-a24-python-independent/red/receipt.json",
+    "sha256": "e2b4526006e82440d52e7a8d3c9dead92c317e1f1988d48ac19efb69ec62463e"
+  },
+  "rawLogSha256": "44d47bcb4b7cddb6d521556d5b2c7b11bbb58a5a14ce0bed98dbcef28d7641be",
+  "schemaScope": "Evaluation-path local projection+FormatChecker only; repository Kotlin-only RED schema unchanged.",
+  "sourceBeforeAfterEqual": true,
+  "sourceOrTestChangesAfterRed": 0,
+  "remoteCiCauseConfirmed": false,
+  "actualModelCalls": 0,
+  "recordedAt": "2026-10-18T17:10:38.448026Z"
+}

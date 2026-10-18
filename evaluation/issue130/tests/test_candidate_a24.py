@@ -97,7 +97,7 @@ class CandidateA24Contract(unittest.TestCase):
             def poll(self):return self.returncode
         fake=types.SimpleNamespace(run=run,Popen=Process,PIPE=subprocess.PIPE,TimeoutExpired=subprocess.TimeoutExpired)
         digest=hashlib.sha256(self.plan.read_bytes()).hexdigest()
-        env=dict(self.env,OPENAI_API_KEY='synthetic-issue130-key-MUST-NOT-LEAK',GEMINI_API_KEY='',ISSUE130_FROZEN_PLAN_SHA256=digest,ISSUE130_EXECUTE_FROZEN=digest)
+        env=dict(self.env,JAVA_HOME=str(Path(os.environ['ISSUE130_TEST_JAVA']).resolve(strict=True).parent.parent),OPENAI_API_KEY='synthetic-issue130-key-MUST-NOT-LEAK',GEMINI_API_KEY='',ISSUE130_FROZEN_PLAN_SHA256=digest,ISSUE130_EXECUTE_FROZEN=digest)
         with mock.patch.object(RUNNER,'validate_plan',validate),mock.patch.object(RUNNER,'subprocess',fake),mock.patch('time.monotonic',lambda:state['now']),mock.patch.dict(os.environ,env),mock.patch('os.killpg',lambda *a:state.update(kills=state['kills']+1)):
             code,result=self.main(True)
         return code,result,state

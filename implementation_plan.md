@@ -1,3 +1,13 @@
+# #130 A24 Python fixture 후속 (2026-10-18 UTC)
+
+- [x] [AGENT] V2 정합화/무료 검증·최종 독립 리뷰 뒤 정상 HEAD `e5cd063364d90c7b99234c68abfe3d8c5751fbc2`를 동일 Draft132에 게시했다. exact CI39146763104는 Gradle/bounded/PC01+PJ16/CA+JDK/ARM/Lifecycle PASS 뒤 A24 Java26PASS·Python exit1로 실패했다. 원 runner가 Python 실패ID를 출력하지 않아 원격ID/host filesystem 원인은 미확정이다.
+- [x] [AGENT] exact e5cd 현 runtime·원Python15만 합성 재현했다. valid parent15PASS, missing/symlink parent에서 각각 PY12/PY14/PY15 assertion3 실패·대조12PASS/오류0다. wrapper의 mocked child가 실제 상속 JDK 파일 조건에 의존하는 fixture 결합을 확인했고 원격 원인 확정과 구분한다. 원 source/15assert·420초/24회/gold·점수는 유지한다.
+- [x] [AGENT] A 독립RED11(10assert실패/대조1) 뒤 선택JDK pin·고정15ID/status/type 관측만 추가했다. 별도 privacy1 INITIALPASS를분리하고 최종12PASS/FI3 탐지2·1·4/각복구를확인했다. B는원25의선택경로대조outer2(각25PASS)·FI2 탐지4·1/각복구뒤두fixture표현만canonical화했다. 제품JDK검증·기존assert·420초/24회/예약/kill·V2지침은불변이다.
+- [x] [AGENT] 기존A41/ B Java118/비용56/workflow4 PASS다. B 원Python25는완료증거재사용으로118+25=143unique를분리기록하며143fresh단일재실행으로표시하지않는다. source602 before=after 필수가드exit0/9.812초이며기존1733XML(1729PASS+기존4SKIP)재사용이다. 새fresh1733주장0·src/main/src/test는e5cd와동일하다.
+- [x] [AGENT] 최종 독립 게시 리뷰 PASS를 봉인했다. 같은 Draft의 정상 후속 commit/push와 정확 새 HEAD CI 확인은 아직 대기 중이다.
+
+추가 유료0·유지 예약USD2.74751488·기존UNKNOWN 유지. V2 의미효능미검증/main·배포·활성화HOLD다. 다음 시작점은 최종 독립 게시 리뷰→정상 후속 게시/정확 HEAD CI이며, 모델/API/UI/DB/threshold/500/참여·마감 정책 변경은 없다. 아래는 각 시점의 기록이다. Commit/PR 동일 후속 커밋 예정.
+
 # #130 공통 정책 V2 정합화·무료 검증 (2026-10-18 UTC)
 
 - [x] [USER] A CLEAR 설명·A/B 지침·평가 정의 정합화와 무료 회귀를 승인했다. API/UI·DB·모델·threshold·유료 호출 변경은 제외한다.
