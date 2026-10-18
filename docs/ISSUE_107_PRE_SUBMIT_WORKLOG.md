@@ -1,5 +1,13 @@
 # 새 #107 구현·통합 Worklog
 
+## 최신 수정 HEAD fresh 15초 경로 검증 (2026-10-18 UTC)
+
+부모가 승인한 정확 HEAD `4101038fd421351affa2a1fcdd5741083cb1a6b6`/source557에서 사전 고정 LIVE-KO-03 한 건을 실행했다. 원문·문맥·LOW2048·500자·공통15초·사전 합성threshold0.8을 바꾸지 않았다. 새 helper의 독립 whole-CLI mock25/25 및 실행 전 ACCEPTED 뒤 root가 07:21:29–07:21:37 UTC에 A/count/generation 각1회만 호출했고 모두 HTTP200, retry/fallback/redirect0이다. 만료 직전 pre-open P2는 최소 수정·같은 독립 재현HTTP0으로 닫았고 원실패와 초기fixture오류를 별도 보존했다.
+
+실제 parser/TwoStage는 NEEDS_CHOICE로 오전08–09/오후20–21 질문과 원문 날짜·의도를 보존한 두 제안을 반환했다. 동일 JVM monotonic 경로7029.248374ms <15초, JVM전체7641.481ms를 구분한다. A rawCLEAR/confidence0.06은 사전 의미 기대와 불일치하며 기존 합성threshold0.8에서 LOW_CONFIDENCE로 생성기에 전달됐다. 이 confidence는 정확도나 CLEAR확률이 아니며 운영threshold는 미선택/OFF다. UI 제출완료·SDK transport·PG원장 운영통합·일반정확도/p50/p95 성공으로 해석하지 않는다. 과거503·15초TIMEOUT·원분류FAIL·수정전parserFAIL은 그대로 남는다.
+
+기존 UNKNOWN 포함 예약USD1.01330944 + 새 사전최대USD0.31854592 = 누적USD1.33185536, USD2 한도 내 여유USD0.66814464를 유지한다. 이번 알려진usage는 A512/0, B530입력·127candidate+533thought=660출력이다. invoice/count fee는 확인하지 않았고 예약을 환급하지 않는다. 새3HTTP 뒤 유료STOP, 누계Decisions7/count3/generation5=15다. 제품source/test/운영설정·병합·배포0, Linear는 부모 전용동기화 담당으로 재시도0이다. 독립 [의미 감사](verification/issue123-fresh-head-two-stage-semantic-review.md)와 [관측·비용 감사](verification/issue123-fresh-head-two-stage-observation-cost-review.md)는 모두 범위 내 PASS·미해결P1/P2 없음으로 봉인됐다. 기록commit 전 unchanged필수guard도07:23:05–14 UTC exit0이며 새fresh1710 실행으로 주장하지 않는다. [기록 최종 게시 리뷰](verification/issue123-fresh-head-two-stage-publication-final-review.md)도 PASS·미해결P1/P2 없음이다. 다음은 같은PR126 기록commit/push·정확HEAD CI다. Commit/PR은 동일후속커밋예정이며 평가대상HEAD4101과 이후기록커밋을 구분한다.
+
 ## 최신 USD2 진단 후속 (2026-10-18 UTC)
 
 metadata 후속 로컬 최종검증: 독립 RED26(6assertFAIL/20controlPASS)→Contract1file 최소수정→집중328 GREEN→독립FI3 탐지/매복구/최종26PASS→실제기록 재생·독립의미보존감사PASS→새 unchanged전체guard213 suite/1710(1706PASS·기존4SKIP·실패/오류0)·source557전후일치→[최종독립게시리뷰](verification/issue123-thought-signature-publication-final-review.md)PASS/미해결P1,P2없음을완료했다. 기존원본tests·실제503/TIMEOUT/분류FAIL·수정전parserFAIL은변경0이다. 다음은같은PR126 후속commit/push·정확HEADCI다. Commit/PR은동일후속커밋예정이며정확SHA·원격결과는Git이력·PR126/ignoredpublicationreceipt에보존한다. 아래다음시작점중이미지나간단계는각당시진행기록이다.

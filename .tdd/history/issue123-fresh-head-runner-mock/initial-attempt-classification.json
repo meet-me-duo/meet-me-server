@@ -1,0 +1,24 @@
+{
+  "cases": 19,
+  "passed": 10,
+  "failed": 9,
+  "genuineHelperFinding": [
+    "expired-before-open: expired local callback deadline still attempts one open(timeout=.001); unknown hold and failure result retained"
+  ],
+  "fixtureSetupFailuresNotValidHelperFailures": [
+    "whole-success",
+    "clear-A",
+    "503-COUNT",
+    "503-GENERATE",
+    "count4097",
+    "duplicate-batch",
+    "duplicate-stage",
+    "shared-deadline"
+  ],
+  "fixtureReason": "Independent synthetic A usage omitted input_tokens_details/output_tokens_details, therefore actual classifier correctly returned usageComplete=false and harness refused generation. Add documented zero cache/reasoning detail fields; no original helper expectations weakened.",
+  "productRedClaimed": false,
+  "originalHelpersMutated": false,
+  "actualPaidCalls": 0,
+  "externalHttp": 0,
+  "recordedAt": "2026-10-18T07:16:42.104765+00:00"
+}

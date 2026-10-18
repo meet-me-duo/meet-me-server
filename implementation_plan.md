@@ -1,5 +1,17 @@
 # meet-me-server Implementation Plan
 
+## 최신 수정 HEAD fresh 15초 실제 경로 검증 (2026-10-18 UTC)
+
+- 부모가 HEAD `4101038fd421351affa2a1fcdd5741083cb1a6b6`의 사전 고정 단일 LIVE-KO-03에서 fresh Decisions→필요시 count→generation→parser/실제 TwoStage 검증을 기존 합산USD2 안에서 추가 승인했다. 해당 HEAD의 CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공, PR126 Draft·미병합과 source557 guard는 유지한다. 아래 b377/metadata 게시 예정 기록은 당시 이력이다.
+- [x] [AGENT] 기존 UNKNOWN 포함 예약USD1.01330944 유지·새 최대USD0.31854592·누적USD1.33185536·잔여비용여유USD0.66814464 사전 독립 산술/공식 단가 검토 PASS. invoice/byte 공식상한 보장·환급0으로 해석하지 않음
+- [x] [AGENT] 기존 oraclec69·threshold0.8 사전 fixture·원문/문맥/LOW2048/500자/공통15초 불변의 새 독립 실행 mode 고정
+- [x] [AGENT] 새 single-use runner 독립 whole-CLI mock25/25·사전 독립리뷰 ACCEPTED. pre-open deadline P2는 최소 수정 뒤 동일사례 HTTP0으로 닫고 원실패/초기fixture오류를 별도 보존
+- [x] [AGENT] root 실제 단일 실행(07:21:29–07:21:37 UTC): A/count/generation 각1·전부HTTP200·retry/fallback/redirect0. 실제 parser/TwoStage NEEDS_CHOICE, 단일 JVM 공통15초 중7029.248374ms·전체JVM7641.481ms
+- [x] [AGENT] 실제 경로/질문 의도/지연/usage·비용 독립 감사 PASS 및 Worklog/근거 기록. LTS01–07·LTS08 제안의미 한 사례 통과/UI미검증·원raw label 불일치 보존. 일반정확도·p50/p95·SDK/영속금융 authority 성공으로 확대0
+- [x] [AGENT] 기록commit 전 unchanged필수guard exit0(07:23:05–14 UTC). 소스557불변·Gradle UP-TO-DATE 가능·새fresh1710 주장0
+- [x] [AGENT] 최종 독립 기록게시 리뷰 PASS·미해결P1/P2 없음. 같은 Draft PR126 기록commit/push·정확 HEAD CI는 다음단계이며 결과를 Git이력/PR/로컬receipt에 기록. 평가대상4101과 이후 기록커밋은구분; Commit/PR 동일후속커밋예정
+- [AGENT] 이 새 단계 실제3 HTTP 뒤 유료STOP. A rawCLEAR/confidence0.06은 원래 기대와 불일치하고 기존 합성0.8 fixture에서 LOW_CONFIDENCE로 B에 전달됐다. 운영 임계값은 미선택/OFF. 누계Decisions7/count3/generation5=HTTP15. source/test·운영 설정·병합·배포0. Linear는 부모 전용 동기화 담당으로 재시도0.
+
 ## 현재 #123 영속 공통 AI 예산 후속 (2026-10-18 UTC)
 
 - 최신 후속: 코드 b3770438 commit/push·[Draft PR126](https://github.com/meet-me-duo/meet-me-server/pull/126) 게시, 정확HEAD CI39102015533 Quality Gate/ARM64 및 Lifecycle39102015519 모두 성공했다. 사용자 추가USD1로 이전 전부를 포함한 Gemini+OpenAI **합산USD2**를 승인했다. 이전USD1 중단/예약0.70918144는 당시 이력으로 보존한다.
@@ -10,7 +22,7 @@
 - [x] [AGENT] metadata 새26개 genuine RED6/통제20→Contract1file 최소수정→집중328 GREEN/testinventory불변. raw B exact parser·기록A/count 실제TwoStage replay accepted/HTTP0; 첫 harness이름 setup오류는제품실패와분리보존
 - [x] [AGENT] metadata 독립FI3 실제assert6/5/2탐지·각exactrestore7/9/5PASS·최종26PASS/원본source,test지문동일. exactrawreplay 독립질문/대안/usage보존감사PASS·fresh15s/UI미검증유지
 - [x] [AGENT] metadata 후속 새unchanged필수guard exit0: fresh213 suite/1710 중1706PASS·기존4SKIP·실패/오류0, source557 before=after=current. 이전b377 guard/실제parserFAIL이력별도보존
-- [ ] [AGENT] 새 진단상태·근거 docs commit/push→PR126 최신 정확HEAD CI. Commit/PR동일후속커밋예정, 정확SHA/원격결과는Git이력·PR126/ignoredpublicationreceipt에기록. 60초진단을제품15초전체성공으로표시하지않음
+- [x] [AGENT] 새 진단상태·근거 docs commit/push→PR126 HEAD4101038/정확CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공. 원격결과는Git이력·PR126/ignoredpublicationreceipt에기록. 60초진단을제품15초전체성공으로표시하지않음
 - 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](docs/ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)을 따른다.
 
 - 사용자 최신 승인: 영속 PG 원장·최종/fallback/HOST retry 포함 전체 물리 호출 연결을 독립 TDD·합성 provider·리뷰·필수 guard로 구현한다. Decisions develop/main 병합·배포 제외, 운영 DB/Secret/접근 변경0. 실제 Gemini+OpenAI 합산 USD1 안에서 고정 payload/byte 기반 보수 견적의 격리 Decisions 진단4회·현재 production parser offline 검증을 완료했다. 모호 사례의 raw label 불일치/confidence0.06에서 중단했으며 운영 가격·활성화나 전체 의미 평가는 별도다.
