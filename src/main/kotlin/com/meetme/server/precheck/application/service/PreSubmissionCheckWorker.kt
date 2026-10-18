@@ -7,6 +7,11 @@ import com.meetme.server.precheck.application.port.output.PrecheckProviderReques
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
 import com.meetme.server.precheck.application.port.output.PrecheckRepository
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
+import com.meetme.server.shared.application.port.output.AiBudgetExecution
+import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
+import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
+import com.meetme.server.shared.application.port.output.AiDispatchModePort
+import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.Duration
@@ -18,18 +23,26 @@ class PreSubmissionCheckWorker(
     private val provider: PreSubmissionCheckProvider,
     private val clock: Clock,
     private val metrics: PrecheckMetricsPort? = null,
+    private val dispatchMode: AiDispatchModePort? = null,
 ) {
     fun runOne(): Boolean {
+        val physicalMode = dispatchMode?.isEnabled() == true
         repository.unfinishedCheckIds(128).forEach(processing::expire)
         if (repository.inFlight(clock.instant()) >= 2) return false
         for (id in repository.queuedCheckIds(128)) {
             val claim = processing.claim(id) ?: continue
             val check = claim.check
-            val remaining = Duration.between(clock.instant(), check.deadlineAt.minusSeconds(3)).coerceAtMost(Duration.ofSeconds(15))
+            val now = clock.instant()
+            val legacyRemaining = Duration.between(now, check.deadlineAt.minusSeconds(3)).coerceAtMost(Duration.ofSeconds(15))
+            var remaining = legacyRemaining
             val started = System.nanoTime()
             var result: PrecheckProviderResult? = null
             var failure: String? = null
             try {
+                if (physicalMode) {
+                    val claimedAt = check.claimedAt ?: throw PrecheckProviderException("CONFIGURATION")
+                    remaining = minOf(legacyRemaining, Duration.between(now, claimedAt.plusSeconds(15)))
+                }
                 if (remaining.isNegative || remaining.isZero) throw PrecheckProviderException("TIMEOUT")
                 val request =
                     PrecheckProviderRequest(
@@ -41,6 +54,32 @@ class PreSubmissionCheckWorker(
                         claim.room.searchRange.startInclusive,
                         claim.room.searchRange.endExclusive,
                         remaining,
+                        roomId = claim.room.id.value,
+                        executionGeneration = check.generation,
+                        dispatchContext =
+                            if (physicalMode) {
+                                AiProviderDispatchContext(
+                                    AiBudgetExecution(
+                                        claim.room.id.value,
+                                        AiBudgetExecutionKind.PRECHECK,
+                                        check.id,
+                                        check.generation.toLong(),
+                                        check.ownerToken ?: throw PrecheckProviderException("CONFIGURATION"),
+                                        check.version,
+                                        AiDispatchFingerprints.personalSource(check.candidate.rawText),
+                                        AiDispatchFingerprints.personalContext(
+                                            check.candidate.referenceAt,
+                                            claim.room.timeZone.value,
+                                            check.candidate.locale,
+                                            claim.room.searchRange.startInclusive,
+                                            claim.room.searchRange.endExclusive,
+                                        ),
+                                    ),
+                                    started + remaining.toNanos(),
+                                )
+                            } else {
+                                null
+                            },
                     )
                 result = provider.check(request)
                 validate(result, check.candidate.rawText)

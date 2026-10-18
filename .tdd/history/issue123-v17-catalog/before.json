@@ -1,0 +1,38 @@
+{
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "recordedAt": "2026-10-18T03:54:04.300805Z",
+  "reason": "Frozen additive V17 exact catalog. Historical seven catalogs and auth14/17 approval inventory remain unchanged; current SQL inventory advances to17; no assertion weakening. Originals precede all oracle edits.",
+  "originals": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "a852a6be38de5a87bf79f44980830f3f53821a8efa64e11ac7a48aa0e4969972",
+      "archive": ".tdd/history/issue123-v17-catalog/originals/.github/scripts/fixtures/integrated-release-catalog.cjs"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66",
+      "archive": ".tdd/history/issue123-v17-catalog/originals/.github/scripts/issue107-integrated-catalog.test.cjs"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "37a2acb82c5e7462d7dae4afac3c1df2de89431da4cb476ade37662ee45be9c2",
+      "archive": ".tdd/history/issue123-v17-catalog/originals/.github/scripts/approved-release-pipeline.test.cjs"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "3187f990626fbf2f24089b21c0a34b0390500c7398b889c5f64246f52f2fd39b",
+      "archive": ".tdd/history/issue123-v17-catalog/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "c037cbdb89065c037b4b47fcf760d75bf54f62acad541278aa7115251b41682e",
+      "archive": ".tdd/history/issue123-v17-catalog/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "cd8f959e2cdb097fe4b3b30c344b4af055bca11bca60ab48304dc6b9792242e4",
+      "archive": ".tdd/history/issue123-v17-catalog/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt"
+    }
+  ],
+  "productsEditedByAuthor": 0
+}

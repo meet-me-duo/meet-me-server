@@ -4,6 +4,8 @@
 
 ## 현재 판정
 
+2026-10-18 후속: 서버 PR121의 develop01d00e7f·merge CI39070926139는 완료됐다. 현재 별도 feature/issue-107-decision-precheck에서 승인된 Decisions→필요시 생성 LLM의 기본 OFF 구현/독립 검증을 준비하며, 이번 승인은 Draft/exact HEAD CI까지다. 실제 금액/계정/청구/품질·durable 모임 예산/최종 분석 전체 연결은 미완료이고 Decisions의 main/develop 병합·배포는 하지 않는다. 최신 비-Decisions 기존 변경의 develop 통합 승인은 별도 격리 대조로 다루며, 합산 USD1 평가 승인도 [실행 조건](ISSUE_107_USD1_EVALUATION_EXECUTION_PLAN.md)의 비용 증명 전에는 호출하지 않는다. [2단계 계약](ISSUE_107_TWO_STAGE_CONTRACT.md)·[평가/키 준비](ISSUE_107_DECISION_EXTERNAL_EVALUATION.md)를 최신 후속으로 본다. 아래 단일 Gemini 설명과 이전 문서 링크는 기존 runtime 준비 이력이다.
+
 **main 병합은 준비 조건 확인 전 보류.** 구현·격리 테스트·서버 develop 통합은 계속한다. main 병합을 통해 아직 승인되지 않은 DB/Secret/권한/유료 모델 작업을 간접 실행하지 않는다.
 
 서버 PR120은 develop `bb996482a3090739a8ce02c8b093561e2c5c58a2`로 일반 병합됐고 [정확 merge CI39064886318](https://github.com/meet-me-duo/meet-me-server/actions/runs/39064886318)이 성공했다. 웹 PR31 HEAD `02a68d8e50680e87dd153156e8bb7ea884a794cc`의 [CI39063558547](https://github.com/meet-me-duo/meet-me-web/actions/runs/39063558547)도 성공했으며 Draft·미병합이다. 실제 모델/OAuth/운영 준비 성공과 구분한다.

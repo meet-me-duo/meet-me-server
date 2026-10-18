@@ -572,3 +572,22 @@ PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 �
 runtime 준비는 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.
 
 새 release의 `runtime-auth-mode=oauth-rs256-required`는 renderer의 typed OAuth/서명 경로·Origin 및 optional 기본 OFF flag 전달을 요구한다. RSA/JWKS는 고정 `/run/meetme-auth` read-only bind이며 없는 호스트 경로는 생성하지 않는다. marker/renderer/Compose를 current17 guard catalog에 묶고 historical14은 읽기만 지원한다. 기존 guard 승인·migration/drain·부분 signing 거부 정책은 바꾸지 않는다. 실제 Secret/파일/권한·OAuth·DB/운영 전환은 별도 사용자 작업이다.
+
+### #107 2단계 분류·생성 보완 개발 경계 (2026-10-18, ADR-054)
+
+새 AmbiguityClassificationPort는 SDK와 독립인 원문/context→CLEAR/NEEDS_REVIEW/INDETERMINATE 계약이다. OpenAI Decisions 후보 adapter는 단일 holistic choice만 사용하며 자유 구간/질문·개인 구조화/AREA를 생성하지 않는다. standalone adapter의 자동 Spring 등록은 없고 TwoStagePreSubmissionCheckProvider가 명시 조합한다. 충분한 CLEAR만 통과하고 정상 유보·검토 필요는 기존 생성 검사로 재판정(CLEAR 가능), refusal/API 오류는 미완료다. 두 stage는 기존 provider 최대15초를 공유하고 기존 worker가 room/check/generation·owner/deadline 게시 fencing을 유지한다. 공개 API/SQL/web 구조는 확대하지 않는다.
+
+기존 provider OFF와 별도 decision-routing OFF를 유지하며 selector만 켜거나 키만 있어도 default DENY budget 경계로 새 단계 호출을 허용하지 않는다. stage별 호출 전 검증된 quote/reservation이 필요하고 known/partial/unknown usage는 provider/model별로 기록한다. 기존 단일 provider 결과에는 terminal stage metadata만 둔다. 비용 불명·timeout·거부·유실을 무료로 환급하지 않는다. 공통 AiCallBudgetPort/default DENY·fake 검증과 실제 PG 원장/모든 최종 분석 dispatch 연결을 구분한다. 후자는 #123에서 영속 구현·독립 검증 중이며 실제 가격/coverage 증명·활성화 전에는 기존 HOST 실패 재시도의 운영 누적 비용 문제가 해결됐다고 주장하지 않는다. 실제 금액·quote·profile 검증과 durable 전체 목적 연결 전 유료 활성화를 보류한다. 상세 DC/TS·평가·예산 설계는 ISSUE_107_DECISION_CLASSIFICATION_DESIGN/ISSUE_107_TWO_STAGE_CONTRACT/ISSUE_107_DECISION_EVALUATION/ISSUE_107_SHARED_AI_BUDGET_DESIGN을 따른다.
+
+
+### #123 영속 공통 AI 예산과 물리 전송 경계
+
+다음은 확정 계약이다. 원장/실제 DB fence94·managed HTTP/Worker·Processor 문맥98·최종 생애와 동일 방 관통10의 집중 검증을 통과했다. 독립 결함 주입과 필수 전체 검증·게시 상태는 최신 Worklog와 최종 근거를 따른다. 별도 최초 Decisions 진단4회와 추가 실제2단계2시도(각새A200→count200→첫generation503·후속TIMEOUT)는 운영 활성화·실제 질문 의미 검증 완료와 구분한다.
+
+ADR-055와 [구현 계약](ISSUE_123_DURABLE_AI_BUDGET_CONTRACT.md)을 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회이며 현재 생산 구현은 모든 quote/청구 근거를 거부한다.
+
+V17의 ai_room_budgets는 기존 방 HISTORICAL_UNKNOWN/신규 방 UNCONFIGURED다. 신규 방 생성과 초기 budget 행은 같은 트랜잭션의 trigger로 원자적이며 request-time lazy zero bootstrap이 없다. ai_budget_profiles는 구조 profile/policy/unit만 보관한다. 입력별 quote·payload/source/context 지문·usage/청구 근거는 방 소유 ai_call_reservations/ai_call_observations에만 두고 기존30일 방 삭제와 함께 cascade 삭제한다. 삭제 뒤 늦은 관측은 원장을 재생성하지 않는다.
+
+새 meetme.ai.budget.enabled 기본 OFF는 기존 final 동작을 보존한다. ON은 개인 Decisions/count/generation과 최종 Gemini/Luna의 다섯 실제 HTTP 작업 모두에서 같은 managed gate를 사용한다. worker/processor는 DB 작업에서 도출한 내부 문맥을 전달하고 fence는 기존 kind별 소유권/상태/현재 version/마감을 재검증한다. adapter의 실제 body를 한 번 고정해 quote와 결속하고 연결 전 예약/dispatch CAS, 실제 request bytes 전 one-shot 검사를 분리한다. 숨은 같은-Call follow-up·SDK 두 번째 Call은 새 권한을 만들지 않는다. 내부 문맥은 provider JSON/header/query나 일반 로그/지표에 전달하지 않는다.
+
+기존 개인15초·final60/Gemini15/Luna27/완료3초와 bounded4+1·질문/입력 상한을 유지한다. 신규 ON은 accepted bounded production composition을 지원하며 과거 nullable/unbounded 생성자 seam은 안전 거절한다. fallback key 공백만으로 정상 primary를 막는 새 조건은 없다. 알려진 token usage는 청구 증명이 아니고 late 금융 관측은 결과 게시 권한이 아니다. UNKNOWN hold는 자동 환급/재전송하지 않는다. 실제 금액·운영 confidence/가격·coverage 증명·소진 UX·과거 비용 조정과 실제 평가/활성화는 별도 남으며, 로컬 검증의 단계별 상태는 Worklog를 따른다. 운영 DB/Secret/접근/Decisions 병합/배포는 수행하지 않는다.

@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-10-18T06:38:36.791202+00:00",
+  "newRedAndFiSchemasWithFormatChecker": "PASS",
+  "validated": [
+    ".tdd/red/issue123-thought-signature.json",
+    ".tdd/verification/issue123-thought-signature-faults.json"
+  ],
+  "finalGuardManifestCurrentMatch": true,
+  "sourceFiles": 557,
+  "candidateTrackedOrUntrackedFilesScanned": 1437,
+  "rawSignatureOrExactEnvironmentKeyValueLeaks": 0,
+  "privateRawResponseExcludedFromGit": true,
+  "sourceChangeSinceB377": [
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt"
+  ],
+  "diffCheck": "PASS excluding byte-exact history only",
+  "productionAndModelCallsByThisCheck": 0,
+  "sourceChangeListReadFromGit": true
+}

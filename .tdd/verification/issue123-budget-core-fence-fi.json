@@ -1,0 +1,124 @@
+{
+  "workItem": "issue123-budget-core-fence-fi",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "boundary": "Synthetic real-PostgreSQL room budget cap, physical claim at-most-once, UNKNOWN exposure and actual execution ownership fence; isolated copied sources, original source/test never mutated.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt",
+      "sha256": "9a816338c3187805fe5bab6aefa053a0af5add45a1a04954e9e01e8538eeadd8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt",
+      "sha256": "2584914db2f47bf72f5de91f7dc9272b9e146a4cf7ff64384dbeefc6b727ec63"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt",
+      "sha256": "9c2fb6df1d10d010e2644f11ba1476c30f599174dc1f534519d3099448fcc246"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/AiCallBudgetBootstrapPostgresTest.kt",
+      "sha256": "3dc923098f3f7e17543d39b60465f1caeb19fd230504570d09ee2b036fe60a39"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/AiCallDispatchAndSettlementPostgresTest.kt",
+      "sha256": "6eb1f9afb0f21a477dbba310227d72d96515d580b1a124b09bbb4f3425548215"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetDefaultAuthorityTest.kt",
+      "sha256": "b4ab7b3a805bc6ec54dae45cc3d370f7648a0abb2589bc8fd7c84d8300b4acc0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetInitialPostgresTest.kt",
+      "sha256": "dda136d81ae7e5aada5086a5fffeb2ea70810ee433e9abde4c92de4c386eecaf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableBudgetPostgresFixture.kt",
+      "sha256": "321ea5f7ab9ae9a3f5bac29ce7aafe612a7d47144bf8d5cd02d02ba13e49245d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetAccountingDefensePostgresTest.kt",
+      "sha256": "d20c75055d23af5f2d39f824a859fe6be19b45029d0241fbce6b8d92fe44c1a0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetCoveragePostgresTest.kt",
+      "sha256": "48f5cc01843568a7abb41fda97fe32aa3832a7a6f9e78e3516e930e947da8a29"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetForeignScopePostgresTest.kt",
+      "sha256": "4af665c7addc2f69a8a901d95ba18bd5f1f01c3cf6b2a8323859ddd3e64352f3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123DefaultBudgetAuthorityCompositionTest.kt",
+      "sha256": "17575e4e98a36e12c53114b2f02c618db41cde1e65e2a5ab47b27eae60f7afa5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/PostgresAiCallBudgetContractTest.kt",
+      "sha256": "2bd8ef612d7e08ca92913535fa5d368260ff119364cfd5905ff5a05e4cf3df39"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue123ExecutionFencePostgresTest.kt",
+      "sha256": "c67870981321407aec23f3606bf59af17ba8330df92e9d5b37d5f9dacd921600"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Allow exposure equal to room cap, violating strict below-cap reservation.",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*PostgresAiCallBudgetContractTest.DB03 strict exposure*"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest#DB03 strict exposure below cap admits 99 and rejects equality 100()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove both application state guard and persistence CAS so a consumed physical dispatch is renewed.",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*PostgresAiCallBudgetContractTest.DB05 a consumed dispatch*"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest#DB05 a consumed dispatch claim is not renewed by reservation replay or a new coordinator()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Refund room and call hold on timeout/UNKNOWN observation despite unproven billing.",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*AiCallDispatchAndSettlementPostgresTest.DB11 timeout observation*"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest#DB11 timeout observation retains full hold and cannot mint another physical dispatch()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Bypass existing real ownership binding validity, allowing an account-claimed guest candidate to retain dispatch authority.",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123ExecutionFencePostgresTest.DB10 stale personal identity*"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.persistence.Issue123ExecutionFencePostgresTest#[11] fault = \"ACCOUNT_CLAIM\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T05:02:47Z"
+}

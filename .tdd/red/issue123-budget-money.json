@@ -1,0 +1,75 @@
+{
+  "workItem": "issue123-budget-money",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableBudgetPostgresFixture.kt",
+      "sha256": "321ea5f7ab9ae9a3f5bac29ce7aafe612a7d47144bf8d5cd02d02ba13e49245d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/PostgresAiCallBudgetContractTest.kt",
+      "sha256": "2bd8ef612d7e08ca92913535fa5d368260ff119364cfd5905ff5a05e4cf3df39"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/AiCallDispatchAndSettlementPostgresTest.kt",
+      "sha256": "6eb1f9afb0f21a477dbba310227d72d96515d580b1a124b09bbb4f3425548215"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/AiCallBudgetBootstrapPostgresTest.kt",
+      "sha256": "3dc923098f3f7e17543d39b60465f1caeb19fd230504570d09ee2b036fe60a39"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*PostgresAiCallBudgetContractTest",
+    "--tests",
+    "*AiCallDispatchAndSettlementPostgresTest",
+    "--tests",
+    "*AiCallBudgetBootstrapPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB14 quote overrun is recorded in full and freezes future room admission()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB16 forged dispatch nonce cannot add observations or settle another reservation()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB10 stale owner cannot consume a still-reserved physical call()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB14 representable bill sum overflow retains prior settled and the unresolved second hold()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB14 trusted complete bill settles once and duplicate evidence releases no extra capacity()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB09 committed intent is never reclaimed after its execution expires()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB14 unsupported complete bill magnitude freezes before SQL overflow and retains full unknown hold()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB16 authentic late usage and settlement attach to old call without current execution authority()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB11 timeout observation retains full hold and cannot mint another physical dispatch()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB13 conflicting duplicate observation is rejected and never reduces uncertainty()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB14 conflicting complete bill never overwrites settled proof with a smaller charge()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB13 partial known usage and complete usage both remain observations rather than money()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.DB08 reserved hold survives coordinator replacement and clock expiry without resending()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB03 very large exact integer quotes never wrap into available capacity()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB02 identical reservation replay has one immutable hold and no dispatch permission()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB04 independent PG clients race precheck and final for one remaining hold()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB05 concurrent identity replay across independent clients creates only one hold()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB06 physical insert failure rolls back every hold and reservation after reaching the fault()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB05 a consumed dispatch claim is not renewed by reservation replay or a new coordinator()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB18 another invocation keeps the original room exposure while a second room is independent()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB12 rejected bundle leaves no affordable first-child partial reservation()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB02 changed payload for the same physical identity cannot reprice or replace its reservation()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB22 changed profile or revoked quote cannot produce a dispatch permit()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB10 reserve uses fresh effective expiry after waiting for the last budget lock()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB12 count and generation reserve atomically with independent child quotes()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[1] mismatch = \"EXPIRED\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[2] mismatch = \"PROFILE\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[3] mismatch = \"PAYLOAD\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[4] mismatch = \"POLICY\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[5] mismatch = \"UNIT\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[6] mismatch = \"NEGATIVE\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.[7] mismatch = \"EMPTY_EVIDENCE\"",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB10 dispatch claim cannot publish permission after auth binding or claim deadline expires during budget wait()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB01 ready synthetic coverage without an authority quote remains denied()",
+    "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.DB03 strict exposure below cap admits 99 and rejects equality 100()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallBudgetBootstrapPostgresTest.DB21 closing a live room and expiring its execution retain unknown full hold()",
+    "com.meetme.server.shared.adapter.output.budget.AiCallBudgetBootstrapPostgresTest.DB21 authorized thirty-day deletion cascades unknown ledger and late events cannot resurrect scope()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T04:12:16Z"
+}

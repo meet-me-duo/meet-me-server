@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-18T03:16:51.922391+00:00",
+  "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+  "before_sha256": "02423846a7210507a8eadbd3eed95caa3b3f632bff0004b26c82a70fb1801365",
+  "after_sha256": "c45fa35de6c7079b13d81f5a1c4d5193b4939a08dd2f3d3b511fc8b390b25334",
+  "only_probability_helper_changed": true,
+  "independent_red": ".tdd/red/issue107-decision-numeric-resource.json",
+  "new_test_sha256": "a7e0f1e18a8402d890ad8eeea3a6d4ef89d3232fddb49d2acdeb17d45b4e85bb",
+  "policy": {
+    "precision_max": 1000,
+    "scale_min": -1000,
+    "scale_max": 1000,
+    "check_before_value_comparison_and_sum": true,
+    "confidence_and_each_probability_share_helper": true
+  },
+  "parser_constraints_changed": false,
+  "probability_tolerance_changed": false,
+  "test_changes_by_implementer": false,
+  "gradle_runs_by_implementer": 0,
+  "scoped_green_and_fault_injection": "Independent author runs next; no pass claim in this implementation record."
+}

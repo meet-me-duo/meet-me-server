@@ -1,0 +1,193 @@
+{
+  "status": "FINAL_PRE_EXECUTION",
+  "frozenAt": "2026-10-18T07:05:27Z",
+  "workItem": "issue123-fresh-head-two-stage-single-case",
+  "mode": "FRESH_A_CONDITIONAL_COUNT_GENERATION_CURRENT_PARSER_AND_ACTUAL_TWO_STAGE_SINGLE_SHARED_15S",
+  "executionOwner": "root only; independent author performs no actual API or Gradle calls",
+  "source": {
+    "head": "4101038fd421351affa2a1fcdd5741083cb1a6b6",
+    "rootExecutionPlanMustPinThisModeSha": true,
+    "requireNoSourceTestChangesBeforeOrDuringExecution": true,
+    "relevantFiles": [
+      {
+        "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+        "sha256": "c45fa35de6c7079b13d81f5a1c4d5193b4939a08dd2f3d3b511fc8b390b25334"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt",
+        "sha256": "1f33e12211eb9b33b96b70ada710e5a0b3da1b0e0ca4fda7c72c704cc60853fe"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+        "sha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+        "sha256": "16fba187e8f04dbaf4c3f00db0a14d49183743dcf1dc22c7fe2ee78528ce9075"
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt",
+        "sha256": "d5d97bd7c6f8100736ace583347c5fe5db386b3a371b59a982f4afb8c2bbeef0"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckThoughtSignatureTransportTest.kt",
+        "sha256": "7acddc4e24866fe52d85c2cdbd2c37f11b40aaf4f11dccf6d48af4792ee353e3"
+      }
+    ]
+  },
+  "immutableOracle": {
+    "path": "docs/evaluation/issue123-live-two-stage-oracle.json",
+    "sha256": "c69edcc525bde189765788edfd96fb05756c0e3a21d23cfcda357a7d52be1d64",
+    "inheritedSuccessCriteriaIds": [
+      "LTS01",
+      "LTS02",
+      "LTS03",
+      "LTS04",
+      "LTS05",
+      "LTS06",
+      "LTS07",
+      "LTS08"
+    ],
+    "inheritedCriteriaCanonicalJsonSha256": "f8c31d57e03fb2d737b6cfff3e2d5af5b432dabc9c2fcbdc18df06a9357d13fc",
+    "canonicalization": "UTF-8 json.dumps(successCriteria,ensure_ascii=False,sort_keys=True,separators=(comma,colon))",
+    "freshARoutingOracleUnchanged": true,
+    "historicalOracleBytesUnchanged": true,
+    "noOutcomeBasedOracleEdits": true
+  },
+  "case": {
+    "id": "LIVE-KO-03",
+    "rawText": "10월 24일 토요일 8시부터 9시까지 가능해요.",
+    "referenceAt": "2026-10-18T04:00:00Z",
+    "timeZone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "searchStartDate": "2026-10-24",
+    "searchEndDate": "2026-10-25",
+    "predeclaredClassification": "NEEDS_REVIEW",
+    "expectedGenerationVerdict": "NEEDS_CHOICE"
+  },
+  "threshold": {
+    "existingSyntheticMinimumConfidence": 0.8,
+    "productionConfidencePolicySelected": false,
+    "productionThresholdOrFlagsChanged": false,
+    "provenance": {
+      "gitRevision": "e83d5280c7c236c99d64165893632920882527fe",
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "line": 118,
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    },
+    "confidenceSeparateFromChoiceProbability": true,
+    "freshResponseMustNotMatchHistoricalNumbers": "No equality to historical confidence0.06 or probability0.37 is required; preserve new raw values and current classifier normalization."
+  },
+  "executionBounds": {
+    "maximumNewDecisionsRequests": 1,
+    "maximumNewCountRequests": 1,
+    "maximumNewGenerationRequests": 1,
+    "maximumNewPhysicalHttpAttempts": 3,
+    "maximumSeparateAttempts": 1,
+    "concurrency": 1,
+    "automaticRetry": 0,
+    "redirect": 0,
+    "fallback": 0,
+    "continuation": 0,
+    "oneAbsolutePipelineDeadlineSeconds": 15,
+    "deadlineStart": "Existing actual TwoStage.check entry immediately before classification, encompassing A, conditional count, generation, body reads, parsing and final return. Root must preserve the same absolute cutoff, not allocate a fresh15seconds per stage.",
+    "recordTiming": "Record pipeline-start/cutoff/final-return monotonic interval and per-stage intervals. JVM startup/shutdown overhead is separate from pipeline latency. A final success after the shared cutoff is TIMEOUT, never accepted success.",
+    "noStandalone60SecondWindow": true,
+    "requestAndResponseUtf8ByteCap": 16384,
+    "rawCodepointLimitUnchanged": 500
+  },
+  "fixedProfiles": {
+    "classification": {
+      "api": "Decisions",
+      "model": "gpt-6-luna",
+      "questionName": "material_ambiguity",
+      "holisticChoiceCount": 1,
+      "choiceValues": [
+        "CLEAR",
+        "NEEDS_REVIEW",
+        "INDETERMINATE"
+      ]
+    },
+    "generation": {
+      "api": "GenerateContent",
+      "model": "gemini-3.8-flash",
+      "candidateCount": 1,
+      "maxOutputTokensIncludingThoughts": 2048,
+      "thinkingLevel": "LOW",
+      "thinkingBudget0": false,
+      "strictCurrentPromptSchemaUnchanged": true,
+      "documentedOptionalThoughtSignature": "Current patched parser7d113125 accepts only the adopted optional bytes metadata alongside one text part, validates then discards it. No actual signature is added to tracked fixtures/results/logs."
+    },
+    "count": "Use the exact newly frozen full generation request in countTokens before generation; valid integral1..4096 required. Prior530 is historical evidence only and cannot replace the fresh count. Count is not exact billed input proof."
+  },
+  "conditionalRouting": {
+    "normalReviewBranch": "Current classifier NEEDS_REVIEW or INDETERMINATE with LOW_CONFIDENCE/MODEL_UNCERTAIN may proceed to fresh count and then generation with remaining absolute time. Preserve raw A separately from normalized routing; do not force historical CLEAR/confidence0.06.",
+    "sufficientlyConfidentClear": "Normal product CLEAR stopping behavior must yield count0/generation0. For this fixed unresolved AM/PM case, record NORMAL_CLEAR_STOP plus FIXED_CASE_EXPECTED_MISMATCH, not full-case semantic success. No forced generator call or new A request.",
+    "refusalOrApiOrInvalidOrDeadline": "Typed failure/STOP, count0/generation0 when A fails; preserve known usage and unknown exposure. Do not convert errors/refusal to normal uncertainty.",
+    "invalidOrOverlimitCount": "generation0 and STOP with typed failure. Never infer a successful submission from saved input or paid reservation.",
+    "newGenerationNeedsChoice": "Expected final verdict only if unchanged LTS02–07 pass within the common deadline; LTS08 is suggestion meaning only, UI remains untested.",
+    "newGenerationNeedsEdit": "SAFE_ABSTENTION_TASK_INCOMPLETE and STOP; safe behavior is preserved but question objective is not complete.",
+    "newGenerationClear": "FAIL_SEMANTIC_CLEAR and STOP for this fixed ambiguous case; legal general reCLEAR behavior does not rewrite this expected outcome.",
+    "unsafeOrInvalidQuestion": "FAIL_UNSAFE_OR_IRRELEVANT_QUESTION or structural failure and STOP; no hand-edited proposal, second sample, prompt change or retry.",
+    "generationErrorOrTimeout": "FAIL_PROVIDER_OR_STRUCTURAL/TASK_INCOMPLETE. Without a valid question semantic quality is NOT_EVALUABLE, not guessed semantic FAIL or PASS. No observed HTTP status means unknown, not a copied prior503."
+  },
+  "independentOutcomeRubric": [
+    {
+      "id": "LTS01",
+      "scope": "New actual A and conditional count/B with unchanged raw/context/anchor, current normalization/legitimate route, same absolute15-second pipeline interval. Prior records cannot stand in for any new stage. A confidentCLEAR normal stop is control-correct but fixed-case expected mismatch."
+    },
+    {
+      "id": "LTS02",
+      "scope": "Actual newly returned B bytes accepted by the current patched production parser without editing payload/signature/text. One STOP candidate/one final text part; only adopted optional metadata. All original strict inner JSON, source/choice/500/usage/body constraints remain."
+    },
+    {
+      "id": "LTS03-LTS07",
+      "scope": "Apply originalc69 exactly: one AM/PM question; exact source excerpt; complete distinct A/B suggestions; same2026-10-24 08–09 and20–21; preserve all unrelated wording/conditions/polarity. No automatic rewrite or invented date/place/person."
+    },
+    {
+      "id": "LTS08",
+      "scope": "Proposals await explicit user acceptance. Evaluate suggestion meaning only. The harness accepted flag is parser/composition success, not accepted revision, user submission completion or UI answer/direct-edit success."
+    }
+  ],
+  "successLabel": "FRESH_SINGLE_CASE_SHARED_15S_QUESTION_AND_PARSER_COMPOSITION_PASS only when all applicable fresh-stage evidence, deadline, patched-parser acceptance and original question semantics pass. Raw A expected mismatch remains a separately preserved observation even if normalization/generation recovers.",
+  "budget": {
+    "approvedCombinedAggregateUsd": "2.00",
+    "priorReservedAndUnknownHeldUsd": "1.01330944",
+    "additionalMaximumPlannedReserveUsd": "0.31854592",
+    "cumulativeMaximumPlannedReserveUsd": "1.33185536",
+    "remainingPlannedHeadroomUsd": "0.66814464",
+    "priorReservationRefunded": false,
+    "invoiceVerified": false,
+    "taxOrFeesAssumedZero": false,
+    "meaning": "These are root-approved conservative plan reservations, not observed invoice/spend/balance. Retain every previous UNKNOWN hold. Source/budget/quote mismatch stops before any request; conditional no-B dispatch is recorded rather than inventing usage."
+  },
+  "historyPreservation": {
+    "originalRawClassificationFailStopUnchanged": true,
+    "originalHttp503Unchanged": true,
+    "originalSharedDeadlineTimeoutUnchanged": true,
+    "originalOldParserInvalidResponseUnchanged": true,
+    "standalone60sAndOfflineReplayRemainSeparate": true,
+    "existingCorpusOrOracleEdited": false,
+    "linearRetryOrExternalMessages": 0
+  },
+  "mustPreserveEvidence": [
+    "Mode/oracle/currentHEAD/source and frozen request hashes before the first HTTP; actual signature never copied to tracked fixtures",
+    "Per-attempt consumed markers and observed status/body/usage or explicit unknown, bounded requests and automaticretry0",
+    "New raw A choice/probabilities/confidence distinct from normalized assessment/reason and selected existing synthetic0.8",
+    "Fresh count result and exact full generation JSON equivalence; no prior count substitution",
+    "Raw B bytes local ignored plus hash, actual parser output and actual TwoStage final result with signature absent",
+    "Whole15-second monotonic start/cutoff/final return plus stage observations and separate JVM elapsed interval",
+    "Independent unchanged LTS semantic assessment or exact blocker; preserve every earlier failure and all UNKNOWN accounting"
+  ],
+  "limits": [
+    "A single fixed synthetic schedule is not a general accuracy or calibrated confidence estimate. No population p50/p95 inference.",
+    "Only claim actual runtime SDK transport if the root execution evidence actually exercises it; callback transport alone proves only that declared fresh callback/production-contract composition.",
+    "No durable financial-authority, production room/worker/DB accepted revision, UI/direct-edit/ownership or final matching validation is implied.",
+    "Production15second policy, flagsOFF and operatingthresholdnull remain unchanged. No new source/test/Secret/OAuth/deploy/merge change is part of this execution.",
+    "No actual B signature is added to any fixture. No extra model call, hidden retry or failed-outcome relabeling."
+  ],
+  "observedFreshResult": null,
+  "authorSourceTestChanges": 0,
+  "authorGradleRuns": 0,
+  "authorActualApiCalls": 0
+}

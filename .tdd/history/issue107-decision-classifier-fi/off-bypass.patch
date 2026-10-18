@@ -1,0 +1,11 @@
+--- src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt original
++++ src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt off-bypass
+@@ -133,7 +133,7 @@
+ 
+     private fun validateConfiguration() {
+         val threshold = options.minimumConfidence
+-        if (!options.enabled ||
++        if (false ||
+             apiKey.isBlank() ||
+             threshold == null ||
+             !threshold.isFinite() ||

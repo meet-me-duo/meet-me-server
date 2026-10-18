@@ -1,0 +1,148 @@
+{
+  "workItem": "issue123-all-ai-dispatch",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "boundary": "Independent scratch-only whole-byte HTTP admission, last-write dual clock cutoff, Worker and real PG final immutable lineage. Original sources/tests never mutated; five mutants assertion-detected and each exact restore GREEN.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "9753c3b0933d84a14bb52e02e489d6078051f4e93d321422ee7f80c74dc9a800"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "0ea67fce5580fb7701aad58f8dd29b624f6673da56bfc6344b2226298bb1ca60"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt",
+      "sha256": "25c2dbe5f8c6d1bd6597fc3751da06e864203b1c34984941d08e7fe7a2d000cb"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123FinalDispatchLifecyclePostgresTest.kt",
+      "sha256": "352f83b3d518b29cecba6668776893d94e23684e48ed4572d200afe62e2776b3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123WholeRoomBudgetPostgresTest.kt",
+      "sha256": "f3b9756c890f8133b3877de325331c7fd583ce9e017520abb1850fbeee560356"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123AiHttpDispatchGateTest.kt",
+      "sha256": "490bc5d4e148ec9df850824624eb56142abda3d94881f4179662fd3f562439c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchEqualLengthBodyTest.kt",
+      "sha256": "1a02b5289fd50f2e1a2b6d6cbfa211643372aa4abd3adf4f99f2981904b421b1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtureControlTest.kt",
+      "sha256": "6dceaefda47a2b7adc5422ffc38f870bc0120a121020aeecae57e3c16411821a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtures.kt",
+      "sha256": "140268c3b45fa61066fe3e3384e21ead9e8baaff09a5b58feff622c66fdd7e79"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchPublicBoundaryTest.kt",
+      "sha256": "160b36f1458983086ecdb1328778ffcc24ab57953f1da130eb6c995c14300c6c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchWriteDeadlineTest.kt",
+      "sha256": "508d021a5e0759a1cc4988810ed1cdec9675a95340c5d0338bf9ffb34ac60188"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123FinalLegacyCompatibilityTest.kt",
+      "sha256": "81515d2e7e8e739667b4081eff9f172653df814c30847c7ac4dbd05a772010dc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ManagedDispatchCompositionTest.kt",
+      "sha256": "24fbf7a042c888a75caf68040c2f88e183227239b430c49d689937ee231666e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ProviderDispatchContractTest.kt",
+      "sha256": "6c0e9b33ceb2c196c8343d5340c8821f3a762cdb3e51ff3733ab37a2129faf10"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123TwoStagePhysicalDispatchTest.kt",
+      "sha256": "cef44a914e78f50267e67b2cfb3ba5fcaf2f3cf02f8c2e14a4394f1d2ed4c8f5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123WorkerDispatchLineageTest.kt",
+      "sha256": "df58be0f972ad37cfd2bc3c43202e299ffe9e0bb0cc1566303dcb7e4d245705a"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "ON authority/claim bypass allows physical HTTP without proof",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123AiHttpDispatchGateTest.AD02 denial*"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue123AiHttpDispatchGateTest#AD02 denial occurs before connection and physical request(String) [1] \"missing-context\"; com.meetme.server.shared.adapter.output.aihttp.Issue123AiHttpDispatchGateTest#AD02 denial occurs before connection and physical request(String) [2] \"reserve-denied\"; com.meetme.server.shared.adapter.output.aihttp.Issue123AiHttpDispatchGateTest#AD02 denial occurs before connection and physical request(String) [3] \"reserve-failure\"; com.meetme.server.shared.adapter.output.aihttp.Issue123AiHttpDispatchGateTest#AD02 denial occurs before connection and physical request(String) [4] \"claim-denied\"; com.meetme.server.shared.adapter.output.aihttp.Issue123AiHttpDispatchGateTest#AD02 denial occurs before connection and physical request(String) [5] \"expired-permit\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Permit fresh-wall and tightened monotonic fence removed before API bytes",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123DispatchWriteDeadlineTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchWriteDeadlineTest#TM02 network write rechecks claimed expiry after downstream application delay(String) [1] \"forward-wall\"; com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchWriteDeadlineTest#TM02 network write rechecks claimed expiry after downstream application delay(String) [2] \"backward-wall-after-tightened-monotonic\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Actual downstream bytes may differ from the quoted immutable body",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123DispatchEqualLengthBodyTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchEqualLengthBodyTest#BD10 same byte length downstream mutation is denied by exact body authority before HTTP()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "ON actual Worker drops claimed execution lineage and original context",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123WorkerDispatchLineageTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue123WorkerDispatchLineageTest#OR01 worker binds immutable claimed execution and original anchor only when mode is ON(String) [1] \"ON\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Actual final orchestration omits persisted immutable invocation context; post-fixture RECONSTRUCTED supplemental RED also verifies TM06 assertion",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--console=plain",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123FinalDispatchLifecyclePostgresTest",
+        "--tests",
+        "*Issue123WholeRoomBudgetPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#AD04 real final primary records exact invocation generation attempt and same room financial hold(); com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM03 real four primary retries and one fallback all consume one durable room account(); com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM04 real HOST retry keeps previous UNKNOWN holds and queued duplicate issues no extra work(); com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM05 real changed correction new batch preserves room budget and source version isolation(); com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM06 real deadletter replay keeps previous physical holds after failure rows are deleted(); com.meetme.server.coordination.adapter.input.web.Issue123WholeRoomBudgetPostgresTest#AD04 actual personal A count B and last CLEAR close plus final all share one unchanged durable room epoch()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T05:16:01.492557Z"
+}

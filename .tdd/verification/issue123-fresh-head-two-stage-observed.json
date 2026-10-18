@@ -1,0 +1,239 @@
+{
+  "recordedAt": "2026-10-18T07:22:32.651828+00:00",
+  "state": "SINGLE_FROZEN_CASE_OBSERVED_AND_INDEPENDENTLY_REVIEWED",
+  "evaluatedHead": "4101038fd421351affa2a1fcdd5741083cb1a6b6",
+  "evaluatedTree": "1d8c38eea7c273727834c487dacc214e4c668fbd",
+  "caseId": "LIVE-KO-03",
+  "planSha256": "3a9fd47f2e5da20ed69f895abcd0c045aceeaefc1e12d98d24121fd6e8028330",
+  "invocation": {
+    "state": "OBSERVED_PENDING_INDEPENDENT_SEMANTIC_REVIEW_INVOICE_UNVERIFIED",
+    "startedAt": "2026-10-18T07:21:29.386566+00:00",
+    "planSha256": "3a9fd47f2e5da20ed69f895abcd0c045aceeaefc1e12d98d24121fd6e8028330",
+    "guardSha256": "f004c436455124ce3bdd31716be16a6b3105b6ba5787e886fa51a96b49330afd",
+    "sourceFilesVerified": 557,
+    "priorReservedUsd": "1.01330944",
+    "maximumNewReservedUsd": "0.31854592",
+    "cumulativeMaximumReservedUsd": "1.33185536",
+    "approvedAggregateUsd": "2.00",
+    "automaticRetries": 0,
+    "exitCode": 0,
+    "wholeJvmInvocationElapsedMs": 7641.481,
+    "finishedAt": "2026-10-18T07:21:37.028422+00:00",
+    "actualNewHttpAttempts": 3,
+    "sourceUnchangedAfterInvocation": true
+  },
+  "report": {
+    "accepted": true,
+    "pipelineTimingClock": "SINGLE_JVM_SYSTEM_NANO_TIME_NOT_WALL_TIME",
+    "pipelineDeadlineSatisfied": true,
+    "pipelineStartedNanos": 33656725469324,
+    "pipelineCutoffNanos": 33671725456084,
+    "pipelineFinishedNanos": 33663754717698,
+    "pipelineElapsedMs": 7029.248374,
+    "mode": "ACTUAL_TWO_STAGE_COORDINATES_BOUNDED_PYTHON_CALLBACKS",
+    "normalizedA": {
+      "accepted": true,
+      "assessment": "INDETERMINATE",
+      "reason": "LOW_CONFIDENCE",
+      "confidence": 0.06,
+      "inputTokens": 512,
+      "outputTokens": 0,
+      "usageComplete": true,
+      "provider": "OPENAI_DECISIONS",
+      "model": "gpt-6-luna",
+      "validationOnlyConfidenceThreshold": 0.8,
+      "operationalThresholdSelected": false
+    },
+    "preflightTotalTokens": 530,
+    "actualTwoStageResult": {
+      "accepted": true,
+      "verdict": "NEEDS_CHOICE",
+      "prompt": "'8시부터 9시까지'가 오전인지 오후인지 선택해주세요.",
+      "sourceExcerpt": "8시부터 9시까지",
+      "choices": [
+        {
+          "id": "A",
+          "label": "오전 8시부터 9시까지",
+          "proposedText": "10월 24일 토요일 오전 8시부터 9시까지 가능해요."
+        },
+        {
+          "id": "B",
+          "label": "오후 8시부터 9시까지",
+          "proposedText": "10월 24일 토요일 오후 8시부터 9시까지 가능해요."
+        }
+      ],
+      "inputTokens": 530,
+      "outputTokens": 660,
+      "responseBytes": 3527,
+      "provider": "GEMINI",
+      "model": "gemini-3.8-flash"
+    },
+    "classifierCallbacks": 1,
+    "countCallbacks": 1,
+    "generationCallbacks": 1,
+    "returnedBUsage": {
+      "inputTokens": 530,
+      "candidateTokens": 127,
+      "thoughtTokens": 533,
+      "invalid": false
+    },
+    "exchanges": [
+      {
+        "operation": "CLASSIFY",
+        "requestSha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+        "responseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+        "elapsedNanos": 716765222,
+        "callbackMetadata": {
+          "stage": "CLASSIFY",
+          "attempts": 1,
+          "state": "HTTP_OBSERVED_INVOICE_UNVERIFIED",
+          "startedAt": "2026-10-18T07:21:29.994694+00:00",
+          "requestSha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+          "remainingMillisAtCallback": 14998,
+          "automaticRetries": 0,
+          "httpStatus": 200,
+          "headersObservedAt": "2026-10-18T07:21:30.645722+00:00",
+          "headersElapsedMs": 651.056,
+          "contentType": "application/json",
+          "retryAfterSeconds": null,
+          "firstBodyChunkElapsedMs": 652.443,
+          "bodyBytesRead": 438,
+          "lastProgressAt": "2026-10-18T07:21:30.647135+00:00",
+          "lastProgressElapsedMs": 652.459,
+          "responseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+          "storedResponseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+          "storedBodySanitized": false,
+          "responseBytes": 438,
+          "elapsedHttpMs": 653.398,
+          "finishedAt": "2026-10-18T07:21:30.648086+00:00"
+        }
+      },
+      {
+        "operation": "COUNT",
+        "requestSha256": "1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f",
+        "responseSha256": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306",
+        "elapsedNanos": 281962148,
+        "callbackMetadata": {
+          "stage": "COUNT",
+          "attempts": 1,
+          "state": "HTTP_OBSERVED_INVOICE_UNVERIFIED",
+          "startedAt": "2026-10-18T07:21:30.713431+00:00",
+          "requestSha256": "1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f",
+          "remainingMillisAtCallback": 14274,
+          "automaticRetries": 0,
+          "httpStatus": 200,
+          "headersObservedAt": "2026-10-18T07:21:30.939480+00:00",
+          "headersElapsedMs": 226.074,
+          "contentType": "application/json; charset=UTF-8",
+          "retryAfterSeconds": null,
+          "firstBodyChunkElapsedMs": 227.327,
+          "bodyBytesRead": 119,
+          "lastProgressAt": "2026-10-18T07:21:30.940755+00:00",
+          "lastProgressElapsedMs": 227.336,
+          "responseSha256": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306",
+          "storedResponseSha256": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306",
+          "storedBodySanitized": false,
+          "responseBytes": 119,
+          "elapsedHttpMs": 228.058,
+          "finishedAt": "2026-10-18T07:21:30.941485+00:00"
+        }
+      },
+      {
+        "operation": "GENERATE",
+        "requestSha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+        "responseSha256": "1cf9d06f2bd21dc9f3c553f5491af65870a6c1928bd498d1d25be3bbf0b25417",
+        "elapsedNanos": 6006005132,
+        "callbackMetadata": {
+          "stage": "GENERATE",
+          "attempts": 1,
+          "state": "HTTP_OBSERVED_INVOICE_UNVERIFIED",
+          "startedAt": "2026-10-18T07:21:31.003241+00:00",
+          "requestSha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+          "remainingMillisAtCallback": 13991,
+          "automaticRetries": 0,
+          "httpStatus": 200,
+          "headersObservedAt": "2026-10-18T07:21:36.934359+00:00",
+          "headersElapsedMs": 5931.145,
+          "contentType": "application/json; charset=UTF-8",
+          "retryAfterSeconds": null,
+          "firstBodyChunkElapsedMs": 5932.871,
+          "bodyBytesRead": 3527,
+          "lastProgressAt": "2026-10-18T07:21:36.937195+00:00",
+          "lastProgressElapsedMs": 5933.971,
+          "responseSha256": "1cf9d06f2bd21dc9f3c553f5491af65870a6c1928bd498d1d25be3bbf0b25417",
+          "storedResponseSha256": "1cf9d06f2bd21dc9f3c553f5491af65870a6c1928bd498d1d25be3bbf0b25417",
+          "storedBodySanitized": false,
+          "responseBytes": 3527,
+          "elapsedHttpMs": 5934.856,
+          "finishedAt": "2026-10-18T07:21:36.938092+00:00"
+        }
+      }
+    ],
+    "productionSdkTransportClaimed": false,
+    "productionActivationClaimed": false,
+    "operationalThresholdSelected": false
+  },
+  "rawResponseSha256": {
+    "classify-response.raw.json": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+    "count-response.raw.json": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306",
+    "generation-response.raw.json": "1cf9d06f2bd21dc9f3c553f5491af65870a6c1928bd498d1d25be3bbf0b25417"
+  },
+  "liveReportSha256": "94baf3fefa5e7e604054607000b5f15699d5dd8ae1c034e65affd29a3b2b6180",
+  "actualHttpAttemptsThisExecution": 3,
+  "confirmedStatuses": [
+    200,
+    200,
+    200
+  ],
+  "automaticRetryFallbackRedirect": 0,
+  "aggregatePriorAndFreshPhysicalHttpAttempts": 15,
+  "aggregatePhysicalByKind": {
+    "decisions": 7,
+    "count": 3,
+    "generationAttempts": 5
+  },
+  "budget": {
+    "approvedAggregateUsd": "2.00",
+    "priorRetainedReservedUsd": "1.01330944",
+    "freshMaximumReservedUsd": "0.31854592",
+    "cumulativeRetainedMaximumUsd": "1.33185536",
+    "headroomUsd": "0.66814464",
+    "refunds": "0",
+    "freshKnownUsageBaseEstimateUsd": "0.00292370",
+    "freshKnownUsageEstimateWith2_2FactorUsd": "0.00643214",
+    "aggregateKnownUsageBaseEstimateUsd": "0.00570720",
+    "aggregateKnownUsageEstimateWith2_2FactorUsd": "0.01255584",
+    "invoiceVerified": false,
+    "countFeeVerified": false,
+    "byteTokenReservationOfficialBound": false
+  },
+  "limits": [
+    "One frozen case only; no general accuracy or latency distribution claim",
+    "Raw Decisions CLEAR disagrees with fixed NEEDS_REVIEW oracle; normalized LOW_CONFIDENCE under pre-existing synthetic .8 fixture routes to generation; operational threshold remains unselected/OFF",
+    "No production SDK transport, durable ledger runtime, browser/UI submission or deployment claim",
+    "Prior raw label mismatch, 503, 15s timeout and pre-fix parser failure remain unchanged",
+    "Raw opaque thoughtSignature and responseId values remain only in ignored 0600 raw evidence"
+  ],
+  "rootGuardAndPrivacyCheck": {
+    "unchangedMandatoryGuardExitCode": 0,
+    "guardStartedAt": "2026-10-18T07:23:05.099674+00:00",
+    "guardFinishedAt": "2026-10-18T07:23:14.026089+00:00",
+    "newFresh1710Claim": false,
+    "source557Unchanged": true,
+    "trackedAndNewFilesScanned": 1474,
+    "exactActualOpaqueSignatureResponseIdOrAvailableKeyValueHits": 0,
+    "secretValuesPrinted": false
+  },
+  "independentReviews": {
+    "observationCost": {
+      "path": "docs/verification/issue123-fresh-head-two-stage-observation-cost-review.md",
+      "sha256": "83d26e194111c330f7c4443376a52ef15de96db05cb3e1a596026bc1f562a603",
+      "result": "PASS_WITH_DECLARED_SCOPE_LIMITS"
+    },
+    "semantics": {
+      "path": "docs/verification/issue123-fresh-head-two-stage-semantic-review.md",
+      "sha256": "2253665bf1f3af76984f9c4e85c4f6fc1a6dbad5d6ad59e4f5ac04b9bc7763d7",
+      "result": "PASS_WITH_DECLARED_SCOPE_LIMITS"
+    }
+  }
+}

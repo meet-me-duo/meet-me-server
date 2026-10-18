@@ -1,0 +1,14 @@
+{
+  "reason": "Fake reserve reissued UUID(123,index+1) for every separate group. A consumed ID collided with later count child despite distinct public physical identity. Corrected fake IDs to stable nameUUID over room/kind/execution/generation/operation/ordinal, preserving duplicate claim denial and expected counts. Added two test-only fixture controls (exact source/context locale and distinct stable child IDs) before new RED.",
+  "originalCounts": {
+    "tests": 76,
+    "failures": 70,
+    "passed": 6,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sourceChangeByTestAuthor": false,
+  "expectationWeakening": false,
+  "rawHistory": ".codex/tdd-evidence/issue123-dispatch-locale76-red",
+  "recordedAt": "2026-10-18T04:19:09.490906+00:00"
+}

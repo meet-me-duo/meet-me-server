@@ -1,0 +1,36 @@
+{
+  "workItem": "issue123-budget-initial",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetDefaultAuthorityTest.kt",
+      "sha256": "b4ab7b3a805bc6ec54dae45cc3d370f7648a0abb2589bc8fd7c84d8300b4acc0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetInitialPostgresTest.kt",
+      "sha256": "dda136d81ae7e5aada5086a5fffeb2ea70810ee433e9abde4c92de4c386eecaf"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*DurableAiBudgetDefaultAuthorityTest",
+    "--tests",
+    "*DurableAiBudgetInitialPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetInitialPostgresTest.DB01 nonexistent room reserve and snapshot deny without creating a scope()",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetInitialPostgresTest.DB01 real room without any approved policy cannot reserve even with a valid synthetic fence()",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.DB01 production authority never upgrades a caller evidence reference into a complete bill()",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.[1] operation = PRECHECK_CLASSIFICATION",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.[2] operation = PRECHECK_COUNT",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.[3] operation = PRECHECK_GENERATION",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.[4] operation = FINAL_PRIMARY",
+    "com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.[5] operation = FINAL_FALLBACK"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-18T04:04:10Z"
+}

@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-18T04:07:13.200323+00:00",
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/approved-release-pipeline.test.cjs",
+    ".github/scripts/issue108-release-catalog.test.cjs",
+    ".github/scripts/issue109-release-catalog.test.cjs",
+    ".github/scripts/issue110-release-catalog.test.cjs",
+    ".github/scripts/issue107-integrated-catalog.test.cjs",
+    ".github/scripts/issue107-runtime-auth-catalog.test.cjs"
+  ],
+  "exitCode": 0,
+  "tests": 72,
+  "passed": 72,
+  "failures": 0,
+  "skipped": 0,
+  "includesActualSourceVC12": true,
+  "includesNewSuiteViaParentRequire": true,
+  "log": ".codex/tdd-evidence/issue123-v17-catalog/full-actual-green.log",
+  "logSha256": "4036b28fbafa57f375e95a80ed27c7e176aeb3f34ab7abbf49c912122e6cca45",
+  "fingerprints": {
+    "src/main/resources/db/migration/V17__add_durable_ai_room_budgets.sql": "912b8f227e6ea7c20fc05cf96d705982fb9737c5051c7c07e771494df482834b",
+    "deploy/pipeline/publish_manifest.py": "7cf3fffa042f251d18a7f6f0fb8c209ab7318da8af54dad0ca23444138b55683",
+    "deploy/pipeline/approved_release.py": "bcde34cb16a7a768f386582f71482d2a23bcc362775d2a6258b4b1f19d86e72f",
+    "deploy/pipeline/host-approved-release.py": "feb0771aeafe6614532d789f89088e7871d52fec69cf5467f1c2c67c22892379",
+    ".github/scripts/issue123-v17-catalog.test.cjs": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3",
+    ".github/scripts/fixtures/integrated-release-catalog.cjs": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2"
+  },
+  "fullKotlinGate": false,
+  "actualModelCalls": 0
+}

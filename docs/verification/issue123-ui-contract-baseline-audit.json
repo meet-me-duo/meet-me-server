@@ -1,0 +1,155 @@
+{
+  "reviewedAt": "2026-10-18T07:55:03.393734+00:00",
+  "serverHead": "18cdb5ddec4f9e09db50feb54337aae9516a0108",
+  "webHead": "02a68d8e50680e87dd153156e8bb7ea884a794cc",
+  "scope": "READ_ONLY_STATIC_CONTRACT_AUDIT_NO_TEST_EXECUTION",
+  "routes": [
+    "/api/rooms/{inviteCode}/submission/checks",
+    "/api/rooms/{inviteCode}/submission/checks/{checkId}/retry",
+    "/api/rooms/{inviteCode}/submission/checks/{checkId}/cancel",
+    "/api/rooms/{inviteCode}/submission/checks/{checkId}/answer",
+    "/api/rooms/{inviteCode}/submission/checks/current"
+  ],
+  "statuses": [
+    "QUEUED",
+    "CHECKING",
+    "NEEDS_CHOICE",
+    "NEEDS_EDIT",
+    "CLEAR",
+    "FAILED",
+    "FAILED_QUEUE",
+    "TIMED_OUT",
+    "LIMIT_REACHED",
+    "CANCELLED",
+    "SUPERSEDED",
+    "CLOSED_BEFORE_COMPLETION"
+  ],
+  "counts": {
+    "public_precheck_paths": 5,
+    "server_status_values": 12,
+    "server_test_files_mapped": 11,
+    "server_named_test_declarations_static": 84,
+    "web_focused_test_files": 11,
+    "historical_unit_cases": 67,
+    "historical_route_mock_browser_cases": 22,
+    "historical_native_scenarios": 12,
+    "current_test_executions_by_reviewer": 0,
+    "confirmed_P1": 0,
+    "confirmed_P2": 1
+  },
+  "baseline_api_files_unchanged_vs_server_bb62a95": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckController.kt": true,
+    "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckNoStoreFilter.kt": true,
+    "src/main/kotlin/com/meetme/server/precheck/application/port/input/PreSubmissionCheckUseCase.kt": true,
+    "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt": true
+  },
+  "historical_web_sources_still_exact": true,
+  "historical_web_tests_still_exact": true,
+  "historical_native_is_current_server_head": false,
+  "serverSources": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckController.kt": "72870baed0fc5d5efb34e6d53a3ddee8fa9d3d4be3ebf9e582288d52da83e8a4",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckNoStoreFilter.kt": "1f22ed9cc6130694734dcc2ac6eacf5f3a76bb0cd67f28401f497977dd06e063",
+    "src/main/kotlin/com/meetme/server/precheck/application/port/input/PreSubmissionCheckUseCase.kt": "148de06cc47062f636378f1d8a8059ba1fa5a2c4f95c0eb70a840c5c547434da",
+    "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt": "327fcaea2613a4fd057bdf207e31c61f0be752adf6742f123b2864fac086b4d4",
+    "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt": "b2704aaf40b22fcb58f7c9ee86b12702314cfbfe4e2fa1450d800ce37d4ffe3c",
+    "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt": "0ea67fce5580fb7701aad58f8dd29b624f6673da56bfc6344b2226298bb1ca60",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt": "8291ef62126ba0a86c932b68bbdcc53f56b20d72d31ebcf6ce14449e79efe6ba",
+    "src/main/kotlin/com/meetme/server/precheck/domain/PrecheckModels.kt": "bc6053ec2580e60f76262af8a36102de26842f6def0a225521df4c387302cedd"
+  },
+  "serverTests": {
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckHttpPostgresTest.kt": {
+      "sha256": "e7e2a54d8884e44a9adfc9cbdda27afd95243733eae1f879e6ba4d5de95378e0",
+      "named_test_declarations": 19
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckWorkerPostgresTest.kt": {
+      "sha256": "366dd031be2f2717234025717975451aa7ab9b6715b64a85b4443cf53a271aeb",
+      "named_test_declarations": 25
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt": {
+      "sha256": "0ded3b08ddfc9cab3835e5780a23f40a206614f68354a3a02cda36ca438be548",
+      "named_test_declarations": 4
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckDefensiveBoundaryPostgresTest.kt": {
+      "sha256": "89275de222afa014b08bb7a5ce6c89ef677fa91ed506637ab177d239c9e674cd",
+      "named_test_declarations": 8
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckAdmissionFreshnessPostgresTest.kt": {
+      "sha256": "80d8eab8bb09fb69af0e4f9d9bc80a2543da3e213c350b09a3b426e11450ecda",
+      "named_test_declarations": 3
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckInputShapeHttpPostgresTest.kt": {
+      "sha256": "a831919c40b9063b02661b62c58f042b755c2215260f7a74459b93481d7498a5",
+      "named_test_declarations": 2
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckRateLimitRoutingContractTest.kt": {
+      "sha256": "b056297553ad9677baf3380c6ad64d6dabc728ed10c3b7cb163cd726a30d07bc",
+      "named_test_declarations": 3
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckCorrectionCompatibilityPostgresTest.kt": {
+      "sha256": "7c5ba283862723111c1ae72182b38f2a3ccfe620ac43cc58d960baacd2172c7f",
+      "named_test_declarations": 4
+    },
+    "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckRetentionPostgresTest.kt": {
+      "sha256": "cd46fb09a9b162eb715b23e395b381fd499c29111152512def368038ccfca63a",
+      "named_test_declarations": 8
+    },
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123WholeRoomBudgetPostgresTest.kt": {
+      "sha256": "f3b9756c890f8133b3877de325331c7fd583ce9e017520abb1850fbeee560356",
+      "named_test_declarations": 1
+    },
+    "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue123ExecutionFencePostgresTest.kt": {
+      "sha256": "c67870981321407aec23f3606bf59af17ba8330df92e9d5b37d5f9dacd921600",
+      "named_test_declarations": 7
+    }
+  },
+  "webSources": {
+    "src/api/client.ts": "3047e2b184bd30b2dc7403215d2671f0220d2f38dc8395b7d87947425daefda6",
+    "src/api/precheck.ts": "4690caaea4155a14b2d8869961bc450aa1ca689449f00b20438dab7743d69fd2",
+    "src/api/types.ts": "e35e13382894823240f72bd63db0f6b66d9f2068befb9cff79f6ac365dd04db5",
+    "src/pages/RoomPage.tsx": "492f2322645e7f30c0eabba29ba4d8842e43bc507f6bdf50d2eb9373a03d1377",
+    "src/components/SubmissionCheckPanel.tsx": "c4863d46b29528a30d2369417611d5b2b57419862c9a8ca7da891647545a717f",
+    "src/components/GuestParticipation.tsx": "37cd8349d774a6342b6406f0606541fed2215c817a62c4bf0f0b249dcc4bbeae",
+    "src/components/GuestAccessPanel.tsx": "9cb264ba28883d2769ac875fbeacd791f7b6d726da3ed752671eeb549b165338",
+    "src/auth/session.ts": "b4c9cedd6132ebf497348b2e7c34baa7a2f8bb86ae7e0db4462e9f2a692ba18b",
+    "src/api/recovery.ts": "e4154303d46629f512b6583beab67a4632f07cd1ff08042e9eac5f9f69332a3a",
+    "src/api/schema.d.ts": "b9d929d0f0b48c20fa075267cdfe4716ca3fe419917cfee23893b6c549d40b85",
+    "openapi/meet-me.openapi.json": "e44e9fb6e99d28309440f65458e26dce439b60372d9a81db575e28b9fd414c97"
+  },
+  "webTests": {
+    "src/api/client.precheck.test.ts": "65d97132b6c90f75ad27855243239753a8b73da72f60ab9c340f97e46b80765b",
+    "src/pages/RoomPage.precheck.test.tsx": "bf65a2150bdb8ad98c70db49ffb7cbd01cc7c4f5b1f23cfe6bc93b0bbe36ffc4",
+    "src/pages/RoomPage.precheck-correction.test.tsx": "bfd00706bf070fddaf826d05e8c596b3a6be33839f8ff2f0f8fde2f1902d0058",
+    "src/components/SubmissionCheckPanel.lifecycle.test.tsx": "a82c63dadb2597e53c839f76339ef2c78bfb6e67fbe55ad1b83c01f75e56fe93",
+    "src/components/GuestParticipation.precheck.test.tsx": "4a3ec55a2a53981842d64de0da3f6b311035e6b5f074de7362fcdb513de32a2c",
+    "src/components/SubmissionCheckPanel.draft.test.tsx": "17f0620880fbfef0189b4f2bc9e39f5923eb28826931097515893dee09a0c035",
+    "src/pages/RoomPage.precheck-privacy.test.tsx": "079bd347fa1f7927fc7e6b4a3014e3b6e629b319a2d3558e3379afd8c0926fcb",
+    "src/components/SubmissionCheckPanel.close.test.tsx": "49c7b3722204f9716cea5b14e4237484049b63af52bca568ef5ac1fb5a7826da",
+    "src/pages/RoomPage.precheck-protocol.test.tsx": "6d0dd1b22c5954eb5459a4faee5b986225eae37f4ec30ee989998785a8e25c28",
+    "src/components/SubmissionCheckPanel.draft-races.test.tsx": "87ee98518ac195aa92cb400933d9811377f53d4a2b540556df4b03e354c3f191",
+    "src/components/SubmissionCheckPanel.correction-snapshot.test.tsx": "91e246c688f2ec843d0bebcc8d91b2a81d0912dd813becbd22f35c14b12285e2",
+    "e2e/precheck.spec.ts": "c4910b1000a976489613f91941fa869ebfde8f4f41e111eae7535ac8f6b65acb",
+    "scripts/verify-precheck-native.mjs": "32aef6a9a4e2e42b316366bc28f9aa5bccc7e141004766902360442b3d3c4829"
+  },
+  "finding": {
+    "id": "P2-CANCEL-QUESTION",
+    "status": "OPEN_SOURCE_CONFIRMED_ROOT_ACCEPTED_FIX_SCOPE",
+    "serverCancelPreservesQuestion": true,
+    "serverOpenSnapshotReturnsQuestionRegardlessOfStatus": true,
+    "webQuestionActionIgnoresStatus": true,
+    "cancelledAnswerServerStatus": 409,
+    "existingCancelWebMockQuestionIsNull": true,
+    "regressionRequired": [
+      "NEEDS_CHOICE -> CANCELLED private snapshot question null but history retained",
+      "new CREATE after cancellation works",
+      "idempotent cancel does not refund question limit",
+      "owner/revision/close fences unchanged"
+    ]
+  },
+  "limits": [
+    "No API/model/OAuth/Gradle/test run",
+    "Historical67/22/12 not added together or promoted to fresh current-server success",
+    "Native12 uses historical synthetic provider/local real infrastructure; current18cdb server plus web02a68 needs fresh owner-run verification",
+    "No heldout corpus read",
+    "Budget/error exposure cases require existing durable boundary tests and current UI run; no money policy selected"
+  ]
+}

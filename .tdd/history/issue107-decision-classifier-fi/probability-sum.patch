@@ -1,0 +1,11 @@
+--- src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt original
++++ src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt probability-sum
+@@ -144,7 +144,7 @@
+             distribution.values
+                 .fold(BigDecimal.ZERO, BigDecimal::add)
+                 .subtract(BigDecimal.ONE)
+-                .abs() > TOLERANCE ||
++                .abs() > BigDecimal.TEN ||
+             distribution.getValue(choice).compareTo(distribution.values.maxOrNull()) != 0
+         ) {
+             invalid()

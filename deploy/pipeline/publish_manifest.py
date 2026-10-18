@@ -30,6 +30,7 @@ MIGRATION_SCRIPTS = (
     'V11__add_accounts_and_participant_ownership.sql', 'V12__add_guest_reaccess.sql',
     'V13__add_submission_clarifications.sql', 'V14__add_operator_access_audits.sql',
     'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
+    'V17__add_durable_ai_room_budgets.sql',
 )
 
 

@@ -9,6 +9,16 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguagePar
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.application.port.output.ParserTransportObservationPort
 import com.meetme.server.coordination.application.port.output.ParserUsage
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpProviderStatusException
+import com.meetme.server.shared.adapter.output.aihttp.GatedAiHttpExchange
+import com.meetme.server.shared.adapter.output.aihttp.PreparedAiHttpRequest
+import com.meetme.server.shared.adapter.output.aihttp.physicalProfile
+import com.meetme.server.shared.adapter.output.aihttp.validateFinalDispatch
+import com.meetme.server.shared.application.port.output.AiBudgetOutcome
+import com.meetme.server.shared.application.port.output.AiBudgetUsage
+import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
@@ -22,19 +32,28 @@ import tools.jackson.databind.ObjectMapper
 import java.io.IOException
 import java.net.URI
 import java.time.Duration
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Component("lunaParser")
 class OpenAiLunaNaturalLanguageParserAdapter
-    @Autowired
     constructor(
         private val properties: OpenAiProperties,
         private val objectMapper: ObjectMapper,
         private val transportObservations: ParserTransportObservationPort? = null,
+        private val dispatchGate: AiHttpDispatchGate? = null,
     ) : NaturalLanguageParserPort {
         private val contract = NaturalLanguageProviderContract(objectMapper)
         private var httpClient: OkHttpClient = OkHttpClient.Builder().build()
         private var endpoint: URI = URI.create("https://api.openai.com/v1/responses")
+
+        @Autowired
+        constructor(
+            properties: OpenAiProperties,
+            objectMapper: ObjectMapper,
+            managedDispatchGate: AiHttpDispatchGate,
+            transportObservations: ParserTransportObservationPort? = null,
+        ) : this(properties, objectMapper, transportObservations, managedDispatchGate)
 
         internal constructor(
             properties: OpenAiProperties,
@@ -42,7 +61,8 @@ class OpenAiLunaNaturalLanguageParserAdapter
             httpClient: OkHttpClient,
             endpoint: URI,
             transportObservations: ParserTransportObservationPort? = null,
-        ) : this(properties, objectMapper, transportObservations) {
+            dispatchGate: AiHttpDispatchGate? = null,
+        ) : this(properties, objectMapper, transportObservations, dispatchGate) {
             this.httpClient = httpClient
             this.endpoint = endpoint
         }
@@ -77,6 +97,9 @@ class OpenAiLunaNaturalLanguageParserAdapter
             if (budget.toMillis() <= 0) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
             val deadline = System.nanoTime() + budget.toNanos()
             var pending: Call? = null
+            var physical: GatedAiHttpExchange? = null
+            var physicalUsage = AiBudgetUsage()
+            var completed = false
             try {
                 val body =
                     objectMapper.writeValueAsString(
@@ -112,6 +135,25 @@ class OpenAiLunaNaturalLanguageParserAdapter
                         .writeTimeout(Duration.ZERO)
                         .callTimeout(Duration.ofNanos(remaining))
                         .build()
+                if (dispatchGate?.properties?.enabled == true) {
+                    validateFinalDispatch(request)
+                    val context = request.dispatchContext!!
+                    val prepared =
+                        PreparedAiHttpRequest.freeze(
+                            AiPhysicalOperation.FINAL_FALLBACK,
+                            context.providerOrdinal,
+                            context.finalAttemptId,
+                            physicalProfile(
+                                AiPhysicalOperation.FINAL_FALLBACK,
+                                properties.model,
+                                endpoint,
+                                32 * 1024 * 1024,
+                            ),
+                            body.toByteArray(Charsets.UTF_8),
+                        )
+                    val group = dispatchGate.prepareGroup(context, listOf(prepared))
+                    physical = dispatchGate.forPreparedCall(transport, group, AiPhysicalOperation.FINAL_FALLBACK)
+                }
                 val httpRequest =
                     Request
                         .Builder()
@@ -119,7 +161,7 @@ class OpenAiLunaNaturalLanguageParserAdapter
                         .header("Authorization", "Bearer ${properties.apiKey}")
                         .post(body.toRequestBody("application/json; charset=utf-8".toMediaType()))
                         .build()
-                pending = transport.newCall(httpRequest)
+                pending = (physical?.client ?: transport).newCall(httpRequest)
                 val callRemaining = deadline - System.nanoTime()
                 if (callRemaining <= 0) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                 pending.timeout().timeout(callRemaining, TimeUnit.NANOSECONDS)
@@ -133,6 +175,12 @@ class OpenAiLunaNaturalLanguageParserAdapter
                         if (System.nanoTime() >= deadline) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                         objectMapper.readTree(bytes)
                     }
+                val observedUsage = root["usage"]
+                physicalUsage =
+                    AiBudgetUsage(
+                        inputTokens = tokenCount(observedUsage, "input_tokens"),
+                        outputTokens = tokenCount(observedUsage, "output_tokens"),
+                    )
                 if (root["status"]?.asString() != "completed") invalid()
                 val output = root["output"]?.takeIf { it.isArray } ?: invalid()
                 val texts = mutableListOf<String>()
@@ -153,6 +201,7 @@ class OpenAiLunaNaturalLanguageParserAdapter
                 val parsed = parseProviderResponse(text, request)
                 if (System.nanoTime() >= deadline) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
                 val usage = root["usage"]
+                completed = true
                 return NaturalLanguageBatchResult(
                     parsed,
                     ParserUsage(
@@ -161,6 +210,12 @@ class OpenAiLunaNaturalLanguageParserAdapter
                         text.toByteArray(Charsets.UTF_8).size,
                     ),
                 )
+            } catch (_: AiHttpDispatchException) {
+                pending?.cancel()
+                throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+            } catch (exception: AiHttpProviderStatusException) {
+                pending?.cancel()
+                throw httpFailure(exception.status, exception.retryAfterMillis?.div(1000)?.toString(), exception.responseBytes)
             } catch (exception: NaturalLanguageParserException) {
                 pending?.cancel()
                 throw exception
@@ -170,6 +225,18 @@ class OpenAiLunaNaturalLanguageParserAdapter
             } catch (exception: RuntimeException) {
                 pending?.cancel()
                 throw NaturalLanguageParserException(ProviderFailureClassifier.classify(exception), cause = exception)
+            } finally {
+                try {
+                    physical?.observe(
+                        UUID.randomUUID(),
+                        if (completed) AiBudgetOutcome.SUCCEEDED else AiBudgetOutcome.FAILED,
+                        physicalUsage,
+                    )
+                } catch (
+                    _: AiHttpDispatchException,
+                ) {
+                    throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                }
             }
         }
 

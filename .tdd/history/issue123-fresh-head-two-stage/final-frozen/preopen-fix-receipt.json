@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-10-18T07:15:41.972853+00:00",
+  "file": "/tmp/issue123-fresh-head-http-callback.py",
+  "beforeSha256": "3779f6b88abeaa02f1c451df557af65a4948b9456b4e51ec82ebacbaec9cad56",
+  "afterSha256": "3a48a878696ec16f46e8ebeb81c218a597d07b645b96389c2602cdf294c93605",
+  "originalSnapshot": "/tmp/issue123-fresh-head-preopen-gap-original.py",
+  "changedLines": "1 line replaced by 5 lines (4 insertions net), build opener before final budget check",
+  "pythonAst": "PASS",
+  "pythonCompile": "PASS",
+  "modelOrApiCalls": 0,
+  "productionOrTestEdits": 0,
+  "planOrRunnerEdits": 0,
+  "independentMockRequired": true
+}

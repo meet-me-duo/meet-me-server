@@ -1,0 +1,20 @@
+{
+  "tests": 34,
+  "genuineMissingBehaviorAssertions": 16,
+  "passControls": 18,
+  "errors": 0,
+  "skipped": 0,
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationNumericResourceTest.kt",
+      "sha256": "a7e0f1e18a8402d890ad8eeea3a6d4ef89d3232fddb49d2acdeb17d45b4e85bb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    }
+  ],
+  "contractBeforeSha256": "02423846a7210507a8eadbd3eed95caa3b3f632bff0004b26c82a70fb1801365",
+  "logSha256": "3737eff4e49b0290212af3ad74bdb038bb00c27ccd700d5d477cf9a10ba18a8d",
+  "xmlSha256": "e54d82a003d648e9325cd942b0c2952837364e3bc01a40f3e429896507e377a7"
+}
