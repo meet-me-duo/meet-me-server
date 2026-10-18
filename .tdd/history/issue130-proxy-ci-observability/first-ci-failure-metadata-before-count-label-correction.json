@@ -1,0 +1,24 @@
+{
+  "sourceRevision": "62f47bb7334d1d31586f462d52277b4bddeae9f6",
+  "ciRun": 39123972026,
+  "qualityJob": 117665127822,
+  "reportedResult": {
+    "javaTests": 49,
+    "javaPassed": 48,
+    "javaAssertionFailures": 1,
+    "javaErrors": 0,
+    "pythonTests": 14,
+    "pythonPassed": 14,
+    "legacyTestsPassed": 102,
+    "gradleTestsPassed": 1717
+  },
+  "failedCaseName": "UNAVAILABLE_FROM_PUBLISHED_SUMMARY",
+  "provenance": "Parent direct CI observation; case detail was only in runner temporary directory, not uploaded",
+  "sourceFingerprints": {
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "ad60f620d13f8add1101c3d2500a3b0204cefc74f1c8bb46044d541740411ecf",
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0"
+  },
+  "recordedAt": "2026-10-18T11:51:44.524941+00:00"
+}

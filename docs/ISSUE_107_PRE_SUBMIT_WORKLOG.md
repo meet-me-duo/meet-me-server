@@ -291,3 +291,9 @@ core/fence 격리FI4는 baseline94→cap등호허용/중복dispatch app+SQL CAS 
 
 
 - [AGENT] 2026-10-18 11:34 UTC #130 최종 독립 기술게시review LOCAL PASS(미해결P1/P2없음). current566source·집중13파일·165합성/FI8·필수6절PR본문과 STOP/분모0/hold1.56254208/CA대기/paid추가0 정합을확인했다. Commit/PR 동일커밋예정이며 다음단계는feature/issue-130-representative-decisions의의도된 실행기·필수검증·상태기록 commit/push→별도Draft→정확HEADCI다. 실제품질/가격/threshold/운영활성화완료·추가유료승인으로확대하지않으며이후SHA/PR/CI는Git·PR·로컬publicationreceipt에기록해재귀상태커밋을만들지않는다.
+
+
+- [AGENT] 2026-10-18 11:58 UTC #130 첫 게시CI39123972026/HEAD62f47bb: ARM64·Gradle1717·기존합성102PASS 뒤 새proxy49Java중assertion1(48PASS)/Python14PASS 실패. 원caseID 미출력으로원인미확정/실패그대로보존. cleanCI-like63PASS·관측보완뒤63PASS이며 original49/14/TLS/helper2bytes불변. safe49ID/status/type whitelist만공개하는새privacy4RED→4GREEN/CI연결, 예상값·timeout·gold변경0. 후속필수guard source567 same/exit0·8.718s/기존XML재사용. 다음은독립리뷰·동일PR132정상후속게시/exactCI이며첫실패해결주장0. actualCA/paid0·hold1.56254208/여유.43745792/환급0 유지, Commit/PR 동일후속커밋예정.
+
+
+- [AGENT] 2026-10-18 #130 CI 관측 보완 한정 최종독립리뷰 LOCAL PASS·미해결 P1/P2 없음. 고정49 ID와 status/type만 공개하는 projection, 새privacy4 RED→GREEN, 기존49/14/TLS/helper 불변·63GREEN, source567 필수guard 전후동일/기존1717XML재사용을 확인했다. 첫CI assertion1의 case/원인은 여전히 미확정이며 기대값·timeout·factory를 고친 결과가 아니다. 다음은 동일DraftPR132 정상후속commit/push·새정확HEADCI이고 정확SHA/상태는Git·PR·로컬receipt에기록한다. 실제품질분모0·CA미구현/승인대기·추가유료0·hold1.56254208/여유.43745792/환급0 유지. Commit/PR 동일후속커밋예정.

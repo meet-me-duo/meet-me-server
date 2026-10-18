@@ -1,0 +1,22 @@
+{
+  "workItem": "issue130-proxy-ci-failure-reporting",
+  "sourceRevision": "62f47bb7334d1d31586f462d52277b4bddeae9f6",
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_proxy_failure_reporting.py",
+      "sha256": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c"
+    }
+  ],
+  "command": [
+    "python3",
+    "evaluation/issue130/tests/test_proxy_failure_reporting.py"
+  ],
+  "failedTests": [
+    "test_RF01_known_assertion_reports_only_fixed_safe_fields",
+    "test_RF02_unlisted_id_pass_and_unknown_status_are_omitted",
+    "test_RF03_known_exception_class_is_reported_without_raw_reason",
+    "test_RF04_unlisted_exception_type_is_fixed_generic_label"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T11:53:49Z"
+}

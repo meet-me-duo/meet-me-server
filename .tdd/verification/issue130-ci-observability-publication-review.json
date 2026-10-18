@@ -1,0 +1,122 @@
+{
+  "workItem": "issue130-proxy-ci-observability",
+  "reviewKind": "INDEPENDENT_NARROW_FOLLOWUP_PUBLICATION_REVIEW",
+  "recordedAt": "2026-10-18T12:02:26.518382+00:00",
+  "decision": "PASS_OBSERVABILITY_ONLY_NOT_ORIGINAL_CI_CAUSE_CLOSURE",
+  "openP1": 0,
+  "openP2": 0,
+  "basePublishedHead": "62f47bb7334d1d31586f462d52277b4bddeae9f6",
+  "sourceAndTestFingerprints": {
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+    "evaluation/issue130/run_representative_decisions.py": "b2f01a76fc2384f29c8eecf4658ff4f41f9096d844822a005f26213914c3f409",
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+    "evaluation/issue130/tests/test_proxy_failure_reporting.py": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c",
+    ".github/workflows/ci.yml": "2cd5eab3583b2879b6b0947a5f9d15255efc65b93f301a199b13e0c2ac30eca1"
+  },
+  "evidenceFingerprints": {
+    ".tdd/red/issue130-proxy-ci-failure-reporting.json": "e5b74a3c3097626c416540956a0a2255ff9df40bf3c45175684168efa44415e0",
+    ".tdd/verification/issue130-proxy-ci-failure-reporting.json": "ed9332d406fd45bb58af5c1d5480c4149aa200e168d1d813ad926fee3fd88afa",
+    ".tdd/verification/issue130-ci-observability-quality.json": "1c334717817a7878bd65c69f450309333bfa025789ef02a92761930298f47d1a",
+    ".tdd/history/issue130-proxy-ci-observability/first-ci-failure-metadata.json": "4220ccd91a5873c44c30c5a5797143d9ccbdbd6cf68e9735e19577f8323b3b6c",
+    ".tdd/history/issue130-proxy-ci-observability/direct-ci-safe-metadata.json": "0d60ba3e0b7e5b7fd95e3f90c8cdb6fa04b855f770621d1487ce43a51b4d6595",
+    ".tdd/history/issue130-proxy-ci-observability/first-ci-failure-metadata-before-count-label-correction.json": "748866683636cdd7c9de39e7a17fa279d51720865d92f2dd001ea3a34d14c80d"
+  },
+  "finalDocumentFingerprints": {
+    "implementation_plan.md": "8310f44803e4ad5040b1b0c593d0a45e38286254e54bc36c726c377dd15432b8",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "9eb52ffa42b42a90700c12ecbfbf63f796b13030fdc41b064f48ded5cb3df655",
+    "docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md": "5e413f3c0a1c49dcfdf90222a20fc7a064ae17502999d8ea595536cfb633a84c"
+  },
+  "prDraft": {
+    "bodySha256": "1055998dddfdaa3da95c2f9590f4a2f529fdf2335b01e0d34f7d8b0335db7059",
+    "sixTemplateSectionsExact": true,
+    "sameDraft": 132,
+    "closes": [
+      130
+    ],
+    "broadIssue123RemainsOpen": true,
+    "nextPublishedHeadCi": "PENDING"
+  },
+  "sourceReview": {
+    "whitelistExactlyMatchesFrozenJavaCaseIds": 49,
+    "onlyProjectedFields": [
+      "test",
+      "status",
+      "type"
+    ],
+    "assertionType": "AssertionError",
+    "unlistedErrorType": "UNEXPECTED_ERROR",
+    "unknownCaseOrStatusOmitted": true,
+    "rawReasonEnvironmentBodyProxyOrKeyCopied": false,
+    "projectionRemovalExactlyReconstructsHeadLauncher": true,
+    "unchangedJava49Python14TlsFixturesAndBothHelpers": true,
+    "existingExitStatusAndTestOraclesTimeoutsUnchanged": true,
+    "ciDelta": "Run new privacy4 before the unchanged proxy63; no factory or production behavior changes."
+  },
+  "verification": {
+    "newPrivacyRed": {
+      "assertionFailures": 4,
+      "errors": 0
+    },
+    "newPrivacyGreen": 4,
+    "ciLikePrepatchProxyPassed": 63,
+    "postpatchProxyPassed": 63,
+    "source567BeforeAfterCurrentEqual": true,
+    "manifestSha256": "b80bfccb917c513e32fea695a3f258973e4a0092e8216ea3def795b95fb00f90",
+    "mandatoryGuardExitCode": 0,
+    "guardElapsedSeconds": 8.718,
+    "gradleXml": "Prior1717 XML reused:1713PASS+existing4SKIP; not a fresh run.",
+    "paidOrExternalModelCallsByReviewer": 0
+  },
+  "originalCiObservation": {
+    "run": 39123972026,
+    "job": 117665127822,
+    "javaTotal": 49,
+    "javaPassed": 48,
+    "javaAssertionFailures": 1,
+    "javaErrors": 0,
+    "pythonPassed": 14,
+    "individualFailedCase": "UNKNOWN_NOT_IN_UPLOADED_SUMMARY",
+    "cause": "UNDETERMINED_NOT_REPRODUCED",
+    "directGradleEvidence": "BUILD SUCCESSFUL; do not interpret historical metadata gradleTestsPassed1717 as1717 passing assertions.",
+    "subsequentLocal63PassDoesNotEraseOriginalFail": true
+  },
+  "nonBlockingHistoricalMetadataClarification": {
+    "path": ".tdd/history/issue130-proxy-ci-observability/first-ci-failure-metadata.json",
+    "issue": "The historical field gradleTestsPassed1717 is an imprecise count label; direct safe CI excerpt proves BUILD SUCCESSFUL, and total1717 must not be read as1717 individual PASS when4 prior skips are included.",
+    "interpretationUsedByThisReview": "First CI Gradle build SUCCESS only; final local reused XML1713PASS+4SKIP is separate.",
+    "recommendedAdministrativeCorrection": "Preserve original provenance and label build status/test total explicitly. No source/test rerun is required for this metadata clarification.",
+    "disposition": "CLOSED_ADMINISTRATIVE_METADATA_CORRECTION_INDEPENDENTLY_VERIFIED"
+  },
+  "bookkeeping": "Reviewer only split the requested plan checkbox into LOCAL PASS/pending commit and appended a short final Worklog paragraph. No further status-document writes needed.",
+  "remainingLimits": [
+    "This authorizes only the existing approved normal follow-up commit/push to Draft132 and exact new HEAD CI; that CI is still pending.",
+    "This is no determination or repair of the original CI failing test. Any later counter/oracle/timeout/factory change requires separate evidence and review.",
+    "Actual semantic denominator remains0; actual quality is BLOCKED. Prior UNKNOWN/fullhold USD1.56254208/headroomUSD0.43745792/refund0 are retained.",
+    "CA opt-in remains unimplemented/security approval pending; no additional paid execution, trust configuration, operating policy, activation, merge or deployment is approved by this review."
+  ],
+  "reviewerActions": {
+    "productionTestCiEdits": 0,
+    "testGradleExecution": 0,
+    "paidCalls": 0,
+    "secretOrPrivateCorpusIndexGoldReads": 0
+  },
+  "metadataCorrectionAddendum": {
+    "recordedAt": "2026-10-18T12:04:26.312246+00:00",
+    "previousReviewSha256": "72d63f3b0e66b8062966f9892b7c63efa46371be1146f482529327ef2289167e",
+    "preservedOriginalProjection": {
+      "path": ".tdd/history/issue130-proxy-ci-observability/first-ci-failure-metadata-before-count-label-correction.json",
+      "sha256": "748866683636cdd7c9de39e7a17fa279d51720865d92f2dd001ea3a34d14c80d"
+    },
+    "correctedProjection": {
+      "path": ".tdd/history/issue130-proxy-ci-observability/first-ci-failure-metadata.json",
+      "sha256": "4220ccd91a5873c44c30c5a5797143d9ccbdbd6cf68e9735e19577f8323b3b6c"
+    },
+    "verification": "Only gradleTestsPassed1717 was replaced with gradleBuildStatus SUCCESS plus explicit countLabelCorrection. Removing those exact changes reconstructs identical remaining metadata. Direct CI BUILD SUCCESSFUL and separate local1717 total including4 skips are distinguished; original bytes preserved.",
+    "sourceTestsCiRawEvidenceChanged": false,
+    "planWorklogReportUnchanged": true,
+    "publicationPassAndAllLimitsUnchanged": true
+  }
+}

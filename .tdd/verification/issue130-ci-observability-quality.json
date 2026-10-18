@@ -1,0 +1,37 @@
+{
+  "exitCode": 0,
+  "sourceBeforeAfterEqual": true,
+  "sourceFiles": 567,
+  "sourceManifestSha256": "b80bfccb917c513e32fea695a3f258973e4a0092e8216ea3def795b95fb00f90",
+  "elapsedSeconds": 8.718,
+  "tests": 1717,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 214,
+  "allXmlFresh": false,
+  "paidCalls": 0,
+  "keysBlankInSubprocess": true,
+  "classification": "OBSERVABILITY_ONLY_FOLLOWUP_MANDATORY_GUARD_PASS_PRIOR_XML_REUSED_NOT_FRESH",
+  "originalCiFailure": {
+    "run": 39123972026,
+    "job": 117665127822,
+    "head": "62f47bb7334d1d31586f462d52277b4bddeae9f6",
+    "gradle": "SUCCESS",
+    "baseSynthetic": 102,
+    "proxyJava": {
+      "passed": 48,
+      "assertionFailures": 1,
+      "errors": 0,
+      "total": 49
+    },
+    "proxyPython": "14PASS",
+    "individualFailureId": "NOT_AVAILABLE_IN_FIRST_LOG",
+    "cause": "UNDETERMINED_NOT_REPRODUCED"
+  },
+  "newTests": {
+    "reporterPrivacy": 4,
+    "unchangedProxy": 63,
+    "allPassed": true
+  }
+}

@@ -42,3 +42,12 @@ raw 의미/정규화 routing의 채점 분모는 각각0이다. 계획 분모16�
 같은 새 factory에서 Authorization/body/key 없이 HEAD 최대1회만 실행한 결과 proxy DNS/connect/TLS start는 관측했으나 `SSLHandshakeException`으로 TLS 미완료·HTTP status 미관측이었다. 상세 nested cause/peer chain은 기록하지 않아 누락 CA가 정확 원인이라고 확정하지 않는다. 공개 CA 메타데이터만 비교한 결과 기존 JDK118·환경 bundle154·공통112/환경만42/JDK만6이며 합집합160이다. 기존 공개 환경 CA를 명시적 지문으로 평가 client 한정 상속하는 방안은 신뢰 anchor 확장이므로 보안 설정 제외 승인 범위에서 자동 진행하지 않는다. 해당 선택에 대한 명시 답변 대기이며 CA 코드·전역 JDK/OS/운영 설정 변경·추가 유료 호출0이다.
 
 승인 시에도 기존 chain/hostname 검증을 유지하고 새 독립 TLS 양성/음성·오염 bundle 거절·기존 default roots 보존 검사와 FI, 무인증 확인, 최신 source/runtime/비용/실행전 독립 리뷰를 거친 새 single-use 계획만 실행할 수 있다. 답변 전에는 현재 hold1.56254208/여유0.43745792/환급0을 그대로 유지한다. 실제 오탐·미탐/정확도/질문 품질/p50/p95는 여전히 미측정이다.
+
+
+## 첫 게시 CI의 단일 합성 실패와 관측 보완
+
+Draft PR132의 최초 HEAD62f47bb/CI39123972026은 ARM64와 Gradle1717 및 기존102 합성을 통과했지만 proxy Java49 중48PASS/assertion1FAIL(Python14PASS)에서 중단했다. 첫 로그에는 개별 실패 ID가 없어 원인을 확정할 수 없다. 동일 테스트의 깨끗한 CI 유사 로컬 실행1회와 관측 보완 뒤 실행은 각각63PASS였으나 첫 실패를 성공으로 소급하지 않는다.
+
+원래49/14 입력·기대값·TLS fixture 및 helper2개는 그대로 두었다. 별도 privacy4 RED→GREEN으로 확인한 고정49 test ID·상태·허용 오류 종류만 출력한다. raw 오류 설명·환경·body·key를 로그로 복사하지 않는다. 테스트 timeout이나 oracle을 바꾸지 않았으며 첫 CI 실패를 해결했다고 주장하지 않는다. 다음 정확 HEAD CI에서 실제 실패 ID를 확인할 수 있게 하는 관측 보완이다.
+
+후속 mandatory guard는 source567 전후동일/exit0·8.718초로 통과했다. 기존1717 XML 재사용이며 새 fresh1717 실행은 아니다. 실제 평가·CA 신뢰·전역/운영 설정·유료 호출에는 변화가 없고 hold1.56254208/여유0.43745792/환급0을 유지한다.

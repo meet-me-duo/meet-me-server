@@ -14,6 +14,84 @@ import time
 REPO = Path(__file__).resolve().parents[3]
 
 
+SAFE_JAVA_TEST_IDS = frozenset({
+    'PX01_lowercase_selected_unresolved',
+    'PX02_uppercase_only_selected',
+    'PX03_absent_port_defaults80',
+    'PX04_root_path_allowed',
+    'PX05_NO_PROXY_never_selects_DIRECT',
+    'PX06_legacy_does_not_infer_env_mode',
+    'PX07_factory_never_reads_API_keys',
+    'PX08_missing_proxy_rejects_no_DIRECT',
+    'PX09_invalid_lower_never_falls_back_upper',
+    'PX_BAD_URI_9',
+    'PX_BAD_URI_10',
+    'PX_BAD_URI_11',
+    'PX_BAD_URI_12',
+    'PX_BAD_URI_13',
+    'PX_BAD_URI_14',
+    'PX_BAD_URI_15',
+    'PX_BAD_URI_16',
+    'PX_BAD_URI_17',
+    'PX_BAD_URI_18',
+    'PX_BAD_URI_19',
+    'PX_BAD_URI_20',
+    'PX_BAD_URI_21',
+    'PX_BAD_URI_22',
+    'PX_BAD_URI_23',
+    'PX_BAD_MODE_24',
+    'PX_BAD_MODE_25',
+    'PX_BAD_MODE_26',
+    'PX_BAD_MODE_27',
+    'PX_BAD_MODE_28',
+    'PB01_new_mode_valid_profile_and_hold_persisted',
+    'PB02_new_mode_rejects_old_hold_rollback',
+    'PB03_new_mode_requires_previous_evidence',
+    'PB04_previous_evidence_hash_mismatch',
+    'PB05_previous_evidence_amount_mismatch',
+    'PB06_previous_status_mismatch',
+    'PB_REFUNDS_invalid_35',
+    'PB_REFUNDS_invalid_36',
+    'PB_REFUNDS_invalid_37',
+    'PB_REFUNDS_invalid_38',
+    'PB_REFUNDS_invalid_39',
+    'PB07_unknown_mode_not_legacy_profile',
+    'PB08_new_profile_connection_failure_holds_total',
+    'PN01_parameterized_TLS_valid_SAN_production_classifier_control',
+    'PN02_parameterized_TLS_trusted_wrong_SAN_control',
+    'PC01_actual_Python_CLI_ENV_proxy_TLS16_and_replay0',
+    'PC02_untrusted_CA_never_emits_POST_or_DIRECT',
+    'PC03_wrong_hostname_even_trusted_CA_rejected',
+    'PC04_503_retryafter0_one_POST',
+    'PC05_redirect_one_POST_no_follow',
+})
+SAFE_JAVA_ERROR_TYPES = frozenset({
+    'NullPointerException', 'IllegalArgumentException', 'IllegalStateException',
+    'IOException', 'SSLException', 'SSLHandshakeException', 'SocketException',
+    'SocketTimeoutException', 'TimeoutException', 'SecurityException',
+    'RuntimeException', 'EvaluationException', 'InterruptedException',
+})
+
+
+def safe_java_failures(rows):
+    """Only frozen public case identifiers and fixed labels may reach CI stdout."""
+    failures = []
+    for row in rows:
+        if not isinstance(row, dict) or not isinstance(row.get('test'), str) or row['test'] not in SAFE_JAVA_TEST_IDS:
+            continue
+        status = row.get('status')
+        if status == 'ASSERTION_FAILURE':
+            kind = 'AssertionError'
+        elif status == 'SETUP_OR_UNEXPECTED_ERROR':
+            kind = row.get('type')
+            if not isinstance(kind, str) or kind not in SAFE_JAVA_ERROR_TYPES:
+                kind = 'UNEXPECTED_ERROR'
+        else:
+            continue
+        failures.append({'test': row['test'], 'status': status, 'type': kind})
+    return failures
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output')
@@ -63,6 +141,7 @@ def main():
         (out / 'source-after.json').write_text(json.dumps(after, indent=2) + '\n')
         result = {'status': 'PASS' if not (java_exit or python_exit) else 'FAILED', 'javaExitCode': java_exit,
                   'pythonExitCode': python_exit, 'javaSummary': rows[-1] if rows else None,
+                  'javaFailures': safe_java_failures(rows),
                   'sourceBeforeAfterEqual': before == after, 'durationSeconds': round(time.monotonic() - started, 3),
                   'evidence': str(out), 'paidCalls': 0, 'sealedDataRead': False}
         (out / 'receipt.json').write_text(json.dumps(result, indent=2) + '\n')

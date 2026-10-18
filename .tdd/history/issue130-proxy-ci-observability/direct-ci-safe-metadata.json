@@ -1,0 +1,13 @@
+{
+  "job": 117665127822,
+  "run": 39123972026,
+  "source": "github_fetch_workflow_job_logs",
+  "safeLines": [
+    "2026-10-18T11:37:19.8816342Z HEAD is now at 5eec4d3 Merge 62f47bb7334d1d31586f462d52277b4bddeae9f6 into 3982535765e878875a901dd9d28352358e594f6f",
+    "2026-10-18T11:37:20.0880456Z Resolved Java 17.0.20+1 from tool-cache",
+    "2026-10-18T11:46:57.8346129Z BUILD SUCCESSFUL in 9m 33s",
+    "2026-10-18T11:49:04.8347849Z {\"status\": \"FAILED\", \"javaExitCode\": 1, \"pythonExitCode\": 0, \"javaSummary\": {\"errors\": 0, \"passed\": 48, \"assertionFailures\": 1, \"sealedDataRead\": false, \"tests\": 49, \"paidCalls\": 0}, \"sourceBeforeAfterEqual\": true, \"durationSeconds\": 42.28, \"evidence\": \"/tmp/issue130-env-proxy-synthetic-u9q58bgk\", \"paidCalls\": 0, \"sealedDataRead\": false}",
+    "2026-10-18T11:49:04.8420525Z ##[error]Process completed with exit code 1."
+  ],
+  "caseNameAvailable": false
+}

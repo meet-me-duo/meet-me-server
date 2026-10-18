@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "publishedSourceRevision": "62f47bb7334d1d31586f462d52277b4bddeae9f6",
+  "firstCiRun": 39123972026,
+  "firstCiQualityJob": 117665127822,
+  "firstCiMergeCheckout": "5eec4d388d565cbbe0c2d9458a4062209bd83d81",
+  "firstCiJava": "Temurin17.0.20+1",
+  "firstCiResult": {
+    "javaTests": 49,
+    "passed": 48,
+    "assertionFailures": 1,
+    "errors": 0,
+    "pythonPassed": 14,
+    "failedCase": "NOT_PRESENT_IN_UPLOADED_SUMMARY"
+  },
+  "originalFailureReproduced": false,
+  "ciLikeReproduce": {
+    "tests": 63,
+    "passed": 63,
+    "errors": 0,
+    "durationSeconds": 38.658
+  },
+  "reporterTdd": {
+    "redAssertionFailures": 4,
+    "greenPassed": 4,
+    "errors": 0
+  },
+  "finalRegression": {
+    "tests": 63,
+    "passed": 63,
+    "errors": 0,
+    "durationSeconds": 38.272,
+    "javaFailures": []
+  },
+  "frozen49JavaAnd14PythonAndTlsUnchanged": true,
+  "helperProductFilesUnchanged": true,
+  "whitelistExactlyMatches49CompiledCases": true,
+  "printedFailureFields": [
+    "test",
+    "status",
+    "type"
+  ],
+  "rawReasonEnvironmentBodyKeysPrinted": false,
+  "modifiedFiles": {
+    "evaluation/issue130/tests/run_environment_proxy_tests.py": "18a8408fda8e6d5fb4ab11887a0fa64b4467baecb122f10a41bbd7c69be75182",
+    "evaluation/issue130/tests/test_proxy_failure_reporting.py": "16eca47c12dd65fe86ad1172caae67e988a75d1966c92b5f20a03db75abbb38c"
+  },
+  "sourceFingerprints": {
+    "evaluation/issue130/tests/Issue130EnvironmentProxyContractTest.java": "596dd6f792dbbab5d277cb09f16b7a6d1ec1e277c27edc35528c1065e6828927",
+    "evaluation/issue130/tests/Issue130EnvironmentTlsProxy.java": "bd4dddad81c6ef839f27ddc65ed31fd3adb9b0cf51a4e70ac38d2af6e7536f03",
+    "evaluation/issue130/tests/test_environment_proxy.py": "27023b3da15eb8a0f27d3180608a8d007dccbadb86ea2b69a7aac32aaa9b69a0",
+    "evaluation/issue130/Issue130RepresentativeDecisionsCli.java": "c2439ff232fa2eda252c903ebd4cda00f51685c0b1aeca48a11bcce515c5ffdc",
+    "evaluation/issue130/run_representative_decisions.py": "b2f01a76fc2384f29c8eecf4658ff4f41f9096d844822a005f26213914c3f409"
+  },
+  "limits": "Failure case remains unknown until next observed CI failure. Timing/connection counter hypotheses are not established causes; no oracle changed. Full mandatory gate and independent review pending root.",
+  "evidence": ".codex/tdd-evidence/issue130-proxy-ci-observability",
+  "actualProviderCalls": 0,
+  "externalNetworkCallsBySyntheticTests": 0,
+  "sealedDataRead": false,
+  "recordedAt": "2026-10-18T11:55:56Z"
+}

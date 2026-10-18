@@ -1,5 +1,13 @@
 # meet-me-server Implementation Plan
 
+## #130 첫 CI 실패 관측 보완 (2026-10-18 UTC)
+
+- [x] 기술기록 DraftPR132/HEAD62f47bb 게시. CI39123972026은 ARM64·Gradle1717·기존합성102 성공 후 새proxy Java49중assertion1실패(Python14PASS/설정오류0)로중단했다. 원caseID가로그에없어원인확정0, 원실패/HEAD를보존한다.
+- [x] CI-like clean1회63PASS·관측보완뒤63PASS, 기존49/14/TLSfixture/helperc243/b2f bytes불변. 새ID whitelist/privacy4 compiledRED→4GREEN 후 CI에연결. rawreason/env/body/key출력0, 원의미·timeout·expected상한변경0.
+- [x] 후속source567 필수guard exit0/8.718초·전후동일. 기존1717XML재사용/새fresh주장0.
+- [x] 관측 보완 한정 후속독립리뷰 LOCAL PASS·미해결 P1/P2 없음. 고정49 ID/status/type privacy projection과 기존 oracle/실행 경계 불변을 확인했다. 첫 CI 실패 원인 해결 판정은 아니다.
+- [ ] 동일PR132 정상commit/push·새정확HEADCI. 다음실패시고정ID/종류만안전하게확인한다. 실제paid/CA변경0·hold1.56254208/여유.43745792/환급0 유지.
+
 ## #130 환경 proxy 보완·TLS 승인 대기 (2026-10-18 11:10 UTC)
 
 - [x] 원래 첫 N16 CONNECTION STOP/1STARTED_UNKNOWN·15UNRUN/의미분모0·hold1.56254208·여유0.43745792·환급0 원본 보존. JDK DIRECT/같은JDK DNS실패와 환경 proxy 무인증HEAD421만 확인, 모델 가용성·청구0 증명 아님.
