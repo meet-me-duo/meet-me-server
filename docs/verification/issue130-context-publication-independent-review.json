@@ -1,0 +1,110 @@
+{
+  "status": "LOCAL_PUBLICATION_PASS_NARROW_EVALUATION_RECORD_AND_FIXTURE_SCOPE",
+  "recordedAt": "2026-10-18T15:44:09.029678+00:00",
+  "reviewer": "/root/review_pre_submit_design",
+  "sourceRevision": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+  "publicationP1": 0,
+  "publicationP2": 0,
+  "decision": "Existing authorization permits normal followup commit/push to Draft132 and verification of the new exact HEAD CI. This is local publication review, not a passing quality evaluation or merge/release approval.",
+  "directChecks": {
+    "sourceFiles": 591,
+    "beforeAfterCurrentAllEqual": true,
+    "sourceManifestSha256": "188304fcf0853c5752f2df0e6875c5ab0d4a597cff7b7870f7ade585f5194bc9",
+    "productHelpersAndProductionSourceChangedFromExecutionHead": false,
+    "currentDeltaExecutable": "Only synthetic deadline test fixture filesystem isolation; original25 assertion-call ASTs identical. No timeout/call/kill/JDK product policy weakening.",
+    "templateSixHeadingsExact": true,
+    "closes130IndependentLine": true,
+    "broad123StillOpen": true
+  },
+  "evidenceAssessment": {
+    "mandatoryGuard": {
+      "exitCode": 0,
+      "elapsedSeconds": 9.19,
+      "xmlReused": 1719,
+      "passed": 1715,
+      "historicalSkipped": 4,
+      "freshXmlClaim": false
+    },
+    "fixtureRegression": "102 plus unchangedJDK16 plus conditioned15 PASS; FI3 detects13 assertions; original and setup/cause uncertainty preserved.",
+    "independentEarlierAuthorEvidence": "A41/B143/decimal56 and their prior FI remain historical bounded evidence; reviewer authored B/decimal tests and does not replace independent gold raters. Current fixture correction authored separately.",
+    "actualA": "24 technical completions; raw17/24, falseCLEAR0/10 observed only, unnecessaryREVIEW7/14. Diagnostic .8 yields LOW24/B_REQUIRED24/CLEAR_STOP0. Operating quality and utility NOT_ESTABLISHED.",
+    "actualB": "Standalone preselected2 with count2/gen2; frozen gold PASS0/FAIL2. Actual clear-gold and generated-question/proposal quality denominators0; no TwoStage/managed financial/UI E2E.",
+    "numericAudit": "Confidence and probability snapshots24/24 agree; argmax mismatch0/tie0. Separate confidence is not P(CLEAR) or demonstrated calibrated correctness. Fixed threshold reporting is not operating threshold selection.",
+    "latency": "Local engineering case/suite/root intervals are separated. Standalone B includes count+generation and no TwoStage routing; no pure provider latency, stage split or population p50/p95 claim.",
+    "combination": "69 focused plus separate3 initial-pass historical managed-close reproduction at6046+9d9 prompt overlay; not current398 compiled coverage. Existing491 unchanged; no final-model/browser/realOAuth/operating proof. Web create500 contentless OpenAPI drift remains explicit.",
+    "remoteCi": "Exact9d9 prior Quality failure and ARM success retained. Hosted JDK filesystem causation and separate b677 failure cause not established; future exact followup HEAD CI pending."
+  },
+  "policyAddendumAssessment": {
+    "publicationHoldFromInterimResolvedByRecording": true,
+    "frozenGoldScorePreserved": true,
+    "formalContradictionOrModelOnlyCausalFailureEstablished": false,
+    "finding": "Full A prohibits guessing necessary personal facts but abbreviated person-dependent choice description is broader; B leaves the necessary-personal-boundary vs symbolic-relation criterion insufficiently explicit. Policy communication tension is documented separately from fixed gold disagreement.",
+    "raterExposure": "Policy auditor was an original rater and later source-exposed; not presented as a new blind third rater. Explicit post-evaluation B2-only disclosure to root preserved; remaining individual corpus stays private.",
+    "notAuthorized": "No silent re-score, exclusion, new prompt/threshold/policy choice or paid experiment. Any future aligned-policy evaluation needs separately versioned frozen evidence."
+  },
+  "financialAssessment": {
+    "retainedPriorIncludingUnknownUsd": "1.79322880",
+    "newAHeldUsd": "0.34603008",
+    "newBHeldUsd": "0.60825600",
+    "heldUsd": "2.74751488",
+    "engineeringHeadroomUsd": "0.25248512",
+    "capUsd": "3.00",
+    "unknownRefunds": 0,
+    "invoiceHardCapOrInvoiceTotalKnown": false,
+    "firstProvenUnstartedCancellation": "Explicitly authorized reservation settlement only; not a billing refund. Original failed execution/reservation records retained."
+  },
+  "remainingGates": [
+    "Root commit/push and exact new HEAD CI verification remain pending.",
+    "Main merge, deployment, operating activation and further actual calls remain HOLD.",
+    "Operating price/policy/threshold, overall model quality, causal improvement, cost savings and release readiness remain unproved.",
+    "Align A/B policy boundaries before any separately authorized future experiment; do not reuse disclosed B2 as fresh blind holdout."
+  ],
+  "boundFiles": {
+    ".tdd/history/issue130-deadline-fixture-portability/README.md": "7ef78107af721f0dc3c919df3b85b20ca40add950f2fd765aa4f30170bec35b1",
+    ".tdd/history/issue130-deadline-fixture-portability/check_portability.py": "67c0de54fe57ee6bf4c5c50a1f54204a5b3011292c29541b095f3b5b9d3a3934",
+    ".tdd/history/issue130-deadline-fixture-portability/fixture-freeze-exception.json": "45cafaed9f96c766bbb27a86f21bbcd6abe3c31653dccff9e23cfe9f14ac05f9",
+    ".tdd/history/issue130-deadline-fixture-portability/primary-ci-public-metadata.json": "122dc871ede79ae222b79c1ca3ab2d64790d29fb1d5d55854e41b7dd3f875404",
+    ".tdd/history/issue130-deadline-fixture-portability/test_representative_decisions.original.py": "0c94f951bd0c1e4212b485f2eaede75b85057a0f81b184de3eb901718ebc09c7",
+    ".tdd/history/issue130-final-combination/Issue130ManagedClosePostgresTest.kt.txt": "6e12a36a139970eeefb55517c3176650053191272182d57774a2d90d04a2d635",
+    ".tdd/history/issue130-final-combination/README.md": "50b3ed377ad9c36a06ca502b7970bf6202c8f93c720ef5fc170f3c0b0b63c8c0",
+    ".tdd/history/issue130-final-combination/sanitized-review-receipt.json": "b2fb518b852f4bc597c6b6feca05c52ace92cf1f8bee71c915f0daf637d7c89b",
+    ".tdd/verification/issue130-deadline-fixture-portability-faults.json": "0e3777f71ef1e0da959b59314c3e10a440ce7d779170ed439d7623b56a2dfc08",
+    ".tdd/verification/issue130-deadline-fixture-portability.json": "45cafaed9f96c766bbb27a86f21bbcd6abe3c31653dccff9e23cfe9f14ac05f9",
+    "docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md": "5d2c11be675b5cdbae782b92aa7a424d7ffd5fddd836a6662187e5c838fdbf6a",
+    "docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md": "89bd447e8acc6a8cdd3a70bf5e3b2de2cc921c69233d81a8a69d282fba2e2b64",
+    "docs/verification/issue130-9d9-exact-ci-failure.json": "a6c5aeeaf90566881272ade694cbb99c40414f928d412b7e919629fa301073ef",
+    "docs/verification/issue130-a24-argmax-uncertainty.json": "44c415d53749ec0fa1a3477df3d0d2f088cfd89d4c6be707617e4b20bd5778de",
+    "docs/verification/issue130-a24-confidence-audit.json": "24c225f5a387b409425a887e1884144e237059837ddf3721f2e78429205b60ca",
+    "docs/verification/issue130-actual-followup-final-quality.json": "708007fbe7d180892181c500ccdf0b831489274c5930888d508a70b0fb6c0d36",
+    "docs/verification/issue130-b2-policy-audit/independent-cause-addendum.json": "a5d071fd71755e728d54e2a3423e0728b1af1e10bffe6e69ecbf0750cf68328b",
+    "docs/verification/issue130-b2-policy-audit/policy-conflict.json": "3719f3c6082e048f05e4a50cb3668571092d71d20fd3ab3fc9dc167a97ce9fb8",
+    "docs/verification/issue130-b2-policy-audit/policy-conflict.md": "da62957fa64318017804d307adfbee1149bc110f311e3ba6287f346f2c1fe628",
+    "docs/verification/issue130-context-actual-a24-aggregate.json": "750c044101e3b13c161effe1eb2aaf85c77539b104e44dbaa7c90b1adab53639",
+    "docs/verification/issue130-context-actual-b2-aggregate.json": "93d0f6eda24d0b62c142dc168381537a1dd49d93960f3f6735e1ab8d66a0d912",
+    "docs/verification/issue130-context-actual-latency.json": "3a92d2b70085ea1db88fb3c2625ef012a86342dec55615c07baafb3a1309eb15",
+    "docs/verification/issue130-context-actual-stage-results.json": "932b36daf087b549d8817857b5407890bc45428f5e46d67442420e0647d230f7",
+    "docs/verification/issue130-context-routing-utility.json": "e5d8bf15dfe1230ce61dbaa1f3833e765853eb8166de08c748d476da8e5b82c8",
+    "docs/verification/issue130-cost-stop-and-reexecution-plan.md": "7f9a50c093386dcd9e989ee89ae93c32d8c718c024b967e5d97551c8ec95861b",
+    "docs/verification/issue130-decisions-current-contract-handoff.md": "d9af2e3673a2e0236530cba5c0979a4881380d8e8d2e2ea58bbaac63fea9c3ad",
+    "docs/verification/issue130-decisions-synthetic-request-example.json": "cb9574eb3036d4a52ecd73442839c8fc489d8858fdcdcba01156543fdca48493",
+    "docs/verification/issue130-final-combination-summary.json": "babfd2a1925d36fd0c5429a495c8a45273a616f12754c8f80350297eca7aa2ed",
+    "evaluation/issue130/tests/test_representative_decisions.py": "e09aa107f8be6aad1da51696ac9928162f3c902940a08d56267f907ba819a05f",
+    "implementation_plan.md": "94867ac6e54acda61e4623a100d47eb1a601d9a02d6ec12f074753248491c152"
+  },
+  "prBody": {
+    "path": "/tmp/issue130-context-live-retry/publication/pr-body.md",
+    "sha256": "476c1ac85b37335b7d321fa8a1173206f169e9f4b5f204a9679579be44a94238"
+  },
+  "historicalInterim": {
+    "path": "/tmp/issue130-context-live-retry/technical-record-independent-review.json",
+    "sha256": "7b18bd9e5b54681f6c22d5b5e87a80bd9376af3ff7401f7ca29678504f0df570",
+    "status": "Earlier policy-addendum publication HOLD preserved, superseded only for this recording scope."
+  },
+  "reviewerActivity": {
+    "privateIndividualInputGoldIndexWireRawResponseCaEnvironmentKeyRead": false,
+    "sourceTestCiEdits": 0,
+    "gradleRuns": 0,
+    "networkOrActualModelCalls": 0,
+    "commitsPushesMergesDeployments": 0
+  }
+}

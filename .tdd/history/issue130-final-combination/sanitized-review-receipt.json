@@ -1,0 +1,88 @@
+{
+  "status": "INDEPENDENT_ORACLE_AND_HISTORICAL_REPRODUCTION_REVIEW_PASS",
+  "basisOracle": {
+    "sha256": "6613461f8c9aadd398ffab17e6bc196d46df4c3002bf74f7c7356286bb2fe627"
+  },
+  "newTestSha256": "6e12a36a139970eeefb55517c3176650053191272182d57774a2d90d04a2d635",
+  "testOnlyCopy": "Issue130ManagedClosePostgresTest.kt.txt",
+  "archiveMeaning": "Historical executable-test source reproduction only. This .tdd/history copy is NOT a compiled or executed test on the current PR132/base398 tree.",
+  "requiredCombination": {
+    "baseRevision": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "overlayRevision": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+    "overlayPath": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+    "overlaySha256": "bbb36cd731377fccbf0a01e9ee5202e51f62a1790f8dac175ac404f740c54283"
+  },
+  "sourceAudit": {
+    "originalFiles": 491,
+    "originalMismatches": 0,
+    "newFiles": 1,
+    "runSourceFiles": 492,
+    "beforeAfterEqual": true,
+    "productChangesBeyondDeclaredPromptOverlay": 0,
+    "oldTestChanges": 0
+  },
+  "independentAssertionAssessment": {
+    "actualCreateToReadyNoSeed": true,
+    "actualWorkerAConfidentClearAndAReviewCountBClear": true,
+    "canonicalTlsSocketCounts": [
+      0,
+      1,
+      4
+    ],
+    "sameEpochAndImmutablePolicy": true,
+    "heldSyntheticAmounts": [
+      0,
+      3,
+      15
+    ],
+    "settledSyntheticAmounts": [
+      0,
+      0,
+      0
+    ],
+    "unsubmittedHostAndExactlyAcceptedMembers": [
+      0,
+      1,
+      2
+    ],
+    "staleRevision409NoFinancialOrSocketChange": true,
+    "unrelatedAccount403NoOtherRaw": true,
+    "earlyClose409ThenHostConfirmedClose": true,
+    "insufficientZeroOneNoBatchRunItems": true,
+    "twoAcceptedExactLastVersionUuidSet": true,
+    "pendingInitialAndPendingEditPreserved": true,
+    "closedLateWorkerAndPostNoNewCostOrVersion": true
+  },
+  "execution": {
+    "classification": "INITIAL_PASS_REGRESSION_NOT_CHRONOLOGICAL_PRODUCT_RED",
+    "finalTests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "freshXmlSuites": 1,
+    "elapsedSeconds": 40.959,
+    "receiptSha256": "e29cc20711cfc04a699349303736911266cd080b22b84e0b2a5680fdf8b59cbc",
+    "xmlSha256": "8a1f796e8962378b9184145eeb19dde02d6b89f470120f683541cbe897aca374",
+    "priorFocused69SeparateRunNotFresh72Claim": true,
+    "compileSetupFailure": "Initial nullableSet2 compiler errors: no new tests executed; stale69 XML was excluded, not productRED.",
+    "formatting": "New-file-only lint; same124 ordered string literals; formatted final3 rerunPASS."
+  },
+  "privacy": {
+    "testDataSynthetic": true,
+    "onlyExplicitSyntheticProviderKeys": true,
+    "productionKeysOrPersonalGoldOrRealCaseBodiesCopied": false,
+    "generatedTestTlsMaterialNotCopied": true,
+    "rawLogsAndXmlIntentionallyNotPublished": true
+  },
+  "limits": [
+    "No final-analysis worker/final-model call",
+    "No browser/realOAuth/HTTPS browser proof",
+    "Synthetic external responses do not establish model semantic quality",
+    "No operating policy selection, activation, merge or deployment",
+    "Web OpenAPI create500 drift remains separate; new3 does not test Swagger/empty500 itself",
+    "Actual A/B model quality failures unchanged"
+  ],
+  "publicationConstraint": "Keep reproduction .kt.txt outside src/test, include README with exact combinations/dependencies/command; never present as current-base test coverage. Inventory exemption does not extend operational PASS.",
+  "actualModelCalls": 0,
+  "recordedAt": "2026-10-18T15:35:42.422530Z"
+}

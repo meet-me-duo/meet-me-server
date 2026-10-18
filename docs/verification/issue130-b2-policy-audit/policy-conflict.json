@@ -1,0 +1,83 @@
+{
+  "status": "POLICY_CONTRACT_TENSION_CONFIRMED_MODEL_FAILURE_CAUSE_NOT_ESTABLISHED",
+  "recorded_at_utc": "2026-10-18T15:41:40.741088+00:00",
+  "role_and_exposure": "Post-result policy auditor; previously author of second independent gold and first semantic judgement. Not source-blind in this audit and not an unexposed new rater. Full A instruction/choice descriptions first inspected under this explicit new authorization; B207–213 had been read for pre-result gold adjudication.",
+  "scope": "Provided A instruction+choice ranges27–67/212–231; B request23–49/instructions203–214; evaluation docs9–13; custody README34; original user agreement and new parent-authorized usefulness criterion. No other22 raw inputs, old16 corpus, new model outputs or tuning.",
+  "sources": {
+    "A_contract": {
+      "path": "/workspace/issue123-representative-evaluation/server/src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+      "sha256": "bbb36cd731377fccbf0a01e9ee5202e51f62a1790f8dac175ac404f740c54283"
+    },
+    "B_contract": {
+      "path": "/workspace/issue123-representative-evaluation/server/src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880"
+    },
+    "public_evaluation_contract": {
+      "path": "/workspace/issue123-representative-evaluation/server/docs/ISSUE_107_DECISION_EVALUATION.md",
+      "sha256": "b1fb095a6134d0ddfd4952e5f815c95a200766ef32c180a390315d1d144a888d"
+    },
+    "custody_B_definition": {
+      "path": "/tmp/issue130-context-live/custody/README.md",
+      "sha256": "e86adead1c4c989e474d9d44ae5f186e2181aec6826e1cba49e838b3296bd63f"
+    }
+  },
+  "findings": [
+    {
+      "id": "PC01",
+      "kind": "Within_A_wording_ambiguity",
+      "evidence": [
+        "A CLEAR choice description52 includes valid broad or person-dependent conditions.",
+        "A instruction226 permits conditions only without guessing a necessary personal/local fact;228 expressly identifies material missing facts and prohibits invented routine/event times."
+      ],
+      "finding": "The short choice description has broader natural reading than the qualified main rule. Reading the complete A instruction supports reviewing a necessary missing own routine time, but the shorthand does not explicitly distinguish this from a valid person-relative predicate."
+    },
+    {
+      "id": "PC02",
+      "kind": "Cross_contract_goal_ambiguity",
+      "evidence": [
+        "Public evaluation doc9 allows valid third-party dependencies and personal-relative travel constraints and rejects treating missing third-party schedules alone as ambiguity.",
+        "Doc11 separates semantic clarity from current structuring-schema support or candidate existence.",
+        "Doc13 prohibits adding arbitrary external personal schedules to determine materiality.",
+        "B208–209 asks whether meaning is determined/unresolved interpretations change conditions; it does not explicitly distinguish unknown personal-clock prerequisites from a clear symbolic relationship."
+      ],
+      "finding": "Two internally plausible tasks coexist: preserve an unambiguous symbolic relationship for later analysis, or ensure the participant own necessary boundary can be used from supplied context without external private facts. The second supports the frozen SAFE_EDIT gold; the first can support CLEAR without inventing any time. Neither lack of a numerical interval nor mere textual preservation alone resolves this conflict."
+    },
+    {
+      "id": "PC03",
+      "kind": "Frozen_gold_disagreement_vs_attribution",
+      "finding": "Observed standalone B2 responses remain CLEAR2 and the frozen first ratings remain semantic pass0/fail2. For the personal-routine case, there is a genuine specification-boundary issue; these artifacts alone cannot establish whether the generator violated its intended task or followed the symbolic-semantic reading. The other fixed case with unresolved date-to-mode binding is not explained by the person-dependent wording conflict. No historical score, gold or first judgement was changed."
+    }
+  ],
+  "distinctions": [
+    {
+      "class": "Intentional_defined_breadth",
+      "rule": "An explicitly allowed broad interval, soft preference, named exclusion or provided recurring search-period condition needs no forced narrowing."
+    },
+    {
+      "class": "Valid_other_availability_dependency",
+      "rule": "Aligning with the intersection of participants actual availability is a meaningful condition; absent other participant raw input alone does not justify asking this participant for it."
+    },
+    {
+      "class": "Missing_own_essential_routine_boundary",
+      "rule": "If the intended check requires operational use of this own boundary from supplied context, unknown personal work/class/event end cannot be guessed or replaced by two invented times: direct edit is appropriate. If preserving the symbolic predicate is itself considered sufficient, CLEAR can be consistent. This prerequisite must be explicit."
+    },
+    {
+      "class": "Schema_limitation_or_no_match",
+      "rule": "Unsupported extraction schema, no matching candidates or out-of-range dates alone must not be relabeled ambiguity."
+    }
+  ],
+  "user_intent_assessment": "The parent-supplied user distinction between everyday/local meaning requiring unavailable personal context and meaning resolved by the text favors contextual usability over mere literal predicate retention. The original generic material-ambiguity/no-forced-narrowing agreement does not itself precisely define every valid person-dependent predicate. This supports clarifying the normative scope, not asserting hidden model reasoning or silently replacing the historical oracle.",
+  "recommendation": "Record and reconcile the intended applicability criterion across A instructions, choice descriptions, B instructions and evaluation definitions before any future preregistered run. Explain which dependencies remain valid and which personal facts are necessary; do not use current structuring support as the criterion. Preserve original artifacts and report policy ambiguity separately; any clarified-policy scoring requires explicitly versioned rules and must not be presented as the original blind judgement. No prompt patch or fresh call is authorized by this audit.",
+  "unchanged_artifact_sha256": {
+    "original_independent_gold": "9783daddbc123153a739e51def32d9c702a59a1f5488c4afdd13c2e8609edd04",
+    "adjudicated_gold": "49becfc42834e5af737831dd5d26cedd3cd9d9577a7e46e6617a4be24a5160c2",
+    "first_semantic_judgement": "e4f0409d46ea430b9d9c5f8eb9dbc2243bbde8b04012c7a1823941b742d87445"
+  },
+  "historical_score_modified": false,
+  "gold_modified": false,
+  "first_ratings_modified": false,
+  "source_modified": false,
+  "new_paid_or_model_calls": 0,
+  "individual_case_identifiers_or_other22_raw_disclosed": false,
+  "remaining_blocker": "Normative policy alignment is required to attribute the personal-routine CLEAR outcome unequivocally as model semantic failure; no new participation/deadline policy decision is proposed."
+}

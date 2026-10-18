@@ -1,0 +1,17 @@
+{
+  "scope": "FINAL_SOURCE_FULL_GUARD_AFTER_A24_B2_IMPLEMENTATION",
+  "verificationPhase": "ACTUAL_A24_B2_FINAL_DEADLINE_FIXTURE_FOLLOWUP",
+  "exitCode": 0,
+  "sourceBeforeAfterEqual": true,
+  "sourceFiles": 591,
+  "sourceManifestSha256": "188304fcf0853c5752f2df0e6875c5ab0d4a597cff7b7870f7ade585f5194bc9",
+  "elapsedSeconds": 9.19,
+  "tests": 1719,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 4,
+  "suites": 215,
+  "allXmlFresh": false,
+  "paidCalls": 0,
+  "keysBlankInSubprocess": true
+}

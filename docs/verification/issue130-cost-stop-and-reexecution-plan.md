@@ -1,4 +1,14 @@
-# 비용 표기 구성 중단과 재실행 조건
+# 미실행 예약 정산과 후속 단회 실행 완료
+
+2026-10-18 UTC. 사용자의 명시 승인 뒤 첫 구성 중단의 USD0.34603008만 별도 미실행 예약 정산으로 해제했다. 원 실패·예약 기록과 기존 누적 USD1.79322880(UNKNOWN 포함)은 그대로다. 이는 실제 청구 환급이 아니다. 정산 원장 SHA `b572d22af2be365528d5fd4a0f3632b7feb6073234a12b1c633ce8a79b0929ba`와 독립 재조회 SHA `d1c6d99af5b331ff02c66bcc8ee16b5cc962bf3c1904e9271afdaf174205a35b`를 연결했다.
+
+별도 새 경로에서 정확 게시 HEAD `9d9c934fd8f999f0bd4a1723bd8987b9efd86b93`·source/runtime·canonical 금액·같은 A24/B2 입력·gold를 봉인하고 단계별 독립 수용을 받았다. A24 Decisions24회, 사전 지정 standalone B2 count2회/generation2회가 각각 단회 기술 완료됐다. 재시도·redirect·fallback은0이며 실행 중 source/runtime 지문은 같다. 원 실패 디렉터리와 원 계획은 수정하지 않았다.
+
+새 A 예약0.34603008과 B 예약0.60825600을 더한 현재 유지 예약은 **USD2.74751488**, 승인 USD3 안의 engineering 여유는 **USD0.25248512**다. 실제 invoice·count 과금은 미확인이고 engineering reservation을 실제 청구 hard cap으로 표시하지 않는다. 추가 실제 호출은 중단했다. A의 품질/운영 효용은 NOT_ESTABLISHED이고 B2 의미 판정은 두 독립 평가에서 모두0/2 correct·FAIL이다. 상세는 [최신 단계 결과](issue130-context-actual-stage-results.json)를 따른다.
+
+아래는 정산·재실행 전 기록이다. 당시 미적용·UNRUN 문구를 현재 상태로 해석하지 않는다.
+
+# 비용 표기 구성 중단과 재실행 조건 (역사)
 
 2026-10-18 UTC. 현재 실제 재시도·B2·예약 정산 적용은 모두0이다.
 

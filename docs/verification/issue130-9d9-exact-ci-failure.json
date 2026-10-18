@@ -1,0 +1,34 @@
+{
+  "status": "HISTORICAL_FAILURE_PRESERVED",
+  "head": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+  "runId": 39138572286,
+  "qualityJobId": 117708064873,
+  "qualityConclusion": "failure",
+  "armJobId": 117708065046,
+  "armConclusion": "success",
+  "checkout": "2fbeabaeed1599bfe72eec80e5742694cada152a",
+  "checkoutParents": [
+    "3982535765e878875a901dd9d28352358e594f6f",
+    "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93"
+  ],
+  "headAndCheckoutTree": "341c8ab44ff99506509a8203e370bf3805e845db",
+  "headTreeMatchesCheckout": true,
+  "gradleGate": "success",
+  "boundedHarnessCompileJava": "success",
+  "boundedHarnessJava": {
+    "tests": 77,
+    "pass": 77,
+    "assertionFailures": 0,
+    "errors": 0
+  },
+  "pythonAssertionFailureIds": [
+    "test_CLI21_compilation_counts_before_java_spawn",
+    "test_CLI22_late_child_success_never_accepted_after300",
+    "test_CLI23_child_timeout_no_second_java_or_retry",
+    "test_CLI24_startup_crosses_deadline_kills_created_child"
+  ],
+  "laterHarnessSteps": "skipped",
+  "localReproduction": "Same four assertion failures with missing/symlink JAVA_HOME; valid fixture passes. Hosted JDK filesystem metadata unobserved; no exact remote cause claim.",
+  "remediation": "Isolate mocked deadline fixture JDK filesystem precondition; keep deadline/count/kill assertions and production JDK selection unchanged. New HEAD CI required.",
+  "oldB677FailureCause": "UNKNOWN_SEPARATE_HISTORY_PRESERVED"
+}

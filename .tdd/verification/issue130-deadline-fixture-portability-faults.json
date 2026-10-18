@@ -1,0 +1,81 @@
+{
+  "workItem": "issue130-deadline-fixture-portability",
+  "sourceRevision": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+  "boundary": "Synthetic timing fixture filesystem isolation; whole300 and created-child cleanup assertions preserved. In-memory module mutations only; no workspace product mutation and no claim of the remote host filesystem cause.",
+  "sourceFiles": [
+    {
+      "path": "evaluation/issue130/run_representative_decisions.py",
+      "sha256": "e79fa4b9ba708876a1166db8b2b587478c39e2299144bd57928b16360ee9b366"
+    },
+    {
+      "path": "evaluation/issue130/tests/test_representative_decisions.py",
+      "sha256": "e09aa107f8be6aad1da51696ac9928162f3c902940a08d56267f907ba819a05f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "evaluation/issue130/tests/test_representative_decisions.py",
+      "sha256": "e09aa107f8be6aad1da51696ac9928162f3c902940a08d56267f907ba819a05f"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Remove only fixture JAVA_HOME pin; invalid/symlink host dependency must reappear",
+      "command": [
+        "python3",
+        ".tdd/history/issue130-deadline-fixture-portability/check_portability.py",
+        "--source-root",
+        "<repository>",
+        "--classpath-file",
+        "<unchanged compiled synthetic runtime>",
+        "--java",
+        "<trusted JDK17>/bin/java",
+        "--output",
+        "<new scratch directory>",
+        "--mutant",
+        "fixture_unpin"
+      ],
+      "detectedBy": "test_CLI21_compilation_counts_before_java_spawn; test_CLI22_late_child_success_never_accepted_after300; test_CLI23_child_timeout_no_second_java_or_retry; test_CLI24_startup_crosses_deadline_kills_created_child",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Extend actual wrapper whole budget by300 in a transient module",
+      "command": [
+        "python3",
+        ".tdd/history/issue130-deadline-fixture-portability/check_portability.py",
+        "--source-root",
+        "<repository>",
+        "--classpath-file",
+        "<unchanged compiled synthetic runtime>",
+        "--java",
+        "<trusted JDK17>/bin/java",
+        "--output",
+        "<new scratch directory>",
+        "--mutant",
+        "extended_deadline"
+      ],
+      "detectedBy": "test_CLI20_freeze_validation_counts_in_whole300; test_CLI21_compilation_counts_before_java_spawn; test_CLI22_late_child_success_never_accepted_after300; test_CLI24_startup_crosses_deadline_kills_created_child",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Suppress actual wrapper created-child process-group cleanup in a transient module",
+      "command": [
+        "python3",
+        ".tdd/history/issue130-deadline-fixture-portability/check_portability.py",
+        "--source-root",
+        "<repository>",
+        "--classpath-file",
+        "<unchanged compiled synthetic runtime>",
+        "--java",
+        "<trusted JDK17>/bin/java",
+        "--output",
+        "<new scratch directory>",
+        "--mutant",
+        "skip_startup_kill"
+      ],
+      "detectedBy": "test_CLI24_startup_crosses_deadline_kills_created_child",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T15:26:52.439396Z"
+}

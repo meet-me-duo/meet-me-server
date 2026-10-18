@@ -243,7 +243,17 @@ class RunnerContract(unittest.TestCase):
                                      CalledProcessError=subprocess.CalledProcessError,
                                      check_output=lambda command, **kw: fake_run(command, stdout=subprocess.PIPE, **kw).stdout)
         digest = hashlib.sha256(self.plan.read_bytes()).hexdigest()
-        env = {'OPENAI_API_KEY': 'synthetic-issue130-key-MUST-NOT-LEAK',
+        # This fixture checks time accounting with mocked children. Keep the
+        # real JDK filesystem precondition independent of the host JAVA_HOME;
+        # actual JDK selection has its own separate portability contracts.
+        deadline_home = self.private / 'deadline-jdk'
+        (deadline_home / 'bin').mkdir(parents=True)
+        for tool in ('javac', 'java'):
+            executable = deadline_home / 'bin' / tool
+            executable.write_text('#!/bin/sh\nexit 99\n')
+            executable.chmod(0o700)
+        env = {'JAVA_HOME': str(deadline_home),
+               'OPENAI_API_KEY': 'synthetic-issue130-key-MUST-NOT-LEAK',
                'GEMINI_API_KEY': '', 'ISSUE130_FROZEN_PLAN_SHA256': digest,
                'ISSUE130_EXECUTE_FROZEN': digest}
         with mock.patch.object(RUNNER, 'validate_plan', validate), mock.patch.object(RUNNER, 'subprocess', fake, create=True), \

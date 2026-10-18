@@ -1,0 +1,202 @@
+{
+  "status": "A24_TECHNICAL_COMPLETE_UTILITY_NOT_ESTABLISHED_B2_SEMANTIC_FAIL",
+  "recordedAt": "2026-10-18T15:20:55.226731+00:00",
+  "executionHead": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+  "publicationHead": "FOLLOWUP_COMMIT_TO_BE_VERIFIED_SEPARATELY",
+  "sourceDuringExecutionBeforeAfterEqual": true,
+  "settlement": {
+    "status": "APPLIED_PROVEN_UNSTARTED_RESERVATION_CANCELLATION",
+    "cancelledReservationUsd": "0.34603008",
+    "retainedPriorIncludingUnknownUsd": "1.79322880",
+    "oldRecordsUnchanged": true,
+    "billingRefund": false,
+    "invoiceKnown": false,
+    "receiptSha256": "b572d22af2be365528d5fd4a0f3632b7feb6073234a12b1c633ce8a79b0929ba",
+    "independentReadbackSha256": "d1c6d99af5b331ff02c66bcc8ee16b5cc962bf3c1904e9271afdaf174205a35b"
+  },
+  "execution": {
+    "A": {
+      "status": "EXECUTED_ONCE_NO_RETRY",
+      "accepted": true,
+      "planSha256": "31e11794b1df4b76c430923a3e3ba5c490491e3ecdde920b8f539b26d4a4cc92",
+      "reviewSha256": "83713f0e36ab095982a3e54f4dc79fb8d3b98f7b0d71080e2536e63b7cea2269",
+      "reservationSha256": "e23381e6f6f9a69ef0bfa5f623ce7211d4ab5693b9a1ca004f123ea64412e2be",
+      "exitCode": 0,
+      "failureCode": null,
+      "sourceBeforeAfterEqual": true,
+      "aggregate": {
+        "suiteStatus": "COMPLETED",
+        "caseCount": 24,
+        "caseStarts": 24,
+        "unrunCases": 0,
+        "outcomes": {
+          "B_REQUIRED_NOT_RUN": 24
+        },
+        "physicalDecisionsCalls": 24,
+        "physicalGenerationCalls": 0,
+        "countCalls": 0,
+        "usageCompleteCases": 24,
+        "unknownUsageStartedCases": 0
+      },
+      "reservedCumulativeUsd": "2.13925888",
+      "newHeldUsd": "0.34603008",
+      "automaticRetries": 0,
+      "invoiceAmountKnown": false,
+      "receiptSha256": "0250d9bb9bce0a101f12b14f23fdac9d8a4dcac3a7bba60fad94ccd90835b9b5",
+      "suiteSha256": "69880a454bae5c9ae1ed5e1b4640de856bc6814a3042208200d6f194f2d209e7"
+    },
+    "B": {
+      "status": "EXECUTED_ONCE_NO_RETRY",
+      "accepted": true,
+      "planSha256": "12398379002e362ed9bd154ed99c7674edaff874ab11a54be97185aa7890668f",
+      "reviewSha256": "92e9924c5d67d40e8f5ea1692fee6301735e3fa249960ed5197862905372cace",
+      "reservationSha256": "344526eed46c722a13f9016d77679cc266af1a5126f0f70532d830f1b894c122",
+      "exitCode": 0,
+      "failureCode": null,
+      "sourceBeforeAfterEqual": true,
+      "aggregate": {
+        "suiteStatus": "COMPLETED",
+        "caseCount": 2,
+        "caseStarts": 2,
+        "unrunCases": 0,
+        "outcomes": {
+          "CLEAR": 2
+        },
+        "classifierCalls": 0,
+        "countCalls": 2,
+        "generationCalls": 2,
+        "usageCompleteCases": 2,
+        "unknownUsageStartedCases": 0
+      },
+      "reservedCumulativeUsd": "2.74751488",
+      "newHeldUsd": "0.60825600",
+      "automaticRetries": 0,
+      "invoiceAmountKnown": false,
+      "receiptSha256": "d3ef1de8af01c14f3f66581b609d1af4c064f4426c97c12c37003861b59709d1",
+      "suiteSha256": "162a83784947bd433a975618835a54df15bf766b750173f0075d677611032893"
+    }
+  },
+  "cost": {
+    "approvedAggregateUsd": "3.00",
+    "newAReservedUsd": "0.34603008",
+    "newBReservedUsd": "0.60825600",
+    "activeHeldUsd": "2.74751488",
+    "engineeringHeadroomUsd": "0.25248512",
+    "invoiceKnown": false,
+    "reservationIsInvoiceHardCapProof": false,
+    "unknownRefunds": 0,
+    "extraActualCalls": 0
+  },
+  "aQuality": {
+    "rawFalseClear": {
+      "count": 0,
+      "denominator": 10
+    },
+    "rawFalseReview": {
+      "count": 7,
+      "denominator": 14
+    },
+    "rawExact": {
+      "count": 17,
+      "denominator": 24
+    },
+    "normalizedLowConfidence": 24,
+    "bRequired": 24,
+    "clearStop": 0,
+    "qualityAcceptance": "NOT_ESTABLISHED",
+    "operatingUtility": "NOT_ESTABLISHED",
+    "rawZeroFalseClearGate": "OBSERVED_ZERO_ONLY",
+    "old16Pooled": false,
+    "old16FailurePreserved": true,
+    "independentAggregateSha256": "750c044101e3b13c161effe1eb2aaf85c77539b104e44dbaa7c90b1adab53639",
+    "independentAuditSha256": "178324038277b18122f1ce64a77f50f25a8ad6de4057285092ad445247cbff6d",
+    "unnecessaryBOnClearGold": {
+      "count": 14,
+      "denominator": 14
+    }
+  },
+  "bQuality": {
+    "status": "SEMANTIC_FAIL_CONFIRMED_BY_TWO_INDEPENDENT_RATERS",
+    "preselectedMaterialChoice": 1,
+    "preselectedSafeEditOnly": 1,
+    "actualClearGoldDenominator": 0,
+    "remainingReviewNotRun": 8,
+    "standaloneQualityOnly": true,
+    "twoStageOrManagedBudgetE2E": false,
+    "semanticCorrect": {
+      "count": 0,
+      "denominator": 2
+    },
+    "falseClearOnMaterialInputs": {
+      "count": 2,
+      "denominator": 2
+    },
+    "missingMaterialChoice": {
+      "count": 1,
+      "denominator": 1
+    },
+    "missingSafeEditOnly": {
+      "count": 1,
+      "denominator": 1
+    },
+    "raterAgreement": "2/2 expected/actual/semantic; no disputes",
+    "questionOrProposalQualityDenominator": 0,
+    "aggregateSha256": "93d0f6eda24d0b62c142dc168381537a1dd49d93960f3f6735e1ab8d66a0d912",
+    "auditSha256": "51ef3316585962d463ad28fadd82b91b55c74a5d6d976d8d3c98d86b1e43def7",
+    "postScorePolicyAudit": {
+      "status": "POLICY_CONTRACT_TENSION_CONFIRMED_MODEL_FAILURE_CAUSE_NOT_ESTABLISHED",
+      "secondSafeEditCase": "Unknown personal work-end fact vs relation-preserving CLEAR; B missing-fact boundary under-specified",
+      "firstChoiceCase": "Distinct date-to-online-only binding remains unresolved under stated context",
+      "fixedGoldAndOriginalScoresUnchanged": true,
+      "modelOnlyCausalFailureEstablished": false,
+      "promptOrPolicyChanged": false,
+      "raterAuditSha256": "3719f3c6082e048f05e4a50cb3668571092d71d20fd3ab3fc9dc167a97ce9fb8",
+      "raterAuditDocumentSha256": "da62957fa64318017804d307adfbee1149bc110f311e3ba6287f346f2c1fe628",
+      "separateReviewerAddendumSha256": "a5d071fd71755e728d54e2a3423e0728b1af1e10bffe6e69ecbf0750cf68328b"
+    }
+  },
+  "limits": {
+    "goldThresholdInstructionsAfterResultsChanged": false,
+    "unnecessaryReviewIsGeneratedQuestionCount": false,
+    "operatingP50P95": null,
+    "causalImprovementClaim": false,
+    "deploymentOrOperatingActivation": false,
+    "rootReadIndividualFreshInputsGoldOrOutputsDuringExecution": false
+  },
+  "currentCi": {
+    "head": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+    "runId": 39138572286,
+    "qualityJobId": 117708064873,
+    "quality": "FAILURE",
+    "assertionTestIds": [
+      "CLI21",
+      "CLI22",
+      "CLI23",
+      "CLI24"
+    ],
+    "armJobId": 117708065046,
+    "arm": "SUCCESS",
+    "gradleAnd77JavaHarnessTests": "PASS",
+    "exactHostedJdkFilesystemCause": "NOT_ESTABLISHED",
+    "separateOldB677BaseFailureCause": "UNKNOWN_PRESERVED"
+  },
+  "latencyAggregateSha256": "3a92d2b70085ea1db88fb3c2625ef012a86342dec55615c07baafb3a1309eb15",
+  "routingUtilitySha256": "e5d8bf15dfe1230ce61dbaa1f3833e765853eb8166de08c748d476da8e5b82c8",
+  "recommendation": "PRESERVE_SAFETY_ARCHITECTURE_HOLD_AI_CANDIDATE_MERGE_ACTIVATION_AND_FURTHER_TUNING_PENDING_OFFICIAL_CONTRACT_REVIEW_AND_NEW_PREREGISTERED_VALIDATION",
+  "postEvaluationExposure": {
+    "parentExplicitRequest": "B2 synthetic text/output/failure reasons only, after independent scoring",
+    "B2OnlyCasesDisclosedToRoot": 2,
+    "remainingFreshHoldoutIndividualDisclosure": 0,
+    "originalEvaluationBlindHistoryPreserved": true,
+    "furtherTuningOrActualCalls": 0
+  },
+  "historicalOriginalLatencyAggregateSha256": "bdea532085ed22d8dca41072dc2426ce5d8d6357be61a2592df4ef726f74436d",
+  "offlineResponseAudit": {
+    "confidenceAggregateSha256": "24c225f5a387b409425a887e1884144e237059837ddf3721f2e78429205b60ca",
+    "argmaxUncertaintySupplementSha256": "44c415d53749ec0fa1a3477df3d0d2f088cfd89d4c6be707617e4b20bd5778de",
+    "finalSupplementReceiptSha256": "6d310fc50323cb4da5134f52ccd6353bf0b144dbcc342183c66e3ea66ec98631",
+    "selectedOperatingThreshold": false,
+    "originalScoreChanged": false,
+    "newActualCalls": 0
+  }
+}

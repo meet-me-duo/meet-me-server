@@ -1,4 +1,21 @@
-# #130 A24 구성 중단·예약 정산 근거 검토 (2026-10-18 UTC)
+# #130 A24·B2 실제 평가와 출시 차단 (2026-10-18 UTC)
+
+- [x] [USER] 첫 구성 중단의 미실행 예약 USD0.34603008만 근거·사유를 보존해 정산하고, 기존 USD3 안에서 새 봉인 A24→사전 B2를 각 한 번 실행하도록 승인했다. 기존 UNKNOWN 포함 USD1.79322880은 유지하며 추가 예산을 요청하지 않는다. 최종 품질·보안 게이트를 조건으로 통합·병합·실배포·로그인·README 작업도 승인됐고 새 자격증명/보안 확대는 제외됐다.
+- [x] [AGENT] 미실행 예약 정산 APPLIED와 독립 재조회 완료. 실제 청구 환급이 아니며 원 실패/예약 장부는 불변이다. 별도 경로에서 정확 게시 HEAD `9d9c934fd8f999f0bd4a1723bd8987b9efd86b93`, source/runtime, 기존 A24/B2 입력·gold, 금액 문자열과 단계별 실행 계획/수용을 다시 봉인했다.
+- [x] [AGENT] A24 Decisions24회·B2 count2/generation2회 단회 기술 완료, usage 전수 확인, retry/redirect/fallback0·source/runtime 전후동일. B는 사전 지정 standalone 품질 평가이며 실제 TwoStage·관리형 금융·웹 제출 E2E가 아니다. 추가 실제 호출 중단.
+- [x] [AGENT] A 독립 채점: raw miss0/10, 불필요 REVIEW7/14, 일치17/24. 고정 진단 .8에서 전원 LOW_CONFIDENCE/B_REQUIRED24·CLEAR_STOP0이다. raw miss0은 관측 표본 한정이고 품질·운영 효용은 NOT_ESTABLISHED다. 기존16 FAIL은 풀링하지 않고 보존한다.
+- [x] [AGENT] B2 두 평가자의 최초 독립 판정은2/2 일치·미해결차이0으로 봉인했다. 의미0/2 PASS·2/2 FAIL(필수 선택형/직접 수정 안내 누락 각1, 실제 CLEAR2)이며 기술 완료를 의미 성공으로 표시하지 않는다. 명확한 gold 입력의 B 분모와 질문/선택지 품질 분모는0이다.
+- [x] [AGENT] 정확 HEAD9d9 CI39138572286의 CLI21–24 assertion 실패에 대해 disposable JDK fixture만 격리했다. 기존25assert AST 동일, 원본/예외 보존, 조건별 원RED8assert→15GREEN·기존102/JDK16 PASS·FI3에서13assert 탐지/복원이다. production/timeout/count/kill 변경0. hosted JDK 파일 상태와 b677 원인은 미확정으로 유지하고 정확 후속 HEAD CI는 별도 확인한다.
+- [x] [AGENT] 부모 공식 조사와 현재 choice3/6필드 JSON문자열/directHTTP 계약을 대조하고 저장24 응답만 Decimal 감사했다. confidence/확률 저장24/24 일치·argmax불일치0/동률0, confidence .11–.66/pCLEAR .09–.57/pINDET .09–.22다. 사전 보고용 threshold별 coverage만 기록하고 최적값/운영합격을 선택하지 않았다. confidence≠보정된 정답확률/.8=진단값/운영nullOFF를 명시한다. B2는 평가 후 별도 명시 승인으로만 root에게 공개했다.
+- [x] [AGENT] 최신 서버 PR1336046+짧은 지침9d9의 실제 managed graph를 외부 합성 TLS transport만으로 검증했다. 기존69 freshPASS와 별도 사전독립oracle의 마감accepted0/1/2 신규3 PASS·독립감사 완료(합산새72로표시하지않음). 기존491원본불변/새test1개는6046 조합 재현 archive로 보존하고 현재base398 livecompiledtest와 구별한다. 웹33 실제OpenAPI 대조는 본문없는create500응답 누락1건/서버URL정규화 차이뿐이다. 최종브라우저/실OAuth·최종모델·DB첫전환·운영정책은 미검증이다.
+- [x] [AGENT] 후속 정책 감사에서 A choice의 person-dependent 허용과 A 본문의 필수 개인 사실 추측 금지, B의 missing-fact 경계 미명시를 대조해 실제 해석상 긴장을 별도 봉인했다. B2 개인 퇴근시각 사례는 고정gold 불일치와 모델 단독 원인을 구분하고 점수·gold·지침을 그대로 유지한다. 정의된 넓은 범위/명시된 타인의존과 알 수 없는 개인 종료시각을 향후 정책 정합성 검토에서 구분한다.
+- [ ] [AGENT] 필수 guard·최종 독립 리뷰 후 동일 Draft132 정상 후속 commit/push·정확 새 HEAD CI를 확인한다. Commit/PR: 동일 후속 커밋 예정.
+
+현재 유지 예약 **USD2.74751488**, 승인 USD3 안의 engineering 여유 **USD0.25248512**, 기존 UNKNOWN 해제0·실청구 환급0이다. invoice·운영 p50/p95는 미확인이다. 실제 품질/운영 정책 게이트가 충족되지 않아 main 병합·배포·활성화는 HOLD이며, 승인된 비유료 검증·상태 기록을 계속한다. [최신 집계](docs/verification/issue130-context-actual-stage-results.json)와 [A 독립 집계](docs/verification/issue130-context-actual-a24-aggregate.json)를 따른다.
+
+이하 단계들은 각 시점의 역사 기록이다. 미적용·UNRUN·승인 대기 문구는 최신 상태를 대신하지 않는다.
+
+# #130 A24 구성 중단·예약 정산 근거 검토 (역사; 2026-10-18 UTC)
 
 - [x] [AGENT] source590·production-only CP1076·정확 plan128ef6/독립수용c99283 뒤 A24를 한 번 시작했다. .34603008 전액 선예약 후 wrapper exit2/CONFIGURATION, suite/case/response 표식과 결과 디렉터리0, source/runtime전후동일이다. 실제 모델 결과0·A24/B2 전원UNRUN·새 의미 gate NOT_EVALUATED이며 기존16 FAIL은 보존한다.
 - [x] [AGENT] 원본 cost parser와 진단 전용 stacktrace-copy로 비용 .10/.01441792/.34603008 표기를 Python만 허용하고 Java가 거부하는 차이를 확인했다. mainClient 객체는 먼저 생성될 수 있으나 cost→validate 실패는 모든 모델 dispatch 전에 발생한다. source/test-independent 감사가 이 경계를 확인했다.

@@ -1,4 +1,25 @@
-# 개인 맥락 A24/B2 최신 실행 상태
+# 개인 맥락 A24/B2 실제 결과 (2026-10-18 UTC)
+
+새 봉인 입력·gold로 정확 게시 HEAD `9d9c934fd8f999f0bd4a1723bd8987b9efd86b93`에서 A24와 사전 지정 standalone B2를 각 한 번 실행했다. Decisions24·count2·generation2 전수 기술 완료/usage 확인, source/runtime 전후동일·자동 retry/redirect/fallback0이다. 원 첫 CONFIGURATION 중단과 원 예약·계획·실패는 보존한다. 이번 실행 뒤 게시할 기록 커밋을 실제 실행 당시 HEAD로 소급하지 않는다.
+
+A의 raw gold CLEAR14는 CLEAR7/REVIEW7, gold REVIEW10은 CLEAR0/REVIEW10이었다. raw 일치는17/24, raw false CLEAR0/10은 **OBSERVED_ZERO_ONLY**다. 고정 진단 .8에서 24건 전부 LOW_CONFIDENCE→B_REQUIRED이고 CLEAR_STOP은0이다. 불필요한 검토 판정7/14와 명확한 입력14/14의 B 경로를 숨기지 않는다. 후자는 실제 불필요 질문 수가 아니다. 품질·운영 효용은 **NOT_ESTABLISHED**, 기존16의 FAIL은 별도이고 개선 인과·모집단 정확도·운영 p50/p95를 주장하지 않는다.
+
+B2는 A 결과 전에 고른 CHOICE1+SAFE_EDIT_ONLY1이며 실제 명확한 gold 입력은0건이다. 두 최초 독립 의미 판정은2/2 일치·미해결차이0, **PASS0/FAIL2**로, 각각 필요한 선택형 보완·직접 수정 안내가 누락되고 실제 CLEAR가 반환됐다. 원 두 판정은 변경하지 않았고 최종 상태는 [단계별 집계](verification/issue130-context-actual-stage-results.json)에 연결한다. 질문·선택지가 없다는 사실을 질문 품질이나 원문 보존의 PASS로 채점하지 않는다. 나머지 review8건과 clear14건의 실제 B 및 UI 최종 제출·운영 분포는 미검증이다. 전체 TwoStage나 영속 금융 E2E로 부르지 않는다.
+
+두 번째 개인 퇴근시각 사례는 후속 정책 감사에서 **지침 명시성 차이**가 확인됐다. A 본문은 필수 personal/local fact 추측을 금지하지만 choice 설명은 person-dependent 조건을 넓게 허용하는 것처럼 읽힐 수 있다. B는 이미 정해진 의미/넓은 범위를 CLEAR로 보존하라는 지침에 필수 개인 시각 누락의 경계가 명시되지 않았다. 따라서0/2는 사전 고정gold 대비 관측 점수로 유지하되, 모델 성능만의 실패 원인으로 단정하지 않는다. prompt/gold/score를 변경하지 않고 정책 정합성 문제를 별도 기록하며 추가 튜닝·유료 호출은 보류한다.
+
+첫 구성 중단의 USD0.34603008만 사용자 승인과 no-dispatch 근거로 별도 미실행 예약 정산했다. 기존 UNKNOWN 포함1.79322880은 유지하고 새 A0.34603008+B0.60825600을 선예약해 현재 **USD2.74751488/engineering 여유0.25248512**다. 실청구 환급·invoice hard cap 증명·UNKNOWN 해제는 없다. 실제 추가 호출은 중단했으며 gold·threshold·지침을 결과에 맞춰 조정하지 않았다. 실행·채점 당시 원문·개별 gold·출력은 root/구현 담당에게 공개하지 않았다. 평가 종료 뒤 부모의 명시 요청으로 개인정보 없는 합성 B2 두 원문·출력·실패 이유만 root에게 전달했다. 나머지 입력/개별gold는 계속 비공개이고 원 평가의 blind 이력은 보존한다.
+
+현재 정확 HEAD9d9의 CI는 Gradle/Java77/ARM 성공 뒤 Python CLI21–24 assertion 실패다. 별도 환경 fixture 최소 보완은 기존25assert를 유지한102/JDK16/조건15 GREEN·FI3 탐지/복원으로 검증했고 이전 실패 이력을 보존한다. 후속 정확 HEAD CI는 별도로 확인한다. 품질·운영 정책/threshold/가격·최신 서버웹 조합·실제 인증/DB 전환 근거가 해결되지 않아 main/배포/운영 활성화는 HOLD다. 넓어진 사용자 완료 승인을 실패 게이트 우회 권한으로 해석하지 않는다.
+
+[A 독립 집계](verification/issue130-context-actual-a24-aggregate.json) · [미실행 정산과 실행 연쇄](verification/issue130-cost-stop-and-reexecution-plan.md)
+
+
+[실측 시간](verification/issue130-context-actual-latency.json)은 A case110.638249–1066.037736ms/suite4759.835602ms/root9067.388526ms, B case3389.243069–4700.874165ms/suite8422.100454ms/root12466.959510ms다. case는 로컬 parse/usage/관측을, B는 count+generation 둘을 포함하고 root는 compile/guard도 포함한다. standalone B에는 TwoStage routing이 없으므로 공개 집계의 범위 문구만 좁히고 원 집계SHA/수치를 보존했다. 순수 모델 속도·운영 p50/p95는 아니다.
+
+아래는 이전 단계 기록이다. 각 당시 UNRUN·정산 미적용 문구는 현재 상태를 대신하지 않는다.
+
+# 개인 맥락 A24/B2 첫 구성 중단 (역사)
 
 2026-10-18 UTC. 실제 A24 시작은 비용 문자열의 Python/Java 문법 차이로 사례 전 CONFIGURATION 중단됐다. 새 모델 결과0·A24/B2 전원UNRUN·새 raw gate NOT_EVALUATED이며 기존16 FAIL은 별도 보존한다. 현재 장부2.13925888, 이번 .34603008의 proven-unstarted 정산 근거 검토 중·기존 누적 예약1.79322880(UNKNOWN 포함) 불변·refund0·추가 예산 요청0이다. client 객체 생성과 HTTP dispatch를 분리하며 청구액0 직접 계측을 주장하지 않는다. [배치 집계](verification/issue130-context-stop-aggregate.json)와 [실행 계획](../implementation_plan.md)의 최신 구간을 따른다.
 

@@ -1,0 +1,113 @@
+{
+  "status": "SYNTHETIC_MANAGED_INTEGRATION_69_PLUS_SEPARATE3_PASS_NOT_RELEASE_ACCEPTANCE",
+  "combination": {
+    "base": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "overlayRevision": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+    "overlayOnly": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+    "beforeSha256": "c45fa35de6c7079b13d81f5a1c4d5193b4939a08dd2f3d3b511fc8b390b25334",
+    "afterSha256": "bbb36cd731377fccbf0a01e9ee5202e51f62a1790f8dac175ac404f740c54283",
+    "web": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+    "productBranchModified": false
+  },
+  "evidence": {
+    "combination.json": {
+      "path": "/tmp/issue130-final-combination/combination.json",
+      "sha256": "5a4694c92e378644a79c36b0f4b4ca4cb62a7b5c8ce4a2c955690d72ed6c4ed3"
+    },
+    "focused/receipt.json": {
+      "path": "/tmp/issue130-final-combination/focused/receipt.json",
+      "sha256": "2098e571024f5a6fcec0db2af75bc2fe6d187db9da769da0db3b2e0609962ae9"
+    },
+    "openapi/receipt.json": {
+      "path": "/tmp/issue130-final-combination/openapi/receipt.json",
+      "sha256": "0a886bdbb2e89fb2b6ebfb9ba0726a659c7ac1a24d8ee8388229d4fa2fc16c1a"
+    }
+  },
+  "tests": {
+    "fresh": true,
+    "passed": 69,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 7,
+    "elapsedSeconds": 143.734,
+    "srcMainTestFiles": 491,
+    "beforeAfterEqual": true,
+    "existingOraclesChanged": false
+  },
+  "managedPositive": "Existing independent MB09 uses actual new-room CREATE TX bootstrap→READY→ownPOST→actualworker→productionTwoStage/classifier/count/generator with only synthetic loopbackTLS external transport seam→3 same-room durable reservations/usage observations→accepted; no READY SQL seed.",
+  "otherSuites": "Owner/stale revision/idempotency/close-deadline invariants and room lifecycle tested separately; not presented as one compound managed-close0/1/2 sequence. Typed internal configuration500 remains contentless and unrelatedIllegalState is not swallowed.",
+  "schema": {
+    "status": "EXPORTED_COMPARED",
+    "serverBase": "6046baf66e49e9382248cd3fb8adb0a8879a7e40",
+    "promptOverlay": "9d9c934fd8f999f0bd4a1723bd8987b9efd86b93",
+    "web": "3c6fb446e3a6e20aec5fd2f9e1eb78233c6f09e6",
+    "actualPaths": 36,
+    "webPaths": 36,
+    "newPaths": [],
+    "missingPaths": [],
+    "changedPaths": [
+      "/api/rooms"
+    ],
+    "actualCreate500": {
+      "description": "방 생성에 필요한 내부 설정 사용 불가"
+    },
+    "webCreate500": null,
+    "semanticallyEqual": false,
+    "actualSchemaSha256": "2ee5db72c0042d401c5cd1607ca8ac3dab5d9a0b9bd76fb174cce2a3ce475d5b",
+    "webSnapshotSha256": "e44e9fb6e99d28309440f65458e26dce439b60372d9a81db575e28b9fd414c97",
+    "actualProviderCalls": 0,
+    "allOFF": true,
+    "scope": "Actual new runtime schema export only; no managed network graph/browser claim.",
+    "semanticDifferencePaths": [
+      "/paths//api/rooms/post/responses/500",
+      "/servers/0/url"
+    ]
+  },
+  "uiCompatibilityFinding": {
+    "severity": "P2",
+    "path": "web/openapi/meet-me.openapi.json + generated schema.d.ts",
+    "changeNeeded": "Synchronize only contentless POST /api/rooms500 response from actual schema; retain canonical public servers setting (actual exported server URL is disposable loopback).",
+    "productUiBehaviorChangeRequiredByThisFinding": false
+  },
+  "remaining": [
+    "Original398 HTTPS runner/Primaryfake guard was not weakened; latest managed web/browser screenshots not executed.",
+    "Screenshots cannot yet be labelled final managed integration success; prior local synthetic UI images retain their original scope.",
+    "A/B real model semantic gates are separate and reported failed by parent; these mocked results do not resolve them.",
+    "No operating allON activation or policy approval; synthetic approved policy only.",
+    "No deployment/main merge/realOAuth/provider calls."
+  ],
+  "originalWorktreesChanged": false,
+  "newWorktree": "/workspace/issue130-final-combination/server",
+  "temporaryHarnesses": [
+    "CombinationOpenApiExporter.java",
+    "export_schema.py",
+    "run_focused.py"
+  ],
+  "cleanup": "Exporter context+Auth fixture stopped normally; no persistent live API/browser started by this run.",
+  "activity": {
+    "actualModelCalls": 0,
+    "productionAccess": 0,
+    "realOAuthLogins": 0,
+    "realCredentialReads": 0,
+    "originalBranchWrites": 0
+  },
+  "recordedAt": "2026-10-18T15:25:57.350257Z",
+  "managedCloseFollowup": {
+    "status": "INDEPENDENT_ORACLE_REVIEW_PASS",
+    "newParameterCases": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "testSha256": "6e12a36a139970eeefb55517c3176650053191272182d57774a2d90d04a2d635",
+    "finalRunReceiptSha256": "e29cc20711cfc04a699349303736911266cd080b22b84e0b2a5680fdf8b59cbc",
+    "reviewReceiptSha256": "b2fb518b852f4bc597c6b6feca05c52ace92cf1f8bee71c915f0daf637d7c89b",
+    "archivePath": ".tdd/history/issue130-final-combination/",
+    "notCompiledAtCurrentBase398": true,
+    "existing69NotPooledWithNew3": true,
+    "actualModelCalls": 0,
+    "finalModelWorkerRun": false,
+    "realOAuthOrLatestBrowserRun": false
+  },
+  "finalIndependentIntegrationReceiptSha256": "e630efe1cfd09e665f29c26971b8be5abdc7242a6b62a5ce5b7c29123a3085bd"
+}

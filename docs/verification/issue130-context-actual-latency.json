@@ -1,0 +1,45 @@
+{
+  "a": {
+    "case_elapsed_ms_max": 1066.037736,
+    "case_elapsed_ms_min": 110.638249,
+    "case_elapsed_ms_sum": 4382.802101,
+    "case_observations": 24,
+    "case_scope": "LOCAL_RUNCASE_START_TO_FINISH_WITH_CLASSIFIER_HTTP_PARSE_USAGE_AND_ROUTING",
+    "operating_p50_p95_ms": null,
+    "operating_percentiles_computed": false,
+    "pure_provider_only_latency_ms": null,
+    "pure_provider_only_latency_status": "NOT_SEPARATELY_CAPTURED",
+    "root_wrapper_elapsed_ms": 9067.388526003924,
+    "root_wrapper_scope": "ROOT_WRAPPER_INCLUDING_COMPILATION_GUARDS_AND_LOCAL_OVERHEAD_NOT_MODEL_SPEED",
+    "suite_elapsed_ms": 4759.835602,
+    "suite_scope": "LOCAL_VALIDATION_AND_CASE_LOOP_MONOTONIC_EXCLUDING_FINAL_SUITE_FILE_WRITE"
+  },
+  "b": {
+    "case_elapsed_ms_max": 4700.874165,
+    "case_elapsed_ms_min": 3389.243069,
+    "case_elapsed_ms_sum": 8090.117234,
+    "case_observations": 2,
+    "case_scope": "LOCAL_RUNCASE_START_TO_FINISH_WITH_COUNT_AND_GENERATION_HTTP_PARSE_USAGE_AND_LOCAL_OBSERVATION_NO_TWOSTAGE_ROUTING",
+    "operating_p50_p95_ms": null,
+    "operating_percentiles_computed": false,
+    "pure_provider_only_latency_ms": null,
+    "pure_provider_only_latency_status": "NOT_SEPARATELY_CAPTURED",
+    "root_wrapper_elapsed_ms": 12466.95950999856,
+    "root_wrapper_scope": "ROOT_WRAPPER_INCLUDING_COMPILATION_GUARDS_AND_LOCAL_OVERHEAD_NOT_MODEL_SPEED",
+    "suite_elapsed_ms": 8422.100454,
+    "suite_scope": "LOCAL_VALIDATION_AND_CASE_LOOP_MONOTONIC_EXCLUDING_FINAL_SUITE_FILE_WRITE"
+  },
+  "new_calls": 0,
+  "p50_p95_computed": false,
+  "pure_provider_speed_claimed": false,
+  "recorded_at": "2026-10-18T15:25:37.527356Z",
+  "source_receipt_sha256": {
+    "a_root": "0250d9bb9bce0a101f12b14f23fdac9d8a4dcac3a7bba60fad94ccd90835b9b5",
+    "a_suite": "69880a454bae5c9ae1ed5e1b4640de856bc6814a3042208200d6f194f2d209e7",
+    "b_root": "d3ef1de8af01c14f3f66581b609d1af4c064f4426c97c12c37003861b59709d1",
+    "b_suite": "162a83784947bd433a975618835a54df15bf766b750173f0075d677611032893"
+  },
+  "status": "ACTUAL_RECORDED_LOCAL_DURATIONS_AGGREGATE_ONLY",
+  "historicalOriginalAggregateSha256": "bdea532085ed22d8dca41072dc2426ce5d8d6357be61a2592df4ef726f74436d",
+  "nonnumericScopeClarification": true
+}

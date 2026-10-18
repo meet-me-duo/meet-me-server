@@ -1,0 +1,361 @@
+package com.meetme.server.coordination.adapter.input.web
+
+import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderHttpTransport
+import com.meetme.server.precheck.application.service.PreSubmissionCheckWorker
+import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
+import jakarta.servlet.http.Cookie
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Primary
+import org.springframework.http.MediaType
+import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.testcontainers.postgresql.PostgreSQLContainer
+import java.math.BigInteger
+import java.nio.file.Files
+import java.security.MessageDigest
+import java.time.Instant
+import java.util.UUID
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+
+/** Executes the independent frozen managed-close oracle; synthetic policy/transport only. */
+@Import(DurableAnalysisInvocationPostgresTest.ControlledTime::class, Issue130ManagedClosePostgresTest.Transport::class)
+class Issue130ManagedClosePostgresTest : CorrectionRoundPostgresFixture() {
+    @Autowired private lateinit var worker: PreSubmissionCheckWorker
+
+    @Autowired private lateinit var budgets: DurableAiBudgetPort
+
+    @Autowired private lateinit var time: DurableAnalysisInvocationPostgresTest.DurableClock
+
+    @BeforeEach
+    fun reset() {
+        time.now = NOW
+        proxy.clear()
+    }
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.ValueSource(ints = [0, 1, 2])
+    fun `MC01 actual managed accepted members freeze their last CLEAR on confirmed HOST close`(acceptedCount: Int) {
+        val host = accounts.newAccount("managed-close-host")
+        val response =
+            mvc
+                .perform(
+                    post("/api/rooms")
+                        .cookie(host)
+                        .header("Origin", ORIGIN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            """{"purpose":"synthetic managed close","meeting_mode":"REMOTE","host_display_name":"host","manual_only":false,"expected_participants":3,"search_start_date":"2026-10-07","search_end_date":"2026-10-12"}""",
+                        ),
+                ).andExpect(status().isCreated)
+                .andReturn()
+                .response
+        val code = document(response).getValue("invite_code").toString()
+        val room = assertNotNull(jdbc.queryForObject("SELECT id FROM meeting_rooms WHERE invite_code=?", UUID::class.java, code))
+        val initialBudget = assertNotNull(budgets.snapshot(room))
+        assertEquals("READY", initialBudget.state.name)
+        assertNotNull(initialBudget.epochId)
+        assertEquals(BigInteger.ZERO, initialBudget.held)
+        val members =
+            (0..1).map { index ->
+                accounts.newAccount("managed-close-member-$index").also { cookie ->
+                    mvc
+                        .perform(
+                            post("/api/rooms/{code}/participants", code)
+                                .cookie(cookie)
+                                .header("Origin", ORIGIN)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""{"display_name":"member-$index"}"""),
+                        ).andExpect(status().isCreated)
+                }
+            }
+        val raws = listOf("토요일 오전 10시부터 12시까지 가능해요", "일요일 오후 2시부터 4시까지 가능해요")
+        for (index in 0 until acceptedCount) {
+            if (index == 0) {
+                proxy.enqueue(CLEAR_DECISION)
+            } else {
+                proxy.enqueue(DECISION)
+                proxy.enqueue("""{"totalTokens":256}""")
+                proxy.enqueue(GENERATION)
+            }
+            submit(code, members[index], raws[index], 0)
+            assertTrue(worker.runOne())
+            val own = current(code, members[index])
+            assertEquals("CLEAR", own.path("check").path("status").asText())
+            assertTrue(own.path("submission_complete").asBoolean())
+            assertEquals(raws[index], own.path("accepted").path("raw_text").asText())
+        }
+        val expectedCalls = listOf(0, 1, 4)[acceptedCount]
+        assertEquals(expectedCalls, proxy.connections.get())
+        assertEquals(expectedCalls, proxy.requests.size)
+        assertTrue(proxy.failures.isEmpty())
+        val reservations = jdbc.queryForList("SELECT epoch_id,policy_fingerprint FROM ai_call_reservations WHERE room_id=?", room)
+        assertEquals(expectedCalls, reservations.size)
+        assertTrue(reservations.all { it["epoch_id"] == initialBudget.epochId && it["policy_fingerprint"] == policyHash })
+        assertEquals(BigInteger(listOf("0", "3", "15")[acceptedCount]), assertNotNull(budgets.snapshot(room)).held)
+        assertEquals(BigInteger.ZERO, assertNotNull(budgets.snapshot(room)).settled)
+        assertEquals("COLLECTING", jdbc.queryForObject("SELECT collection_status FROM meeting_rooms WHERE id=?", String::class.java, room))
+
+        val pendingIndex = if (acceptedCount == 2) 0 else acceptedCount
+        val pendingRaw = "아직 확인하지 않은 별도 합성 수정본"
+        val oldHeads = heads(room)
+        val oldVersions = versionCount(room)
+        submit(code, members[pendingIndex], pendingRaw, if (acceptedCount == 2) 1 else 0)
+        assertEquals(oldHeads, heads(room))
+        assertEquals(oldVersions, versionCount(room))
+        val stateBeforeRejections = financialState(room)
+        mvc.perform(postCheck(code, members[pendingIndex], "stale synthetic", 0)).andExpect(status().isConflict)
+        assertEquals(stateBeforeRejections, financialState(room))
+        val outsider = accounts.newAccount("unrelated-valid-account")
+        val denied =
+            mvc
+                .perform(get("/api/rooms/{code}/submission/checks/current", code).cookie(outsider))
+                .andExpect(status().isForbidden)
+                .andReturn()
+                .response.contentAsString
+        assertFalse(denied.contains(pendingRaw))
+        assertTrue(raws.none { denied.contains(it) })
+        assertEquals(stateBeforeRejections, financialState(room))
+        val hostView = current(code, host)
+        assertTrue(hostView.path("accepted").isNull)
+        assertTrue(hostView.path("candidate").isNull)
+        assertTrue(raws.none { hostView.toString().contains(it) })
+        assertFalse(hostView.toString().contains(pendingRaw))
+
+        val unconfirmed =
+            mvc
+                .perform(
+                    post("/api/rooms/{code}/close", code)
+                        .cookie(host)
+                        .header("Origin", ORIGIN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"confirm_early":false}"""),
+                ).andExpect(status().isConflict)
+                .andReturn()
+                .response
+        assertEquals("EARLY_CLOSE_CONFIRMATION_REQUIRED", mapper.readTree(unconfirmed.contentAsString).path("code").asText())
+        assertEquals(stateBeforeRejections, financialState(room))
+        assertEquals(oldHeads, heads(room))
+        assertEquals("COLLECTING", jdbc.queryForObject("SELECT collection_status FROM meeting_rooms WHERE id=?", String::class.java, room))
+        val closed =
+            mvc
+                .perform(
+                    post("/api/rooms/{code}/close", code)
+                        .cookie(host)
+                        .header("Origin", ORIGIN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""{"confirm_early":true}"""),
+                ).andExpect(status().isOk)
+                .andReturn()
+                .response
+        val closedJson = mapper.readTree(closed.contentAsString)
+        assertEquals("CLOSED", closedJson.path("collection_status").asText())
+        assertEquals(if (acceptedCount < 2) "INSUFFICIENT_PARTICIPANTS" else "ANALYZING", closedJson.path("public_status").asText())
+        assertEquals(oldHeads, heads(room))
+        val expectedBatches = if (acceptedCount < 2) 0 else 1
+        assertEquals(expectedBatches, scopedCount("submission_batches", room))
+        assertEquals(expectedBatches, scopedCount("coordination_runs", room))
+        assertEquals(if (acceptedCount < 2) emptySet() else oldHeads, frozen(room))
+        val pending = current(code, members[pendingIndex])
+        assertEquals(pendingRaw, pending.path("candidate").path("raw_text").asText())
+        assertFalse(pending.path("submission_complete").asBoolean())
+        assertEquals(acceptedCount == 2, pending.path("applied_to_result").asBoolean())
+        if (acceptedCount < 2) {
+            assertTrue(pending.path("accepted").isNull)
+        } else {
+            assertEquals(raws[0], pending.path("accepted").path("raw_text").asText())
+        }
+        val afterClose = financialState(room)
+        repeat(3) { worker.runOne() }
+        assertEquals(afterClose, financialState(room), "closed queued work may not spend additional calls or observations")
+        assertEquals(oldHeads, heads(room))
+        assertEquals(oldVersions, versionCount(room))
+        assertEquals(if (acceptedCount < 2) emptySet() else oldHeads, frozen(room))
+        val late =
+            mvc
+                .perform(postCheck(code, members[pendingIndex], "late synthetic", if (acceptedCount == 2) 2 else 1))
+                .andExpect(status().isConflict)
+                .andReturn()
+                .response
+        assertEquals("ROOM_CLOSED", mapper.readTree(late.contentAsString).path("code").asText())
+        assertEquals(afterClose, financialState(room))
+    }
+
+    private fun postCheck(
+        code: String,
+        cookie: Cookie,
+        raw: String,
+        revision: Int,
+    ) = post("/api/rooms/{code}/submission/checks", code)
+        .cookie(cookie)
+        .header("Origin", ORIGIN)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(
+            mapper.writeValueAsString(
+                mapOf(
+                    "request_id" to UUID.randomUUID(),
+                    "expected_revision" to revision,
+                    "raw_text" to raw,
+                    "locale" to "ko-KR",
+                ),
+            ),
+        )
+
+    private fun submit(
+        code: String,
+        cookie: Cookie,
+        raw: String,
+        revision: Int,
+    ) {
+        mvc.perform(postCheck(code, cookie, raw, revision)).andExpect(status().isAccepted)
+    }
+
+    private fun current(
+        code: String,
+        cookie: Cookie,
+    ) = mapper.readTree(
+        mvc
+            .perform(
+                get("/api/rooms/{code}/submission/checks/current", code).cookie(cookie),
+            ).andExpect(status().isOk)
+            .andReturn()
+            .response.contentAsString,
+    )
+
+    private fun heads(room: UUID): Set<UUID> =
+        jdbc
+            .queryForList(
+                "SELECT latest_version_id FROM submission_heads WHERE room_id=?",
+                UUID::class.java,
+                room,
+            ).map { assertNotNull(it) }
+            .toSet()
+
+    private fun versionCount(room: UUID): Int =
+        assertNotNull(
+            jdbc.queryForObject(
+                "SELECT count(*) FROM submission_versions v JOIN submission_heads h ON h.id=v.submission_id WHERE h.room_id=?",
+                Int::class.java,
+                room,
+            ),
+        )
+
+    private fun frozen(room: UUID): Set<UUID> =
+        jdbc
+            .queryForList(
+                "SELECT i.submission_version_id FROM submission_batch_items i JOIN submission_batches b ON b.id=i.batch_id WHERE b.room_id=?",
+                UUID::class.java,
+                room,
+            ).map { assertNotNull(it) }
+            .toSet()
+
+    private fun scopedCount(
+        table: String,
+        room: UUID,
+    ): Int = assertNotNull(jdbc.queryForObject("SELECT count(*) FROM $table WHERE room_id=?", Int::class.java, room))
+
+    private fun financialState(room: UUID): Map<String, Any?> =
+        mapOf(
+            "budget" to jdbc.queryForMap("SELECT epoch_id,held,settled,version FROM ai_room_budgets WHERE room_id=?", room),
+            "reservations" to scopedCount("ai_call_reservations", room),
+            "observations" to
+                jdbc.queryForObject(
+                    "SELECT count(*) FROM ai_call_observations o JOIN ai_call_reservations r ON r.id=o.reservation_id WHERE r.room_id=?",
+                    Int::class.java,
+                    room,
+                ),
+            "sockets" to proxy.connections.get(),
+            "requests" to proxy.requests.size,
+        )
+
+    @TestConfiguration
+    class Transport {
+        @Bean @Primary
+        fun canonicalLoopbackTransport() = PrecheckProviderHttpTransport(proxy.client())
+    }
+
+    companion object {
+        private const val CLEAR_DECISION =
+            """{"model":"gpt-6-luna","answers":[{"type":"choice","name":"material_ambiguity","choice":"CLEAR","confidence":0.9,"probabilities":[{"value":"CLEAR","probability":0.9},{"value":"NEEDS_REVIEW","probability":0.05},{"value":"INDETERMINATE","probability":0.05}]}],"usage":{"input_tokens":100,"input_tokens_details":{"cached_tokens":0,"cache_write_tokens":0},"output_tokens":0,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":100}}"""
+
+        private val NOW = Instant.parse("2026-10-07T00:00:00Z")
+        private val EXPIRES = NOW.plusSeconds(3600)
+        private val directory = Files.createTempDirectory("issue131-synthetic-policy-")
+        private val proxy = Issue131CanonicalTlsProxy(directory)
+        private val profiles =
+            listOf(
+                "308b2fd0b2d0892f59aa7f953247ea9c855597d0da5a30a6923070596149ec81",
+                "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
+                "b9ce9802d9dc3f4396f49c796cfe173fda708c6a35ac40c79d5bdc5091419363",
+                "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
+                "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
+            )
+        private val operations =
+            listOf("PRECHECK_CLASSIFICATION", "PRECHECK_COUNT", "PRECHECK_GENERATION", "FINAL_PRIMARY", "FINAL_FALLBACK")
+        private val policy =
+            Files.writeString(
+                directory.resolve("policy.json"),
+                """{"protocol":"meetme-managed-ai-policy-v1","state":"CONFIGURED",""" +
+                    """"unit":{"code":"TEST_SUBUNIT","scale":0},"roomCap":"1000",""" +
+                    """"minimumConfidence":0.73,"operations":[""" +
+                    operations
+                        .mapIndexed {
+                            i,
+                            op,
+                            ->
+                            """{"operation":"$op","profileFingerprint":"${profiles[i]}","evidenceFingerprint":"${hash(
+                                "synthetic:$op",
+                            )}","maximumAmount":"${i + 3}","validUntil":"$EXPIRES"}"""
+                        }.joinToString(",") +
+                    "]}",
+            )
+        private val policyHash = hash(Files.readString(policy))
+        private val postgres = PostgreSQLContainer("postgres:18-alpine").apply { start() }
+        private const val DECISION =
+            """{"model":"gpt-6-luna","answers":[{"type":"choice","name":"material_ambiguity",""" +
+                """"choice":"NEEDS_REVIEW","confidence":0.9,"probabilities":[{"value":"CLEAR","probability":0.05},""" +
+                """{"value":"NEEDS_REVIEW","probability":0.9},{"value":"INDETERMINATE","probability":0.05}]}],""" +
+                """"usage":{"input_tokens":100,"input_tokens_details":{"cached_tokens":0,"cache_write_tokens":0},""" +
+                """"output_tokens":0,"output_tokens_details":{"reasoning_tokens":0},"total_tokens":100}}"""
+        private const val GENERATION =
+            """{"candidates":[{"content":{"parts":[{"text":"{\"verdict\":\"CLEAR\"}"}]},""" +
+                """"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":256,"candidatesTokenCount":12,"thoughtsTokenCount":20}}"""
+
+        private fun hash(value: String): String =
+            MessageDigest.getInstance("SHA-256").digest(value.toByteArray()).joinToString("") {
+                "%02x".format(it)
+            }
+
+        @JvmStatic @DynamicPropertySource
+        fun properties(registry: DynamicPropertyRegistry) {
+            registerCorrectionDatabase(registry, postgres)
+            registry.add("meetme.precheck.provider.enabled") { true }
+            registry.add("meetme.precheck.decision-routing.enabled") { true }
+            registry.add("meetme.precheck.classifier.enabled") { true }
+            registry.add("meetme.precheck.classifier.minimum-confidence") { 0.73 }
+            registry.add("meetme.ai.budget.enabled") { true }
+            registry.add("meetme.ai.budget.policy-path") { policy.toString() }
+            registry.add("meetme.ai.budget.policy-sha256") { policyHash }
+            registry.add("meetme.gemini.api-key") { "synthetic-not-a-real-key" }
+            registry.add("meetme.openai.api-key") { "synthetic-not-a-real-key" }
+        }
+
+        @JvmStatic @AfterAll
+        fun stopFixture() {
+            proxy.close()
+            postgres.stop()
+        }
+    }
+}
