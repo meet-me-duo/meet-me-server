@@ -2,7 +2,7 @@
 
 현재 A/B 모호성 의미의 세부 경계는 사용자 승인 후 분리한 [공통 정책 V2](ISSUE_130_SHARED_POLICY_V2_EVALUATION.md)를 따른다. 필요한 개인 사실의 미제공과 명시적 넓은 허용·타인 가용성 의존·날짜/방식 선택권 위임을 구분한다. 아래는 해당 작성 시점의 설계·평가 이력이며 기존 corpus/gold/성적은 소급 수정하지 않는다. 현재 실행·예산·게시 상태는 [Worklog](ISSUE_107_PRE_SUBMIT_WORKLOG.md)를 따른다.
 
-2026-10-18 UTC. 기준 develop `01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df`. 이번 단계는 외부 호출 없이 검토할 수 있는 공통 경계·목업 검증과 Draft PR/exact HEAD CI까지다. Decisions의 main/develop 병합·배포·키 발급/설정·운영 변경은 하지 않는다. 최신 실제 검증 합산 USD1 예산 승인은 [실행 계획](ISSUE_107_USD1_EVALUATION_EXECUTION_PLAN.md)의 비용·인증 gate를 충족해야 하며 현재 실제 호출0이다.
+2026-10-18 UTC. 기준 develop `01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df`. 이번 단계는 외부 호출 없이 검토할 수 있는 공통 경계·목업 검증과 Draft PR/exact HEAD CI까지다. Decisions의 main/develop 병합·배포·키 발급/설정·운영 변경은 하지 않는다. 최신 실제 검증 합산 USD1 예산 승인은 [실행 계획](ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-107-usd1-evaluation-execution-plan)의 비용·인증 gate를 충족해야 하며 현재 실제 호출0이다.
 
 ## 확정 범위와 결정 대기
 

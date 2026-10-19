@@ -97,7 +97,7 @@ V13 질문/답변·구 batch·확정·기존 OPEN correction round는 변경/자
 
 필요한 조합은 서버 PR117의 #107+#109 **위에** PR118의 #108 실제 proof/write guard와 #113 deadline hunk, PR119의 #110 관측/감사·V14/V15를 선별 통합한 기준이다. 웹은 PR28에 PR30의 #108 참여/재접근과 PR29의 #110 경로를 보존한다. 이 작업에서는 세 PR을 merge하지 않았다. 부모가 단일 편집자를 정해 공통 #109 이력 중복을 피하고 hunk를 대조한 뒤 실제 결합 SHA를 전달해야 한다.
 
-정확 Git diff 목록과 각 SQL SHA-256은 [기준 inventory](verification/issue-107-pre-submit-base-inventory.json)에 저장했다. 이는 텍스트 교집합이며 실제 merge conflict 여부를 실행해 확인한 결과는 아니다.
+초기 설계는 Git diff 목록과 SQL SHA-256을 `verification/issue-107-pre-submit-base-inventory.json`에 저장했다고 기록했으나, 현재 작업 트리와 이 경로의 Git 이력에서 해당 파일을 확인하지 못했다. 이 누락 자료를 결합 검증 근거로 사용하지 않는다. 위 결합 범위 설명은 당시 텍스트 대조이며 실제 merge conflict 여부를 실행해 확인한 결과가 아니다.
 
 | 영역 | 최소 변경/결합 영향 |
 | --- | --- |

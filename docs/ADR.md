@@ -593,7 +593,7 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 
 **트레이드오프**: 1차 false CLEAR는 2차의 보정 기회를 없애므로 독립 핵심 회귀와 미튜닝 검증셋이 필요하다. 전원이2차를 사용할 수 있어 평균 절감이 최대 비용 보장이 아니다. 두 단계는 기존15초를 공유하며 정상 유보도 추가 비용을 예약해야 한다. 실제 confidence/모델·청구 상한/금액·소진 행동은 미확정이다. 공통 budget port/default DENY와 합성 검증을 준비하지만 durable PG/all-final dispatch/quote 증명 전에는 모임10원 보장·운영 활성화 완료가 아니다. 기본 OFF·키/유료 평가/운영/병합·배포 보류를 유지한다. 기존 ADR-053의 원문 보존·저장/완료·마감 정책을 대체하지 않는다.
 
-2026-10-18 후속 합산USD1 승인으로 격리 Decisions 진단4회를 실행했다. 낮은 확신의 rawCLEAR 사례에서 사전oracle 불일치를 보존하고 중단했으며 실제 생성 단계·운영 threshold/가격·활성화·Decisions 병합은 검증/선택하지 않았다. 위 유료 평가 보류는 이 한정 승인 이전 이력이고 장기 운영 경계는 그대로다. [실제 진단 근거](ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)를 따른다.
+2026-10-18 후속 합산USD1 승인으로 격리 Decisions 진단4회를 실행했다. 낮은 확신의 rawCLEAR 사례에서 사전oracle 불일치를 보존하고 중단했으며 실제 생성 단계·운영 threshold/가격·활성화·Decisions 병합은 검증/선택하지 않았다. 위 유료 평가 보류는 이 한정 승인 이전 이력이고 장기 운영 경계는 그대로다. [실제 진단 근거](ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-live-decisions-diagnostic)를 따른다.
 
 ### ADR-055: 같은 방의 영속 AI 예약과 단일 물리 전송 경계
 

@@ -24,7 +24,7 @@ V17 이전 방 또는 enforcement OFF 동안 미계상 호출이 가능한 방�
 
 ## 미확정·차단 범위
 
-실제 B/통화·FX/세금·단가/청구 cap 근거·운영 confidence·예산 소진/UNKNOWN의 참여 UX·최종 분석 몫 보호·과거 비용 reconciliation은 TBD다. 현재 공개 API/마감/참여 정책을 새로 선택하지 않는다. 내부 거절은 기존 안전한 실패/지연으로 남고 CLEAR/제출 완료·추가 retry/fallback으로 바뀌지 않는다. 합산 USD1 안의 별도 격리 [Decisions 진단4회](ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)는 byte/framing 보수 견적·독립 사전oracle로 실행했으며 의미 불일치에서 중단했다. 이 관측을 생산 quote/청구 cap 증명·운영 threshold·실제 전체2단계 검증으로 전용하지 않는다.
+실제 B/통화·FX/세금·단가/청구 cap 근거·운영 confidence·예산 소진/UNKNOWN의 참여 UX·최종 분석 몫 보호·과거 비용 reconciliation은 TBD다. 현재 공개 API/마감/참여 정책을 새로 선택하지 않는다. 내부 거절은 기존 안전한 실패/지연으로 남고 CLEAR/제출 완료·추가 retry/fallback으로 바뀌지 않는다. 합산 USD1 안의 별도 격리 [Decisions 진단4회](ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-live-decisions-diagnostic)는 byte/framing 보수 견적·독립 사전oracle로 실행했으며 의미 불일치에서 중단했다. 이 관측을 생산 quote/청구 cap 증명·운영 threshold·실제 전체2단계 검증으로 전용하지 않는다.
 
 ## 검증과 다음 단계
 

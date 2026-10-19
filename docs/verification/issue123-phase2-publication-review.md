@@ -12,7 +12,7 @@ The earlier full-guard failure and independent legacy-upgrade oracle correction 
 
 ## Later actual diagnostic and its limits
 
-I compared the current [validation record](../ISSUE_123_LIVE_TWO_STAGE_VALIDATION.md), structured observation, independent [result review](issue123-live-two-stage-result-review.md), [observation audit](issue123-live-two-stage-observation-audit.md), and local invocation/consumed records. The fixed plan/oracle hashes and each stage's one-use marker/request hashes agree. There are exactly three new evaluation HTTP attempts:
+I compared the current [validation record](../ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-live-two-stage-validation), structured observation, independent [result review](issue123-live-two-stage-result-review.md), [observation audit](issue123-live-two-stage-observation-audit.md), and local invocation/consumed records. The fixed plan/oracle hashes and each stage's one-use marker/request hashes agree. There are exactly three new evaluation HTTP attempts:
 
 | Stage | Observation | Consequence |
 | --- | --- | --- |

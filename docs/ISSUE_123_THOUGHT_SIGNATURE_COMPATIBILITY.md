@@ -1,6 +1,6 @@
 # #123 실제 응답 metadata 호환 후속 계약
 
-2026-10-18 UTC. [실제 B 진단](ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)에서 질문 제안의 의미는 고정 기준에 부합했지만, 기존 parser가 text와 함께 온 공식 optional thoughtSignature를 거절했다. 이 후속은 모델 prompt·semantic oracle·confidence·가격·제품15초 deadline을 바꾸지 않는 별도 TDD 수정이다. b377의 전체 guard/CI 성공과 수정 전 INVALID_RESPONSE는 역사적 증거로 보존한다.
+2026-10-18 UTC. [실제 B 진단](ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-usd2-generation-diagnostic)에서 질문 제안의 의미는 고정 기준에 부합했지만, 기존 parser가 text와 함께 온 공식 optional thoughtSignature를 거절했다. 이 후속은 모델 prompt·semantic oracle·confidence·가격·제품15초 deadline을 바꾸지 않는 별도 TDD 수정이다. b377의 전체 guard/CI 성공과 수정 전 INVALID_RESPONSE는 역사적 증거로 보존한다.
 
 [공식 규격 검토](verification/issue123-thought-signature-compatibility-proposal.md)를 채택한다. Part는 정확히 하나의 object이며 required string text와 optional thoughtSignature만 허용한다. signature의 absent/null은 unset, empty string은0바이트다. nonnull은 표준 또는 URL-safe base64의 padded/unpadded 형식으로 검증하며 공백·혼합 alphabet·invalid character/길이/padding·잘못된 JSON type은 typed INVALID_RESPONSE로 거절한다. trim·자동수정·원문 의미 판정은 하지 않는다. 기존16KiB 응답 한도 안에서 검증 후 opaque bytes를 폐기한다.
 

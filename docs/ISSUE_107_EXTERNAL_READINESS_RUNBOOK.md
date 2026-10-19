@@ -53,7 +53,7 @@
 
 운영자 요약 `OperatorQueryProperties.enabled=false`와 빈 allowlist를 유지한다. 운영자 UUID 등록·권한 변경·활성화는 core login/room/precheck의 선행 조건이 아니다. `/api/operations` 거부는 정상이다. 기존 실제 CurrentAccountPort·명시 allowlist·조회 전 인가·감사 실패 시 보호 정보 미반환 정책을 유지한다. OFF는 감사 schema·Flyway를 제거하는 설정이 아니며 `cleanupEnabled=true`의 감사 정리는 별도다.
 
-1. 에이전트의 코드·독립 검증 결과를 확인하고 **모임 총 AI10원 정책과 새 호출 예산의 충돌**을 부모가 결정한다. 기본 OFF 활성화·인증 전달 경로의 코드 준비를 사용자 키 입력 탓으로 남기지 않는다. count 사전 제한은 실제 billed input hard cap 증명이 아니므로 [평가 준비안](ISSUE_107_REAL_MODEL_EVALUATION_PLAN.md)의 남은 과금 근거도 확인한다.
+1. 에이전트의 코드·독립 검증 결과를 확인하고 **모임 총 AI10원 정책과 새 호출 예산의 충돌**을 부모가 결정한다. 기본 OFF 활성화·인증 전달 경로의 코드 준비를 사용자 키 입력 탓으로 남기지 않는다. count 사전 제한은 실제 billed input hard cap 증명이 아니므로 [평가 준비안](ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-107-real-model-evaluation-plan)의 남은 과금 근거도 확인한다.
 2. 입증된 최대 비용을 보고받은 뒤 **30개 실제 평가 승인**. 준비된 경로로 기존 OAuth 자격 증명·RS256/JWKS를 안전하게 전달하고 별도 실로그인 검증을 승인한다. 공개 앱 설정은 반복하지 않는다.
 3. 실제 준비 결과 뒤 **운영 읽기·복구/유지보수·정확 전환 승인**. main 자동 배포 때문에 준비 전 main을 먼저 병합하지 않는다. 서버 호환성을 확인한 뒤 웹 main을 진행한다.
 

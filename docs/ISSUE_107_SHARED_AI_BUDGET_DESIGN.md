@@ -2,7 +2,7 @@
 
 2026-10-18 UTC. 기존 동작의 코드 확인 기준 `01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df`(기존 runtime 동작 기준; 새 2단계 bridge·공통 port/default DENY는 별도 TS 구현과 합성 검증을 완료). 이 문서는 **설계 제안**이다. 유료 예산 금액·환율 정책·소진 시 제품 행동을 확정하지 않으며, durable PG migration·최종 분석을 포함한 모든 dispatch의 제품 연결·feature flag 활성화는 수행하지 않는다. 실제 모델·유료 API·운영·OAuth·SSM·Secret 호출은 0이다. 최신 사용자 승인 방향은 충분한 confidence의 CLEAR를 통과시키고 NEEDS_REVIEW/정상 low-confidence는 생성 모델로 재확인하는 2단계다. API 오류/refusal은 별도 실패이며 자동 생성 fallback으로 바꾸지 않는다. 이 방향 승인이 유료 예산·운영 활성화·최대 비용 보장 승인은 아니다. 새 분류 공통 경계는 [분류 설계](ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md)에 별도로 둔다.
 
-최신 실제 검증의 Gemini·OpenAI 합산 USD1 예산 승인은 [별도 평가 실행 계획](ISSUE_107_USD1_EVALUATION_EXECUTION_PLAN.md)을 따른다. 이는 제품 room 예산 금액·소진 행동이나 이 영속 원장 구현 완료를 승인한 것이 아니다. 평가도 총액 상한 증명 전 모델 호출0이다.
+최신 실제 검증의 Gemini·OpenAI 합산 USD1 예산 승인은 [별도 평가 실행 계획](ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-107-usd1-evaluation-execution-plan)을 따른다. 이는 제품 room 예산 금액·소진 행동이나 이 영속 원장 구현 완료를 승인한 것이 아니다. 평가도 총액 상한 증명 전 모델 호출0이다.
 
 ## 현재 요구사항과 구현의 차이
 

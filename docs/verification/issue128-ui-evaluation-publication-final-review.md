@@ -59,6 +59,6 @@ source 482·frozen runtime 1559·dependency 216개를 올바른 runtime-final �
 
 검토한 PR body SHA는 서버 `c7536e19dd9ed40fea2baa9e2c46e9af189fd6f7f2e03cbd8a19bd6698ace09a`, 웹 `c21f905841eab8a05a21b21e43a59c06d6fdf78076253aac1c0338157af63bca`다. 본 리뷰 링크와 실제 게시 URL/SHA/CI 결과를 추가하는 후속 상태 기록은 가능하다. 제품/테스트/하네스/평가 payload의 의미를 바꾸면 해당 범위는 다시 검증해야 한다.
 
-[현재 검증 보고](../ISSUE_123_UI_AND_EVALUATION_VERIFICATION.md), implementation_plan과 Worklog는 코드 완료/검증 완료와 commit·새 Draft·정확 HEAD CI 대기를 구분한다. 과거 raw CLEAR 불일치·503·timeout·parser 실패·유료 기록은 재라벨하지 않았다. 추가 유료 호출/UNKNOWN 환급 0, 기존 합산 USD2의 예약 USD1.33185536/여유 USD0.66814464 유지이며 운영 threshold·가격/활성화·전체 모델 품질은 여전히 미완료다. README/이미지 #127, 병합·배포·운영/Secret 변경·Linear 재시도는 이번 범위에 없다.
+[현재 검증 보고](../ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-ui-and-evaluation-verification), implementation_plan과 Worklog는 코드 완료/검증 완료와 commit·새 Draft·정확 HEAD CI 대기를 구분한다. 과거 raw CLEAR 불일치·503·timeout·parser 실패·유료 기록은 재라벨하지 않았다. 추가 유료 호출/UNKNOWN 환급 0, 기존 합산 USD2의 예약 USD1.33185536/여유 USD0.66814464 유지이며 운영 threshold·가격/활성화·전체 모델 품질은 여전히 미완료다. README/이미지 #127, 병합·배포·운영/Secret 변경·Linear 재시도는 이번 범위에 없다.
 
 남은 단계는 부모가 이 바이트를 commit/push하고 **기존 PR을 보존한 새 Draft 두 개**를 게시한 뒤 각 정확 HEAD의 CI를 확인·기록하는 것이다. 현재 로컬 PASS를 아직 없는 원격 CI 성공으로 표현하지 않는다.

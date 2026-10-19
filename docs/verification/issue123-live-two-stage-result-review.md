@@ -37,7 +37,7 @@
 | LTS06–07: 같은 날짜·두 시간 해석·그 밖의 의도 보존 | 평가 불가 | 실제 제안이 없어 날짜·부정·불필요 조건 추가를 판단할 수 없다. |
 | LTS08: 명시적 수용 전 자동 치환·완료 금지 | 완료 주장 없음 | accepted=false. 격리 평가이며 UI 직접 수정·답변 저장·accepted revision·운영 소유권 fencing을 실행하지 않았다. |
 
-원래 raw CLEAR와 사전 NEEDS_REVIEW의 불일치는 기존 [실제 Decisions 진단](../ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)의 FAIL/STOP 그대로다. LOW_CONFIDENCE routing이 적절했다는 별도 관측으로 그 raw 정답을 소급 변경하지 않는다. confidence0.06은 CLEAR 확률6%나 보정된 정확도가 아니다. 별도 CLEAR probability는0.37이며, 공급자의 confidence 수식은 검증하지 않았다.
+원래 raw CLEAR와 사전 NEEDS_REVIEW의 불일치는 기존 [실제 Decisions 진단](../ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-live-decisions-diagnostic)의 FAIL/STOP 그대로다. LOW_CONFIDENCE routing이 적절했다는 별도 관측으로 그 raw 정답을 소급 변경하지 않는다. confidence0.06은 CLEAR 확률6%나 보정된 정확도가 아니다. 별도 CLEAR probability는0.37이며, 공급자의 confidence 수식은 검증하지 않았다.
 
 기존 실제4회의 HTTP 지연1011.1/201.9/196.2/203.6ms와 input usage518/518/513/512·output0 기록은 그대로 유지한다. 이번 새 A의855.0ms와 input512를 별도로 추가하며 과거 값을 대체하지 않는다. 작은 표본에서 정확도·p50/p95·임계값 보정 효과를 주장하지 않는다.
 

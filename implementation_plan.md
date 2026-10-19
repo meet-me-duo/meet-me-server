@@ -1,3 +1,16 @@
+# 문서 기록 위치 정리 (2026-10-18 UTC)
+
+- [x] [USER] 정리 관련29개 변경만 별도 commit/push하여 기존 Draft PR132에 게시하고 정확 HEAD CI까지 확인하도록 후속 승인했다. 비용 감사/실모델 계획/README 초안 등 승인 대기12개와 그 상세 작업 기록은 게시에서 제외한다. 병합·배포·유료 호출·재계상은 제외한다.
+- [x] [AGENT] 원격 Draft132 Open·미병합/정확 HEAD ebcf218과 로컬 동일 branch를 재조회했다. Worklog/계획의 이전 미게시 기록과 이번 정리 hunk를 구분하고, 게시할 index/tree만 별도 검증한다. 기존 승인 대기 내용은 작업 트리에 보존한다.
+- [ ] [AGENT] 필수 pre-commit guard·최종 범위 검토 뒤 정리29개만 정상 commit/push하고 원격 diff/tree·로컬 링크·정확 HEAD CI를 확인한다. Commit/PR: 동일 커밋 예정 / 기존 Draft132. 자동 승인 검토가 다시 게시를 거절하면 재시도하지 않고 중단·보고한다.
+
+- [x] [AGENT] docs 목록/생성 커밋·AGENTS/6규칙·PR template/CI workflow·기존 Worklog를 읽어 원인을 대조했다. 별도 보고서 강제 규칙은 없고 단계별 실행 기록을 별도 Markdown으로 만든 문서화 선택이었다. 문서 규칙의 기록 위치 공백만 최소 보완한다.
+- [x] [AGENT] 완료 실행/리뷰11개를 기존 [Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md#통합한-과거-실행리뷰-원문)에 전체 통합하고 명시 anchor/원본 Git 복구 경로를 남겼다. root57→46/전체128→117 Markdown이다. 현재 설계/API/운영·사용자 작성 문서·원시 검증 자료는 보존하며 실제 링크만 현재 Worklog 위치로 연결한다.
+- [x] [AGENT] 승인 대기 비용 감사·최소 유료 검증 계획·README 초안 등 기존12개 미커밋 자료를 bytes 동일하게 보존한다. Worklog/구현 계획의 기존 변경도 보존한다. 기존 누락 inventory 링크1개는 근거 미확인으로 명시했다.
+- [x] [AGENT] 로컬 Markdown 파일/anchor 링크316개 전부 확인·끊김0, 명시 history anchor78개 중복0이다. 11개 원문 전체(링크 주소만 변경)·Git 복구/기존 Worklog·계획 본문 보존·pending12 bytes동일·제품/테스트/실행기/CI/원시 결과 불변·diff검사 PASS다. 새 Markdown 보고서0이다. 원격 PR132도 Open/Draft·미병합/HEAD ebcf218 동일을 재조회했다. 이번 정리는 미커밋/미게시로 부모에게 전달한다.
+
+유료 호출/비용 재계상/예약 해제·main 병합·배포·보안 설정 변경0. 기존USD3의 완료분 재계상과 새3개 유료 검증은 승인 대기다. 이번 정리는 로컬 미커밋이며 기존 Draft132 HEAD ebcf218의 CI와 구분한다. 아래는 각 시점의 기록이다.
+
 # #130 무료 managed HTTPS 브라우저 통합 준비·실행 (2026-10-18 UTC)
 
 - [x] [USER] test 전용 managed launcher·정확 runtime 핀·웹33 의존성 복구·기존 HTTPS 브라우저 연결을 승인했다. 실제 모델/OAuth 호출·운영 설정 변경은 제외하고 합성 결과와 실제 관리형 경로 검증을 구분한다.
@@ -140,7 +153,7 @@
 - [x] 현재root130 전체필수guard exit0·fresh214suites/1717중1713PASS+기존4SKIP·source235전후동일/454.85s를확인했다.
 - [ ] 최종 독립 게시review·기록commit/push/Draft/정확HEADCI. 미완료대표의미평가/#123와운영활성화는그대로 열림. 별도131 runtime C1은43GREEN/C2·배포전달 독립TDD중이다
 
-상세는 [대표 평가 기록](docs/ISSUE_130_REPRESENTATIVE_DECISIONS_EVALUATION.md)이다. 실제 평가대상398+미게시helper해시와미래게시commit을구별한다. 추가 실제 호출은중단했으며 소스변경없는전송환경대조만진행한다. Commit/PR 동일후속커밋예정.
+상세는 [대표 평가 기록](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-130-representative-decisions-evaluation)이다. 실제 평가대상398+미게시helper해시와미래게시commit을구별한다. 추가 실제 호출은중단했으며 소스변경없는전송환경대조만진행한다. Commit/PR 동일후속커밋예정.
 
 ## #130 대표 Decisions 평가·HTTPS 통합·출시 준비 후속 (2026-10-18 UTC)
 
@@ -204,7 +217,7 @@
 - [x] [AGENT] metadata 독립FI3 실제assert6/5/2탐지·각exactrestore7/9/5PASS·최종26PASS/원본source,test지문동일. exactrawreplay 독립질문/대안/usage보존감사PASS·fresh15s/UI미검증유지
 - [x] [AGENT] metadata 후속 새unchanged필수guard exit0: fresh213 suite/1710 중1706PASS·기존4SKIP·실패/오류0, source557 before=after=current. 이전b377 guard/실제parserFAIL이력별도보존
 - [x] [AGENT] 새 진단상태·근거 docs commit/push→PR126 HEAD4101038/정확CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공. 원격결과는Git이력·PR126/ignoredpublicationreceipt에기록. 60초진단을제품15초전체성공으로표시하지않음
-- 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](docs/ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)을 따른다.
+- 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-123-usd2-generation-diagnostic)을 따른다.
 
 - 사용자 최신 승인: 영속 PG 원장·최종/fallback/HOST retry 포함 전체 물리 호출 연결을 독립 TDD·합성 provider·리뷰·필수 guard로 구현한다. Decisions develop/main 병합·배포 제외, 운영 DB/Secret/접근 변경0. 실제 Gemini+OpenAI 합산 USD1 안에서 고정 payload/byte 기반 보수 견적의 격리 Decisions 진단4회·현재 production parser offline 검증을 완료했다. 모호 사례의 raw label 불일치/confidence0.06에서 중단했으며 운영 가격·활성화나 전체 의미 평가는 별도다.
 - [x] [AGENT] 1단계 [PR122](https://github.com/meet-me-duo/meet-me-server/pull/122) e83d5280… 코드 CI39093790134 Quality/ARM64 success·최신 Lifecycle39094909440 success. 완료 범위 #124 / 남은 전체 #123 분리. Refs-only 실패39094466469 이력 보존·workflow 변경0
@@ -258,7 +271,7 @@
 - [x] [AGENT] runtime 준비 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음 (`docs/verification/issue107-runtime-readiness-independent-review.md`)
 - [x] [AGENT] runtime 준비 PR121 HEAD20fb099·CI39069432900→develop01d00e7f 일반merge·exact merge CI39070926139 완료(최신 격리 대조로 재확인)
 - [ ] [USER/SHARED] 모임 총 AI10원 정책 충돌 결정·입증된 상한으로 별도 유료 평가 승인, 런타임 자격 증명·RS256/JWKS 및 실로그인/운영 읽기·복구·전환 승인. 공개 OAuth 설정은 완료 유지. 운영자 요약은 기본 OFF이며 출시 차단 조건 아님
-- 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
+- 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-107-main-readiness)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
 - 상세상태/다음시작점/역할·검증한계: [새107 Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음
 
 

@@ -11,4 +11,4 @@
 
 후속 실제 평가가 필요하면 먼저 지원 가능한 API/모델 파라미터와 합산 출력 cap을 확정하고, 입력 목록·반복수·총물리호출수·공식가격·예상최대비용·중단조건을 구체화해 사용자 승인을 받는다. 현재 승인 없는 paid probe나 cap 우회 활성화는 하지 않는다.
 
-재조사·독립 리뷰 후 [실제 평가 준비안](../ISSUE_107_REAL_MODEL_EVALUATION_PLAN.md)에 generation30/retry0/count최대30, 조건부 USD0.32256 산식과 현재 최대 USD 미입증, 정답 누출 방지·고정 분모·독립 판정/지연 측정·중단 규칙을 기록했다. 이 산식을 실제 실행 허가나 보장으로 사용하지 않는다.
+재조사·독립 리뷰 후 [실제 평가 준비안](../ISSUE_107_PRE_SUBMIT_WORKLOG.md#history-issue-107-real-model-evaluation-plan)에 generation30/retry0/count최대30, 조건부 USD0.32256 산식과 현재 최대 USD 미입증, 정답 누출 방지·고정 분모·독립 판정/지연 측정·중단 규칙을 기록했다. 이 산식을 실제 실행 허가나 보장으로 사용하지 않는다.
