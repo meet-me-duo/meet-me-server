@@ -1,3 +1,35 @@
+# history 정리 게시 준비 (2026-10-19 UTC)
+
+- [x] [USER] history639개 삭제와 기존 문서·규칙7개 수정, 총646개만 별도 커밋으로 같은 Draft PR132 브랜치에 정상 게시하고 정확 새 HEAD CI 종료까지 확인하도록 승인했다. 비용/계획/초안12개와 기존 관련 상세 기록은 게시하지 않고 작업 트리에 보존한다.
+- [x] [AGENT] HEAD/원격7ab660ad·PR132 Open/Draft·미병합을 재조회하고 총646개 범위를 확인했다. 활성/JSON/pending 보존과 기존 독립 리뷰를 바탕으로 게시할 index/tree를 별도 검증한다.
+- [ ] [AGENT] 필수 guard·게시 tree 최종 리뷰 후 정상 commit/push, 원격 diff/tree의 history0·제외자료 부재와 정확 새 HEAD CI를 확인한다. Commit/PR: 동일 커밋 예정 / 기존 Draft132.
+
+유료 호출·비용 재계상·병합·배포는 제외한다. 다음 시작점은 필수 guard와 게시 tree 리뷰이며 아래는 이전 시점 기록이다.
+
+# history 전체 사본 정리 (2026-10-19 UTC, 미게시)
+
+- [USER] 남은553개도 조사 후 함께 정리하도록 재확인했다. 현재 실행 입력이 확인되면 그 파일만 보존하고 과거 JSON/활성 도구/미게시 비용 원본을 유지한다. 추가 commit/push·유료 호출·재계상·병합·배포는 승인 범위가 아니다.
+- [AGENT] `7ab660ad7c1ca3553a63013df0d61ef1c07c668b`에서 history639개(4265087 bytes)를 모두 임시 복구하여 Git blob과 byte 대조했고 남은553개도 일치했다. CI/빌드/현재 도구의 실제 입력·glob을 대조한 정적 실행 의존성 확인0이다. 이는 모든 CI를 새 실행한 성적과 구분한다.
+- [AGENT] 남은553개는 현재 실행 입력0/동일 소스 여분22/소스 지문 목록5/기록끼리의 참조393/앞 범주 제외 명시적 미참조133으로 한 번씩 분류했다. 참조만으로 보존 필요성을 단정한 이전 설명을 정정한다. 참조 수는 파일·폴더·상대경로 기준 정적 조사다.
+- [AGENT] 남은553개를 제거하여 현재 history사본639→0, stub/폴더 이동0이다. [기존 TDD 안내](../.tdd/README.md#과거-fixture실행-사본의-git-복구)에 고정 Git 원본·역사경로 해석·복구법을 최소 보존하고 현행 Markdown 링크10개/4파일을 Git 고정 주소로 전환했다. 과거 JSON의 path/SHA/sourceRevision/판정/실패 이력은 다시 쓰지 않는다.
+- [x] [AGENT] history 없는 상태에서 관련 검사135(hook12/runtime pin28/managed Node68/catalog Node26·Python1) PASS, Gradle ktlintCheck/assemble/test exit0·17tasks UP-TO-DATE를 확인했다. 새 전체 테스트 실행으로 표시하지 않는다. 링크310/파일·anchor 오류0·고정Git 링크11·원본639복구·보존 JSON493/runtime654/pending12 byte동일·history path/SHA70쌍·기존문서/기록보존·index clean·diff검사 PASS다.
+- [x] [AGENT] 최종 독립 실제diff 리뷰 PASS/열린P1·P2=0이다. 검토 bound는 HEAD7ab660ad / diff SHA256 `9a3ca94475b8faaafee8ad5562517712826f54e072a87befc32b18bb6137decb`이며 이후 변경은 이 결과 상태 기록뿐이다. 리뷰어도 원본639 복구·JSON493 byte동일·서로 다른 직접 path/SHA61쌍·고정Git11·pending/기존기록 보존을 독립 확인했다. 총646변경=history639삭제+기존MD7수정이며 미커밋/미게시로 보고한다. 기존 원격7ab CI SUCCESS는 이번 추가 로컬 정리의 CI로 표시하지 않는다.
+
+추가분은 미커밋/미게시다. 다음 시작점은 부모의 전체646개 작업 사본 결과·게시 범위 검토다. 별도 확인 전 commit/push하지 않으며 아래는 이전 시점 기록이다.
+
+# docs 밖 검증 사본 정리 (2026-10-19 UTC, 미게시)
+
+- [USER] docs 밖 이슈별 script/JSON/폴더도 조사하고 안전한 작업 사본 정리까지 진행하도록 범위를 확대했다. 추가 정리분은 별도 확인 전 commit/push하지 않는다. 기존 미게시 비용 자료12개와 Worklog/계획의 이전 상세 기록을 보존한다.
+- [AGENT] 원격 문서 커밋 `7ab660ad7c1ca3553a63013df0d61ef1c07c668b`는 재생성·재게시하지 않았다. 부모 대비 Git `D11/M18`과 GitHub `removed11/modified18`가 일치하고 삭제 경로의 stub/rename은 없다. 정확 [CI39179046945](https://github.com/meet-me-duo/meet-me-server/actions/runs/39179046945)는 Quality Gate·ARM64 모두 최종 SUCCESS, Lifecycle39179046944도 SUCCESS다. Quality literal checkout45f17cd943910994e541df4b2c0e1aa2a7ecd93e의 부모는 develop3982535+HEAD7ab이며 HEAD와 tree577ead506968c774c486da840187a283cf3a14e2가 동일하다. ARM64는 정확7ab 직접 checkout을 확인했다. 이 결과는 원격 문서29개 커밋의 CI이며 추가 로컬90개 CI로 표시하지 않는다.
+- [AGENT] 추적1931개 중 `.tdd`1048/history639·RED115·verification202, `evaluation/issue130`70을 분류했다. 중복57그룹126사본/여분69는 삭제 가능 수량이 아니다. 현재 JSON47개가 history145파일을 참조하므로 참조된 자료·유효한 증거와 CI 도구는 보존한다.
+- [AGENT] 현재 코드·CI·테스트·남는 증거와 미게시 자료에서 incoming 참조가 없는 과거 fixture/실행 사본14묶음86파일(721170 bytes)을 작업 트리에서 제거했다. 유효 RED/FI 요약·실행기70·제품/테스트/배포/CI·비용 원본은 불변이다. [고정 Git 원본·복구 목록](../.tdd/README.md#과거-fixture실행-사본의-git-복구)에 삭제 이유와 7ab660ad 원본을 연결했으며 과거 JSON의 경로·지문을 다시 쓰지 않는다.
+- [AGENT] 전체 사본 대신 원본 커밋/경로/지문을 쓰고 기존 실행기·로컬 산출물 경계를 재사용하도록 개발 규칙을 최소 보완했다. 포괄 ignore 추가0·새 폴더/실행기/보고서0이다. wrapper 통합은 고정 ID·마스킹·실행 상한을 바꿀 수 있어 수행하지 않는다.
+- [x] [AGENT] 삭제 원본86개를 Git archive로 임시 디렉터리에 복구하고 HEAD 원본 blob과 byte 대조했다. 남은 현재/미게시 자료의 incoming 참조0, 보호 파일1107 불변·pending12 byte동일·기존11문서/이전기록 보존·index clean·diff검사 PASS다. 로컬 링크318개/파일·anchor 오류0, hook selftest12 및 managed runtime pin28 PASS다. 새 full Gradle/실모델/실제 browser 실행으로 표시하지 않는다.
+- [x] [AGENT] 독립 최종 실제 diff 리뷰 PASS/열린P1·P2=0이다. 검토 bound는 HEAD7ab660ad / diff SHA256 `891d6656675b502d6f0680d4781a5003e9b9dc77589f4bbec28b260a88c58864`이며 리뷰어도 원본86 복구·pending12/기존18·21행 보존·활성src/CI/RED/FI 불변을 별도 확인했다. 이 줄은 검토 후 상태 기록이며 새 실행 증거로 표시하지 않는다. 동일 바이트 여분 사본은69→41, 작업 트리에 남은 history파일639→553이다.
+- [x] [AGENT] 기존 원격7ab CI 최종상태·literal checkout·원격HEAD일치를 확인했다. 추가90개는 검증/독립 리뷰를 마쳤으며 미커밋/미게시로 결과를 보고한다. 추가 commit/push는 별도 확인 전 수행하지 않는다.
+
+유료 호출·비용 재계상·예약 변경·병합·배포0. 다음 시작점은 부모의 추가90개 작업 사본 결과 검토다. 추가 게시 승인은 아직 없으며 아래는 이전 시점 기록이다.
+
 ## 2026-10-18 UTC — 일회성 문서 정리
 
 후속 게시 승인: 사용자는 정리29개만 별도 커밋으로 현재 PR132 branch에 게시하고 정확 HEAD CI까지 확인하도록 승인했다. 승인 대기12개 및 그 상세 작업 기록은 index/게시 tree에서 제외하고 작업 트리에 보존한다. 필수 guard·게시 범위/링크 검증 후 정상 push하며, 이전 거절 뒤 이번 승인으로 한 번만 다시 시도한다. 다시 자동 승인 검토에 거절되면 중단·보고한다. 병합/배포/유료/비용 재계상은 승인하지 않았다. Commit/PR: 동일 후속 커밋 예정 / 기존 Draft132. 아래의 미커밋/미게시·원격 ebcf218 설명은 첫 정리 완료 시점이다. 최종 게시 SHA/정확 CI는 Git 이력과 PR 본문에서 확인한다.
@@ -1143,7 +1175,7 @@ raw A의 CLEAR는 이 사례의 사전 NEEDS_REVIEW 의미 기대와 계속 불�
 
 실행은 수정 없는 전체 guard와 현 소스 독립 리뷰가 통과한 뒤 수행한다. 원시 요청/응답·single-use consumed 기록·개별 HTTP 지연·usage nullable 값과 모델 응답 의미의 독립 판정을 별도 보존한다. 사전 oracle 실패 시 추가 호출·답변 손질·threshold 변경 없이 중단하며 전체 품질·정확도·p50/p95·운영 준비 완료를 주장하지 않는다.
 
-실행 전 wire는 분류2397B·count3172B·generation3111B로 모두16KiB 미만이다. 동결 [실행 계획](../.tdd/history/issue123-live-two-stage-execution/execution-plan.json)의 SHA는 `368bafb75f2c36f0980501ea5b7b8a9669f5b8eb5e6705c49e4b6659b9aeb746`이며 [wire manifest](../.tdd/history/issue123-live-two-stage-execution/wire-manifest.json)와 exact harness/callback 원본을 같은 history에 보존한다. callback은 전체 guard exit0을 재검사하고 stage별 O_EXCL consumed를 요청 전에 기록한다. 실행 전 준비 시점의 추가 실제 호출은0이었다. 아래는 이후의 고정 계획 실행 결과다.
+실행 전 wire는 분류2397B·count3172B·generation3111B로 모두16KiB 미만이다. 동결 [실행 계획](https://github.com/meet-me-duo/meet-me-server/blob/7ab660ad7c1ca3553a63013df0d61ef1c07c668b/.tdd/history/issue123-live-two-stage-execution/execution-plan.json)의 SHA는 `368bafb75f2c36f0980501ea5b7b8a9669f5b8eb5e6705c49e4b6659b9aeb746`이며 [wire manifest](https://github.com/meet-me-duo/meet-me-server/blob/7ab660ad7c1ca3553a63013df0d61ef1c07c668b/.tdd/history/issue123-live-two-stage-execution/wire-manifest.json)와 exact harness/callback 원본을 같은 history에 보존한다. callback은 전체 guard exit0을 재검사하고 stage별 O_EXCL consumed를 요청 전에 기록한다. 실행 전 준비 시점의 추가 실제 호출은0이었다. 아래는 이후의 고정 계획 실행 결과다.
 
 <a id="history-issue-123-live-two-stage-validation--실제-관측과-차단"></a>
 
@@ -1161,7 +1193,7 @@ raw A의 CLEAR는 이 사례의 사전 NEEDS_REVIEW 의미 기대와 계속 불�
 
 초기4회와 합한 Decisions는5회·입력2573/출력0이다. 그 보고 usage의 공개 기본 단가 환산은USD0.0002573,2.2배 보수 환산은USD0.00056606이다. Gemini count1과 generation시도1의 청구/생성 usage는 미확인으로 남기고0으로 바꾸지 않았다. 전체 예약USD0.39063552와 추가 비용 여유USD0.60936448를 유지한다. 최초4회 개별 지연1011.1/201.9/196.2/203.6ms와 초기 raw FAIL/STOP은 [원 진단](#history-issue-123-live-decisions-diagnostic)에서 보존한다.
 
-[구조화 관측](../.tdd/verification/issue123-live-two-stage-observed.json)과 [single-use 실행 기록](../.tdd/history/issue123-live-two-stage-execution/live-invocation.json)에 각 요청/응답·guard·oracle 지문과503 차단을 남겼다. 운영 활성화·임계값 결정·전체 정확도/p50/p95·실제 모임10원 보장을 입증한 결과가 아니다.
+[구조화 관측](../.tdd/verification/issue123-live-two-stage-observed.json)과 [single-use 실행 기록](https://github.com/meet-me-duo/meet-me-server/blob/7ab660ad7c1ca3553a63013df0d61ef1c07c668b/.tdd/history/issue123-live-two-stage-execution/live-invocation.json)에 각 요청/응답·guard·oracle 지문과503 차단을 남겼다. 운영 활성화·임계값 결정·전체 정확도/p50/p95·실제 모임10원 보장을 입증한 결과가 아니다.
 
 <a id="history-issue-123-live-two-stage-validation--별도-후속-시도2--실행-전-고정"></a>
 
@@ -1169,7 +1201,7 @@ raw A의 CLEAR는 이 사례의 사전 NEEDS_REVIEW 의미 기대와 계속 불�
 
 부모가 최초503의 FAIL/STOP과 미확인 예약을 유지한 채 같은 범위의 한정된 별도 재검증을 요청했다. [독립 예산 검토](verification/issue123-live-two-stage-attempt2-budget-review.md)의 Decimal 검증에 따라 기존USD0.39063552+추가 최대USD0.31854592=누적USD0.70918144, 추가 비용 여유USD0.29081856이다. 그다음 같은 전체 시도는USD1.02772736으로 승인USD1을 넘으므로 실행하지 않는다.
 
-첫 종료 이후7분 이상 지난 시점에 새 single-use 폴더와 [고정 계획](../.tdd/history/issue123-live-two-stage-attempt2/execution-plan.json)을 준비했다(plan SHA `b4fe8fd30e5b61b87d259cce1ab6a4099220d445910ba5617c2511d9354a0e28`). 기존3개 요청 bytes/SHA·oraclec69·합성threshold0.8·전체15초·2048/LOW·harness757b는 동일하다. 최대새A1/count1/gen1, 이 별도 시도 내부 retry/fallback0이며 첫 실패에서 중단한다. 원래503 계획/결과는 수정하지 않는다. 새attempt2는 실행 전 정적 독립 리뷰 뒤 한 번만 실행하며 현재 준비 실행의 추가 HTTP는0이다.
+첫 종료 이후7분 이상 지난 시점에 새 single-use 폴더와 [고정 계획](https://github.com/meet-me-duo/meet-me-server/blob/7ab660ad7c1ca3553a63013df0d61ef1c07c668b/.tdd/history/issue123-live-two-stage-attempt2/execution-plan.json)을 준비했다(plan SHA `b4fe8fd30e5b61b87d259cce1ab6a4099220d445910ba5617c2511d9354a0e28`). 기존3개 요청 bytes/SHA·oraclec69·합성threshold0.8·전체15초·2048/LOW·harness757b는 동일하다. 최대새A1/count1/gen1, 이 별도 시도 내부 retry/fallback0이며 첫 실패에서 중단한다. 원래503 계획/결과는 수정하지 않는다. 새attempt2는 실행 전 정적 독립 리뷰 뒤 한 번만 실행하며 현재 준비 실행의 추가 HTTP는0이다.
 
 <a id="history-issue-123-live-two-stage-validation--후속-시도2-실제-관측"></a>
 
@@ -1267,7 +1299,7 @@ NEEDS_CHOICE 검사를 취소하면 persisted question이 그대로인 상태에
 
 [독립 비용 검토](verification/issue123-usd2-generation-diagnostic-cost-review.md)는 각generation최대견적USD0.152064, 추가2회USD0.304128, 이전예약을 포함한 최대USD1.01330944·추가 비용 여유USD0.98669056를 확인했다. 실제 청구·세금·결제 수수료와 Gemini byte/token 공식 상한을 확인한 값이 아니며, 기존81920 engineering input allowance/2048 thought-inclusive output/2.2배 여유를 유지했다. 미호출 slot과 UNKNOWN 노출은 따로 기록한다.
 
-동결 [계획](../.tdd/history/issue123-usd2-generation-diagnostic/execution-plan.json) SHA는 `95db90eee4118232952bed08a743956f5d5356145d084df8638355a62a3f90c6`, request SHA는 `3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44`다. 실제 실행 전 static review에서 알려진HTTP상태의 재시도 우회와 invalid RetryAfter 허용을 발견해 유료호출0 상태에서 최소 보완했고, 원본과 독립 재현을 history에 보존했다. 최종 격리 mock59/59와 [실행 전 독립 리뷰](verification/issue123-usd2-generation-preexecution-review.md) 후에만 아래 두 요청을 실행했다.
+동결 [계획](https://github.com/meet-me-duo/meet-me-server/blob/7ab660ad7c1ca3553a63013df0d61ef1c07c668b/.tdd/history/issue123-usd2-generation-diagnostic/execution-plan.json) SHA는 `95db90eee4118232952bed08a743956f5d5356145d084df8638355a62a3f90c6`, request SHA는 `3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44`다. 실제 실행 전 static review에서 알려진HTTP상태의 재시도 우회와 invalid RetryAfter 허용을 발견해 유료호출0 상태에서 최소 보완했고, 원본과 독립 재현을 history에 보존했다. 최종 격리 mock59/59와 [실행 전 독립 리뷰](verification/issue123-usd2-generation-preexecution-review.md) 후에만 아래 두 요청을 실행했다.
 
 <a id="history-issue-123-usd2-generation-diagnostic--실제-관측과-중단"></a>
 

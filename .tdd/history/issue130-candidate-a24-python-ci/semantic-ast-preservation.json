@@ -1,7 +1,0 @@
-{
-  "fixtureOnlyCanonicalJavaHomeKeywordRemovedRestoresExactOldPythonAst": true,
-  "removedKeywords": 1,
-  "runnerOnlyObservationStatementsRemovedRestoresExactOldMainAst": true,
-  "originalAssertionsCount": 24,
-  "originalAssertionsAstSha256": "96f8e27e91ac6dc91f11c20afad09a95ac5cd3e478e1bc402115e99c608e5c21"
-}

@@ -1,8 +1,0 @@
-{
-  "status": "PASS_FOR_EXPLICIT_EVALUATION_PATH_PROJECTION",
-  "canonicalSevenFieldsUnchanged": true,
-  "baseSchema": ".tdd/schema/red-evidence.schema.json",
-  "onlyProjection": "testFiles[].path permits evaluation/issue130/tests/*.java|*.py in this local schema instance; repository schema not changed.",
-  "formatChecker": true,
-  "originalKotlinSchemaClaimedPass": false
-}

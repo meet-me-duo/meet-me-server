@@ -1,1 +1,0 @@
-{"mode": "DRY_RUN_NO_NETWORK", "freezeReady": true, "requiredPlanPath": "/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-fresh-head-two-stage/execution-plan.json", "planSha256": "0463d7e56066c7b709c5cdcdc0420733017b89c4a71a10ec59b8b90e86e63222", "sourceRevision": "4101038fd421351affa2a1fcdd5741083cb1a6b6", "automaticRetries": 0}

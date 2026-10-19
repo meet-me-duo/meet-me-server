@@ -1,3 +1,30 @@
+# history 정리 게시 준비 (2026-10-19 UTC)
+
+- [x] [USER] history639삭제+기존MD/규칙7수정의646개만 같은 Draft132에 별도 정상 commit/push하고 정확 새 HEAD CI 종료까지 확인하도록 승인했다. 미게시12개/기존 비용·계획 상세 기록은 제외·보존한다.
+- [x] [AGENT] 로컬/원격HEAD7ab·Draft132 Open/미병합과646개 범위를 확인했다. 원본639 복구·JSON493/runtime654/pending12 보존·135관련검사/Gradle gate·최종 독립 리뷰는 완료했다.
+- [ ] [AGENT] 필수 guard·정확 게시 tree 리뷰→정상 commit/push→원격history0/diff/tree·정확 새 HEAD CI를 확인한다. Commit/PR: 동일 커밋 예정 / 기존 Draft132.
+
+추가 유료 호출·재계상·병합·배포는 제외한다. 다음 시작점은 필수 guard/게시 tree 리뷰이며 아래는 이전 기록이다.
+
+# history 전체 사본 정리 (2026-10-19 UTC, 미게시)
+
+- [x] [USER] 남은553개 history 사본도 작업 사본에서 정리하도록 재확인했다. 추가 게시·유료 호출·재계상·병합·배포는 제외한다.
+- [x] [AGENT] Git7ab 원본639 전수 복구/byte 대조·남은553 동일·정적 현재 실행 입력0을 확인하고 전체 history사본639→0으로 정리했다. 기존 [.tdd 안내](.tdd/README.md#과거-fixture실행-사본의-git-복구)에 역사경로/복구 해석을 남기고 현행 링크10개만 고정 Git으로 연결했다. JSON 판정/지문과 활성 도구·미게시 자료는 보존한다.
+- [x] [AGENT] history 없는 작업 트리의 관련135 PASS·Gradle gate exit0(17tasks UP-TO-DATE)·링크310/오류0·고정Git11·원본639복구·JSON493/runtime654/pending12 보존·path/SHA70쌍·diff검사를 통과했다. 새 전체 제품 테스트 실행으로 표시하지 않는다.
+- [x] [AGENT] 최종 독립 실제diff 리뷰 PASS/열린P1·P2=0이다(diff SHA9a3ca944…). 원본639 복구·JSON493/미게시12/기존기록 불변을 독립 확인했으며 총646변경(history639삭제+기존MD7수정)을 미커밋/미게시로 보고한다. 원격7ab CI SUCCESS와 추가 로컬 검증을 구분한다.
+
+다음 시작점은 부모의 전체646개 작업 사본 결과·게시 범위 검토다. 추가 commit/push는 별도 확인 전 금지이며 아래는 이전 기록이다.
+
+# docs 밖 검증 사본 정리 (2026-10-19 UTC, 미게시)
+
+- [x] [USER] 조사 후 docs 밖까지 안전하게 함께 정리하도록 범위를 확대했다. 추가분 commit/push는 별도 확인 전 금지다.
+- [x] [AGENT] 활성 코드·CI·테스트/fixture·유효 RED/FI·미게시12 자료를 보존하고 참조 없는 과거14묶음86파일을 작업 트리에서 제거했다. 기존 [.tdd 안내](.tdd/README.md#과거-fixture실행-사본의-git-복구)에 고정 Git7ab 원본/복구 경로를 연결하고 지침을 최소 보완했다. 새 보고서·실행기·폴더는 만들지 않는다.
+- [x] [AGENT] 원본86 Git 복구/byte 대조·현재 incoming참조0·보호1107/pending12 불변·기존문서/기록 보존·링크318/오류0·hook12/runtime pin28·diff검사를 통과했다. 활성 테스트의 기대값/지문은 바꾸지 않는다.
+- [x] [AGENT] 독립 최종 실제diff 리뷰 PASS/열린P1·P2=0이다(diff SHA891d6656…). 원본86 복구·기존pending/활성파일 보존을 독립 확인했다. 이후 변경은 결과 상태 기록뿐이다.
+- [x] [AGENT] 기존 원격HEAD7ab 문서 CI39179046945(Quality/ARM64)·Lifecycle39179046944 SUCCESS 및 literal checkout/tree/원격HEAD 일치를 확인했다. 추가90개는 미커밋/미게시이며 해당 원격 CI와 분리하여 결과를 보고한다. 추가 commit/push는 별도 확인 전 금지다.
+
+유료 호출/재계상/병합/배포0. 다음 시작점은 부모의 추가90개 작업 사본 결과 검토다. 추가 게시 승인은 없으며 아래는 이전 기록이다.
+
 # 문서 기록 위치 정리 (2026-10-18 UTC)
 
 - [x] [USER] 정리 관련29개 변경만 별도 commit/push하여 기존 Draft PR132에 게시하고 정확 HEAD CI까지 확인하도록 후속 승인했다. 비용 감사/실모델 계획/README 초안 등 승인 대기12개와 그 상세 작업 기록은 게시에서 제외한다. 병합·배포·유료 호출·재계상은 제외한다.

@@ -37,6 +37,26 @@
 - 구현이 되돌려져 요약이 더 이상 현재 코드의 근거가 아니어도 과거 Git 이력은 보존한다.
   현재 트리에서 제거할 필요가 있으면 별도 정리 변경으로 삭제 이유를 남긴다.
 
+### 과거 fixture·실행 사본의 Git 복구
+
+과거 `.tdd/history/` 사본 639개는 현재 코드·CI·테스트의 실행 입력이 아니므로 현재 트리에서
+제거했다. 전체 원본은 [고정 Git 이력](https://github.com/meet-me-duo/meet-me-server/tree/7ab660ad7c1ca3553a63013df0d61ef1c07c668b/.tdd/history)에 보존한다.
+유효한 `red/`, `verification/` 요약과 현재 `evaluation/` 실행기·필수 fixture는 유지한다.
+이 정리는 과거 실패, fixture 교정, 원래 기대값과 판정을 현재 결과로 대체하지 않는다.
+
+남아 있는 증거 JSON·과거 기록·주석의 `.tdd/history/...` 경로는 위 커밋의 Git object 경로로
+해석한다. 원래 JSON의 경로·SHA·`sourceRevision`·판정은 그대로이며 현재 파일의 존재나 현재
+소스와의 일치를 뜻하지 않는다. `7ab660ad7c1ca3553a63013df0d61ef1c07c668b`는 보관본의 커밋이지
+각 실행의 `sourceRevision`을 바꾸는 값이 아니다. 미게시 승인 대기 자료에도 같은 보관 위치를
+적용하며 그 원문은 수정하지 않는다.
+
+개별 원본 열람: `git show 7ab660ad7c1ca3553a63013df0d61ef1c07c668b:.tdd/history/<경로>`.
+전체 복구: `git archive 7ab660ad7c1ca3553a63013df0d61ef1c07c668b -- .tdd/history`를 빈 임시
+디렉터리에 추출한다. 복구한 파일의 SHA를 원래 요약과 대조할 수 있다. 실행을 재현할 때는
+기록에 지정된 source revision·도구·runtime을 별도 작업 사본에서 함께 복구한다. 현재 구현과
+과거 사본을 섞은 새 실행을 과거 실행 증거로 표시하지 않는다. 새 임시 산출물은 기존 로컬
+전용 경로에 두며 history 사본을 현재 트리에 다시 복제하지 않는다.
+
 ## 고위험 결함 주입 검증
 
 트랜잭션·동시성·보안·외부 Adapter처럼 PIT로 충분히 검증할 수 없는 경계는 구현을 복구한
