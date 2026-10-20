@@ -4,15 +4,18 @@
 
 - [USER] 이번 범위는 소셜 로그인·계정 소유권, 개인 원문 저장, Jev 확인 필요 판단, 필요한 경우만 보완 질문 생성, 답변·수정 후 재검사, 현재 원문의 CLEAR 수용, 마감된 전체 완료본 분석과 결정론적 추천이다. 사용자 README 흐름도 이미지 검사 전 운영 전환을 하지 않는다.
 - [x] 최소 GitHub Issue #134 생성. 원본 서버·웹 checkout 및 복구된 평가 source를 보존하고 clean develop FF 뒤 feature/issue-134-jev-integrated-release 분기.
-- [x] PR133 runtime 변경과 PR132의 V2 판단·생성 계약, 별도로 실제 Luna 4/4 및 무료 전체 회귀를 통과했던 조건부 대체·해석 실패 안전 처리 source를 격리 통합. 현재 미커밋이며 새 통합 후보 검증은 별도 진행한다.
+- [x] PR133 runtime 변경과 PR132의 V2 판단·생성 계약, 별도로 실제 Luna 4/4 및 무료 전체 회귀를 통과했던 조건부 대체·해석 실패 안전 처리 source를 격리 통합. 검증된 소스는 289edadc4534faa4d5a323f988c4117578934369로 commit/push하고 develop 대상 Draft PR135로 보존했다. PR133을 merge parent로 포함하며 PR132의 V2 계약을 반영했다.
 - [x] 전체 입력 Jev를 기존 PRECHECK_CLASSIFICATION 물리 슬롯에 연결하고 exact bytes 예약·단일 송신·usage 관측·명시 confidence 정책을 무료 회귀로 검증했다. 집중188 PASS, 통합 JDK17 ktlintCheck/assemble/test 2013건 중2009 PASS·기존4 SKIP·오류0, 독립 FI3 모두 탐지·매회 exact restore와20건 control PASS. 시각별 Jev의 NO_PERIOD_QUESTION은 전체 CLEAR 권한이 아니며 별도 clock 진단을 전체 분류로 대체하지 않는다.
 - [ ] 기존 운영 가격 근거·방 cap·단위·confidence 임계값과 기존 Typesafe key 전달 경로를 확인한다. 원본48 평가의 USD0.01 한도·평가 가격은 운영 승인으로 전용하지 않는다. 누락 시 기본 OFF·UNCONFIGURED·DENY를 유지한다.
 - [ ] PR33 웹 계약과 Google/Kakao·소유권·확인 질문 흐름의 운영 통합을 확인한다. 격리 PR33의 API 생성 계약·lint·typecheck·unit682·build PASS이며 실제 OAuth 로그인 증거는 아니다. 기존 OAuth callback/RS256 host 파일의 존재·가독성은 값을 노출하지 않고 확인하며 실제 로그인은 사용자 handoff로 확인한다.
 - [ ] main V1–V10 바이트 일치를 확인했고 필요한 V11–V17 additive migration·기존 방과 새 방은 통합 전체 PG 회귀를 통과했다. 운영 history·backup/restore 경계는 별도 확인한다. SQL을 되돌리지 않으며 조건부 JSON을 쓴 뒤 이전 reader로 되돌리는 위험을 별도 검토한다.
 - [ ] README 흐름도 검토안은 부모가 Library libfile_0c0509e210908191924dcd9274e9aff9로 사용자에게 전달했다. 승인 전 최종 자산 확정·운영 전환 금지.
 - [ ] 독립 테스트·결함 주입·ktlintCheck/assemble/test·정확 HEAD CI 후 승인된 기존 배포 절차와 READY·health·runtime SHA를 확인한다.
+- [x] 검토용 소스 게시와 CI 준비: PR135 및 289edad의 CI run39448634693을 생성했다. 해당 ARM64 Built Image job은 성공했고 Quality Gate는 기록 시 진행 중이다. main 병합·운영 전환은 수행하지 않았다.
 
-현재 추가 유료 모델 호출0·운영 변경0. 원본 commit guard도 통과했으며 검증된 소스를 검토용 branch·Draft PR로 게시한다. README 이미지·운영 정책·키 쓰기·배포는 승인 대기다. 기존 PR133의 일회성 검증 사본과 과거 Worklog 변경은 Git 이력에 보존하고 이번 source diff에서는 제외한다. 키 전달 renderer는 기존 typed 검증을 재사용해 승인된 기존 key를 활성화 시에만 읽도록 준비했고 독립 Node73 PASS, 운영 SSM 존재·권한·값은 확인하지 않았다. 배포 Python19중18 PASS/1은 alpine:3.22 부재 및 공식 pull의 daemon 인증 오류로 미검증이다. 기존 실제 Luna 4/4는 최종 조건 추출 증거이며 Jev 운영 판단·질문 생성·답변 전체 경로의 실검증으로 확대하지 않는다.
+현재 추가 유료 모델 호출0·운영 변경0. 원본 commit guard도 통과했으며 검증된 소스를 검토용 branch·Draft PR135로 게시했다. README 이미지·운영 정책·키 쓰기·배포는 승인 대기다. 기존 PR133의 일회성 검증 사본과 과거 Worklog 변경은 Git 이력에 보존하고 이번 source diff에서는 제외한다. 키 전달 renderer는 기존 typed 검증을 재사용해 승인된 기존 key를 활성화 시에만 읽도록 준비했고 독립 Node73 PASS, 운영 SSM 존재·권한·값은 확인하지 않았다. 배포 Python19중18 PASS/1은 alpine:3.22 부재 및 공식 pull의 daemon 인증 오류로 미검증이다. 기존 실제 Luna 4/4는 최종 조건 추출 증거이며 Jev 운영 판단·질문 생성·답변 전체 경로의 실검증으로 확대하지 않는다.
+
+운영 비용 검토(2026-10-20 UTC): 기존 제한은 개인500/방10000 Unicode code point·최대50명, 개인검사 최대6회, 최종 분석당 Gemini 최대4회와 Luna 최대1회다. 전체 완료본 원문을 사용하는 고정 prompt/schema와 실제 SDK를 오프라인에서 직렬화했으며 50명·합계10000자의 8종 문자 측정은 약26–77KB였다. 이는 대표 문자·고정 메타데이터의 전송 크기이며 모든 입력의 청구 토큰 상한 증명은 아니다. 최종 입력 토큰 사전검사는 없고 count와 청구 입력의 결속·count 가격·실제 Standard tier 및 confidence calibration은 미확인이다. 최대 모델 context 전량을 사용한 기존 USD6.52 제안은 활성화하지 않는다. 더 작은 바이트 제한은 검토 가능하나 금액 cap으로 환산하지 않는다. 개인2048/최종32768 출력 요청 한도 자체가 기존 모임10원 목표와 충돌할 수 있으므로 임의로 한도·prompt/schema·운영 정책을 바꾸지 않았다. 새 최종 count HTTP는 기존 PRECHECK_COUNT 권한으로 실행할 수 없다.
 
 ## #131 관리형 AI runtime 연결 보완 (2026-10-18 UTC)
 
