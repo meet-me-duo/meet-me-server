@@ -24,6 +24,12 @@ services:
         read_only: true
         bind:
           create_host_path: false
+      - type: bind
+        source: ./runtime-ai-policy.json
+        target: /run/meetme-ai/runtime-ai-policy.json
+        read_only: true
+        bind:
+          create_host_path: false
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://127.0.0.1:9090/actuator/health"]
       interval: 15s

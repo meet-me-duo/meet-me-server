@@ -190,6 +190,7 @@ class Issue123ManagedDispatchCompositionTest {
 
     private fun base() =
         ApplicationContextRunner()
+            .withPropertyValues("meetme.typesafe.api-key=synthetic-managed-key")
             .withBean(GeminiProperties::class.java, Supplier { GeminiProperties(apiKey = "synthetic-managed-key") })
             .withBean(OpenAiProperties::class.java, Supplier { OpenAiProperties(apiKey = "synthetic-managed-key") })
             .withBean(ObjectMapper::class.java, Supplier { JsonMapper.builder().build() })

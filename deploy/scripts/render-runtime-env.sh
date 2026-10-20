@@ -71,6 +71,7 @@ validate_auth_destination() {
 if [[ "$auth_required" == true ]]; then validate_auth_destination; fi
 
 openai_api_key=
+typesafe_api_key=
 if [[ "$runtime_mode" == gemini-luna-required ]]; then
   if ! openai_parameter="$(aws ssm get-parameter \
     --region "$region" \
@@ -150,6 +151,75 @@ if [[ "$auth_required" == true ]]; then
     fi
   fi
   unset precheck_parameter
+
+  # This release's reviewed, nonsecret artifact is the only policy source.
+  # Validate before replacing the raw environment; no SSM value can supply financial authority.
+  if ! policy_info="$(python3 -I - "$release_directory/runtime-ai-policy.json" "$precheck_provider_enabled" <<'PY'
+import datetime,decimal,hashlib,json,os,re,stat,sys
+try:
+    path,enabled=sys.argv[1:]
+    fd=os.open(path,os.O_RDONLY|os.O_NOFOLLOW)
+    with os.fdopen(fd,'rb') as stream:
+        metadata=os.fstat(stream.fileno())
+        assert stat.S_ISREG(metadata.st_mode) and metadata.st_size<=65536 and metadata.st_mode&0o444
+        raw=stream.read(65537)
+    assert len(raw)<=65536
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            assert key not in result
+            result[key]=value
+        return result
+    def invalid_constant(value):raise ValueError()
+    data=json.loads(raw.decode('utf-8'),object_pairs_hook=unique,parse_float=decimal.Decimal,parse_constant=invalid_constant)
+    assert type(data) is dict and data.get('protocol')=='meetme-managed-ai-policy-v1'
+    threshold=''
+    if data.get('state')=='UNCONFIGURED':
+        assert set(data)=={'protocol','state'} and enabled=='false'
+    else:
+        assert data.get('state')=='CONFIGURED' and set(data)=={'protocol','state','unit','roomCap','minimumConfidence','operations'}
+        unit=data['unit']
+        assert type(unit) is dict and set(unit)=={'code','scale'}
+        code=unit['code']
+        assert type(code) is str and code and code==code.strip() and len(code.encode('utf-16-le'))//2<=32
+        assert not any(value in code for value in ('\x00','\r','\n')) and type(unit['scale']) is int and 0<=unit['scale']<=38
+        def amount(value):return type(value) is str and re.fullmatch(r'0|[1-9][0-9]{0,37}',value)
+        assert amount(data['roomCap']) and int(data['roomCap'])>0
+        confidence=data['minimumConfidence']
+        assert type(confidence) in (int,decimal.Decimal) and decimal.Decimal(confidence).is_finite() and 0<=confidence<=1
+        profiles={
+            'PRECHECK_CLASSIFICATION':'c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc',
+            'PRECHECK_COUNT':'658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307',
+            'PRECHECK_GENERATION':'b9ce9802d9dc3f4396f49c796cfe173fda708c6a35ac40c79d5bdc5091419363',
+            'FINAL_PRIMARY':'0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04',
+            'FINAL_FALLBACK':'9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab'}
+        operations=data['operations']
+        assert type(operations) is list and len(operations)==5
+        seen=set()
+        for row in operations:
+            assert type(row) is dict and set(row)=={'operation','profileFingerprint','evidenceFingerprint','maximumAmount','validUntil'}
+            operation=row['operation']
+            assert operation in profiles and operation not in seen and row['profileFingerprint']==profiles[operation]
+            seen.add(operation)
+            assert type(row['evidenceFingerprint']) is str and re.fullmatch('[0-9a-f]{64}',row['evidenceFingerprint'])
+            assert amount(row['maximumAmount']) and type(row['validUntil']) is str and row['validUntil'].endswith('Z')
+            expiry=datetime.datetime.fromisoformat(row['validUntil'].replace('Z','+00:00'))
+            assert expiry.utcoffset()==datetime.timedelta(0)
+            if enabled=='true':assert expiry>datetime.datetime.now(datetime.timezone.utc)
+        if enabled=='true':threshold=str(confidence)
+    print(hashlib.sha256(raw).hexdigest()+':'+threshold)
+except Exception:
+    sys.exit(2)
+PY
+  )"; then
+    runtime_fail 'Managed AI runtime policy is invalid or unavailable'
+  fi
+  policy_sha256="${policy_info%%:*}"
+  classifier_minimum_confidence="${policy_info#*:}"
+  unset policy_info
+  if [[ "$precheck_provider_enabled" == true ]]; then
+    typesafe_api_key="$(get_auth_parameter secret/typesafe-api-key SecureString)"
+  fi
 fi
 
 database_secret_arn="$(get_parameter "$parameter_root/config/database-secret-arn")"
@@ -202,6 +272,15 @@ trap 'rm -f "$temporary"' EXIT
     printf 'AUTH_SIGNING_PRIVATE_KEY_PATH=/run/meetme-auth/signing-private.pem\n'
     printf 'AUTH_VERIFICATION_JWKS_PATH=/run/meetme-auth/verification.jwks.json\n'
     printf 'MEETME_PRECHECK_PROVIDER_ENABLED=%s\n' "$precheck_provider_enabled"
+    printf 'MEETME_PRECHECK_DECISIONROUTING_ENABLED=%s\n' "$precheck_provider_enabled"
+    printf 'MEETME_PRECHECK_CLASSIFIER_ENABLED=%s\n' "$precheck_provider_enabled"
+    printf 'MEETME_AI_BUDGET_ENABLED=%s\n' "$precheck_provider_enabled"
+    printf 'MEETME_AI_BUDGET_POLICYPATH=/run/meetme-ai/runtime-ai-policy.json\n'
+    printf 'MEETME_AI_BUDGET_POLICYSHA256=%s\n' "$policy_sha256"
+    if [[ "$precheck_provider_enabled" == true ]]; then
+      printf 'MEETME_PRECHECK_CLASSIFIER_MINIMUMCONFIDENCE=%s\n' "$classifier_minimum_confidence"
+      printf 'TYPESAFE_API_KEY=%s\n' "$typesafe_api_key"
+    fi
   fi
   printf 'ANONYMOUS_COOKIE_SECURE=true\n'
   printf 'MANAGEMENT_PORT=9090\n'

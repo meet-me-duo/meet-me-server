@@ -41,6 +41,7 @@ class RoomLifecycleController(
     @Operation(summary = "로그인 계정으로 방과 주최자 참여 생성")
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "방 생성 성공"),
+        ApiResponse(responseCode = "500", description = "방 생성에 필요한 내부 설정 사용 불가", content = [Content()]),
         ApiResponse(
             responseCode = "401",
             description = "로그인 필요",

@@ -9,7 +9,24 @@ enum class TimePolarity {
     UNAVAILABLE,
 }
 
+enum class ConditionalTimeActivation {
+    WHOLE_ROOM_PRIMARY_UNAVAILABLE,
+}
+
 sealed interface StructuredCondition {
+    data class ConditionalFallbackTimeWindow(
+        val activation: ConditionalTimeActivation,
+        val date: LocalDate?,
+        val dayOfWeek: DayOfWeek?,
+        val startTime: LocalTime,
+        val endTime: LocalTime,
+        val endsAtNextDayStart: Boolean = false,
+    ) : StructuredCondition {
+        init {
+            TimeWindow(TimePolarity.AVAILABLE, date, dayOfWeek, startTime, endTime, endsAtNextDayStart)
+        }
+    }
+
     data class TimeWindow(
         val polarity: TimePolarity,
         val date: LocalDate?,

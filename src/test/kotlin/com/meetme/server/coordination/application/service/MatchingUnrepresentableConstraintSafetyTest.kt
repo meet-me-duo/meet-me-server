@@ -63,15 +63,16 @@ class MatchingUnrepresentableConstraintSafetyTest {
     }
 
     @Test
-    fun `generic invalid condition retains the existing neutral time policy`() {
+    fun `generic invalid condition without availability is safely excluded`() {
         val f = fixture("INVALID_CONDITION", MeetingMode.REMOTE)
 
         f.process()
 
-        val candidate = f.run.candidates.single()
-        assertEquals(PlanType.B, candidate.planType)
-        assertEquals(2, candidate.participantIds.size)
-        assertEquals(listOf(f.utc(10, 13)), candidate.timeRanges)
+        assertTrue(f.run.candidates.isEmpty())
+        val view = f.resultService().getCandidates(f.room.inviteCode.value, "host", Locale.KOREAN)
+        assertEquals(2, view.totalSubmissions)
+        assertEquals(1, view.appliedSubmissions)
+        assertEquals(1, view.unappliedInputs)
         assertEquals(CandidateQuality.PARTIAL, f.run.quality)
     }
 

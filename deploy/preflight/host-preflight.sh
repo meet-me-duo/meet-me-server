@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 set +x
-[[ "$#" == 1 && ${#1} -le 32768 && "$1" =~ ^[A-Za-z0-9+/]+={0,2}$ ]] || exit 2
+[[ ( "$#" == 1 || ( "$#" == 2 && "$2" == oauth-rs256-required ) ) && ${#1} -le 32768 && "$1" =~ ^[A-Za-z0-9+/]+={0,2}$ ]] || exit 2
 python3 - "$1" <<'PY'
 import base64,sys
 try:
@@ -12,8 +12,8 @@ except Exception:
 PY
 
 # Read selected metadata only, never cmdline, app logs, env or secret files.
-host_metadata=$(python3 - <<'PY'
-import os,stat,hashlib,json,subprocess
+host_metadata=$(python3 - "${2:-}" <<'PY'
+import os,stat,hashlib,json,subprocess,sys
 root='/opt/meet-me'
 def safe_file(path):
     try:
@@ -46,6 +46,59 @@ paths=['guard/host-release-guard.sh','guard/compose.guard.yml','state/installati
 data={'containerBefore':container(),'files':{p:metadata(root+'/'+p) for p in paths}}
 release=os.path.realpath(root+'/current')
 data['currentRelease']=release if release.startswith(root+'/releases/') else 'UNAVAILABLE'
+if sys.argv[1]=='oauth-rs256-required':
+    auth=root+'/auth'
+    def auth_metadata(path,directory=False):
+        try:
+            s=os.lstat(path)
+            return {'exists':True,'directory' if directory else 'regular':stat.S_ISDIR(s.st_mode) if directory else stat.S_ISREG(s.st_mode),
+                    'noSymlink':not stat.S_ISLNK(s.st_mode),'uid':s.st_uid,'gid':s.st_gid,
+                    'mode':oct(stat.S_IMODE(s.st_mode)),'readableByApp':False}
+        except OSError:return {'exists':False}
+    files={'directory':auth_metadata(auth,True),'jwks':auth_metadata(auth+'/verification.jwks.json'),
+           'signingKey':auth_metadata(auth+'/signing-private.pem')}
+    # Resolve the bind source as root, then check access relative to its mounted root as the actual app UID.
+    # No file is opened; outer host-directory traversal is not part of the container bind's permissions.
+    access_code="""import json,os,sys
+os.chdir(sys.argv[1])
+if os.getuid()==0:
+ os.setgroups([]);os.setgid(10001);os.setuid(10001)
+else:
+ assert os.getuid()==10001 and os.getgid()==10001 and set(os.getgroups())<={10001}
+print(json.dumps({'directory':os.access('.',os.R_OK|os.X_OK),'jwks':os.access('verification.jwks.json',os.R_OK),
+                  'signingKey':os.access('signing-private.pem',os.R_OK)}))
+"""
+    try:
+        if not all(item.get('noSymlink') is True for item in files.values()):raise ValueError()
+        checked=subprocess.run([sys.executable,'-I','-c',access_code,auth],capture_output=True,text=True,timeout=5)
+        access=json.loads(checked.stdout) if checked.returncode==0 else {}
+        if set(access)==set(files) and all(type(value) is bool for value in access.values()):
+            for name,item in files.items():
+                if item.get('exists'):item['readableByApp']=access[name]
+    except Exception:pass
+    data['authFiles']=files
+    mount={key:False for key in ('required','present','bind','sourceMatches','targetMatches','readOnly')}
+    marker=release+'/runtime-auth-mode'
+    if os.path.lexists(marker):
+        # An unsafe/unknown current marker cannot be treated as a legacy exemption.
+        mount['required']=True
+        if safe_file(marker):
+            with open(marker,'rb') as f:mode=f.read(64)
+            if mode not in (b'oauth-rs256-required',b'oauth-rs256-required\n'):
+                data['authMount']=mount
+                raise SystemExit(2)
+    try:
+        template='{{range .Mounts}}{{if eq .Destination "/run/meetme-auth"}}{{.Type}}|{{.Source}}|{{.Destination}}|{{.RW}}{{"\\n"}}{{end}}{{end}}'
+        observed=subprocess.run(['docker','inspect','--format',template,'meet-me-app'],capture_output=True,text=True,timeout=5)
+        lines=observed.stdout.strip().splitlines() if observed.returncode==0 else []
+        mount['present']=bool(lines)
+        if len(lines)==1:
+            parts=lines[0].split('|')
+            if len(parts)==4:
+                mount.update({'bind':parts[0]=='bind','sourceMatches':parts[1]==auth,
+                              'targetMatches':parts[2]=='/run/meetme-auth','readOnly':parts[3]=='false'})
+    except Exception:pass
+    data['authMount']=mount
 for name in ['phase','minimum-contract']:
     p=root+'/state/'+name
     try:

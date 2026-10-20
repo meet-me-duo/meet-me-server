@@ -123,6 +123,7 @@ jobs:
             container-entrypoint.sh \
             runtime-provider-mode \
             runtime-auth-mode \
+            runtime-ai-policy.json \
             nginx scripts pipeline preflight migrations
           python3 deploy/pipeline/publish_manifest.py --archive release.tar.gz --output manifest.json
           aws s3api put-object \

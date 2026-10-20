@@ -1,8 +1,8 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const f = require('./fixtures/integrated-release-catalog.cjs');
-const { fs, path, root, scripts, guardFiles, range, catalogs, hash, canonical, clone, crc,
-  manifest, history, record, ready, fixture, publish, validate, readRecord, judge, mode, untrusted, denied } = f;
+const { fs, path, root, scripts, currentGuardFiles, range, catalogs, hash, canonical, clone, crc,
+  manifest, history, record, ready, currentFixture: fixture, publish, validate, readRecord, judge, mode, untrusted, denied } = f;
 
 test('C01 immutable V1 through V15 SQL remains byte-identical to the separately reviewed PRs', () => {
   const expected = [
@@ -33,7 +33,7 @@ test('C02 publisher emits exactly canonical V1 through V17 in numeric order with
     assert.deepEqual(built.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(built.result.schemaFingerprint, hash(canonical(catalog)));
-    assert.equal(built.result.guardFingerprint, hash(canonical(guardFiles.map(name => ({ path: name,
+    assert.equal(built.result.guardFingerprint, hash(canonical(currentGuardFiles.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     assert.equal(built.result.archiveSha256, hash(fs.readFileSync(value.archive)));
     assert.equal(validate(built.result).ok, true);

@@ -27,6 +27,8 @@ const guardFiles = [
   'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
   'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
 ].sort();
+// Additive current publication fixture; historical seventeen-file fixture stays frozen.
+const currentGuardFiles = [...guardFiles, 'runtime-ai-policy.json'].sort();
 const range = n => Array.from({ length: n }, (_, i) => i + 1);
 const catalogs = [range(10), range(11), range(12), [...range(11), 13],
   [...range(10), 14, 15], [...range(11), 14, 15], range(16), range(17)];
@@ -101,6 +103,11 @@ function fixture() {
   const archive = path.join(directory, 'release.tar.gz'); fs.writeFileSync(archive, 'synthetic offline archive');
   return { directory, migrations, archive, remove() { fs.rmSync(directory, { recursive: true, force: true }); } };
 }
+function currentFixture() {
+  const value = fixture();
+  fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
+  return value;
+}
 const publish = value => python('build_manifest', [value.directory, value.archive, environment], 'publish_manifest.py');
 const validate = value => python('validate_manifest', [value, expected]);
 const readRecord = value => python('_record', [value], 'host-approved-release.py', true);
@@ -108,6 +115,6 @@ const judge = (release, facts, action, approved = false) => python('validate_dep
 const mode = value => ({ ok: true, result: { mode: value } });
 const untrusted = { ok: false, reason: 'UNTRUSTED_RELEASE' };
 const denied = { ok: false, reason: 'UNSAFE_RELEASE_STATE' };
-module.exports = { fs, path, root, scripts, guardFiles, range, catalogs, hash, canonical, clone, crc,
+module.exports = { fs, path, root, scripts, guardFiles, currentGuardFiles, range, catalogs, hash, canonical, clone, crc,
   expected, repository, sourceSha, oldImage, environment, rows, manifest, history, record, ready,
-  python, fixture, publish, validate, readRecord, judge, mode, untrusted, denied };
+  python, fixture, currentFixture, publish, validate, readRecord, judge, mode, untrusted, denied };
