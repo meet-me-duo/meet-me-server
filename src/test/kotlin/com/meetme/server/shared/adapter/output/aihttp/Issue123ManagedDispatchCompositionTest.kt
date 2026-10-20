@@ -134,7 +134,7 @@ class Issue123ManagedDispatchCompositionTest {
                 val operations =
                     when (route) {
                         Route.CLASSIFIER, Route.TWO_STAGE_PERSONAL -> listOf(AiPhysicalOperation.PRECHECK_CLASSIFICATION)
-                        Route.DIRECT_PERSONAL -> listOf(AiPhysicalOperation.PRECHECK_COUNT, AiPhysicalOperation.PRECHECK_GENERATION)
+                        Route.DIRECT_PERSONAL -> listOf(AiPhysicalOperation.PRECHECK_GENERATION)
                         Route.FINAL_GEMINI -> listOf(AiPhysicalOperation.FINAL_PRIMARY)
                         Route.FINAL_LUNA -> listOf(AiPhysicalOperation.FINAL_FALLBACK)
                     }
@@ -190,6 +190,7 @@ class Issue123ManagedDispatchCompositionTest {
 
     private fun base() =
         ApplicationContextRunner()
+            .withPropertyValues("meetme.typesafe.api-key=synthetic-managed-key")
             .withBean(GeminiProperties::class.java, Supplier { GeminiProperties(apiKey = "synthetic-managed-key") })
             .withBean(OpenAiProperties::class.java, Supplier { OpenAiProperties(apiKey = "synthetic-managed-key") })
             .withBean(ObjectMapper::class.java, Supplier { JsonMapper.builder().build() })

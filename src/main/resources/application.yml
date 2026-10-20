@@ -42,6 +42,8 @@ meetme:
   precheck:
     provider:
       enabled: ${MEETME_PRECHECK_PROVIDER_ENABLED:false}
+  typesafe:
+    api-key: ${TYPESAFE_API_KEY:}
   openai:
     api-key: ${OPENAI_API_KEY:}
     model: gpt-6-luna

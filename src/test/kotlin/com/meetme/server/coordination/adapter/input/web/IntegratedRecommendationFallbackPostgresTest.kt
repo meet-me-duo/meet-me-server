@@ -98,6 +98,85 @@ class IntegratedRecommendationFallbackPostgresTest : RecommendationPostgresFixtu
     }
 
     @Test
+    fun `Gemini timeouts preserve Luna budget and persist one winning result`() {
+        verifyTimeoutFallback(lunaSucceeds = true)
+    }
+
+    @Test
+    fun `Luna timeout after Gemini timeouts retains inputs and acknowledges delayed execution`() {
+        verifyTimeoutFallback(lunaSucceeds = false)
+    }
+
+    private fun verifyTimeoutFallback(lunaSucceeds: Boolean) {
+        val (fixture, run) = queuedRoom()
+        val inputs = inputSnapshot()
+        val calls = mutableListOf<Pair<AnalysisProvider, Duration>>()
+        val gemini =
+            NaturalLanguageParserPort { request ->
+                calls += AnalysisProvider.GEMINI to request.callTimeout
+                time.now = time.now.plus(request.callTimeout)
+                throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
+            }
+        val luna =
+            NaturalLanguageParserPort { request ->
+                calls += AnalysisProvider.OPENAI to request.callTimeout
+                time.now = time.now.plusSeconds(if (lunaSucceeds) 20 else 27)
+                if (!lunaSucceeds) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
+                NaturalLanguageBatchResult(
+                    request.inputs.map { preferredResult(SubmissionVersionId(UUID.fromString(it.inputRef))) },
+                    ParserUsage(123, 45, 678),
+                )
+            }
+        val queue = mock(CoordinationWorkQueuePort::class.java)
+        val message = publishedMessage(run)
+        val worker = worker(processor(gemini, luna), queue)
+
+        worker.process(message)
+
+        assertEquals(
+            listOf(
+                AnalysisProvider.GEMINI to Duration.ofSeconds(15),
+                AnalysisProvider.GEMINI to Duration.ofSeconds(15),
+                AnalysisProvider.OPENAI to Duration.ofSeconds(27),
+            ),
+            calls,
+        )
+        assertEquals(inputs, inputSnapshot())
+        assertEquals(run.batch, runs.findById(run.id)?.batch)
+        assertEquals(OutboxStatus.PROCESSED, outbox.findById(message.eventId)?.status)
+        verify(queue).acknowledge(message.streamRecordId)
+        val invocation = assertNotNull(invocations.findLatestByRun(run.id))
+        assertEquals(2, invocation.geminiAttempts)
+        assertEquals(1, invocation.lunaAttempts)
+        assertEquals(NOW.plusSeconds(60), invocation.deadlineAt)
+        assertNotNull(invocation.finishedAt)
+        if (lunaSucceeds) {
+            assertEquals(CoordinationStatus.COMPLETED, runs.findById(run.id)?.status)
+            assertNotNull(invocation.winnerAttemptId)
+            assertEquals(
+                run.batch.submissionVersionIds
+                    .map(::preferredResult)
+                    .toSet(),
+                structured.findByBatch(run.batch.id).toSet(),
+            )
+            assertNotNull(recommendationsRepository.find(run.id.value))
+            assertEquals(1, count("recommendation_analyses"))
+        } else {
+            assertEquals(CoordinationStatus.ANALYSIS_DELAYED, runs.findById(run.id)?.status)
+            assertEquals(ResumeStage.STRUCTURING, runs.findById(run.id)?.resumeStage)
+            assertEquals("ANALYSIS_DELAYED", room(fixture.host)["public_status"])
+            assertNull(invocation.winnerAttemptId)
+            assertTrue(structured.findByBatch(run.batch.id).isEmpty())
+            assertNull(recommendationsRepository.find(run.id.value))
+            assertEquals(0, count("candidates"))
+        }
+        worker.process(message.copy(streamRecordId = "synthetic-timeout-redelivery"))
+        assertEquals(3, calls.size, "ACKed timeout/fallback execution cannot dispatch again on redelivery")
+        assertEquals(invocation, invocations.findLatestByRun(run.id))
+        assertEquals(if (lunaSucceeds) 1 else 0, count("recommendation_analyses"))
+    }
+
+    @Test
     fun `Luna fallback persists frozen preferences publishes subwindow and confirms actual selection without repeating calls`() {
         val (fixture, run) = queuedRoom()
         val inputs = inputSnapshot()

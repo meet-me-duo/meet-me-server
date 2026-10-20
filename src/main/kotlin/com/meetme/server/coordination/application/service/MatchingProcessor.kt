@@ -19,6 +19,8 @@ import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
 import com.meetme.server.coordination.domain.matching.ParticipantPreferences
 import com.meetme.server.coordination.domain.matching.RecommendationProjection
 import com.meetme.server.coordination.domain.matching.RecommendationProjector
+import com.meetme.server.coordination.domain.matching.TimeRangeMatcher
+import com.meetme.server.coordination.domain.matching.WholeRoomConditionalTimePolicy
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CandidateId
@@ -73,13 +75,19 @@ class MatchingProcessor(
                 StructuredSubmissionResult(it.latest.id, emptyList(), "LEGACY_MANUAL_ONLY_UNSUPPORTED")
             }
         val legacyIds = legacyResults.mapTo(mutableSetOf()) { it.submissionVersionId }
-        val results = existingStructured.filter { it.submissionVersionId !in legacyIds } + legacyResults
+        val availableResults = existingStructured.filter { it.submissionVersionId !in legacyIds } + legacyResults
         if (legacyResults.isNotEmpty()) {
-            structuredSubmissionRepository.replaceForBatch(batchId, results, clock.instant())
+            structuredSubmissionRepository.replaceForBatch(batchId, availableResults, clock.instant())
         }
+        val resultIds = availableResults.mapTo(mutableSetOf()) { it.submissionVersionId }
+        val missingResults =
+            submissions.filter { it.latest.id !in resultIds }.map {
+                StructuredSubmissionResult(it.latest.id, emptyList(), "STRUCTURED_RESULT_MISSING")
+            }
+        val results = availableResults + missingResults
         val structured = results.associateBy { it.submissionVersionId }
         val snapshots = mutableListOf<NormalizedPlace>()
-        var hasUnappliedInput = structured.values.any { it.rejectionCode != null }
+        var hasUnappliedInput = structured.values.any { it.rejectionCode != null } || submissions.any { it.latest.id !in structured }
         val legacyAreaKeys =
             structured.values
                 .flatMap { it.conditions }
@@ -91,9 +99,13 @@ class MatchingProcessor(
                 .mapIndexed { index, query -> query to "AREA_${index + 1}" }
                 .toMap()
 
-        val inputs =
+        val primaryInputs =
             submissions.map { submission ->
-                val conditions = structured[submission.latest.id]?.conditions.orEmpty()
+                val result = structured[submission.latest.id]
+                val conditions = result?.conditions.orEmpty()
+                val naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>()
+                val failedWithoutAvailability =
+                    result == null || (result.rejectionCode != null && naturalWindows.none { it.polarity == TimePolarity.AVAILABLE })
                 val areas =
                     conditions
                         .filterIsInstance<StructuredCondition.SpecificPlace>()
@@ -126,11 +138,14 @@ class MatchingProcessor(
                 ParticipantMatchInput(
                     participantId = submission.participantId,
                     availableTimes =
-                        if (submission.latest.rawText == null || structured[submission.latest.id]?.rejectionCode in UNSAFE_TIME_REASONS) {
+                        if (submission.latest.rawText == null ||
+                            failedWithoutAvailability ||
+                            result.rejectionCode in UNSAFE_TIME_REASONS
+                        ) {
                             emptyList()
                         } else {
-                            com.meetme.server.coordination.domain.matching.TimeRangeMatcher.calculateAvailability(
-                                naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>(),
+                            TimeRangeMatcher.calculateAvailability(
+                                naturalWindows = naturalWindows,
                                 datedManualAvailability = emptyList(),
                                 weeklyManualAvailability = emptyList(),
                                 blocked = emptyList(),
@@ -142,7 +157,7 @@ class MatchingProcessor(
                     explicitPreferences =
                         ParticipantPreferences(
                             timeRanges =
-                                com.meetme.server.coordination.domain.matching.TimeRangeMatcher.expandNaturalWindows(
+                                TimeRangeMatcher.expandNaturalWindows(
                                     conditions.filterIsInstance<StructuredCondition.PreferredTimeWindow>().map {
                                         StructuredCondition.TimeWindow(
                                             TimePolarity.AVAILABLE,
@@ -162,9 +177,76 @@ class MatchingProcessor(
                                 ) { it.areaKey },
                             hasTimePreference = conditions.any { it is StructuredCondition.PreferredTimeWindow },
                             hasPlacePreference = conditions.any { it is StructuredCondition.PreferredPlace },
-                            canScore = structured[submission.latest.id]?.rejectionCode == null,
+                            canScore = result != null && result.rejectionCode == null,
                         ),
                 )
+            }
+
+        val conditionalFallbacks =
+            submissions
+                .mapNotNull { submission ->
+                    val conditions = structured[submission.latest.id]?.conditions.orEmpty()
+                    val fallback = conditions.filterIsInstance<StructuredCondition.ConditionalFallbackTimeWindow>()
+                    if (fallback.isEmpty()) return@mapNotNull null
+                    submission.participantId to
+                        TimeRangeMatcher.calculateAvailability(
+                            naturalWindows =
+                                fallback.map {
+                                    StructuredCondition.TimeWindow(
+                                        TimePolarity.AVAILABLE,
+                                        it.date,
+                                        it.dayOfWeek,
+                                        it.startTime,
+                                        it.endTime,
+                                        it.endsAtNextDayStart,
+                                    )
+                                } +
+                                    conditions.filterIsInstance<StructuredCondition.TimeWindow>().filter {
+                                        it.polarity ==
+                                            TimePolarity.UNAVAILABLE
+                                    },
+                            datedManualAvailability = emptyList(),
+                            weeklyManualAvailability = emptyList(),
+                            blocked = emptyList(),
+                            searchRange = room.searchRange,
+                            zone = room.timeZone,
+                        )
+                }.toMap()
+        val primaryInputsKnown =
+            submissions.all { submission ->
+                val result = structured[submission.latest.id]
+                submission.latest.rawText != null &&
+                    result != null &&
+                    result.rejectionCode == null &&
+                    (
+                        submission.participantId !in conditionalFallbacks ||
+                            result.conditions.filterIsInstance<StructuredCondition.TimeWindow>().any {
+                                it.polarity == TimePolarity.AVAILABLE
+                            }
+                    )
+            }
+        val resolution = WholeRoomConditionalTimePolicy.resolve(primaryInputs, conditionalFallbacks, primaryInputsKnown)
+        val inputs = resolution.participants
+        val persistInputDiagnostics: (() -> Unit)? =
+            if (resolution.unsupportedParticipantIds.isEmpty() && missingResults.isEmpty()) {
+                null
+            } else {
+                hasUnappliedInput = true
+                val unsupportedVersions =
+                    submissions.filter { it.participantId in resolution.unsupportedParticipantIds }.map { it.latest.id }.toSet()
+                val rejected =
+                    results.map {
+                        if (it.submissionVersionId in
+                            unsupportedVersions
+                        ) {
+                            it.copy(rejectionCode = "UNSUPPORTED_CONDITIONAL_CONSTRAINT")
+                        } else {
+                            it
+                        }
+                    }
+                // Persist the owner-visible reason under the same active-run lock and transaction as the publication.
+                val persist: () -> Unit = { structuredSubmissionRepository.replaceForBatch(batchId, rejected, clock.instant()) }
+                persist
             }
 
         val generated = DeterministicCandidateMatcher.generate(room.mode, inputs)
@@ -193,12 +275,13 @@ class MatchingProcessor(
         val completed = run.complete(if (hasUnappliedInput) CandidateQuality.PARTIAL else CandidateQuality.COMPLETE, candidates)
         if (canPublish == null) {
             if (recommendationRepository == null) {
-                persistence.complete(completed, snapshots)
+                persistence.complete(completed, snapshots, persistInputDiagnostics)
             } else {
                 persistence.completeRecommendations(
                     completed,
                     snapshots,
                     RecommendationProjector.generate(room.mode, inputs, room.timeZone.value),
+                    persistInputDiagnostics,
                 )
             }
         } else {
@@ -216,7 +299,7 @@ class MatchingProcessor(
                                 if (!canPublish()) throw AnalysisDeadlineExceededException()
                             }
                         }
-                    persistence.completeBounded(completed, snapshots, projection, canPublish)
+                    persistence.completeBounded(completed, snapshots, projection, persistInputDiagnostics, canPublish)
                 } catch (_: AnalysisDeadlineExceededException) {
                     false
                 }
@@ -254,6 +337,7 @@ class MatchingProcessingPersistenceService(
         run: CoordinationRun,
         places: List<NormalizedPlace>,
         projection: RecommendationProjection? = null,
+        persistInputDiagnostics: (() -> Unit)? = null,
         canPublish: () -> Boolean,
     ): Boolean {
         val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return false
@@ -262,6 +346,7 @@ class MatchingProcessingPersistenceService(
 
         fun withinDeadline(): Boolean = canPublish() && (invocation == null || clock.instant() < invocation.deadlineAt)
         if (!withinDeadline()) return false
+        persistInputDiagnostics?.invoke()
         normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
         runRepository.update(run)
         if (projection != null) publishRecommendations(run, room.id.value, projection)
@@ -283,9 +368,11 @@ class MatchingProcessingPersistenceService(
     fun complete(
         run: CoordinationRun,
         places: List<NormalizedPlace>,
+        persistInputDiagnostics: (() -> Unit)? = null,
     ) {
         val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return
         if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return
+        persistInputDiagnostics?.invoke()
         normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
         runRepository.update(run)
         roomRepository.update(room.transition())
@@ -296,9 +383,11 @@ class MatchingProcessingPersistenceService(
         run: CoordinationRun,
         places: List<NormalizedPlace>,
         projection: RecommendationProjection,
+        persistInputDiagnostics: (() -> Unit)? = null,
     ) {
         val (room, current) = ActiveRunLock.acquire(roomRepository, runRepository, run) ?: return
         if (current.status != CoordinationStatus.MATCHING || current.version + 1 != run.version) return
+        persistInputDiagnostics?.invoke()
         normalizedPlaceRepository.replaceForBatch(run.batch.id, places)
         runRepository.update(run)
         publishRecommendations(run, room.id.value, projection)

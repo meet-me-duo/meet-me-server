@@ -5,6 +5,7 @@ import com.meetme.server.coordination.application.port.input.MatchingResultExcep
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
+import com.meetme.server.shared.application.port.output.NewRoomAiBudgetUnavailableException
 import com.meetme.server.submission.application.port.input.SubmissionErrorCode
 import com.meetme.server.submission.application.port.input.SubmissionException
 import jakarta.servlet.http.HttpServletRequest
@@ -25,6 +26,11 @@ class ApiExceptionHandler(
     private val messageSource: MessageSource,
     private val metrics: ApplicationMetricsPort? = null,
 ) {
+    @ExceptionHandler(NewRoomAiBudgetUnavailableException::class)
+    fun newRoomAiBudgetUnavailable(
+        @Suppress("UNUSED_PARAMETER") exception: NewRoomAiBudgetUnavailableException,
+    ): ResponseEntity<Void> = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()
+
     @ExceptionHandler(MatchingResultException::class)
     fun matchingResult(
         exception: MatchingResultException,

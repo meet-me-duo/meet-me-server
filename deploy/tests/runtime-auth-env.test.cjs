@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const cp = require('node:child_process');
+const crypto = require('node:crypto');
 const test = require('node:test');
 
 // Independent #107 runtime-readiness oracle, derived from the accepted runbook.
@@ -10,6 +11,8 @@ const test = require('node:test');
 const repository = path.resolve(__dirname, '../..');
 const oldEnvironment = 'LEGACY_SENTINEL=unchanged\n';
 const marker = 'oauth-rs256-required\n';
+const typesafeParameter = 'secret/typesafe-api-key';
+const typesafeKey = 'fixture-typesafe$\'"\\#=opaque';
 const auth = [
   ['GOOGLE_CLIENT_ID', 'secret/google-client-id', 'SecureString', 'fixture-google$client-id'],
   ['GOOGLE_CLIENT_SECRET', 'secret/google-client-secret', 'SecureString', 'fixture-google$\'"\\#secret'],
@@ -23,11 +26,31 @@ const auth = [
   ['AUTH_WEB_CALLBACK_URI', 'config/auth-web-callback-uri', 'String', 'https://app.fixture.invalid/auth/callback'],
   ['APP_ALLOWED_ORIGINS', 'config/allowed-origins', 'String', 'https://app.fixture.invalid'],
 ];
-const defaultParameters = Object.fromEntries(auth.map(([, name, Type, Value]) => [name, { Type, Value }]));
+const defaultParameters = {
+  ...Object.fromEntries(auth.map(([, name, Type, Value]) => [name, { Type, Value }])),
+  [typesafeParameter]: { Type: 'SecureString', Value: typesafeKey },
+};
 const privatePaths = {
   AUTH_SIGNING_PRIVATE_KEY_PATH: '/run/meetme-auth/signing-private.pem',
   AUTH_VERIFICATION_JWKS_PATH: '/run/meetme-auth/verification.jwks.json',
 };
+// Synthetic policy values match the independent #131 bundle fixture; they are not operating configuration.
+const profiles = [
+  'c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc',
+  '658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307',
+  '86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714',
+  '0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04',
+  '9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab',
+];
+const digest = value => crypto.createHash('sha256').update(value).digest('hex');
+function syntheticManagedPolicy() {
+  return { protocol: 'meetme-managed-ai-policy-v1', state: 'CONFIGURED', unit: { code: 'TEST_SUBUNIT', scale: 0 },
+    roomCap: '1000', minimumConfidence: 0.73,
+    operations: ['PRECHECK_CLASSIFICATION', 'PRECHECK_COUNT', 'PRECHECK_GENERATION', 'FINAL_PRIMARY', 'FINAL_FALLBACK'].map((operation, index) => ({
+      operation, profileFingerprint: profiles[index], evidenceFingerprint: digest(`synthetic:${operation}`),
+      maximumAmount: String(index + 3), validUntil: '2099-01-01T00:00:00Z',
+    })) };
+}
 const awsStub = `#!/usr/bin/env python3
 import json,os,sys
 args=sys.argv[1:]; scenario=json.load(open(os.environ['FAKE_AUTH_SCENARIO']))
@@ -64,6 +87,11 @@ function fixture({ mode = marker, changes = {}, unavailable = [], diagnostic = '
   fs.writeFileSync(path.join(scripts, 'render-runtime-env.sh'), mapLegacyDefault ? source.replaceAll('/opt/meet-me/current/.env.runtime', path.join(root, 'legacy-current.env')) : source);
   fs.writeFileSync(path.join(release, 'runtime-provider-mode'), 'gemini-luna-required\n');
   if (mode !== null) fs.writeFileSync(path.join(release, 'runtime-auth-mode'), mode);
+  const policy = path.join(release, 'runtime-ai-policy.json');
+  const enabled = changes['config/precheck-provider-enabled'];
+  const payload = enabled?.Type === 'String' && enabled.Value === 'true'
+    ? syntheticManagedPolicy() : { protocol: 'meetme-managed-ai-policy-v1', state: 'UNCONFIGURED' };
+  fs.writeFileSync(policy, JSON.stringify(payload) + '\n');
   fs.writeFileSync(destination, oldEnvironment, { mode: 0o600 });
   fs.writeFileSync(path.join(bin, 'aws'), awsStub, { mode: 0o755 });
   fs.writeFileSync(path.join(bin, 'mv'), '#!/bin/sh\nif [ "${FAKE_AUTH_RENAME_FAILURE:-0}" = 1 ]; then exit 91; fi\nexec /usr/bin/mv "$@"\n', { mode: 0o755 });
@@ -74,7 +102,7 @@ function fixture({ mode = marker, changes = {}, unavailable = [], diagnostic = '
     FAKE_AUTH_SCENARIO: path.join(root, 'scenario.json'), FAKE_AUTH_CALLS: path.join(root, 'calls.jsonl'), FAKE_AUTH_DEST: destination,
   };
   return {
-    root, release, bin, destination, environment,
+    root, release, bin, destination, environment, policy,
     mode: path.join(release, 'runtime-auth-mode'),
     render(extra = {}, args = [destination]) { return cp.spawnSync('bash', [path.join(scripts, 'render-runtime-env.sh'), ...args], { env: { ...environment, ...extra }, cwd: root, encoding: 'utf8', timeout: 15_000 }); },
     calls() { return fs.existsSync(environment.FAKE_AUTH_CALLS) ? fs.readFileSync(environment.FAKE_AUTH_CALLS, 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse) : []; },
@@ -83,7 +111,7 @@ function fixture({ mode = marker, changes = {}, unavailable = [], diagnostic = '
   };
 }
 function quiet(result, extra = []) {
-  for (const value of [...auth.map(row => row[3]), 'synthetic-fresh', 'SYNTHETIC_AWS_DIAGNOSTIC', 'fixture-private-diagnostic', ...extra]) {
+  for (const value of [...auth.map(row => row[3]), typesafeKey, 'synthetic-fresh', 'SYNTHETIC_AWS_DIAGNOSTIC', 'fixture-private-diagnostic', ...extra]) {
     assert.ok(!(result.stdout + result.stderr).includes(value), 'Runtime values and raw provider diagnostics must never enter stdout/stderr');
   }
 }
@@ -195,9 +223,10 @@ test('AR14 CI explicitly executes the independent auth runtime contract', () => 
   assert.match(ci, /node\s+--test\s+deploy\/tests\/runtime-auth-env\.test\.cjs/);
 });
 
-function refreshFixture(f) {
+function refreshFixture(f, includeTypesafe = false) {
   const result = cp.spawnSync('python3', [path.join(__dirname, 'runtime_auth_refresh_fixture.py')], {
-    env: { ...f.environment, PATH: process.env.PATH, AUTH_TEST_AWS: path.join(f.bin, 'aws'), AUTH_TEST_VARIABLES: JSON.stringify(auth.map(([variable, name]) => [variable, name])) },
+    env: { ...f.environment, PATH: process.env.PATH, AUTH_TEST_AWS: path.join(f.bin, 'aws'), AUTH_TEST_POLICY: f.policy,
+      AUTH_TEST_VARIABLES: JSON.stringify([...auth.map(([variable, name]) => [variable, name]), ...(includeTypesafe ? [['TYPESAFE_API_KEY', typesafeParameter]] : [])]) },
     encoding: 'utf8', timeout: 20_000,
   });
   assert.equal(result.error, undefined, 'Refresh fixture must not time out');
@@ -269,6 +298,9 @@ test('AR21 optional activation accepts only exact String true or false and faith
   for (const Value of ['true', 'false']) {
     const f = fixture({ changes: { 'config/precheck-provider-enabled': { Type: 'String', Value } } }); try {
       const result = f.render(); assert.equal(result.status, 0); assert.ok(f.read().includes(`MEETME_PRECHECK_PROVIDER_ENABLED=${Value}\n`)); quiet(result);
+      const calls = f.calls().filter(call => call.name === `/fixture/production/${typesafeParameter}`);
+      assert.equal(calls.length, Value === 'true' ? 1 : 0);
+      assert.equal(f.read().includes(`TYPESAFE_API_KEY=${typesafeKey}\n`), Value === 'true');
     } finally { f.remove(); }
   }
 });
@@ -290,7 +322,83 @@ test('AR23 present but malformed activation values or JSON fail atomically inste
 
 test('AR24 real guarded DB refresh preserves explicitly configured synthetic activation true', () => {
   const f = fixture({ changes: { 'config/precheck-provider-enabled': { Type: 'String', Value: 'true' } } }); try {
-    const report = refreshFixture(f); assert.equal(report.returncode, 0); assert.equal(report.auth_complete, true); assert.equal(report.precheck_enabled, 'true');
+    const report = refreshFixture(f, true); assert.equal(report.returncode, 0); assert.equal(report.auth_complete, true); assert.equal(report.precheck_enabled, 'true');
     assert.equal(report.fixed_paths, true); assert.equal(report.app_recreates, 1); assert.equal(report.quiet, true);
+  } finally { f.remove(); }
+});
+
+function managedTypesafeFixture(options = {}) {
+  return fixture({ ...options, changes: {
+    'config/precheck-provider-enabled': { Type: 'String', Value: 'true' },
+    ...options.changes,
+  } });
+}
+
+function typesafeCalls(f) {
+  return f.calls().filter(call => call.name === `/fixture/production/${typesafeParameter}`);
+}
+
+test('AR25 managed opt-in requires its Typesafe secret and preserves old bytes on lookup failure', () => {
+  const f = managedTypesafeFixture({ unavailable: [typesafeParameter], diagnostic: 'private-typesafe-missing' }); try {
+    preserved(f, f.render(), ['private-typesafe-missing']);
+    assert.equal(typesafeCalls(f).length, 1);
+  } finally { f.remove(); }
+});
+
+test('AR26 managed Typesafe key is fetched once as typed decrypted JSON and emitted as exact opaque raw bytes', () => {
+  const f = managedTypesafeFixture(); try {
+    const result = f.render(); assert.equal(result.error, undefined); assert.equal(result.status, 0); quiet(result);
+    const lines = f.read().split('\n').filter(line => line.startsWith('TYPESAFE_API_KEY='));
+    assert.deepEqual(lines, [`TYPESAFE_API_KEY=${typesafeKey}`]);
+    const calls = typesafeCalls(f); assert.equal(calls.length, 1);
+    assert.equal(calls[0].service, 'ssm'); assert.equal(calls[0].operation, 'get-parameter');
+    assert.equal(calls[0].output, 'json'); assert.equal(calls[0].query, null);
+    assert.equal(calls[0].decrypt, true); assert.equal(calls[0].region, 'fixture-region');
+    assert.ok(f.calls().every(call => call.old_preserved));
+    assert.equal(fs.statSync(f.destination).mode & 0o777, 0o600);
+  } finally { f.remove(); }
+});
+
+const invalidTypesafeParameters = [
+  ['wrong parameter type', { Type: 'String', Value: 'fixture-typesafe-wrong-type' }],
+  ...[['empty', ''], ['null', null], ['number', 17], ['array', []], ['object', {}],
+    ['line injection', 'typesafe\nINJECTED=true'], ['CR', 'typesafe\r'], ['NUL', 'typesafe\u0000suffix'],
+    ['trailing newline', 'typesafe\n'], ['tab', 'typesafe\t'], ['space', 'typesafe key'], ['non-ASCII', 'typésafe']]
+    .map(([name, Value]) => [name, { Type: 'SecureString', Value }]),
+];
+for (const [name, parameter] of invalidTypesafeParameters) {
+  test(`AR27 invalid Typesafe ${name} is rejected quietly without replacing the old environment`, () => {
+    const f = managedTypesafeFixture({ changes: { [typesafeParameter]: parameter } }); try {
+      preserved(f, f.render(), ['fixture-typesafe-wrong-type', 'INJECTED=true',
+        ...(typeof parameter.Value === 'string' && parameter.Value.length > 0 ? [parameter.Value] : [])]);
+      assert.equal(typesafeCalls(f).length, 1);
+    } finally { f.remove(); }
+  });
+}
+
+test('AR27 malformed Typesafe JSON is rejected without publishing partial environment bytes', () => {
+  const f = managedTypesafeFixture({ malformed: typesafeParameter }); try {
+    preserved(f, f.render(), ['SYNTHETIC_INVALID_JSON']);
+    assert.equal(typesafeCalls(f).length, 1);
+  } finally { f.remove(); }
+});
+
+for (const kind of ['OFF', 'LEGACY']) {
+  test(`AR28 ${kind} does not look up or emit a Typesafe credential`, () => {
+    const f = fixture({ mode: kind === 'LEGACY' ? null : marker,
+      changes: { 'config/precheck-provider-enabled': { Type: 'String', Value: kind === 'OFF' ? 'false' : 'true' } },
+      unavailable: [typesafeParameter] }); try {
+      const result = f.render(); assert.equal(result.error, undefined); assert.equal(result.status, 0); quiet(result);
+      assert.equal(typesafeCalls(f).length, 0);
+      assert.ok(!/^TYPESAFE_API_KEY=/m.test(f.read()));
+    } finally { f.remove(); }
+  });
+}
+
+test('AR29 managed policy must validate before any Typesafe credential lookup', () => {
+  const f = managedTypesafeFixture(); try {
+    fs.writeFileSync(f.policy, '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n');
+    preserved(f, f.render());
+    assert.equal(typesafeCalls(f).length, 0);
   } finally { f.remove(); }
 });

@@ -1,7 +1,7 @@
 package com.meetme.server.precheck.adapter.output.classification
 
-import com.meetme.server.config.GeminiProperties
-import com.meetme.server.precheck.adapter.output.provider.GeminiPreSubmissionCheckProvider
+import com.meetme.server.config.OpenAiConfiguration
+import com.meetme.server.precheck.adapter.output.provider.LunaPreSubmissionCheckProvider
 import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderConfiguration
 import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderHttpTransport
 import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRuntimeProperties
@@ -39,9 +39,11 @@ class AmbiguityClassificationCompositionTest {
                     throw AssertionError("No external socket permitted")
                 }.build()
         ApplicationContextRunner()
-            .withUserConfiguration(PrecheckProviderConfiguration::class.java, ClassifierPackageScan::class.java)
-            .withBean(GeminiProperties::class.java, Supplier { GeminiProperties(apiKey = "synthetic-composition-key") })
-            .withBean(ObjectMapper::class.java, Supplier { DecisionClassificationFixtures.mapper })
+            .withUserConfiguration(
+                PrecheckProviderConfiguration::class.java,
+                ClassifierPackageScan::class.java,
+                OpenAiConfiguration::class.java,
+            ).withBean(ObjectMapper::class.java, Supplier { DecisionClassificationFixtures.mapper })
             .withBean(PrecheckProviderHttpTransport::class.java, Supplier { PrecheckProviderHttpTransport(client) })
             .withPropertyValues(
                 "meetme.precheck.classification.enabled=true",
@@ -52,7 +54,7 @@ class AmbiguityClassificationCompositionTest {
                 assertTrue(context.getBeansOfType(AmbiguityClassificationPort::class.java).isEmpty())
                 assertFalse(context.getBean(PrecheckProviderRuntimeProperties::class.java).enabled)
                 val provider = context.getBean(PreSubmissionCheckProvider::class.java)
-                assertIs<GeminiPreSubmissionCheckProvider>(provider)
+                assertIs<LunaPreSubmissionCheckProvider>(provider)
                 val r = DecisionClassificationFixtures.request
                 val request =
                     PrecheckProviderRequest(

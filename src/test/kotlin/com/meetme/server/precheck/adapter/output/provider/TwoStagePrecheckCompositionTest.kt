@@ -1,6 +1,6 @@
 package com.meetme.server.precheck.adapter.output.provider
 
-import com.meetme.server.config.GeminiProperties
+import com.meetme.server.config.OpenAiProperties
 import com.meetme.server.meetingroom.domain.ClosurePolicy
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
@@ -73,7 +73,7 @@ class TwoStagePrecheckCompositionTest {
             assertFalse(context.getBean(PrecheckProviderRuntimeProperties::class.java).enabled)
             assertFalse(context.getBean(PrecheckDecisionRoutingProperties::class.java).enabled)
             val provider = context.getBean(PreSubmissionCheckProvider::class.java)
-            assertIs<GeminiPreSubmissionCheckProvider>(provider)
+            assertIs<LunaPreSubmissionCheckProvider>(provider)
             assertEquals(
                 "CONFIGURATION",
                 assertFailsWith<PrecheckProviderException> { provider.check(TwoStageFixtures.request()) }.failureCode,
@@ -244,7 +244,7 @@ class TwoStagePrecheckCompositionTest {
     private fun runner(outbound: AtomicInteger) =
         ApplicationContextRunner()
             .withUserConfiguration(PrecheckProviderConfiguration::class.java)
-            .withBean(GeminiProperties::class.java, Supplier { GeminiProperties(apiKey = "synthetic-key-no-runtime-secret") })
+            .withBean(OpenAiProperties::class.java, Supplier { OpenAiProperties(apiKey = "synthetic-key-no-runtime-secret") })
             .withBean(ObjectMapper::class.java, Supplier { JsonMapper.builder().build() })
             .withBean(
                 PrecheckProviderHttpTransport::class.java,

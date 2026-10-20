@@ -210,7 +210,7 @@ class MatchingNaturalLanguageOnlyTest {
     }
 
     @Test
-    fun `valid time survives partial rejection and all failed natural input retains neutral base`() {
+    fun `valid time survives partial rejection while fully failed natural input cannot attend`() {
         val partial = NaturalLanguageOnlyFixture(listOf("partially valid", "available"))
         partial.results(listOf(partial.window(9, 12)), listOf(partial.window(10, 13)))
         partial.structured =
@@ -231,10 +231,7 @@ class MatchingNaturalLanguageOnlyTest {
                 if (index == 0) result.copy(rejectionCode = "INVALID_CONDITION") else result
             }
         failed.process()
-        assertEquals(
-            listOf(failed.utc(10, 13)),
-            failed.singleCandidate().timeRanges,
-        )
+        assertTrue(failed.run.candidates.isEmpty())
         assertEquals(CandidateQuality.PARTIAL, failed.run.quality)
         assertEquals(CoordinationStatus.COMPLETED, failed.run.status)
     }

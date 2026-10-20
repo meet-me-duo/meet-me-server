@@ -4,7 +4,7 @@ const cp = require('node:child_process');
 const f = require('./fixtures/integrated-release-catalog.cjs');
 const { fs, path, root, hash, canonical, clone, publish, ready, record, judge, mode, denied } = f;
 
-// Independent public release contract: historical14 is read-only; current17 is the only publisher.
+// Historical14 and auth17 reader contracts remain frozen; only current18 may publish.
 // No constant is imported from production to build the expected catalog.
 const historical14 = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
@@ -18,6 +18,7 @@ const historical14 = [
 assert.equal(historical14.length, 14, 'Frozen pre-runtime-auth oracle must remain fourteen files');
 const additions = ['runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml'];
 const current17 = [...historical14, ...additions].sort();
+const current18 = [...current17, 'runtime-ai-policy.json'].sort();
 const requiredMode = 'oauth-rs256-required';
 function py(action, value = {}) {
   const source = String.raw`import importlib.util,json,pathlib,sys
@@ -81,6 +82,11 @@ function fixture(current = true) {
   }
   return value;
 }
+function publicationFixture() {
+  const value = fixture();
+  fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
+  return value;
+}
 function fingerprint(value, names = current17) {
   return hash(canonical(names.map(name => ({ path: name, sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) }))));
 }
@@ -99,22 +105,22 @@ function pack(value) {
 }
 function assertRejected(value, label) { assert.equal(value.ok, false, label); }
 
-test('RA01 publisher runner and host pin the same exact current seventeen-file approval catalog', () => {
+test('RA01 publisher runner and host pin the same exact current eighteen-file approval catalog', () => {
   const result = py('lists');assert.equal(result.ok, true);
-  for (const [name, list] of Object.entries(result.result)) assert.deepEqual([...list].sort(), current17, name);
+  for (const [name, list] of Object.entries(result.result)) assert.deepEqual([...list].sort(), current18, name);
 });
 
-test('RA02 publisher fingerprints all seventeen including runtime auth mode renderer and compose', () => {
-  const value = fixture();try {
+test('RA02 publisher fingerprints all eighteen including policy runtime auth mode renderer and compose', () => {
+  const value = publicationFixture();try {
     const built = publish(value);assert.equal(built.ok, true);
-    assert.equal(built.result.guardFingerprint, fingerprint(value));
+    assert.equal(built.result.guardFingerprint, fingerprint(value, current18));
     assert.notEqual(built.result.guardFingerprint, fingerprint(value, historical14));
   } finally { value.remove(); }
 });
 
 test('RA03 each runtime approval byte independently changes the fingerprint and cannot reuse automatic approval', () => {
   for (const name of additions) {
-    const value = fixture();try {
+    const value = publicationFixture();try {
       const before = publish(value);assert.equal(before.ok, true);
       fs.appendFileSync(path.join(value.directory, 'deploy', name), '\n');
       const after = publish(value);assert.equal(after.ok, true, name);
@@ -128,7 +134,7 @@ test('RA03 each runtime approval byte independently changes the fingerprint and 
 
 test('RA04 current publisher rejects each omitted or linked runtime approval file', () => {
   for (const name of additions) for (const fault of ['missing', 'symlink']) {
-    const value = fixture();try {
+    const value = publicationFixture();try {
       const target = path.join(value.directory, 'deploy', name);
       if (fault === 'missing') fs.unlinkSync(target);
       else { fs.renameSync(target, `${target}.actual`);fs.symlinkSync(`${target}.actual`, target); }
@@ -139,7 +145,7 @@ test('RA04 current publisher rejects each omitted or linked runtime approval fil
 
 test('RA05 present unknown malformed or legacy auth markers cannot publish a new release', () => {
   for (const marker of ['', 'legacy', 'oauth-rs256-required\r\n', 'oauth-rs256-required\n\n', 'oauth-rs256-required\0', 'oauth-rs256-required-extra']) {
-    const value = fixture();try {
+    const value = publicationFixture();try {
       fs.writeFileSync(path.join(value.directory, 'deploy/runtime-auth-mode'), marker);
       assertRejected(publish(value), JSON.stringify(marker));
     } finally { value.remove(); }

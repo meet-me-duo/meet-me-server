@@ -56,6 +56,24 @@ def _require(condition):
 
 
 def _validate_host(host):
+    if "authFiles" in host:
+        files = host["authFiles"]
+        _require(type(files) is dict and set(files) == {"directory", "jwks", "signingKey"})
+        for name, item in files.items():
+            _require(type(item) is dict and type(item.get("exists")) is bool)
+            if not item["exists"]:
+                _require(set(item) == {"exists"})
+                continue
+            kind = "directory" if name == "directory" else "regular"
+            _require(set(item) == {"exists", kind, "noSymlink", "uid", "gid", "mode", "readableByApp"})
+            _require(all(type(item[key]) is bool for key in (kind, "noSymlink", "readableByApp")))
+            _require(all(type(item[key]) is int and item[key] >= 0 for key in ("uid", "gid")))
+            _require(type(item["mode"]) is str and re.fullmatch(r"0o[0-7]{3,4}", item["mode"]))
+    if "authMount" in host:
+        mount = host["authMount"]
+        _require(type(mount) is dict
+                 and set(mount) == {"required", "present", "bind", "sourceMatches", "targetMatches", "readOnly"}
+                 and all(type(value) is bool for value in mount.values()))
     if "files" in host:
         _require(isinstance(host["files"], dict) and set(host["files"]) <= FILE_PATHS)
         for item in host["files"].values():
@@ -120,7 +138,7 @@ def summarize_invocation(status, stdout, stderr):
         _reject_secrets(data)
         host, flyway = data["host"], data["flyway"]
         host_keys = {"api", "files", "currentRelease", "phase", "minimum-contract",
-                     "approvedImages", "containerBefore", "containerAfter", "service"}
+                     "approvedImages", "containerBefore", "containerAfter", "service", "authFiles", "authMount"}
         if not isinstance(host, dict) or not set(host) <= host_keys:
             raise ValueError()
         _validate_host(host)

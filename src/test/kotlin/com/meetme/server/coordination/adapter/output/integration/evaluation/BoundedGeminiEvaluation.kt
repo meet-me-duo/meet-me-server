@@ -566,7 +566,10 @@ object BoundedGeminiEvaluation {
                     "conditions" to
                         result.conditions.map { c ->
                             when (c) {
-                                is StructuredCondition.PreferredTimeWindow, is StructuredCondition.PreferredPlace ->
+                                is StructuredCondition.PreferredTimeWindow,
+                                is StructuredCondition.PreferredPlace,
+                                is StructuredCondition.ConditionalFallbackTimeWindow,
+                                ->
                                     com.meetme.server.submission.adapter.output.persistence.StructuredConditionJsonMapper
                                         .toMap(c)
                                 is StructuredCondition.TimeWindow ->

@@ -5,7 +5,7 @@
 > **저장소:** `meet-me-duo/meet-me-server`  
 > **관련 문서:** `docs/PRD.md`, `docs/ADR.md`
 
-## #109 계정·소유권 경계 (2026-10-17)
+## 계정·소유권 경계
 
 사용자 승인 #109는 기존 익명 제출 모드에서 계정 HOST로 전환하는 후속 버전이다. account 영역의 application port 뒤에 Google/Kakao OIDC, RSA JWT, Redis 회전 세션, JDBC 영구 계정 저장을 둔다. Domain에는 공급자·HTTP·Redis 타입을 노출하지 않는다. 계정 생성은 provider+subject unique 및 transaction으로 보호하고 이메일 자동 연결을 하지 않는다. login-only 공급자 토큰은 검증 뒤 폐기하며 Calendar 지속 grant/암호화 저장은 별도 범위다.
 
@@ -13,7 +13,7 @@ participants는 account user 또는 guest session 정확히 하나를 소유자�
 
 Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 사용한다. provider issuer/audience/kid/signature/time 검증 뒤 서비스 Refresh를 cookie로만 발급하고 fixed frontend callback으로 돌아간다. Redis 회전·가족 폐기는 atomic script로 처리하며 실패 시 갱신을 허용하지 않는다. 서비스 RS256 private key는 mount된 외부 secret file, 검증 current/previous public key는 JWKS로 주입한다. 설정 없는 환경에서 임시 운영키를 만들지 않는다. 실제 앱/키/배포 및 운영 로그인은 별도 검증이다.
 
-[#109 계약과 변경 경계](ISSUE_109_CONTRACT.md), [ADR-051](ADR.md), [외부 설정](ISSUE_109_OAUTH_SETUP.md)를 따른다. 이하 제출 MVP 구조는 과거 버전 설명이며 이번 변경의 실제 완료 여부는 [실행 기록](ISSUE_109_WORKLOG.md)에서 확인한다.
+계정·소유권은 ADR-051과 위 계약을 기준으로 하며 아래 익명 제출 MVP 구조보다 우선한다. 외부 설정은 [운영 안내](USER_INTERVENTION.md)를 따른다.
 
 ## 1. 목적과 범위
 
@@ -232,7 +232,7 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 2. 종료 시점의 고유 참여자 제출이 2개 미만이면 방을 `INSUFFICIENT_PARTICIPANTS`로 종료하고 후보 생성 작업을 시작하지 않는다.
 3. 입력 수집 종료 시점의 방 전체 제출 배치 구조화가 종결되면 PostgreSQL에서 모임과 참여자의 유효한 정형 조건을 조회한다.
 4. 도메인 서비스가 자연어에서 구조화된 요일·지역 시간 조건을 `[searchStartDate, searchEndDate)` 안의 실제 날짜별 구간으로 확장하고 `ZoneRules`를 적용한다.
-5. 원문 있는 입력에서 AVAILABLE 조건이 없으면 탐색 범위 전체를 기준으로 UNAVAILABLE를 차감한다. 단, 표현 불가능한 시간·장소 결합 제약 `UNSUPPORTED_CONDITIONAL_CONSTRAINT`와 모호한 시간 제약 `AMBIGUOUS_TIME_CONSTRAINT`는 해당 참여자의 가능 구간을 비워 하드 제약이 없는 전체 기간 가능 상태로 확대하지 않는다. 일반적인 기존 조건 검증 실패의 중립 시간 정책은 유지한다. raw_text=null legacy 슬롯 전용은 빈 가능 구간·LEGACY_MANUAL_ONLY_UNSUPPORTED로 처리한다.
+5. 성공적으로 해석된 원문 입력에 AVAILABLE 조건이 없으면 탐색 범위 전체를 기준으로 UNAVAILABLE를 차감한다. 검증 실패가 있고 유효 AVAILABLE이 남지 않은 입력은 빈 가능 구간으로 처리한다(ADR-058). 구조화 결과 누락도 빈 가능 구간이며 `STRUCTURED_RESULT_MISSING` 진단을 활성 run 게시 트랜잭션 안에서 보존한다. 유효 AVAILABLE이 남는 일부 조건 실패는 유효 시간과 불가 차감을 유지하고 선호 점수는 제외한다. `UNSUPPORTED_CONDITIONAL_CONSTRAINT`, `AMBIGUOUS_TIME_CONSTRAINT`, `AMBIGUOUS_INPUT`은 남은 AVAILABLE과 관계없이 기존 안전 제외를 유지한다. raw_text=null legacy 슬롯 전용은 빈 가능 구간·LEGACY_MANUAL_ONLY_UNSUPPORTED로 처리한다.
 6. 원문 있는 legacy 수동 값도 계산에 관여하지 않는다. 원문 없는 참여자는 빈 가능 구간으로 전체 인원에 남겨 전원 참석 Plan A/B와 부분 참석 Plan C 의미를 유지한다. Calendar 차감은 Post-MVP 경계다.
 7. 고정된 후보 격자로 양자화하거나 임의 길이로 자르지 않고 교차·차감 후 남은 모든 연속 시간 구간을 그대로 시간 후보로 유지한다.
 8. Gemini가 구조화한 각 특정 장소의 `area_key`와 공통 `area_name`을 검증한다.
@@ -428,7 +428,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 로컬 관리 작업은 MFA가 적용된 IAM 콘솔 세션의 `aws login` 임시 자격 증명을 사용한다. GitHub Actions는 장기 Access Key 없이 OIDC로 환경별 최소 권한 role을 사용한다.
 - V8 배포는 설치된 `/opt/meet-me/guard/host-release-guard.sh`가 관리한다. deploy·호환 rollback·credential refresh·boot restart가 공통 잠금과 root 소유의 영속 manifest·선행조건·정확한 digest 승인 TSV를 검증한다. 모든 저장 release의 진입 script를 wrapper로 교체하고 구 파일 inode를 hard-link로 보존하여 열린 구 Bash FD가 있으면 중단한다. cmdline·credential은 검사 출력에 포함하지 않는다.
 - 앱 전체를 중지하고 Docker 자동 재시작을 비활성화한 뒤 `V8_STARTED`와 sticky `input_revision_v8` marker를 원자적으로 영속화한다. 승인된 동일 이미지로 Flyway 실행·앱 교체·실제 Docker image와 health 확인을 완료해야 `current`와 `READY`를 기록한다. 실패 시 점검 상태를 유지하고 승인된 digest의 deploy로 roll-forward한다. Flyway downgrade·구 image 자동 fallback은 제공하지 않는다.
-- Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [INPUT_REVISION_ROLLOUT.md](INPUT_REVISION_ROLLOUT.md)를 따른다.
+- Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [운영 안내](USER_INTERVENTION.md)를 따른다.
 - `main` push CI의 정확 `head_sha`로 image와 run/attempt별 불변 release manifest를 게시한다. ADR-050에 따라 첫 V8→V9/V10 전환과 SQL/guard 실행 bundle 변경은 명시 승인으로 분리한다. main 읽기 preflight/deploy는 기존 게시물을 소비하고 다시 build하지 않는다. 성공 후 실제 Flyway history·READY·현재 digest·SQL/guard 지문을 root record에 저장하며, 같은 계약의 후속 main CI는 실제 상태를 재확인한 뒤 자동 배포한다. PR·`develop`·수동 CI와 실패한 CI는 자동 게시/배포하지 않는다. 기존 production 역할·보호규칙과 직렬화(cancel=false)는 유지한다.
 
 ### 제출 MVP 토폴로지 선택 근거
@@ -481,7 +481,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 내부 분석 계측은 한 실행의 승인된 시도 수와 로컬 파서 dispatch 수를 별도로 기록한다. dispatch는 파서 진입 횟수이며 실제 HTTP 요청·공급자 수신·청구 건수를 증명하지 않는다. 재전달로 실행을 소유하지 못하거나 이미 완료된 결과를 재사용하는 경로는 새 실행 완료로 집계하지 않는다.
 - `AnalysisExecutionObservation`은 enum 결과·provider, 경과 시간과 숫자 usage만 전달한다. `meetme.analysis.execution.*`는 실행 결과·시간을, `meetme.analysis.admitted.attempts`와 `meetme.analysis.parser.dispatches`는 승인/dispatch 수를, `meetme.analysis.attempts`는 provider별 `ADMITTED_ONLY`/`PARSER_DISPATCHED`를 기록한다. dispatch된 시도마다 `meetme.analysis.usage.observations`의 `field`와 `knowledge=KNOWN|UNKNOWN`으로 입력 token·출력 token·비용의 확인 범위를 나타낸다. `meetme.analysis.attempt.*` summary에는 확인된 값만 기록하며, 알려진 0과 미확인 null을 구별한다. 이 지표의 합계는 확인된 시도의 소계이며 미확인 시도가 있을 때 전체 비용으로 표시하면 안 된다.
 - 기존 `meetme.gemini.batch.*`는 호환 지표로 남긴다. 새 실행 수와 기존 배치 수는 같은 종결의 두 표현이므로 합쳐서 세지 않는다. Gemini 배치 비용·원화 예산 판정은 dispatch가 하나 이상이고 모든 dispatch가 Gemini이며 모든 비용이 확인된 때만 합산한다. 재시도나 Luna의 비용이 미확인이면 마지막 성공 응답의 비용으로 전체를 대신하지 않는다. provider별 단가·timeout·재시도·영속 실행 계약은 바꾸지 않는다.
-- 위 내부 계측은 #110의 첫 단위다. 2026-10-17 후속 위임으로 최소 운영 조회 API·웹 화면, 검증된 accountId의 명시적 운영자 allowlist·기본 거부·접근 감사를 구현한다. 일반 HOST·회원·게스트에게 새 조회 권한을 자동 부여하지 않는다. 감사 보존은 구성 가능하고 초기 목표는 30일이며 실제 계정 등록과 운영 설정 적용은 별도 확인한다. [#110 조회 계약](issue-110-operator-query.md)에 최소 노출·영속 이력의 한계·#109 인증 연결·로컬 검증 경계를 기록한다.
+- 위 내부 계측은 #110의 첫 단위다. 2026-10-17 후속 위임으로 최소 운영 조회 API·웹 화면, 검증된 accountId의 명시적 운영자 allowlist·기본 거부·접근 감사를 구현한다. 일반 HOST·회원·게스트에게 새 조회 권한을 자동 부여하지 않는다. 감사 보존은 구성 가능하고 초기 목표는 30일이며 실제 계정 등록과 운영 설정 적용은 별도 확인한다. 조회 전 실제 계정 인가, 최소 노출, 감사 실패 시 보호 정보 미반환과 영속 이력의 한계를 유지한다.
 - V14는 제한된 운영 접근 감사만 보존한다. V15는 승인에 명시적으로 연결된 파서 진입과 로컬 OkHttp call lifecycle만 원자적으로 보존한다. 비동기 제한 큐·전용 DB 대기 한도는 관측 저장이 파서 timeout/재시도 정책을 바꾸지 않도록 분리한다. 관측 부재는 미확인이며 provider 수신·청구 exactly-once를 뜻하지 않는다. 기존 시도 cascade 삭제를 따르고 기존 비즈니스 보존을 연장하지 않는다.
 - 내부 지표는 프로세스 내 비영속 집계이며, 실행 중 프로세스가 중단되면 종결 관찰이 누락될 수 있으므로 영속 실행 이력이나 공급자 청구 원장으로 사용하지 않는다.
 - 새 `outcome`은 `GeminiBatchProcessor`의 로컬 구조화 처리 경로의 종결이다. `COMPLETED`는 해당 경로의 정상 종결이며 후보 게시 성공이나 방의 READY/COMPLETE 상태를 보증하지 않는다. `ANALYSIS_DELAYED`도 현재 방 상태를 재조회한 값은 아니다. 최종 매칭 결과는 별도 matching 지표와 영속 상태로 확인한다. `elapsed`에는 동기 후속 matching 처리 시간도 포함된다.
@@ -531,7 +531,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 
 기존 legacy matcher·candidates·final_confirmations와 별개로 결정론적 RecommendationProjector가 N/N-1/N-2 전체 조합의 실제 연속 창과 mode/장소/참석 variant를 만든다. primary는 최대 세 시간안이며 전체 대안은 손실 없는 cursor로 조회한다. 신규 분석의 legacy 결과와 recommendation_analyses/options/variants/참석 관계는 방→run 잠금 아래 하나의 PostgreSQL 트랜잭션으로 게시한다. Redis·LLM은 추천 순위나 최종 시각을 결정하지 않는다. V1~V8은 수정하지 않고 추천 V9와 invocation V10을 추가한다. 두 원본 SQL 바이트는 보존했다. 운영 Flyway 이력을 이 구현에서 조회·repair하지 않았다.
 
-D2 명시 선호 집계는 2026-10-07 사용자 승인된 [계약](ISSUE_95_CONTRACT.md)과 ADR-048을 따른다. 자연어 구조화에서 필수 제약과 선호를 분리하고 서버가 참석자별 최대1점·같은 차원 OR·여러 차원 AND·창 전체 충족을 계산한다. #99 통합에서 공통 live schema_version 3에 PREFERRED_TIME_WINDOW/PREFERRED_PLACE를 추가하고 두 공급자 prompt/validator와 조건 JSON 저장·복원을 함께 확장했다. v1/v2 저장 결과·비strict fixture는 선호 없음으로 복원하고 AVAILABLE은 하드 가능 조건으로 유지한다. 선호 시간 합집합을 실제 가능 창에 교차하고 두 선호 구간의 교집합으로 모든 의미 있는 공통 하위 창을 보존한다. 명시 선호 차원은 검색 범위에서 비어도 사라지지 않는다. 일부 조건 거부가 있는 참가자는 유효 조건과 선호 하위 창을 보존하되 선호 득점을 제외한다. live v3의 잘못된 하드 시간 조건은 AMBIGUOUS_TIME_CONSTRAINT로 안전 제외하여 불가 조건 누락으로 가능 범위를 넓히지 않는다. 현재 AVAILABLE을 선호로 추정하지 않고 공개 option/variant/confirmation API를 유지한다. 자정의 인접 구간은 연속 창으로 보존한다. 신규 A/B/C는 primary 표시 순서이고 기존 plan_type은 legacy 의미를 보존한다.
+D2 명시 선호 집계는 PRD의 명시 선호 계약과 ADR-048을 따른다. 자연어 구조화에서 필수 제약과 선호를 분리하고 서버가 참석자별 최대1점·같은 차원 OR·여러 차원 AND·창 전체 충족을 계산한다. #99 통합에서 공통 live schema_version 3에 PREFERRED_TIME_WINDOW/PREFERRED_PLACE를 추가하고 두 공급자 prompt/validator와 조건 JSON 저장·복원을 함께 확장했다. v1/v2 저장 결과·비strict fixture는 선호 없음으로 복원하고 AVAILABLE은 하드 가능 조건으로 유지한다. 선호 시간 합집합을 실제 가능 창에 교차하고 두 선호 구간의 교집합으로 모든 의미 있는 공통 하위 창을 보존한다. 명시 선호 차원은 검색 범위에서 비어도 사라지지 않는다. 일부 조건 거부가 있는 참가자는 유효 조건과 선호 하위 창을 보존하되 선호 득점을 제외한다. live v3의 잘못된 하드 시간 조건은 AMBIGUOUS_TIME_CONSTRAINT로 안전 제외하여 불가 조건 누락으로 가능 범위를 넓히지 않는다. 현재 AVAILABLE을 선호로 추정하지 않고 공개 option/variant/confirmation API를 유지한다. 자정의 인접 구간은 연속 창으로 보존한다. 신규 A/B/C는 primary 표시 순서이고 기존 plan_type은 legacy 의미를 보존한다.
 
 `GET recommendations`, `GET recommendations/alternatives`, `POST recommendations/{optionId}/confirmation`은 기존 참여·HOST·Origin·호출 제한 정책을 재사용한다. 방 응답 recommendation_protocol과 추천 envelope protocol의 정확한 지원 값은 diverse-time-v1이며 legacy는 null이다. typed 선택은 candidate FK와 분리한 recommendation_selections에 전체 분석/option/variant/start/end 튜플로 저장한다. 같은 방·분석·variant FK, 단일 창 containment, active analysis·CLOSED·OPEN round 없음과 구 확정 없음 검사를 적용한다. 결과는 실제 선택 시간과 별도 selection을 제공하며 신규 candidate_id는 null이다. 기존 candidates 읽기와 과거 확정은 유지하지만 신규 protocol의 구 candidate-only 확정은409로 거부한다.
 
@@ -551,7 +551,7 @@ Attempt에 provider/model/policy/invocation별 usage를 구분한다. 알 수 �
 설정에는 `OPENAI_API_KEY` 변수 참조만 추가한다. 실제 비밀값과 운영 설정은 이 구현에서 읽거나 등록하지 않는다. 새 공급자로 원문을 전달하는 사용자 고지·처리 조건 검토와 운영 자격 증명 등록은 배포 준비의 별도 작업이며 개인 보관함 연결·별도 품질 평가를 운영 배포 승인으로 확대하지 않는다.
 
 
-### #107 본인 모호성 보완 경계 (2026-10-17 사용자 위임)
+### LEGACY 방의 본인 모호성 보완 경계
 
 공통 provider 계약은 기존 배치 응답의 nullable `clarification`에 최대1개 질문과 전체 수정본 A/B를 담는다. `schema_version=3`의 additive reader는 구 응답의 해당 필드 생략도 null로 읽는다. 공급자 SDK, HTTP timeout, invocation/attempt admission과 Worker는 변경하지 않는다. 질문 제안만을 위한 별도 LLM 호출은 없다. 명확한 문맥·부정·선호·원문 버전별 기준일은 보존하고 상대 날짜가 있는 선택지는 절대 날짜로 표현한다. 서버는 원문 regex로 의미를 덮어쓰지 않고 구절·길이·서로 다른 옵션·모호성 rejection과 빈 조건의 구조 계약을 검증한다.
 
@@ -563,31 +563,97 @@ ClarificationUseCase는 본인 소유권 확인 후 현재 활성 완료 배치�
 
 웹의 소유자 query/cache와 답변 form 수명은 구분한다. form은 질문 ID·source revision·편집 round ID를 key로 사용하며 새 질문/라운드는 선택·직접 입력·operation·blocked 상태를 초기화한다. 이전 form의 늦은 POST는 새 질문 cache·알림·권한 callback을 변경하지 않는다. 같은 질문/라운드 query 재조회는 form을 유지한다.
 
-### #107 PRE_SUBMIT_V1 경계 (2026-10-17, ADR-053)
+### 제출 전 확인과 PRE_SUBMIT_V1 (ADR-053)
 
 PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 전 확인의 기준으로 두며 기존 Submission version은 CLEAR accepted만 저장한다. `meeting_rooms.submission_protocol`은 기존 방 LEGACY, 신규 방 PRE_SUBMIT_V1을 구분한다. queue claim·비용 admission·완료 publish는 영속 세대와 room lock으로 fence하며 Redis 유실이 원문/검사 상태를 잃게 하지 않는다. 외부 provider는 개인 입력/context만 받는 별도 output port이다. 최종 분석은 전체 accepted frozen batch의 구조화·AREA 그룹·결정론적 매칭을 계속 수행한다.
 
 조회/답변/취소/retry/멱등 replay 모두 현재 본인 소유권과 인증을 검사하고 no-store 응답을 쓴다. REPLACE_ONLY는 조회 권한을 얻지 않으며 candidate epoch/generation CAS로 제한된 대체만 수행한다. typed native OpenAPI와 web generated contract를 최종 통합한다. 신규 V16은 기존 SQL bytes를 보존하는 additive migration이며 정확 catalog·guard·DB upgrade 검증을 수행한다. runtime 인증 전달/키 mount·migration 승인·provider cap 검증이 준비되지 않으면 main 배포를 진행하지 않는다.
 
-runtime 준비는 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.
+2026-10-17 runtime 준비본은 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용했다. 개인 생성은 아래 2026-10-20 Luna 계약으로 대체한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.
 
 새 release의 `runtime-auth-mode=oauth-rs256-required`는 renderer의 typed OAuth/서명 경로·Origin 및 optional 기본 OFF flag 전달을 요구한다. RSA/JWKS는 고정 `/run/meetme-auth` read-only bind이며 없는 호스트 경로는 생성하지 않는다. marker/renderer/Compose를 current17 guard catalog에 묶고 historical14은 읽기만 지원한다. 기존 guard 승인·migration/drain·부분 signing 거부 정책은 바꾸지 않는다. 실제 Secret/파일/권한·OAuth·DB/운영 전환은 별도 사용자 작업이다.
 
-### #107 2단계 분류·생성 보완 개발 경계 (2026-10-18, ADR-054)
+### 2단계 분류·생성 경계 (ADR-054)
 
 새 AmbiguityClassificationPort는 SDK와 독립인 원문/context→CLEAR/NEEDS_REVIEW/INDETERMINATE 계약이다. OpenAI Decisions 후보 adapter는 단일 holistic choice만 사용하며 자유 구간/질문·개인 구조화/AREA를 생성하지 않는다. standalone adapter의 자동 Spring 등록은 없고 TwoStagePreSubmissionCheckProvider가 명시 조합한다. 충분한 CLEAR만 통과하고 정상 유보·검토 필요는 기존 생성 검사로 재판정(CLEAR 가능), refusal/API 오류는 미완료다. 두 stage는 기존 provider 최대15초를 공유하고 기존 worker가 room/check/generation·owner/deadline 게시 fencing을 유지한다. 공개 API/SQL/web 구조는 확대하지 않는다.
 
-기존 provider OFF와 별도 decision-routing OFF를 유지하며 selector만 켜거나 키만 있어도 default DENY budget 경계로 새 단계 호출을 허용하지 않는다. stage별 호출 전 검증된 quote/reservation이 필요하고 known/partial/unknown usage는 provider/model별로 기록한다. 기존 단일 provider 결과에는 terminal stage metadata만 둔다. 비용 불명·timeout·거부·유실을 무료로 환급하지 않는다. 공통 AiCallBudgetPort/default DENY·fake 검증과 실제 PG 원장/모든 최종 분석 dispatch 연결을 구분한다. 후자는 #123에서 영속 구현·독립 검증 중이며 실제 가격/coverage 증명·활성화 전에는 기존 HOST 실패 재시도의 운영 누적 비용 문제가 해결됐다고 주장하지 않는다. 실제 금액·quote·profile 검증과 durable 전체 목적 연결 전 유료 활성화를 보류한다. 상세 DC/TS·평가·예산 설계는 ISSUE_107_DECISION_CLASSIFICATION_DESIGN/ISSUE_107_TWO_STAGE_CONTRACT/ISSUE_107_DECISION_EVALUATION/ISSUE_107_SHARED_AI_BUDGET_DESIGN을 따른다.
+기존 provider OFF와 별도 decision-routing OFF를 유지하며 selector만 켜거나 키만 있어도 default DENY budget 경계로 새 단계 호출을 허용하지 않는다. stage별 호출 전 검증된 quote/reservation이 필요하고 known/partial/unknown usage는 provider/model별로 기록한다. 기존 단일 provider 결과에는 terminal stage metadata만 둔다. 비용 불명·timeout·거부·유실을 무료로 환급하지 않는다. 공통 AiCallBudgetPort/default DENY·fake 검증과 실제 PG 원장/모든 최종 분석 dispatch 연결을 구분한다. 영속 구현은 다음 절을 따르며 실제 가격/coverage 증명·활성화 전에는 기존 HOST 실패 재시도의 운영 누적 비용 문제가 해결됐다고 주장하지 않는다. 실제 금액·quote·profile 검증과 durable 전체 목적 연결 전 유료 활성화를 보류한다. 분류기의 reason/confidence 일관성 위반·응답 계약 실패도 기술 실패이며 자동 생성 전환 사유가 아니다. 운영 minimumConfidence는 미확정이고 0.8은 과거 진단값이다.
 
 
-### #123 영속 공통 AI 예산과 물리 전송 경계
+### 관련 시각 중심의 시간대 보완 개발 후보
 
-다음은 확정 계약이다. 원장/실제 DB fence94·managed HTTP/Worker·Processor 문맥98·최종 생애와 동일 방 관통10의 집중 검증을 통과했다. 독립 결함 주입과 필수 전체 검증·게시 상태는 최신 Worklog와 최종 근거를 따른다. 별도 최초 Decisions 진단4회와 추가 실제2단계2시도(각새A200→count200→첫generation503·후속TIMEOUT)는 운영 활성화·실제 질문 의미 검증 완료와 구분한다.
+2026-10-20 통합 후보는 사용자 지시에 따라 개인 입력 전체의 분류 bean을 Jev로 연결한다. 기존
+`PRECHECK_CLASSIFICATION/ordinal=1`을 재사용하며 모델 `jev-1.14.0`·공식 endpoint·16KiB 요청 한도를
+새 physical profile에 고정한다. 기존 OpenAI 분류 profile의 가격 근거를 재사용하지 않는다. 원문·기준일·
+검색 문맥을 그대로 전달하고 충분한 유일 최댓값만 CLEAR로 수용한다. 낮은 confidence와 동률은 raw 의미
+판정·확률·confidence를 보존한 정상 유보이며 기존 질문 생성 단계가 재판정한다. managed 경로의 명시
+threshold는 검토된 runtime policy와 일치해야 한다. 실제 운영값이 없으면 OFF·UNCONFIGURED·DENY다.
 
-ADR-055와 [구현 계약](ISSUE_123_DURABLE_AI_BUDGET_CONTRACT.md)을 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회이며 현재 생산 구현은 모든 quote/청구 근거를 거부한다.
+예약은 실제 요청 bytes와 결속하고 기존 gate의 단일 물리 claim·공유 deadline·게시 fence를 유지한다.
+답변이 잘못되어도 유효 usage는 먼저 관측하며 이는 complete bill 정산이 아니다. 아래의 시각별 두 단계
+진단은 전체 입력 분류와 별개이며 이번 연결에 포함한 것처럼 표시하지 않는다.
+
+사용자 승인에 따라 기본 OFF·생산 등록 없는 별도 후보를 개발한다. ClockCandidateDetector는 원문 코드포인트 위치의 숫자 시각과 범위 단위 생략을 보존하는 lexical detector이며 의미를 정규식으로 결정하지 않는다. ClockRelevancePort는 가능한 일정에 영향을 주는 시작·종료·제외 경계와 배경 사건의 시각을 구분한다. 명확한 다른 대안이 있어도 모호한 관련 대안을 지우지 않는다. 선택한 관련 시각만 ClockPeriodPort의 AM/PM/NOT_STATED/UNRESOLVED Choice에 전달하며 확정된24시간 앵커에는 기간 선택을 새로 요구하지 않는다. 식사·퇴근·수업·수면의 개인 관습으로 빈 기간 정보를 채우지 않는다.
+
+PeriodClarificationPolicy는 시각별 결과를 순수하게 합성한다. NOT_STATED 질문 대상과 UNRESOLVED/동률 HOLD를 별도 보존하고 기술 실패도 구분한다. NO_PERIOD_QUESTION은 전체 입력 CLEAR·제출·최종 구조화·매칭 허가가 아니다. 원문과 reference/timezone/표시 종료일·배타적 종료일/모임 길이는 항상 후속 전체 LLM에 그대로 전달한다. 너무 이른 시각은 즉시 보완에서 제외하여 전체 LLM 판단에 맡기며, 불참·유연한 위임·미래 일정 미정·길이 불일치를 시간대 질문으로 바꾸지 않는다. 이 범위에서 자유 구간이나 최종 일정·질문 문장을 생성하지 않는다.
+
+Jev1.14.0 후보는 기존 endpoint/model 기본 OFF 옵션을 사용한다. relevance와 period는 입력별 여러 과제를 각각 한 HTTP에 묶고 입력 합성은 추가 모델을 사용하지 않는다. 실제 HTTP와 과제 수는 별도로 관측한다. strict JSON/UTF-8·원문 span·qid·확률/최댓값 검증을 적용하며 confidence는 보관할 증거이고 동작 임계값이 아니다. 유효 usage 관측은 답/문항 검증보다 먼저 정산 observer에 전달하고, 잘못된 답은 정산 뒤에도 실패로 남긴다. 불확실 usage·기술 오류는 중단하며 재시도·redirect·다른 공급자 폴백을 하지 않는다.
+
+정오·자정·오전10~12 끝점·낮/점심 및 colon 표기의 미정 사항은 계약 고정 전에 보고한다. 미확정 계약과 소실된 과거 원장은 호출 권한이 아니다. 현재 원장 복구 전에는 새 누적 ledger를 만들지 않고 실제 평가를 차단한다. 원래48개는 이미 본 개발 세트이며 기존 gold와 새로운 관련성/이견 기록을 분리한다. 이 후보는 기존 worker·생산 budget·공개 API·Spring binding을 활성화하지 않는다.
+
+### 영속 공통 AI 예산과 물리 전송 경계
+
+아래는 구현 경계다. 합성 HTTP·PostgreSQL·Worker 회귀는 실제 모델 의미 효능, 청구 상한 또는 운영 활성화 검증을 대체하지 않는다.
+
+ADR-055를 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회이며 현재 생산 구현은 모든 quote/청구 근거를 거부한다.
 
 V17의 ai_room_budgets는 기존 방 HISTORICAL_UNKNOWN/신규 방 UNCONFIGURED다. 신규 방 생성과 초기 budget 행은 같은 트랜잭션의 trigger로 원자적이며 request-time lazy zero bootstrap이 없다. ai_budget_profiles는 구조 profile/policy/unit만 보관한다. 입력별 quote·payload/source/context 지문·usage/청구 근거는 방 소유 ai_call_reservations/ai_call_observations에만 두고 기존30일 방 삭제와 함께 cascade 삭제한다. 삭제 뒤 늦은 관측은 원장을 재생성하지 않는다.
 
-새 meetme.ai.budget.enabled 기본 OFF는 기존 final 동작을 보존한다. ON은 개인 Decisions/count/generation과 최종 Gemini/Luna의 다섯 실제 HTTP 작업 모두에서 같은 managed gate를 사용한다. worker/processor는 DB 작업에서 도출한 내부 문맥을 전달하고 fence는 기존 kind별 소유권/상태/현재 version/마감을 재검증한다. adapter의 실제 body를 한 번 고정해 quote와 결속하고 연결 전 예약/dispatch CAS, 실제 request bytes 전 one-shot 검사를 분리한다. 숨은 같은-Call follow-up·SDK 두 번째 Call은 새 권한을 만들지 않는다. 내부 문맥은 provider JSON/header/query나 일반 로그/지표에 전달하지 않는다.
+새 meetme.ai.budget.enabled 기본 OFF는 기존 final 동작을 보존한다. 최초 ON 구성은 개인 분류/count/generation과 최종 Gemini/Luna의 다섯 operation에 같은 managed gate를 적용했다. 2026-10-20 Luna 전환 뒤 실제 경로는 개인 Jev/Luna와 최종 Gemini/Luna의 네 operation이며, PRECHECK_COUNT enum/profile은 역사 호환만 유지하고 개인 runtime에서 호출·예약하지 않는다. worker/processor는 DB 작업에서 도출한 내부 문맥을 전달하고 fence는 기존 kind별 소유권/상태/현재 version/마감을 재검증한다. adapter의 실제 body를 한 번 고정해 quote와 결속하고 연결 전 예약/dispatch CAS, 실제 request bytes 전 one-shot 검사를 분리한다. 숨은 같은-Call follow-up·SDK 두 번째 Call은 새 권한을 만들지 않는다. 내부 문맥은 provider JSON/header/query나 일반 로그/지표에 전달하지 않는다.
 
-기존 개인15초·final60/Gemini15/Luna27/완료3초와 bounded4+1·질문/입력 상한을 유지한다. 신규 ON은 accepted bounded production composition을 지원하며 과거 nullable/unbounded 생성자 seam은 안전 거절한다. fallback key 공백만으로 정상 primary를 막는 새 조건은 없다. 알려진 token usage는 청구 증명이 아니고 late 금융 관측은 결과 게시 권한이 아니다. UNKNOWN hold는 자동 환급/재전송하지 않는다. 실제 금액·운영 confidence/가격·coverage 증명·소진 UX·과거 비용 조정과 실제 평가/활성화는 별도 남으며, 로컬 검증의 단계별 상태는 Worklog를 따른다. 운영 DB/Secret/접근/Decisions 병합/배포는 수행하지 않는다.
+기존 개인15초·final60/Gemini15/Luna27/완료3초와 bounded4+1·질문/입력 상한을 유지한다. 신규 ON은 accepted bounded production composition을 지원하며 과거 nullable/unbounded 생성자 seam은 안전 거절한다. fallback key 공백만으로 정상 primary를 막는 새 조건은 없다. 알려진 token usage는 청구 증명이 아니고 late 금융 관측은 결과 게시 권한이 아니다. UNKNOWN hold는 자동 환급/재전송하지 않는다. 실제 금액·운영 confidence/가격·coverage 증명·소진 UX·과거 비용 조정과 실제 평가/활성화는 별도 남으며, 실행·평가 이력은 Git과 별도 Notion 기록에서 확인한다. 운영 DB/Secret/접근/Decisions 병합/배포는 수행하지 않는다.
+
+
+### 제출 전 확인의 상태·경합·상한
+
+candidate 저장은 제출 완료가 아니다. QUEUED/CHECKING은 대기, NEEDS_CHOICE는 본인 응답 대기, NEEDS_EDIT/FAILED/FAILED_QUEUE/TIMED_OUT/LIMIT_REACHED/CANCELLED는 새 완료가 아니다. CLEAR와 accepted를 같은 트랜잭션에 반영한 뒤에만 완료로 집계한다. SUPERSEDED 및 낡은 source revision·generation·owner·lease의 응답은 최신 입력을 덮어쓰지 않는다. 방 잠금 아래 현재 권한·수정 가능 상태·deadline을 다시 검사한다. 마감은 연장하지 않고 마지막 accepted를 동결한다. 수정 확인 중이면 이전 완료본을 사용하고 최초 미확인 입력은 제외한다.
+
+원문·check/outbox·멱등 명령을 원자 저장한다. 중복 요청의 같은 key/body는 최초 명령 결과를 재생하되 현재 snapshot과 구분하고, 다른 body는 충돌이다. 응답 유실은 본인 GET 복원 뒤 같은 key로 명시 재시도하며 새로고침이 자동 POST를 만들지 않는다. AI 호출은 DB 잠금 밖에서 수행하고 외부 exactly-once를 주장하지 않는다. 취소·새 수정·다른 탭·계정 변경·마감 뒤 결과가 권한·revision 경계를 우회하지 않게 한다.
+
+A/B 선택은 새 revision과 created_at을 생성하되 interpretation_reference_at은 원본 candidate에서 상속한다. DIRECT와 일반 신규 입력은 새 기준시각을 사용한다. accepted와 최종 frozen batch도 고정한 해석 기준을 보존하여 선택·재시도·재분석으로 상대 날짜가 이동하지 않게 한다.
+
+확인 admission은 방·참여자당 6회, 질문은 기존 이력을 포함해 3회, 명시 retry는 check당 1회다. A/B/DIRECT 수정은 새 immutable revision으로 한 번 재검사하며 같은 모호성·한도 소진을 성공으로 바꾸지 않는다. 큐 대기 포함 execution 30초, 게시 예약 3초, provider 전체 최대 15초를 유지한다. 2단계와 count/generation은 각각 남은 동일 deadline을 공유한다. 현재 worker 초기 한도는 동시 2·대기 100이며 큐 실패도 원문과 실패 상태를 보존한다. 큐·동시성·대기/호출 지연·usage·실패·stale drop은 원문과 개인 식별자 없는 지표로 관측한다. 실제 p50/p95·정확도·10원 충족은 별도 미검증이다.
+
+분류 입력은 원문과 reference_at/time_zone/locale/search_start_date/search_end_date의 여섯 필드뿐이다. 금액·권한용 내부 room/check/generation 문맥은 외부 JSON/header/query나 일반 로그에 보내지 않는다. 분류 결과는 단일 choice이며 개인 시간 구조·AREA를 합쳐 최종 방 전체 분석을 대체하지 않는다. 생성 metadata의 thoughtSignature 등 정상 부가 필드는 의미 payload와 분리하고 응답을 자동 재전송하지 않는다. 현재 source의 provider·decision routing·budget 기본 OFF와 검증되지 않은 quote의 DENY를 유지한다.
+
+### 게스트 재접근과 제한된 대체
+
+이름·초대 링크·participant UUID는 소유 증명이 아니다. 서버가 검증한 VERIFIED_GUEST만 본인 읽기·수정을 허용하며 REPLACE_ONLY는 읽기·HOST·claim 없이 제한된 대체만 허용한다. 계정은 guest보다 우선하고 무효 Bearer나 계정 참여 없음에서 guest로 fallback하지 않는다. 재접근 grant는 서버 세션·방·participant·현재 revision에 결속한다. 무암호 대체의 두 동시 명령 중 하나만 성공하고 동일 원문도 새 버전으로 증명을 소비하여 원문 일치 여부를 누출하지 않는다. claim은 로그인과 유효 소유 증명을 함께 요구하며 room 잠금 아래 회원 충돌을 검사한다. 이름·이메일 자동 병합, HOST 암호 우회, 대체 후 읽기 승격은 없다. IP+대상 시도 제한은 Redis 장애 시 fail closed다.
+
+
+### 단일 단계 전원 기준 조건부 대체 시간 (ADR-057)
+
+공통 공급자 프롬프트는 “X가 좋고 X에서 모이지 못하면 Y도 가능”이라는 명확한 관계에서 X를 기본 AVAILABLE과 명시 선호로 함께 보존하고 Y만 조건부 대체로 구조화하도록 지시한다. 독립적인 부드러운 선호만으로 AVAILABLE을 만들지는 않는다. 이 지시문과 고정 응답 parser 검증은 실제 공급자 추출 품질의 증거를 대신하지 않는다.
+
+Gemini와 Luna의 공통 schema_version 3에 `CONDITIONAL_FALLBACK_TIME_WINDOW`와 유일한 activation `WHOLE_ROOM_PRIMARY_UNAVAILABLE`를 추가한다. 날짜/요일 중 하나, 시작과 종료를 포함하며 polarity는 없다. 공통 parser가 정확한 필드, 시간·scope·activation과 같은 제출의 명시적 기본 AVAILABLE을 검증한다. 잘못된 대체 관계는 미지원 하드 제약으로 처리하며 원문 정규식으로 공급자 의미를 덮어쓰지 않는다. 기존 v1/v2와 v3의 평평한 조건은 유지한다.
+
+별도 Domain 조건 타입과 영속 JSON discriminator는 대체 관계와 `24:00`을 손실 없이 유지한다. 기존 JSONB 컬럼을 사용하므로 Flyway 변경은 없다. `MatchingProcessor`는 불가 시간 차감·검색 범위 적용 후의 기본 구간과 별도 대체 구간을 `WholeRoomConditionalTimePolicy`에 전달한다. 이 순수 Domain 정책은 부분 조합 탐색 전에 전원의 기본 교집합을 한 번 계산하고 같은 해석 결과를 legacy matcher와 recommendation projector에 전달한다. 선호는 별도 predicates와 점수 규칙을 유지한다.
+
+조건부 참여자 둘 이상이나 알려지지 않은 기본 입력은 대체 실패 조건으로 사용할 수 없다. 해당 조건부 참여자를 안전 제외하고 구조화 결과에 `UNSUPPORTED_CONDITIONAL_CONSTRAINT`를 저장하여 기존 주최자 한정 미반영 사유·PARTIAL 집계에 연결한다. 연쇄·순환·다단계 의미의 지원은 별도 결정 대상이다. 무료 fixture·실제 PostgreSQL 검증은 공급자 실모델 추출 정확도의 증거와 구분한다.
+
+
+### #131 관리형 runtime 연결 계약
+
+기존 provider/routing/classifier/budget 네 flag를 하나의 시작 시점 선택으로 검증한다. allOFF는 기존 final과 새 개인검사 OFF를 유지하며, partialON은 시작을 거부한다. allON에는 명시 threshold와 일치하는 검토된 고정 정책 파일이 필요하다. 이 계약의 구현·검증 상태는 implementation plan과 Worklog를 따르며 운영 활성화를 의미하지 않는다.
+
+정책은 비밀정보가 아닌 reviewed release artifact이며 `/run/meetme-ai/runtime-ai-policy.json`으로 read-only mount한다. 기본은 UNCONFIGURED다. CONFIGURED 문서는 단위/scale·방 cap·minimumConfidence와 정확히 다섯 operation의 physical profile 지문·근거 지문·최대 금액·UTC 만료를 포함한다. 파일 bytes SHA를 policy fingerprint로 사용하고 등록된 실제 physical profile 및 고정 payload 지문에 quote를 결속한다. 누락·불일치·만료는 거부하며 파일 형식이 가격 근거의 경제적 타당성을 증명하지 않는다. 완전 청구 증명이 없으면 청구 정산 근거는 계속 거부한다. 실제 값과 운영 임계값은 별도 미확정이다.
+
+새 방의 budget 초기화는 Room CREATE의 동일 물리 트랜잭션에서만 수행한다. 실제 저장소 INSERT 성공이 해당 트랜잭션의 private synchronization에 room ID·createdAt 일치 one-shot receipt를 발급하고 초기화가 이를 소비한다. 전체 rollback·완료와 savepoint rollback은 롤백된 INSERT의 권한을 폐기하며 savepoint 전 outer INSERT 권한은 보존한다. room과 trigger budget row의 현재 트랜잭션·v1/zero/UNCONFIGURED, 기존 실행 부재와 create-only callsite도 함께 검증한다. xmin 단독 또는 기존 row의 UPDATE를 원 INSERT 증명으로 취급하지 않는다. 기존 HISTORICAL_UNKNOWN/UNCONFIGURED·held 방을 요청 시 자동 승격하지 않는다. ON의 정책 만료/초기화 실패는 CREATE 전체 rollback과 해당 내부 예외에 한정한 body 없는 HTTP500으로 처리하고 allOFF 생성은 유지한다. POST create Swagger에 empty500을 명시하며 기존 공개 오류 코드·V1–V17 원본·참여/마감 정책은 유지한다. savepoint 보완의 구현·검증 진행 상태는 Worklog를 따른다.
+
+### 2026-10-20 개인 보완의 Luna Responses 계약
+
+사용자 승인에 따라 `LunaPreSubmissionCheckProvider`를 개인 생성 bean으로 사용한다. `gpt-6-luna` 단일 POST `/v1/responses`, `store=false`, `service_tier=default`(Standard 요청), `reasoning.effort=low`, `max_output_tokens=2048`와 strict 개인 판정 schema를 고정한다. 입력은 기존 단일 원문과 기준시각·timezone·locale·검색기간이며 다른 참여자 원문·AREA·최종 일정은 보내지 않는다. 질문/선택지의 길이·정확한 원문 발췌·완전한 제안 원문 검증과 본인 명시 수용 후 재검사를 유지한다. 최종 공통 공급자 prompt/schema는 변경하지 않는다.
+
+Jev와 Luna는 기존 provider15초를 공유하고 Luna 자동 재시도·redirect·fallback·count HTTP는 없다. 실제 `PRECHECK_GENERATION` ordinal1 한 건의 고정 bytes/profile을 공통 예산 reserve/claim/usage와 결속한다. 기존 `PRECHECK_COUNT` operation은 역사 호환을 위해 유지하되 Luna 경로에서는 사용하지 않는다. usage는 답 검증 전에 관측하고 부재는 unknown으로 남기며 청구 완료 증명이나 자동 환급으로 바꾸지 않는다. 출력/추론을 합한 한도와 알려진 입력 usage 방어는 사후 검증이며 실제 청구 상한 증명이 아니다.
+
+운영 정책은 UNCONFIGURED이며 기본 네 flag OFF다. 실제 Standard 처리·공급자 지연/의미 품질·confidence calibration·실제 가격/방 cap과 target OAuth/secret readiness는 별도다. 기존 실제 Luna4/4는 최종 조건 해석만 검증했으며 새 개인 보완의 실제 검증으로 확대하지 않는다. main 병합을 사용자에게 남기며 운영 자동 활성화를 위해 임의의 정책·키·권한을 만들지 않는다.

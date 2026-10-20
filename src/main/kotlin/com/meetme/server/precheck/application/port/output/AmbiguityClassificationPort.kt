@@ -39,6 +39,8 @@ data class AmbiguityClassificationResult(
     val usageComplete: Boolean = false,
     val provider: String = "OPENAI_DECISIONS",
     val model: String = "gpt-6-luna",
+    val semanticAssessment: AmbiguityAssessment? = null,
+    val probabilities: Map<AmbiguityAssessment, Double> = emptyMap(),
 )
 
 fun interface AmbiguityClassificationPort {

@@ -1,6 +1,6 @@
 package com.meetme.server.precheck.adapter.output.provider
 
-import com.meetme.server.config.GeminiProperties
+import com.meetme.server.config.OpenAiProperties
 import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProvider
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
@@ -63,7 +63,7 @@ class PrecheckRuntimeBindingContractTest {
             assertNull(context.startupFailure)
             assertFalse(context.getBean(PrecheckProviderRuntimeProperties::class.java).enabled)
             val provider = context.getBean(PreSubmissionCheckProvider::class.java)
-            assertIs<GeminiPreSubmissionCheckProvider>(provider)
+            assertIs<LunaPreSubmissionCheckProvider>(provider)
             assertEquals("CONFIGURATION", assertFailsWith<PrecheckProviderException> { provider.check(input) }.failureCode)
             assertTrue(capture.sent.isEmpty())
             assertEquals(0.0, attempts(capture.registry, "COUNT_TOKENS"))
@@ -87,25 +87,24 @@ class PrecheckRuntimeBindingContractTest {
             assertNull(context.startupFailure)
             assertTrue(context.getBean(PrecheckProviderRuntimeProperties::class.java).enabled)
             val provider = context.getBean(PreSubmissionCheckProvider::class.java)
-            assertIs<GeminiPreSubmissionCheckProvider>(provider)
+            assertIs<LunaPreSubmissionCheckProvider>(provider)
             val result =
                 org.junit.jupiter.api.Assertions
                     .assertDoesNotThrow<PrecheckProviderResult> { provider.check(input) }
             assertEquals(PrecheckVerdict.CLEAR, result.verdict)
             assertEquals(256L, result.inputTokens)
             assertEquals(25L, result.outputTokens)
-            assertEquals(2, capture.sent.size)
+            assertEquals(1, capture.sent.size)
             capture.sent.forEach {
                 assertEquals("https", it.scheme)
-                assertEquals("generativelanguage.googleapis.com", it.host)
+                assertEquals("api.openai.com", it.host)
                 assertEquals("POST", it.method)
                 assertNull(it.query)
-                assertEquals("synthetic-runtime-key", it.key)
+                assertEquals("Bearer synthetic-runtime-key", it.key)
             }
-            assertEquals("/v1beta/models/gemini-3.8-flash:countTokens", capture.sent[0].path)
-            assertEquals("/v1beta/models/gemini-3.8-flash:generateContent", capture.sent[1].path)
-            assertCompleteCountEquality(capture.sent[0].body, capture.sent[1].body)
-            assertEquals(1.0, attempts(capture.registry, "COUNT_TOKENS"))
+            assertEquals("/v1/responses", capture.sent.single().path)
+            assertLunaProfile(capture.sent.single().body)
+            assertEquals(0.0, attempts(capture.registry, "COUNT_TOKENS"))
             assertEquals(1.0, attempts(capture.registry, "GENERATE_CONTENT"))
         }
     }
@@ -125,7 +124,7 @@ class PrecheckRuntimeBindingContractTest {
                         .assertDoesNotThrow<PrecheckProviderResult> { provider.check(input) }
                         .verdict,
                 )
-                assertEquals(2, capture.sent.size)
+                assertEquals(1, capture.sent.size)
             }
     }
 
@@ -161,7 +160,7 @@ class PrecheckRuntimeBindingContractTest {
             org.junit.jupiter.api.Assertions.assertDoesNotThrow<PrecheckProviderResult> {
                 provider.check(input.copy(timeout = Duration.ofSeconds(30)))
             }
-            assertEquals(2, capture.sent.size)
+            assertEquals(1, capture.sent.size)
             capture.sent.forEach {
                 assertTrue(it.callTimeoutNanos in 1..Duration.ofSeconds(15).toNanos())
             }
@@ -173,7 +172,7 @@ class PrecheckRuntimeBindingContractTest {
         environment: Map<String, String> = emptyMap(),
     ) = ApplicationContextRunner()
         .withUserConfiguration(PrecheckProviderConfiguration::class.java)
-        .withBean(GeminiProperties::class.java, Supplier { GeminiProperties(apiKey = "synthetic-runtime-key") })
+        .withBean(OpenAiProperties::class.java, Supplier { OpenAiProperties(apiKey = "synthetic-runtime-key") })
         .withBean(ObjectMapper::class.java, Supplier { mapper })
         .withBean(MeterRegistry::class.java, Supplier { capture.registry })
         .withBean(PrecheckProviderHttpTransport::class.java, Supplier { capture.transport })
@@ -181,25 +180,21 @@ class PrecheckRuntimeBindingContractTest {
             context.environment.propertySources.addFirst(SystemEnvironmentPropertySource("synthetic-runtime-environment", environment))
         }
 
-    private fun assertCompleteCountEquality(
-        countedBody: String,
-        generatedBody: String,
-    ) {
-        val outer = mapper.readTree(countedBody)
-        val counted = outer.path("generateContentRequest")
-        val generated = mapper.readTree(generatedBody)
-        assertEquals(setOf("generateContentRequest"), outer.propertyNames().toSet())
-        assertEquals("models/gemini-3.8-flash", counted.path("model").asText())
-        assertEquals(generated.propertyNames().toSet() + "model", counted.propertyNames().toSet())
-        generated.propertyNames().forEach { key -> assertEquals(generated.path(key), counted.path(key), key) }
-        val config = generated.path("generationConfig")
-        assertEquals(1, config.path("candidateCount").asInt())
-        assertEquals(2048, config.path("maxOutputTokens").asInt())
-        assertEquals("LOW", config.path("thinkingConfig").path("thinkingLevel").asText())
-        assertFalse(config.path("thinkingConfig").has("thinkingBudget"))
-        assertTrue(config.path("responseJsonSchema").isObject)
-        assertTrue(generated.path("systemInstruction").isObject)
-        assertFalse(generated.has("tools"))
+    private fun assertLunaProfile(body: String) {
+        val wire = mapper.readTree(body)
+        assertEquals("gpt-6-luna", wire.path("model").asText())
+        assertEquals("default", wire.path("service_tier").asText())
+        assertFalse(wire.path("store").asBoolean())
+        assertEquals("low", wire.path("reasoning").path("effort").asText())
+        assertEquals(2048, wire.path("max_output_tokens").asInt())
+        assertTrue(
+            wire
+                .path("text")
+                .path("format")
+                .path("strict")
+                .asBoolean(),
+        )
+        assertEquals(input.rawText, mapper.readTree(wire.path("input").asText()).path("raw_text").asText())
     }
 
     private fun attempts(
@@ -240,16 +235,12 @@ class PrecheckRuntimeBindingContractTest {
                                 request.url.encodedPath,
                                 request.method,
                                 request.url.query,
-                                request.header("x-goog-api-key"),
+                                request.header("Authorization"),
                                 buffer.readUtf8(),
                                 chain.call().timeout().timeoutNanos(),
                             )
                         val body =
-                            if (request.url.encodedPath.endsWith(":countTokens")) {
-                                """{"totalTokens":256}"""
-                            } else {
-                                """{"candidates":[{"finishReason":"STOP","content":{"parts":[{"text":"{\"verdict\":\"CLEAR\"}"}]}}],"usageMetadata":{"promptTokenCount":256,"candidatesTokenCount":25,"thoughtsTokenCount":0}}"""
-                            }
+                            """{"status":"completed","output":[{"type":"message","content":[{"type":"output_text","text":"{\"verdict\":\"CLEAR\",\"prompt\":null,\"sourceExcerpt\":null,\"choices\":null}"}]}],"usage":{"input_tokens":256,"output_tokens":25,"output_tokens_details":{"reasoning_tokens":0}}}"""
                         Response
                             .Builder()
                             .request(request)

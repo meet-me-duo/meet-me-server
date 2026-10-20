@@ -1,0 +1,96 @@
+{
+  "schema_version": "3",
+  "results": [
+    {
+      "input_ref": "08248ca1-f50d-3553-9cf7-5ac1e841d26b",
+      "clarification": null,
+      "rejection_code": null,
+      "conditions": [
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": null,
+          "day_of_week": "MONDAY",
+          "start_time": "10:00",
+          "end_time": "12:00"
+        },
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": null,
+          "day_of_week": "WEDNESDAY",
+          "start_time": "10:00",
+          "end_time": "12:00"
+        },
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": null,
+          "day_of_week": "FRIDAY",
+          "start_time": "10:00",
+          "end_time": "12:00"
+        }
+      ]
+    },
+    {
+      "input_ref": "402e17c9-c4eb-371d-bdff-23a5ea1dc086",
+      "clarification": null,
+      "rejection_code": null,
+      "conditions": [
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": "2026-11-03",
+          "day_of_week": null,
+          "start_time": "14:00",
+          "end_time": "16:00"
+        },
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": "2026-11-04",
+          "day_of_week": null,
+          "start_time": "10:00",
+          "end_time": "12:00"
+        }
+      ]
+    },
+    {
+      "input_ref": "7c06d745-a9fb-3aa6-b587-23e96e9fb1cd",
+      "clarification": null,
+      "rejection_code": null,
+      "conditions": [
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": null,
+          "day_of_week": "MONDAY",
+          "start_time": "19:00",
+          "end_time": "22:00"
+        },
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": null,
+          "day_of_week": "WEDNESDAY",
+          "start_time": "19:00",
+          "end_time": "22:00"
+        },
+        {
+          "type": "TIME_WINDOW",
+          "polarity": "AVAILABLE",
+          "date": null,
+          "day_of_week": "FRIDAY",
+          "start_time": "19:00",
+          "end_time": "22:00"
+        }
+      ]
+    },
+    {
+      "input_ref": "74714cde-d28e-3a66-bbb2-9f639169a5bf",
+      "clarification": null,
+      "rejection_code": "CONDITION_VALIDATION_FAILED",
+      "conditions": []
+    }
+  ]
+}
