@@ -8,11 +8,13 @@ import com.meetme.server.shared.application.port.output.AiBudgetExecutionFencePo
 import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
 import com.meetme.server.shared.application.port.output.AiBudgetQuoteRequest
 import com.meetme.server.shared.application.port.output.AiBudgetReserveRequest
+import com.meetme.server.shared.application.port.output.AiBudgetUnit
 import com.meetme.server.shared.application.port.output.AiCurrentBudgetExecution
 import com.meetme.server.shared.application.port.output.AiPhysicalCallSpec
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.shared.application.port.output.AiVerifiedBudgetQuote
 import com.meetme.server.shared.application.port.output.AiVerifiedCompleteBill
+import com.meetme.server.shared.application.port.output.AiVerifiedFinalReserve
 import com.meetme.server.shared.application.service.DurableAiBudgetService
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
@@ -24,6 +26,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.transaction.support.TransactionTemplate
 import org.testcontainers.postgresql.PostgreSQLContainer
+import java.math.BigInteger
 import java.time.Clock
 import java.time.Instant
 import java.time.ZoneOffset
@@ -41,6 +44,10 @@ class DurableAiBudgetInitialPostgresTest {
             override fun quote(request: AiBudgetQuoteRequest): AiVerifiedBudgetQuote? = null
 
             override fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill? = null
+
+            // Explicit synthetic zero floor preserves this fixture's unrelated existing contract.
+            override fun protectedFinalReserve(request: AiBudgetQuoteRequest): AiVerifiedFinalReserve =
+                AiVerifiedFinalReserve(request.policyFingerprint, BigInteger.ZERO, AiBudgetUnit("TEST_SUBUNIT", 0), NOW.plusSeconds(60))
         }
     private val fence =
         object : AiBudgetExecutionFencePort {

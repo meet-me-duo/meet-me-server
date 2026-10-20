@@ -72,6 +72,57 @@ Gemini 장애에 한해 최대 4회 시도하고 `Retry-After`가 없으면 지�
 - 단일 참여자의 명시적인 기본 시간과 한 단계 대체 시간을 지원합니다. 여러 조건부 참여자, 연쇄·순환
   대체는 안전 제외와 `PARTIAL` 사유로 남깁니다. 해석 실패·구조화 결과 누락을 참석 가능으로 추정하지 않습니다.
 
+### 병합 전 비용과 운영 준비
+
+10원은 달성된 고정 상한이나 새 결제 승인이 아닙니다. 2026-10-20 공식 Standard 가격의
+Gemini 출력 $3.75/백만 토큰과 Luna 출력 $0.50/백만 토큰을 **조건부 계산**에 사용하면 다음과 같습니다.
+Gemini 가격은 2026-12-31까지이며 이후 재검토가 필요합니다.
+([Gemini 가격](https://ai.google.dev/gemini-api/docs/pricing),
+[Luna 모델 가격](https://developers.openai.com/api/docs/models/gpt-6-luna))
+
+| 요청 범위 | 출력 요청 한도 | 출력만의 조건부 최대 비용(USD) |
+| --- | --- | --- |
+| 개인 Luna 질문 1회 | 2,048 | 0.001024 |
+| 최종 Gemini 1회 | 32,768 | 0.122880 |
+| 최종 Luna fallback 1회 | 32,768 | 0.016384 |
+| 최종 분석 한 invocation의 최대 4+1회 | 각 32,768 | 0.507904 |
+
+이는 실제 사용량 예측·실청구·모임 전체 상한이 아닙니다. 전체 입력·schema·reasoning/캐시·서비스 tier·
+세금/환전·개인 Jev/Luna 검사와 새 correction/HOST invocation을 별도로 계산해야 합니다. 최종 Luna는
+검증된 요청의 `service_tier`를 생략한 상태이며 개인 Luna의 명시적 `default`와 다릅니다. 응답의 실제 tier는
+확인되지 않았습니다. 검증한 최종 prompt/schema와 두 최종 출력 한도는 그대로 보존했습니다.
+
+현재 입력 제한은 개인500/방10,000 Unicode code point·최대50명입니다. 개인 Luna의 전송 전 검사는
+전체 요청16,384바이트이고, 입력4,096토큰 검사는 **응답 usage를 받은 뒤** 수행합니다. 최종 요청은 실제
+전송 바이트를 고정·해시 검증하지만 32MiB capture 제한은 청구 토큰 상한이 아닙니다. 대표 입력의
+26–77KB 오프라인 측정이나 최대 모델 context 전량의 $6.52 계산으로 실용적 방 cap을 확정하지 않습니다.
+정확 모델의 전체 요청 토큰과 유효 가격/만료를 결속한 operation 최대액 근거가 필요합니다.
+입력을 포함한 한 invocation의 조건부 산식은 `(0.75×Gemini 입력 합계 + 3.75×Gemini 출력 합계 +
+0.10×Luna 입력 + 0.50×Luna 출력)/1,000,000`입니다. 이때 출력은 과금되는 reasoning을 포함하며
+캐시·tier 등 계약 차이는 별도 반영해야 합니다. 기존 usage 기반 추정 지표나 고정 환산율은 이 근거를 대신하지 않습니다.
+
+관리형 예산은 승인된 최종 `PRIMARY` 최대액의4배와 `FALLBACK` 최대액의 합을 신규 개인 예약에서 보호합니다.
+가상 보호분을 실제 hold로 중복 계상하지 않으며 같은 예약의 replay에도 다시 청구하지 않습니다.
+이는 미래 최종 invocation 한 번의 여유이고 반복 실행 전체의 비용 보장이 아닙니다. cap 부족·만료·근거
+누락은 전송 전에 거부합니다. `usageComplete=true`도 완전 청구 증거가 아니므로 production의
+`completeBill()`은 현재 `null`을 유지합니다. 낮은 usage로 hold가 풀리는 운영 정산은 아직 지원하지 않아
+누적 예약 때문에 정상 요청도 중단될 수 있습니다. 임의 가격으로 환급하지 않습니다.
+HTTP gate는 usage 관측만 전달합니다. 실제 완전 청구 증거를 공급하고 해당 예약의 `settle()`을 호출하는
+운영 소비자도 아직 연결되지 않았으므로 resolver 하나를 추가하는 것만으로 정산이 완성되지 않습니다.
+
+Jev 기본 confidence는 `null`입니다. 검토된 development60/holdout60/보강16의 gold는 실측 예측이 아니며
+과거 다른 모델의0.8/0.1을 운영 임계값으로 재사용하지 않습니다.
+([평가 범위](docs/evaluation/issue123-classification-evaluation/README.md),
+[공급자 confidence 설명](https://docs.typesafe.ai/confidence))
+
+OAuth 콘솔 설정은 사용자 완료 상태입니다. 남은 확인은 기존 runtime typed 설정 전달·RS256 파일의
+UID10001 가독성/읽기 전용 mount·V11–V17 적용 및 복구 준비입니다. 기존 main preflight는 V1–V10만
+확인했습니다. 이 실행기의 GitHub 연결은 secret 메타데이터 endpoint 조회를 허용하지 않으며 새 대상의
+host 증거도 아직 없습니다. 운영 AI 정책은 `UNCONFIGURED`·OFF를 유지합니다. 코드/CI 완료를
+운영 준비 완료로 표시하지 않으며 main 병합이 자동 게시·배포를 촉발하기 전에 이 차이를 해소해야 합니다.
+OFF는 기존 legacy 최종 분석 동작을 보존하므로 전체 AI의 전역 중지 스위치가 아닙니다. 관리형 보호가
+적용되지 않은 기존 호출을 이 예산으로 계상했다고 주장하지 않습니다.
+
 | 후보 | 의미 |
 | --- | --- |
 | **Plan A** | 전원이 참석 가능한 시간과 오프라인 장소 조건을 모두 만족하는 최적안 |

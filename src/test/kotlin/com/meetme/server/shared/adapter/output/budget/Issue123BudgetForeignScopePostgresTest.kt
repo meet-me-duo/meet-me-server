@@ -11,9 +11,11 @@ import com.meetme.server.shared.application.port.output.AiBudgetUnit
 import com.meetme.server.shared.application.port.output.AiCurrentBudgetExecution
 import com.meetme.server.shared.application.port.output.AiVerifiedBudgetQuote
 import com.meetme.server.shared.application.port.output.AiVerifiedCompleteBill
+import com.meetme.server.shared.application.port.output.AiVerifiedFinalReserve
 import com.meetme.server.shared.application.service.DurableAiBudgetService
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import java.math.BigInteger
 import java.time.Instant
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -51,6 +53,10 @@ class Issue123BudgetForeignScopePostgresTest : DurableBudgetPostgresFixture() {
                 }
 
                 override fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill? = null
+
+                // Explicit synthetic zero floor preserves this fixture's unrelated existing contract.
+                override fun protectedFinalReserve(request: AiBudgetQuoteRequest): AiVerifiedFinalReserve =
+                    AiVerifiedFinalReserve(request.policyFingerprint, BigInteger.ZERO, AiBudgetUnit("TEST_SUBUNIT", 0), NOW.plusSeconds(60))
             }
         val foreignCall = reserve(foreignRequest).calls.single()
         val ownCall = reserve(ownRequest).calls.single()

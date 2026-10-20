@@ -1,5 +1,15 @@
 # meet-me-server Implementation Plan
 
+## #137 main 병합 전 비용·최종 분석 보호 (2026-10-20 UTC)
+
+- [USER] 10원 고정 상한은 미확정이며 새 금액/유료 호출을 승인한 것으로 해석하지 않는다. main 병합 전까지 소스·무료 회귀·develop/기존 PR을 준비하고 main 병합·운영 배포는 하지 않는다. OAuth 콘솔은 이미 완료했다. 키/비밀 등록·보안 권한·운영 DB 변경은 하지 않는다.
+- [x] [AGENT] clean develop d5fce878 FF 뒤 기존 broad #123 범위의 fix branch에서 조사했으며 좁은 실제 완료 단위 #137을 생성했다. production completeBill=null은 의도된 보수적 계약이고 사후4096·최종32768×4+1/조건부 출력USD0.507904·confidence null을 재확인했다. 과거136개 gold와 실제 Jev calibration을 구분하고 holdout 원문은 열지 않았다.
+- [x] [AGENT] 독립 작성29개를 고정해13개 예상 assertion RED/오류0을 확인한 뒤 승인 operation 최대액에서 최종4+1 가상 보호분을 도출하고 신규 개인 예약의 같은 room lock에서 검사했다. 정산·prompt/schema·실제 출력/profile·API·DB migration 바이트는 변경하지 않았다.
+- [x] [AGENT] focused29 GREEN·실제 PG 경합/멱등·strict cap·정산 유지, 계산4→3/보호분누락/cap동률허용 FI3종의 단언 탐지와 정확 복구29 GREEN, 독립 리뷰 P1/P2=0을 확인했다. 고정6테스트SHA·검증 source SHA와 원본 로그를 .tdd 요약/로컬 원본으로 보존했다. 136개 oracle 구조 및 protocol 산식 검사도 PASS이며 실제 accuracy/calibration 결과가 아니다.
+- [x] [AGENT] 원본 commit guard 전체 결과240 suites/2058중2054 PASS·기존4 SKIP·실패/오류0을 확인했다. 연결 재시작 뒤 기존 프로세스 종료와 전체 XML을 보존했고 중복 실행하지 않았다. 종료 코드 수신 유실을 해소하기 위해 기존 검사 종료 후 변경 없는 guard를 재확인하여 exit0을 받았다(기존 결과 재사용 가능; 별도 fresh2058 재실행 주장0). Commit/PR: 동일 커밋 예정.
+- [x] [AGENT] 기존 GitHub 연결로 production/repository secret 메타데이터 GET을 시도했으나 허용 endpoint가 아니라 HTTP400으로 거부됐다. 값 조회·새 인증·우회0. main 전용 preflight는 현재 main의 V1–V10 증거이며 develop targetOAuth/RS256 host/V11–V17 준비 완료로 확대할 수 없다. 새로운 운영 설정·키 생성·DB 적용0이다.
+- [ ] [AGENT] 검증 source를 develop에 통합하고 main행 PR136·웹PR34의 운영 차단 설명/정확 CI를 최신화한다. broad123/130은 실제 청구·가격/threshold 근거와 실평가 미완료로 유지한다. 새 유료 HTTP0, 운영 정책 UNCONFIGURED 유지.
+
 ## #134 Jev·소셜 로그인 통합 릴리스 준비 (2026-10-20 UTC)
 
 - [USER] 최신 승인: 개인 확인에서 보완 생성만 GPT-6 Luna로 변경하고 최종 Gemini 주 경로·Luna fallback은 유지한다. 최종 공식 흐름도를 README에 반영하며 서버/웹 develop 통합과 main행 PR 준비까지 수행한다. main 병합은 사용자가 직접 하며 에이전트의 main 병합·운영 배포는 금지다. 이 승인은 새 유료 호출·운영 키/권한·미확정 금액/임계값 선택으로 확대하지 않는다.
