@@ -1,6 +1,6 @@
 package com.meetme.server.precheck.adapter.output.provider
 
-import com.meetme.server.config.GeminiProperties
+import com.meetme.server.config.OpenAiProperties
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationException
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationPort
 import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProvider
@@ -30,7 +30,7 @@ class PrecheckProviderConfiguration {
     @Bean
     @ConditionalOnMissingBean(PreSubmissionCheckProvider::class)
     fun preSubmissionCheckProvider(
-        properties: GeminiProperties,
+        properties: OpenAiProperties,
         objectMapper: ObjectMapper,
         activation: PrecheckProviderRuntimeProperties,
         transport: PrecheckProviderHttpTransport,
@@ -45,12 +45,12 @@ class PrecheckProviderConfiguration {
             return PreSubmissionCheckProvider { throw PrecheckProviderException("CONFIGURATION") }
         }
         val generator =
-            GeminiPreSubmissionCheckProvider.runtime(
+            LunaPreSubmissionCheckProvider.runtime(
                 properties,
                 objectMapper,
                 activation,
                 transport,
-                meterRegistry,
+                meterRegistry = meterRegistry,
                 dispatchGate = dispatchGate,
             )
         if (!decisionRouting.enabled || !activation.enabled) return generator

@@ -20,6 +20,129 @@ internal class PrecheckProviderContract(
             .readerFor(JsonNode::class.java)
             .with(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
 
+    fun lunaRequestBytes(request: PrecheckProviderRequest): ByteArray =
+        mapper.writeValueAsBytes(
+            mapOf(
+                "model" to "gpt-6-luna",
+                "store" to false,
+                "service_tier" to "default",
+                "reasoning" to mapOf("effort" to "low"),
+                "max_output_tokens" to 2048,
+                "instructions" to INSTRUCTIONS,
+                "input" to
+                    mapper.writeValueAsString(
+                        mapOf(
+                            "input_ref" to request.checkId.toString(),
+                            "raw_text" to request.rawText,
+                            "reference_at" to request.referenceAt.toString(),
+                            "time_zone" to request.timeZone.id,
+                            "locale" to request.locale,
+                            "search_start_date" to request.searchStartDate.toString(),
+                            "search_end_date" to request.searchEndDate.toString(),
+                        ),
+                    ),
+                "text" to
+                    mapOf(
+                        "format" to
+                            mapOf(
+                                "type" to "json_schema",
+                                "name" to "meet_me_personal_check_v1",
+                                "strict" to true,
+                                "schema" to (RESPONSE_SCHEMA + ("required" to PAYLOAD_KEYS.toList())),
+                            ),
+                    ),
+            ),
+        )
+
+    fun observeLunaUsage(bytes: ByteArray): UsageObservation =
+        try {
+            val root: JsonNode = reader.readValue(bytes)
+            if (!root.isObject) invalid()
+            val usage = root.path("usage")
+            if (!nullOrMissing(usage) && !usage.isObject) invalid()
+            val details = usage.path("output_tokens_details")
+            if (!nullOrMissing(details) && !details.isObject) invalid()
+            var malformed = false
+            val values =
+                mapOf(
+                    "INPUT" to usage.path("input_tokens"),
+                    "OUTPUT" to usage.path("output_tokens"),
+                    "THOUGHT" to details.path("reasoning_tokens"),
+                ).mapValues { (_, value) ->
+                    try {
+                        token(value)
+                    } catch (_: PrecheckProviderException) {
+                        malformed = true
+                        null
+                    }
+                }
+            UsageObservation(values, malformed)
+        } catch (_: RuntimeException) {
+            UsageObservation(emptyMap(), true)
+        }
+
+    fun parseLuna(
+        bytes: ByteArray,
+        request: PrecheckProviderRequest,
+    ): PrecheckProviderResult =
+        try {
+            val root: JsonNode = reader.readValue(bytes)
+            if (!root.isObject || root.path("status").asText() != "completed") invalid()
+            val output = root.path("output")
+            if (!output.isArray) invalid()
+            val texts = mutableListOf<String>()
+            output.values().forEach { item ->
+                when (item.path("type").asText()) {
+                    "reasoning" -> Unit
+                    "message" -> {
+                        val content = item.path("content")
+                        if (!content.isArray) invalid()
+                        content.values().forEach { part ->
+                            if (part.path("type").asText() != "output_text") invalid()
+                            texts += text(part.path("text"))
+                        }
+                    }
+                    else -> invalid()
+                }
+            }
+            if (texts.size != 1) invalid()
+            val usage = observeLunaUsage(bytes)
+            val input = usage.tokens["INPUT"]
+            val outputTokens = usage.tokens["OUTPUT"]
+            val thought = usage.tokens["THOUGHT"]
+            if (usage.invalid ||
+                input?.let { it > 4096 } == true ||
+                outputTokens?.let { it > 2048 } == true ||
+                thought?.let { it > 2048 || (outputTokens != null && it > outputTokens) } == true
+            ) {
+                invalid()
+            }
+            // Reuse the existing semantic/length/source-excerpt validator for the same personal verdict.
+            val validationEnvelope =
+                mapper.writeValueAsBytes(
+                    mapOf(
+                        "candidates" to
+                            listOf(
+                                mapOf("finishReason" to "STOP", "content" to mapOf("parts" to listOf(mapOf("text" to texts.single())))),
+                            ),
+                        "usageMetadata" to
+                            mapOf(
+                                "promptTokenCount" to input,
+                                "candidatesTokenCount" to outputTokens,
+                                "thoughtsTokenCount" to 0,
+                            ),
+                    ),
+                )
+            parse(
+                validationEnvelope,
+                request,
+            ).copy(outputTokens = outputTokens, responseBytes = bytes.size, provider = "OPENAI", model = "gpt-6-luna")
+        } catch (exception: PrecheckProviderException) {
+            throw exception
+        } catch (_: RuntimeException) {
+            invalid()
+        }
+
     fun requestBytes(
         request: PrecheckProviderRequest,
         runtime: Boolean = false,

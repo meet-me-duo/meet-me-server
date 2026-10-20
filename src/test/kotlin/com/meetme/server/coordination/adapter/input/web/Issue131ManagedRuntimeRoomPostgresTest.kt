@@ -87,11 +87,10 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
     }
 
     @Test
-    fun `MB09 actual CREATE then own POST worker A count B uses canonical physical network and same PG budget without seed`() {
+    fun `MB09 actual CREATE then own POST worker Jev then Luna uses canonical physical network and same PG budget without seed`() {
         val created = create()
         val raw = "10월 10일  8시에 가능해요 😀"
         proxy.enqueue(DECISION)
-        proxy.enqueue("""{"totalTokens":256}""")
         proxy.enqueue(GENERATION)
         submit(created, raw)
         assertTrue(assertDoesNotThrow { worker.runOne() })
@@ -107,14 +106,13 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
         assertEquals(raw, json.path("candidate").path("raw_text").asText())
         assertEquals(raw, json.path("accepted").path("raw_text").asText())
         assertEquals("PRECHECK", json.path("accepted").path("confirmation_source").asText())
-        assertEquals(3, proxy.connections.get(), "Each counted attempt must reach the real loopback socket exactly once")
-        assertEquals(3, proxy.requests.size)
+        assertEquals(2, proxy.connections.get(), "Each counted attempt must reach the real loopback socket exactly once")
+        assertEquals(2, proxy.requests.size)
         assertTrue(proxy.failures.isEmpty())
         assertEquals(
             listOf(
                 "api.typesafe.ai",
-                "generativelanguage.googleapis.com",
-                "generativelanguage.googleapis.com",
+                "api.openai.com",
             ),
             proxy.requests.map {
                 it.host
@@ -123,8 +121,7 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
         assertEquals(
             listOf(
                 "/v1/systemone",
-                "/v1beta/models/gemini-3.8-flash:countTokens",
-                "/v1beta/models/gemini-3.8-flash:generateContent",
+                "/v1/responses",
             ),
             proxy.requests.map {
                 it.path
@@ -136,23 +133,23 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
         assertEquals(raw, decisionWire.path("state").path("raw_text").asText())
         val snapshot = assertNotNull(budgets.snapshot(created.id))
         assertEquals("READY", snapshot.state.name)
-        assertEquals(BigInteger("12"), snapshot.held, "Usage is observed but does not authorize a complete-bill refund")
+        assertEquals(BigInteger("8"), snapshot.held, "Usage is observed but does not authorize a complete-bill refund")
         assertEquals(BigInteger.ZERO, snapshot.settled)
         val rows =
             jdbc.queryForList(
                 "SELECT operation,epoch_id,policy_fingerprint,whole_payload_fingerprint,maximum_amount FROM ai_call_reservations WHERE room_id=? ORDER BY operation",
                 created.id,
             )
-        assertEquals(3, rows.size)
-        assertEquals(setOf("PRECHECK_CLASSIFICATION", "PRECHECK_COUNT", "PRECHECK_GENERATION"), rows.map { it["operation"] }.toSet())
+        assertEquals(2, rows.size)
+        assertEquals(setOf("PRECHECK_CLASSIFICATION", "PRECHECK_GENERATION"), rows.map { it["operation"] }.toSet())
         assertTrue(rows.all { it["epoch_id"] == snapshot.epochId && it["policy_fingerprint"] == policyHash })
-        assertEquals(3, rows.map { it["whole_payload_fingerprint"] }.toSet().size)
+        assertEquals(2, rows.map { it["whole_payload_fingerprint"] }.toSet().size)
         val observations =
             jdbc.queryForList(
                 "SELECT input_tokens,output_tokens,usage_complete FROM ai_call_observations o JOIN ai_call_reservations r ON r.id=o.reservation_id WHERE r.room_id=? AND kind='USAGE'",
                 created.id,
             )
-        assertEquals(3, observations.size)
+        assertEquals(2, observations.size)
         assertEquals(
             1,
             jdbc.queryForObject(
@@ -163,7 +160,7 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
             ),
         )
         assertFalse(worker.runOne())
-        assertEquals(3, proxy.connections.get())
+        assertEquals(2, proxy.connections.get())
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] updateRoom={0}")
@@ -320,7 +317,7 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
             listOf(
                 "c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc",
                 "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
-                "b9ce9802d9dc3f4396f49c796cfe173fda708c6a35ac40c79d5bdc5091419363",
+                "86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714",
                 "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
                 "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
             )
@@ -350,8 +347,7 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
                 """"choice":"NEEDS_REVIEW","confidence":0.85,"probabilities":{"CLEAR":0.05,""" +
                 """"NEEDS_REVIEW":0.9,"INDETERMINATE":0.05}}},"usage":{"input_tokens":100,"output_tokens":0}}"""
         private const val GENERATION =
-            """{"candidates":[{"content":{"parts":[{"text":"{\"verdict\":\"CLEAR\"}"}]},""" +
-                """"finishReason":"STOP"}],"usageMetadata":{"promptTokenCount":256,"candidatesTokenCount":12,"thoughtsTokenCount":20}}"""
+            """{"status":"completed","output":[{"type":"message","content":[{"type":"output_text","text":"{\"verdict\":\"CLEAR\",\"prompt\":null,\"sourceExcerpt\":null,\"choices\":null}"}]}],"usage":{"input_tokens":256,"output_tokens":32,"output_tokens_details":{"reasoning_tokens":20}}}"""
 
         private fun hash(value: String): String =
             MessageDigest.getInstance("SHA-256").digest(value.toByteArray()).joinToString("") {
@@ -369,6 +365,7 @@ class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() 
             registry.add("meetme.ai.budget.policy-path") { policy.toString() }
             registry.add("meetme.ai.budget.policy-sha256") { policyHash }
             registry.add("meetme.gemini.api-key") { "synthetic-not-a-real-key" }
+            registry.add("meetme.openai.api-key") { "synthetic-not-a-real-key" }
             registry.add("meetme.typesafe.api-key") { "synthetic-not-a-real-key" }
         }
 

@@ -569,7 +569,7 @@ PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 �
 
 조회/답변/취소/retry/멱등 replay 모두 현재 본인 소유권과 인증을 검사하고 no-store 응답을 쓴다. REPLACE_ONLY는 조회 권한을 얻지 않으며 candidate epoch/generation CAS로 제한된 대체만 수행한다. typed native OpenAPI와 web generated contract를 최종 통합한다. 신규 V16은 기존 SQL bytes를 보존하는 additive migration이며 정확 catalog·guard·DB upgrade 검증을 수행한다. runtime 인증 전달/키 mount·migration 승인·provider cap 검증이 준비되지 않으면 main 배포를 진행하지 않는다.
 
-runtime 준비는 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.
+2026-10-17 runtime 준비본은 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용했다. 개인 생성은 아래 2026-10-20 Luna 계약으로 대체한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.
 
 새 release의 `runtime-auth-mode=oauth-rs256-required`는 renderer의 typed OAuth/서명 경로·Origin 및 optional 기본 OFF flag 전달을 요구한다. RSA/JWKS는 고정 `/run/meetme-auth` read-only bind이며 없는 호스트 경로는 생성하지 않는다. marker/renderer/Compose를 current17 guard catalog에 묶고 historical14은 읽기만 지원한다. 기존 guard 승인·migration/drain·부분 signing 거부 정책은 바꾸지 않는다. 실제 Secret/파일/권한·OAuth·DB/운영 전환은 별도 사용자 작업이다.
 
@@ -609,7 +609,7 @@ ADR-055를 따른다. Application의 DurableAiBudgetService가 PostgreSQL room�
 
 V17의 ai_room_budgets는 기존 방 HISTORICAL_UNKNOWN/신규 방 UNCONFIGURED다. 신규 방 생성과 초기 budget 행은 같은 트랜잭션의 trigger로 원자적이며 request-time lazy zero bootstrap이 없다. ai_budget_profiles는 구조 profile/policy/unit만 보관한다. 입력별 quote·payload/source/context 지문·usage/청구 근거는 방 소유 ai_call_reservations/ai_call_observations에만 두고 기존30일 방 삭제와 함께 cascade 삭제한다. 삭제 뒤 늦은 관측은 원장을 재생성하지 않는다.
 
-새 meetme.ai.budget.enabled 기본 OFF는 기존 final 동작을 보존한다. ON은 개인 분류/count/generation과 최종 Gemini/Luna의 다섯 실제 HTTP 작업 모두에서 같은 managed gate를 사용한다. worker/processor는 DB 작업에서 도출한 내부 문맥을 전달하고 fence는 기존 kind별 소유권/상태/현재 version/마감을 재검증한다. adapter의 실제 body를 한 번 고정해 quote와 결속하고 연결 전 예약/dispatch CAS, 실제 request bytes 전 one-shot 검사를 분리한다. 숨은 같은-Call follow-up·SDK 두 번째 Call은 새 권한을 만들지 않는다. 내부 문맥은 provider JSON/header/query나 일반 로그/지표에 전달하지 않는다.
+새 meetme.ai.budget.enabled 기본 OFF는 기존 final 동작을 보존한다. 최초 ON 구성은 개인 분류/count/generation과 최종 Gemini/Luna의 다섯 operation에 같은 managed gate를 적용했다. 2026-10-20 Luna 전환 뒤 실제 경로는 개인 Jev/Luna와 최종 Gemini/Luna의 네 operation이며, PRECHECK_COUNT enum/profile은 역사 호환만 유지하고 개인 runtime에서 호출·예약하지 않는다. worker/processor는 DB 작업에서 도출한 내부 문맥을 전달하고 fence는 기존 kind별 소유권/상태/현재 version/마감을 재검증한다. adapter의 실제 body를 한 번 고정해 quote와 결속하고 연결 전 예약/dispatch CAS, 실제 request bytes 전 one-shot 검사를 분리한다. 숨은 같은-Call follow-up·SDK 두 번째 Call은 새 권한을 만들지 않는다. 내부 문맥은 provider JSON/header/query나 일반 로그/지표에 전달하지 않는다.
 
 기존 개인15초·final60/Gemini15/Luna27/완료3초와 bounded4+1·질문/입력 상한을 유지한다. 신규 ON은 accepted bounded production composition을 지원하며 과거 nullable/unbounded 생성자 seam은 안전 거절한다. fallback key 공백만으로 정상 primary를 막는 새 조건은 없다. 알려진 token usage는 청구 증명이 아니고 late 금융 관측은 결과 게시 권한이 아니다. UNKNOWN hold는 자동 환급/재전송하지 않는다. 실제 금액·운영 confidence/가격·coverage 증명·소진 UX·과거 비용 조정과 실제 평가/활성화는 별도 남으며, 실행·평가 이력은 Git과 별도 Notion 기록에서 확인한다. 운영 DB/Secret/접근/Decisions 병합/배포는 수행하지 않는다.
 
@@ -649,3 +649,11 @@ Gemini와 Luna의 공통 schema_version 3에 `CONDITIONAL_FALLBACK_TIME_WINDOW`�
 정책은 비밀정보가 아닌 reviewed release artifact이며 `/run/meetme-ai/runtime-ai-policy.json`으로 read-only mount한다. 기본은 UNCONFIGURED다. CONFIGURED 문서는 단위/scale·방 cap·minimumConfidence와 정확히 다섯 operation의 physical profile 지문·근거 지문·최대 금액·UTC 만료를 포함한다. 파일 bytes SHA를 policy fingerprint로 사용하고 등록된 실제 physical profile 및 고정 payload 지문에 quote를 결속한다. 누락·불일치·만료는 거부하며 파일 형식이 가격 근거의 경제적 타당성을 증명하지 않는다. 완전 청구 증명이 없으면 청구 정산 근거는 계속 거부한다. 실제 값과 운영 임계값은 별도 미확정이다.
 
 새 방의 budget 초기화는 Room CREATE의 동일 물리 트랜잭션에서만 수행한다. 실제 저장소 INSERT 성공이 해당 트랜잭션의 private synchronization에 room ID·createdAt 일치 one-shot receipt를 발급하고 초기화가 이를 소비한다. 전체 rollback·완료와 savepoint rollback은 롤백된 INSERT의 권한을 폐기하며 savepoint 전 outer INSERT 권한은 보존한다. room과 trigger budget row의 현재 트랜잭션·v1/zero/UNCONFIGURED, 기존 실행 부재와 create-only callsite도 함께 검증한다. xmin 단독 또는 기존 row의 UPDATE를 원 INSERT 증명으로 취급하지 않는다. 기존 HISTORICAL_UNKNOWN/UNCONFIGURED·held 방을 요청 시 자동 승격하지 않는다. ON의 정책 만료/초기화 실패는 CREATE 전체 rollback과 해당 내부 예외에 한정한 body 없는 HTTP500으로 처리하고 allOFF 생성은 유지한다. POST create Swagger에 empty500을 명시하며 기존 공개 오류 코드·V1–V17 원본·참여/마감 정책은 유지한다. savepoint 보완의 구현·검증 진행 상태는 Worklog를 따른다.
+
+### 2026-10-20 개인 보완의 Luna Responses 계약
+
+사용자 승인에 따라 `LunaPreSubmissionCheckProvider`를 개인 생성 bean으로 사용한다. `gpt-6-luna` 단일 POST `/v1/responses`, `store=false`, `service_tier=default`(Standard 요청), `reasoning.effort=low`, `max_output_tokens=2048`와 strict 개인 판정 schema를 고정한다. 입력은 기존 단일 원문과 기준시각·timezone·locale·검색기간이며 다른 참여자 원문·AREA·최종 일정은 보내지 않는다. 질문/선택지의 길이·정확한 원문 발췌·완전한 제안 원문 검증과 본인 명시 수용 후 재검사를 유지한다. 최종 공통 공급자 prompt/schema는 변경하지 않는다.
+
+Jev와 Luna는 기존 provider15초를 공유하고 Luna 자동 재시도·redirect·fallback·count HTTP는 없다. 실제 `PRECHECK_GENERATION` ordinal1 한 건의 고정 bytes/profile을 공통 예산 reserve/claim/usage와 결속한다. 기존 `PRECHECK_COUNT` operation은 역사 호환을 위해 유지하되 Luna 경로에서는 사용하지 않는다. usage는 답 검증 전에 관측하고 부재는 unknown으로 남기며 청구 완료 증명이나 자동 환급으로 바꾸지 않는다. 출력/추론을 합한 한도와 알려진 입력 usage 방어는 사후 검증이며 실제 청구 상한 증명이 아니다.
+
+운영 정책은 UNCONFIGURED이며 기본 네 flag OFF다. 실제 Standard 처리·공급자 지연/의미 품질·confidence calibration·실제 가격/방 cap과 target OAuth/secret readiness는 별도다. 기존 실제 Luna4/4는 최종 조건 해석만 검증했으며 새 개인 보완의 실제 검증으로 확대하지 않는다. main 병합을 사용자에게 남기며 운영 자동 활성화를 위해 임의의 정책·키·권한을 만들지 않는다.
