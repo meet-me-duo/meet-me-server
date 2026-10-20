@@ -14,6 +14,10 @@
 함께 통합합니다. 아래는 구현 흐름이며 운영 연결 완료를 뜻하지 않습니다. 최종 공식 Figma 흐름도는
 사용자가 승인한 보완 Luna 경로를 반영합니다. 현재 후보는 미배포 상태입니다.
 
+![Google 로그인과 개인 조건 입력 뒤 Jev가 확인 필요를 판단하고 GPT-6 Luna로 보완 질문을 생성하며, 수집 마감 뒤 Gemini 전체 분석과 Luna fallback을 거쳐 서버가 추천을 계산하는 흐름](docs/assets/meetme-service-flow.svg)
+
+[최종 Figma 원본](https://www.figma.com/design/1Y3BUYKbKiMQEemQ1rnoIq?node-id=11-2)의 승인된 SVG를 저장소에 포함했습니다. 보완 질문만 Luna로 변경했으며 전체 분석은 Gemini와 Luna fallback을 유지합니다.
+
 - **API 문서**
   - [운영 Swagger UI](https://api.meet-me.co.kr/swagger-ui/index.html)
   - [OpenAPI JSON](https://api.meet-me.co.kr/v3/api-docs)
@@ -55,8 +59,8 @@ Gemini 장애에 한해 최대 4회 시도하고 `Retry-After`가 없으면 지�
 
 - 개인 보완은 GPT-6 Luna Responses 단일 요청이며 Standard(`service_tier=default`)·low reasoning·출력 최대2,048토큰을 명시합니다. count·자동 재시도·개인 단계 fallback은 없습니다. 실제 Standard 처리·15초 내 응답률·질문 의미 품질은 무료 회귀와 구분해 미검증으로 남깁니다.
 
-- Google/Kakao·소유권, 질문 API·답변·재검사, 웹 화면과 영속 예산 구현을 통합하는 중입니다.
-  실제 OAuth 로그인과 운영 callback·서명키 설정, 새 통합 후보의 전체 검증은 아직 완료되지 않았습니다.
+- Google/Kakao·소유권, 질문 API·답변·재검사, 웹 화면과 영속 예산 구현을 server/web develop에 통합했습니다.
+  무료 회귀와 CI는 실제 운영 OAuth 로그인·callback·서명키 설정 및 새 모델의 의미 품질·지연 검증과 구분합니다.
 - Jev 전체 입력 분류의 운영 연결을 준비합니다. 별도 원본48 실험에서 검증한 시각 관련성 및
   `AM/PM/NOT_STATED/UNRESOLVED` 판단은 시간대 보완 실험이며, `NO_PERIOD_QUESTION`만으로
   입력 전체를 `CLEAR`로 승인하지 않습니다. 모임 길이·날짜 경계·최종 일정 해석은 전체 분석에 남깁니다.
@@ -64,6 +68,7 @@ Gemini 장애에 한해 최대 4회 시도하고 `Retry-After`가 없으면 지�
   OFF·`UNCONFIGURED`·전송 거부입니다. 개발 평가 한도를 운영 비용 승인으로 사용하지 않습니다.
 - 최종 조건 추출의 실제 Luna 4/4 검증과 이전 무료 회귀는 개인 Jev 판단·질문 생성·답변·로그인을
   포함한 운영 전체 흐름의 실검증을 대신하지 않습니다. 추가 실모델 호출은 이번 통합 준비에 포함하지 않습니다.
+- main행 검토 PR은 서버 [#136](https://github.com/meet-me-duo/meet-me-server/pull/136)과 웹 [#34](https://github.com/meet-me-duo/meet-me-web/pull/34)입니다. main 병합은 기존 자동 운영 게시·배포를 촉발하므로 서버의 새 OAuth/RS256·typed secret·V11–V17 대상 준비와 웹의 호환 배포 순서를 먼저 확인해야 합니다. 기존 main의 읽기 전용 preflight 성공을 새 대상 준비 완료로 사용하지 않습니다. 검증된 소스 통합만으로 운영 AI 기능을 활성화하지 않습니다.
 - 단일 참여자의 명시적인 기본 시간과 한 단계 대체 시간을 지원합니다. 여러 조건부 참여자, 연쇄·순환
   대체는 안전 제외와 `PARTIAL` 사유로 남깁니다. 해석 실패·구조화 결과 누락을 참석 가능으로 추정하지 않습니다.
 
