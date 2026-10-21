@@ -477,7 +477,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 애플리케이션과 Worker는 표준 출력에 JSON 구조화 로그를 기록한다. 서버가 생성한 상관관계 ID, HTTP method·경로 템플릿·상태·처리시간과 낮은 cardinality의 실패 분류만 기록한다. 요청 body, 원 URL 식별자, 쿠키와 인증 헤더는 기록하지 않는다.
 - Grafana Alloy 수집, Grafana Cloud Metrics·Loki 전송, 대시보드와 Grafana-managed Alerting은 Post-MVP로 이관한다. 제출 MVP에서는 Grafana Cloud 계정·token·연락 채널을 요구하지 않는다.
 - 핵심 애플리케이션 지표는 Gemini 배치 호출·종결 결과·처리시간·재시도, 미발행 Outbox의 최장 대기시간, Redis Pending 수·최장 대기시간과 DLQ 진입 수를 포함한다.
-- Gemini가 제공한 token 사용량으로 논리 배치별 USD 비용을 합산하고, 운영 설정의 보수적 환산율(기본 1 USD = 1,500 KRW)로 원화 추정 비용과 10원 미만 여부를 지표에 기록한다. 환산율은 실시간 환율이 아니라 비용 상한 판정을 위한 환경별 설정이다.
+- 기존 Gemini 지표는 반환된 token 필드와 설정 환산율(기본 1 USD = 1,500 KRW)로 원화 추정 및 과거10원 목표 비교를 기록한다. 실시간 환율·청구서·예약 권한이 아니다. candidate 출력만 반환하는 legacy ParserUsage는 thought 출력 전체를 증명하지 않으므로 이 추정값으로 completeBill이나 승인 cap을 만들지 않는다. 사용자와 방 cap은 아직 합의되지 않았고 관리형 영속 예산의 승인 근거와 별도로 다룬다.
 - 내부 분석 계측은 한 실행의 승인된 시도 수와 로컬 파서 dispatch 수를 별도로 기록한다. dispatch는 파서 진입 횟수이며 실제 HTTP 요청·공급자 수신·청구 건수를 증명하지 않는다. 재전달로 실행을 소유하지 못하거나 이미 완료된 결과를 재사용하는 경로는 새 실행 완료로 집계하지 않는다.
 - `AnalysisExecutionObservation`은 enum 결과·provider, 경과 시간과 숫자 usage만 전달한다. `meetme.analysis.execution.*`는 실행 결과·시간을, `meetme.analysis.admitted.attempts`와 `meetme.analysis.parser.dispatches`는 승인/dispatch 수를, `meetme.analysis.attempts`는 provider별 `ADMITTED_ONLY`/`PARSER_DISPATCHED`를 기록한다. dispatch된 시도마다 `meetme.analysis.usage.observations`의 `field`와 `knowledge=KNOWN|UNKNOWN`으로 입력 token·출력 token·비용의 확인 범위를 나타낸다. `meetme.analysis.attempt.*` summary에는 확인된 값만 기록하며, 알려진 0과 미확인 null을 구별한다. 이 지표의 합계는 확인된 시도의 소계이며 미확인 시도가 있을 때 전체 비용으로 표시하면 안 된다.
 - 기존 `meetme.gemini.batch.*`는 호환 지표로 남긴다. 새 실행 수와 기존 배치 수는 같은 종결의 두 표현이므로 합쳐서 세지 않는다. Gemini 배치 비용·원화 예산 판정은 dispatch가 하나 이상이고 모든 dispatch가 Gemini이며 모든 비용이 확인된 때만 합산한다. 재시도나 Luna의 비용이 미확인이면 마지막 성공 응답의 비용으로 전체를 대신하지 않는다. provider별 단가·timeout·재시도·영속 실행 계약은 바꾸지 않는다.
@@ -605,7 +605,9 @@ Jev1.14.0 후보는 기존 endpoint/model 기본 OFF 옵션을 사용한다. rel
 
 아래는 구현 경계다. 합성 HTTP·PostgreSQL·Worker 회귀는 실제 모델 의미 효능, 청구 상한 또는 운영 활성화 검증을 대체하지 않는다.
 
-ADR-055를 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회이며 현재 생산 구현은 모든 quote/청구 근거를 거부한다.
+ADR-055를 따른다. Application의 DurableAiBudgetService가 PostgreSQL room→현재 작업→budget 트랜잭션을 소유하고 JDBC adapter가 방 누적 settled/held·요청별 immutable quote·dispatch intent·usage/청구 이벤트를 보존한다. 예약과 실제 송신 권한은 구분한다. Trusted registry는 트랜잭션 안에서 네트워크를 호출하지 않는 사전 검증된 로컬 근거 조회다. CONFIGURED 정책과 실제 요청/profile이 결속될 때만 quote를 만들며 기본 UNCONFIGURED는 거부한다. 현재 production completeBill은 null로서 usage만으로 hold를 해제하지 않는다. HTTP gate는 observe만 호출하며 실제 청구 증거를 공급해 settle을 호출하는 운영 소비자도 연결되지 않았다. 독립적인 완전 청구 증거의 실제 공급·승인 없이 정산 연동 완료라고 주장하지 않는다.
+
+신규 PRECHECK 예약은 같은 room lock에서 settled+기존/신규 physical hold+가상 최종 보호분이 cap의 strict 미만이어야 한다. 보호분은 같은 승인 정책의 FINAL_PRIMARY.maximumAmount×4+FINAL_FALLBACK.maximumAmount이며 정책/단위/만료/NUMERIC38을 검증한다. 한 요청의 두 child에는 한 번만 적용하고 금액0을 포함한 새 physical 예약에는 근거가 필요하다. 완전 replay는 새 소비가 아니며 FINAL_ANALYSIS 단건은 기존 physical hold만 예약한다. 보호분을 원장 hold나 청구 이벤트로 쓰지 않는다. 이는 미래 최종 invocation 한 번을 위한 보수적 여유이며 HOST/correction의 반복 전체나 실제 공급자 청구를 보장하지 않는다. 부족하면 기존 안전 거부를 유지하며 새 cap이나 가격을 자동 선택하지 않는다.
 
 V17의 ai_room_budgets는 기존 방 HISTORICAL_UNKNOWN/신규 방 UNCONFIGURED다. 신규 방 생성과 초기 budget 행은 같은 트랜잭션의 trigger로 원자적이며 request-time lazy zero bootstrap이 없다. ai_budget_profiles는 구조 profile/policy/unit만 보관한다. 입력별 quote·payload/source/context 지문·usage/청구 근거는 방 소유 ai_call_reservations/ai_call_observations에만 두고 기존30일 방 삭제와 함께 cascade 삭제한다. 삭제 뒤 늦은 관측은 원장을 재생성하지 않는다.
 

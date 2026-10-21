@@ -30,6 +30,7 @@ import com.meetme.server.shared.application.port.output.AiBudgetUnit
 import com.meetme.server.shared.application.port.output.AiDispatchModePort
 import com.meetme.server.shared.application.port.output.AiVerifiedBudgetQuote
 import com.meetme.server.shared.application.port.output.AiVerifiedCompleteBill
+import com.meetme.server.shared.application.port.output.AiVerifiedFinalReserve
 import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CoordinationRunId
@@ -457,6 +458,15 @@ class Issue123FinalDispatchLifecyclePostgresTest : CorrectionRoundPostgresFixtur
             )
 
         override fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill? = null
+
+        // Explicit synthetic zero floor preserves this fixture's unrelated existing contract.
+        override fun protectedFinalReserve(request: AiBudgetQuoteRequest): AiVerifiedFinalReserve =
+            AiVerifiedFinalReserve(
+                request.policyFingerprint,
+                BigInteger.ZERO,
+                AiBudgetUnit("TEST_SUBUNIT", 0),
+                clock.instant().plusSeconds(120),
+            )
     }
 
     @TestConfiguration(proxyBeanMethods = false)

@@ -21,6 +21,7 @@ import com.meetme.server.shared.application.port.output.AiReservedPhysicalCall
 import com.meetme.server.shared.application.port.output.AiRoomBudgetSnapshot
 import com.meetme.server.shared.application.port.output.AiVerifiedBudgetQuote
 import com.meetme.server.shared.application.port.output.AiVerifiedCompleteBill
+import com.meetme.server.shared.application.port.output.AiVerifiedFinalReserve
 import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import com.meetme.server.shared.application.service.DurableAiBudgetService
 import org.flywaydb.core.Flyway
@@ -42,6 +43,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertNotNull
 
@@ -68,6 +70,9 @@ abstract class DurableBudgetPostgresFixture {
         clock.set(NOW)
         authority.quotes.clear()
         authority.bills.clear()
+        authority.finalReserves.clear()
+        authority.missingFinalReserves.clear()
+        authority.finalReserveLookups.set(0)
         quoteByCall.clear()
         fence.clear()
     }
@@ -199,6 +204,34 @@ abstract class DurableBudgetPostgresFixture {
         quoteByCall[call] = changed
     }
 
+    protected fun finalReserve(
+        request: AiBudgetReserveRequest,
+        amount: BigInteger,
+    ) {
+        request.calls.forEach { call ->
+            authority.finalReserves[call] = AiVerifiedFinalReserve(hash("synthetic-policy"), amount, UNIT, NOW.plusSeconds(60))
+            authority.missingFinalReserves.remove(call)
+        }
+    }
+
+    protected fun finalReserveLookups(): Int = authority.finalReserveLookups.get()
+
+    protected fun alterFinalReserve(
+        call: AiPhysicalCallSpec,
+        transform: (AiVerifiedFinalReserve) -> AiVerifiedFinalReserve?,
+    ) {
+        val current =
+            authority.finalReserves[call] ?: AiVerifiedFinalReserve(hash("synthetic-policy"), BigInteger.ZERO, UNIT, NOW.plusSeconds(60))
+        val changed = transform(current)
+        if (changed == null) {
+            authority.finalReserves.remove(call)
+            authority.missingFinalReserves.add(call)
+        } else {
+            authority.finalReserves[call] = changed
+            authority.missingFinalReserves.remove(call)
+        }
+    }
+
     protected fun reserve(request: AiBudgetReserveRequest): AiBudgetReservation =
         assertNotNull(
             assertDoesNotThrow {
@@ -301,10 +334,22 @@ abstract class DurableBudgetPostgresFixture {
     private class SyntheticAuthority : AiBudgetAuthorityRegistryPort {
         val quotes = ConcurrentHashMap<AiPhysicalCallSpec, AiVerifiedBudgetQuote>()
         val bills = ConcurrentHashMap<String, AiVerifiedCompleteBill>()
+        val finalReserves = ConcurrentHashMap<AiPhysicalCallSpec, AiVerifiedFinalReserve>()
+        val missingFinalReserves = ConcurrentHashMap.newKeySet<AiPhysicalCallSpec>()
+        val finalReserveLookups = AtomicInteger()
 
         override fun quote(request: AiBudgetQuoteRequest): AiVerifiedBudgetQuote? = quotes[request.call]
 
         override fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill? = bills[request.evidenceReference]
+
+        override fun protectedFinalReserve(request: AiBudgetQuoteRequest): AiVerifiedFinalReserve? {
+            finalReserveLookups.incrementAndGet()
+            return if (request.call in missingFinalReserves) {
+                null
+            } else {
+                finalReserves[request.call] ?: AiVerifiedFinalReserve(request.policyFingerprint, BigInteger.ZERO, UNIT, NOW.plusSeconds(60))
+            }
+        }
     }
 
     companion object {

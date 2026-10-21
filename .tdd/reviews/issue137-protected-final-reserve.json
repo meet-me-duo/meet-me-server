@@ -1,0 +1,28 @@
+{
+  "workItem": "issue137-protected-final-reserve",
+  "sourceRevision": "d5fce878d06260157878295dbce58bd5c220d2d2",
+  "reviewer": "/root/budget_contract_review",
+  "testAuthor": "/root/budget_contract_review",
+  "implementationAuthor": "/root",
+  "independence": "Reviewer authored frozen public contract tests and ran fault injection; parent implemented production behavior. No test expectations changed after final RED.",
+  "result": "PASS",
+  "openP1": 0,
+  "openP2": 0,
+  "verified": [
+    "Four primary maxima plus one fallback maximum in approved units with bounded arithmetic and earliest final validity",
+    "Only new physical PRECHECK records including zero amount require identical current proof; complete replay does not requery protection",
+    "Atomic room lock protects settled+held+new holds+virtual floor strictly below cap; FINAL does not count floor twice",
+    "Protection expiry rechecked before physical call insertion; completeBill remains null",
+    "All three deliberate faults assertion-detected; byte-exact restoration and final 29-test GREEN"
+  ],
+  "limitations": [
+    "No actual price, model usage, invoice settlement, confidence calibration, latency or production readiness is established",
+    "One future bounded invocation only; later HOST retries/corrections remain subject to the same room cap",
+    "No dedicated floor-expiry-during-profile-lock or authority-exception test; corresponding defenses reviewed in source",
+    "Focused suite only; parent still must complete full guard and CI"
+  ],
+  "evidence": ".tdd/verification/issue137-protected-final-reserve.json",
+  "paidModelCalls": 0,
+  "operatingWrites": 0,
+  "recordedAt": "2026-10-20T23:40:09.694594Z"
+}

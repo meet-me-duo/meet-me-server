@@ -1,0 +1,56 @@
+{
+  "workItem": "issue137-protected-final-reserve",
+  "sourceRevision": "d5fce878d06260157878295dbce58bd5c220d2d2",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123ProtectedFinalReserveRegistryTest.kt",
+      "sha256": "86b3c48976ca21887b0ff74533792ecce29951fd0d6d1c5d0183a5fdd7ac1d10"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123ProtectedFinalReservePostgresTest.kt",
+      "sha256": "ac37d7aa457c052419c0036dcaca86678269e2aa7b8c3010fef093402450e476"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableBudgetPostgresFixture.kt",
+      "sha256": "3c57ceb78f6e56971d627aaf0d00301a9ec6cf5386ecb5d865c66b33cb6ce1c1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetInitialPostgresTest.kt",
+      "sha256": "a9d5cbef54201ecc1833b1bcb73ad22e2a24775ad72672ea605d09b696cd68d8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetForeignScopePostgresTest.kt",
+      "sha256": "07f7da92f14dba5be869e53835fa30ea1707f2246a3eb467f31c64de0e9249e3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123FinalDispatchLifecyclePostgresTest.kt",
+      "sha256": "0e803251c87e8dcdc3f1750ced594725cfedbc28f85e77136e7c33c9c8ce40ba"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/jev-evaluation/deployment-20261020/run_integrated_gradle.py",
+    "test",
+    "--tests",
+    "*Issue123ProtectedFinalReserveRegistryTest",
+    "--tests",
+    "*Issue123ProtectedFinalReservePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReserveRegistryTest.PF02 derived protection is not complete bill proof and never releases an observed usage hold()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReserveRegistryTest.PF01 derive four primary plus one fallback in the exact approved unit with earliest validity()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF08 a two-child personal group pays its floor once and rejects differing protection evidence atomically()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF05 personal exposure plus protected final reserve must stay strictly below cap()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF06 already settled charges are included before protecting the future final invocation()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF09 a new zero-amount physical call still needs valid final protection()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF11 concurrent personal requests serialize the protected remainder rather than each spending it()",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.[1] mutation = \"MISSING\"",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.[2] mutation = \"POLICY\"",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.[3] mutation = \"UNIT\"",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.[4] mutation = \"EXPIRED\"",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.[5] mutation = \"NEGATIVE\"",
+    "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.[6] mutation = \"OVERFLOW\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-20T23:35:39.449779Z"
+}

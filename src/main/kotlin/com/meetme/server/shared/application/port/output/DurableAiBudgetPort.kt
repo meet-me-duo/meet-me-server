@@ -124,6 +124,14 @@ data class AiVerifiedBudgetQuote(
     val validUntil: Instant,
 )
 
+/** Virtual headroom for one final invocation; never persisted as a second physical hold. */
+data class AiVerifiedFinalReserve(
+    val policyFingerprint: String,
+    val amount: BigInteger,
+    val unit: AiBudgetUnit,
+    val validUntil: Instant,
+)
+
 /** Opaque complete-bill evidence lookup key, not an amount or caller assertion of completeness. */
 data class AiBudgetSettlementRequest(
     val reservationId: UUID,
@@ -148,6 +156,9 @@ data class AiVerifiedCompleteBill(
 /** Offline, preloaded trusted proof resolution only: no HTTP, SDK, or live token count inside budget transactions. */
 interface AiBudgetAuthorityRegistryPort {
     fun quote(request: AiBudgetQuoteRequest): AiVerifiedBudgetQuote?
+
+    /** Missing approved evidence denies new personal reservations, without changing replay authority. */
+    fun protectedFinalReserve(request: AiBudgetQuoteRequest): AiVerifiedFinalReserve? = null
 
     fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill?
 }

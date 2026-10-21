@@ -88,10 +88,40 @@ class DurableAiBudgetService(
                 }.fold(BigInteger.ZERO, BigInteger::add)
         val nextHeld = room.held + added
         if (!amount(nextHeld) || room.settled + nextHeld >= requireNotNull(room.cap)) return null
+        val protection =
+            if (request.execution.kind == AiBudgetExecutionKind.PRECHECK && existing.any { it == null }) {
+                val proofs =
+                    request.calls.mapIndexedNotNull { index, call ->
+                        if (existing[index] != null) return@mapIndexedNotNull null
+                        val proof =
+                            try {
+                                authority.protectedFinalReserve(
+                                    AiBudgetQuoteRequest(request.execution, call, requireNotNull(configuration.policyFingerprint)),
+                                )
+                            } catch (_: Exception) {
+                                return null
+                            } ?: return null
+                        if (proof.policyFingerprint != configuration.policyFingerprint ||
+                            proof.unit != room.unit ||
+                            !amount(proof.amount) ||
+                            !now.isBefore(proof.validUntil)
+                        ) {
+                            return null
+                        }
+                        proof
+                    }
+                val proof = proofs.distinct().singleOrNull() ?: return null
+                val exposure = room.settled + nextHeld + proof.amount
+                if (!amount(exposure) || exposure >= room.cap) return null
+                proof
+            } else {
+                null
+            }
         val profiles = quotes.map { profileHash(it) to it }.distinctBy { it.first }.sortedBy { it.first }
         for ((hash, quote) in profiles) if (!repository.insertProfile(hash, quote)) return null
         val beforeInsert = clock.instant()
         if (!beforeInsert.isBefore(active.deadlineAt) ||
+            protection?.let { !beforeInsert.isBefore(it.validUntil) } == true ||
             quotes.withIndex().any { (index, quote) -> existing[index] == null && !beforeInsert.isBefore(quote.validUntil) }
         ) {
             return null
