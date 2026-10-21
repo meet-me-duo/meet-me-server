@@ -2,6 +2,8 @@
 
 ## #137 main 병합 전 비용·최종 분석 보호 (2026-10-20 UTC)
 
+- [USER] Issue와 PR 제목은 `feat: ...`/`fix: ...` 등 소문자 type 형식으로 통일한다. 현재 PR138에서 서버 feature/bug 템플릿과 저장소 규칙을 맞추며, 기존 공개 제목은 별도 담당의 정리와 중복 수정하지 않는다.
+- [x] [AGENT] 서버 feature.yml의 `[Feature] `→`feat: `, bug.yml의 `[Bug] `→`fix: ` 및 development 규칙의 Issue/PR 공통 형식을 반영했다. 웹 develop의 실제 .github에는 workflows만 있어 새 템플릿 체계를 만들지 않는다. 기존 공개 제목 변경0, 제품/테스트/README/정책/이미지 바이트 변경0이다. 문서·템플릿 검증/guard와 정확 후속 CI는 PR138을 따른다. Commit/PR: 동일 커밋 예정.
 - [USER] PR138의 README에 변경·검증·인계 기록이 섞였다는 피드백에 따라 서비스 소개·문제 해결 흐름·기존 흐름도·짧은 실행 안내와 상세 문서 링크로 정리한다. 별도 PR 없이 현재 작업에서 반영하며 실제 지원 범위를 유지한다.
 - [x] [AGENT] README369→73행으로 정리했다. 비용·토큰/정산·confidence·운영 연결/검증 상태는 기존 ISSUE_107_MAIN_READINESS 최신 절로, 설계·배포·검증/기존 MVP 범위 상세는 기존 WORKLOG의 날짜를 명시한 원문 이력으로 보존했다. 오래된 소셜 로그인 Post-MVP 목록은 현재 지원 주장과 구분했다. 제품/테스트·정책·SQL·승인 SVG 바이트는 bf6f4e0 그대로다. 문서 후속의 정확 source/CI는 PR138/136과 Git 이력에 기록한다.
 - [x] [AGENT] 문서 후속의 상대 링크 전부 존재, 운영 상세 원문 이동 보존, 보호 source/SVG SHA 동일, diff check PASS와 변경 없는 원본 commit guard exit0을 확인했다. 기존 전체2058 결과는 재사용 가능하며 문서 정리로 새 모델/전체 실검증을 주장하지 않는다. Commit/PR: 동일 커밋 예정, 기존 PR138에 정상 push한다.
