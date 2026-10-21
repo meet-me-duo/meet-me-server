@@ -467,3 +467,9 @@ Windows PowerShell에서는 다음 명령을 사용합니다.
 
 현재 상태와 완료 근거는 [Implementation Plan](../implementation_plan.md), 사용자 개입이 필요한 외부 설정은
 [User Intervention Guide](USER_INTERVENTION.md)에서 추적합니다.
+
+## 2026-10-21 develop README 전체 구현 대조 — PR138
+
+develop `d5fce878`의 README 전체318행을 기준으로 정리했다. PR138에 추가한 비용 절만 제거한 것이 아니며, 오래된 로그인 없는 HOST/소셜 로그인 Post-MVP 목록과 단일 Gemini 시스템도·운영/검증 상세를 옮겼다. 통합 흐름의 활성화 상태는 main 준비 문서로 구분한다.
+
+현재 AuthController의 Google/Kakao 경로, AmbiguityClassifierConfiguration의 관리형 Jev 바인딩, PrecheckProviderConfiguration의 Luna/TwoStage 구성, CoordinationWorker의 Outbox lease, DeterministicCandidateMatcher의 후보/인원 범위와 build.gradle.kts·compose.yml·application-local.yml을 대조했다. 최종 README는74행이며 Plan C의 최대2명 제외/최소2명과 JDK17 toolchain도 명확히 했다. 비용·검증 기록은 소개문으로 되돌리지 않는다. source·정책·승인 SVG는 변경하지 않으며 병합 후 정확 develop README/이미지 지문과 CI는 PR136 및 전달 receipt로 검증한다.

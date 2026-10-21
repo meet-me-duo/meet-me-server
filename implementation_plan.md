@@ -2,6 +2,8 @@
 
 ## #137 main 병합 전 비용·최종 분석 보호 (2026-10-20 UTC)
 
+- [USER 2026-10-21] develop README 전체의 오래된 설명과 기록을 현재 구현에 맞춰 정리하고, develop 병합 후 README 근거와 불필요 항목의 실제 종료 여부까지 확인한다. 미완료 운영 업무와 main행 PR은 유지한다.
+- [x] [AGENT] develop318행→최종74행으로 README 전체를 대조했다. Google/Kakao/Jev/Luna·전체 Gemini/fallback·결정론/Outbox/권한과 실제 build/Compose를 확인했고 Plan C 최대2명 제외/최소2명 및 JDK17을 정합했다. 세부 이력은 기존 Worklog와 main 준비 문서에 남겼다. 최종 link/diff/guard·정확 HEAD CI와 병합 뒤 README/상태 검증은 PR138/136에 연결한다. Commit/PR: 동일 커밋 예정.
 - [USER] Issue와 PR 제목은 `feat: ...`/`fix: ...` 등 소문자 type 형식으로 통일한다. 현재 PR138에서 서버 feature/bug 템플릿과 저장소 규칙을 맞추며, 기존 공개 제목은 별도 담당의 정리와 중복 수정하지 않는다.
 - [x] [AGENT] 서버 feature.yml의 `[Feature] `→`feat: `, bug.yml의 `[Bug] `→`fix: ` 및 development 규칙의 Issue/PR 공통 형식을 반영했다. 웹 develop의 실제 .github에는 workflows만 있어 새 템플릿 체계를 만들지 않는다. 기존 공개 제목 변경0, 제품/테스트/README/정책/이미지 바이트 변경0이다. 문서·템플릿 검증/guard와 정확 후속 CI는 PR138을 따른다. Commit/PR: 동일 커밋 예정.
 - [USER] PR138의 README에 변경·검증·인계 기록이 섞였다는 피드백에 따라 서비스 소개·문제 해결 흐름·기존 흐름도·짧은 실행 안내와 상세 문서 링크로 정리한다. 별도 PR 없이 현재 작업에서 반영하며 실제 지원 범위를 유지한다.

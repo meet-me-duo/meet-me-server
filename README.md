@@ -24,11 +24,12 @@
 | --- | --- |
 | **Plan A** | 전원의 시간과 오프라인 장소 조건을 만족하는 최적안 |
 | **Plan B** | 전원이 참석 가능한 온라인 대안 |
-| **Plan C** | 전원 교집합이 없을 때 최소 2명을 유지하는 최대 참석자 차선안 |
+| **Plan C** | 최대 2명 제외·최소 2명 참석 범위의 차선안 |
 
 이 흐름은 통합 개발본 기준입니다. 개인 확인의 운영 활성화와 실제 공급자 검증 상태는
 [운영 준비 문서](docs/ISSUE_107_MAIN_READINESS.md)에서 구분합니다. 조건부 대체는 한 참여자의 한 단계까지
 지원하며, 해석 실패나 지원하지 않는 복합 조건을 참석 가능한 것으로 추정하지 않습니다.
+조건을 만족하는 후보가 없으면 후보 없음으로 알립니다.
 
 ## 설계에서 지킨 경계
 
@@ -44,7 +45,7 @@ Kotlin·Java 17, Spring Boot, PostgreSQL·Komapper·Flyway, Redis Streams, Docke
 
 ## 로컬 실행
 
-Java 17+, Docker/Compose가 필요합니다. 외부 연동 설정은 [.env.example](.env.example)과
+JDK 17, Docker/Compose가 필요합니다. 외부 연동 설정은 [.env.example](.env.example)과
 [설정 안내](docs/USER_INTERVENTION.md)를 참고하고 비밀값은 저장소에 남기지 않습니다.
 
 ```shell
