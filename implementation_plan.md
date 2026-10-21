@@ -2,6 +2,9 @@
 
 ## #137 main 병합 전 비용·최종 분석 보호 (2026-10-20 UTC)
 
+- [USER] PR138의 README에 변경·검증·인계 기록이 섞였다는 피드백에 따라 서비스 소개·문제 해결 흐름·기존 흐름도·짧은 실행 안내와 상세 문서 링크로 정리한다. 별도 PR 없이 현재 작업에서 반영하며 실제 지원 범위를 유지한다.
+- [x] [AGENT] README369→73행으로 정리했다. 비용·토큰/정산·confidence·운영 연결/검증 상태는 기존 ISSUE_107_MAIN_READINESS 최신 절로, 설계·배포·검증/기존 MVP 범위 상세는 기존 WORKLOG의 날짜를 명시한 원문 이력으로 보존했다. 오래된 소셜 로그인 Post-MVP 목록은 현재 지원 주장과 구분했다. 제품/테스트·정책·SQL·승인 SVG 바이트는 bf6f4e0 그대로다. 문서 후속의 정확 source/CI는 PR138/136과 Git 이력에 기록한다.
+- [x] [AGENT] 문서 후속의 상대 링크 전부 존재, 운영 상세 원문 이동 보존, 보호 source/SVG SHA 동일, diff check PASS와 변경 없는 원본 commit guard exit0을 확인했다. 기존 전체2058 결과는 재사용 가능하며 문서 정리로 새 모델/전체 실검증을 주장하지 않는다. Commit/PR: 동일 커밋 예정, 기존 PR138에 정상 push한다.
 - [USER] 10원 고정 상한은 미확정이며 새 금액/유료 호출을 승인한 것으로 해석하지 않는다. main 병합 전까지 소스·무료 회귀·develop/기존 PR을 준비하고 main 병합·운영 배포는 하지 않는다. OAuth 콘솔은 이미 완료했다. 키/비밀 등록·보안 권한·운영 DB 변경은 하지 않는다.
 - [x] [AGENT] clean develop d5fce878 FF 뒤 기존 broad #123 범위의 fix branch에서 조사했으며 좁은 실제 완료 단위 #137을 생성했다. production completeBill=null은 의도된 보수적 계약이고 사후4096·최종32768×4+1/조건부 출력USD0.507904·confidence null을 재확인했다. 과거136개 gold와 실제 Jev calibration을 구분하고 holdout 원문은 열지 않았다.
 - [x] [AGENT] 독립 작성29개를 고정해13개 예상 assertion RED/오류0을 확인한 뒤 승인 operation 최대액에서 최종4+1 가상 보호분을 도출하고 신규 개인 예약의 같은 room lock에서 검사했다. 정산·prompt/schema·실제 출력/profile·API·DB migration 바이트는 변경하지 않았다.

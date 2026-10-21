@@ -256,3 +256,214 @@ core/fence 격리FI4는 baseline94→cap등호허용/중복dispatch app+SQL CAS 
 - [AGENT] 부모가 요청한 bounded 별도attempt2를 고정planb4fe/독립실행리뷰8c48 뒤05:47 UTC 한 번 실행했다. A200/.06LOW/in512out0/394.6ms→count200530/245.3ms→GEN공통15초TIMEOUT childkill. JVM전체15538.3ms(준비포함), 생성HTTPstatus/개별지연/질문/usage는미관측이며genconsumedSTARTED_UNKNOWN_HELD그대로보존·늦은청구환급0. 누계D6/in3085/out0·count2·gen시도2/성공0=평가HTTP10(모델metadata2별도), 알려진D만baseUSD0.0003085/2.2보수USD0.00067870. 기존hold전부유지+총예약0.70918144/추가여유0.29081856. 다음동일full견적0.31854592를추가하면1.02772736으로USD1보다0.02772736초과해추가dependent실제호출중단. 원503/분류FAIL/STOP·oraclec69/threshold.8·prompt/2048LOW/15초변경0, actualquestion의도보존평가여전히불가. `.tdd/verification/issue123-live-two-stage-attempt2-observed.json`과history에보존했고독립감사후게시최종화한다.
 
 - [AGENT] 2026-10-18 최종 게시 리뷰 PASS `issue123-phase2-publication-final-review.md` d545f2fa, 미해결 P1/P2 없음. 원본 fullguard1684=1680PASS/기존4SKIP·556지문·RGR/FI/수정이력·실진단503/TIMEOUT/UNKNOWN와 Closes#125 범위를 모두 봉인했다. Commit/PR: 동일 커밋 예정. 다음 시작점은 feature/issue-123-durable-ai-budget의 의도된 코드·필수 테스트·상태기록 stage/commit/push→별도 develop 대상 Draft→정확 HEAD CI다. 커밋 이후 정확 SHA·PR URL·각 job checkout/tree와 최종CI는 해당 PR/#125/#123의 상태 및 ignored `.codex/tdd-evidence/issue123-publication/result.json`에 보존한다. 현재 실제 생성 질문 의미/운영threshold·가격·활성화·최종 청구 입증은 미완료이고 추가 실제 호출은 예산상중단·Decisions merge/deploy0이다. Linear JIN-72 추가 갱신은 기존 automatic approval review의 민감 구현정보 공개 권한 부족 거절로 보류하며 새승인없는재시도0이다.
+
+
+## 2026-10-20 README 목적 정리 이력 — PR138
+
+- [USER] README는 처음 보는 사람이 서비스와 문제 해결 흐름을 이해하는 소개로 정리한다. 변경·테스트·인계 기록은 기존 상세 문서로 옮기고 승인된 흐름도와 실제 지원 범위를 유지한다.
+- [AGENT] README의 비용 산식·토큰/정산·confidence·운영 연결 상세와 검증 상태는 [main 준비 문서](ISSUE_107_MAIN_READINESS.md)의 최신 절로 이동한다. 제품 Kotlin·prompt/schema·정책·마이그레이션·이미지는 변경하지 않는다. 정확 문서 후속 HEAD/CI는 PR138과 PR136을 따른다.
+- 아래는 이전 README에서 옮긴 상세 원문이다. 설계 기준은 [Architecture](ARCHITECTURE.md), 현재 제품 설명은 [README](../README.md)를 따른다. 마지막의 ‘로그인 없는 방 생성’, ‘소셜 로그인 Post-MVP’ 목록은 이전 MVP의 이력이며 현재 통합 코드의 지원 범위나 운영 준비 완료를 뜻하지 않는다. 기존 지연/품질·키/DB 미확인을 완료로 바꾸지 않는다.
+
+### 이전 README의 설계·배포·검증 상세
+
+## 백엔드 설계 하이라이트
+
+### 1. AI와 핵심 의사결정의 경계
+
+- Gemini Structured Output을 닫힌 조건 유니온으로 제한하고 공급자 응답을 서버에서 다시 검증합니다.
+- LLM이 좌표, 후보 점수와 최종 선택을 만들지 못하게 합니다.
+- 인접 장소에는 같은 `AREA_n` 키를 부여하고, 멀리 떨어진 장소는 다른 키로 구조화합니다.
+- 시간 교집합, 장소 그룹 교집합과 Plan A/B/C 계산은 프레임워크 독립적인 Domain에서 수행합니다.
+- 구조화 성공 후 일부 의미 조건만 반영할 수 없으면 `PARTIAL`, 공급자 기술 장애가 지속되면 입력을 보존한
+  `ANALYSIS_DELAYED`로 분리합니다.
+
+### 2. 유실과 중복 전달을 견디는 비동기 파이프라인
+
+참여자의 제출 요청에서 외부 AI를 호출하지 않습니다. 원본 제출은 불변 버전으로 먼저 저장하고, 입력 수집
+종료 시점의 최신 버전만 하나의 방 전체 배치로 고정합니다.
+
+- PostgreSQL 트랜잭션 안에서 조율 작업과 Outbox를 함께 기록합니다.
+- Relay가 작업 참조만 Redis Streams로 발행하고 Worker가 PostgreSQL에서 원문을 조회합니다.
+- PostgreSQL의 처리 lease와 상태를 기준으로 중복 실행을 막습니다.
+- Redis Pending 또는 데이터 유실 뒤에도 PostgreSQL에서 작업을 재발행할 수 있습니다.
+- 첫 전달을 포함해 5회 실패한 poison message는 PostgreSQL에 먼저 영구 실패를 기록한 뒤 참조형 DLQ로
+  이동합니다.
+
+Redis는 전달과 호출 제한을 담당하지만 영구 비즈니스 데이터의 최종 기준은 PostgreSQL입니다.
+
+### 3. 계정과 게스트 소유권
+
+- 서버가 256비트 불투명 guest credential을 다음 속성의 cookie로 발급합니다.
+  `Secure HttpOnly; SameSite=Lax; Path=/api`
+- 원문 credential은 응답 body나 브라우저 저장소에 노출하지 않고 PostgreSQL에는 SHA-256 digest만 저장합니다.
+- 방 소유권이 확인된 `HOST`만 마감·재분석·후보 확정을 수행합니다.
+- 공유 초대 코드는 방 접근 수단일 뿐 참여자 또는 주최자 권한이 아닙니다.
+- 계정의 방 소유권과 검증된 게스트 소유권을 구분합니다. 다른 기기 재로그인과 명시적 게스트 연결은
+  소유권을 다시 검사하며 이름이나 이메일의 일치만으로 참여 기록을 병합하지 않습니다.
+- 상태 변경 요청은 정확한 허용 Origin을 검증하고 Redis 기반 호출 제한을 적용합니다.
+- 로그에는 원본 자연어·cookie·좌표·외부 API key를 기록하지 않습니다.
+
+### 4. Aggregate 우선 헥사고날 아키텍처
+
+```text
+com.meetme.server
+├── meetingroom/{domain,application,adapter}
+├── participant/{domain,application,adapter}
+├── submission/{domain,application,adapter}
+├── coordination/{domain,application,adapter}
+├── shared
+└── config
+```
+
+각 Aggregate가 자신의 Domain, Use Case, Port와 Adapter를 함께 소유합니다. 의존 방향은
+`adapter → application → domain`이며 Domain은 Spring, Komapper, Redis와 외부 SDK를 알지 못합니다.
+Web DTO, 외부 공급자 DTO, Domain 모델과 Komapper 영속 Record도 분리합니다.
+
+## 시스템 구조
+
+```mermaid
+flowchart LR
+    Client[Browser Client] -->|HTTPS + HttpOnly cookie| Nginx[Nginx]
+    Nginx --> Web[Web Adapters]
+
+    subgraph Spring[Spring Boot]
+        Web --> App[Application Use Cases]
+        App --> Domain[Deterministic Domain]
+        Relay[Outbox Relay]
+        Worker[Coordination Worker]
+        Worker --> Domain
+    end
+
+    App -->|transaction| PG[(PostgreSQL)]
+    PG --> Relay
+    Relay -->|event reference| Stream[(Redis Streams / Valkey)]
+    Stream --> Worker
+    Worker -->|load and persist state| PG
+    Worker --> Gemini[Google Gemini]
+```
+
+## 기술 스택
+
+- **Language:** Kotlin 2.3.21, Java 17
+  - null 안전성과 명확한 도메인 모델, 안정적인 JVM 생태계
+- **Framework:** Spring Boot 4.1.1, Spring MVC, Validation
+  - 동기 JDBC 기반 유스케이스와 HTTP 경계 구성
+- **Persistence:** PostgreSQL 18, Komapper JDBC 7.0.0, Flyway
+  - SQL 제약·트랜잭션 중심 데이터 정합성과 명시적인 스키마 이력
+- **Async / Rate limit:** Redis Streams, ElastiCache Serverless for Valkey
+  - 비동기 전달, Pending 복구, DLQ와 공개 API 호출 제한
+- **AI / Place:** Jev 1.14 개인 분류, GPT-6 Luna 개인 보완, Gemini 3.8 Flash 전체 분석과 Luna fallback
+  - 개인 확인 필요 판단과 필요한 보완 질문을 구분하고, 전체 원문의 조건·장소 그룹 구조화는 마감 뒤 수행
+- **API:** springdoc-openapi, RFC 9457 Problem Details
+  - 실행 코드에서 생성되는 프론트엔드 계약과 언어 중립 오류 코드
+- **Test:** JUnit 5, Spring Boot Test, Testcontainers
+  - 순수 Domain부터 실제 PostgreSQL·Redis 통합 경계까지 검증
+- **Observability:** Actuator, Micrometer Prometheus, JSON logs
+  - health·지표와 상관관계 ID 기반 운영 진단
+- **Infrastructure:** Docker, Nginx, Terraform, AWS
+  - 재현 가능한 이미지·인프라와 관리형 영구 데이터 서비스
+- **CI/CD:** GitHub Actions, AWS OIDC, ECR, SSM
+  - 장기 AWS Access Key 없이 main CI 성공 commit을 자동 배포
+
+## 운영 배포
+
+제출 MVP는 비용과 구현 복잡도를 고려해 서울 리전의 단일 EC2에서 Nginx와 Spring Boot 컨테이너를
+실행합니다. 영구 데이터와 작업 전달 계층은 호스트 수명주기에서 분리했습니다.
+
+- **Compute:** EC2 `t4g.small`, ARM64 애플리케이션 이미지
+- **Data:** RDS PostgreSQL 18 `db.t4g.micro`, Single-AZ, 7일 자동 백업
+- **Stream / Cache:** ElastiCache Serverless for Valkey
+- **Edge:** Route 53, ACM exportable certificate, Nginx TLS reverse proxy
+- **Artifact / Deploy:** ECR image digest, S3 release contract, Systems Manager
+- **Secrets:** RDS managed secret와 SSM Parameter Store `SecureString`
+- **IaC state:** versioning·암호화를 적용한 S3 backend와 native lock file
+
+배포는 다음 순서를 따릅니다.
+
+```text
+main merge
+  → CI: ktlintCheck + assemble + test + 운영 구성 회귀 검사
+  → CI 성공 commit의 SHA로 ARM64 image build·ECR push
+  → 같은 image로 Flyway migration 선실행
+  → SSM을 통한 EC2 application 교체
+  → app·Nginx health 및 공개 /healthz·/v3/api-docs 검증
+```
+
+GitHub Actions는 OIDC로 AWS 임시 자격 증명을 발급받습니다. 배포는 tag가 아닌 image digest를 고정하며,
+실패하면 이전 digest로 애플리케이션을 되돌립니다. Flyway migration은 자동 downgrade하지 않으므로 운영
+스키마는 이전 애플리케이션과 호환되는 단계적 변경을 우선합니다.
+
+## 테스트와 검증 전략
+
+- **Domain:** 시간대/DST, 연속 시간 교집합, 장소 호환 그룹 교집합, Plan A/B/C와 동률 규칙
+- **Application:** 트랜잭션 경계, 최신 제출 고정, 중복 종료·확정의 멱등성과 권한 분기
+- **Persistence:** H2 대신 Testcontainers PostgreSQL에서 Flyway fresh/upgrade와
+  실제 제약 검증
+- **Async:** 중복 Stream 전달, 처리 lease, Pending 회수, 재발행과 poison DLQ 순서
+- **External adapters:** Gemini schema·응답 상한·재시도와 Kakao 다중 페이지·동명 장소·timeout 계약
+- **Web / Security:** cookie 속성, Origin, 타인 입력 비공개,
+  401/403/409/429/503과 OpenAPI 계약
+- **Architecture:** 소스 경로와 package 일치, Domain 프레임워크 독립성과 역방향 의존 방지
+- **Deployment:** ARM64 image, raw secret 전달, 비루트·read-only 컨테이너와
+  실제 Nginx 기동 회귀 검사
+
+핵심 동시성·보안·외부 Adapter 테스트는 정상 사례만 확인하지 않고 의도적인 결함을 주입해 기존 테스트가
+이를 탐지하는지도 검증합니다.
+
+
+### 이전 README의 로컬 연동 상세
+
+### 2. 선택적인 외부 연동 설정
+
+애플리케이션은 외부 key 없이도 기동하고 정형 시간 입력 흐름을 실행할 수 있습니다. 자연어 분석과
+Gemini 장소 호환 그룹까지 확인하려면 `.env.example`을 참고해 실행 프로세스에 다음 환경 변수를 주입합니다.
+
+```properties
+GEMINI_API_KEY=
+```
+
+실제 값은 Git, 채팅, Issue, PR과 로그에 남기지 않습니다. 로컬 보관이 필요하면 Git에서 제외된
+`.env.local`을 사용하고 IDE Run Configuration 또는 현재 terminal session에서 애플리케이션 프로세스에
+전달합니다.
+
+### 3. 애플리케이션 실행
+
+```shell
+./gradlew bootRun --args='--spring.profiles.active=local'
+```
+
+Windows PowerShell에서는 다음 명령을 사용합니다.
+
+```powershell
+.\gradlew.bat bootRun --args="--spring.profiles.active=local"
+```
+
+로컬 API는 `http://localhost:8080`, Prometheus 지표는 `http://localhost:8080/actuator/prometheus`에서
+확인할 수 있습니다.
+
+
+### 이전 README의 범위/다음 단계 이력
+
+## 구현 범위와 다음 단계
+
+### 제출 MVP에 포함
+
+- 로그인 없는 방 생성·참여와 브라우저 세션 기반 HOST 권한
+- 자연어·수동 가능 시간 제출과 최신 입력 복원
+- 비동기 Gemini 시간·장소 그룹 구조화
+- 결정론적 Plan A/B/C·`NO_MATCH`·`PARTIAL` 계산
+- 분석 지연 재요청, 후보 확정과 결과 공유
+- Redis 호출 제한, 30일 데이터 정리와 Prometheus·JSON 로그
+- Terraform AWS 인프라와 main 기반 자동 CI/CD
+
+### Post-MVP 또는 운영 준비 과제
+
+- Google·Kakao 로그인과 Google Calendar 연결·방별 ON/OFF
+- 실제 좌표·이동시간 검증이 필요할 때 지도 공급자 재선정
+- Grafana Cloud 중앙 로그·지표·대시보드와 자동 알림
+- 합의된 성능 목표 기반 부하 테스트
+- 이전 image digest rollback과 RDS 시점 복구 리허설
+- 다중 인스턴스·무중단 배포 요구 발생 시 ECS·ALB 재평가
+
+현재 상태와 완료 근거는 [Implementation Plan](../implementation_plan.md), 사용자 개입이 필요한 외부 설정은
+[User Intervention Guide](USER_INTERVENTION.md)에서 추적합니다.
