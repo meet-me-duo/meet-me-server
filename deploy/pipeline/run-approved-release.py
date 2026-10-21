@@ -1,6 +1,7 @@
 """Consume an existing immutable release through validated production facts."""
 
 import base64
+import datetime
 import gzip
 import hashlib
 import importlib.util
@@ -26,7 +27,12 @@ CONTRACT_FILES = tuple(sorted((
     "meet-me-guarded-restart.service", "pipeline/approved_release.py", "pipeline/host-approved-release.py",
     "pipeline/run-approved-release.py", "pipeline/publish_manifest.py", "preflight/host-preflight.sh",
     "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java",
+    "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml",
+    "runtime-ai-policy.json",
 )))
+AUTH_CONTRACT_FILES = tuple(name for name in CONTRACT_FILES if name != "runtime-ai-policy.json")
+LEGACY_CONTRACT_FILES = tuple(name for name in AUTH_CONTRACT_FILES if name not in (
+    "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml"))
 
 
 def _require(condition):
@@ -43,6 +49,55 @@ def _load(name, path):
 
 def _canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+
+def _runtime_policy_bytes(raw):
+    """Nonsecret reviewed artifact shape only; historical reading never adopts an operating policy or clock."""
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            _require(key not in result)
+            result[key] = value
+        return result
+    _require(type(raw) is bytes and len(raw) <= 65536)
+    data = json.loads(raw.decode("utf-8"), object_pairs_hook=unique)
+    _require(type(data) is dict and data.get("protocol") == "meetme-managed-ai-policy-v1")
+    if data.get("state") == "UNCONFIGURED":
+        _require(set(data) == {"protocol", "state"})
+        return
+    _require(data.get("state") == "CONFIGURED"
+             and set(data) == {"protocol", "state", "unit", "roomCap", "minimumConfidence", "operations"})
+    unit = data["unit"]
+    _require(type(unit) is dict and set(unit) == {"code", "scale"})
+    code = unit["code"]
+    _require(type(code) is str and bool(code.strip()) and code == code.strip()
+             and len(code.encode("utf-16-le")) // 2 <= 32 and not any(ch in code for ch in ("\x00", "\r", "\n")))
+    _require(type(unit["scale"]) is int and 0 <= unit["scale"] <= 38)
+    amount = lambda value: type(value) is str and re.fullmatch(r"0|[1-9][0-9]{0,37}", value)
+    _require(amount(data["roomCap"]) and int(data["roomCap"]) > 0)
+    threshold = data["minimumConfidence"]
+    _require(type(threshold) in (float, int) and 0 <= threshold <= 1)
+    operations = data["operations"]
+    expected = {
+        "PRECHECK_CLASSIFICATION": "c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc",
+        "PRECHECK_COUNT": "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
+        "PRECHECK_GENERATION": "86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714",
+        "FINAL_PRIMARY": "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
+        "FINAL_FALLBACK": "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
+    }
+    _require(type(operations) is list and len(operations) == len(expected))
+    seen = set()
+    for row in operations:
+        _require(type(row) is dict and set(row) == {
+            "operation", "profileFingerprint", "evidenceFingerprint", "maximumAmount", "validUntil"})
+        _require(type(row["operation"]) is str and row["operation"] in expected and row["operation"] not in seen)
+        seen.add(row["operation"])
+        for key in ("profileFingerprint", "evidenceFingerprint"):
+            _require(type(row[key]) is str and re.fullmatch(r"[0-9a-f]{64}", row[key]))
+        _require(row["profileFingerprint"] == expected[row["operation"]])
+        _require(amount(row["maximumAmount"]) and type(row["validUntil"]) is str
+                 and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?Z", row["validUntil"]))
+        datetime.datetime.fromisoformat(row["validUntil"].replace("Z", "+00:00"))
 
 
 def _encoded(value):
@@ -104,9 +159,18 @@ def _verify_package(archive_path, manifest):
     validate_archive(archive_path)
     with tarfile.open(archive_path, "r:gz") as archive:
         files = {member.name: archive.extractfile(member).read() for member in archive.getmembers() if member.isfile()}
-    _require(set(CONTRACT_FILES) | {"migrations/" + row["script"] for row in manifest["migrations"]}
+    contract = LEGACY_CONTRACT_FILES
+    auth_required = "runtime-auth-mode" in files
+    if auth_required:
+        _require(files["runtime-auth-mode"] in (b"oauth-rs256-required", b"oauth-rs256-required\n"))
+        contract = AUTH_CONTRACT_FILES
+    if "runtime-ai-policy.json" in files:
+        _require(auth_required)
+        _runtime_policy_bytes(files["runtime-ai-policy.json"])
+        contract = CONTRACT_FILES
+    _require(set(contract) | {"migrations/" + row["script"] for row in manifest["migrations"]}
              | {"preflight/compiled/ReadOnlyFlywayProbe.class", "runtime-provider-mode", "compose.production.yml"} <= set(files))
-    guard = [{"path": relative, "sha256": hashlib.sha256(files[relative]).hexdigest()} for relative in CONTRACT_FILES]
+    guard = [{"path": relative, "sha256": hashlib.sha256(files[relative]).hexdigest()} for relative in contract]
     catalog = []
     for row in manifest["migrations"]:
         raw = files["migrations/" + row["script"]]
@@ -116,6 +180,7 @@ def _verify_package(archive_path, manifest):
     _require(hashlib.sha256(_canonical(guard)).hexdigest() == manifest["guardFingerprint"])
     _require(hashlib.sha256(_canonical(catalog)).hexdigest() == manifest["schemaFingerprint"])
     _require(files["preflight/compiled/ReadOnlyFlywayProbe.class"].startswith(bytes.fromhex("cafebabe")))
+    return auth_required
 
 
 def aws_call(service, operation, *args):
@@ -206,12 +271,14 @@ def _strict_state(status, stdout, stderr):
     return state
 
 
-def _host_preflight(instance):
+def _host_preflight(instance, auth_required=False):
+    _require(type(auth_required) is bool)
     probe = BASE / "preflight/compiled/ReadOnlyFlywayProbe.class"
     payload = base64.b64encode(probe.read_bytes()).decode("ascii")
     _require(len(payload) <= 32768)
     script = (BASE / "preflight/host-preflight.sh").read_text()
-    command = "bash -s -- " + payload + " <<'MEETME_APPROVED_PREFLIGHT'\n" + script + "\nMEETME_APPROVED_PREFLIGHT"
+    mode = " oauth-rs256-required" if auth_required else ""
+    command = "bash -s -- " + payload + mode + " <<'MEETME_APPROVED_PREFLIGHT'\n" + script + "\nMEETME_APPROVED_PREFLIGHT"
     reader = _load("approved_preflight_reader", BASE / "preflight/run-preflight.py")
     return _ssm(instance, command, reader.summarize_invocation)
 
@@ -238,7 +305,8 @@ finally:shutil.rmtree(root)
     return _ssm(instance, command, _strict_state)
 
 
-def _aws_facts(instance, region, repository):
+def _aws_facts(instance, region, repository, auth_required=False):
+    _require(type(auth_required) is bool)
     account = repository.split(".", 1)[0]
     partition = "aws-cn" if ".amazonaws.com.cn/" in repository else "aws"
     reservations = _aws("ec2", "describe-instances", "--instance-ids", instance)["Reservations"]
@@ -281,24 +349,54 @@ def _aws_facts(instance, region, repository):
             if matches and command["Status"] in ("Pending", "InProgress", "Delayed", "Cancelling"):
                 active[command["CommandId"]] = True
     pending = len(active)
-    name = "/meet-me/production/secret/openai-api-key"
-    parameters = _aws("ssm", "describe-parameters", "--parameter-filters", "Key=Name,Option=Equals,Values=" + name)
-    _require(not parameters.get("NextToken"))
-    entries = parameters["Parameters"]
-    valid_parameter = (len(entries) == 1 and entries[0].get("Name") == name and entries[0].get("Type") == "SecureString"
-                       and type(entries[0].get("Version")) is int and entries[0]["Version"] > 0)
+    required = {"secret/openai-api-key": "SecureString"}
+    if auth_required:
+        required.update({
+            "secret/google-client-id": "SecureString", "secret/google-client-secret": "SecureString",
+            "secret/kakao-client-id": "SecureString", "secret/kakao-client-secret": "SecureString",
+            "config/google-redirect-uri": "String", "config/kakao-redirect-uri": "String",
+            "config/auth-signing-key-id": "String", "config/auth-issuer": "String", "config/auth-audience": "String",
+            "config/auth-web-callback-uri": "String", "config/allowed-origins": "String",
+        })
+    valid_parameter = True
+    for short, kind in required.items():
+        name = "/meet-me/production/" + short
+        parameters = _aws("ssm", "describe-parameters", "--parameter-filters", "Key=Name,Option=Equals,Values=" + name)
+        _require(not parameters.get("NextToken"))
+        entries = parameters["Parameters"]
+        _require(type(entries) is list)
+        valid = (len(entries) == 1 and type(entries[0]) is dict and entries[0].get("Name") == name
+                 and entries[0].get("Type") == kind and type(entries[0].get("Version")) is int and entries[0]["Version"] > 0)
+        valid_parameter = valid_parameter and valid
     return states, pending, valid_parameter
 
 
-def _collect_facts(instance, region, manifest):
-    observed = _host_preflight(instance)
+def _collect_facts(instance, region, manifest, auth_required=False):
+    _require(type(auth_required) is bool)
+    observed = _host_preflight(instance, auth_required=True) if auth_required else _host_preflight(instance)
     _require(observed["flyway"]["status"] == "success")
     before, after = observed["host"]["containerBefore"], observed["host"]["containerAfter"]
     _require(before.get("present") is True and before["running"] is True)
     _require(all(before[key] == after[key] for key in ("running", "pid", "restartCount")))
     state = _host_state(instance, manifest)
     _require(state["currentImage"] == before["image"])
-    states, pending, parameter_ready = _aws_facts(instance, region, manifest["imageRepository"])
+    states, pending, parameter_ready = (_aws_facts(instance, region, manifest["imageRepository"], auth_required=True)
+                                        if auth_required else _aws_facts(instance, region, manifest["imageRepository"]))
+    if auth_required:
+        host = observed["host"]
+        files, mount = host.get("authFiles"), host.get("authMount")
+        files_ready = type(files) is dict and set(files) == {"directory", "jwks", "signingKey"}
+        if files_ready:
+            for name, item in files.items():
+                kind = "directory" if name == "directory" else "regular"
+                files_ready = files_ready and (type(item) is dict and item.get("exists") is True
+                              and item.get(kind) is True and item.get("noSymlink") is True and item.get("readableByApp") is True)
+        mount_ready = (type(mount) is dict
+                       and set(mount) == {"required", "present", "bind", "sourceMatches", "targetMatches", "readOnly"}
+                       and all(type(value) is bool for value in mount.values()))
+        if mount_ready and (mount["required"] or mount["present"]):
+            mount_ready = all(mount[key] for key in ("present", "bind", "sourceMatches", "targetMatches", "readOnly"))
+        parameter_ready = parameter_ready and files_ready and mount_ready
     return {"history": observed["flyway"]["history"], "phase": state["phase"], "currentImage": state["currentImage"],
             "guardTrusted": state["guardTrusted"], "automaticContract": state["automaticContract"],
             "refreshRuleStates": states, "pendingCommands": pending}, parameter_ready
@@ -307,7 +405,7 @@ def _collect_facts(instance, region, manifest):
 def _deploy_command(bucket, key, region, manifest, attestation):
     # Every interpolated token is typed/validated first; archive extraction happens only after SHA/path verification.
     source = base64.b64encode(Path(__file__).read_bytes()).decode("ascii")
-    remote = """import base64,hashlib,importlib.util,json,os,pathlib,subprocess,sys,tempfile,shutil,stat
+    remote = """import base64,hashlib,importlib.util,json,os,pathlib,subprocess,sys,tempfile,shutil,stat,tarfile
 os.umask(0o077)
 manifest=json.loads(base64.b64decode(sys.argv[1],validate=True))
 release=pathlib.Path('/opt/meet-me/releases')/manifest['releaseId']
@@ -332,6 +430,20 @@ try:
  retained=release/'.approved-release.tar.gz';shutil.copyfile(archive,retained);retained.chmod(0o600)
  extracted=subprocess.run(['tar','-xzf',str(archive),'--no-same-owner','--no-same-permissions','-C',str(release)],capture_output=True,timeout=20)
  if extracted.returncode:sys.exit(2)
+ # A single-file bind bypasses host parent directories but retains inode permissions for app UID10001.
+ # Normalize only the archive-verified nonsecret policy. Auth keys and all other extracted files are untouched.
+ with tarfile.open(archive,'r:gz') as bundle:
+  policy_members=[member for member in bundle.getmembers() if member.name=='runtime-ai-policy.json']
+  if policy_members:
+   if len(policy_members)!=1 or not policy_members[0].isfile():sys.exit(2)
+   expected_policy=bundle.extractfile(policy_members[0]).read(65537)
+   module._runtime_policy_bytes(expected_policy)
+   policy=release/'runtime-ai-policy.json'
+   fd=os.open(policy,os.O_RDONLY|os.O_NOFOLLOW)
+   with os.fdopen(fd,'rb') as stream:
+    metadata=os.fstat(stream.fileno())
+    if not stat.S_ISREG(metadata.st_mode) or stream.read(65537)!=expected_policy:sys.exit(2)
+    os.fchmod(stream.fileno(),0o644)
  # Only the archive-verified reviewed host entrypoint may perform installation/deployment.
  deployed=subprocess.run(['timeout','--signal=TERM','--kill-after=15s','1440s','python3',str(release/'pipeline/host-approved-release.py'),'--deploy',sys.argv[1],sys.argv[5]],capture_output=True,text=True,timeout=1460)
  if deployed.returncode or deployed.stderr.strip():sys.exit(2)
@@ -392,15 +504,15 @@ def main():
             archive = directory / "release.tar.gz"
             _download(bucket, prefix + "release.tar.gz", archive, MAX_ARCHIVE)
             _require(hashlib.sha256(archive.read_bytes()).hexdigest() == manifest["archiveSha256"])
-            _verify_package(archive, manifest)
-            facts, parameter_ready = _collect_facts(instance, region, manifest)
+            auth_required = _verify_package(archive, manifest)
+            facts, parameter_ready = _collect_facts(instance, region, manifest, auth_required=auth_required)
             plan = approved.validate_deploy_facts(validated, facts, action, approve == "true")
             summary.update({"action": action, "releaseId": manifest["releaseId"], "mode": plan["mode"],
                             "refreshRuleStates": facts["refreshRuleStates"], "pendingCommands": facts["pendingCommands"],
                             "parameterMetadataReady": parameter_ready})
             if action != "preflight" and plan["mode"] != "TRANSITION_REQUIRED":
                 _verify_origin(manifest, action)
-                fresh, parameter_ready = _collect_facts(instance, region, manifest)
+                fresh, parameter_ready = _collect_facts(instance, region, manifest, auth_required=auth_required)
                 summary.update({"refreshRuleStates": fresh["refreshRuleStates"], "pendingCommands": fresh["pendingCommands"],
                                 "parameterMetadataReady": parameter_ready})
                 fresh_plan = approved.validate_deploy_facts(validated, fresh, action, approve == "true")

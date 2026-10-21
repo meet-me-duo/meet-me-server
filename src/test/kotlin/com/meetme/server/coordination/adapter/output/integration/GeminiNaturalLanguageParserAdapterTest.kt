@@ -74,7 +74,7 @@ class GeminiNaturalLanguageParserAdapterTest {
         val conditionItem = conditions.getValue("items") as Map<String, Any>
         val variants = conditionItem.getValue("anyOf") as List<Map<String, Any>>
 
-        assertEquals(8, variants.size)
+        assertEquals(10, variants.size)
         val byType =
             variants.groupBy { variant ->
                 val properties = variant.getValue("properties") as Map<String, Any>
@@ -85,6 +85,7 @@ class GeminiNaturalLanguageParserAdapterTest {
             mapOf(
                 "TIME_WINDOW" to 2,
                 "PREFERRED_TIME_WINDOW" to 2,
+                "CONDITIONAL_FALLBACK_TIME_WINDOW" to 2,
                 "SPECIFIC_PLACE" to 1,
                 "PREFERRED_PLACE" to 1,
                 "TRAVEL_CONSTRAINT" to 1,
@@ -96,6 +97,7 @@ class GeminiNaturalLanguageParserAdapterTest {
             mapOf(
                 "TIME_WINDOW" to setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
                 "PREFERRED_TIME_WINDOW" to setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time"),
+                "CONDITIONAL_FALLBACK_TIME_WINDOW" to setOf("type", "activation", "date", "day_of_week", "start_time", "end_time"),
                 "SPECIFIC_PLACE" to setOf("type", "query", "area_key", "area_name"),
                 "PREFERRED_PLACE" to setOf("type", "query", "radius_meters", "area_key", "area_name"),
                 "TRAVEL_CONSTRAINT" to setOf("type", "expression"),
@@ -109,7 +111,7 @@ class GeminiNaturalLanguageParserAdapterTest {
                 assertEquals(false, variant["additionalProperties"])
             }
         }
-        listOf("TIME_WINDOW", "PREFERRED_TIME_WINDOW").forEach { type ->
+        listOf("TIME_WINDOW", "PREFERRED_TIME_WINDOW", "CONDITIONAL_FALLBACK_TIME_WINDOW").forEach { type ->
             val timeVariants = byType.getValue(type)
             val scopes =
                 timeVariants
@@ -124,15 +126,23 @@ class GeminiNaturalLanguageParserAdapterTest {
             assertEquals(setOf("string" to "null", "null" to "string"), scopes)
             timeVariants.forEach { variant ->
                 val properties = variant.getValue("properties") as Map<String, Any>
-                val polarity = properties.getValue("polarity") as Map<String, Any>
-                assertEquals(
-                    if (type == "TIME_WINDOW") {
-                        mapOf("type" to "string", "enum" to listOf("AVAILABLE", "UNAVAILABLE"))
-                    } else {
-                        mapOf("type" to "null")
-                    },
-                    polarity,
-                )
+                if (type == "CONDITIONAL_FALLBACK_TIME_WINDOW") {
+                    assertEquals(
+                        mapOf("type" to "string", "enum" to listOf("WHOLE_ROOM_PRIMARY_UNAVAILABLE")),
+                        properties.getValue("activation"),
+                    )
+                    assertFalse(properties.containsKey("polarity"))
+                } else {
+                    val polarity = properties.getValue("polarity") as Map<String, Any>
+                    assertEquals(
+                        if (type == "TIME_WINDOW") {
+                            mapOf("type" to "string", "enum" to listOf("AVAILABLE", "UNAVAILABLE"))
+                        } else {
+                            mapOf("type" to "null")
+                        },
+                        polarity,
+                    )
+                }
                 listOf("start_time", "end_time").forEach { field ->
                     val time = properties.getValue(field) as Map<String, Any>
                     assertFalse(time.containsKey("format"))

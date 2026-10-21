@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-10-18T05:36:40.346667+00:00",
+  "base": "e83d5280c7c236c99d64165893632920882527fe",
+  "guard": {
+    "command": "python3 .codex/hooks/tdd_guard.py < event.json",
+    "unchanged": true,
+    "exitCode": 0,
+    "startedAt": "2026-10-18T05:29:32.329045+00:00",
+    "checks": [
+      "hook self-tests",
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "junit": {
+    "suites": 212,
+    "tests": 1684,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "passed": 1680,
+    "allFreshAfterGuardStart": true
+  },
+  "source": {
+    "files": 556,
+    "beforeEqualsAfterEqualsCurrent": true,
+    "manifestSha256": "3103634acd501621a7133b3168460570d47334672724a2d95cfadc751c2a2072"
+  },
+  "limits": [
+    "Synthetic/local only",
+    "Guard subprocess model calls zero (both API keys empty); separate real Decisions diagnostic4 recorded elsewhere; production/OAuth/SSM/Secret changes zero"
+  ],
+  "archivedWhitespace": "Exact FI history *.diff/*.patch preserved as data; source diff excludes history archives only."
+}

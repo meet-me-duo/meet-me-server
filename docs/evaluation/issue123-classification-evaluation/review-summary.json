@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "status": "INDEPENDENT_REVIEW_PASS_FINAL_PRE_EXECUTION",
+  "original_cases": 120,
+  "supplemental_cases": 16,
+  "supplemental_pairs": 8,
+  "open_P1": 0,
+  "open_P2": 0,
+  "resolved_draft_P2_groups": 4,
+  "reviewer": "/root/review_pre_submit_design",
+  "review_basis_sha256": "353f7514a4c1d3869ce304d9187814484741df3947cf4ec261d629f4f228d616",
+  "initial_findings_sha256": "68a97e2bc20309d043ec5336e955acb2e0362dcaff4124ed6853817d54d4d6dd",
+  "source_sha_primary_gold_and_core_gate_unchanged": true,
+  "status_only_seal": [
+    {
+      "path": "docs/fixtures/issue-123-ui-evaluation-supplemental-pairs.json",
+      "reviewed_draft_sha256": "5929a8150ea3f712fbd36ffbec1ca6495ec6bf65e90f8ae5d1cbfab9a3f757bc",
+      "sealed_sha256": "1bf192223986cc7b98885d98bb97cecdbda5ec5d6e3769104519dcd675b97472",
+      "changed_fields": [
+        "status"
+      ],
+      "semantic_input_gold_identical": true,
+      "status_excluded_semantic_sha256": "19958434a74e65ea9b53d9205ed96e24c2bf2cc20aa6363b5f160ed830edadf1"
+    },
+    {
+      "path": "docs/fixtures/issue-123-ui-evaluation-development-overlay.json",
+      "reviewed_draft_sha256": "eef3f6688348c0ed69148a03e124416f38941400fe277dc9098e5064a5231e51",
+      "sealed_sha256": "337fd05e1b23435e8b9633e6518a25eab2abb5b3545288dfec224b82f7be779b",
+      "changed_fields": [
+        "status"
+      ],
+      "semantic_input_gold_identical": true,
+      "status_excluded_semantic_sha256": "3fae8eacf1edd65166f84f188629d45625b0eb22c6f53c6b9f769a4c8d6b442e"
+    },
+    {
+      "path": "docs/fixtures/issue-123-ui-evaluation-holdout-overlay.json",
+      "reviewed_draft_sha256": "6cfda0f054f2511cd9be3035b05f228a8b018fbc9a3c8c00f4e44d1676069f69",
+      "sealed_sha256": "82460043b0ede12bba72d43285b94c4cc94854265f9822687a9d7aef32aad18b",
+      "changed_fields": [
+        "status"
+      ],
+      "semantic_input_gold_identical": true,
+      "status_excluded_semantic_sha256": "62539f0f9b160d6122bdd0257809c89ae314fe7cdf502cd3678c2c7d604cc5cb"
+    }
+  ],
+  "private_history_location": ".codex/tdd-evidence/issue123-classification-oracle-history",
+  "private_history_content_not_for_tuning_roles": true,
+  "known_exposure_scope": "Author/reviewer access is recorded; this is not an unseen-by-everyone or cryptographically blind split.",
+  "paid_model_http_gradle_calls": 0,
+  "model_accuracy_measured": false
+}

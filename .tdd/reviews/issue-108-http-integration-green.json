@@ -1,0 +1,69 @@
+{
+  "scope": "issue108-real-http-pg-and-scoped-migration-contract",
+  "recordedAt": "2026-10-17T16:13:25.422545+00:00",
+  "results": [
+    {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suite": "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest"
+    },
+    {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suite": "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest"
+    },
+    {
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suite": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest"
+    },
+    {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suite": "com.meetme.server.meetingroom.adapter.input.web.ScopedGuestViewerJoinWebIntegrationTest"
+    },
+    {
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suite": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest"
+    },
+    {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suite": "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest"
+    }
+  ],
+  "total": 58,
+  "failures": 0,
+  "errors": 0,
+  "runtimeClasspathSnapshots": [
+    {
+      "source": "build/classes/kotlin/test",
+      "snapshot": "/tmp/issue108-native/runtime/1"
+    },
+    {
+      "source": "build/resources/test",
+      "snapshot": "/tmp/issue108-native/runtime/3"
+    },
+    {
+      "source": "build/classes/kotlin/main",
+      "snapshot": "/tmp/issue108-native/runtime/5"
+    },
+    {
+      "source": "build/resources/main",
+      "snapshot": "/tmp/issue108-native/runtime/7"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import com.meetme.server.shared.domain.GuestSessionId
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import java.time.Instant
+import java.util.UUID
 
 data class IssuedGuestCredential(
     val rawCredential: String,
@@ -38,6 +39,17 @@ interface ParticipantRepository {
         roomId: MeetingRoomId,
         guestSessionId: GuestSessionId,
     ): Participant?
+
+    fun findByRoomAndUser(
+        roomId: MeetingRoomId,
+        userId: UUID,
+    ): Participant?
+
+    fun claimGuest(
+        id: ParticipantId,
+        guestSessionId: GuestSessionId,
+        userId: UUID,
+    ): Boolean
 
     fun countByRoom(roomId: MeetingRoomId): Int
 }

@@ -8,6 +8,8 @@ import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
+import com.meetme.server.participant.application.service.OwnershipOperation
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.SubmissionId
 import com.meetme.server.shared.domain.SubmissionVersionId
@@ -36,14 +38,30 @@ class SubmissionService(
     private val clock: Clock,
     private val revisionRoundRepository: com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository,
     private val runRepository: com.meetme.server.coordination.application.port.output.CoordinationRunRepository,
+    private val ownership: ParticipantOwnershipResolver,
+    private val guestWriteGuard: com.meetme.server.submission.application.port.output.GuestSubmissionWriteGuard,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
 ) : SaveSubmissionUseCase,
     GetOwnSubmissionUseCase {
     @Transactional
     override fun save(command: SaveSubmissionCommand): SubmissionView {
         val room = findRoom(command.inviteCode, lock = true)
-        val participant = requireParticipant(room.id, command.rawCredential)
+        val participant = requireParticipant(room.id, command.rawCredential, OwnershipOperation.REPLACE_OWN)
+        if (room.collectionStatus == CollectionStatus.COLLECTING &&
+            prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1"
+        ) {
+            revisionConflict()
+        }
         val existing = submissionRepository.findByParticipant(participant.id)
+        guestWriteGuard.validate(room.id, participant.id, command.rawCredential, existing?.latest?.revision ?: 0, command.blindReplacement)
         val correction = room.collectionStatus == CollectionStatus.CLOSED
+        val now = clock.instant()
+        val deadline = room.closurePolicy.deadline
+        if (!correction && deadline != null && now >= deadline) {
+            throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
+                com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.ROOM_CLOSED,
+            )
+        }
         if (correction) {
             val roundId = room.activeRevisionRoundId
             if (roundId == null) {
@@ -75,7 +93,7 @@ class SubmissionService(
             if (command.expectedRevision == null || existing?.latest?.revision != command.expectedRevision) revisionConflict()
         }
         val rawText = normalizeText(command.rawText)
-        if (existing != null && existing.latest.rawText == rawText) {
+        if (!command.blindReplacement && existing != null && existing.latest.rawText == rawText) {
             return existing.toView(true, room.activeRevisionRoundId, room.version)
         }
 
@@ -91,7 +109,6 @@ class SubmissionService(
                 mapOf("maximum" to SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS),
             )
         }
-        val now = clock.instant()
         val submission =
             existing?.revise(SubmissionVersionId(idGenerator.next()), rawText, emptyList(), command.locale, now)
                 ?: Submission.start(
@@ -125,7 +142,7 @@ class SubmissionService(
         rawCredential: String?,
     ): SubmissionView {
         val room = findRoom(inviteCode, lock = false)
-        val participant = requireParticipant(room.id, rawCredential)
+        val participant = requireParticipant(room.id, rawCredential, OwnershipOperation.READ_OWN)
         val submission =
             submissionRepository.findByParticipant(participant.id)
                 ?: throw SubmissionException(SubmissionErrorCode.SUBMISSION_NOT_FOUND)
@@ -182,21 +199,16 @@ class SubmissionService(
     private fun requireParticipant(
         roomId: com.meetme.server.shared.domain.MeetingRoomId,
         rawCredential: String?,
-    ): com.meetme.server.participant.domain.Participant {
-        if (rawCredential.isNullOrBlank()) {
-            throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
-                com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED,
-            )
+        operation: OwnershipOperation,
+    ): com.meetme.server.participant.domain.Participant =
+        try {
+            ownership.resolve(roomId, rawCredential, operation)
+        } catch (failure: com.meetme.server.meetingroom.application.port.input.RoomLifecycleException) {
+            if (failure.code == com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.PARTICIPANT_REQUIRED) {
+                throw SubmissionException(SubmissionErrorCode.PARTICIPANT_REQUIRED)
+            }
+            throw failure
         }
-        val now = clock.instant()
-        val session =
-            guestSessionRepository.findByCredentialDigest(credentialPort.digest(rawCredential))?.takeIf { it.isActive(now) }
-                ?: throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(
-                    com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode.GUEST_SESSION_INVALID,
-                )
-        return participantRepository.findByRoomAndGuestSession(roomId, session.id)
-            ?: throw SubmissionException(SubmissionErrorCode.PARTICIPANT_REQUIRED)
-    }
 
     private fun revisionConflict(): Nothing =
         throw com.meetme.server.meetingroom.application.port.input.RoomLifecycleException(

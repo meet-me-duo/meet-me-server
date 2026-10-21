@@ -1,5 +1,6 @@
 package com.meetme.server.meetingroom.application.service
 
+import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.meetingroom.application.port.input.CloseRoomCommand
 import com.meetme.server.meetingroom.application.port.input.CloseRoomUseCase
@@ -24,11 +25,14 @@ import com.meetme.server.meetingroom.domain.MeetingRoom
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
+import com.meetme.server.participant.application.service.OwnershipOperation
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.participant.domain.GuestSession
 import com.meetme.server.participant.domain.Participant
 import com.meetme.server.participant.domain.ParticipantDisplayName
 import com.meetme.server.participant.domain.ParticipantRole
 import com.meetme.server.shared.application.port.output.IdGenerator
+import com.meetme.server.shared.application.port.output.NewRoomAiBudgetPort
 import com.meetme.server.shared.domain.GuestSessionId
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
@@ -52,14 +56,18 @@ class RoomLifecycleService(
     private val closureService: CollectionClosureService,
     private val clock: Clock,
     private val revisionRoundRepository: com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository,
+    private val currentAccount: CurrentAccountPort = CurrentAccountPort { null },
+    private val ownership: ParticipantOwnershipResolver,
+    private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
+    private val newRoomAiBudget: NewRoomAiBudgetPort? = null,
 ) : CreateRoomUseCase,
     GetRoomUseCase,
     JoinRoomUseCase,
     CloseRoomUseCase {
     @Transactional
     override fun create(command: CreateRoomCommand): RoomAccessResult {
+        val account = currentAccount.currentAccount() ?: throw RoomLifecycleException(RoomLifecycleErrorCode.ACCOUNT_REQUIRED)
         val now = clock.instant()
-        val session = resolveOrIssueSession(command.rawCredential, now)
         val zone = MeetingTimeZone.of("Asia/Seoul")
         val searchRange =
             when {
@@ -90,15 +98,17 @@ class RoomLifecycleService(
                 candidate.takeIf(roomRepository::insertIfInviteAvailable)
             } ?: throw RoomLifecycleException(RoomLifecycleErrorCode.INVITE_CODE_GENERATION_FAILED)
         val host =
-            Participant.host(
+            Participant.account(
                 id = ParticipantId(idGenerator.next()),
                 roomId = room.id,
-                guestSessionId = session.domain.id,
-                displayName = ParticipantDisplayName.of(command.hostDisplayName),
+                userId = account.accountId,
+                displayName = ParticipantDisplayName.of(account.displayName),
+                role = ParticipantRole.HOST,
                 joinedAt = now,
             )
         participantRepository.insert(host)
-        return RoomAccessResult(room.toView(host, 0), session.newCredential, true)
+        newRoomAiBudget?.initialize(room.id.value, now)
+        return RoomAccessResult(room.toView(host, 0), null, true)
     }
 
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
@@ -107,11 +117,7 @@ class RoomLifecycleService(
         rawCredential: String?,
     ): RoomView {
         val room = findRoom(inviteCode, lock = false)
-        val participant =
-            activeSession(
-                rawCredential,
-                clock.instant(),
-            )?.let { participantRepository.findByRoomAndGuestSession(room.id, it.id) }
+        val participant = viewer(room.id, rawCredential)
         return room.toView(participant, submissionRepository.countSubmittedParticipants(room.id))
     }
 
@@ -122,30 +128,62 @@ class RoomLifecycleService(
             throw RoomLifecycleException(RoomLifecycleErrorCode.ROOM_CLOSED)
         }
         val now = clock.instant()
-        val session = resolveOrIssueSession(command.rawCredential, now, lockExisting = true)
-        val existing = participantRepository.findByRoomAndGuestSession(room.id, session.domain.id)
+        val account = currentAccount.currentAccount()
+        var joinCredential = command.rawCredential
+        val existing =
+            if (account != null) {
+                participantRepository.findByRoomAndUser(room.id, account.accountId)
+            } else {
+                try {
+                    ownership.resolve(room.id, command.rawCredential, OwnershipOperation.READ_OWN)
+                } catch (failure: RoomLifecycleException) {
+                    when (failure.code) {
+                        RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED, RoomLifecycleErrorCode.PARTICIPANT_REQUIRED -> null
+                        RoomLifecycleErrorCode.GUEST_SESSION_INVALID -> {
+                            joinCredential = null
+                            null
+                        }
+                        else -> throw failure
+                    }
+                }
+            }
         if (existing != null) {
             return RoomAccessResult(
                 room.toView(existing, submissionRepository.countSubmittedParticipants(room.id)),
-                session.newCredential,
+                null,
                 false,
             )
         }
         if (participantRepository.countByRoom(room.id) >= com.meetme.server.submission.domain.SubmissionRules.MAX_ROOM_PARTICIPANTS) {
             throw RoomLifecycleException(RoomLifecycleErrorCode.ROOM_PARTICIPANT_LIMIT_REACHED)
         }
+        val session = if (account == null) resolveOrIssueSession(joinCredential, now, lockExisting = true) else null
         val participant =
-            Participant.member(
-                id = ParticipantId(idGenerator.next()),
-                roomId = room.id,
-                guestSessionId = session.domain.id,
-                displayName = ParticipantDisplayName.of(command.displayName),
-                joinedAt = now,
-            )
+            if (account != null) {
+                Participant.account(
+                    id = ParticipantId(idGenerator.next()),
+                    roomId = room.id,
+                    userId = account.accountId,
+                    displayName = ParticipantDisplayName.of(account.displayName),
+                    role = ParticipantRole.MEMBER,
+                    joinedAt = now,
+                )
+            } else {
+                Participant.member(
+                    id = ParticipantId(idGenerator.next()),
+                    roomId = room.id,
+                    guestSessionId = requireNotNull(session).domain.id,
+                    displayName =
+                        ParticipantDisplayName.of(
+                            command.displayName ?: throw IllegalArgumentException("Guest display name required"),
+                        ),
+                    joinedAt = now,
+                )
+            }
         participantRepository.insert(participant)
         return RoomAccessResult(
             room.toView(participant, submissionRepository.countSubmittedParticipants(room.id)),
-            session.newCredential,
+            session?.newCredential,
             true,
         )
     }
@@ -153,11 +191,7 @@ class RoomLifecycleService(
     @Transactional
     override fun close(command: CloseRoomCommand): RoomView {
         val room = findRoom(command.inviteCode, lock = true)
-        val session = requireActiveSession(command.rawCredential, clock.instant())
-        val participant = participantRepository.findByRoomAndGuestSession(room.id, session.id)
-        if (participant?.role != ParticipantRole.HOST) {
-            throw RoomLifecycleException(RoomLifecycleErrorCode.HOST_PERMISSION_REQUIRED)
-        }
+        val participant = ownership.resolve(room.id, command.rawCredential, OwnershipOperation.HOST_COMMAND)
         val submitted = submissionRepository.countSubmittedParticipants(room.id)
         if (room.collectionStatus == CollectionStatus.CLOSED) {
             return room.toView(participant, submitted)
@@ -221,26 +255,22 @@ class RoomLifecycleService(
         return SessionResolution(session, issued.rawCredential)
     }
 
-    private fun activeSession(
+    private fun viewer(
+        roomId: MeetingRoomId,
         rawCredential: String?,
-        now: java.time.Instant,
-    ): GuestSession? =
-        rawCredential
-            ?.takeIf { it.isNotBlank() }
-            ?.let(credentialService::digest)
-            ?.let(guestSessionRepository::findByCredentialDigest)
-            ?.takeIf { it.isActive(now) }
-
-    private fun requireActiveSession(
-        rawCredential: String?,
-        now: java.time.Instant,
-    ): GuestSession {
-        if (rawCredential.isNullOrBlank()) {
-            throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED)
+    ): Participant? =
+        try {
+            ownership.resolve(roomId, rawCredential, OwnershipOperation.READ_OWN)
+        } catch (failure: RoomLifecycleException) {
+            when (failure.code) {
+                RoomLifecycleErrorCode.GUEST_SESSION_REQUIRED,
+                RoomLifecycleErrorCode.GUEST_SESSION_INVALID,
+                RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT,
+                RoomLifecycleErrorCode.PARTICIPANT_REQUIRED,
+                -> null
+                else -> throw failure
+            }
         }
-        return activeSession(rawCredential, now)
-            ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_SESSION_INVALID)
-    }
 
     private fun MeetingRoom.toView(
         viewer: Participant?,
@@ -249,7 +279,7 @@ class RoomLifecycleService(
         val run = coordinationRunRepository.findLatestByRoom(id)
         val round = activeRevisionRoundId?.let { revisionRoundRepository.findById(id, it) }
         check(activeRevisionRoundId == null || round?.status == com.meetme.server.coordination.domain.RevisionRoundStatus.OPEN)
-        val host = viewer?.role == ParticipantRole.HOST
+        val host = viewer?.role == ParticipantRole.HOST && viewer.userId != null
         val sourceCohort =
             if (round != null && run != null) {
                 com.meetme.server.coordination.application.service.FrozenSubmissionReader
@@ -279,7 +309,19 @@ class RoomLifecycleService(
             closureReason = closureReason,
             closedAt = closedAt,
             publicStatus = if (round != null) PublicRoomStatus.COLLECTING else publicStatus(submittedParticipants),
-            viewer = ViewerParticipation(viewer != null, viewer?.displayName?.value, viewer?.role, viewer?.id?.value),
+            viewer =
+                ViewerParticipation(
+                    viewer != null,
+                    viewer?.displayName?.value,
+                    viewer?.role,
+                    viewer?.id?.value,
+                    viewer
+                        ?.takeIf {
+                            it.userId ==
+                                null
+                        }?.id
+                        ?.value,
+                ),
             analysisId = run?.id?.value,
             revisionGeneration = revisionGeneration,
             revisionRound =
@@ -301,6 +343,7 @@ class RoomLifecycleService(
             remainingCorrectionAnalyses = 3 - correctionAnalysisCount,
             stateVersion = version,
             recommendationProtocol = run?.recommendationProtocol,
+            submissionProtocol = prechecks?.protocol(id.value) ?: "LEGACY",
         )
     }
 

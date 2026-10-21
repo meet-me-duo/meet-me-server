@@ -1,0 +1,55 @@
+{
+  "workItem": "issue107-runtime-auth-catalog",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "recordedAt": "2026-10-17T20:42:13.444362Z",
+  "classification": "CHRONOLOGICAL_INDEPENDENT_NODE_CONTRACT_RED",
+  "schemaScope": "Node/Python adapter contract, not a Kotlin RED-schema record; no fake src/test/kotlin projection",
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+    ".github/scripts/issue107-integrated-catalog.test.cjs"
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "a852a6be38de5a87bf79f44980830f3f53821a8efa64e11ac7a48aa0e4969972"
+    }
+  ],
+  "failedTests": [
+    "C02 publisher emits exactly canonical V1 through V16 in numeric order with independent checksums and fingerprints",
+    "RA01 publisher runner and host pin the same exact current seventeen-file approval catalog",
+    "RA02 publisher fingerprints all seventeen including runtime auth mode renderer and compose",
+    "RA03 each runtime approval byte independently changes the fingerprint and cannot reuse automatic approval",
+    "RA04 current publisher rejects each omitted or linked runtime approval file",
+    "RA05 present unknown malformed or legacy auth markers cannot publish a new release",
+    "RA06 runner accepts current seventeen and rejects fourteen-fingerprint downgrade when auth marker is present",
+    "RA07 runner reads the exact markerless historical fourteen without retroactively requiring auth configuration",
+    "RA09 installed host catalog reads exact historical14 and current17 while rejecting unknown marker",
+    "RA10 host archive verifies historical14 and current17 and refuses mixed fingerprint approvals"
+  ],
+  "totals": {
+    "tests": 26,
+    "passed": 16,
+    "assertionFailures": 10,
+    "setupErrors": 0,
+    "skipped": 0
+  },
+  "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-red.log",
+  "rawLogSha256": "6a6f079ded29c963ababab2730b29eff809ef4b42d44eb697d5d257fc559a260",
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "boundary": "Fixed current17 approval catalog including authmarker renderer compose; markerless historical14 read-only; unknown/hybrid rejection; explicit approval/history/two-rules/pending invariants preserved",
+  "originalHistory": ".tdd/history/issue-107-runtime-auth-catalog",
+  "productsEditedByTestAuthor": 0,
+  "externalCalls": 0,
+  "initial12TestDraft": "Initial12-test draft logs are separately retained; this record binds the final14 tests plus existing12 under current helper17"
+}

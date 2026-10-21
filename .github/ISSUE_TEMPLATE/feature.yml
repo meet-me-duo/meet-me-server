@@ -1,6 +1,6 @@
 name: Feature request
 description: 새로운 기능 또는 기능 개선 작업을 제안합니다.
-title: "[Feature] "
+title: "feat: "
 body:
   - type: textarea
     id: goal

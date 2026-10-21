@@ -6,6 +6,7 @@ This helper never resets their phase or attempts an earlier image on failure.
 """
 
 import base64
+import datetime
 from contextlib import contextmanager
 import fcntl
 import hashlib
@@ -36,7 +37,12 @@ BUNDLE = (
     'pipeline/host-approved-release.py', 'pipeline/run-approved-release.py',
     'pipeline/publish_manifest.py', 'preflight/host-preflight.sh',
     'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
+    'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
+    'runtime-ai-policy.json',
 )
+AUTH_BUNDLE = tuple(name for name in BUNDLE if name != 'runtime-ai-policy.json')
+LEGACY_BUNDLE = tuple(name for name in AUTH_BUNDLE if name not in (
+    'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml'))
 ENV = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
        'HOME': '/root', 'LANG': 'C.UTF-8'}
 
@@ -44,6 +50,55 @@ ENV = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
 def _require(value):
     if not value:
         raise ValueError('UNSAFE_HOST_RELEASE')
+
+
+def _runtime_policy_bytes(raw):
+    """Nonsecret reviewed artifact shape only; historical reading never adopts an operating policy or clock."""
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            _require(key not in result)
+            result[key] = value
+        return result
+    _require(type(raw) is bytes and len(raw) <= 65536)
+    data = json.loads(raw.decode("utf-8"), object_pairs_hook=unique)
+    _require(type(data) is dict and data.get("protocol") == "meetme-managed-ai-policy-v1")
+    if data.get("state") == "UNCONFIGURED":
+        _require(set(data) == {"protocol", "state"})
+        return
+    _require(data.get("state") == "CONFIGURED"
+             and set(data) == {"protocol", "state", "unit", "roomCap", "minimumConfidence", "operations"})
+    unit = data["unit"]
+    _require(type(unit) is dict and set(unit) == {"code", "scale"})
+    code = unit["code"]
+    _require(type(code) is str and bool(code.strip()) and code == code.strip()
+             and len(code.encode("utf-16-le")) // 2 <= 32 and not any(ch in code for ch in ("\x00", "\r", "\n")))
+    _require(type(unit["scale"]) is int and 0 <= unit["scale"] <= 38)
+    amount = lambda value: type(value) is str and re.fullmatch(r"0|[1-9][0-9]{0,37}", value)
+    _require(amount(data["roomCap"]) and int(data["roomCap"]) > 0)
+    threshold = data["minimumConfidence"]
+    _require(type(threshold) in (float, int) and 0 <= threshold <= 1)
+    operations = data["operations"]
+    expected = {
+        "PRECHECK_CLASSIFICATION": "c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc",
+        "PRECHECK_COUNT": "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
+        "PRECHECK_GENERATION": "86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714",
+        "FINAL_PRIMARY": "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
+        "FINAL_FALLBACK": "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
+    }
+    _require(type(operations) is list and len(operations) == len(expected))
+    seen = set()
+    for row in operations:
+        _require(type(row) is dict and set(row) == {
+            "operation", "profileFingerprint", "evidenceFingerprint", "maximumAmount", "validUntil"})
+        _require(type(row["operation"]) is str and row["operation"] in expected and row["operation"] not in seen)
+        seen.add(row["operation"])
+        for key in ("profileFingerprint", "evidenceFingerprint"):
+            _require(type(row[key]) is str and re.fullmatch(r"[0-9a-f]{64}", row[key]))
+        _require(row["profileFingerprint"] == expected[row["operation"]])
+        _require(amount(row["maximumAmount"]) and type(row["validUntil"]) is str
+                 and re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,9})?Z", row["validUntil"]))
+        datetime.datetime.fromisoformat(row["validUntil"].replace("Z", "+00:00"))
 
 
 def _canonical(value):
@@ -172,6 +227,19 @@ def _unit(expected):
                       'FragmentPath': str(UNIT), 'DropInPaths': ''})
 
 
+def _release_bundle(release):
+    marker = release / 'runtime-auth-mode'
+    policy = release / 'runtime-ai-policy.json'
+    if not os.path.lexists(marker):
+        _require(not os.path.lexists(policy))
+        return LEGACY_BUNDLE
+    _require(_bytes(marker, 64) in (b'oauth-rs256-required', b'oauth-rs256-required\n'))
+    if os.path.lexists(policy):
+        _runtime_policy_bytes(_bytes(policy, 65536))
+        return BUNDLE
+    return AUTH_BUNDLE
+
+
 def _installed_catalog(release):
     mapped = {
         'scripts/host-release-guard.sh': LAUNCHER,
@@ -180,7 +248,7 @@ def _installed_catalog(release):
         'meet-me-guarded-restart.service': ROOT / 'guard/meet-me-guarded-restart.service',
     }
     catalog = [{'path': name, 'sha256': _hash(_bytes(mapped.get(name, release / name)))}
-               for name in sorted(BUNDLE)]
+               for name in sorted(_release_bundle(release))]
     _unit(_bytes(ROOT / 'guard/meet-me-guarded-restart.service'))
     return catalog
 
@@ -200,11 +268,31 @@ def _record():
         _require(type(record[key]) is str and re.fullmatch(r'[1-9][0-9]{0,19}', record[key]))
     _require(type(record['currentImage']) is str and re.fullmatch(
         r'[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(?:\.cn)?/[A-Za-z0-9][A-Za-z0-9._/-]*@sha256:[0-9a-f]{64}', record['currentImage']))
-    _require(type(record['history']) is list and len(record['history']) == 10)
-    for version, row in enumerate(record['history'], 1):
+    _require(type(record['history']) is list)
+    versions = tuple(row.get('version') if type(row) is dict else None for row in record['history'])
+    catalogs = (tuple(map(str, range(1, 11))), tuple(map(str, range(1, 12))),
+                tuple(map(str, range(1, 13))), tuple(map(str, range(1, 12))) + ('13',),
+                tuple(map(str, range(1, 11))) + ('14', '15'),
+                tuple(map(str, range(1, 12))) + ('14', '15'), tuple(map(str, range(1, 17))),
+                tuple(map(str, range(1, 18))))
+    _require(versions in catalogs)
+    sparse = '14' in versions
+    names = ('create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
+             'add_matching_results', 'remove_meeting_duration', 'add_reliable_outbox_processing',
+             'resume_delayed_matching_from_structuring', 'add_input_revision_rounds',
+             'add_time_recommendations', 'add_bounded_analysis_invocations', 'add_accounts_and_participant_ownership')
+    scripts = {str(version): f'V{version}__{name}.sql' for version, name in enumerate(names, 1)}
+    scripts.update({
+        '12': 'V12__add_guest_reaccess.sql', '13': 'V13__add_submission_clarifications.sql',
+        '14': 'V14__add_operator_access_audits.sql', '15': 'V15__add_parser_transport_observations.sql',
+        '16': 'V16__add_pre_submission_checks.sql',
+        '17': 'V17__add_durable_ai_room_budgets.sql',
+    })
+    for version, row in zip(versions, record['history']):
         _require(type(row) is dict and set(row) == {'version', 'script', 'checksum', 'success'})
-        _require(row['version'] == str(version) and row['success'] is True)
-        _require(type(row['script']) is str and re.fullmatch(rf'V{version}__[A-Za-z0-9_]+\.sql', row['script']))
+        _require(row['success'] is True)
+        _require(row['script'] == scripts[version] if sparse else
+                 type(row['script']) is str and re.fullmatch(rf'V{version}__[A-Za-z0-9_]+\.sql', row['script']))
         _require(type(row['checksum']) is int and -(2 ** 31) <= row['checksum'] < 2 ** 31)
     return record
 
@@ -261,7 +349,8 @@ def _archive(release, manifest):
     archive = release / '.approved-release.tar.gz'
     raw = _bytes(archive, 4 * 1024 * 1024)
     _require(_hash(raw) == manifest['archiveSha256'])
-    required = set(BUNDLE) | {'migrations/' + row['script'] for row in manifest['migrations']}
+    release_bundle = _release_bundle(release)
+    required = set(release_bundle) | {'migrations/' + row['script'] for row in manifest['migrations']}
     required.add('preflight/compiled/ReadOnlyFlywayProbe.class')
     total, seen, files = 0, set(), set()
     with tarfile.open(archive, 'r:gz') as bundle:
@@ -284,7 +373,7 @@ def _archive(release, manifest):
             else:
                 _safe(release / name, directory=True)
     _require(required <= files)
-    catalog = [{'path': name, 'sha256': _hash(_bytes(release / name))} for name in sorted(BUNDLE)]
+    catalog = [{'path': name, 'sha256': _hash(_bytes(release / name))} for name in sorted(release_bundle)]
     _require(_hash(_canonical(catalog)) == manifest['guardFingerprint'])
     _require(_schema(release, manifest['migrations']) == manifest['schemaFingerprint'])
     probe = _bytes(release / 'preflight/compiled/ReadOnlyFlywayProbe.class', 24576)

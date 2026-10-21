@@ -1,0 +1,17 @@
+{
+  "workItem": "issue-109-architecture-test-update",
+  "recordedAt": "2026-10-17T15:02:14.809184+00:00",
+  "classification": "ACCEPTED_ARCHITECTURE_CONTRACT_UPDATE",
+  "basis": [
+    "docs/ADR.md#adr-051-계정-host와-명시적-게스트-소유권-연결",
+    "docs/ARCHITECTURE.md",
+    "Issue #109 accepted account module"
+  ],
+  "testFile": "src/test/kotlin/com/meetme/server/architecture/AggregatePackageArchitectureTest.kt",
+  "change": "Include account in the existing aggregate set; keep every architecture assertion unchanged.",
+  "reason": "The four-aggregate allowlist predates the accepted account aggregate. Including account both recognizes the approved top-level package and extends the existing layer, domain framework independence, and domain/application-to-adapter dependency checks to account.",
+  "verification": "Focused regression batch passed: 28 tests across six architecture, matching unit/web, core persistence, migration runner, and integrated legacy upgrade classes; zero failures/errors/skips. Root final whole gate remains separate.",
+  "redEvidence": "No synthetic RED or changed implementation behavior. This is an approved architecture expectation update based on ADR-051.",
+  "productionChanged": false,
+  "focusedEvidence": ".tdd/reviews/issue-109-focused-regressions.json"
+}

@@ -1,0 +1,38 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-109-ownership",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipWebIntegrationTest.kt",
+      "sha256": "13b7cc0e59aae3b8c12eccfc40c56b1a414cf802cb40e7fa20b2b8616600198c"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*RoomOwnershipWebIntegrationTest",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+  ],
+  "failedTests": [
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#guest host cannot close until explicit claim and unrelated logged in account cannot ride host proof()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#archive lists only own host rooms and exposes created or closed anchored 30 day expiry()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#claim with existing account participant conflicts without merging either record()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#expired and revoked proof cannot claim and failed claims do not mutate owner()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#member submission uses account without guest cookie and does not expose other member input()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#simultaneous account join and guest claim either conflict or preserve the claimed participant()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#archive requires login and claim requires trusted origin()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#competing accounts claim guest only once and losing account never receives ownership()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#member joins without reentering name and account identity wins over guest cookie()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#all host endpoints require account and reject unrelated account riding legacy host cookie()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#explicit claim preserves participant and submission then removes guest ownership()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#host creation requires account even when guest proof and name are valid()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#login and same display name never implicitly adopt guest records()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#claim needs both authenticated account and valid guest ownership proof()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest#member host uses account profile without name or password and issues no guest credential()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:35:20.324071Z"
+}

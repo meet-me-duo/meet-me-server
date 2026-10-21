@@ -1,0 +1,38 @@
+{
+  "workItem": "issue107-provider-nul-guard-fault",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "boundary": "Isolated final NUL structural guard removed; exact target contract and Unicode tests, historical network adapter metadata-only difference disclosed in detailed evidence. Actual model calls0.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "14df35cbcda7ab31f96bd38bb717faf4828b055067b7b0118ae68461b2160155"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderUnicodeContractTest.kt",
+      "sha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "remove escaped NUL validation from boundedText",
+      "command": [
+        "flock",
+        "/tmp/meetme-gradle.lock",
+        "/tmp/meetme-provider-faults/gradlew",
+        "-p",
+        "/tmp/meetme-provider-faults",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckProvider*ContractTest",
+        "--max-workers=2"
+      ],
+      "detectedBy": "P17 escaped NUL in question prompt is an invalid response(); P18 escaped NUL in choice label is an invalid response()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T19:08:48.255738Z"
+}

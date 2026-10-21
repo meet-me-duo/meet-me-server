@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Issue #99: actual V8 rows survive additive V9 recommendations and V10 bounded invocations unchanged. */
+/** Existing V8 rows survive exact V1..V17 integration without automatic linking or reanalysis. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,17 +18,17 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly ten versions and validates both independent schemas`() {
-        assertEquals(10, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly seventeen versions and validates both independent legacy schemas`() {
+        assertEquals(17, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "10",
+            "17",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("10", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("17", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
@@ -47,10 +47,28 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(2, flyway().migrate().migrationsExecuted)
+        assertEquals(9, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
+        assertEquals("0", scalar("SELECT count(*)::text FROM participants WHERE user_id IS NOT NULL"))
+        assertEquals("3", scalar("SELECT count(*)::text FROM meeting_rooms WHERE submission_protocol='LEGACY'"))
+        for (table in listOf("precheck_candidates", "precheck_checks", "precheck_executions", "precheck_operations")) {
+            assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent checks or rewrite saved input")
+        }
+        assertEquals("3", scalar("SELECT count(*)::text FROM ai_room_budgets"))
+        assertEquals(
+            "3",
+            scalar(
+                "SELECT count(*)::text FROM ai_room_budgets WHERE state='HISTORICAL_UNKNOWN' " +
+                    "AND epoch_id IS NULL AND cap IS NULL AND unit_code IS NULL AND unit_scale IS NULL " +
+                    "AND policy_fingerprint IS NULL AND coverage_started_at IS NULL AND held=0 AND settled=0",
+            ),
+            "Every historical room must deny unproven spend coverage without inventing a zero-cost READY budget",
+        )
+        for (table in listOf("ai_call_reservations", "ai_call_observations", "ai_budget_profiles")) {
+            assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent calls, observations or profiles")
+        }
         assertEquals("3", scalar("SELECT count(*)::text FROM coordination_attempts"))
         assertEquals(
             "3",
@@ -206,6 +224,10 @@ class IntegratedLegacyUpgradePostgresTest {
             val value =
                 if (table == "coordination_attempts") {
                     "to_jsonb(t) - 'provider' - 'model' - 'policy_version' - 'invocation_id'"
+                } else if (table == "participants") {
+                    "to_jsonb(t) - 'user_id'"
+                } else if (table == "meeting_rooms") {
+                    "to_jsonb(t) - 'submission_protocol'"
                 } else {
                     "to_jsonb(t)"
                 }

@@ -94,7 +94,7 @@ class CorePersistenceIntegrationTest {
     @Test
     fun `Flyway 최초 마이그레이션을 적용하고 검증한다`() {
         assertEquals(
-            "10",
+            "17",
             flyway
                 .info()
                 .current()
@@ -106,7 +106,31 @@ class CorePersistenceIntegrationTest {
                 "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'",
                 String::class.java,
             )
-        assertEquals(true, tables.containsAll(listOf("meeting_rooms", "submission_versions", "coordination_runs", "outbox_events")))
+        assertEquals(
+            true,
+            tables.containsAll(
+                listOf(
+                    "meeting_rooms",
+                    "submission_versions",
+                    "coordination_runs",
+                    "outbox_events",
+                    "guest_participant_passwords",
+                    "guest_reaccess_grants",
+                    "submission_clarifications",
+                    "operations_access_audits",
+                    "parser_transport_observations",
+                    "parser_transport_client_calls",
+                    "precheck_candidates",
+                    "precheck_checks",
+                    "precheck_executions",
+                    "precheck_operations",
+                    "ai_budget_profiles",
+                    "ai_room_budgets",
+                    "ai_call_reservations",
+                    "ai_call_observations",
+                ),
+            ),
+        )
     }
 
     @Test

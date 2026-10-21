@@ -1,0 +1,79 @@
+{
+  "workItem": "issue107-pre-submit-provider-final",
+  "recordedAt": "2026-10-17T19:07:17.725723+00:00",
+  "status": "EIGHTEEN_FOCUSED_TRANSPORT_TESTS_GREEN",
+  "command": "flock /tmp/meetme-gradle.lock bash gradlew --no-daemon --max-workers=2 -I /tmp/meetme-provider-only.init.gradle test --tests *PrecheckProvider*ContractTest",
+  "scope": "All production Kotlin compiled; test source restricted to the three independent provider transport files. Full repository gate remains parent-owned.",
+  "gradleExitCode": 0,
+  "tests": 18,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "results": [
+    {
+      "path": ".codex/tdd-evidence/issue107-provider-final-recovered-xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRetryAfterContractTest.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-provider-final-recovered-xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.xml",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-provider-final-recovered-xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderUnicodeContractTest.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "log": ".codex/tdd-evidence/issue107-provider-final-recovered-green.log",
+  "previousCompletedGreenLog": ".codex/tdd-evidence/issue107-provider-unicode-final-green.log",
+  "revalidationReason": "Environment-resume check found prior completed GREEN and final NUL guard already present, but the provider XML had been overwritten by later legacy tests. One focused rerun archived final exact-source XML; no duplicate source mutation.",
+  "productionFingerprints": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt",
+      "sha256": "cdf249c54c6375083983ea5609f3c0a633172e12ceb38c70c77d2734eb618f23"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "14df35cbcda7ab31f96bd38bb717faf4828b055067b7b0118ae68461b2160155"
+    }
+  ],
+  "testFingerprints": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRetryAfterContractTest.kt",
+      "sha256": "35fa215b897b5a0105b45e3d31a9a66ee20e1fd8d230fbc80a679f54b9406728"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "874d13bb1cb182119982b03b81c0c0c9c03d92ac939b02cdc07e483a2c277624"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderUnicodeContractTest.kt",
+      "sha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24"
+    }
+  ],
+  "nullGuardRed": ".tdd/red/issue-107-provider-unicode.json",
+  "ownedSourceStyleVerification": ".codex/tdd-evidence/issue107-provider-format-copy-check.json",
+  "styleVerificationScope": "Public RuleEngine format applied only to disposable copies of the three owned files, compared exact bytes; no original production/test file writes.",
+  "limits": [
+    "Default production bean remains totalOutputTokenCapVerified=false and fails CONFIGURATION before network.",
+    "Synthetic loopback responses prove structural/transport handling, not actual model quality, pricing, latency or billed token-cap capability.",
+    "Root owns final independent review, full gates, commit/push/PR/CI and any approved develop integration."
+  ],
+  "testEditsByProviderImplementer": 0,
+  "externalProviderCalls": 0,
+  "paidProviderCalls": 0,
+  "operationalCalls": 0,
+  "remoteWrites": 0
+}

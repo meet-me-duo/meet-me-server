@@ -1,0 +1,38 @@
+{
+  "workItem": "issue107-runtime-auth-compose",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-auth-compose.test.cjs",
+      "sha256": "56469a9272531112ebfb15405b553f35876a51595eabb7125bd06c974720c3d4"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "deploy/tests/runtime-auth-compose.test.cjs"
+  ],
+  "failedTests": [
+    "AC01 production Compose declares a required read-only long bind without automatic host-path creation",
+    "AC02 actual UID10001 reads owner-only synthetic key files but cannot write into the read-only bind",
+    "AC03 missing auth bind path is refused without creating a host directory or running the app command"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T20:47:59.570Z",
+  "provenance": "RECONSTRUCTED_BASELINE_COMPOSE_AFTER_NORMALIZATION_ORACLE_CORRECTION",
+  "tests": 6,
+  "failed": 3,
+  "passedControls": 3,
+  "setupErrors": 0,
+  "actualAwsCalls": 0,
+  "actualOAuthProviderCalls": 0,
+  "productionAccess": false,
+  "notes": "Current test copied byte-for-byte to scratch, baseline Compose read via git show21a82f6, current Dockerfile and CI only. Normalized JSON may omit explicitfalse: source YAML explicitfalse, actual UID/ro, and actual missingpath refusal/noauto-create remain mandatory. Product tree untouched by reconstruction. Current product6/6 PASS separately recorded.",
+  "evidenceKind": "NON_KOTLIN_INDEPENDENT_INFRA_CHRONOLOGY",
+  "kotlinCanonicalRedEvidence": false,
+  "chronologicalOriginalRedClaim": false,
+  "baselineProductRevision": "21a82f6",
+  "baselineProductFile": "deploy/compose.production.yml",
+  "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-compose-reconstructed-red.log",
+  "historicalRed": ".tdd/verification/issue107-runtime-auth-compose-original-red.json"
+}

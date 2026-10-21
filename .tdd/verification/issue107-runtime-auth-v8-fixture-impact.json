@@ -1,0 +1,48 @@
+{
+  "workItem": "issue107-runtime-auth-v8-fixture-impact",
+  "recordedAt": "2026-10-17T20:44:25.671627Z",
+  "status": "PASS_STATIC_NO_CATALOG_DEPENDENCY_AND_TWO_SMOKE_TESTS",
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "test_v8_release_guard.V8ReleaseGuardTest.test_common_install_rewrites_all_stored_legacy_entrypoints_and_pins_inodes",
+    "test_v8_release_guard.V8ReleaseGuardTest.test_approved_rollforward_recovers_failed_transition_and_safe_refresh",
+    "-v"
+  ],
+  "environment": {
+    "PYTHONPATH": "deploy/tests"
+  },
+  "tests": 2,
+  "passed": 2,
+  "failures": 0,
+  "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-v8-fixture-smoke.log",
+  "rawLogSha256": "f11ea5d19f1eeca233b06c631379f924235f57a8e91663fc3840c2643ddc202b",
+  "fixtureTestFingerprints": [
+    {
+      "path": "deploy/tests/test_v8_release_guard.py",
+      "sha256": "3eb1658c24a46431d81df0f99fabf5bbf44e5d0d5324fa3f2fe664de118d0905"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_additional.py",
+      "sha256": "9225e3641229e83d2e8290c81bb37b7d8d06e0a704847898117202236d77c1b8"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_detectors.py",
+      "sha256": "460a91ff743b45c86d3917718ae1796932b46f79cf651d0c8a0768f73c71a8a1"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_installer_boundaries.py",
+      "sha256": "4143dabd344cdf0560ea25e1a9e2209a4f8d6c2b18c80cf260322fe695034a1d"
+    },
+    {
+      "path": "deploy/tests/test_v8_release_guard_review_boundaries.py",
+      "sha256": "fc2c048cf95a68c14300345a2f04ee567a21924f6c430fc8d4e4c0af6ea687f3"
+    }
+  ],
+  "fixtureChangesRequired": false,
+  "fixtureEditsByAuthor": 0,
+  "runtimeAuthRefreshFixtureEditedByAuthor": false,
+  "staticReason": "Existing V8 bash guard suites do not import Python publisher/runner/host approval catalogs. Sandbox copies deploy but stubs only external renderer/export/Docker/AWS effects. Restart:no and guard override assertions remain unchanged. Current17 guard catalog cannot break its constant inventory because no such constant is asserted by these suites.",
+  "scopeLimit": "The two smoke tests ran before actual new auth renderer/compose files were installed by owner. Final full37 after actual infra source freeze remains root-owned; this is not that full run. No real Docker/AWS/SSM/Secrets/paid/OAuth calls."
+}

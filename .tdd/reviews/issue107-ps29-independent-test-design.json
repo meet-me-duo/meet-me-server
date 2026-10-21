@@ -1,0 +1,33 @@
+{
+  "workItem": "issue107-ps29-independent-retention-atomicity",
+  "recordedAt": "2026-10-17T18:44:29.637505+00:00",
+  "sourceHead": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "oracleBasis": [
+    "PS29 pre-submit accepted design/test specification",
+    "Existing Architecture retention: CLOSED closed_at / collecting created_at +30 days",
+    "V16 public SQL FK and provenance relationships",
+    "Existing public HTTP/real RS256/VERIFIED reaccess fixture contract"
+  ],
+  "testPath": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckRetentionPostgresTest.kt",
+  "initialScratchSha256": "14afa22e77732fde6f4cce082b1fc7b4cdfdc8ccbdb78aff27383e4db7919c17",
+  "cases": [
+    "R01 closed anchor all private precheck rows removed; recent answers do not extend retention; fresh sibling exact rows preserved",
+    "R02 collecting created_at anchor unchanged; fresh sibling preserved",
+    "R03 AFTER INSERT execution database failure atomically rolls back candidate/check/execution/operation and permits retry",
+    "R04 operation insert failure leaves no idempotency consumption/head and permits same-key retry/replay",
+    "R05 answer operation failure preserves source question/provenance/head; same-key recovery creates one derivative",
+    "R06 accepted-pointer publication failure cannot commit accepted version or false completion; durable admission/raw retained",
+    "R07 actual PG FK rejects missing references and room/participant mismatch with SQLSTATE23503",
+    "R08 AFTER DELETE candidate fault aborts whole retention operation; subsequent recovery removes one expired room only"
+  ],
+  "failureReachability": "Nontransactional PostgreSQL sequence nextval marker proves injected AFTER-write trigger ran, independently from transaction rollback",
+  "roleSeparation": "Test author did not implement core/retention/SQL; provider implementation is separate boundary and not used by these tests",
+  "productionEdits": 0,
+  "existingFrozenTestEdits": 0,
+  "paidProviderCalls": 0,
+  "externalProviderCalls": 0,
+  "operationalCalls": 0,
+  "status": "EIGHT_EXISTING_BEHAVIOR_CONTROLS_GREEN_NO_PRODUCT_RED",
+  "currentTestSha256": "cd46fb09a9b162eb715b23e395b381fd499c29111152512def368038ccfca63a",
+  "executionEvidence": ".tdd/verification/issue107-ps29-independent.json"
+}

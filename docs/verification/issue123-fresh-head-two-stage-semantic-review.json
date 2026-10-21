@@ -1,0 +1,177 @@
+{
+  "workItem": "issue123-fresh-head-two-stage-semantic-review",
+  "reviewedAt": "2026-10-18T07:26:03Z",
+  "result": "FRESH_SINGLE_CASE_SHARED_15S_QUESTION_AND_PARSER_COMPOSITION_PASS",
+  "scope": "Actual TwoStage and current production contracts coordinate bounded real Python HTTP callbacks. One fixed synthetic schedule only.",
+  "sourceRevision": "4101038fd421351affa2a1fcdd5741083cb1a6b6",
+  "planSha256": "3a9fd47f2e5da20ed69f895abcd0c045aceeaefc1e12d98d24121fd6e8028330",
+  "oracleSha256": "c69edcc525bde189765788edfd96fb05756c0e3a21d23cfcda357a7d52be1d64",
+  "modeSha256": "b40a1d20eec4464ca41cbaefb91341aadf0e01e68f1f6ed1b06f4cf08f79adb2",
+  "sourceManifestSha256": "9db1ce591e8d60e77277688bc1b19bf5611e0ad8d81fa106c636b85ef40220fe",
+  "sourceFilesVerified": 557,
+  "headAndPinnedSourceFilesMatchCurrent": true,
+  "requestResponseHashes": {
+    "CLASSIFY": {
+      "requestSha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+      "responseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c"
+    },
+    "COUNT": {
+      "requestSha256": "1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f",
+      "responseSha256": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306"
+    },
+    "GENERATE": {
+      "requestSha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+      "responseSha256": "1cf9d06f2bd21dc9f3c553f5491af65870a6c1928bd498d1d25be3bbf0b25417"
+    }
+  },
+  "rawA": {
+    "choice": "CLEAR",
+    "confidence": 0.06,
+    "clearProbability": 0.37,
+    "predeclaredExpectedChoice": "NEEDS_REVIEW",
+    "rawLabelMismatchPreserved": true,
+    "normalizedAssessment": "INDETERMINATE",
+    "normalizedReason": "LOW_CONFIDENCE",
+    "syntheticThreshold": 0.8,
+    "operatingThresholdSelected": false
+  },
+  "rubric": [
+    {
+      "id": "LTS01",
+      "result": "PASS_DECLARED_FRESH_CALLBACK_FLOW",
+      "reason": "Actual fresh A/count/generation once each; exact original context; current LOW_CONFIDENCE routing; common monotonic deadline satisfied. Raw A expected-label mismatch remains separate."
+    },
+    {
+      "id": "LTS02",
+      "result": "PASS_CURRENT_PARSER",
+      "reason": "Fresh exact B bytes accepted by patched parser; oneSTOP candidate/one final text part plus validated discarded optional signature. ActualTwoStage preserves the payload."
+    },
+    {
+      "id": "LTS03",
+      "result": "PASS",
+      "reason": "One focused AM/PM clarification rather than automatic interpretation."
+    },
+    {
+      "id": "LTS04",
+      "result": "PASS",
+      "reason": "Exact original substring 8시부터 9시까지; bounded question/excerpt."
+    },
+    {
+      "id": "LTS05",
+      "result": "PASS",
+      "reason": "Exactly A/B, distinct bounded labels and complete proposals, neither equal to the original raw text."
+    },
+    {
+      "id": "LTS06",
+      "result": "PASS",
+      "reason": "Same2026-10-24 08:00–09:00 and20:00–21:00 in original context."
+    },
+    {
+      "id": "LTS07",
+      "result": "PASS",
+      "reason": "Same date/weekday/duration/available polarity; no invented location/person/other date or condition."
+    },
+    {
+      "id": "LTS08",
+      "result": "PASS_SUGGESTION_MEANING_ONLY_UI_UNTESTED",
+      "reason": "Explicit choice question, no forced answer. Harness accepted=true is parser/composition success, not saved accepted revision or participant submission completion."
+    }
+  ],
+  "timing": {
+    "clock": "SINGLE_JVM_SYSTEM_NANO_TIME_NOT_WALL_TIME",
+    "pipelineStartedNanos": 33656725469324,
+    "pipelineCutoffNanos": 33671725456084,
+    "pipelineFinishedNanos": 33663754717698,
+    "independentElapsedNanos": 7029248374,
+    "pipelineElapsedMs": 7029.248374,
+    "availableBudgetNanos": 14999986760,
+    "remainingAtFinalReturnNanos": 7970738386,
+    "deadlineSatisfied": true,
+    "wholeJvmInvocationElapsedMs": 7641.481,
+    "stageHttpMs": {
+      "CLASSIFY": 653.398,
+      "COUNT": 228.058,
+      "GENERATE": 5934.856
+    },
+    "remainingMillisAtCallback": {
+      "CLASSIFY": 14998,
+      "COUNT": 14274,
+      "GENERATE": 13991
+    }
+  },
+  "transportEvidence": {
+    "actualNewHttpAttempts": 3,
+    "eachStageAttempts": 1,
+    "statuses": {
+      "CLASSIFY": 200,
+      "COUNT": 200,
+      "GENERATE": 200
+    },
+    "safeContentTypes": {
+      "CLASSIFY": "application/json",
+      "COUNT": "application/json; charset=UTF-8",
+      "GENERATE": "application/json; charset=UTF-8"
+    },
+    "bodyBytes": {
+      "CLASSIFY": 438,
+      "COUNT": 119,
+      "GENERATE": 3527
+    },
+    "automaticRetries": 0,
+    "originalResponsesNotSanitizedOrEdited": true
+  },
+  "finalQuestion": {
+    "verdict": "NEEDS_CHOICE",
+    "prompt": "'8시부터 9시까지'가 오전인지 오후인지 선택해주세요.",
+    "sourceExcerpt": "8시부터 9시까지",
+    "choices": [
+      {
+        "id": "A",
+        "label": "오전 8시부터 9시까지",
+        "proposedText": "10월 24일 토요일 오전 8시부터 9시까지 가능해요."
+      },
+      {
+        "id": "B",
+        "label": "오후 8시부터 9시까지",
+        "proposedText": "10월 24일 토요일 오후 8시부터 9시까지 가능해요."
+      }
+    ]
+  },
+  "usage": {
+    "newAInputTokens": 512,
+    "newAOutputTokens": 0,
+    "freshCountReportedTokens": 530,
+    "newBInputTokens": 530,
+    "newBCandidateTokens": 127,
+    "newBThoughtTokens": 533,
+    "newBOutputTokens": 660,
+    "newBTotalTokens": 1190,
+    "reportedGenerationModelVersion": "gemini-3.8-flash",
+    "reportedServiceTier": "standard",
+    "invoiceVerified": false
+  },
+  "signature": {
+    "optionalMetadataPresent": true,
+    "valueSha256": "054be6d05def1961d8695a41796bed7342a692e53705db8ef18ccb0eb2fdbdf4",
+    "actualValueInFinalResultOrAudit": false,
+    "newActualSignatureFixtureAdded": false
+  },
+  "budget": {
+    "approvedAggregateUsd": "2.00",
+    "priorReservedUsd": "1.01330944",
+    "maximumNewReservedUsd": "0.31854592",
+    "cumulativeMaximumReservedUsd": "1.33185536",
+    "plannedHeadroomUsd": "0.66814464",
+    "priorUnknownHoldsRefunded": false,
+    "actualInvoiceOrTaxVerified": false
+  },
+  "limits": [
+    "Raw classification mismatch and historical503/timeout/original parser failures are retained.",
+    "No production SDK transport, durable PG financial authority, real room/worker/UI/direct-edit/accepted-revision or final matching success is demonstrated.",
+    "One case cannot establish general accuracy, calibrated confidence, reliability, p50/p95 or exact billed cost.",
+    "No source/test/helper edits, Gradle, API calls or external messages by this reviewer."
+  ],
+  "reviewerAdditionalActualCalls": 0,
+  "reviewerSourceTestHelperEdits": 0,
+  "reviewerGradleRuns": 0
+}

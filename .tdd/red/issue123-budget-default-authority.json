@@ -1,0 +1,39 @@
+{
+  "workItem": "issue123-budget-default-authority",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123DefaultBudgetAuthorityCompositionTest.kt",
+      "sha256": "17575e4e98a36e12c53114b2f02c618db41cde1e65e2a5ab47b27eae60f7afa5"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*DurableAiBudgetDefaultAuthorityTest",
+    "--tests",
+    "*DurableAiBudgetInitialPostgresTest",
+    "--tests",
+    "*PostgresAiCallBudgetContractTest",
+    "--tests",
+    "*AiCallDispatchAndSettlementPostgresTest",
+    "--tests",
+    "*AiCallBudgetBootstrapPostgresTest",
+    "--tests",
+    "*Issue123BudgetAccountingDefensePostgresTest",
+    "--tests",
+    "*Issue123BudgetCoveragePostgresTest",
+    "--tests",
+    "*Issue123BudgetForeignScopePostgresTest",
+    "--tests",
+    "*Issue123DefaultBudgetAuthorityCompositionTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.budget.Issue123DefaultBudgetAuthorityCompositionTest.DB01 production budget adapter scan supplies exactly one default deny authority()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T04:36:33Z"
+}

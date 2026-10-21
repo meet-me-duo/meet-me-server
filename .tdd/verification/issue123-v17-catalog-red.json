@@ -1,0 +1,78 @@
+{
+  "workItem": "issue123-v17-catalog",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "recordedAt": "2026-10-18T03:56:46.338104Z",
+  "classification": "CHRONOLOGICAL_INDEPENDENT_NODE_CONTRACT_RED",
+  "schemaScope": "Node/Python contract evidence; Kotlin-only RED schema not misused. PG current inventory files are unexecuted and not counted.",
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern=^VC(0[1-9]|1[01]) ",
+    "--test-reporter=tap",
+    "--test-reporter-destination=.codex/tdd-evidence/issue123-v17-catalog/red.log",
+    "--test-reporter=/tmp/issue123-node-json-reporter.mjs",
+    "--test-reporter-destination=.codex/tdd-evidence/issue123-v17-catalog/red-events.jsonl",
+    ".github/scripts/issue123-v17-catalog.test.cjs"
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+      "sha256": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "008e4992a876ef004c7ba866d1b254a155cfe9c7d84609ae300bdcff0c8c3f85"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2"
+    }
+  ],
+  "failedTests": [
+    "VC02 current publisher accepts exactly V1 through V17 with independent SQL CRC and both inventory fingerprints",
+    "VC03 publisher rejects each omission duplicate unknown18 noncanonical17 and unapproved physical inventory entry",
+    "VC05 V17-only byte changes preserve all prior sixteen checksums and distinguish SQL from runtime fingerprints",
+    "VC06 both readers preserve every exact historical catalog including V16 and admit only new contiguous V17",
+    "VC08 approved V16 host state requires explicit transition to V17 and cannot reuse automatic approval",
+    "VC09 V17 approval preserves every successful prefix and denies old16 new17 history tamper gaps and sparse insertion",
+    "VC10 exact V17 unchanged contract stays automatic while schema guard image or publication identity mismatch fails closed"
+  ],
+  "totals": {
+    "executed": 11,
+    "passed": 4,
+    "assertionFailures": 7,
+    "setupErrors": 0,
+    "excludedActualSourceControl": 1
+  },
+  "excluded": [
+    "VC12 actual-source inventory control deliberately excluded until real V17 SQL exists; absence is not counted as RED"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "rawLog": ".codex/tdd-evidence/issue123-v17-catalog/red.log",
+  "rawLogSha256": "d99768490287a816029cac8bdccf1c6a7e8c456238e0427d0fa4f75d6ffc670e",
+  "rawJSON": ".codex/tdd-evidence/issue123-v17-catalog/red-result.json",
+  "rawJSONSha256": "1a6d67ab6403bef79ad211b8dfea007644631ca7e9a39b7c2238e39d4f44d7d9",
+  "sourceBefore": {
+    "deploy/pipeline/publish_manifest.py": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567",
+    "deploy/pipeline/approved_release.py": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6",
+    "deploy/pipeline/host-approved-release.py": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95",
+    "deploy/pipeline/run-approved-release.py": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce"
+  },
+  "sourceAfter": {
+    "deploy/pipeline/publish_manifest.py": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567",
+    "deploy/pipeline/approved_release.py": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6",
+    "deploy/pipeline/host-approved-release.py": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95",
+    "deploy/pipeline/run-approved-release.py": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce"
+  },
+  "sourceUnchanged": true,
+  "archive": ".tdd/history/issue123-v17-catalog",
+  "ciEntry": {
+    "includedBy": ".github/scripts/issue107-integrated-catalog.test.cjs",
+    "standaloneFileMustBeExcludedWhenParentAlsoListed": true,
+    "workflowEdits": 0
+  },
+  "productsEditedByAuthor": 0,
+  "externalCalls": 0,
+  "gradleRuns": 0,
+  "boundary": "Only current migration inventory advances to17; exact seven historical catalogs retained plus new17; runtime auth current17 and historical14 fingerprints unchanged; successful-prefix/checksum/approval/two-rules/pending/source-identity guards retained"
+}

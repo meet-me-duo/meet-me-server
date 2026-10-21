@@ -1,0 +1,36 @@
+{
+  "status": "PASS",
+  "totals": {
+    "tests": 77,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest",
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest",
+      "tests": 37,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.participant.adapter.input.web.GuestDisplayNameUnicodeWebIntegrationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "command": "/tmp/issue108-integration-gradle-run test --tests *GuestDisplayNameUnicodeWebIntegrationTest --tests *SubmissionDeadlinePostgresTest --tests *GuestReaccessWebIntegrationTest -Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10 -Pkotlin.compiler.execution.strategy=in-process -Pkotlin.incremental=false --max-workers=2",
+  "rawLog": "/tmp/issue108-unicode-and-http-green.log",
+  "rawLogSha256": "6940a7dce871342fe96fce926f1509eecda421702b2e68a2ad74e5961f06c916",
+  "recordedAt": "2026-10-17T16:57:00.054454+00:00"
+}

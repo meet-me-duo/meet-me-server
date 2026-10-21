@@ -1,0 +1,142 @@
+{
+  "workItem": "issue107-independent-provider-source-review",
+  "reviewer": "/root/baseline_merge_review",
+  "role": "Independent source reviewer; neither provider implementation nor provider test author. No original production or test edits.",
+  "recordedAt": "2026-10-17T19:34:46.558369+00:00",
+  "status": "APPROVED_FINAL_LOCAL_PROVIDER_SOURCE_AND_CURRENT_TEST_PROVENANCE_SCOPE",
+  "reviewedSourceFingerprints": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "14df35cbcda7ab31f96bd38bb717faf4828b055067b7b0118ae68461b2160155"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt",
+      "sha256": "cdf249c54c6375083983ea5609f3c0a633172e12ceb38c70c77d2734eb618f23"
+    }
+  ],
+  "testFingerprints": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "0a31ce73a1c74aca991d36f67e59b96b1d557ac59da0f120136770a88a9e735c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRetryAfterContractTest.kt",
+      "sha256": "35fa215b897b5a0105b45e3d31a9a66ee20e1fd8d230fbc80a679f54b9406728"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderUnicodeContractTest.kt",
+      "sha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24"
+    }
+  ],
+  "verifiedGreen": [
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRetryAfterContractTest.xml",
+      "sha256": "4e1f5a07732b12213d7404a9465bd241e167bc320ee03c122d8d7feed797265b",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.xml",
+      "sha256": "5eaef81ac410b48eab475edc3d47a2d53c6c7295bd5dbf0feddf26f2168e3428",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderUnicodeContractTest.xml",
+      "sha256": "e4a61cc03d195ce97b05498e4f1e4792086409f9e8cba7c7bc4bd7abf128c78d",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "sourceConclusions": [
+    "Default bean fails with CONFIGURATION before network: missing key, unverified total billed output/reasoning cap, or unsupported requested output limit. No production opt-in flag was added.",
+    "Single physical exchange: connection retry and all redirects disabled; network interceptor rejects non-200 before OkHttp HTTP follow-up, including 503 Retry-After: 0. Credentials are an HTTP header and never a query parameter.",
+    "One monotonic deadline covers serialization, call, header/body streaming and parse. Total budget is at most 15 seconds. Actual request and streamed response are bounded to 16 KiB; response EOF/stall remains under call deadline.",
+    "Strict JSON parser rejects duplicates/trailing data, absent/unknown/invalid payload fields and invalid envelope/finishReason. NEEDS_CHOICE requires exact A/B, distinct complete alternatives, exact original excerpt and bounded Unicode lengths. CLEAR and NEEDS_EDIT cannot silently carry question fields.",
+    "Output usage validates each and combined known candidate/thinking tokens <=2048. Missing thinking/candidate usage remains unknown rather than zero. Provider/model metadata delta only stamps trusted configuration after successful parse.",
+    "Prompt instructs material ambiguity only, deliberate broad ranges/contextually clear input => CLEAR, no regex semantic decisions or automatic text conversion, user confirmation for alternatives, no personal AREA/group/cache reuse. These instructions are not evidence of actual model semantic accuracy.",
+    "Final boundedText NUL guard inspected and independent escaped-NUL prompt/label cases each fail with INVALID_RESPONSE; final archived provider18 tests contain zero failures/errors/skips."
+  ],
+  "faultEvidence": ".tdd/verification/issue107-provider-independent-faults.json",
+  "faultEvidenceAssessment": {
+    "cases": 5,
+    "actualAssertionFailures": 7,
+    "eachRestoredSuiteTests": 16,
+    "originalAdapterSha": "7aff0a972bd9e6ed00609ccf6fe79cb478b91fc344950a760d228148dda6e860",
+    "finalAdapterSha": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214",
+    "finalDelta": "Successful parse result.copy(provider = GEMINI, model = properties.model) only; read directly in final source. Final independent16 rerun XML inspected.",
+    "originalTestsChangedAfterFaults": "Only deterministic method-chain formatting in transport P01; exact archived diff inspected. No assertion or fixture semantics changed."
+  },
+  "testProvenance": {
+    "originalChronologicalRed": ".tdd/history/issue-107-precheck-provider-format/chronological-first-red.json",
+    "currentFormatSupplementalRed": ".tdd/red/issue-107-provider-format-replay.json",
+    "supplementalRedClaim": "15 actual failures on reconstructed TODO adapter; explicitly not chronological first RED."
+  },
+  "openSourceFindings": [],
+  "requiredBeforeWholeFeatureApproval": [
+    "Final core/worker/SQL/shared hunks independent review and real isolated PostgreSQL regression gates.",
+    "Final native OpenAPI/generated web contract and backend-browser integration verification.",
+    "Exact HEAD CI and independent final review before authorized Draft publication."
+  ],
+  "mainReadinessBlockers": [
+    "Actual model total billed reasoning/output cap and provider response compatibility are unverified. Default production precheck provider intentionally cannot call Gemini; new-protocol users will receive a durable failed check rather than completion until a separately approved capability verification/configuration change.",
+    "MUST_ASK and MUST_NOT_ASK model quality, paid cost and latency measurements have not been performed; no accuracy or p50/p95 claim."
+  ],
+  "externalProviderCallsByReviewer": 0,
+  "realOAuthCallsByReviewer": 0,
+  "originalProductionEdits": 0,
+  "originalTestEdits": 0,
+  "previousApprovalScope": "Bounded transport and remaining structural rules reviewed as recorded; final approval pending NUL guard, exact-source tests and review update.",
+  "previousNulFinding": {
+    "id": "S02",
+    "status": "REMEDIATED_AND_INDEPENDENT_TWO_CASE_CHRONOLOGICAL_RED_TO_GREEN_VERIFIED",
+    "source": "PrecheckProviderContract.boundedText",
+    "minimumFix": "Reject NUL in every bounded question field before durable publication. No semantic classification or range narrowing."
+  },
+  "finalGreenLog": ".codex/tdd-evidence/issue107-provider-final-recovered-green.log",
+  "finalTests": 18,
+  "unicodeRedManifest": ".tdd/red/issue-107-provider-unicode.json",
+  "unicodeRedMatchesCurrentTest": true,
+  "nulFaultSupplement": {
+    "evidence": ".tdd/verification/issue107-provider-nul-independent-fault.json",
+    "baselineTests": 18,
+    "actualAssertionFailures": 2,
+    "restoredTests": 18,
+    "restoredExitCode": 0,
+    "contractMatchesCurrent": true,
+    "scope": "Separate NUL-only scratch fault supplements earlier5/7assertion transport faults. Scratch adapter earlier metadata-copy delta is separately reviewed; original product/test edits0."
+  },
+  "finalCurrentTestFormatSupplement": {
+    "detail": ".tdd/verification/issue107-provider-final-format-replay.json",
+    "canonical": ".tdd/red/issue-107-provider-final-format.json",
+    "sourceTestSha256": "0a31ce73a1c74aca991d36f67e59b96b1d557ac59da0f120136770a88a9e735c",
+    "exactFormatDiff": ".tdd/history/issue-107-precheck-provider-final-format/format-only.diff",
+    "formatChange": "P03 Endpoint argument line wrapped only; prompt/body/fixture/expectation values unchanged. Exact diff inspected.",
+    "baseline": 18,
+    "reconstructedFailures": 15,
+    "validActualAssertionRed": 13,
+    "excludedNonAssertionFailures": [
+      "P01 NoSuchElementException: missing request collection in no-transport stub",
+      "P14 NoSuchElementException: missing request collection in no-transport stub"
+    ],
+    "restoredGreen": 18,
+    "schemaAndCurrentTestFingerprintValid": true,
+    "originalProductionChanged": false,
+    "chronology": "Post-implementation behavior-absent reconstruction only. It does not replace or become original chronological first RED."
+  },
+  "faultCanonicalSummaries": [
+    ".tdd/verification/issue107-provider-bounded-transport-faults-canonical.json",
+    ".tdd/verification/issue107-provider-nul-guard-fault-canonical.json"
+  ],
+  "postPublicationGate": "Exact published HEAD CI must be checked after authorized commit/push/Draft PR and before separately authorized merge. No main/deployment/real-model readiness approval."
+}

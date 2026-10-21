@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "status": "PREREGISTERED_SCORING_DESIGN_NO_MODEL_RESULTS",
+  "scope": "Old development60, old untuned-holdout60 and new supplemental16 reported separately. Never pool the supplemental into historical120 results.",
+  "input_projection": {
+    "allowlist": ["rawText", "referenceAt", "timeZone", "locale", "searchStartDate", "searchEndDate"],
+    "raw_policy": "Exact source raw_text without normalization, trimming or automatic rewriting. Context comes from the frozen shared_context.",
+    "excluded": ["case_id", "pair_id", "split", "group", "dimensions", "oracle", "reason", "must_preserve", "unknown_facts", "gold", "file_name", "order", "source_hash", "annotation_metadata"],
+    "separation": "The input projector cannot see gold. The scorer joins model outcomes with gold only after the run is complete. No output is generated in this audit."
+  },
+  "run_preregistration": [
+    "Freeze corpus/overlay/context/profile/prompt/schema/projector/scorer/source hashes before any evaluation.",
+    "Choose a threshold before heldout execution using a separately authorized policy; this corpus supplies no numeric confidence targets. Do not fit the threshold to heldout or live results.",
+    "Preserve raw answers and normalized routing separately. confidence is not the selected class probability.",
+    "Paid authorization, request limits, financial quotes, retries and stop rules require a separate plan. Current model/HTTP count is zero.",
+    "A new run never overwrites historical real results or old predeclared oracle files."
+  ],
+  "record_shape": {
+    "statuses": ["UNRUN", "PREVALIDATION_ERROR", "HTTP_ERROR", "TIMEOUT", "REFUSAL", "INVALID_RESPONSE", "VALID_CHOICE"],
+    "stage_a_raw": ["valid_choice_or_null", "selected_class_or_null", "confidence_or_null", "probabilities_or_null", "refusal_or_typed_error"],
+    "stage_a_normalized": ["assessment_or_null", "reason_or_null", "generator_attempted"],
+    "stage_b": ["not_invoked_reason_or_null", "status", "verdict_or_null", "structural_validity", "independent_semantic_assessment", "must_preserve_violations", "invented_facts", "question_or_edit_needed", "safe_but_incomplete"],
+    "missing_values": "Null remains unknown. Never fill missing outcomes with CLEAR, zero cost, zero latency, correct or successful abstention."
+  },
+  "stage_a_metrics": [
+    {
+      "metric": "raw_three_class_confusion",
+      "population": "VALID_CHOICE responses only",
+      "denominator": "Valid choices per exact frozen A gold class",
+      "also_report": "Planned, transmitted, valid, invalid, refusal, timeout and unrun counts per gold class. Conditional confusion is not all-planned accuracy."
+    },
+    {
+      "metric": "raw_material_false_negative",
+      "numerator": "gold NEEDS_REVIEW and raw CLEAR",
+      "denominators": ["All planned NEEDS_REVIEW cases", "NEEDS_REVIEW cases with valid raw choices"],
+      "rule": "Recovery by LOW_CONFIDENCE routing or B does not erase the raw A false negative."
+    },
+    {
+      "metric": "unnecessary_review_route",
+      "numerator": "gold CLEAR and normalized route invokes B",
+      "denominator": "Planned CLEAR cases",
+      "rule": "This is routing overhead, distinct from an actual unnecessary B question."
+    },
+    {
+      "metric": "core_unsafe_clear",
+      "numerator": "gold REVIEW or INDETERMINATE and raw CLEAR / final accepted CLEAR, reported separately",
+      "denominator": "Planned core-gate cases (36 per old split)",
+      "rule": "Report REVIEW and adversarial/uninterpretable INDETERMINATE strata separately. A low unsafe-clear rate with all errors or abstentions is not a quality pass."
+    },
+    {
+      "metric": "abstention_and_failure",
+      "strata": ["Gold INDETERMINATE", "MODEL_UNCERTAIN", "LOW_CONFIDENCE", "REFUSED", "technical error", "unrun"],
+      "rule": "Keep distinct; a refusal or API error is not a correct semantic classification."
+    }
+  ],
+  "stage_b_metrics": [
+    {
+      "metric": "unnecessary_question",
+      "numerator": "MUST_NOT_ASK gold and emitted NEEDS_CHOICE",
+      "denominators": ["All planned MUST_NOT_ASK cases", "MUST_NOT_ASK cases where B was invoked"],
+      "rule": "A context-resolved expression or intended broad range must not be narrowed. NEEDS_EDIT on clear input is a separate unnecessary-edit error."
+    },
+    {
+      "metric": "material_resolution_quality",
+      "success": "Valid NEEDS_CHOICE about the actual uncertainty, two distinct grounded full proposals preserving all unaffected constraints, direct edit available, no guessed facts.",
+      "safe_incomplete": "NEEDS_EDIT when a safe two-choice answer is not established; distinguish safe-only target from incomplete choice-capable input.",
+      "failure": "Silent CLEAR for unresolved material ambiguity, invalid proposals, irrelevant question, invented date/place/polarity, loss of exceptions/dependencies or narrowed intended breadth.",
+      "denominator": "Planned relevant gold cases and observed B attempts, both reported. Missing/technical-error outcomes are incomplete, not semantic success."
+    },
+    {
+      "metric": "safe_abstention",
+      "rule": "For SAFE_EDIT_ONLY or uninterpretable/adversarial gold, NEEDS_EDIT can satisfy safe behavior. It does not prove a successful meeting submission or selectable-question quality."
+    }
+  ],
+  "pair_metrics": {
+    "eligible": "Only independently reviewed, preregistered true contrasts with one decision factor changed. Old120 have no certified pair IDs.",
+    "report": ["planned pairs", "both-members-observed pairs", "A raw pair discrimination", "normalized final pair discrimination", "must-not-ask preserved", "must-preserve across members"],
+    "denominators": "Both planned pair count and completed pair count. Any failed/unrun member makes the pair incomplete; do not omit it silently.",
+    "no_promotion": "Similarity or shared dimension alone is not a pair. Do not invent ASK examples for valid dependency or broadness merely to balance labels."
+  },
+  "aggregation": {
+    "strata": ["split", "group", "dimension", "question_policy", "failure_kind"],
+    "dimension_overlap": "Dimensions are multi-label; never sum dimension denominators into total cases.",
+    "zero_denominator": "N/A, never 100 percent or zero inferred errors.",
+    "accuracy_claim": "No current synthetic or actual model outcomes exist for these assets in this audit. One existing live success and its latency remain separate from corpus accuracy. No p50/p95 from a single sample."
+  }
+}

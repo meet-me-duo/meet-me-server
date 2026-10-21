@@ -1,0 +1,148 @@
+{
+  "workItem": "issue107-decision-classifier-fi",
+  "sourceRevision": "01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df",
+  "boundary": "Standalone OFF Decisions classification: confidence/distribution, absolute transport budget, no hidden exchanges and safe usage uncertainty. Isolated copied sources only.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationContract.kt",
+      "sha256": "c77a911e1129acc32f711d38cbd5dd6fe44f83982828c51e68b14d79f8614132"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassifierOptions.kt",
+      "sha256": "70c8acff13ead4f9e8df0150c8f61060abf1c6d0b4146ba783a328f463d1cd1e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt",
+      "sha256": "f525efc3e8e2f9d013ea82982d30c6d44961bd0ad4f9455a211868c4875840e6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/AmbiguityClassificationPort.kt",
+      "sha256": "d0ba39fe0aef03c3490ec99a639201f01c5a08b4bb033132092c0b483155c53a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassificationCompositionTest.kt",
+      "sha256": "9fb2ebc2a806b609268519623e3ac57010636208f0b5c798a61990384d8c2757"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationSafetyTest.kt",
+      "sha256": "4d194a1c69099bec09e1b4181e93a6ac541cf622bbdf39e07b8a37b7aa9e76a6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationTransportTest.kt",
+      "sha256": "35153bb9ed26f95ec7b1fc9059929d361485b39c17d768a673ca3c34cf860622"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationUncertainValidationTest.kt",
+      "sha256": "cb12d2978f76a79eb2b6d8d44006c339804c142a961c89f1f696514908926404"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "0a31ce73a1c74aca991d36f67e59b96b1d557ac59da0f120136770a88a9e735c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRetryAfterContractTest.kt",
+      "sha256": "35fa215b897b5a0105b45e3d31a9a66ee20e1fd8d230fbc80a679f54b9406728"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderUnicodeContractTest.kt",
+      "sha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Ignore explicit OFF with otherwise valid synthetic configuration",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*OpenAiAmbiguityClassificationSafetyTest.DCS01*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationSafetyTest#[1] invalid = \"OFF\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Promote below-threshold CLEAR or NEEDS_REVIEW without LOW_CONFIDENCE uncertainty",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*OpenAiAmbiguityClassificationTransportTest.DCW03*",
+        "--tests",
+        "*OpenAiAmbiguityClassificationTransportTest.DCW09*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#DCW09 low confidence needs review remains uncertain without authorizing a generation stage(); com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[1] confidence = \"0.79\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Accept incomplete probability sums for CLEAR and explicit INDETERMINATE",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*OpenAiAmbiguityClassificationTransportTest.DCW06*",
+        "--tests",
+        "*OpenAiAmbiguityClassificationUncertainValidationTest.DCU01*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationUncertainValidationTest#[7] invalid = \"INVALID_SUM\"; com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[28] invalid = \"PROB_SUM\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Replace the absolute body deadline with a per-read timeout that trickling data can extend",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*OpenAiAmbiguityClassificationSafetyTest.DCS05*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationSafetyTest#[2] mode = \"TRICKLE\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Permit HTTP Retry-After zero follow-up before application status rejection",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*OpenAiAmbiguityClassificationSafetyTest.DCS04*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationSafetyTest#[10] status = 503",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Suppress unknown input/output usage observations as if no uncertainty existed",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*OpenAiAmbiguityClassificationTransportTest.DCW07*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[1] invalid = \"MISSING\"; com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[2] invalid = \"NULL\"; com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[3] invalid = \"STRING\"; com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[4] invalid = \"NEGATIVE_INPUT\"; com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[5] invalid = \"STRING_OUTPUT\"; com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationTransportTest#[6] invalid = \"MISSING_OUTPUT\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T02:58:10Z"
+}

@@ -1,0 +1,942 @@
+{
+  "schema_version": 1,
+  "issue": 107,
+  "basis": "User instructions + PRD FR-008D/008E + ADR-045/046/048/049; independently designed without implementation inspection",
+  "scope": "Synthetic semantic evaluation oracle; provider stubs isolate workflow tests; no live model calls",
+  "provenance_invariants": [
+    "source version/raw_text/created_at remain immutable",
+    "question source owner and analysis are preserved",
+    "answer choice/direct_text and newly created version are linked atomically",
+    "saved answer never creates analysis/provider call",
+    "A/B preserve source-relative dates as explicit dates",
+    "DIRECT uses new revision creation date for new relative expressions",
+    "unanswered/cancelled/still ambiguous never become a guessed successful interpretation",
+    "same raw text and same confirmation history cannot produce unbounded questions"
+  ],
+  "fixtures": [
+    {
+      "id": "C01",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오후 7시부터 9시까지 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "19:00~21:00",
+          "명시 오후를 오전으로 바꾸지 않음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C02",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전 7시부터 9시까지 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "07:00~09:00"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C03",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 19시부터 21시까지 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "2026-10-18 19:00~21:00",
+          "같은 version 재시도는 기준일 불변"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C04",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오늘 23시부터 내일 오전 1시까지 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "2026-10-17 23:00~2026-10-18 01:00",
+          "자정 인접 구간 연속"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C05",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "10월 18일 22시부터 24시까지 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "2026-10-18 22:00~2026-10-19 00:00",
+          "양수 길이 2시간"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C06",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "수요일 19~21시는 불가하고 21~23시는 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "불가 19:00~21:00",
+          "가능 21:00~23:00",
+          "불가 극성 보존"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C07",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "매일 18~22시 가능하고 19~20시를 선호해요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "하드 가능 18:00~22:00",
+          "소프트 선호 19:00~20:00",
+          "선호 밖 가능 대안 유지"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C08",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "매일 18~22시 가능하고 내일은 19시부터 가능해요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "내일 2026-10-18 19:00~22:00",
+          "유일한 호환 부모 종료 22:00 상속"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C09",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오후에만 가능해요. 7시부터 9시까지요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "같은 원문의 명시 오후 문맥 19:00~21:00"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C10",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "서울 강남역에서 10월 18일 19~21시 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "명시 장소 서울 강남역",
+          "명시 날짜와 24시간 시각"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C11",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "매일 오전 9~11시와 오후 7~9시 가능해요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "두 독립 가능 창 09:00~11:00 및 19:00~21:00"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "C12",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 19~21시는 불가해요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "2026-10-18 불가 19:00~21:00",
+          "불가-only를 가능-only로 뒤집지 않음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "A01",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "7시부터 9시까지 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "오전/오후 중 임의 선택 금지",
+          "선택 A/B 전체 원문에 명시 시각 포함"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A02",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 7시부터 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "AM/PM과 끝 경계 임의 생성 금지",
+          "상대 날짜는 source 기준 2026-10-18"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A03",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "12시부터 1시까지 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "정오/자정 및 날짜 넘김 임의 확정 금지"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A04",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "7시부터 9시까지는 안 돼요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "A/B 모두 부정/불가 유지",
+          "모호함을 해소하며 가능으로 바꾸지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A05",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "저녁에 좋아요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "선호만으로 하드 가능 시간을 새로 만들지 않음",
+          "정확한 시간 경계 임의 생성 금지"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A06",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 오전 7시부터 가능해요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "명시 오전과 source 기준 내일 날짜 보존",
+          "부모 없는 열린 종료를 임의 완성하지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A07",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전 7시부터 오후 9시까지인데 7시 전에는 못 가요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "두 번째 7시가 오전인지 오후인지에 따라 후보가 달라짐",
+          "명시 오전/오후 범위와 불가 조건 보존"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A08",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "중앙역 근처에서 가능해요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "어느 중앙역인지 임의 특정/좌표 생성 금지",
+          "개인 장소 입력 UI 강제 금지"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A09",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "학교 근처는 화요일, 비대면이면 심야 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "장소-시간 조건부 결합을 삭제해 전체 가능으로 확대 금지",
+          "학교를 임의 특정 장소로 만들지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "A10",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 7~9시 선호하지만 8~10시는 안 돼요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "선호와 불가의 서로 다른 극성 유지",
+          "하드 불가가 선호보다 우선",
+          "날짜 2026-10-18 보존"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION"
+      }
+    },
+    {
+      "id": "C13",
+      "source_created_at": "2026-10-17T15:10:00Z",
+      "source_local_date": "2026-10-18",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 19~21시 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "KST 날짜 2026-10-18 기준 내일=2026-10-19",
+          "UTC 날짜 10/17로 해석하지 않음"
+        ]
+      }
+    },
+    {
+      "id": "A11",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 7~9시 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "상대 날짜 2026-10-18 보존",
+          "시작과 종료의 오전/오후만 해소"
+        ]
+      }
+    },
+    {
+      "id": "C14",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전 7시부터 오후 9시까지인데 저녁 7시 전에는 못 가요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "명확한 하드 불가 우선으로 19:00~21:00",
+          "겉으로 범위가 다르다고 불필요한 질문 금지"
+        ]
+      }
+    },
+    {
+      "id": "T01",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "7-8시쯤",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "실제 보고 표현을 하이픈 포함 그대로 보존",
+          "오전/오후와 쯤의 의미를 임의 확정하지 않음",
+          "쯤을 ±15분/±30분/새 경계 숫자로 만들지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS",
+        "reported_case": true
+      }
+    },
+    {
+      "id": "T02",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "7~8시",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "AM/PM 없는 7~8을 오전 또는 저녁으로 임의 확정하지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T03",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전 7~8시",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "07:00~08:00",
+          "오전 명시로 추가 질문 없음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T04",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "저녁 7~8시",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "19:00~20:00",
+          "같은 절의 저녁 문맥으로 7과8 모두 해석"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T05",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "19~20시",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "19:00~20:00",
+          "24시간제 시각을 오전으로 이동하지 않음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T06",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오늘 19~20시 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "source KST 날짜 오늘=2026-10-17",
+          "같은 버전 재시도시 오늘이 이동하지 않음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T07",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 오전 7~8시 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "source KST 날짜 내일=2026-10-18",
+          "07:00~08:00"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T08",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "다음주 월요일 저녁 7~8시 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "월요일 시작 주 계약에 따라 2026-10-19 19:00~20:00",
+          "명시 월요일만 보존; 다음주 전체/임의요일 생성 금지"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T09",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "다음주 7~8시 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "다음주와 AM/PM 없는 시각을 보존",
+          "사용자가 쓰지 않은 월요일이나 특정 날짜를 생성하지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T10",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오늘 23시부터 내일 0시까지 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "2026-10-17 23:00~2026-10-18 00:00",
+          "17일24:00 배타종료; 0분 구간으로 축약 금지"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T11",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "내일 0~1시 가능",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "2026-10-18 00:00~01:00",
+          "자정 이후를 오늘 오전으로 이동 금지"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T12",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전 8~7시 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "역전된 시각을 자동 swap하여07~08로 바꾸지 않음",
+          "다음날07시 종료 또는 밤샘을 추정하지 않음"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T13",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "20~19시 불가",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "불가 극성 보존",
+          "19~20으로 자동swap 금지",
+          "다음날19시로 자동 확장 금지"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T14",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "7~8시 불가",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "A/B 모두 불가 극성 보존",
+          "AM/PM 선택 전 전체기간 가능으로 확대 금지"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T15",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "저녁 7~8시 불가",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "UNAVAILABLE19:00~20:00",
+          "부정 때문에 AM/PM 명시를 잃지 않음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T16",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "저녁에만 가능해요. 7~8시요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "같은 본인 원문의 유일한 저녁 문맥으로19:00~20:00",
+          "불필요한 추가 질문 없음"
+        ],
+        "unresolved": null
+      }
+    },
+    {
+      "id": "T17",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전이나 저녁 중 아직 정하지 못했어요. 7~8시요",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "가능 대안 OR인지 미결정인지 임의 확정하지 않음",
+          "원문의 미확정 문맥 보존"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T18",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "오전 7-8시쯤 가능",
+      "expected": {
+        "classification": "AMBIGUOUS",
+        "question_count_max": 1,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "오전은 이미 명확하여 AM/PM 재질문 금지",
+          "쯤의 결과영향 경계만 미확정; 수치오차 임의발명 금지"
+        ],
+        "unresolved": "NO_INVENTED_INTERPRETATION",
+        "allowed_time_rejection_codes": [
+          "AMBIGUOUS_TIME_CONSTRAINT",
+          "AMBIGUOUS_INPUT"
+        ],
+        "technical_failure": false,
+        "safe_excluded": true,
+        "question_policy": "OWNER_ONLY_IF_TWO_SAFE_FULL_OPTIONS_ELSE_NO_FABRICATED_OPTIONS"
+      }
+    },
+    {
+      "id": "T19",
+      "source_created_at": "2026-10-17T10:00:00Z",
+      "source_local_date": "2026-10-17",
+      "time_zone": "Asia/Seoul",
+      "locale": "ko-KR",
+      "raw_text": "19~20시 가능하고 19시30분~20시를 선호해요",
+      "expected": {
+        "classification": "CLEAR",
+        "question_count_max": 0,
+        "additional_ai_calls": 0,
+        "preserve": [
+          "하드가능19:00~20:00",
+          "선호19:30~20:00",
+          "선호 밖19:00~19:30 대안 보존"
+        ],
+        "unresolved": null
+      }
+    }
+  ],
+  "answer_scenarios": [
+    {
+      "id": "R01",
+      "source_fixture": "A01",
+      "choice": "A",
+      "replacement": "오전 7시부터 9시까지 가능",
+      "expected": "new immutable revision; original preserved; no analysis"
+    },
+    {
+      "id": "R02",
+      "source_fixture": "A04",
+      "choice": "B",
+      "replacement": "오후 7시부터 9시까지는 안 돼요",
+      "expected": "new revision preserves UNAVAILABLE polarity; no analysis"
+    },
+    {
+      "id": "R03",
+      "source_fixture": "A11",
+      "answered_at": "2026-10-19T10:00:00Z",
+      "choice": "A",
+      "replacement": "2026년 10월 18일 오전 7시부터 9시까지 가능",
+      "expected": "A/B interpreted date remains 2026-10-18; explicit endpoint and AM/PM are user-approved, all unrelated source constraints preserved"
+    },
+    {
+      "id": "R04",
+      "source_fixture": "A02",
+      "answered_at": "2026-10-19T10:00:00Z",
+      "choice": "DIRECT",
+      "direct_text": "내일 19~21시 가능",
+      "expected": "new revision relative date=2026-10-20; entire original replaced with explicit UI notice"
+    },
+    {
+      "id": "R05",
+      "source_fixture": "A01",
+      "choice": "CANCEL",
+      "expected": "raw text/head/revision/batch/quota unchanged; cancellation history may persist; no analysis"
+    },
+    {
+      "id": "R06",
+      "source_fixture": "A01",
+      "choice": "DIRECT",
+      "direct_text": "그때쯤 가능",
+      "expected": "new text may be saved; no guessed resolution, no automatic analysis or repeated same question"
+    },
+    {
+      "id": "R07",
+      "source_fixture": "A01",
+      "choice": null,
+      "expected": "unanswered original remains; no automatic default, analysis or expiry assumption"
+    }
+  ],
+  "reported_time_regression": {
+    "reported_raw_text": "7-8시쯤",
+    "new_fixture_ids": [
+      "T01",
+      "T02",
+      "T03",
+      "T04",
+      "T05",
+      "T06",
+      "T07",
+      "T08",
+      "T09",
+      "T10",
+      "T11",
+      "T12",
+      "T13",
+      "T14",
+      "T15",
+      "T16",
+      "T17",
+      "T18",
+      "T19"
+    ],
+    "authority": "2026-10-17 latest user report; oracle derived from user instructions and PRD FR-008D, not parser implementation",
+    "approximation_policy": "Do not invent numeric tolerance for 쯤; a safe structural proposal may preserve 쯤 and remain semantically unresolved until later explicit analysis"
+  }
+}

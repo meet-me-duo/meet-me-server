@@ -1,0 +1,6 @@
+{
+  "originalSha256": "9add11fc05bb6ab6e5bfbc5741217752f2cc2bcc186ae17e112a84971e19456c",
+  "revisedSha256": "f4e0d24fb7ff21a3f0c5946e2e415c62df607fd7ffe25b2e6c37e0005f4272eb",
+  "classification": "PRE_RED_ORACLE_CORRECTION",
+  "reason": "Root-frozen DB06 physical vs logical atomicity, DB20 no lazy bootstrap, DB21 authorized retention cascade, DB24 OFF legacy final compatibility; DB10 kind-specific fresh fence."
+}

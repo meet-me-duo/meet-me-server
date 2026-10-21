@@ -1,0 +1,51 @@
+--- original-single-frozen-owner
++++ corrected-two-distinct-frozen-owners
+@@ -319,6 +319,39 @@
+             timestamp(START),
+         )
+         jdbc.update("UPDATE submission_heads SET latest_version_id=? WHERE id=?", version, head)
++        // Existing FrozenSubmissionReader requires two distinct frozen owners. This historical manual-only
++        // control is a valid second submission and does not add a natural-language provider input.
++        val manualSession = UUID.randomUUID()
++        val manualParticipant = UUID.randomUUID()
++        val manualHead = UUID.randomUUID()
++        val manualVersion = UUID.randomUUID()
++        jdbc.update(
++            "INSERT INTO guest_browser_sessions(id,credential_digest,expires_at,created_at) VALUES (?,?,?,?)",
++            manualSession,
++            credentials.digest("synthetic-manual-$manualSession"),
++            timestamp(START.plusSeconds(60)),
++            timestamp(START),
++        )
++        jdbc.update(
++            "INSERT INTO participants(id,room_id,guest_session_id,role,display_name,joined_at) VALUES (?,?,?,'MEMBER','synthetic manual',?)",
++            manualParticipant,
++            p.room,
++            manualSession,
++            timestamp(START),
++        )
++        jdbc.update("INSERT INTO submission_heads(id,room_id,participant_id) VALUES (?,?,?)", manualHead, p.room, manualParticipant)
++        jdbc.update(
++            "INSERT INTO submission_versions(id,submission_id,revision,raw_text,locale,created_at) VALUES (?,?,1,NULL,'ko-KR',?)",
++            manualVersion,
++            manualHead,
++            timestamp(START),
++        )
++        jdbc.update("UPDATE submission_heads SET latest_version_id=? WHERE id=?", manualVersion, manualHead)
++        jdbc.update(
++            "INSERT INTO manual_availability_intervals(id,submission_version_id,interval_order,interval_kind,local_date,start_time,end_time) VALUES (?,?,0,'DATED',DATE '2026-10-18',TIME '10:00',TIME '11:00')",
++            UUID.randomUUID(),
++            manualVersion,
++        )
+         val batch = UUID.randomUUID()
+         val run = UUID.randomUUID()
+         val invocation = UUID.randomUUID()
+@@ -327,6 +360,8 @@
+         val fallback = operation == AiPhysicalOperation.FINAL_FALLBACK
+         jdbc.update("INSERT INTO submission_batches(id,room_id,fixed_at) VALUES (?,?,?)", batch, p.room, timestamp(START))
+         jdbc.update("INSERT INTO submission_batch_items(batch_id,submission_version_id) VALUES (?,?)", batch, version)
++        jdbc.update("INSERT INTO submission_batch_items(batch_id,submission_version_id) VALUES (?,?)", batch, manualVersion)
++        assertEquals(2, jdbc.queryForObject("SELECT COUNT(*) FROM submission_batch_items WHERE batch_id=?", Int::class.java, batch))
+         jdbc.update(
+             "INSERT INTO coordination_runs(id,room_id,batch_id,status,created_at,version) VALUES (?,?,?,'STRUCTURING',?,?)",
+             run,

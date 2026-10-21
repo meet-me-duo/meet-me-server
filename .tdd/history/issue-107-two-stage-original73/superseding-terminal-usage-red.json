@@ -1,0 +1,60 @@
+{
+  "workItem": "issue-107-two-stage-pipeline",
+  "sourceRevision": "01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckBudgetTest.kt",
+      "sha256": "3a813a63c7d159ff0eaeb6544e8ac53b429ea9b90cbc23814f1c500b36d69831"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckCompositionTest.kt",
+      "sha256": "68a8b29bc0247e93a93015a1e6b2d846e79d80623cf2b7691b9e5fabfd4da787"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckDeadlineTest.kt",
+      "sha256": "ddc8af8fa9b3fcbd2aa12179eb430ef7730fc75382936b7593ca98cc19e8d7f5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckRoutingTest.kt",
+      "sha256": "2a14d28feae413fe587ab5ac1116a511ca1c5d28e7720c73586871ea7fc5690a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckTerminalUsageWorkerTest.kt",
+      "sha256": "189ffeb359650c0bf6f7ffb176a00c8af23d934586160f743e3e660c67b85e74"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*TwoStagePrecheck*Test"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckRoutingTest#TS02 normalized sufficiently confident CLEAR avoids the generator entirely()",
+    "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckTerminalUsageWorkerTest#[1] output = 4",
+    "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckTerminalUsageWorkerTest#[2] output = 2049"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T03:06:37.326708+00:00",
+  "compileExit": 0,
+  "targetExit": 1,
+  "counts": {
+    "tests": 79,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0
+  },
+  "expectedReasons": [
+    "Approved TS08 clarification maps classifier terminal legacy outputTokens to null/N A; actual stage usage stays in budget observation",
+    "Classifier output2049 must not hit generation-only worker2048 cap; B output and cap remain unchanged"
+  ],
+  "rawLog": ".codex/tdd-evidence/issue-107-two-stage-terminal-usage-red.log",
+  "rawXmlDirectory": ".codex/tdd-evidence/issue-107-two-stage-terminal-usage-red-xml",
+  "supersedes": ".tdd/history/issue-107-two-stage-original73/red.json",
+  "original73History": ".tdd/history/issue-107-two-stage-original73/contract-correction.json",
+  "independentAuthor": "/root/web_precheck_impl",
+  "boundary": "Legitimate new TS08 contract correction after frozen original73 FI. Existing three test files unchanged, Routing one output assertion corrected, six actual worker/budget regressions added. No production edits by author."
+}

@@ -1,0 +1,15 @@
+{
+  "recordedAt": "2026-10-18T07:09:15.593708+00:00",
+  "javacExit": 0,
+  "javacOutput": "",
+  "sourceHashes": {
+    "/tmp/Issue123FreshHeadTwoStageHarness.java": "667fc67dccdd312abf569a5ce3d51453fa267626d57fad1496929626eab7e764",
+    "/tmp/issue123-fresh-head-http-callback.py": "3779f6b88abeaa02f1c451df557af65a4948b9456b4e51ec82ebacbaec9cad56",
+    "/tmp/issue123-run-fresh-head-two-stage.py": "c3a7ac1578f9ad8093ea8ef6f4b05f45fb4a38b031b905e3a8285e9d29643898"
+  },
+  "pythonSyntax": "PASS",
+  "harnessExecutionsByAuthor": 0,
+  "actualHttpCallsByAuthor": 0,
+  "repositoryProductionTestEdits": 0,
+  "runnerFreezePlaceholder": "ROOT_FREEZE_REQUIRED"
+}

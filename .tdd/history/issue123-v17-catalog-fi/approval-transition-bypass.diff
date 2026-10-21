@@ -1,0 +1,11 @@
+--- deploy/pipeline/approved_release.py.baseline
++++ deploy/pipeline/approved_release.py.mutant
+@@ -171,7 +171,7 @@
+         if action in {"automatic", "preflight"}:
+             return {"mode": "TRANSITION_REQUIRED"}
+ 
+-        _require(approve_first_transition and states == ["DISABLED", "DISABLED"])
++        _require(states == ["DISABLED", "DISABLED"])
+         if facts["guardTrusted"]:
+             _require(facts["phase"] in {"PRE_V8", "V8_STARTED", "READY"})
+         else:

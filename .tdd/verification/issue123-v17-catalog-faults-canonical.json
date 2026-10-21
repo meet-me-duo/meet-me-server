@@ -1,0 +1,77 @@
+{
+  "workItem": "issue123-v17-catalog",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "boundary": "Independent offline VC01..11; scratch-only missing17 publisher, historical16 host reader loss, explicit approval bypass. Actual V17 SQL/VC12/PostgreSQL/full gate excluded. Details .tdd/history/issue123-v17-catalog-fi/manifest.json",
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "bcde34cb16a7a768f386582f71482d2a23bcc362775d2a6258b4b1f19d86e72f"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "feb0771aeafe6614532d789f89088e7871d52fec69cf5467f1c2c67c22892379"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "7cf3fffa042f251d18a7f6f0fb8c209ab7318da8af54dad0ca23444138b55683"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2"
+    },
+    {
+      "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+      "sha256": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Publisher accepts an incomplete current source missing V17 as legacy V16 publication",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^VC(0[1-9]|1[01]) ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-v17-catalog-fi/publisher-missing17.log",
+        "--test-reporter=/tmp/issue123-catalog-fi-38w3jz_o/reporter.mjs",
+        "--test-reporter-destination=/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-v17-catalog-fi/publisher-missing17-events.jsonl",
+        ".github/scripts/issue123-v17-catalog.test.cjs"
+      ],
+      "detectedBy": "VC03 publisher rejects each omission duplicate unknown18 noncanonical17 and unapproved physical inventory entry",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Installed host record reader drops approved historical contiguous V1..V16 inventory",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^VC(0[1-9]|1[01]) ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-v17-catalog-fi/host-historical16-loss.log",
+        "--test-reporter=/tmp/issue123-catalog-fi-38w3jz_o/reporter.mjs",
+        "--test-reporter-destination=/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-v17-catalog-fi/host-historical16-loss-events.jsonl",
+        ".github/scripts/issue123-v17-catalog.test.cjs"
+      ],
+      "detectedBy": "VC06 both readers preserve every exact historical catalog including V16 and admit only new contiguous V17",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Deploy permits V16 to V17 schema transition without explicit first-transition approval",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^VC(0[1-9]|1[01]) ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-v17-catalog-fi/approval-transition-bypass.log",
+        "--test-reporter=/tmp/issue123-catalog-fi-38w3jz_o/reporter.mjs",
+        "--test-reporter-destination=/workspace/issue123-durable-budget/server/.codex/tdd-evidence/issue123-v17-catalog-fi/approval-transition-bypass-events.jsonl",
+        ".github/scripts/issue123-v17-catalog.test.cjs"
+      ],
+      "detectedBy": "VC08 approved V16 host state requires explicit transition to V17 and cannot reuse automatic approval",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-18T03:59:51.205608Z"
+}

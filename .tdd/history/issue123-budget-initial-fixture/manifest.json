@@ -1,0 +1,6 @@
+{
+  "oldSha256": "647fb38e0c56063a7b7b2e1d309b3280880b214453caf55dda7e38ad014f97d4",
+  "newSha256": "dda136d81ae7e5aada5086a5fffeb2ea70810ee433e9abde4c92de4c386eecaf",
+  "classification": "PRE_FREEZE_FIXTURE_CORRECTION",
+  "reason": "Remove fixed Flyway target16 so current migration creates the future budget schema; current first-run V16 fixture and semantic assertions unchanged. Original8 assertionRED preserved; fresh exact-current8RED required."
+}

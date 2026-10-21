@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-10-17T19:23:10.443322+00:00",
+  "classification": "FORMAT_ONLY_PASS_CONTROL; not an original RED test suite",
+  "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckCorrectionCompatibilityPostgresTest.kt",
+  "originalSHA256": "e79761ec86dc0e823eb5e8c51e28debd58cae73dfed919e40623c8f5d074df13",
+  "currentSHA256": "7c5ba283862723111c1ae72182b38f2a3ccfe620ac43cc58d960baacd2172c7f",
+  "originalSource": ".tdd/history/issue-107-pre-submit-correction-format/PrecheckCorrectionCompatibilityPostgresTest.before.kt",
+  "exactDiff": ".tdd/history/issue-107-pre-submit-correction-format/format-only.diff",
+  "review": "Only analyzeCorrection val result / mvc method chain line wrapping; all4 PASS controls and expectations unchanged. New fingerprint requires current-source GREEN in final guard; no claim as chronological RED.",
+  "finalFullGreenControl": {
+    "guardResultLocalPath": ".codex/tdd-evidence/issue107-final-guard-attempt4/result.json",
+    "guardResultSHA256": "4101e9938179b46e7b697fea0fba8725293416d7bc7c7b20a4d8f430f6e0e01c",
+    "fullTotals": {
+      "tests": 1197,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    "sharedSourceChanged": false,
+    "suite": {
+      "suite": "PrecheckCorrectionCompatibilityPostgresTest",
+      "totals": {
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "originalLocalXML": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PrecheckCorrectionCompatibilityPostgresTest.xml",
+      "xmlSHA256": "5fd1471d6a27725f6d0c0214a3c80cffee88d978b5fd4cc279a0f56c34edde39"
+    },
+    "classification": "Existing behavior GREEN control; no new product RED claimed."
+  }
+}

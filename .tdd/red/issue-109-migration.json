@@ -1,0 +1,24 @@
+{
+  "$schema": "../schema/red-evidence.schema.json",
+  "workItem": "issue-109-migration",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountOwnershipMigrationTest.kt",
+      "sha256": "c131a29f438836632ea986db6893f618014bb9803fa4d8cef5d4ab6affd25f1b"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*AccountOwnershipMigrationTest",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme-109-tools/jdk17"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.AccountOwnershipMigrationTest#account migration preserves legacy guest and submission while enforcing exclusive unique owners()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:32:58.381569Z"
+}

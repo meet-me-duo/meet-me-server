@@ -1,0 +1,46 @@
+{
+  "tests": 78,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "sourceFiles": {
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/OpenAiLunaNaturalLanguageParserAdapter.kt": "7b27926b816e6af9933e6831dcc8be228f643b8722f7329aa841f3c94bd5c03f",
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt": "ffe946ea086a832e29ffc35f064b48e8c337122ec03fc3c554564356efeac8b0",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt": "9ff87920bfc10bb57da82e22fcd8683deb7cd19800fcab03902b5d1060c9d00b",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt": "d5d97bd7c6f8100736ace583347c5fe5db386b3a371b59a982f4afb8c2bbeef0",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt": "16fba187e8f04dbaf4c3f00db0a14d49183743dcf1dc22c7fe2ee78528ce9075",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt": "1f33e12211eb9b33b96b70ada710e5a0b3da1b0e0ca4fda7c72c704cc60853fe",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/AmbiguityClassifierConfiguration.kt": "d9259f6c974b0494907cef262db4c6366e0a93a86293225b767beca8fdd9a265",
+    "src/main/kotlin/com/meetme/server/shared/application/port/output/AiDispatchFingerprints.kt": "d02a58d5b56ade84c0e4171ba19e0f957a3abfbb5b9ae94e6616e075ae2da1ea",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiDispatchBindings.kt": "52320ad9c8b8a05c4751d533973b1fa321adfcb6ff42ab49971d2779dab74334",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt": "b751f9ce5ba3b5314dc5b9119af07b509c31fccabe09c90097b4044660683063"
+  },
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123AiHttpDispatchGateTest.kt",
+      "sha256": "490bc5d4e148ec9df850824624eb56142abda3d94881f4179662fd3f562439c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtureControlTest.kt",
+      "sha256": "6dceaefda47a2b7adc5422ffc38f870bc0120a121020aeecae57e3c16411821a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtures.kt",
+      "sha256": "140268c3b45fa61066fe3e3384e21ead9e8baaff09a5b58feff622c66fdd7e79"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchPublicBoundaryTest.kt",
+      "sha256": "160b36f1458983086ecdb1328778ffcc24ab57953f1da130eb6c995c14300c6c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ProviderDispatchContractTest.kt",
+      "sha256": "6c0e9b33ceb2c196c8343d5340c8821f3a762cdb3e51ff3733ab37a2129faf10"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123TwoStagePhysicalDispatchTest.kt",
+      "sha256": "cef44a914e78f50267e67b2cfb3ba5fcaf2f3cf02f8c2e14a4394f1d2ed4c8f5"
+    }
+  ],
+  "scope": "Gate, direct five physical HTTP operations, public composition, physical TwoStage. Real PG fence/worker/orchestration not verified in this cycle.",
+  "paidProviderCalls": 0
+}

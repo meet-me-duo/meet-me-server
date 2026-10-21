@@ -1,0 +1,15 @@
+{
+  "reason": "Public exact locale contract requires raw final locale and independently framed context to match. Locale.KOREAN is ko; intended fixture context is ko-KR. Replaced the single request fixture with Locale.forLanguageTag(\"ko-KR\"); no expected value or validator weakened.",
+  "originalCounts": {
+    "tests": 76,
+    "failures": 70,
+    "passed": 6,
+    "errors": 0,
+    "skipped": 0
+  },
+  "affectedFile": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ProviderDispatchContractTest.kt",
+  "affectedCases": 40,
+  "originalRaw": ".codex/tdd-evidence/issue123-dispatch-original76-red",
+  "classification": "Historical chronological RED retained; affected positive locale mismatch is not an additional product defect. Current test SHA requires fresh RED.",
+  "recordedAt": "2026-10-18T04:12:51.789455+00:00"
+}

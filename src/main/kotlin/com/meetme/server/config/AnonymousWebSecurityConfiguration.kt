@@ -19,7 +19,7 @@ class AnonymousWebSecurityConfiguration(
             .addMapping("/api/**")
             .allowedOrigins(*properties.allowedOrigins.toTypedArray())
             .allowedMethods("GET", "POST", "PUT", "OPTIONS")
-            .allowedHeaders("Content-Type", "Accept-Language")
+            .allowedHeaders("Content-Type", "Accept-Language", "Authorization")
             .allowCredentials(true)
     }
 

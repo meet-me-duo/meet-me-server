@@ -1,0 +1,44 @@
+{
+  "purpose": "predeclared four-case Korean diagnostic only; no population accuracy inference",
+  "frozenAt": "2026-10-18T04:54:34.342728Z",
+  "context": {
+    "referenceInstant": "2026-10-18T04:00:00Z",
+    "timezone": "Asia/Seoul",
+    "searchStartDate": "2026-10-24",
+    "searchEndDate": "2026-10-25"
+  },
+  "newSyntheticCases": true,
+  "corpusRereadForThisTask": false,
+  "modelCallsByAuthor": 0,
+  "outcomesSeenForTheseCases": false,
+  "cases": [
+    {
+      "id": "LIVE-KO-01",
+      "category": "intentional_broad_weekend",
+      "input": "10월 24일 토요일과 25일 일요일은 하루 종일 아무 때나 괜찮아요.",
+      "expected": "CLEAR",
+      "reason": "검색 기간의 두 날짜와 종일 허용 의도가 명시되어 있다. 넓은 허용 범위를 임의로 좁힐 필요가 없다."
+    },
+    {
+      "id": "LIVE-KO-02",
+      "category": "contextually_clear_time",
+      "input": "10월 24일 토요일 오후 3시부터 5시까지 가능해요.",
+      "expected": "CLEAR",
+      "reason": "날짜와 시작 시각의 오후 문맥이 같은 연속 구간의 끝 시각에도 적용되어 15시부터 17시까지로 명확하다."
+    },
+    {
+      "id": "LIVE-KO-03",
+      "category": "material_unresolved_ambiguity",
+      "input": "10월 24일 토요일 8시부터 9시까지 가능해요.",
+      "expected": "NEEDS_REVIEW",
+      "reason": "오전 또는 오후를 정할 문맥이 없고 08~09시와 20~21시는 서로 다른 참여 가능 구간이다."
+    },
+    {
+      "id": "LIVE-KO-04",
+      "category": "negation_and_exception",
+      "input": "10월 24일 토요일 오전 10시부터 오후 6시까지 가능하지만 오후 1시부터 2시는 빼주세요. 일요일은 안 돼요.",
+      "expected": "CLEAR",
+      "reason": "토요일 허용 구간, 명시적인 제외 구간, 일요일 불가가 서로 모순 없이 결정된다."
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "known_live": {
+    "known_evidence_physical_attempt_count": 15,
+    "stage_counts": {
+      "CLASSIFY": 7,
+      "COUNT": 3,
+      "GENERATE": 5
+    },
+    "distinct_raw_count": 4,
+    "exact_overlap_unique_raw_counts": {
+      "development": 0,
+      "holdout": 0
+    },
+    "exact_overlap_attempt_counts": {
+      "development": 0,
+      "holdout": 0
+    },
+    "scope": "Only the 15 consumed evidence records listed here; absence of other exposure is not proven. Unconsumed request files are excluded.",
+    "records": [
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-minimal-smoke/openai-smoke-single-request-consumed.json",
+        "receipt_sha256": "2809869e0949cdf852f7daf1d42781d2c7be455d04a3aed795cf1298c8e08a7f",
+        "request_path": ".codex/tdd-evidence/issue123-minimal-smoke/openai-smoke-request.json",
+        "request_sha256": "b36db3e64454215c66ff89b89ae2f854b1cf25ecfeed06238dd8898b5b70d4a7",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-01-consumed.json",
+        "receipt_sha256": "2970a8835da5b7d742aeba7f8ff26444febe89a9392ebd495a9355926711b0bf",
+        "request_path": ".codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-01-request.json",
+        "request_sha256": "89bee4cef7ea371c1c906a1ef47de143230d5874ddc9b54ad413bfccc2aea53a",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-02-consumed.json",
+        "receipt_sha256": "c078cf4c8e8bce2fe1bc66a890d3071877404547665f36349c94c81cf4139dc9",
+        "request_path": ".codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-02-request.json",
+        "request_sha256": "320c4b72f87a028a0a6954c5e37a3db09ce79900157c6631fcace6f1afb541a0",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-03-consumed.json",
+        "receipt_sha256": "b07dca2fba66303b9b76c1725893e13410dfdb1046ff91afcc13efa51f13fdce",
+        "request_path": ".codex/tdd-evidence/issue123-minimal-smoke/LIVE-KO-03-request.json",
+        "request_sha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-live-two-stage/CLASSIFY-consumed.json",
+        "receipt_sha256": "d68c7be105ef46c311491e8895f46768f1ff36d63774db7765cb21283a036f95",
+        "request_path": ".codex/tdd-evidence/issue123-live-two-stage/a-request.json",
+        "request_sha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-live-two-stage/COUNT-consumed.json",
+        "receipt_sha256": "22795559112fd26bb371e52a8e1be044d39cad24200c502896207435eca2161f",
+        "request_path": ".codex/tdd-evidence/issue123-live-two-stage/count-request.json",
+        "request_sha256": "1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f",
+        "stage": "COUNT",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-live-two-stage/GENERATE-consumed.json",
+        "receipt_sha256": "317d321856cf259fca6d6ad3671564f4ae3955178929da5c4b7522f5a4471dcc",
+        "request_path": ".codex/tdd-evidence/issue123-live-two-stage/generation-request.json",
+        "request_sha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+        "stage": "GENERATE",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/CLASSIFY-consumed.json",
+        "receipt_sha256": "dd32893bfbfb3c9c4ab8255072b7099407a8db45ac64e5dd90b6312cbc55eda5",
+        "request_path": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/a-request.json",
+        "request_sha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/COUNT-consumed.json",
+        "receipt_sha256": "e23288127caa4b470fac33048314fd4edcad3bdfc2ec5d5080a0ed275aeafd9e",
+        "request_path": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/count-request.json",
+        "request_sha256": "1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f",
+        "stage": "COUNT",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/GENERATE-consumed.json",
+        "receipt_sha256": "03bfe8cd00aac71791fc73fb5952c08cadb872ad54d78f8bceb3e8322f221a77",
+        "request_path": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/generation-request.json",
+        "request_sha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+        "stage": "GENERATE",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-fresh-head-two-stage/CLASSIFY-consumed.json",
+        "receipt_sha256": "dbafca3b7ada363c0eeaee28eedaecf9e0580455c2919e39a37b1a22e296e4ed",
+        "request_path": ".codex/tdd-evidence/issue123-fresh-head-two-stage/a-request.json",
+        "request_sha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+        "stage": "CLASSIFY",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-fresh-head-two-stage/COUNT-consumed.json",
+        "receipt_sha256": "52dbb985a2bf192b88e0d7b5b9afd04cc5d9e175ec2564166e18db04be4ef66d",
+        "request_path": ".codex/tdd-evidence/issue123-fresh-head-two-stage/count-request.json",
+        "request_sha256": "1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f",
+        "stage": "COUNT",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-fresh-head-two-stage/GENERATE-consumed.json",
+        "receipt_sha256": "83456fa74033c9102698afe8c3a97fddd7e5ef36e02d424ba22d39f6546056b6",
+        "request_path": ".codex/tdd-evidence/issue123-fresh-head-two-stage/generation-request.json",
+        "request_sha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+        "stage": "GENERATE",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-usd2-generation-diagnostic/attempt1-consumed.json",
+        "receipt_sha256": "44e46679492477e6e2d1c566206616296b707e183ad2c75debdaad23f58a9497",
+        "request_path": ".codex/tdd-evidence/issue123-usd2-generation-diagnostic/generation-request.json",
+        "request_sha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+        "stage": "GENERATE",
+        "attempts": 1
+      },
+      {
+        "receipt_path": ".codex/tdd-evidence/issue123-usd2-generation-diagnostic/attempt2-consumed.json",
+        "receipt_sha256": "cb17349643a79ef7e603ecea2acfef6bc518a25a5663d6710c9e66667f5f7429",
+        "request_path": ".codex/tdd-evidence/issue123-usd2-generation-diagnostic/generation-request.json",
+        "request_sha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+        "stage": "GENERATE",
+        "attempts": 1
+      }
+    ]
+  },
+  "evaluator_access": {
+    "author": "/root/server_precheck_tests",
+    "scope": "Read both corpus containers/raw/gold programmatically for aggregate and exact-match audit; inspected development candidate comparisons. No holdout raw, per-case IDs or individual gold mappings printed or forwarded.",
+    "prompt_tuning_eligibility": "This evaluator must not tune prompt/schema/threshold using the old holdout after accessing it.",
+    "previous_review": {
+      "path": "docs/verification/issue107-decision-evaluation-review.md",
+      "author": "/root/baseline_merge_review",
+      "all120_previously_read": true
+    },
+    "isolation": "Repository split is procedural, not cryptographic access control. Root/prompt/implementation receive aggregate counts only; independent payload review is separate."
+  },
+  "provenance_path_scope": "Historical issue123 worktree evidence records. Listed raw request/receipt paths are provenance only, not dependencies of this portable validator."
+}

@@ -1,0 +1,49 @@
+{
+  "recorded_at": "2026-10-17T20:59:40.638810+00:00",
+  "node_tests": 140,
+  "node_passed": 140,
+  "node_failed": 0,
+  "v8_tests": 37,
+  "v8_passed": 37,
+  "v8_seconds": 453.852,
+  "nginx_exit": 0,
+  "initial_failures_excluded": {
+    "node": "Two standalone javac launch failures because JDK bin was absent from PATH; source unchanged; identical full selection passed with JDK17 PATH.",
+    "nginx": "Local public config mode0600 after checkout was not readable by container; workspace-only chmod0644, unchanged Git/content; isolated Docker configuration preserved."
+  },
+  "limits": "Synthetic/local only; no production/real OAuth/paid model/SSM/Secret calls.",
+  "logs": {
+    "node_initial_environment_failure": {
+      "path": ".codex/tdd-evidence/issue107-runtime-readiness-node-full.log",
+      "sha256": "931dbe6fdd8d5a6b208ed0ce06a72bbcccde11cb6c569948f3d07f6cef3270cd"
+    },
+    "node_green": {
+      "path": ".codex/tdd-evidence/issue107-runtime-readiness-node-full-jdk-green.log",
+      "sha256": "48ae1610069620f72c78b826da591eac869c66c2b2402bd17c256d9797f510b4"
+    },
+    "v8_green": {
+      "path": ".codex/tdd-evidence/issue107-runtime-readiness-v8-full.log",
+      "sha256": "95201addee26fc22d8978fd46916f6361ed7fac7e84361595b6b5dff3ebd9495"
+    },
+    "nginx_initial_environment_failure": {
+      "path": ".codex/tdd-evidence/issue107-runtime-readiness-nginx.log",
+      "sha256": "8afea526952e63d0fddb1c204dce4076c50356936f8a01e28f676945e5d1f66b"
+    },
+    "nginx_green": {
+      "path": ".codex/tdd-evidence/issue107-runtime-readiness-nginx-readable-green.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "commands": {
+    "node": "JAVA_HOME=/tmp/meetme-jdk17 PATH=/tmp/meetme-jdk17/bin:$PATH node --test .github/scripts/*.test.cjs deploy/tests/runtime-provider-env.test.cjs deploy/tests/built-image-workflow.test.cjs",
+    "v8": "python3 -m unittest discover -s deploy/tests -p 'test_v8_release_guard*.py' -v",
+    "nginx": "DOCKER_CONFIG=<private empty temporary directory> bash deploy/scripts/verify-nginx-runtime.sh"
+  },
+  "nginx_environment": {
+    "configurationMode": "0644 workspace-only public configuration; content unchanged",
+    "dockerConfig": "temporary empty {} to isolate injected CLI proxy settings",
+    "scriptUnchanged": true,
+    "exitCode": 0,
+    "successLogIsEmptyBecauseQuietScript": true
+  }
+}

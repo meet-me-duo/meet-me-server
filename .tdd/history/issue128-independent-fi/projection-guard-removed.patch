@@ -1,0 +1,11 @@
+--- src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt
++++ src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt
+@@ -385,7 +385,7 @@
+                     it.id,
+                     requireNotNull(status),
+                     it.version,
+-                    if (open && status == PrecheckStatus.NEEDS_CHOICE) it.question else null,
++                    if (open) it.question else null,
+                     open &&
+                         it.status in RETRYABLE &&
+                         it.retryCount == 0 &&

@@ -229,10 +229,12 @@ class CorrectionRoundAdditionalPostgresTest : CorrectionRoundPostgresFixture() {
     }
 
     private fun completedRoomWithObserver(): Pair<CompletedCorrectionFixture, CorrectionSession> {
+        val hostCookie = accounts.newAccount("host")
         val response =
             mvc
                 .perform(
                     post("/api/rooms")
+                        .cookie(hostCookie)
                         .header("Origin", CorrectionRoundPostgresFixture.ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -242,7 +244,9 @@ class CorrectionRoundAdditionalPostgresTest : CorrectionRoundPostgresFixture() {
                 .andReturn()
                 .response
         val code = document(response).getValue("invite_code").toString()
-        val host = CorrectionSession(code, credential(response.getHeader(HttpHeaders.SET_COOKIE)))
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
+        val host = CorrectionSession(code, hostCookie.value)
 
         fun join(name: String): CorrectionSession {
             val joined =

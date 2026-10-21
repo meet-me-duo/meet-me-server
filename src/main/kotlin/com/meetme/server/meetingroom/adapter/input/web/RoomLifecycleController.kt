@@ -7,7 +7,6 @@ import com.meetme.server.meetingroom.application.port.input.CreateRoomCommand
 import com.meetme.server.meetingroom.application.port.input.CreateRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.GetRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.JoinRoomCommand
-import com.meetme.server.meetingroom.application.port.input.JoinRoomUseCase
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -34,14 +33,20 @@ import java.time.Duration
 class RoomLifecycleController(
     private val createRoom: CreateRoomUseCase,
     private val getRoom: GetRoomUseCase,
-    private val joinRoom: JoinRoomUseCase,
+    private val guestParticipation: com.meetme.server.participant.application.port.input.GuestReaccessUseCase,
     private val closeRoom: CloseRoomUseCase,
     private val properties: AnonymousAccessProperties,
 ) {
     @PostMapping
-    @Operation(summary = "로그인 없이 방과 주최자 참여 생성")
+    @Operation(summary = "로그인 계정으로 방과 주최자 참여 생성")
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "방 생성 성공"),
+        ApiResponse(responseCode = "500", description = "방 생성에 필요한 내부 설정 사용 불가", content = [Content()]),
+        ApiResponse(
+            responseCode = "401",
+            description = "로그인 필요",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
         ApiResponse(
             responseCode = "400",
             description = "입력 검증 실패",
@@ -86,6 +91,16 @@ class RoomLifecycleController(
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "방 조회 성공"),
         ApiResponse(
+            responseCode = "401",
+            description = "제공한 Access Token이 무효",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "403",
+            description = "참여 소유 증명 범위 부족",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
             responseCode = "404",
             description = "방 없음",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
@@ -97,10 +112,20 @@ class RoomLifecycleController(
     ): RoomResponse = RoomResponse.from(getRoom.get(inviteCode, credential))
 
     @PostMapping("/{inviteCode}/participants")
-    @Operation(summary = "익명 세션으로 방 참여")
+    @Operation(summary = "로그인 계정 또는 게스트 세션으로 방 참여")
     @ApiResponses(
         ApiResponse(responseCode = "201", description = "새 참여 생성"),
+        ApiResponse(
+            responseCode = "401",
+            description = "제공한 Access Token이 무효",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
         ApiResponse(responseCode = "200", description = "기존 참여 반환"),
+        ApiResponse(
+            responseCode = "403",
+            description = "Origin 또는 게스트 참여 조회 증명 범위 부족",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
         ApiResponse(
             responseCode = "400",
             description = "입력 검증 실패",
@@ -127,7 +152,7 @@ class RoomLifecycleController(
         @Valid @RequestBody request: JoinRoomRequest,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
     ): ResponseEntity<RoomResponse> {
-        val result = joinRoom.join(JoinRoomCommand(inviteCode, credential, request.displayName))
+        val result = guestParticipation.join(JoinRoomCommand(inviteCode, credential, request.displayName), request.password)
         return responseBuilder(
             if (result.participantCreated) HttpStatus.CREATED else HttpStatus.OK,
             result.newCredential,
@@ -135,12 +160,12 @@ class RoomLifecycleController(
     }
 
     @PostMapping("/{inviteCode}/close")
-    @Operation(summary = "주최자 세션으로 입력 수집 수동 마감")
+    @Operation(summary = "로그인한 주최자가 입력 수집 수동 마감")
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "마감 성공 또는 기존 마감 결과"),
         ApiResponse(
             responseCode = "401",
-            description = "게스트 세션 누락 또는 무효",
+            description = "로그인 누락 또는 무효",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
         ApiResponse(

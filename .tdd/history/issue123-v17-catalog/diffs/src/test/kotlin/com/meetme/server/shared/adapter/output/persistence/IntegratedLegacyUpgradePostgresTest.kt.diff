@@ -1,0 +1,53 @@
+--- src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt.before
++++ src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt.after
+@@ -9,7 +9,7 @@
+ import java.util.UUID
+ import kotlin.test.assertEquals
+ 
+-/** Existing V8 rows survive exact V1..V16 integration without automatic linking or reanalysis. */
++/** Existing V8 rows survive exact V1..V17 integration without automatic linking or reanalysis. */
+ class IntegratedLegacyUpgradePostgresTest {
+     @BeforeEach
+     fun resetSchema() {
+@@ -18,17 +18,17 @@
+     }
+ 
+     @Test
+-    fun `blank PostgreSQL migrates exactly sixteen versions and validates both independent legacy schemas`() {
+-        assertEquals(16, flyway().migrate().migrationsExecuted)
++    fun `blank PostgreSQL migrates exactly seventeen versions and validates both independent legacy schemas`() {
++        assertEquals(17, flyway().migrate().migrationsExecuted)
+         flyway().validate()
+         assertEquals(
+-            "16",
++            "17",
+             flyway()
+                 .info()
+                 .current()
+                 .version.version,
+         )
+-        assertEquals("16", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
++        assertEquals("17", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+         assertEquals(
+             "6",
+             scalar(
+@@ -47,7 +47,7 @@
+         seedRoom("CONSUMED")
+         val original = snapshots()
+ 
+-        assertEquals(8, flyway().migrate().migrationsExecuted)
++        assertEquals(9, flyway().migrate().migrationsExecuted)
+         flyway().validate()
+ 
+         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
+@@ -55,6 +55,10 @@
+         assertEquals("3", scalar("SELECT count(*)::text FROM meeting_rooms WHERE submission_protocol='LEGACY'"))
+         for (table in listOf("precheck_candidates", "precheck_checks", "precheck_executions", "precheck_operations")) {
+             assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent checks or rewrite saved input")
++        }
++        val roomLedgerTables = listOf("ai_room_budgets", "ai_call_reservations", "ai_call_observations")
++        for (table in roomLedgerTables) {
++            assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent budget coverage or reservations")
+         }
+         assertEquals("3", scalar("SELECT count(*)::text FROM coordination_attempts"))
+         assertEquals(

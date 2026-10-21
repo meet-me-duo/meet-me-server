@@ -1,0 +1,90 @@
+{
+  "workItem": "issue107-integrated-catalog",
+  "status": "THREE_INDEPENDENT_MUTANTS_DETECTED",
+  "recordedAt": "2026-10-17T18:16:24.009699Z",
+  "mode": "Mutations only in disposable local copies; original production and frozen tests never edited",
+  "mutants": [
+    {
+      "id": "publisher-ignores-unknown17",
+      "mutatedPath": "deploy/pipeline/publish_manifest.py",
+      "targetTest": "C03",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=C03",
+        ".github/scripts/issue107-integrated-catalog.test.cjs"
+      ],
+      "mutantExit": 1,
+      "assertionDetected": true,
+      "restoredExit": 0,
+      "copyRestoredExactly": true,
+      "rawEvidence": ".codex/tdd-evidence/issue107-integrated-catalog-faults/publisher-ignores-unknown17.log",
+      "rawSha256": "e6de66dfa5058868df8876736a7d39c53110a31c8e75a24428e936157d19db9c"
+    },
+    {
+      "id": "remove-history-prefix",
+      "mutatedPath": "deploy/pipeline/approved_release.py",
+      "targetTest": "C10",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=C10",
+        ".github/scripts/issue107-integrated-catalog.test.cjs"
+      ],
+      "mutantExit": 1,
+      "assertionDetected": true,
+      "restoredExit": 0,
+      "copyRestoredExactly": true,
+      "rawEvidence": ".codex/tdd-evidence/issue107-integrated-catalog-faults/remove-history-prefix.log",
+      "rawSha256": "cfa05c0eb8b3b95df7bca97b73e69e1f78c4d656d3ccd740452255387dd9d5ce"
+    },
+    {
+      "id": "ignore-schema-guard-fingerprint",
+      "mutatedPath": "deploy/pipeline/approved_release.py",
+      "targetTest": "C12",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern=C12",
+        ".github/scripts/issue107-integrated-catalog.test.cjs"
+      ],
+      "mutantExit": 1,
+      "assertionDetected": true,
+      "restoredExit": 0,
+      "copyRestoredExactly": true,
+      "rawEvidence": ".codex/tdd-evidence/issue107-integrated-catalog-faults/ignore-schema-guard-fingerprint.log",
+      "rawSha256": "078034cd5c82efc5126390e8e4717fc792f3782d34e50f990dcd3a6441f901ad"
+    }
+  ],
+  "originalProductionFingerprints": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b7215c98a249d0c5cb5c9a7655f223fe4bd2d980775aba1ebd282b5ad6c8e3a1"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "a1adb5c6ca3c9cc1df3346af2116673e7a7bb4ac664cfe7af8286ddb4a69523c"
+    }
+  ],
+  "frozenTestFingerprints": [
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "9dc45b0c130c69ee8d5d5747b518639adac68b3a1701d5631911b3f0e8bffda7"
+    }
+  ],
+  "originalSourceUnchanged": true,
+  "testsUnchanged": true,
+  "externalCalls": 0,
+  "operationalCalls": 0
+}

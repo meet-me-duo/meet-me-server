@@ -1,0 +1,57 @@
+{
+  "workItem": "issue123-dispatch-integration",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123FinalDispatchLifecyclePostgresTest.kt",
+      "sha256": "b3d62a22b0dba887d7abe4afd6b517a95f29911fe56c1ca68dab6511d6a1439f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtures.kt",
+      "sha256": "140268c3b45fa61066fe3e3384e21ead9e8baaff09a5b58feff622c66fdd7e79"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123FinalLegacyCompatibilityTest.kt",
+      "sha256": "81515d2e7e8e739667b4081eff9f172653df814c30847c7ac4dbd05a772010dc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ManagedDispatchCompositionTest.kt",
+      "sha256": "24fbf7a042c888a75caf68040c2f88e183227239b430c49d689937ee231666e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123WorkerDispatchLineageTest.kt",
+      "sha256": "df58be0f972ad37cfd2bc3c43202e299ffe9e0bb0cc1566303dcb7e4d245705a"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue123ManagedDispatchCompositionTest",
+    "--tests",
+    "*Issue123FinalDispatchLifecyclePostgresTest",
+    "--tests",
+    "*Issue123WorkerDispatchLineageTest",
+    "--tests",
+    "*Issue123FinalLegacyCompatibilityTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#AD04 real final primary records exact invocation generation attempt and same room financial hold()",
+    "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM03 real four primary retries and one fallback all consume one durable room account()",
+    "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM04 real HOST retry keeps previous UNKNOWN holds and queued duplicate issues no extra work()",
+    "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#AD02 unsupported legacy final wiring with ON has no physical dispatch(String) [2] \"invocation-repository\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM05 real changed correction new batch preserves room budget and source version isolation()",
+    "com.meetme.server.coordination.adapter.input.web.Issue123FinalDispatchLifecyclePostgresTest#TM06 real deadletter replay keeps previous physical holds after failure rows are deleted()",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#OR01 managed application mode reads the same explicit gate property without financial authority(boolean) [1] false",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#OR01 managed application mode reads the same explicit gate property without financial authority(boolean) [2] true",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#AD02 managed final adapter cannot start without its mandatory shared gate(String) [1] \"gemini\"",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#AD02 managed final adapter cannot start without its mandatory shared gate(String) [2] \"luna\"",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#AD02 managed personal factory ON without gate returns configuration failure before any socket()",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123WorkerDispatchLineageTest#OR01 worker binds immutable claimed execution and original anchor only when mode is ON(String) [1] \"ON\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T04:38:26.699225Z"
+}

@@ -1,0 +1,48 @@
+{
+  "workItem": "issue-109-identity",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "boundary": "Account identity uniqueness across concurrent first login and application transaction enforcement using real PostgreSQL and Spring transaction proxy; final source only ktlint whitespace and optional trailing commas after mutation verification, token-equivalence reviewed and final 6/6 GREEN",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/persistence/JdbcAccountRepository.kt",
+      "sha256": "8d0a4d7ed22d014214cd188b3ece21382cb7b3401f3f72abd8e2178c901c3d6e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/application/service/AccountIdentityService.kt",
+      "sha256": "29c562b1332acb8f268c8fb100971d84161cf02b3f5aff875305f9c65288ec3a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/persistence/AccountIdentityPersistenceTest.kt",
+      "sha256": "66174673b7ebd21802fd2d6b7c8b7aa1ab6d95fe1c4c6d538b8cf34f2bf11565"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "remove provider subject transaction-scoped PostgreSQL advisory lock",
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*AccountIdentityPersistenceTest"
+      ],
+      "detectedBy": "AccountIdentityPersistenceTest#concurrent first login for same identity yields one account and no orphans()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "remove application identity transaction; defensive adapter guard rejects nontransactional identity creation",
+      "command": [
+        "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*AccountIdentityPersistenceTest"
+      ],
+      "detectedBy": "AccountIdentityPersistenceTest#identity insertion failure rolls back account creation and later retry succeeds()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T14:42:16Z"
+}

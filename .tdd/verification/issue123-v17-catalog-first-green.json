@@ -1,0 +1,29 @@
+{
+  "recordedAt": "2026-10-18T03:58:35.089456+00:00",
+  "classification": "FOCUSED_SYNTHETIC_CATALOG_FIRST_GREEN",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe plus listed working-tree patch",
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern=^VC(0[1-9]|1[01]) ",
+    ".github/scripts/issue123-v17-catalog.test.cjs"
+  ],
+  "exitCode": 0,
+  "tests": 11,
+  "passed": 11,
+  "failed": 0,
+  "excluded": "VC12 actual-source check awaits real V17 SQL; not counted as PASS/RED",
+  "rawLog": ".codex/tdd-evidence/issue123-v17-catalog/first-green.log",
+  "rawLogSha256": "e151e80331019561a0b91065252031f23a425d87e8d6774f4c59c9489e1230ef",
+  "fingerprints": {
+    "deploy/pipeline/publish_manifest.py": "7cf3fffa042f251d18a7f6f0fb8c209ab7318da8af54dad0ca23444138b55683",
+    "deploy/pipeline/approved_release.py": "bcde34cb16a7a768f386582f71482d2a23bcc362775d2a6258b4b1f19d86e72f",
+    "deploy/pipeline/host-approved-release.py": "feb0771aeafe6614532d789f89088e7871d52fec69cf5467f1c2c67c22892379",
+    ".github/scripts/issue123-v17-catalog.test.cjs": "88befd487346d70101bab7d052f11869379fc1835efc371b3911dc1c73257ce3",
+    ".github/scripts/issue107-integrated-catalog.test.cjs": "008e4992a876ef004c7ba866d1b254a155cfe9c7d84609ae300bdcff0c8c3f85",
+    ".github/scripts/fixtures/integrated-release-catalog.cjs": "c4319bdceda956806dc7645612fd6e23bd56e8f9d552a6daa042309bdf11c0f2"
+  },
+  "workflowChanges": 0,
+  "runtimeAuthFileInventoryChanges": 0,
+  "fullGateCompleted": false
+}

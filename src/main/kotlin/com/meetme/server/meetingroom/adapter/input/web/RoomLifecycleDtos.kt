@@ -16,7 +16,7 @@ import jakarta.validation.constraints.Size
 import java.time.Instant
 import java.time.LocalDate
 
-@Schema(description = "익명 모임 방 생성 요청")
+@Schema(description = "로그인한 계정의 모임 방 생성 요청")
 data class CreateRoomRequest(
     @field:NotBlank
     @field:Size(max = 500)
@@ -25,11 +25,10 @@ data class CreateRoomRequest(
     @field:JsonProperty("meeting_mode")
     @field:Schema(description = "선호 모임 방식")
     val meetingMode: MeetingMode,
-    @field:NotBlank
     @field:Size(max = 50)
     @field:JsonProperty("host_display_name")
-    @field:Schema(description = "주최자 표시 이름, 공백 제거 후 1~50자", example = "민수")
-    val hostDisplayName: String,
+    @field:Schema(description = "호환용 입력. 로그인 계정의 표시 이름을 사용하므로 생략 가능하며 사용하지 않음", nullable = true)
+    val hostDisplayName: String? = null,
     @field:Min(2)
     @field:JsonProperty("expected_participants")
     @field:Schema(description = "자동 마감할 고유 제출 참여자 목표, 설정하면 2 이상", nullable = true)
@@ -50,12 +49,22 @@ data class CreateRoomRequest(
 
 @Schema(description = "익명 참여 요청")
 data class JoinRoomRequest(
-    @field:NotBlank
-    @field:Size(max = 50)
     @field:JsonProperty("display_name")
-    @field:Schema(description = "참여자 표시 이름, 최초 참여에만 사용", example = "지수")
-    val displayName: String,
-)
+    @field:Schema(
+        description = "게스트 최초 참여 때 필요한 표시 이름. 앞뒤 공백 제거 후 1~50 Unicode 코드 포인트. 회원은 계정 이름을 사용하여 생략 가능",
+        example = "지수",
+        nullable = true,
+    )
+    val displayName: String? = null,
+    @field:Schema(
+        description = "게스트 최초 참여의 선택 암호. 공백·대소문자를 보존하며 1~128 Unicode 코드 포인트. 회원은 사용하지 않음",
+        nullable = true,
+        accessMode = Schema.AccessMode.WRITE_ONLY,
+    )
+    val password: String? = null,
+) {
+    override fun toString(): String = "JoinRoomRequest(redacted)"
+}
 
 @Schema(description = "수동 마감 요청")
 data class CloseRoomRequest(
@@ -80,6 +89,9 @@ data class ViewerParticipationResponse(
         format = "uuid",
     )
     val contextId: java.util.UUID? = null,
+    @field:JsonProperty("participant_id")
+    @field:Schema(description = "현재 유효한 게스트의 기록 번호. 재접근 선택 보조용이며 권한 증명이 아님. 회원·미참여는 null", nullable = true, format = "uuid")
+    val participantId: java.util.UUID? = null,
 )
 
 @Schema(description = "조건 수정 라운드. 과거 operation 결과와 현재 활성 라운드는 별개")
@@ -183,6 +195,12 @@ data class RoomResponse(
     @field:JsonProperty("recommendation_protocol")
     @field:Schema(description = "활성 분석의 실제 시각 선택 protocol; legacy 또는 분석 전에는 null", nullable = true)
     val recommendationProtocol: String? = null,
+    @field:JsonProperty("clarification_protocol")
+    @field:Schema(description = "본인 보완 질문 API 지원 표지. 권한은 별도 검증", allowableValues = ["owner-clarification-v1"])
+    val clarificationProtocol: String = "owner-clarification-v1",
+    @field:JsonProperty("submission_protocol")
+    @field:Schema(description = "방 생성 시 고정된 제출 확인 흐름", allowableValues = ["LEGACY", "PRE_SUBMIT_V1"])
+    val submissionProtocol: String = "LEGACY",
 ) {
     companion object {
         fun from(view: RoomView) =
@@ -201,7 +219,13 @@ data class RoomResponse(
                 view.closureReason,
                 view.closedAt,
                 view.publicStatus,
-                ViewerParticipationResponse(view.viewer.joined, view.viewer.displayName, view.viewer.role, view.viewer.contextId),
+                ViewerParticipationResponse(
+                    view.viewer.joined,
+                    view.viewer.displayName,
+                    view.viewer.role,
+                    view.viewer.contextId,
+                    view.viewer.participantId,
+                ),
                 view.inputDisclosurePolicy,
                 view.analysisId,
                 view.revisionGeneration,
@@ -210,6 +234,7 @@ data class RoomResponse(
                 view.remainingCorrectionAnalyses,
                 view.stateVersion,
                 view.recommendationProtocol,
+                submissionProtocol = view.submissionProtocol,
             )
     }
 }

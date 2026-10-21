@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "status": "READ_ONLY_ASSET_AUDIT_NO_MODEL_EXECUTION",
+  "assets": [
+    {
+      "path": "docs/fixtures/issue-107-decision-development.json",
+      "sha256": "34f7ad4f06120c6cba6e1869e3e9ef5a9b250e1687765367ae28be96be7323a0",
+      "count": 60,
+      "split": "development",
+      "origin_commit": "e83d5280c7c236c99d64165893632920882527fe",
+      "byte_identical_to_origin": true,
+      "shared_context": {
+        "referenceAt": "2026-11-04T03:00:00Z",
+        "timeZone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "searchStartDate": "2026-11-04",
+        "searchEndDate": "2026-11-18"
+      },
+      "model_input_allowlist": [
+        "rawText",
+        "referenceAt",
+        "timeZone",
+        "locale",
+        "searchStartDate",
+        "searchEndDate"
+      ],
+      "original_execution_status_field": "NOT_RUN_NO_PAID_AUTHORIZATION"
+    },
+    {
+      "path": "docs/fixtures/issue-107-decision-holdout.json",
+      "sha256": "da6569ee860561dd0d1cb2019ec142bea5b0f8d649f81964ebc3ac0f7ec7c407",
+      "count": 60,
+      "split": "holdout",
+      "origin_commit": "e83d5280c7c236c99d64165893632920882527fe",
+      "byte_identical_to_origin": true,
+      "shared_context": {
+        "referenceAt": "2026-11-04T03:00:00Z",
+        "timeZone": "Asia/Seoul",
+        "locale": "ko-KR",
+        "searchStartDate": "2026-11-04",
+        "searchEndDate": "2026-11-18"
+      },
+      "model_input_allowlist": [
+        "rawText",
+        "referenceAt",
+        "timeZone",
+        "locale",
+        "searchStartDate",
+        "searchEndDate"
+      ],
+      "original_execution_status_field": "NOT_RUN_NO_PAID_AUTHORIZATION"
+    }
+  ],
+  "frozen_criteria": [
+    {
+      "path": "docs/ISSUE_107_DECISION_EVALUATION.md",
+      "sha256": "b1fb095a6134d0ddfd4952e5f815c95a200766ef32c180a390315d1d144a888d"
+    },
+    {
+      "path": "docs/ISSUE_107_DECISION_EXTERNAL_EVALUATION.md",
+      "sha256": "5ae9741dab3745554310f936f84f61e3372baac5601051718c210e5476d163a2"
+    },
+    {
+      "path": "docs/verification/issue107-decision-evaluation-review.md",
+      "sha256": "ac213afde2b8855e4bbe3c1b21e4ecbce263a6df1335868f3a5b16233524d929"
+    },
+    {
+      "path": "docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md",
+      "sha256": "593ff38958fd01cdfa67c047cb8db664dce8048b40fc90ec1945c0465c0345fc"
+    }
+  ],
+  "older30": {
+    "path": "docs/fixtures/issue-107-pre-submit-evaluation.json",
+    "sha256": "063c21f4cb96eddf77578fa2d6947160c000564d872be2b565ce5482687b807f",
+    "count": 30
+  },
+  "checks": {
+    "cross_split_duplicate_count": 0,
+    "older30_exact_overlap_counts": {
+      "development": 0,
+      "holdout": 0
+    },
+    "unique_ids_per_split": {
+      "development": 60,
+      "holdout": 60
+    },
+    "cross_split_id_duplicate_count": 0
+  }
+}

@@ -1,5 +1,7 @@
 package com.meetme.server.coordination.application.service
 
+import com.meetme.server.account.application.port.output.CurrentAccountPort
+import com.meetme.server.account.domain.AccountPrincipal
 import com.meetme.server.coordination.application.port.input.MatchingResultErrorCode
 import com.meetme.server.coordination.application.port.input.MatchingResultException
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
@@ -16,14 +18,16 @@ import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.meetingroom.domain.MeetingRoom
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
+import com.meetme.server.participant.application.port.output.GuestOwnershipProofPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
-import com.meetme.server.participant.domain.GuestSession
+import com.meetme.server.participant.application.service.ParticipantOwnershipResolver
 import com.meetme.server.participant.domain.Participant
 import com.meetme.server.participant.domain.ParticipantDisplayName
+import com.meetme.server.participant.domain.ParticipantRole
+import com.meetme.server.shared.adapter.input.web.GuestCookie
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CoordinationRunId
-import com.meetme.server.shared.domain.GuestSessionId
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.SubmissionBatchId
@@ -48,6 +52,8 @@ import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.springframework.context.support.StaticMessageSource
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import java.time.Clock
 import java.time.Instant
 import java.time.LocalDate
@@ -119,6 +125,7 @@ class MatchingNaturalLanguageOnlyTest {
         assertEquals("participant 2", unapplied.participantDisplayName)
         assertNull(unapplied.rawText)
         assertEquals("LEGACY_MANUAL_ONLY_UNSUPPORTED", unapplied.reason)
+        f.viewAsMember()
         val denied =
             assertThrows<MatchingResultException> {
                 service.getUnappliedInputs(f.room.inviteCode.value, "member")
@@ -203,7 +210,7 @@ class MatchingNaturalLanguageOnlyTest {
     }
 
     @Test
-    fun `valid time survives partial rejection and all failed natural input retains neutral base`() {
+    fun `valid time survives partial rejection while fully failed natural input cannot attend`() {
         val partial = NaturalLanguageOnlyFixture(listOf("partially valid", "available"))
         partial.results(listOf(partial.window(9, 12)), listOf(partial.window(10, 13)))
         partial.structured =
@@ -224,10 +231,7 @@ class MatchingNaturalLanguageOnlyTest {
                 if (index == 0) result.copy(rejectionCode = "INVALID_CONDITION") else result
             }
         failed.process()
-        assertEquals(
-            listOf(failed.utc(10, 13)),
-            failed.singleCandidate().timeRanges,
-        )
+        assertTrue(failed.run.candidates.isEmpty())
         assertEquals(CandidateQuality.PARTIAL, failed.run.quality)
         assertEquals(CoordinationStatus.COMPLETED, failed.run.status)
     }
@@ -338,29 +342,53 @@ internal class NaturalLanguageOnlyFixture(
         return run.candidates.single()
     }
 
+    private var viewerAccount: AccountPrincipal? = null
+    private lateinit var hostAccount: AccountPrincipal
+    private lateinit var memberAccount: AccountPrincipal
+
+    fun viewAsMember() {
+        viewerAccount = memberAccount
+    }
+
+    private fun currentViewerAccount(): AccountPrincipal? {
+        val request = (RequestContextHolder.getRequestAttributes() as? ServletRequestAttributes)?.request ?: return viewerAccount
+        return when (request.cookies?.firstOrNull { it.name == GuestCookie.NAME }?.value) {
+            "host" -> hostAccount
+            "member" -> memberAccount
+            else -> null
+        }
+    }
+
     fun resultService(): MatchingResultService {
         val sessions = mock(GuestSessionRepository::class.java)
         val participants = mock(ParticipantRepository::class.java)
         val credentials = mock(GuestCredentialPort::class.java)
-        listOf("host", "member").forEachIndexed { index, credential ->
-            val session = GuestSession(GuestSessionId(UUID.randomUUID()), credential, NOW.plusSeconds(3600), null, NOW)
+        listOf("host", "member").forEachIndexed { index, _ ->
+            val account = AccountPrincipal(UUID.randomUUID(), "participant ${index + 1}")
             val owner =
-                if (index == 0) {
-                    Participant.host(submissions[index].participantId, room.id, session.id, ParticipantDisplayName.of("participant 1"), NOW)
-                } else {
-                    Participant.member(
-                        submissions[index].participantId,
-                        room.id,
-                        session.id,
-                        ParticipantDisplayName.of("participant 2"),
-                        NOW,
-                    )
-                }
-            `when`(credentials.digest(credential)).thenReturn(credential)
-            `when`(sessions.findByCredentialDigest(credential)).thenReturn(session)
-            `when`(participants.findByRoomAndGuestSession(room.id, session.id)).thenReturn(owner)
+                Participant.account(
+                    submissions[index].participantId,
+                    room.id,
+                    account.accountId,
+                    ParticipantDisplayName.of(account.displayName),
+                    if (index == 0) ParticipantRole.HOST else ParticipantRole.MEMBER,
+                    NOW,
+                )
+            `when`(participants.findByRoomAndUser(room.id, account.accountId)).thenReturn(owner)
             `when`(participants.findById(owner.id)).thenReturn(owner)
+            if (index == 0) {
+                hostAccount = account
+                viewerAccount = account
+            } else {
+                memberAccount = account
+            }
         }
+        val ownership =
+            ParticipantOwnershipResolver(
+                CurrentAccountPort { currentViewerAccount() },
+                mock(GuestOwnershipProofPort::class.java),
+                participants,
+            )
         val messages = StaticMessageSource().apply { addMessage("candidate.summary.explicit", Locale.KOREAN, "{0}") }
         return MatchingResultService(
             roomRepository,
@@ -373,6 +401,7 @@ internal class NaturalLanguageOnlyFixture(
             credentials,
             messages,
             Clock.fixed(NOW, ZoneOffset.UTC),
+            ownership = ownership,
         )
     }
 

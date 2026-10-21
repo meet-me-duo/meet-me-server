@@ -1,0 +1,390 @@
+{
+  "workItem": "issue107-runtime-auth-catalog-faults",
+  "startedAt": "2026-10-17T20:45:54.607785Z",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "scratch": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+  "copiedFiles": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "a852a6be38de5a87bf79f44980830f3f53821a8efa64e11ac7a48aa0e4969972"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e"
+    },
+    {
+      "path": "deploy/compose.guard.yml",
+      "sha256": "e7ce7a742f7c207ab9329c66d6de917259db7d08868bf9f6291a72a631dffceb"
+    },
+    {
+      "path": "deploy/compose.production.yml",
+      "sha256": "359f890940af942dbacacb18d5b07cec6fef7d21bf769cf09eb2e0d22fffbb0c"
+    },
+    {
+      "path": "deploy/meet-me-guarded-restart.service",
+      "sha256": "e939efacc89d2456541d48cefbf5050354da8e0d9ba8d441ecb974b753b6bfbb"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce"
+    },
+    {
+      "path": "deploy/preflight/ReadOnlyFlywayProbe.java",
+      "sha256": "ab7c9cb140ee51f82a5433768061999a905e3beb08fb46831cea51fb96044794"
+    },
+    {
+      "path": "deploy/preflight/host-preflight.sh",
+      "sha256": "b44200421088120caf4b59ab7d81be286e38e9aad514eb0ecdb00f01550ac43c"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "7a4d0b810224f88495dee52823319913ee1219913edbee66bd715974b6641a53"
+    },
+    {
+      "path": "deploy/runtime-auth-mode",
+      "sha256": "30988713daff9e4788a9798036742f3adeb4643a0d3544582632328cb72af20a"
+    },
+    {
+      "path": "deploy/scripts/deploy-release.sh",
+      "sha256": "01fcf7a94f7e1f07b4e4bd4fc15d3151405f2019906ad78d88ded326a11adbcd"
+    },
+    {
+      "path": "deploy/scripts/host-release-guard.sh",
+      "sha256": "57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f"
+    },
+    {
+      "path": "deploy/scripts/install-host-release-guard.sh",
+      "sha256": "3ee4718626ef2725503486e5ca635eff7a5d95b173d6b3aba64f34cdfab5b1d1"
+    },
+    {
+      "path": "deploy/scripts/refresh-database-credential.sh",
+      "sha256": "b1d221dcad8e70522dcfdac6ad9d42d931e3c6e5a9525f2147cf741e532c38c7"
+    },
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "f4a62e508cf21272fa47ff24b231f43603e88a7b29fb3fcc6666ceaaeb65d3b4"
+    },
+    {
+      "path": "deploy/scripts/rollback-release.sh",
+      "sha256": "20f60fb5705158cfb60e6d4cb8010b56a54401b761d3ffcebb4fa4289fbc6bad"
+    },
+    {
+      "path": "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql",
+      "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab"
+    },
+    {
+      "path": "src/main/resources/db/migration/V11__add_accounts_and_participant_ownership.sql",
+      "sha256": "0431b2c18a5f03c341d3d4c4d1f3456e169db610cb5bd92e3681978623b3b92c"
+    },
+    {
+      "path": "src/main/resources/db/migration/V12__add_guest_reaccess.sql",
+      "sha256": "fce24fe4bb215ef2d40d0b2eddb2efd1fc98d57162681d5050236824a3cd11da"
+    },
+    {
+      "path": "src/main/resources/db/migration/V13__add_submission_clarifications.sql",
+      "sha256": "b6ea047b7aa87486941b06d5cfbd4873449821ba6d684a8f52946053aa53e3ff"
+    },
+    {
+      "path": "src/main/resources/db/migration/V14__add_operator_access_audits.sql",
+      "sha256": "cddce45ef10fc2eac99cb739a1b631f41634b2cd06905e19919692844ca40196"
+    },
+    {
+      "path": "src/main/resources/db/migration/V15__add_parser_transport_observations.sql",
+      "sha256": "fcbcd040cb232ca400cbfb24b944f8289428032daf6ce386c35dbc119f9b9f98"
+    },
+    {
+      "path": "src/main/resources/db/migration/V16__add_pre_submission_checks.sql",
+      "sha256": "65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e"
+    },
+    {
+      "path": "src/main/resources/db/migration/V1__create_core_domain.sql",
+      "sha256": "f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515"
+    },
+    {
+      "path": "src/main/resources/db/migration/V2__add_anonymous_room_lifecycle.sql",
+      "sha256": "75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7"
+    },
+    {
+      "path": "src/main/resources/db/migration/V3__add_submission_gemini_pipeline.sql",
+      "sha256": "a1d7723e2461dbc6e483040f24fe9df8efc5d088b9ddc00ffaf1cdc842f12371"
+    },
+    {
+      "path": "src/main/resources/db/migration/V4__add_matching_results.sql",
+      "sha256": "14f90ca0642a4ee02242d334ebe542503907b509ee1a4fdfcc45f6c33905fe9d"
+    },
+    {
+      "path": "src/main/resources/db/migration/V5__remove_meeting_duration.sql",
+      "sha256": "7127e1ccc1284865cc3b0ea38be3582a1870f7d3ec05e3700d4577d1084c3146"
+    },
+    {
+      "path": "src/main/resources/db/migration/V6__add_reliable_outbox_processing.sql",
+      "sha256": "526c1cca68d23c1ee9fe4fad6c7cf0937eb53df5e306ee75b327223855f8af7a"
+    },
+    {
+      "path": "src/main/resources/db/migration/V7__resume_delayed_matching_from_structuring.sql",
+      "sha256": "d252715c33435f88498e8e0131ea5b35e6e081e63fdc91fab67b7f1b6235c747"
+    },
+    {
+      "path": "src/main/resources/db/migration/V8__add_input_revision_rounds.sql",
+      "sha256": "04ac022f09473e4d95128c765b2e274b7d1d1abb0fee4b722f56119638d22a92"
+    },
+    {
+      "path": "src/main/resources/db/migration/V9__add_time_recommendations.sql",
+      "sha256": "a6fc046611fb3cafa96d51f87de09687b3fdecc403988d211b7d86c4fad0585d"
+    }
+  ],
+  "copyMatchesOriginalBeforeRun": true,
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "a852a6be38de5a87bf79f44980830f3f53821a8efa64e11ac7a48aa0e4969972"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Publisher removes renderer from the seventeen-file approval fingerprint",
+      "target": "deploy/pipeline/publish_manifest.py",
+      "originalSHA256": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567",
+      "mutantSHA256": "e578ae3f5bbadb99b266252252f27894e2f3aeda9b79cb735cf9c774be4db516",
+      "exactRemoved": "\"runtime-auth-mode\", \"scripts/render-runtime-env.sh\", \"compose.production.yml\",",
+      "exactInserted": "\"runtime-auth-mode\", \"compose.production.yml\",",
+      "mutant": {
+        "startedAt": "2026-10-17T20:46:01.226842Z",
+        "finishedAt": "2026-10-17T20:46:01.370394Z",
+        "command": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          "--test-name-pattern",
+          "^RA02 ",
+          ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+          ".github/scripts/issue107-integrated-catalog.test.cjs"
+        ],
+        "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+        "exitCode": 1,
+        "totals": {
+          "tests": 2,
+          "pass": 1,
+          "fail": 1,
+          "skipped": 0
+        },
+        "failedTests": [
+          "RA02 publisher fingerprints all seventeen including runtime auth mode renderer and compose"
+        ],
+        "assertionFailureCount": 1,
+        "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/publisher-omits-renderer-mutant.log",
+        "rawLogSha256": "0348d17dd17125ac5958fcda21d42376e910751e5018542622da9e22ae293f17"
+      },
+      "restored": {
+        "startedAt": "2026-10-17T20:46:01.370558Z",
+        "finishedAt": "2026-10-17T20:46:08.137438Z",
+        "command": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+          ".github/scripts/issue107-integrated-catalog.test.cjs"
+        ],
+        "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+        "exitCode": 0,
+        "totals": {
+          "tests": 26,
+          "pass": 26,
+          "fail": 0,
+          "skipped": 0
+        },
+        "failedTests": [],
+        "assertionFailureCount": 0,
+        "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/publisher-omits-renderer-restored26.log",
+        "rawLogSha256": "d1ca364f6036e0222f5896c82c2fc4d3da3c40ba8927c243973e93e61b471820"
+      },
+      "exactScratchRestoration": true
+    },
+    {
+      "fault": "Runner treats a present authenticated-runtime marker as historical fourteen-file approval",
+      "target": "deploy/pipeline/run-approved-release.py",
+      "originalSHA256": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce",
+      "mutantSHA256": "041b03c64ca261792546086211f8b30c92382475b29dfa43190e792e99f6dc3a",
+      "exactRemoved": "        contract = CONTRACT_FILES\n",
+      "exactInserted": "        contract = LEGACY_CONTRACT_FILES\n",
+      "mutant": {
+        "startedAt": "2026-10-17T20:46:08.138448Z",
+        "finishedAt": "2026-10-17T20:46:08.359039Z",
+        "command": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          "--test-name-pattern",
+          "^RA06 ",
+          ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+          ".github/scripts/issue107-integrated-catalog.test.cjs"
+        ],
+        "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+        "exitCode": 1,
+        "totals": {
+          "tests": 2,
+          "pass": 1,
+          "fail": 1,
+          "skipped": 0
+        },
+        "failedTests": [
+          "RA06 runner accepts current seventeen and rejects fourteen-fingerprint downgrade when auth marker is present"
+        ],
+        "assertionFailureCount": 1,
+        "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/runner-forces-legacy14-mutant.log",
+        "rawLogSha256": "7a8bf30ab218ea351ca52b19d8955dcf1328a92a80d4651e554f403cccefadf7"
+      },
+      "restored": {
+        "startedAt": "2026-10-17T20:46:08.359241Z",
+        "finishedAt": "2026-10-17T20:46:15.082896Z",
+        "command": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+          ".github/scripts/issue107-integrated-catalog.test.cjs"
+        ],
+        "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+        "exitCode": 0,
+        "totals": {
+          "tests": 26,
+          "pass": 26,
+          "fail": 0,
+          "skipped": 0
+        },
+        "failedTests": [],
+        "assertionFailureCount": 0,
+        "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/runner-forces-legacy14-restored26.log",
+        "rawLogSha256": "8c33905a65663f2997f84bece1ffbd43eba4b98f98bc8eafbf62e3e79c05ff39"
+      },
+      "exactScratchRestoration": true
+    },
+    {
+      "fault": "Host accepts an unknown present auth marker instead of failing closed",
+      "target": "deploy/pipeline/host-approved-release.py",
+      "originalSHA256": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95",
+      "mutantSHA256": "8eda20c2e4cd6e401db2326ef473ab50c08c4fdbe846e0f66da8d3078db32880",
+      "exactRemoved": "    _require(_bytes(marker, 64) in (b'oauth-rs256-required', b'oauth-rs256-required\\n'))\n",
+      "exactInserted": "    pass  # isolated deliberate marker-validation omission\n",
+      "mutant": {
+        "startedAt": "2026-10-17T20:46:15.083791Z",
+        "finishedAt": "2026-10-17T20:46:15.284115Z",
+        "command": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          "--test-name-pattern",
+          "^RA09 ",
+          ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+          ".github/scripts/issue107-integrated-catalog.test.cjs"
+        ],
+        "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+        "exitCode": 1,
+        "totals": {
+          "tests": 2,
+          "pass": 1,
+          "fail": 1,
+          "skipped": 0
+        },
+        "failedTests": [
+          "RA09 installed host catalog reads exact historical14 and current17 while rejecting unknown marker"
+        ],
+        "assertionFailureCount": 1,
+        "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/host-allows-unknown-marker-mutant.log",
+        "rawLogSha256": "f1f897b80462285c1542cb8ff0c36688b7c0aa6f0f32655dc7c004a7c0726451"
+      },
+      "restored": {
+        "startedAt": "2026-10-17T20:46:15.284313Z",
+        "finishedAt": "2026-10-17T20:46:21.952582Z",
+        "command": [
+          "node",
+          "--test",
+          "--test-reporter=tap",
+          ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+          ".github/scripts/issue107-integrated-catalog.test.cjs"
+        ],
+        "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+        "exitCode": 0,
+        "totals": {
+          "tests": 26,
+          "pass": 26,
+          "fail": 0,
+          "skipped": 0
+        },
+        "failedTests": [],
+        "assertionFailureCount": 0,
+        "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/host-allows-unknown-marker-restored26.log",
+        "rawLogSha256": "318a8416a5faa8fad33af50bcd393879e8947a97d18d82856240ac6d5df3085d"
+      },
+      "exactScratchRestoration": true
+    }
+  ],
+  "scope": "Frozen26 independent Node/Python adapter tests on a minimal36-file exact copy. Local tar/filesystem fixtures only; host privileged filesystem/unit transport is replaced by test harness as already specified. Original product/test source is never mutated. Not the full node/V8/mandatory gate; actual provider/OAuth/SSM/Secrets/operations0.",
+  "baseline": {
+    "startedAt": "2026-10-17T20:45:54.609567Z",
+    "finishedAt": "2026-10-17T20:46:01.226605Z",
+    "command": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      ".github/scripts/issue107-integrated-catalog.test.cjs"
+    ],
+    "cwd": "/tmp/meetme107-runtime-catalog-fi-vqyaqy8a",
+    "exitCode": 0,
+    "totals": {
+      "tests": 26,
+      "pass": 26,
+      "fail": 0,
+      "skipped": 0
+    },
+    "failedTests": [],
+    "assertionFailureCount": 0,
+    "rawLog": ".codex/tdd-evidence/issue107-runtime-auth-catalog-fi/baseline26.log",
+    "rawLogSha256": "d4e36bf2cc4e15561ac23b60ce0bdd5a7d6aed5e7dba22f9f8bdc1e4c2097f09"
+  },
+  "status": "PASS_THREE_ACTUAL_ASSERTIONS_AND_EACH_EXACT_RESTORE26_GREEN",
+  "finishedAt": "2026-10-17T20:46:21.953475Z",
+  "originalCopiedFileChanges": [],
+  "originalMutatedSourceOrTestChanges": [],
+  "originalProductEditsByReviewer": 0,
+  "originalTestEditsByReviewer": 0
+}

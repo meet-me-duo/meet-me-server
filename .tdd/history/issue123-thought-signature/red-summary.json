@@ -1,0 +1,35 @@
+{
+  "classification": "GENUINE_CHRONOLOGICAL_ASSERTION_RED",
+  "totals": {
+    "tests": 26,
+    "failures": 6,
+    "errors": 0,
+    "skipped": 0
+  },
+  "controlsPassed": 20,
+  "testSha256": "7acddc4e24866fe52d85c2cdbd2c37f11b40aaf4f11dccf6d48af4792ee353e3",
+  "sourceFilesChanged": 0,
+  "existingTestsChanged": 0,
+  "sourceBeforeAfterUnchanged": true,
+  "actualModelCallsByAuthor": 0,
+  "actualSignatureValueCopiedToTestOrHistory": false,
+  "originalRawResponseSha256": "983e23db4fab03c1f5c41e5ca8775e8cf798b122ba5dd9507114c9a7a7cc080a",
+  "exactTextPayloadSha256": "bf0f16ba09b40c680f72f0cfe2093318791fd4b744f3b8712394ddbe859e3c7b",
+  "usage": {
+    "input": 530,
+    "candidate": 188,
+    "thought": 366,
+    "knownOutputSum": 554
+  },
+  "redLogSha256": "5038ea1a073f7caf10afb93408828bafdbd223e14b6b8b2062f4abd5cdd8b7f9",
+  "redXmlSha256": "fb0ed7563e7e91e2b669fa140d9db10b658d0a3f53816e4908a30dd8dd2aa572",
+  "canonicalSha256": "10afbe24a0a27d11cdc2f3373960054beaa8e9f4c8136294c84019e6b36d61cf",
+  "expectedFailedVariants": [
+    "NULL",
+    "EMPTY",
+    "STANDARD_PADDED",
+    "STANDARD_UNPADDED",
+    "URL_PADDED",
+    "URL_UNPADDED"
+  ]
+}

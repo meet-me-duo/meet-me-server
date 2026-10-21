@@ -1,0 +1,37 @@
+{
+  "workItem": "issue-107-pre-submit-boundary",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckInputShapeHttpPostgresTest.kt",
+      "sha256": "a831919c40b9063b02661b62c58f042b755c2215260f7a74459b93481d7498a5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckRateLimitRoutingContractTest.kt",
+      "sha256": "273cd5b076a9b3c94459dff5279d3b0608efd4d1f45c54222e7238ddeb11f3f8"
+    }
+  ],
+  "command": [
+    "bash",
+    "gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*PrecheckCorrectionCompatibilityPostgresTest",
+    "--tests",
+    "*PrecheckInputShapeHttpPostgresTest",
+    "--tests",
+    "*PrecheckRateLimitRoutingContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.PrecheckInputShapeHttpPostgresTest.[1] literal = \"123\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckInputShapeHttpPostgresTest.[2] literal = \"true\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[1] suffix = \"\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[2] suffix = \"/3f96cc72-4a22-4147-9a29-b6768250c635/answer\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[3] suffix = \"/3f96cc72-4a22-4147-9a29-b6768250c635/retry\"",
+    "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.[4] suffix = \"/3f96cc72-4a22-4147-9a29-b6768250c635/cancel\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T18:38:29.280469+00:00"
+}

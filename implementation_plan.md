@@ -1,12 +1,249 @@
 # meet-me-server Implementation Plan
 
+## #137 main 병합 전 비용·최종 분석 보호 (2026-10-20 UTC)
+
+- [USER 2026-10-21] develop README 전체의 오래된 설명과 기록을 현재 구현에 맞춰 정리하고, develop 병합 후 README 근거와 불필요 항목의 실제 종료 여부까지 확인한다. 미완료 운영 업무와 main행 PR은 유지한다.
+- [x] [AGENT] develop318행→최종74행으로 README 전체를 대조했다. Google/Kakao/Jev/Luna·전체 Gemini/fallback·결정론/Outbox/권한과 실제 build/Compose를 확인했고 Plan C 최대2명 제외/최소2명 및 JDK17을 정합했다. 세부 이력은 기존 Worklog와 main 준비 문서에 남겼다. 최종 link/diff/guard·정확 HEAD CI와 병합 뒤 README/상태 검증은 PR138/136에 연결한다. Commit/PR: 동일 커밋 예정.
+- [USER] Issue와 PR 제목은 `feat: ...`/`fix: ...` 등 소문자 type 형식으로 통일한다. 현재 PR138에서 서버 feature/bug 템플릿과 저장소 규칙을 맞추며, 기존 공개 제목은 별도 담당의 정리와 중복 수정하지 않는다.
+- [x] [AGENT] 서버 feature.yml의 `[Feature] `→`feat: `, bug.yml의 `[Bug] `→`fix: ` 및 development 규칙의 Issue/PR 공통 형식을 반영했다. 웹 develop의 실제 .github에는 workflows만 있어 새 템플릿 체계를 만들지 않는다. 기존 공개 제목 변경0, 제품/테스트/README/정책/이미지 바이트 변경0이다. 문서·템플릿 검증/guard와 정확 후속 CI는 PR138을 따른다. Commit/PR: 동일 커밋 예정.
+- [USER] PR138의 README에 변경·검증·인계 기록이 섞였다는 피드백에 따라 서비스 소개·문제 해결 흐름·기존 흐름도·짧은 실행 안내와 상세 문서 링크로 정리한다. 별도 PR 없이 현재 작업에서 반영하며 실제 지원 범위를 유지한다.
+- [x] [AGENT] README369→73행으로 정리했다. 비용·토큰/정산·confidence·운영 연결/검증 상태는 기존 ISSUE_107_MAIN_READINESS 최신 절로, 설계·배포·검증/기존 MVP 범위 상세는 기존 WORKLOG의 날짜를 명시한 원문 이력으로 보존했다. 오래된 소셜 로그인 Post-MVP 목록은 현재 지원 주장과 구분했다. 제품/테스트·정책·SQL·승인 SVG 바이트는 bf6f4e0 그대로다. 문서 후속의 정확 source/CI는 PR138/136과 Git 이력에 기록한다.
+- [x] [AGENT] 문서 후속의 상대 링크 전부 존재, 운영 상세 원문 이동 보존, 보호 source/SVG SHA 동일, diff check PASS와 변경 없는 원본 commit guard exit0을 확인했다. 기존 전체2058 결과는 재사용 가능하며 문서 정리로 새 모델/전체 실검증을 주장하지 않는다. Commit/PR: 동일 커밋 예정, 기존 PR138에 정상 push한다.
+- [USER] 10원 고정 상한은 미확정이며 새 금액/유료 호출을 승인한 것으로 해석하지 않는다. main 병합 전까지 소스·무료 회귀·develop/기존 PR을 준비하고 main 병합·운영 배포는 하지 않는다. OAuth 콘솔은 이미 완료했다. 키/비밀 등록·보안 권한·운영 DB 변경은 하지 않는다.
+- [x] [AGENT] clean develop d5fce878 FF 뒤 기존 broad #123 범위의 fix branch에서 조사했으며 좁은 실제 완료 단위 #137을 생성했다. production completeBill=null은 의도된 보수적 계약이고 사후4096·최종32768×4+1/조건부 출력USD0.507904·confidence null을 재확인했다. 과거136개 gold와 실제 Jev calibration을 구분하고 holdout 원문은 열지 않았다.
+- [x] [AGENT] 독립 작성29개를 고정해13개 예상 assertion RED/오류0을 확인한 뒤 승인 operation 최대액에서 최종4+1 가상 보호분을 도출하고 신규 개인 예약의 같은 room lock에서 검사했다. 정산·prompt/schema·실제 출력/profile·API·DB migration 바이트는 변경하지 않았다.
+- [x] [AGENT] focused29 GREEN·실제 PG 경합/멱등·strict cap·정산 유지, 계산4→3/보호분누락/cap동률허용 FI3종의 단언 탐지와 정확 복구29 GREEN, 독립 리뷰 P1/P2=0을 확인했다. 고정6테스트SHA·검증 source SHA와 원본 로그를 .tdd 요약/로컬 원본으로 보존했다. 136개 oracle 구조 및 protocol 산식 검사도 PASS이며 실제 accuracy/calibration 결과가 아니다.
+- [x] [AGENT] 원본 commit guard 전체 결과240 suites/2058중2054 PASS·기존4 SKIP·실패/오류0을 확인했다. 연결 재시작 뒤 기존 프로세스 종료와 전체 XML을 보존했고 중복 실행하지 않았다. 종료 코드 수신 유실을 해소하기 위해 기존 검사 종료 후 변경 없는 guard를 재확인하여 exit0을 받았다(기존 결과 재사용 가능; 별도 fresh2058 재실행 주장0). Commit/PR: 동일 커밋 예정.
+- [x] [AGENT] 기존 GitHub 연결로 production/repository secret 메타데이터 GET을 시도했으나 허용 endpoint가 아니라 HTTP400으로 거부됐다. 값 조회·새 인증·우회0. main 전용 preflight는 현재 main의 V1–V10 증거이며 develop targetOAuth/RS256 host/V11–V17 준비 완료로 확대할 수 없다. 새로운 운영 설정·키 생성·DB 적용0이다.
+- [ ] [AGENT] 검증 source를 develop에 통합하고 main행 PR136·웹PR34의 운영 차단 설명/정확 CI를 최신화한다. broad123/130은 실제 청구·가격/threshold 근거와 실평가 미완료로 유지한다. 새 유료 HTTP0, 운영 정책 UNCONFIGURED 유지.
+
+## #134 Jev·소셜 로그인 통합 릴리스 준비 (2026-10-20 UTC)
+
+- [USER] 최신 승인: 개인 확인에서 보완 생성만 GPT-6 Luna로 변경하고 최종 Gemini 주 경로·Luna fallback은 유지한다. 최종 공식 흐름도를 README에 반영하며 서버/웹 develop 통합과 main행 PR 준비까지 수행한다. main 병합은 사용자가 직접 하며 에이전트의 main 병합·운영 배포는 금지다. 이 승인은 새 유료 호출·운영 키/권한·미확정 금액/임계값 선택으로 확대하지 않는다.
+- [x] [AGENT] Luna 보완 단일 Responses/Standard·low reasoning·2048 출력·Jev와 공유15초·재시도0·실제 generation만 공통 예산에 예약하는 계약, 질문/답변/재검사·실제 PG 저장을 독립 무료 회귀로 검증했다. 집중88 PASS·독립 RED16·FI3 탐지/매회 exact restore와14 control PASS다. 최종 전송 profile은86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714이며 strict policy loader/renderer/host/publish/fixture를 맞췄다. 실모델 지연·의미 품질은 미검증이다.
+- [x] [AGENT] 서버 PR135→develop f2fb0dcddc57ce4ede38f99d8916803509c51828, 웹 PR33→develop55121a880cd8c80f541ca8ab4c89a5f2337e5e23을 normal merge했다. 각각 검증 HEAD6be4c45/4dd4895와 tree가 같다. 서버 main행 PR136과 웹 main행 PR34를 준비했고 main은 병합하지 않았다. PR133은 ancestor 포함으로 merged이며 PR132는 V2 계약만 반영한 대체 근거로 종료했다. 웹 PR24는 실제 merge parent로 보존하고 최신 PR33 실행기로 조정한 근거를 남겨 종료했다. 완료 이슈114/131/web32는 닫고 미해결107/123/130/web22와 승격 인계134는 열린 상태로 유지한다.
+
+- [USER] 이번 범위는 소셜 로그인·계정 소유권, 개인 원문 저장, Jev 확인 필요 판단, 필요한 경우만 보완 질문 생성, 답변·수정 후 재검사, 현재 원문의 CLEAR 수용, 마감된 전체 완료본 분석과 결정론적 추천이다. 최종 이미지·develop 통합은 최신 승인 범위이며 main 병합·운영 전환은 수행하지 않는다.
+- [x] 최소 GitHub Issue #134 생성. 원본 서버·웹 checkout 및 복구된 평가 source를 보존하고 clean develop FF 뒤 feature/issue-134-jev-integrated-release 분기.
+- [x] PR133 runtime 변경과 PR132의 V2 판단·생성 계약, 별도로 실제 Luna 4/4 및 무료 전체 회귀를 통과했던 조건부 대체·해석 실패 안전 처리 source를 격리 통합. 검증된 소스는 289edadc4534faa4d5a323f988c4117578934369로 commit/push하고 develop 대상 Draft PR135로 보존했다. PR133을 merge parent로 포함하며 PR132의 V2 계약을 반영했다.
+- [x] 전체 입력 Jev를 기존 PRECHECK_CLASSIFICATION 물리 슬롯에 연결하고 exact bytes 예약·단일 송신·usage 관측·명시 confidence 정책을 무료 회귀로 검증했다. 집중188 PASS, 통합 JDK17 ktlintCheck/assemble/test 2013건 중2009 PASS·기존4 SKIP·오류0, 독립 FI3 모두 탐지·매회 exact restore와20건 control PASS. 시각별 Jev의 NO_PERIOD_QUESTION은 전체 CLEAR 권한이 아니며 별도 clock 진단을 전체 분류로 대체하지 않는다.
+- [ ] 기존 운영 가격 근거·방 cap·단위·confidence 임계값과 기존 Typesafe key 전달 경로를 확인한다. 원본48 평가의 USD0.01 한도·평가 가격은 운영 승인으로 전용하지 않는다. 누락 시 기본 OFF·UNCONFIGURED·DENY를 유지한다.
+- [ ] PR33 웹 계약과 Google/Kakao·소유권·확인 질문 흐름의 운영 통합을 확인한다. 격리 PR33의 API 생성 계약·lint·typecheck·unit682·build PASS이며 실제 OAuth 로그인 증거는 아니다. 기존 OAuth callback/RS256 host 파일의 존재·가독성은 값을 노출하지 않고 확인하며 실제 로그인은 사용자 handoff로 확인한다.
+- [ ] main V1–V10 바이트 일치를 확인했고 필요한 V11–V17 additive migration·기존 방과 새 방은 통합 전체 PG 회귀를 통과했다. 운영 main preflight39450442485 SUCCESS는 READY·healthy/restart0·Flyway V1–V10·RDS backup7일/deletion protection·최신 복구 가능2026-10-20T15:36:08Z를 확인했으며 새 OAuth/Jev 대상 준비를 포함하지 않는다. 복구 실행/새 migration 적용은 하지 않았다. SQL을 되돌리지 않으며 조건부 JSON을 쓴 뒤 이전 reader로 되돌리는 위험을 별도 검토한다.
+- [x] 최종 Figma frame11:2의 승인된 SVG를 부모의 gzip/base646조각에서 복원했다. 71500bytes·SHA256 5ae680c4c066c5bfcf8c1cc9b40d9cbada0475952fdfdb713d5cd467be3fa934 일치, 스크립트/외부 참조0을 확인했다. Inkscape1880×520 렌더를 시각 검수하여 보완 GPT-6 Luna·전체 Gemini·fallback Luna를 확인하고 docs/assets/meetme-service-flow.svg 및 README에 반영했다. 외부 Figma/Library403을 재시도하지 않았으며 임시 URL과 과거 Gemini 보완 이미지는 커밋하지 않는다.
+- [ ] 최종 README 자산·진행 기록의 원본 commit guard exit0을 확인했다(기존 ktlintCheck/assemble/test 결과 재사용 가능, fresh2029 재실행 주장0). source 게시/정확 HEAD CI는 후속 PR/Git 이력과 로컬 receipt에 기록한다. 이번 종료 조건은 develop 통합과 main행 인계이며 운영 READY 전환·배포 실행은 범위 밖이다. 이 문서 후속은 제품 Kotlin·prompt/schema·정책 값을 변경하지 않는다.
+- [x] 검토용 소스 게시와 CI 준비: PR135 및 289edad의 CI run39448634693을 생성했다. 해당 ARM64 Built Image job은 성공했고 Quality Gate는 기록 시 진행 중이다. main 병합·운영 전환은 수행하지 않았다.
+
+최신 Luna 변경6be4c45는 로컬 전체 검증과 정확 HEAD CI39461244064를 통과했고 develop에 통합했다. 이전 게시 전 원격 PR135 HEAD203d620과 다음 최초 실패 이력은 보존한다. 첫 전체 gate2029는2024 PASS·기존4 SKIP·과거 count oracle1 실패였다. 독립 검토 후 DIRECT_PERSONAL의 정확 expected operation만 단일 generation으로 맞췄고 기존 CONFIGURATION·단일예약·claim0·network0을 유지한13개는PASS, 수정 후 원본 commit guard ktlintCheck/assemble/test exit0·최종238 suites/2029중2025 PASS·기존4 SKIP·실패/오류0을 확인했다. 생산/독립 테스트 지문은 전후동일하다. 웹은PR33+PR24 두 parent의 로컬c233a2e로 통합하고 제품TS/OpenAPI/e2e가PR33과동일함을 확인했다. API/lint/typecheck/unit682/build와browser425 PASS·기존1SKIP·retry/flaky0이다. 원격웹develop 생성의 최초 자동검토 거부는 최신 사용자 develop 통합 승인을 명시한1회 재검토로 성공했다. main9b183978 기반으로 생성한 뒤 PR33을 정상 병합했다. 웹 HEAD CI39465726718/develop CI39466893098/main행 CI39467008254는 SUCCESS다. 서버 develop/main행의 CI는 최종 결과를 PR에 기록한다.
+
+현재 추가 유료 모델 호출0·운영 변경0. 원본 commit guard도 통과했으며 검증된 소스를 검토용 branch·Draft PR135로 게시했다. README 최종 자산은 정확 SHA·시각 검수를 마쳐 이번 문서 후속으로 반영하며 운영 정책의 미확정 값·키 쓰기·배포는 별도다. main 병합은 사용자에게 남긴다. 기존 PR133의 일회성 검증 사본과 과거 Worklog 변경은 Git 이력에 보존하고 이번 source diff에서는 제외한다. 키 전달 renderer는 기존 typed 검증을 재사용해 승인된 기존 key를 활성화 시에만 읽도록 준비했고 독립 Node73 PASS, 운영 SSM 존재·권한·값은 확인하지 않았다. 배포 Python19중18 PASS/1은 alpine:3.22 부재 및 공식 pull의 daemon 인증 오류로 미검증이다. 기존 실제 Luna 4/4는 최종 조건 추출 증거이며 Jev 운영 판단·질문 생성·답변 전체 경로의 실검증으로 확대하지 않는다.
+
+운영 비용 검토(2026-10-20 UTC): 기존 제한은 개인500/방10000 Unicode code point·최대50명, 개인검사 최대6회, 최종 분석당 Gemini 최대4회와 Luna 최대1회다. 전체 완료본 원문을 사용하는 고정 prompt/schema와 실제 SDK를 오프라인에서 직렬화했으며 50명·합계10000자의 8종 문자 측정은 약26–77KB였다. 이는 대표 문자·고정 메타데이터의 전송 크기이며 모든 입력의 청구 토큰 상한 증명은 아니다. 최종 입력 토큰 사전검사는 없고 count와 청구 입력의 결속·count 가격·실제 Standard tier 및 confidence calibration은 미확인이다. 최대 모델 context 전량을 사용한 기존 USD6.52 제안은 활성화하지 않는다. 더 작은 바이트 제한은 검토 가능하나 금액 cap으로 환산하지 않는다. 개인2048/최종32768 출력 요청 한도 자체가 기존 모임10원 목표와 충돌할 수 있으므로 임의로 한도·prompt/schema·운영 정책을 바꾸지 않았다. 새 최종 count HTTP는 기존 PRECHECK_COUNT 권한으로 실행할 수 없다.
+
+## #131 관리형 AI runtime 연결 보완 (2026-10-18 UTC)
+
+- [USER] 기존 #123의 미완료 runtime 연결을 코드·독립 TDD·합성 검증으로 보완한다. 검증 후 정상 PR/main·정확 CI·실제 배포 승인은 유지하되 실제 운영 활성화·자격 증명/보안 설정·가격·임계값은 임의 확정하지 않는다.
+- [x] clean develop3982535765e878875a901dd9d28352358e594f6f FF 뒤 fix/issue-131-managed-precheck-runtime 분기. 기존 #123 본문을 보존하고 좁은 #131을 연결했다. 다른 브랜치 변경0.
+- [x] 실제 결함 확인: provider flag 단독 ON은 기본 routing OFF의 단일 생성기를 선택하며 production authority는 DENY, 새 room은 UNCONFIGURED다. 토글만으로 Decisions/공통 예산을 활성화했다고 부를 수 없다.
+- [x] 계약 고정·행동 TODO skeleton: 기존 네 flag allOFF는 기존 final 유지/새 개인검사 HTTP0, allON은 동일한 명시 threshold·고정 정책 artifact·실제 5 operation profile 및 durable graph, partialON은 startup 거부. default artifact는 UNCONFIGURED이며 실제 가격·cap·unit·threshold 미선택이다.
+- [x] 독립 C1/C2·환경 바인딩·sanitized HTTP500·INSERT receipt 집중 Kotlin63 GREEN. 실제 managed graph CREATE→개인검사→TwoStage/classifier→TLS 합성3요청→PG held12 검증, Primary authority/provider 대역0. 기존 방 both-touch UPDATE를 거부하고 실제 저장소 INSERT가 발급한 같은 TX one-shot receipt만 허용한다. 외부 OAuth·실제 모델·운영 가격 검증은 아니다.
+- [x] 새 방 생성 시 정책 만료/초기화 실패는 전체 CREATE TX rollback과 해당 내부 예외만 body 없는 HTTP500. POST create Swagger에도 empty500 명시. allOFF 생성·기존 방·참여/마감 정책·기존 공개 오류 코드는 유지한다.
+- [x] 독립 DX29+정책 catalog9 GREEN. release-local 정책 RO bind/파일0644 한정·현재 approval18와 과거17/14 reader 구분. target AUTH marker를 최초/fresh readiness에 전달하고 실제 UID10001 가독성 메타데이터만 검사한다. key 내용·설정 변경0. 기존 catalog fixture 정합은 historical17/14 oracle·SQL V1..17 불변의 별도 currentFixture로 보완해 관련59 GREEN.
+- [x] 기존 범위 독립 FI6 모두 assertion 탐지/매회 exactrestore GREEN, 최종 Kotlin63+DX29=92 PASS/errors·skips0. 이 결과는 후속 savepoint 변경 전 snapshot에 한정한다.
+- [x] 독립 savepoint PG 새2 validRED1/control1→최소 hook 보완→동일2 GREEN. hook 제거 FI1 assertion 탐지/정확 복원 뒤 최종 Kotlin65+DX29=94 PASS, 독립 좁은 리뷰 P2 CLOSED. 현재 source540 불변·FI 총7종 결과는 단계별 snapshot을 구분한다.
+- [x] root 정책 catalog9 포함 집중103·기존 node142·배포 node95 PASS. 첫 전체1782의 기존DB01 Clock DI 회귀는 원본 보존→nullable Clock 최소fix→기존72GREEN→독립FI1 탐지/정확복구로 보완했다. 새 전체필수guard fresh220suites/1782=1778PASS+기존4SKIP·오류/실패0·source571전후동일.
+- [x] 기존 배포 Python66의 준비timeout3은 동일2method/동일15초·기대불변 격리재실행GREEN. Compose fidelity/DB credentialrefresh PASS. Nginx는 checkout publicfile0600과 Docker 자동proxy의localhost403을 로컬fixture/임시empty Docker config로 분리해 exactsource PASS, 전역/운영설정0·원실패보존.
+- [x] 최종 독립 게시리뷰 LOCAL PASS·미해결 P1/P2 없음. source571·fresh1782(1778PASS/기존4SKIP)·단계별 FI8·현재/과거 release 계약과 기본 OFF/UNCONFIGURED 정합을 확인했다.
+- [ ] commit/push/Draft/정확 HEAD CI. 기존 #123과 broad 모델 품질·청구 cap·모임10원·실운영 활성화는 미완료로 유지한다.
+
+현재 이 runtime 단계 유료 추가0·운영 DB/SSM/Secret/OAuth 변경0이다. 별도 #130의 N16 첫 시도는 CONNECTION STOP/1 STARTED_UNKNOWN·15 UNRUN이며 원문/정답평가0, 현재 합산 예약 USD1.56254208/승인USD2/여유USD0.43745792·환급0을 유지한다. JDK env proxy 미사용을 최소 보완해 새63+기존102/FI8 통과했으나 새 무인증 HEAD는 TLS handshake 실패였다. 평가 client 한정 platform 공개 CA 추가는 신뢰 anchor 확장이므로 명시 승인 대기/새 유료 호출0이다. 해당 helper 검증을 runtime 금융 graph 또는 실모델 품질 성공으로 대체하지 않는다. 다음 시작점은 완료된 필수 검증의 최종 독립 게시리뷰·게시다. Commit/PR 동일 후속 커밋 예정.
+
+## 서버 develop 병합·PR 정리 승인 (2026-10-18 UTC)
+
+- [USER] Decision Model을 포함해 검증을 통과한 서버 변경을 develop까지 병합하고, 대체·중복 PR은 근거를 남겨 정리하도록 명시 승인했다. 아래 과거 병합 제외 기록은 당시 범위다. main·운영 활성화·배포·추가 유료 호출 승인은 아니다. 웹에는 develop이 없으므로 웹 main 병합으로 확대하지 않는다.
+- [x] [AGENT] 서버 PR129 코드 HEAD67bad4d0에 PR126의18cdb5d 및 PR122의e83d5280가 정확 ancestor임을 확인했다. develop01d00e7 대비 workflow 변경0·기본 OFF/default DENY·검증 source558 불변, 독립 병합 준비 리뷰 P1/P2 없음이다. 이번 통합 병합 범위는 취소 수정뿐 아니라 Decisions·영속 공통 예산 V17·물리 전송 권한·응답 호환 전체다.
+- [x] [AGENT] 별도 Draft PR129/웹 PR33 게시. 웹 exactf08aaa98 CI39111519165 SUCCESS(627unit/425browser·기존skip1), 합성 merge14677b4b tree가 게시 HEAD와 같다. 서버 코드 HEAD67bad4d0 CI39111507712의 ARM64 SUCCESS, Quality Gate는 기록 시 진행 중이다.
+- [ ] [AGENT] 이 승인·진행 기록만 반영한 후속 게시 HEAD의 필수 CI·Lifecycle·최종 base/충돌/리뷰 경계를 확인하고 PR129를 normal merge한다. 코드/테스트/fixture/정답 자산 변경0이며 원래67bad4d0의 CI 결과와 새 기록 HEAD의 CI를 구분한다. Commit/PR 동일후속커밋예정, 기존 PR129 유지.
+- [ ] [AGENT] 실제 develop merge SHA·부모·tree와 해당 push CI를 검증한 뒤 PR122/126 상태를 재조회한다. 간접 merged 상태는 그대로 두고, 남아 있는 대체 PR에 PR129·정확 merge SHA 근거를 댓글로 남겨 정리한다. #123의 모델 품질·가격·임계값·활성화 미완료는 유지한다. 확정 원격 결과는 PR 대화·Git 이력·로컬 publication/merge receipt에 기록하여 상태 기록만을 위한 재귀 커밋을 만들지 않는다.
+- 웹 정리 계획은 읽기 전용 대조로 부모에게 전달한다. PR33은 PR31/30/25의 정확 descendant이고, PR29의 자체 변경30파일 중27은 동일 blob이며 나머지는 통합 계획·OpenAPI·생성 타입이다. PR28/27의 옛 질문 흐름과 PR26의 독립 운영 화면은 통합·인증 계약으로 대체되었으나 단순 ancestor라고 부르지 않는다. 별도 PR24의 HTTPS 회귀7파일은 PR33에 없으므로 보존한다. 웹 main 병합·유효 미완료 작업 일괄 종료0이다.
+
+## #123 UI 계약·사전 정답 평가 준비 후속 (2026-10-18 UTC)
+
+- 부모가 추가 유료 호출 없이 현재 서버와 웹 PR31의 입력→모호성 질문→선택/직접 수정→재검사/제출 UI 계약·기존 시나리오와 로컬 누락 검증을 점검하도록 지시했다. 서버 기준18cdb5ddec4f9e09db50feb54337aae9516a0108/PR126, 웹02a68d8e50680e87dd153156e8bb7ea884a794cc/PR31을 원격 재확인했고 둘 다 Draft·미병합이다. 아래 fresh15초 단계는 완료된 이전 단위다.
+- [x] [AGENT] 기존 UI·서버 상태/인증/마감/비공개 계약과 테스트 대응표·누락 범위 독립 점검. 기존5paths/12states 정합, 취소 후 retained question P2를 발견해 별도128/32에 격리
+- [x] [AGENT] 기존 웹02 집중157unit/22browser PASS·원본268불변. 새후보 전체627unit/425browser+기존skip1 PASS/retry0. 현재수정 source native14 PASS/실API154·APIrouteMock0·외부/실AI/OAuth0. Primary합성provider가TwoStage/금융graph우회함을명시
+- [x] [AGENT] 8범주 사전정답 기존개발60/holdout60불변·별도8쌍16/단계gold overlay 봉인. 독립DRAFT P2 4그룹 보정/재reviewPASS·원본보존, 최종manifest1d15a4e·136ID. 구조/PROTOCOL_ONLY·DRAFT/변조거절PASS/실모델0, rootblind유지
+- [x] [AGENT] 발견된 누락 최소 독립 TDD/FI·현재native/전체guard·상태기록·최종독립게시review LOCAL PASS/미해결P1P2없음. 기존PR126/31보존·새128/32 격리
+- 발견 P2: NEEDS_CHOICE 취소 뒤 persisted question이 snapshot에 남아 웹의 새 입력/직접 수정 진입을 막음. 서버#128/웹#32로 좁게 분리하고 clean develop/main ff-only 후 server18/web02를 상속한 `/workspace/issue128-cancel-question/{server,web}`를 준비했다. 기존 PR126/31 worktree는 그대로 보존한다.
+- [x] [AGENT] 취소 후 server1조건·web1조건 최소수정: 서버7 RED1/통제6→7GREEN/FI2 assertion1·5탐지/각복구7PASS; 웹7 RED4/통제3→7GREEN·기존67포함74/FI4탐지·원복7. 기존기대값·DB질문이력·상한·500자·참여/마감·last CLEAR불변
+- [x] [AGENT] 현재 수정 source 실제HTTP/PG/browser native14 PASS, 실제OpenAPI36paths/61schemas JSON동일, source482/runtime1559/deps216/웹자산전후동일·포트/컨테이너정상종료. 준비경로오류는별도보존·정정후검증. classifier/금융graph 성공 주장0
+- [x] [AGENT] 서버 unchanged필수전체guard exit0/source558전후동일·새214suites/1717중1713PASS·기존4SKIP/실패·오류0·실AI/OAuth0
+- [x] [AGENT] 최종독립게시review LOCAL PASS·미해결P1P2없음
+- [ ] [AGENT] server#128/web#32 별도Draft·정확HEADCI. Commit/PR 동일커밋예정, 평가/구현원본HEAD와게시SHA구분
+- 현재 새 실제 호출0. 기존 UNKNOWN 환급0·누적 예약USD1.33185536/합산USD2·보수여유USD0.66814464 유지. 작은 실제 호출계획·사전 상한이 고정되기 전 유료 실행0, 결과맞춤 threshold변경0. Linear는 부모가 담당한다.
+- README 생성 이미지·편집은 선행 검증 후 #127로 진행하며 지금 시작하지 않는다. 병합·운영활성화·배포0.
+
+## 최신 수정 HEAD fresh 15초 실제 경로 검증 (2026-10-18 UTC)
+
+- 부모가 HEAD `4101038fd421351affa2a1fcdd5741083cb1a6b6`의 사전 고정 단일 LIVE-KO-03에서 fresh Decisions→필요시 count→generation→parser/실제 TwoStage 검증을 기존 합산USD2 안에서 추가 승인했다. 해당 HEAD의 CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공, PR126 Draft·미병합과 source557 guard는 유지한다. 아래 b377/metadata 게시 예정 기록은 당시 이력이다.
+- [x] [AGENT] 기존 UNKNOWN 포함 예약USD1.01330944 유지·새 최대USD0.31854592·누적USD1.33185536·잔여비용여유USD0.66814464 사전 독립 산술/공식 단가 검토 PASS. invoice/byte 공식상한 보장·환급0으로 해석하지 않음
+- [x] [AGENT] 기존 oraclec69·threshold0.8 사전 fixture·원문/문맥/LOW2048/500자/공통15초 불변의 새 독립 실행 mode 고정
+- [x] [AGENT] 새 single-use runner 독립 whole-CLI mock25/25·사전 독립리뷰 ACCEPTED. pre-open deadline P2는 최소 수정 뒤 동일사례 HTTP0으로 닫고 원실패/초기fixture오류를 별도 보존
+- [x] [AGENT] root 실제 단일 실행(07:21:29–07:21:37 UTC): A/count/generation 각1·전부HTTP200·retry/fallback/redirect0. 실제 parser/TwoStage NEEDS_CHOICE, 단일 JVM 공통15초 중7029.248374ms·전체JVM7641.481ms
+- [x] [AGENT] 실제 경로/질문 의도/지연/usage·비용 독립 감사 PASS 및 Worklog/근거 기록. LTS01–07·LTS08 제안의미 한 사례 통과/UI미검증·원raw label 불일치 보존. 일반정확도·p50/p95·SDK/영속금융 authority 성공으로 확대0
+- [x] [AGENT] 기록commit 전 unchanged필수guard exit0(07:23:05–14 UTC). 소스557불변·Gradle UP-TO-DATE 가능·새fresh1710 주장0
+- [x] [AGENT] 최종 독립 기록게시 리뷰 PASS·미해결P1/P2 없음. 같은 Draft PR126 기록commit/push·정확 HEAD CI는 다음단계이며 결과를 Git이력/PR/로컬receipt에 기록. 평가대상4101과 이후 기록커밋은구분; Commit/PR 동일후속커밋예정
+- [AGENT] 이 새 단계 실제3 HTTP 뒤 유료STOP. A rawCLEAR/confidence0.06은 원래 기대와 불일치하고 기존 합성0.8 fixture에서 LOW_CONFIDENCE로 B에 전달됐다. 운영 임계값은 미선택/OFF. 누계Decisions7/count3/generation5=HTTP15. source/test·운영 설정·병합·배포0. Linear는 부모 전용 동기화 담당으로 재시도0.
+
+## 현재 #123 영속 공통 AI 예산 후속 (2026-10-18 UTC)
+
+- 최신 후속: 코드 b3770438 commit/push·[Draft PR126](https://github.com/meet-me-duo/meet-me-server/pull/126) 게시, 정확HEAD CI39102015533 Quality Gate/ARM64 및 Lifecycle39102015519 모두 성공했다. 사용자 추가USD1로 이전 전부를 포함한 Gemini+OpenAI **합산USD2**를 승인했다. 이전USD1 중단/예약0.70918144는 당시 이력으로 보존한다.
+- [x] [AGENT] 비유료503/15초 원인 점검·동일payload/count/관측누락과 공식문서 대조. 상세원인확정불가·제품설정변경0
+- [x] [AGENT] 단독B 각60초/최대2·추가A/count0·기존oracle/2048LOW 고정, 최대합산예약USD1.01330944/추가여유USD0.98669056 독립산술 검토
+- [x] [AGENT] 진단runner staticP2 최소보완·격리mock59/59·실행전독립리뷰 뒤 bounded B실제2회: 503 high demand→200/5195.5ms·질문 의미LTS03–07·LTS08 제안의미 독립PASS/UI미검증, 현재 parser metadata호환 LTS02FAIL·fresh15s전체LTS01미실행
+- [x] [AGENT] 공식 optional thoughtSignature만 좁은 호환: 독립 새 RED→최소 구현→격리 actual-response 재생·FI·새 전체guard·최종 독립게시리뷰PASS/미해결P1,P2없음. 원 signature값 추적/로그0, 기존 strict JSON/usage/500/ownership/마감 불변
+- [x] [AGENT] metadata 새26개 genuine RED6/통제20→Contract1file 최소수정→집중328 GREEN/testinventory불변. raw B exact parser·기록A/count 실제TwoStage replay accepted/HTTP0; 첫 harness이름 setup오류는제품실패와분리보존
+- [x] [AGENT] metadata 독립FI3 실제assert6/5/2탐지·각exactrestore7/9/5PASS·최종26PASS/원본source,test지문동일. exactrawreplay 독립질문/대안/usage보존감사PASS·fresh15s/UI미검증유지
+- [x] [AGENT] metadata 후속 새unchanged필수guard exit0: fresh213 suite/1710 중1706PASS·기존4SKIP·실패/오류0, source557 before=after=current. 이전b377 guard/실제parserFAIL이력별도보존
+- [x] [AGENT] 새 진단상태·근거 docs commit/push→PR126 HEAD4101038/정확CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공. 원격결과는Git이력·PR126/ignoredpublicationreceipt에기록. 60초진단을제품15초전체성공으로표시하지않음
+- 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](docs/ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)을 따른다.
+
+- 사용자 최신 승인: 영속 PG 원장·최종/fallback/HOST retry 포함 전체 물리 호출 연결을 독립 TDD·합성 provider·리뷰·필수 guard로 구현한다. Decisions develop/main 병합·배포 제외, 운영 DB/Secret/접근 변경0. 실제 Gemini+OpenAI 합산 USD1 안에서 고정 payload/byte 기반 보수 견적의 격리 Decisions 진단4회·현재 production parser offline 검증을 완료했다. 모호 사례의 raw label 불일치/confidence0.06에서 중단했으며 운영 가격·활성화나 전체 의미 평가는 별도다.
+- [x] [AGENT] 1단계 [PR122](https://github.com/meet-me-duo/meet-me-server/pull/122) e83d5280… 코드 CI39093790134 Quality/ARM64 success·최신 Lifecycle39094909440 success. 완료 범위 #124 / 남은 전체 #123 분리. Refs-only 실패39094466469 이력 보존·workflow 변경0
+- [x] [AGENT] clean develop01d00e7f ff-only 갱신→feature/issue-123-durable-ai-budget 생성→검증된 e83 ff-only 상속. 1단계 PR122 소스 고정
+- [x] [AGENT] 독립 예산/물리 dispatch 명세·공개 계약 freeze: OFF 미계상 이력 UNKNOWN, 현재30일삭제/cascade 유지, 실제 quote 미구성 DENY
+- [x] [AGENT] 독립 PG/네트워크 RED→원자 예약/one-shot dispatch/UNKNOWN/늦은 usage·전체 경로 구현. 원장/실제 fence94·managed/문맥98 GREEN, 같은 방 개인검사→마감최종 관통1 초회PASS
+- [x] [AGENT] 최종 PG생애/DLQ fixture 정합·같은 방 전체 관통10 GREEN. core/fence 독립 FI4 탐지/각복구/마지막94 GREEN
+- [x] [AGENT] provider/관통 독립 FI5 탐지·각복구·최종109 GREEN. 동일 길이 본문 변이 oracle 보완과 최초 생존 이력 보존
+- [x] [AGENT] 기록된 실제 응답의 classifier→TwoStage 회귀2 INITIAL_PASS. 기존 합성 threshold0.8 재사용·생성기 합성·추가 실제 호출0
+- [x] [AGENT] 변경 없는 전체 guard 새 실행 PASS: fresh212 suite/1684개 중1680PASS·기존4SKIP·실패/오류0, source556 before=after. 최초 legacy oracle1 실패는 원본 보존 후 독립 정합2PASS로 분리
+- [x] [AGENT] 현재 source/test/FI/전체 guard 독립 CODE GATE PASS·미해결 P1/P2 없음
+- [x] [AGENT] 최소 실제 Decisions 진단4회·production parser offline PASS·독립 결과 감사. raw label 불일치/confidence0.06에서 중단·1case미호출, 운영 confidence/실제 B생성/전체 의미 평가 미완료
+- [x] [AGENT] 별도 실제2단계2시도: 각 A200 LOW_CONFIDENCE→count200/530 뒤 생성이 첫503·후속 공통15초TIMEOUT에서 중단. 원본/기대/threshold 유지, 누계Decisions6·Gemini count2·생성시도2/성공0
+- [ ] [AGENT] 실제 생성 질문의 원문 의도 보존 평가: 첫503·후속TIMEOUT으로 성공 생성 응답/usage 증거 미확보로 차단. 누적 예약USD0.70918144·다음 동일 검증USD1.02772736으로 예산 초과/추가 실제 호출 중단. 원래 분류 FAIL/STOP·독립 oracle·기존 합성 threshold0.8 유지
+- [x] [AGENT] 실제 관측·원문 의도 평가 가능 여부 독립 감사 PASS. 실진단 결과는 공급자503/질문 평가 미완료로 보존
+- [x] [AGENT] 최종 게시 리뷰 PASS·미해결 P1/P2 없음. source556/현재 PR6절/Closes125 및 실제 실패·UNKNOWN/예산중단 범위 일치
+- [x] [AGENT] 완료 기술 범위 [#125](https://github.com/meet-me-duo/meet-me-server/issues/125) 분리. broad#123/원요구#107은 열림 유지
+- [ ] [AGENT] 상태 기록·최종 게시 리뷰·commit/push/Draft/정확 HEAD CI. 실모델·운영 활성화 완료로 표시하지 않음
+- 실제 B/가격·청구 cap/운영 confidence·예산 소진 UX/보호된 최종 분석 할당·과거 UNKNOWN 해제는 TBD. 현재 참여/마감/500자/last CLEAR/소유권/fencing/최종 AREA 전체 분석을 유지한다.
+
+## #107 저비용 결정 모델 1단계 봉인 기록 (2026-10-18 UTC)
+
+- 최신 승인: Decisions 설계·독립 TDD/mock/FI/회귀·리뷰·commit/push/Draft/exact HEAD CI까지이며 Decisions develop/main 병합·배포0. 추가로 실제 검증은 Gemini·OpenAI 통합 USD1 이내·상한 입증 조건부 승인, 키 생성/전달·새 접근/운영 변경0이다. 비-Decisions 기존 네 이슈의 미반영 변경만 별도 격리 대조 후 develop 통합·정확 merge CI까지 승인됐다.
+- 사용자가 2단계(Decisions→의심/정상 낮은 확신만 생성 LLM 재확인) 개발 방향을 승인했다. 유형 안내 전용 API/DB/web 확장은 하지 않고 분류 port·기본 OFF adapter·기존 생성 검사 bridge·공통 평가·누적 예산 설계를 진행한다. 원문/마감 전체 해석·last CLEAR·기존 한도/ownership/fencing은 유지한다.
+- [x] [AGENT] 실제 원격 server develop01d00e7f/main91eb2505, web main9b183978/PR31 Draft 대조·clean develop ff-only 후 feature/issue-107-decision-precheck 생성·기존107 재개방
+- [x] [AGENT] 공식 Decisions guide/create/response와 Jev API/models 확인·공통 내부 계약/2단계 영향 검토
+- [x] [AGENT] 최신 비-Decisions develop 통합 요청: 별도 worktree actual diff 대조 결과 누락0·115/118/120/121 조상·113/116/117/119 기능 흡수/대체·develop01d00e7f exact CI39070926139 재확인, 중복 merge0
+- [x] [AGENT] 독립 개발60/미튜닝 검증60·한국어 정상/모호/문맥/공격 기준과 oracle 독립 리뷰·모임 전체 예산 설계(영속 원장/전체 dispatch는 PR122 봉인 당시 제외 범위이며 현재 #123에서 구현·독립 검증 중)
+- [x] [AGENT] 분류 adapter/2단계 bridge·shared budget port/default DENY 독립 RED→집중160/79 GREEN·단계별 FI14·전체1479(1475PASS/기존4SKIP)·512지문 일치·독립 최종 local 게시 PASS
+- [x] [AGENT] commit/push/Draft PR122 e83d5280…·정확 HEAD CI39093790134 success·Lifecycle39094821627 success·Worklog/Linear 인계
+- [AGENT/SHARED] 당시 실제 호출 전 보류 기록. 현재 최소 실제4회와 보수 견적·중단 결과는 맨 위 #123 및 실제 진단 문서를 따른다. 최종 청구/운영 confidence·예산 정책/활성화는 미확정
+- 상세: [공통 설계](docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md). 아래는 이전 단위의 당시 기록이다. PR121은 develop01d00e7f, exact merge CI39070926139 성공으로 완료됐다.
+
+## 현재 #107 제출 전 확인·통합 (2026-10-17 UTC)
+
+- 최신 후속 승인: 실제 외부 설정/비용 정책과 독립인 인증 runtime 전달·기본 OFF AI 입력/출력 제한 준비는 제품 코드까지 완료하고 독립 TDD/FI/리뷰·정확 CI·develop까지 진행한다. 기존 main·실제 외부 작업 보류는 유지한다.
+- 사용자 D1/D2 승인 완료: CLEAR 뒤 완료 집계·시각/수동 마감의 마지막 accepted 동결, pending 수정은 이전 accepted·최초 미확인/미응답은 결과 미반영, 마감 연장0.
+- [x] [AGENT] 6개 PR 정확SHA/공통조상/중복patch-id·실제pairwise충돌·마감113 흡수/fixture회귀·개발배포경계 독립 조사
+- [x] [AGENT] PR115 exact c06b60a를 서버 develop에 일반merge: 59e39bea8db58e17de119be353cb673fb68d9d98. tree는원래검증HEAD와동일. 첫자동검토거절후최신명시승인의동일HEAD1회재시도로성공,우회0
+- [x] [AGENT] PR115 mergeSHA59e39bea의 pushCI39057006651 SUCCESS 및 두 job 실제 checkout SHA 로그 확인 (`docs/verification/issue-115-develop-merge-ci.json`)
+- [x] [AGENT] PR118 exactbd881862 일반merge→9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9, 원본HEAD tree동일
+- [x] [AGENT] PR118 실제mergeSHA9ec4c6ce의 pushCI39058071664 SUCCESS·두job checkout로그 확인 (`docs/verification/issue-118-develop-merge-ci.json`)
+- [x] [AGENT] 기존107/108/109/110 내용 통합+새check 독립TDD·합성provider/실제PG/proof/browser 구현
+- [x] [AGENT] unchanged mandatoryguard 전체1197(1193PASS/기존skip4), provider18, 웹unit620/전체browser425PASS·기존skip1, 최종actualnative12PASS
+- [x] [AGENT] 독립coreFI6/각복구·provider경계5+NUL1·웹11종, 형식변경backend7/provider13 유효assertion 사후RED와원복GREEN·원본chronology구분
+- [x] [AGENT] 독립최종로컬게시리뷰 승인: 서버/core·통합·provider·catalog·웹·실서버지문 모두 확인, 새source/test/guard 변경0
+- [x] [AGENT] commit/push/Draft/exactHEADCI: 서버 PR120 HEAD bb62a95 CI39063547650 / 웹 PR31 HEAD02a68d8 CI39063558547 성공. 각 job checkout/tree 확인
+- [x] [AGENT] 서버 PR120 develop 일반merge bb996482a3090739a8ce02c8b093561e2c5c58a2 및 pushCI39064886318 두 job 실제 checkout 동일 SHA·성공 확인. 웹 Draft·미병합 유지
+- [x] [AGENT] main 준비 후속: provider opt-in 코드 부재·동일 API cap 공식 근거 정정, 30개 실제 평가 호출/중단/측정/조건부 비용 명세, 완료된 공개 OAuth 설정 재요구 없는 인증/DB 안내
+- [x] [AGENT] 기존 API 지원 profile·기본 OFF 실제 바인딩/인증 전달·input gate 독립 TDD/FI. 필수 전체1258(1254PASS/기존skip4), Node140·V837·합성 Nginx PASS. 근거 없는 verified=true·유료 호출0 유지
+- [x] [AGENT] runtime 준비 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음 (`docs/verification/issue107-runtime-readiness-independent-review.md`)
+- [x] [AGENT] runtime 준비 PR121 HEAD20fb099·CI39069432900→develop01d00e7f 일반merge·exact merge CI39070926139 완료(최신 격리 대조로 재확인)
+- [ ] [USER/SHARED] 모임 총 AI10원 정책 충돌 결정·입증된 상한으로 별도 유료 평가 승인, 런타임 자격 증명·RS256/JWKS 및 실로그인/운영 읽기·복구·전환 승인. 공개 OAuth 설정은 완료 유지. 운영자 요약은 기본 OFF이며 출시 차단 조건 아님
+- 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
+- 상세상태/다음시작점/역할·검증한계: [새107 Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음
+
+
+## 과거 #109 단독 세션 기록 (2026-10-17 UTC)
+
+아래는 당시 독립 작업의 승인·완료 이력이다. 현재 네 이슈 통합·게시·develop 승인은 맨 위 #107 범위와 최신 Worklog를 따른다.
+
+- 사용자 목표일: 2026-10-18 KST. 이 세션은 #109만 담당하며 #107/#108/#110의 완료를 대신 선언하지 않는다.
+- [x] [AGENT] Google/Kakao 서버·웹 로그인과 계정 HOST/회원 참여·본인 방 아카이브
+- [x] [AGENT] 명시적 이중증명 게스트 연결·동일방409·DB경합·30일정책·보안/브라우저 통합
+- [x] [AGENT] 독립 frozen RED/GREEN·결함주입·최종리뷰·전체게이트·OpenAPI/인계
+- [ ] [USER/SHARED] 실제 OAuth 앱·콘솔·키 및 운영 RS256/secret 전달·실제 공급자 검증 (별도 승인)
+- [ ] [USER] push/PR/병합/배포/운영DB 승인 (요청 전 미실행)
+- 기준 서버 develop3232128의 별도 feature, 웹은 원격 develop 부재·고유 지침에 따라 최신 main9b18397에서 local feature 분리(차이를 보고/기록). 독립 구현·테스트·리뷰 역할을 분리했다. 서버773개(실행769PASS/기존skip4), 웹unit364/E2E383PASS+기존skip1, native12와V11 catalog16/추가fault3종을 확인했다. 기존CI부가검사도통과했으며원격exacthead CI는PR/최종receipt를기준으로한다.
+- 상세 계약/증거/복구: [#109 WORKLOG](docs/ISSUE_109_WORKLOG.md), [CONTRACT](docs/ISSUE_109_CONTRACT.md), [OAUTH SETUP](docs/ISSUE_109_OAUTH_SETUP.md).
+- 아래 다른 이슈 기록과 과거 완료/게시 승인은 이번 #109 승인으로 확장하지 않는다.
+
+
 > **상태:** Active  
-> **최종 갱신:** 2026-10-09
+> **최종 갱신:** 2026-10-18
 > **목표:** MVP 백엔드 구현의 의사결정, 작업 순서, 진행 상황과 완료 근거를 한곳에서 추적한다.
+
+## #110 전담 완료 목표 — 운영자 요약 조회 (2026-10-17 재개, 목표 2026-10-18)
+
+### 실제 #109 통합 후속 기록
+
+- `[USER]` 후속 승인 범위는 feature commit·push·Draft PR·게시 HEAD CI까지다. Meet me 병합·배포·AWS/SSM·운영 DB·실제 키/운영자 등록은 제외한다. 과거 운영 조회 승인은 이 작업에 재사용하지 않는다.
+- `[AGENT]` 실제 서버 #109 `c06b60a9833ae77e5fce9cfef5719ab2f37470ff`와 웹 `95f09c0a98c6538b0f19ed381fdf11a2f5b844d9` 위에 별도 통합 브랜치를 만들었다. 원래 서버 미커밋 작업과 웹 PR26은 보존했다. 실제 `CurrentAccountPort`를 사용하며 계약 중복 정의는 없다.
+- `[AGENT]` 읽기 전용 요약·기본 거부 account UUID allowlist·최소 접근 감사 V14·보관기간 30일 구성·로컬 transport V15·웹 화면을 구현했다. 인증 invalid401/인프라503을 게스트로 낮추지 않는다. 원문/응답/URL/헤더/secret은 요약에 없으며 usage unknown과 부분 합계, 논리 실행/승인/dispatch/local call은 구분한다. 공급자 수신·청구·exactly-once를 주장하지 않는다.
+- `[AGENT]` 실제 소켓 HTTP14+마이그레이션1 GREEN; 웹 단위415와 production 브라우저395+기존skip1, 실제 격리 API 연결8검사 PASS. 실제 OAuth 공급자 로그인이나 운영 활성화가 아니다. 웹 Draft PR29 HEAD `ab25c6f8008cba191f2cf96dfb171b189f32a66f`, CI39054110586 성공이며 원시 로그에서도415/395+skip1을 확인했다.
+- `[AGENT]` Linux catalog/Nginx32와 Windows 실제 Git approval7 PASS. Nginx 실제 로컬 HTTP 투영에서 callback502 두 건과 사전 location 파싱400의 code/state 미노출을 확인했다(TLS·운영 검증 아님). 메모리 연동 결함2, catalog/log 결함3, 인증 상태 결함1을 assertion으로 검출하고 원본과 테스트 지문을 복원했다. 기존 단독 transport 변이 기록과 합산하지 않는다.
+- `[AGENT]` 첫 전체888개 실행은 고정 마이그레이션 기대값3건과 미구성 인증 대역1건으로4실패/오류0/기존skip4였다. UTF-8/CP949 출력 오류도 별도로 보존했다. 독립 작성자가 기존 보존/인가 assertion을 유지해 정정했으며 수정 전 bytes·SHA·실패 XML은 `.tdd/history/issue-110-full-gate-contract-reconciliation`에 기록했다. 수정 후 대상20개+ktlintCheck PASS, 전체 원본 commit guard 재검증은 진행 중이다.
+- `[SHARED]` #107+#109 PR117/웹PR28, #108과의 중앙 통합은 이 단위에 포함하지 않는다. V11=109/V12=108/V13=107/V14·15=110이며 현재 strict catalog는12·13을 의도적으로 거부한다. 실제 파일·checksum·history·approval fingerprint를 함께 확장해야 한다. 상세 인계는 `docs/ISSUE_110_HANDOFF.md`를 따른다.
+- `[AGENT]` 정정 후 원본 commit guard(수정 없음)가 17:36:05–17:43:54 UTC exit0으로 통과했다. fresh150 suite/888개 중884 PASS/기존skip4/실패0/오류0이며 이전 실패 실행을 합산하지 않는다. hook self-test·ktlintCheck·assemble·test를 실행했고, 증거·189 source raw/LF 지문·초기 frozen 테스트2개 유지·이전 실패 분류는 `docs/verification/issue-110-integration-final.json`에 봉인했다. 서버 게시 HEAD CI는 다음 단계이며 운영 접근/설정 변경은 없다.
+
+- `[USER]` 이 세션은 #110만 맡으며 내부 세부 결정은 dot에 위임됐다. 서버·웹 전체 구현, 합성/로컬 테스트와 독립 리뷰를 진행한다. push·병합·운영 설정·배포와 실제 운영자 등록은 별도 승인 전 실행하지 않는다. 전용 goal 도구는 없어 이 기록과 실행 계획으로 완료 기준을 관리한다.
+- `[USER]` 확정 정책은 일반 HOST·회원·게스트와 분리된 명시적 운영자 allowlist, 기본 접근 거부, 원문·응답·비밀정보 없는 요약, 접근 감사다. 감사 보존기간은 구성 가능하며 초기 목표는 30일이다. 실제 계정 지정과 실제 보존 설정 적용은 외부 적용 전에 확인한다. 기존 방 데이터 30일 정책은 바꾸지 않는다.
+- `[AGENT]` 최소 GET 3개로 방 목록 → 현재 방 설정/실행 이력 → 한 실행의 승인 시도/사용량 확인 범위를 연결한다. V10 승인 이력으로 실제 HTTP·청구 횟수를 단정하지 않고, 과거 버전·재시도·폴백·수정 분석·V8 REUSED를 구분한다. 운영자 인가 전에 대상 존재 여부를 조회하지 않으며 감사 저장 실패 시 보호 데이터를 반환하지 않는다.
+- [x] `[AGENT]` 최신 #110 OPEN/댓글 없음과 #20·#96 CLOSED를 기존 GitHub 인증으로 읽어 확정 요구와 기존 구현을 대조했다. 기존 내부 계측 4제품·2테스트와 검증 근거를 보존했다.
+- [ ] `[AGENT]` 독립 테스트 작성자가 설계한 인가·조회·감사·보존 RED/GREEN 및 실제 PostgreSQL 검증
+- [ ] `[AGENT]` 최소 운영자 화면·typed API·비민감 표시/거부·캐시 폐기와 대역 브라우저 검증
+- [ ] `[AGENT]` 생성 OpenAPI와 웹 계약 일치, 전체 필수 품질 게이트, 독립 리뷰·의도적 결함 탐지
+- `[SHARED]` #109 공통의 검증된 사용자 식별 포트와 Flyway 번호 배정은 연계 확인 중이다. 계약이 없으면 누구도 자동 운영자가 되지 않으며 요청 헤더/쿠키/파라미터가 주장하는 ID를 신뢰하지 않는다. 기존 `SubmissionService.kt`는 이 작업에서 변경하지 않는다.
+
+## 후속 #110 내부 분석 계측 보완 (2026-10-17)
+
+- `[AGENT]` #107~#110과 웹 #22를 실제 조회했다. 웹 #22 핵심 흐름은 현재 웹 main에 반영돼 있으며, 서버는 develop `3232128`에서 분기한 별도 작업 복사본 `feature/110-analysis-observation-summary`를 사용한다. 기존 저장소의 미커밋 변경은 보존한다.
+- `[AGENT]` 이번 단위는 내부 계측에 한정한다. 승인된 시도와 파서 dispatch를 분리하고, provider별 token·비용의 known/unknown 확인 범위를 기록한다. 파서 dispatch를 실제 HTTP 또는 청구된 호출 수로 간주하지 않는다. 기존 Gemini 배치 비용은 모든 dispatch의 Gemini 비용이 확인된 경우에만 전체 합계로 전달한다.
+- [x] `[AGENT]` 구현자와 분리된 테스트 설계 및 유효한 RED 증거: 새 15개 중 누락 동작 14개 실패, 허용 필드 경계 1개 통과. `.tdd/red/issue-110-analysis-observation.json`과 로컬 제외 로그에 보존했다.
+- [x] `[AGENT]` 최소 구현과 대상 테스트 GREEN: 새 15개와 기존 Gemini 처리 3개, 합계 18개 PASS/실패 0/스킵 0. 독립 정적 리뷰에서 차단 결함이 발견되지 않았다.
+- [x] `[AGENT]` 최종 `--offline --no-daemon ktlintCheck assemble test` Gradle exit 0/8m39s. 전체 113 suite/678 test 중 674 PASS/기존 opt-in skip 4/실패 0/오류 0이다. 첫 실행의 연결 단절 및 부분 77개 결과는 별도 보존했고 전체 통과로 집계하지 않았다. 종료 후 보조 실행기의 CP949 콘솔 출력 오류는 저장된 Gradle exit 0·성공 로그·완료 XML과 분리 확인했다.
+- [x] `[AGENT]` 고의 결함 3종을 assertion으로 탐지하고 제품 원본 바이트·테스트 지문을 복원·유지했다. 독립 최종 리뷰가 전체 XML 113개·로그·지문·스킵 조건과 `SubmissionService.kt`의 기준 커밋 동일성을 확인했으며 차단 결함은 없다. 근거는 `docs/verification/issue-110-local.md`와 작업 복사본 상위 `verification/issue-110-final-evidence.json`, `issue-110-independent-review.md`에 보존했다. 공유 Docker 엔진 재시작·종료·전체 컨테이너 정리와 원격 쓰기는 없다.
+- `[USER]` 운영자 권한·최소 조회 정보·보관기간은 TBD다. 신규 조회 API·웹 운영 화면·외부 telemetry 전송은 이번에 추가하지 않는다. #107 질문 시점/미응답, #108 중복 이름/분실/계정 연결, #109 익명 방 귀속/공급자/보관 정책도 확정하지 않는다.
+- `[SHARED]` 이 단위는 #110 전체 완료가 아니다. 실제 AI·운영 방 생성·운영 쓰기·보안 설정·병합·배포와 원격 게시 권한으로 확장하지 않는다.
 
 이 문서는 실행 체크리스트다. 제품 요구사항은 [`docs/PRD.md`](docs/PRD.md), 기술 구조와 TBD는
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), 확정된 장기 결정은 [`docs/ADR.md`](docs/ADR.md)를
 기준으로 한다. 이 문서가 기준 문서와 충돌하면 기준 문서를 우선하고 이 계획을 갱신한다.
+
+## 웹 #22 / JIN-71 로컬 후속 — 방 생성과 HOST 조건 제출 분리 (2026-10-15 UTC)
+
+- `[AGENT]` 두 저장소 지침·Worklog·실제 원격 main을 읽었다. 서버 main과 사용자 제공 운영 기준은 `91eb2505ddf6b4db549a5bc2b8b07f11e514d0b0`, 웹 main은 `7b95951aba1a8fafb28a4df7e93f4e6faa9ba221`다. 원래 작업 트리는 모두 깨끗했다. 서버 develop을 ff-only 갱신한 `dd8e07d6e1245269454e59edd2981532cc3f3dc3`는 main과 tree가 같으며 별도 `feature/22-host-input-contract-tests`에서 테스트만 보완한다.
+- [x] `[AGENT]` 현재 `POST /api/rooms`가 HOST만 생성하고 제출은 별도 `PUT /submission`인 계약을 확인했다. 서버 API·제품 Kotlin·SQL·설정 변경은 필요하지 않다. 웹에서 생성 성공·선공유·나중에 입력·저장 실패 재시도 안내와 진행 중 중복 클릭 방어를 보완한다.
+- [x] `[AGENT]` 실제 격리 PostgreSQL 대상 32개 검증 통과(신규 9개 포함). 생성 직후 제출 0개, 같은 HOST 재방문·재참여·빈 원문 거부 후 재시도, 동일 원문 순차/동시 제출의 참여자·제출 head·version 각각 1개 수렴을 확인했다. 기존 비공개·주최자 권한·마감 경합 회귀를 함께 실행했다.
+- [x] `[AGENT]` HOST 미제출 시 수동/시간 마감의 제출 0·1·2명과 인원 목표 마감을 검증했다. 기존 계약은 역할이 아닌 고유 제출 수를 세며, 2명 미만은 `INSUFFICIENT_PARTICIPANTS`, 다른 참여자 2명 이상이면 HOST 원문 없이 분석 배치를 만든다. 서버가 `CLOSED`로 마감한 뒤 HOST의 최초 제출은 `ROOM_CLOSED`로 거부한다. 시간 회귀는 합성 DB의 deadline 경과 후 scheduler를 직접 호출하며 정확한 시각 경계의 pre-scan 거부를 입증하지 않는다. HOST 필수 제출이나 마감 연장 정책을 새로 만들지 않았다.
+- [x] `[AGENT]` 최종 `ktlintCheck assemble test` PASS(exit 0, 5m31s). 실제 전체 663개 중 659개 PASS/기존skip4/실패0/오류0이다. 첫 실행도 기능 실패0이었으나 새 테스트의 chain 줄바꿈 8개가 ktlint에서 거부돼 서식만 수정하고 전체 gate를 재실행했다. 테스트 입력·기대값은 유지했다. 웹 최종 API 정합·lint·typecheck·unit282·build PASS, 전체 mock browser375 PASS/기존skip1/실패0/flaky0. 검증 원본은 `/workspace/scratch/issue-22/`, source/test SHA와 최종 집계는 웹 `docs/verification/issue-22-local.json`에 기록했다.
+- 범위 밖: 소셜 로그인·계정·아카이브·선택 암호·모호성 질문, commit/push/PR/merge/배포, 운영 흐름 검증·운영 데이터·보안 설정 변경. 관련 계정 이슈는 후속 연동이며 이 작업의 의존성으로 새로 지정하지 않는다. 이 기록은 운영 실행 근거가 아니다.
+
+### 같은 날 독립 리뷰 후속
+
+- `[AGENT]` 별도 read-only `review_contract`와 `review_web`가 소스·테스트·원시 로그/XML·SHA를 대조했다. 서버 제품 코드가 배포 기준과 동일하고 신규9 실제 실행·기존skip4·참여자별 제약·권한·마감·추천·재분석 회귀 결과를 확인했다. 서버 source/test는 위 전체 gate 이후 동일하므로 전체659 PASS를 다시 실행한 것으로 집계하지 않는다.
+- `[AGENT]` 웹 필수 발견4건은 최초 HOST draft의 마감 전환 보존, 생성/저장 응답 유실의 결과 미확인 안내, 저장 시도 이후 미제출 단정 제거, 본인 GET이 저장을 확인한 뒤 미확인 오류 해소다. 독립 수용26개는 첫 구현19 RED/기존7 GREEN 후 최종26 GREEN, 고의 결함5종 assertion 탐지·정확 복원으로 검증했다. 최종8파일 지문 묶음 `ecea54680f84953585bc7e3366f562f3d1feb15666ca62304c22bc1091649953`를 reviewer가 직접 재계산했다. 최종 변경 코드의 추가 필수 수정은 없다.
+- `[AGENT]` 기존 P2는 남긴다. PRD Rule4(273행)는 deadline 전까지만 수정을 허용하지만 `SubmissionService.save`는 CLOSED만 검사하고 저장 후 예상 인원 마감만 처리하며 scheduler 기본60초 간격 전에 경과한 deadline의 PUT을 접수할 수 있다. 이번 테스트는 scheduler 마감 이후 거부만 검증했다. 기존 구현을 유지하고 후속으로 명시하거나, 원격 반영 전 별도 서버 범위에서 기존 PRD 시간 경계를 원자적으로 강제하고 동시성 TDD를 추가하는 선택지가 있다. 임의 유예 정책이나 서버 제품 변경은 하지 않았다.
+- `[AGENT]` 기존skip4는 live Gemini opt-in1과 선택적 OpenAPI 검사/export/debug capture opt-in3이며 각 소스는 기준과 동일하다. 정확한 클래스·메서드·조건·검증 한계와 최신 웹 검증 결과는 웹 `docs/verification/issue-22-independent-review.md` 및 `issue-22-local.json`을 따른다. 실제 서버/browser 종단·운영 검증과 생성 POST 응답 유실의 서버 멱등 재생은 별도다. 로컬 작업만 유지하며 원격 쓰기는 없다.
+- `[AGENT]` 독립 리뷰 수정 후 웹 실제 최종 API 정합·lint·build(tsc 포함)·전체 단위308 PASS, 고정 build 전체 mock browser383 PASS/기존skip1/실패0/flaky0/retries0다. 종료 후 source8파일·dist SHA가 같고 임시 Playwright 설정을 제거했다. 이는 별도 mock 검증이며 서버/backend 연결이나 운영 실행의 증거로 사용하지 않는다.
+
+### 같은 날 게시 승인 — 커밋·PR·원격 CI
+
+- `[USER]` 2026-10-15 10:30 KST 검증된 변경의 commit/push/PR 생성과 원격 CI 확인을 승인했다. merge·배포·운영 데이터·보안 변경은 제외한다. 위 로컬 단계의 미커밋 기록은 당시 이력이다.
+- `[AGENT]` 원격 developdd8e07d/main91eb250과 open PR0, 최종 test SHA4f8aea3a… 및 source8 묶음ecea5468…를 확인했다. 웹22/JIN-71의 서버 회귀만 추적하는 보조 이슈를 연결하고 develop 대상 PR을 준비한다. 제품/API/SQL/설정은 동일하며 기존 deadline P2는 별도 후속이다.
+- `[AGENT]` commit 전 변경 없는 .codex/hooks/tdd_guard.py를 필수 실행한다. Gradle이 이전 결과를 재사용하면 새로운659건 실행으로 집계하지 않는다. 로컬 cache만 준비하고 guard·wrapper·CI는 변경하지 않는다.
+- `[AGENT]` 실제 필수 guard는 exit0/11.507초로 통과했다. 기존 품질 결과 재사용이며 새로운659건 실행으로 주장하지 않는다. 회귀 테스트만 추적하는 [서버111](https://github.com/meet-me-duo/meet-me-server/issues/111)을 만들었고 웹22/JIN-71과 연결한다. 제품/API/SQL/설정과 검증 test SHA는 그대로다.
+- Commit/PR: 동일 커밋 예정. 정확 SHA·PR·원격 결과는 게시 후 PR/Linear에서 대조한다. 최종 갱신일2026-10-15 UTC.
 
 ## 최신 운영 읽기 점검 (2026-10-09 UTC)
 
@@ -1282,3 +1519,52 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 독립 동결6 신규+기존33의 유효 RED16/23PASS 뒤 최종39 PASS/실패0/skip0, 실제 Flyway12.4.0 checksum10 일치와7fault/8assertion 탐지·303 source/test 파일 exact복원을 확인했다. 테스트 기대를 구현자가 바꾸지 않았고 과거 workflow/RED를 history에 보존했다. 추가 host orchestration fixture는 최신 사용자 범위 지시로 실행 없이 폐기했으므로 독립 host runtime proof를 주장하지 않는다.
 - 변경 없는 필수 tdd_guard SHA07c4f974…exit0/8.639초로 hook self-tests·ktlintCheck·assemble·test를 확인했다. Gradle cached654 결과 재사용이며 새 로컬654 실행으로 집계하지 않는다. 제품 Kotlin/API/V1~V10 SQL/runtime renderer/entrypoint·기존guard/installer는369c5ff와 동일하다. 새 정확HEAD CI는 게시 후 PR100에서 별도로 확인한다.
 - 현재 실제AWS조회/운영명령/서비스중단/DB쓰기/main·develop병합/유료모델호출0. 운영 source/digest와 실제preflight를 보고한 뒤 최종배포승인을 받아야 한다. 구현/문서/검증 후속 Commit/PR: 동일 커밋 예정, 기존Draft PR100 유지.
+
+
+## Issue #107 모호성 보완 (2026-10-17 UTC)
+
+- 목표: 2026-10-18 KST까지 서버·웹 로컬 제품 구현과 격리 검증. push/PR/병합/배포/운영·유료 호출 제외. 내장 goal 도구 없음.
+- [x] [AGENT] 최신 서버 develop3232128·웹 main9b18397에서 독립 브랜치, 지침/기준문서·이슈 확인, 독립 fixture25+답변7·테스트설계와 공개계약 작성.
+- [x] [AGENT] provider·본인 HTTP·웹 UI의 유효 RED 확인 후 질문/답변/provenance·기존 수정 라운드 연결.
+- [x] [AGENT] #107 본인 소유권을 공통 resolver용 port와 테스트 전용 대역으로 분리. main 인증/guest fallback 복제 제거.
+- [ ] [AGENT] #109 공통 소유권 resolver 실제 adapter 통합과 프로덕션 기동. account/participant/auth/CORS/RoomLifecycle 소유파일 복제금지, V13 예약.
+- [x] [AGENT] 최종 nativeOpenAPI 동기화·서버 전체719(715 PASS/기존skip4)와 guard·웹 전체360/브라우저391 PASS(기존skip1)·서버6/웹4 결함 주입·독립 최종 리뷰 검증. 재개 근거와 정확 SHA는 docs/verification/issue-107-local.json을 따른다.
+- [ ] [SHARED] 실제 공급자의 자연어 의미·질문품질·비용/latency 평가 및 운영 적용은 이 세션 범위 밖. mock/격리 통과를 이 완료로 집계하지 않음.
+- 보호파일 GeminiBatchProcessor.kt·SubmissionService.kt·관측 계층은 수정하지 않음.
+- 현재 근거/계약: docs/ISSUE_107_CONTRACT.md, docs/ISSUE_107_TEST_DESIGN.md, .tdd/red/issue-107-*.json. 최종 게이트와 구현상태는 후속 검증 기록으로 갱신.
+
+### 후속 게시 승인과 통합 대기
+
+- [USER] 최종 테스트·독립 리뷰 통과 범위의 commit·push→Draft PR→정확한 HEAD CI 확인을 승인했다. merge/auto-merge/main 배포/운영 DB/Secret 변경은 제외한다.
+- [AGENT] 원격 develop3232128·웹 main9b18397 및 작업 브랜치/PR 중복 없음, feature push/PR의 운영 배포 비발생과 push dry-run을 확인했다. #107 독립 구현의 격리 검증 결과만 게시하며 #109 실제 adapter 부재·production 기동 차단을 Draft PR에서 명시한다.
+- [AGENT] 기존 전체 게이트 첫 실행의 5실패는 오래된 모호성 전원참석 oracle1·V13 migration 기대4다. 독립 설계자가 계약과 정확 catalog에 맞춰 수정했고 기존 데이터 보존 assertion은 유지했다. 원본 로그/XML과 최종 재실행을 분리 보존했다.
+- Commit/PR: 동일 커밋 예정. 실제 source SHA와 원격 CI는 게시 후 PR 및 로컬 publication 기록을 따른다.
+
+### ‘7-8시쯤’ 추가 제보 보강
+
+- [USER] 오전·오후 누락 실제 사례와 오늘/내일/다음주·자정·역전·가능/불가·문맥 대조, 짧은 상시 안내와 실제 예시를 요청했다. 실제 운영 AI 호출은 승인하지 않았다.
+- [x] [AGENT] 기존 fixture25를 유지하고19개 추가→총44개·답변7개. 새 provider 합성 회귀8개 targeted PASS. 원격 main91eb250 소스는 이미 모호성 안전 rejection을 지원하나 보완 질문·명시 안내가 없었다. 실제 운영 image/당시 공급자 응답이 없어 실제 오류 원인은 미확정이다.
+- [x] [AGENT] 모드별 예시·오전/오후/24시간 안내·접근성 설명을 일반/수정/DIRECT 입력에 추가했다. 독립 안내15 RED→15 GREEN, 집중67 GREEN, 최신 소스로 FI4 탐지·정확 복원67 GREEN을 확인했다. 자동 원문 변환·저장·분석·추가 API는 없다.
+- [x] [AGENT] 추가 보강 후 서버 전체727(723 PASS/기존skip4/실패·오류0)·guard, 웹 전체375·고정 bundle 브라우저391 PASS/기존skip1, FI 서버6/웹4 및 독립 최종 근거를 확인했다. 정확 SHA·원본·한계는 docs/verification/issue-107-local.json에 기록한다. 승인된 Draft 게시를 진행하며 #109 실제 통합·프로덕션 기동 차단은 유지한다.
+
+### #107 + #109 별도 로컬 통합 검증
+
+- [x] [AGENT] 정확 #109 server c06b60a/web95f09c0 기반 별도 worktree에서 게시 #107을 적용했다. ADR 번호를 보존하고 통합 migration은12개/최신V13이며 V12는 만들지 않았다. 공통 SubmissionService/GeminiBatchProcessor 바이트는 #109 base와 동일하다.
+- [x] [AGENT] 독립 real-JWT HTTP7 valid RED5 후 READ_OWN 최소위임 binding과 실제 소유권 resolver로 GREEN. 약한 proof CANCEL/DIRECT거부·verifiedguest저장·claim보존·계정우선/invalidBearer·명시분석 멱등과 추가AI0 검증. 집중Clarification71 PASS.
+- [x] [AGENT] 실제 production bootJAR605f7a...의 local PG/Redis/JWT 기동·HTTP·source보존/revision2/replay/명시분석정확1 work·AI0 스모크 PASS. POST-only REPLACE_OWN 결함을 CANCEL200에서 탐지 후 source정확복원/account7+native1 PASS. 실제 공급자 로그인과 배포 미검증.
+- [x] [AGENT] 통합 서버 ktlintCheck/assemble/test844(840PASS/기존skip4/실패·오류0), 변경 없는 mandatoryguard21.098초(cached844), 독립최종review PASS.
+- [x] [AGENT] 통합 웹466unit·391browser/기존skip1 및6게이트·FI2/35재GREEN, 양정확#109base patch적용검사와지문인계 완료. 최초 로컬 단계에서는 통합 브랜치를 게시하지 않았으며 다음 후속 승인으로 범위를 확장했다. 독립PR116 catalog 수정dc145c3 exactCI39048479774 전체SUCCESS.
+
+### #107 + #109 통합 별도 Draft 게시 승인 (2026-10-17 UTC)
+
+- [USER] 검증한 실제 통합을 기존 PR116/27을 유지하는 별도 Draft PR로 commit·push하고 새 정확 HEAD CI까지 확인하도록 승인했다. merge/auto-merge/main 배포/운영 DB/Secret/운영·유료AI는 계속 제외한다.
+- [x] [AGENT] 실제 분기 기준은 서버#109 c06b60a9833ae77e5fce9cfef5719ab2f37470ff, 웹#109 95f09c0a98c6538b0f19ed381fdf11a2f5b844d9이며 두 원격이 동일함을 확인했다. 서버 CI branch 필터를 유지하기 위해 새 PR base는 develop3232128, 웹main9b18397로 한다. #109 포함 commit과 그 이후 자체 delta를 본문에서 구분한다.
+- [x] [AGENT] 독립 역할의 최종 서버/웹 통합 검토, source/test/고정dist지문·실JAR·전체 로컬 게이트·현재통합source FI 및 mandatoryguard 근거를 보존했다. 인증소스와 보호된 SubmissionService/GeminiBatchProcessor는 #109 그대로다.
+- [ ] [AGENT] 승인 범위의 통합 commit·push→별도Draft PR→정확HEAD 전체CI 확인. Commit/PR: 동일 커밋 예정. 기존 독립PR의 성공CI와 새 통합CI를 혼동하지 않는다.
+
+### 통합 첫 원격 CI 후속: 역사 catalog 테스트 정렬 (2026-10-17 UTC)
+
+- [x] [AGENT] 통합 commit100f934를 push하고 별도 Draft117을 생성했다. 실제 부모c06b60a와 PR base develop3232128을 구분했다. 웹 통합fb87358 Draft28은 exactCI39050257242 전체SUCCESS(unit466/browser391+기존skip1), 기존PR116/27은 유지했다.
+- [x] [AGENT] 서버 exactCI39050251162는 ktlint/assemble/test·ARM64·배포정책/preflight를 통과했으나 #109 역사 catalog 테스트5/17이 기존V11상한과 현재V13지원 계약 충돌로 실패했다. 후속단계는SKIP이며 전체성공으로 집계하지 않는다. 원본원격로그를 보존했다.
+- [x] [AGENT] 독립설계자가 역사V10/V11 fixture와 현재V1..11+V13 fixture를 분리하고 requiredprefix/checksum/success/identity/pending/명시승인·두rulesDISABLED 불변식을 보존해 test oracle만 정렬한다. 제품/배포guard/SQL/CIworkflow는 변경하지 않는다. 기존generic13/FI4는 동일production 바이트의 근거이며 이번oracle교정을 새제품RED로 집계하지 않는다.
+- [ ] [AGENT] 관련Node전체17(내부generic13포함)·독립최종review·변경없는 mandatoryguard 확인 후 추가commit·push하고 새 정확HEAD의 전체CI를 확인한다. Commit/PR: 동일 커밋 예정, 기존Draft117 유지.

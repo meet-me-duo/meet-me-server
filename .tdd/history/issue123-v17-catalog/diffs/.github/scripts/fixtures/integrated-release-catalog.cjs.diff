@@ -1,0 +1,47 @@
+--- .github/scripts/fixtures/integrated-release-catalog.cjs.before
++++ .github/scripts/fixtures/integrated-release-catalog.cjs.after
+@@ -15,6 +15,7 @@
+   'V11__add_accounts_and_participant_ownership.sql', 'V12__add_guest_reaccess.sql',
+   'V13__add_submission_clarifications.sql', 'V14__add_operator_access_audits.sql',
+   'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
++  'V17__add_durable_ai_room_budgets.sql',
+ ];
+ const guardFiles = [
+   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
+@@ -28,7 +29,7 @@
+ ].sort();
+ const range = n => Array.from({ length: n }, (_, i) => i + 1);
+ const catalogs = [range(10), range(11), range(12), [...range(11), 13],
+-  [...range(10), 14, 15], [...range(11), 14, 15], range(16)];
++  [...range(10), 14, 15], [...range(11), 14, 15], range(16), range(17)];
+ const hash = value => crypto.createHash('sha256').update(value).digest('hex');
+ const canonical = value => JSON.stringify(value, (_key, item) => item && !Array.isArray(item) && typeof item === 'object'
+   ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
+@@ -48,10 +49,10 @@
+ const oldImage = `${repository}@sha256:${'7'.repeat(64)}`;
+ const environment = { SOURCE_SHA: sourceSha, CI_SHA: sourceSha, CI_RUN_ID: '67890',
+   BUILD_RUN_ID: '12345', BUILD_RUN_ATTEMPT: '2', ECR_REPOSITORY_URL: repository, IMAGE_DIGEST: `sha256:${'b'.repeat(64)}` };
+-function rows(versions = range(16)) {
++function rows(versions = range(17)) {
+   return versions.map(version => ({ version: String(version), script: scripts[version - 1], checksum: version * 37 }));
+ }
+-function manifest(versions = range(16)) {
++function manifest(versions = range(17)) {
+   return { protocol: 'meet-me-approved-release-v1', sourceSha, ...expected,
+     imageDigest: environment.IMAGE_DIGEST, releaseId: `${sourceSha}-12345-2`, archiveSha256: 'c'.repeat(64),
+     schemaFingerprint: 'd'.repeat(64), guardFingerprint: 'e'.repeat(64), migrations: rows(versions),
+@@ -83,11 +84,11 @@
+   const migrations = path.join(directory, 'src/main/resources/db/migration'); fs.mkdirSync(migrations, { recursive: true });
+   for (const name of scripts) {
+     const source = path.join(root, 'src/main/resources/db/migration', name);
+-    // V16 may be unimplemented during independent RED. Synthetic SQL exists only in this temp fixture.
++    // Only new V17 may be unimplemented during independent RED; never synthesize historical SQL.
+     if (fs.existsSync(source)) fs.copyFileSync(source, path.join(migrations, name));
+     else {
+-      assert.equal(name, scripts[15], 'Only the new, not-yet-authored V16 may be synthetic');
+-      fs.writeFileSync(path.join(migrations, name), '-- synthetic test-only V16\r\nSELECT 16;\r\n');
++      assert.equal(name, scripts[16], 'Only the new, not-yet-authored V17 may be synthetic');
++      fs.writeFileSync(path.join(migrations, name), '-- synthetic test-only V17\r\nSELECT 17;\r\n');
+     }
+   }
+   for (const name of guardFiles) {

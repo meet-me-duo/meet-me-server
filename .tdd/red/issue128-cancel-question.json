@@ -1,0 +1,24 @@
+{
+  "workItem": "issue128-cancel-question",
+  "sourceRevision": "18cdb5ddec4f9e09db50feb54337aae9516a0108",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/Issue128CancelledQuestionHttpPostgresTest.kt",
+      "sha256": "8c22e9fda348eeae8483f8e2465789d9636a6f06af295b2184d3b041df9ffbe3"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue128CancelledQuestionHttpPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.Issue128CancelledQuestionHttpPostgresTest#CQ01 cancelled question is absent from mutation and reload while private history remains()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T08:01:11Z"
+}

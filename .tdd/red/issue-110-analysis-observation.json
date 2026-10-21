@@ -1,0 +1,43 @@
+{
+  "workItem": "issue-110-analysis-observation",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorObservationTest.kt",
+      "sha256": "d6d5385260a516f129ff5b6b205039da724d7155848bdffdbc93251f42dd377b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/observability/MicrometerAnalysisExecutionMetricsTest.kt",
+      "sha256": "5991a92f063f79083cec8d9b128e064ac8370984118e00dd35e1a5b4003b99b5"
+    }
+  ],
+  "command": [
+    ".\\gradlew.bat",
+    "--offline",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*GeminiBatchProcessorObservationTest",
+    "--tests",
+    "*MicrometerAnalysisExecutionMetricsTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#late discarded response usage contributes alongside the eventual winner()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#unknown failed attempt cost prevents winner cost being advertised as the whole execution()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#all failed dispatches produce one delayed execution with unknown usage rather than zeros()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#single completion reports one execution and preserves known usage and existing price()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#admission that consumes the deadline is counted without claiming parser dispatch or zero cost()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#fallback keeps providers separate and never labels a Gemini subtotal as mixed execution cost()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#delayed execution still preserves known usage from a response after the total deadline()",
+    "com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest#zero dispatch execution does not manufacture a known zero legacy cost()",
+    "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest#one execution records admitted attempts separately from parser dispatches()",
+    "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest#admitted only execution does not enter dispatched usage coverage()",
+    "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest#known per-attempt costs remain provider separated without creating legacy execution totals()",
+    "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest#usage coverage uses dispatched attempts and measures each field independently()",
+    "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest#known zero is recorded while unknown usage creates no zero samples()",
+    "com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest#completed and delayed are separate logical executions with bounded enum tags()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T08:43:28.415128+00:00"
+}

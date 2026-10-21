@@ -1,0 +1,19 @@
+{
+  "workItem": "issue-109-auth-google-issuer",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/GoogleIssuerCompatibilitySecurityTest.kt",
+      "sha256": "1a2f96957f966ed65eea5a76ac8735498e05cb616242a777464913bdcf895ef2"
+    }
+  ],
+  "command": [
+    "python3",
+    "/tmp/meetme-109-google-red-refresh.py"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.adapter.output.oauth.GoogleIssuerCompatibilitySecurityTest.Google canonical and documented legacy issuer identify same subject while lookalikes fail()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:50:52.793162Z"
+}

@@ -1,0 +1,47 @@
+{
+  "workItem": "issue123-dispatch-managed-worker",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchFixtures.kt",
+      "sha256": "140268c3b45fa61066fe3e3384e21ead9e8baaff09a5b58feff622c66fdd7e79"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123FinalLegacyCompatibilityTest.kt",
+      "sha256": "81515d2e7e8e739667b4081eff9f172653df814c30847c7ac4dbd05a772010dc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ManagedDispatchCompositionTest.kt",
+      "sha256": "24fbf7a042c888a75caf68040c2f88e183227239b430c49d689937ee231666e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123WorkerDispatchLineageTest.kt",
+      "sha256": "df58be0f972ad37cfd2bc3c43202e299ffe9e0bb0cc1566303dcb7e4d245705a"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--console=plain",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*Issue123ManagedDispatchCompositionTest",
+    "--tests",
+    "*Issue123FinalDispatchLifecyclePostgresTest",
+    "--tests",
+    "*Issue123WorkerDispatchLineageTest",
+    "--tests",
+    "*Issue123FinalLegacyCompatibilityTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#OR01 managed application mode reads the same explicit gate property without financial authority(boolean) [1] false",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#OR01 managed application mode reads the same explicit gate property without financial authority(boolean) [2] true",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#AD02 managed final adapter cannot start without its mandatory shared gate(String) [1] \"gemini\"",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#AD02 managed final adapter cannot start without its mandatory shared gate(String) [2] \"luna\"",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest#AD02 managed personal factory ON without gate returns configuration failure before any socket()",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123WorkerDispatchLineageTest#OR01 worker binds immutable claimed execution and original anchor only when mode is ON(String) [1] \"ON\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T04:38:26.699225Z"
+}

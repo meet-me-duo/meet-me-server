@@ -1,0 +1,110 @@
+{
+  "status": "PASS_PROTOCOL_ONLY",
+  "records": [
+    {
+      "id": "P1",
+      "gold": "NEEDS_REVIEW",
+      "status": "VALID_CHOICE",
+      "raw": "CLEAR",
+      "reason": "LOW_CONFIDENCE",
+      "b": "NEEDS_CHOICE"
+    },
+    {
+      "id": "P2",
+      "gold": "CLEAR",
+      "status": "VALID_CHOICE",
+      "raw": "NEEDS_REVIEW",
+      "reason": null,
+      "b": "NEEDS_CHOICE"
+    },
+    {
+      "id": "P3",
+      "gold": "NEEDS_REVIEW",
+      "status": "VALID_CHOICE",
+      "raw": "INDETERMINATE",
+      "reason": "MODEL_UNCERTAIN",
+      "b": "NEEDS_EDIT"
+    },
+    {
+      "id": "P4",
+      "gold": "NEEDS_REVIEW",
+      "status": "HTTP_ERROR",
+      "raw": null,
+      "reason": null,
+      "b": null
+    },
+    {
+      "id": "P5",
+      "gold": "NEEDS_REVIEW",
+      "status": "UNRUN",
+      "raw": null,
+      "reason": null,
+      "b": null
+    },
+    {
+      "id": "P6",
+      "gold": "INDETERMINATE",
+      "status": "REFUSAL",
+      "raw": null,
+      "reason": "REFUSED",
+      "b": null
+    },
+    {
+      "id": "P7",
+      "gold": "INDETERMINATE",
+      "status": "VALID_CHOICE",
+      "raw": "INDETERMINATE",
+      "reason": "MODEL_UNCERTAIN",
+      "b": "NEEDS_EDIT"
+    },
+    {
+      "id": "P8",
+      "gold": "CLEAR",
+      "status": "VALID_CHOICE",
+      "raw": "CLEAR",
+      "reason": null,
+      "b": null
+    },
+    {
+      "id": "P9",
+      "gold": "NEEDS_REVIEW",
+      "status": "VALID_CHOICE",
+      "raw": "CLEAR",
+      "reason": null,
+      "b": null
+    }
+  ],
+  "synthetic_arithmetic": {
+    "planned": 9,
+    "gold_counts": {
+      "NEEDS_REVIEW": 5,
+      "CLEAR": 2,
+      "INDETERMINATE": 2
+    },
+    "status_counts": {
+      "VALID_CHOICE": 6,
+      "HTTP_ERROR": 1,
+      "UNRUN": 1,
+      "REFUSAL": 1
+    },
+    "valid_choices": 6,
+    "raw_material_false_negatives": 2,
+    "raw_material_planned_denominator": 5,
+    "raw_material_valid_denominator": 3,
+    "unnecessary_questions": 1,
+    "clear_planned_denominator": 2,
+    "clear_B_attempt_denominator": 1,
+    "safe_but_incomplete": 1,
+    "safe_abstention_target_met": 1,
+    "final_false_clear": 1,
+    "low_confidence_count": 1,
+    "model_uncertain_count": 2,
+    "refusal_count": 1,
+    "technical_error_count": 1,
+    "unrun_count": 1
+  },
+  "zero_denominator": "N/A",
+  "model_execution_count": 0,
+  "model_accuracy_claim": false,
+  "provenance": "Entirely invented scoring protocol records, not corpus cases or provider predictions."
+}

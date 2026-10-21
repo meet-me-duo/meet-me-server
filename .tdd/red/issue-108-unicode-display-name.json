@@ -1,0 +1,32 @@
+{
+  "workItem": "issue-108-unicode-display-name",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/input/web/GuestDisplayNameUnicodeWebIntegrationTest.kt",
+      "sha256": "7e35cd367af2c4a1fb69f843ea08ca7ca57ae19b31f7e277c5e994f1f3337463"
+    }
+  ],
+  "command": [
+    "/tmp/issue108-integration-gradle-run",
+    "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Pkotlin.incremental=false",
+    "--max-workers=2",
+    "-I",
+    "/tmp/issue108-unicode-deadline-author.gradle",
+    "runKtlintFormatOverTestSourceSet",
+    "runKtlintCheckOverTestSourceSet",
+    "test",
+    "--tests",
+    "*GuestDisplayNameUnicodeWebIntegrationTest",
+    "--tests",
+    "*SubmissionDeadlinePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.participant.adapter.input.web.GuestDisplayNameUnicodeWebIntegrationTest.108 U03 이름의 앞뒤 공백을 제거한 뒤 50코드 포인트를 허용하고 공백뿐인 이름은 거부한다()",
+    "com.meetme.server.participant.adapter.input.web.GuestDisplayNameUnicodeWebIntegrationTest.108 U01 non BMP 이름 50코드 포인트는 UTF16 길이에 관계없이 참여할 수 있다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T16:52:39Z"
+}

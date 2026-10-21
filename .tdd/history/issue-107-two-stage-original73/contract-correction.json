@@ -1,0 +1,14 @@
+{
+  "status": "HISTORICAL_ORIGINAL_73_SUPERSEDED_BY_VALID_79_RED_AND_GREEN",
+  "reason": "Independent review found classifier outputTokens2049 incorrectly meets legacy generation-only worker2048 cap. Approved TS08 clarification keeps known classifier output in budget observation and maps terminal legacy outputTokens to null/N/A; generator output/cap unchanged.",
+  "old_assertion": "assertEquals(4L, result.outputTokens)",
+  "new_assertion": "assertNull(result.outputTokens)",
+  "raw_original_tests": ".codex/tdd-evidence/issue-107-two-stage-original73-tests",
+  "old_red_manifest": "red.json",
+  "six_faults": "Six scoped mutants detected by15 assertions, each exact restore GREEN, final73 GREEN; separate all-main assertion stopped safely for one externally owned whitespace-only classifier contract change.",
+  "root_authorized_change": true,
+  "only_existing_test_change_is_approved_assertion": true,
+  "prior_test_exactly_reconstructible_from_documented_delta": true,
+  "new_red": ".tdd/red/issue-107-two-stage-pipeline.json",
+  "new_green_receipt": ".codex/tdd-evidence/issue-107-two-stage-terminal-usage-green-receipt.json"
+}

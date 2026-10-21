@@ -4,8 +4,11 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageBat
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.shared.domain.SubmissionVersionId
+import com.meetme.server.submission.domain.ClarificationProposal
+import com.meetme.server.submission.domain.ConditionalTimeActivation
 import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
+import com.meetme.server.submission.domain.SubmissionRules
 import com.meetme.server.submission.domain.TimePolarity
 import tools.jackson.databind.ObjectMapper
 import java.time.DateTimeException
@@ -52,7 +55,7 @@ internal class NaturalLanguageProviderContract(
         val providerAreaNames = mutableListOf<Pair<String, String>>()
         val parsed =
             results.map { result ->
-                if (!result.keys.all { it in setOf("input_ref", "conditions", "rejection_code") }) {
+                if (!result.keys.all { it in setOf("input_ref", "conditions", "rejection_code", "clarification") }) {
                     throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 }
                 if (strict && !result.containsKey("rejection_code")) invalid()
@@ -87,8 +90,17 @@ internal class NaturalLanguageProviderContract(
                             null
                         }
                     }
+                val rawFallbackCount = rawConditions.count { it["type"] == CONDITIONAL_FALLBACK_TYPE }
+                val conditionalRejected =
+                    rawFallbackCount > 0 &&
+                        (
+                            conditions.filterIsInstance<StructuredCondition.ConditionalFallbackTimeWindow>().size != rawFallbackCount ||
+                                rejectedHardTime ||
+                                conditions.filterIsInstance<StructuredCondition.TimeWindow>().none { it.polarity == TimePolarity.AVAILABLE }
+                        )
                 val rejectionCode =
                     when {
+                        conditionalRejected -> "UNSUPPORTED_CONDITIONAL_CONSTRAINT"
                         rejectedHardTime -> "AMBIGUOUS_TIME_CONSTRAINT"
                         suppliedRejection != null -> suppliedRejection as String
                         conditionRejected -> "CONDITION_VALIDATION_FAILED"
@@ -106,7 +118,12 @@ internal class NaturalLanguageProviderContract(
                     throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 }
                 val versionId = SubmissionVersionId(UUID.fromString(ref))
-                StructuredSubmissionResult(versionId, conditions, rejectionCode)
+                val clarification =
+                    result["clarification"]?.let {
+                        if (rejectionCode !in setOf("AMBIGUOUS_TIME_CONSTRAINT", "AMBIGUOUS_INPUT") || rawConditions.isNotEmpty()) invalid()
+                        parseClarification(it, requestByRef.getValue(ref).rawText)
+                    }
+                StructuredSubmissionResult(versionId, conditions, rejectionCode, clarification)
             }
         val expectedRefs = request.inputs.map { it.inputRef }.toSet()
         if (parsed.map { it.submissionVersionId.value.toString() }.toSet() != expectedRefs || parsed.size != request.inputs.size) {
@@ -119,6 +136,36 @@ internal class NaturalLanguageProviderContract(
         return parsed
     }
 
+    private fun parseClarification(
+        value: Any,
+        rawText: String,
+    ): ClarificationProposal {
+        val fields = value as? Map<*, *> ?: invalid()
+        if (fields.keys != setOf("excerpt", "question", "option_a", "option_b")) invalid()
+
+        fun text(
+            name: String,
+            maximum: Int,
+        ): String {
+            val raw = fields[name] as? String ?: invalid()
+            val trimmed = SubmissionRules.trimRawText(raw)
+            if (trimmed.isEmpty() || trimmed.codePointCount(0, trimmed.length) > maximum) invalid()
+            return trimmed
+        }
+        val excerpt = text("excerpt", 200)
+        if (!rawText.contains(excerpt)) invalid()
+        val question = text("question", 160)
+        val optionA = text("option_a", 500)
+        val optionB = text("option_b", 500)
+        if (optionA == optionB ||
+            optionA == SubmissionRules.trimRawText(rawText) ||
+            optionB == SubmissionRules.trimRawText(rawText)
+        ) {
+            invalid()
+        }
+        return ClarificationProposal(excerpt, question, optionA, optionB)
+    }
+
     private fun parseCondition(
         map: Map<String, Any?>,
         schemaVersion: String,
@@ -126,10 +173,11 @@ internal class NaturalLanguageProviderContract(
         if (schemaVersion == "3") validateLiveCondition(map)
         val meaningful = map.filterValues { it != null }
         return when (meaningful["type"]?.toString()) {
-            "TIME_WINDOW", "PREFERRED_TIME_WINDOW" -> {
+            "TIME_WINDOW", "PREFERRED_TIME_WINDOW", CONDITIONAL_FALLBACK_TYPE -> {
                 val preferred = meaningful["type"] == "PREFERRED_TIME_WINDOW"
-                if (preferred && schemaVersion != "3") invalid()
-                requireOnly(meaningful, TIME_FIELDS)
+                val conditional = meaningful["type"] == CONDITIONAL_FALLBACK_TYPE
+                if ((preferred || conditional) && schemaVersion != "3") invalid()
+                requireOnly(meaningful, if (conditional) CONDITIONAL_TIME_FIELDS else TIME_FIELDS)
                 val date = meaningful["date"]?.toString()?.let(LocalDate::parse)
                 val day = meaningful["day_of_week"]?.toString()?.let(DayOfWeek::valueOf)
                 val normalizedDay =
@@ -143,7 +191,16 @@ internal class NaturalLanguageProviderContract(
                 val rawEndTime = meaningful.getValue("end_time").toString()
                 val endsAtNextDayStart = rawEndTime == END_OF_DAY
                 val endTime = if (endsAtNextDayStart) LocalTime.MIDNIGHT else LocalTime.parse(rawEndTime)
-                if (preferred) {
+                if (conditional) {
+                    StructuredCondition.ConditionalFallbackTimeWindow(
+                        ConditionalTimeActivation.valueOf(meaningful.getValue("activation").toString()),
+                        date,
+                        normalizedDay,
+                        startTime,
+                        endTime,
+                        endsAtNextDayStart,
+                    )
+                } else if (preferred) {
                     StructuredCondition.PreferredTimeWindow(date, normalizedDay, startTime, endTime, endsAtNextDayStart)
                 } else {
                     StructuredCondition.TimeWindow(
@@ -196,6 +253,7 @@ internal class NaturalLanguageProviderContract(
         val fields =
             when (type) {
                 "TIME_WINDOW", "PREFERRED_TIME_WINDOW" -> TIME_FIELDS
+                CONDITIONAL_FALLBACK_TYPE -> CONDITIONAL_TIME_FIELDS
                 "SPECIFIC_PLACE" -> PLACE_FIELDS
                 "PREFERRED_PLACE" -> PLACE_FIELDS + "radius_meters"
                 "TRAVEL_CONSTRAINT" -> setOf("type", "expression")
@@ -204,12 +262,14 @@ internal class NaturalLanguageProviderContract(
             }
         if (map.keys != fields) invalid()
         when (type) {
-            "TIME_WINDOW", "PREFERRED_TIME_WINDOW" -> {
+            "TIME_WINDOW", "PREFERRED_TIME_WINDOW", CONDITIONAL_FALLBACK_TYPE -> {
                 if ((map["date"] == null) == (map["day_of_week"] == null)) invalid()
                 listOf("date", "day_of_week").forEach { field ->
                     if (map[field] != null && map[field] !is String) invalid()
                 }
-                if (type == "PREFERRED_TIME_WINDOW") {
+                if (type == CONDITIONAL_FALLBACK_TYPE) {
+                    if (map["activation"] != ConditionalTimeActivation.WHOLE_ROOM_PRIMARY_UNAVAILABLE.name) invalid()
+                } else if (type == "PREFERRED_TIME_WINDOW") {
                     if (map["polarity"] != null) invalid()
                 } else if (map["polarity"] !is String) {
                     invalid()
@@ -244,6 +304,26 @@ internal class NaturalLanguageProviderContract(
             appendLine("Never generate final plans, scores, recommendations, invented stores or coordinates.")
             appendLine("Use AVAILABLE for explicit possible times and UNAVAILABLE for hard time exclusions, including exceptions.")
             appendLine("Preserve every explicit feasible time alternative and recurring day within the search range.")
+            appendLine(
+                "Preserve a single-stage primary-then-fallback time relationship; never union a conditional fallback into AVAILABLE.",
+            )
+            appendLine("Keep every primary feasible alternative as TIME_WINDOW AVAILABLE, alongside any explicit PREFERRED_TIME_WINDOW.")
+            appendLine(
+                "When X is preferred and Y is possible only if X does not work, preserve X as both " +
+                    "TIME_WINDOW AVAILABLE and PREFERRED_TIME_WINDOW, and Y as CONDITIONAL_FALLBACK_TIME_WINDOW.",
+            )
+            appendLine(
+                "An isolated soft preference without an explicit feasible window or primary-to-fallback relationship " +
+                    "must not create TIME_WINDOW AVAILABLE.",
+            )
+            appendLine("For fallback only if the whole room cannot meet in the primary times, use CONDITIONAL_FALLBACK_TIME_WINDOW.")
+            appendLine("Its activation is WHOLE_ROOM_PRIMARY_UNAVAILABLE; include date, day_of_week, start_time, end_time and no polarity.")
+            appendLine(
+                "At least one explicit primary AVAILABLE window in that input is required; preference alone is not primary availability.",
+            )
+            appendLine("Do not evaluate this trigger per participant subset or infer it from preference ranking or meeting duration.")
+            appendLine("Only one conditional participant and one primary-to-fallback stage are supported across the frozen room batch.")
+            appendLine("For multiple conditional participants, nested triggers, chains or cycles, use UNSUPPORTED_CONDITIONAL_CONSTRAINT.")
             appendLine("Use PREFERRED_TIME_WINDOW only for an explicitly preferred date-and-time predicate; polarity must be null.")
             appendLine("Use PREFERRED_PLACE only for an explicitly preferred place; radius_meters must be null.")
             appendLine("Never infer a preference from AVAILABLE, UNAVAILABLE or an ordinary permitted place.")
@@ -254,6 +334,19 @@ internal class NaturalLanguageProviderContract(
             appendLine("For 평일19–21가능, 목요일20시이후선호, keep weekday AVAILABLE19–21 and Thursday PREFERRED_TIME_WINDOW20–21.")
             appendLine("Soft preferences do not remove feasible alternatives and must not become hard availability constraints.")
             appendLine("Do not invent time bounds for vague or ambiguous time restrictions.")
+            appendLine(
+                "Only material ambiguity affecting candidate results may carry a clarification; clear or unambiguous inputs use null.",
+            )
+            appendLine("Return at most one concise clarification with an exact original excerpt, question, option_a and option_b.")
+            appendLine(
+                "Each option is a complete replacement input: preserve every other constraint, negation, exclusion and soft preference.",
+            )
+            appendLine("Resolve relative dates using the input reference_date and write absolute dates in both replacement options.")
+            appendLine("If two safe complete interpretations cannot express the ambiguity, use null instead of invented alternatives.")
+            appendLine(
+                "A clarification requires empty conditions and AMBIGUOUS_TIME_CONSTRAINT or AMBIGUOUS_INPUT; never assume availability.",
+            )
+            appendLine("Question <=160, excerpt <=200 and each complete replacement <=500 Unicode code points; options must be distinct.")
             appendLine(
                 "Resolve relative dates separately from each input's immutable room-local reference_date, never from today or search start.",
             )
@@ -318,7 +411,9 @@ internal class NaturalLanguageProviderContract(
         private val REJECTION_CODES =
             setOf("AMBIGUOUS_TIME_CONSTRAINT", "UNSUPPORTED_CONDITIONAL_CONSTRAINT", "CONDITION_VALIDATION_FAILED", "AMBIGUOUS_INPUT")
         private const val END_OF_DAY = "24:00"
+        private const val CONDITIONAL_FALLBACK_TYPE = "CONDITIONAL_FALLBACK_TIME_WINDOW"
         private val TIME_FIELDS = setOf("type", "polarity", "date", "day_of_week", "start_time", "end_time")
+        private val CONDITIONAL_TIME_FIELDS = setOf("type", "activation", "date", "day_of_week", "start_time", "end_time")
         private val PLACE_FIELDS = setOf("type", "query", "area_key", "area_name")
         private val START_TIME_SCHEMA: Map<String, Any> =
             mapOf(
@@ -352,6 +447,14 @@ internal class NaturalLanguageProviderContract(
                     date = mapOf("type" to "null"),
                     dayOfWeek = mapOf("type" to "string", "enum" to DayOfWeek.entries.map { it.name }),
                     preferred = true,
+                ),
+                conditionalTimeWindowSchema(
+                    date = mapOf("type" to "string", "format" to "date"),
+                    dayOfWeek = mapOf("type" to "null"),
+                ),
+                conditionalTimeWindowSchema(
+                    date = mapOf("type" to "null"),
+                    dayOfWeek = mapOf("type" to "string", "enum" to DayOfWeek.entries.map { it.name }),
                 ),
                 conditionSchema(
                     type = "SPECIFIC_PLACE",
@@ -405,10 +508,25 @@ internal class NaturalLanguageProviderContract(
                                     mapOf(
                                         "type" to "object",
                                         "additionalProperties" to false,
-                                        "required" to listOf("input_ref", "conditions", "rejection_code"),
+                                        "required" to listOf("input_ref", "conditions", "rejection_code", "clarification"),
                                         "properties" to
                                             mapOf(
                                                 "input_ref" to mapOf("type" to "string"),
+                                                "clarification" to
+                                                    mapOf(
+                                                        "anyOf" to
+                                                            listOf(
+                                                                mapOf("type" to "null"),
+                                                                mapOf(
+                                                                    "type" to "object",
+                                                                    "additionalProperties" to false,
+                                                                    "required" to listOf("excerpt", "question", "option_a", "option_b"),
+                                                                    "properties" to
+                                                                        listOf("excerpt", "question", "option_a", "option_b")
+                                                                            .associateWith { mapOf("type" to "string") },
+                                                                ),
+                                                            ),
+                                                    ),
                                                 "rejection_code" to
                                                     mapOf(
                                                         "type" to listOf("string", "null"),
@@ -425,6 +543,24 @@ internal class NaturalLanguageProviderContract(
                                             ),
                                     ),
                             ),
+                    ),
+            )
+
+        private fun conditionalTimeWindowSchema(
+            date: Map<String, Any>,
+            dayOfWeek: Map<String, Any>,
+        ): Map<String, Any> =
+            conditionSchema(
+                type = CONDITIONAL_FALLBACK_TYPE,
+                required = CONDITIONAL_TIME_FIELDS.toList(),
+                properties =
+                    mapOf(
+                        "activation" to
+                            mapOf("type" to "string", "enum" to listOf(ConditionalTimeActivation.WHOLE_ROOM_PRIMARY_UNAVAILABLE.name)),
+                        "date" to date,
+                        "day_of_week" to dayOfWeek,
+                        "start_time" to START_TIME_SCHEMA,
+                        "end_time" to END_TIME_SCHEMA,
                     ),
             )
 

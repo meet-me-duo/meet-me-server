@@ -1,0 +1,46 @@
+{
+  "workItem": "issue-107-precheck-provider-format",
+  "recordedAt": "2026-10-17T18:38:05.803000+00:00",
+  "provenance": "SUPPLEMENTAL_RECONSTRUCTED_RED_AFTER_FORMAT_ONLY_CHANGE",
+  "chronologicalFirstRed": ".tdd/red/issue-107-pre-submit-provider.json",
+  "originalTest": ".tdd/history/issue-107-precheck-provider-format/PrecheckProviderTransportContractTest.before.kt",
+  "originalSha256": "7227847aeae9d6f03b34acab4dd27ebc64f94eb76e96f5a6d91a6fff05275ba8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "874d13bb1cb182119982b03b81c0c0c9c03d92ac939b02cdc07e483a2c277624"
+    }
+  ],
+  "change": "One method-chain line wrapped and trailing comma inserted; exact deterministic formatting operation verified. No test expectation change.",
+  "diff": ".tdd/history/issue-107-precheck-provider-format/format-only.diff",
+  "reconstructedSource": "Separate /tmp snapshot check() replaced with TODO to replay missing original adapter behavior. This is not claimed to be chronological pre-implementation RED.",
+  "tests": 15,
+  "failed": 15,
+  "errors": 0,
+  "log": ".codex/tdd-evidence/provider-format-replay/format-reconstructed-red.log",
+  "logSha256": "30dae24245f5a78d1d8db657770e6c01e29e11f21fbf76b39824c12a7fd07f53",
+  "command": [
+    "./gradlew",
+    "-I",
+    "/tmp/meetme-provider-only.init.gradle",
+    "test",
+    "--tests",
+    "*PrecheckProviderTransportContractTest"
+  ],
+  "externalProviderCalls": 0,
+  "restoredGreen": {
+    "tests": 16,
+    "failed": 0,
+    "errors": 0,
+    "log": ".codex/tdd-evidence/provider-format-replay/format-reconstructed-restored-green.log",
+    "logSha256": "a5da434817dfb3dde2fc5f8e4881cd389094555be4c150b4dfdd266a50505cf5"
+  },
+  "finalOriginalProductionGreen": {
+    "adapterSha256": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214",
+    "tests": 16,
+    "failed": 0,
+    "errors": 0,
+    "log": ".codex/tdd-evidence/issue107-provider-provenance-final-green.log",
+    "scope": "Actual current provider/model metadata delta plus formatted tests; separate from reconstructed adapter snapshot"
+  }
+}

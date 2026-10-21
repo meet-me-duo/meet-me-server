@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-10-17T21:03:38Z",
+  "base": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "guard": {
+    "command": "python3 .codex/hooks/tdd_guard.py < guard-event.json",
+    "unchanged": true,
+    "exitCode": 0,
+    "startedAt": "2026-10-17T20:53:53.323622+00:00",
+    "checks": [
+      "hook self-tests",
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "junit": {
+    "suites": 179,
+    "tests": 1258,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "passed": 1254,
+    "allFreshAfterGuardStart": true
+  },
+  "source": {
+    "files": 491,
+    "beforeEqualsAfterEqualsCurrent": true,
+    "manifestSha256": "184841a2e49769fe7ae3860b5c4948d501f09bb549bdfeae8afe85563247e739"
+  },
+  "limits": [
+    "Synthetic/local only",
+    "Paid model / production / real OAuth / SSM / Secret calls zero"
+  ],
+  "archivedWhitespace": "Exact FI history *.diff/*.patch are preserved as data; source diff check excludes these archives only."
+}

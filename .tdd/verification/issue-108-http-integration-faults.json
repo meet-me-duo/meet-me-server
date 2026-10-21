@@ -1,0 +1,121 @@
+{
+  "workItem": "issue-108-http-integration-faults",
+  "sourceRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "boundary": "ONE grouped run with five simultaneous mutations across four source files, mapped to H10/H25/H37-first/H36/deadline-FIRST-exact. F3+F5 share one exact original SubmissionService backup. This is not five independent runs. Followed by one restored 74-test GREEN run.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicy.kt",
+      "sha256": "4148d22281817d7027270fde86e187f0e659fd417afcd30de7b9b4be1d12f027"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessWriteGuard.kt",
+      "sha256": "35f73a345ad3d4b8888320a6b939984df0387b2675863234044c449a6ca61e67"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "7db4f54cbdfc8653746e48ede9345e624914b0a1621bfd2b464ab8d713cf6b59"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessService.kt",
+      "sha256": "65265949abbe7588c72fd327d57b8f925bbed677fd516af26493a56cd6297f1f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/input/web/GuestReaccessWebIntegrationTest.kt",
+      "sha256": "6a45dd18274dfeee1afe4b10c40a536c65257535a446b904dfccf8621f14e6ce"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionDeadlinePostgresTest.kt",
+      "sha256": "9dbc7e87cf86dcdf58837c21c1cf4ff1e33211f3f446e7a3715ec8075483808c"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "F1: Password verification always succeeds for a supplied password; wrong password must be rejected.",
+      "command": [
+        "/tmp/issue108-integration-gradle-run",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Pkotlin.incremental=false",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*GuestReaccessWebIntegrationTest",
+        "--tests",
+        "*SubmissionDeadlinePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H10 틀린 암호는 원문이나 암호 존재 정보를 노출하지 않고 거부한다()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F2: Skip stored revision precondition; two replacement requests must not both succeed.",
+      "command": [
+        "/tmp/issue108-integration-gradle-run",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Pkotlin.incremental=false",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*GuestReaccessWebIntegrationTest",
+        "--tests",
+        "*SubmissionDeadlinePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H25 같은 revision을 선택한 두 기기의 대체 입력은 하나만 수용하고 나머지는 충돌한다()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F3: Restore generic same-text no-op for blind write; the first same-text replacement must still create a fresh version.",
+      "command": [
+        "/tmp/issue108-integration-gradle-run",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Pkotlin.incremental=false",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*GuestReaccessWebIntegrationTest",
+        "--tests",
+        "*SubmissionDeadlinePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H37 blind 입력은 기존 원문과 같아도 새 버전으로 snapshot을 소비하며 같은 grant 재사용은 충돌한다()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F4: Remove only join outer transaction; invalid password hashing must roll back inner participant/session registration.",
+      "command": [
+        "/tmp/issue108-integration-gradle-run",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Pkotlin.incremental=false",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*GuestReaccessWebIntegrationTest",
+        "--tests",
+        "*SubmissionDeadlinePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.108 H36 Unicode 129개 암호 등록 실패는 participant 세션 해시를 모두 rollback하고 쿠키를 발급하지 않는다()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "F5: Disable only initial-collection deadline rejection after acquiring room lock; ordinary FIRST at exact deadline must reject before any write.",
+      "command": [
+        "/tmp/issue108-integration-gradle-run",
+        "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Pkotlin.incremental=false",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*GuestReaccessWebIntegrationTest",
+        "--tests",
+        "*SubmissionDeadlinePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest.\"FIRST\", deadline offset 0ns, expected participant policy false",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T17:06:34Z"
+}

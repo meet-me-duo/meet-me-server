@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "issue": 107,
+  "purpose": "Synthetic independent semantic evaluation input; no executable classifier or model-quality result",
+  "source_created_at": "2026-10-17T10:00:00Z",
+  "source_local_date": "2026-10-17",
+  "time_zone": "Asia/Seoul",
+  "locale": "ko-KR",
+  "search_start_date": "2026-10-17",
+  "search_end_date": "2026-10-31",
+  "notes": [
+    "MUST_NOT_ASK includes intended wide ranges and valid zero-candidate inputs; it is not a success/match promise",
+    "MUST_ASK requires result-relevant clarification; if safe A/B is impossible, NEEDS_EDIT is acceptable and CLEAR is not",
+    "Old additional_ai_calls=0 fixtures describe post-close behavior and are not copied here",
+    "Synthetic provider fixtures do not measure real-model false positives or false negatives"
+  ],
+  "fixtures": [
+    {
+      "id": "Q01",
+      "raw_text": "7~8시 가능",
+      "expected": "MUST_ASK",
+      "reason": "맥락 없는 오전/오후 두 해석",
+      "preserve": "가능 극성과 다른 조건을 보존"
+    },
+    {
+      "id": "Q02",
+      "raw_text": "7~8시 불가",
+      "expected": "MUST_ASK",
+      "reason": "불가 시간의 오전/오후",
+      "preserve": "불가를 가능으로 바꾸지 않음"
+    },
+    {
+      "id": "Q03",
+      "raw_text": "오전이나 저녁 중 아직 정하지 못했어요. 7~8시요",
+      "expected": "MUST_ASK",
+      "reason": "아직 미결인 오전/저녁",
+      "preserve": "미결정을 두 시간대 모두 가능으로 바꾸지 않음"
+    },
+    {
+      "id": "Q04",
+      "raw_text": "오전 8~7시 가능",
+      "expected": "MUST_ASK",
+      "reason": "종료시각 역전",
+      "preserve": "swap/밤샘 추정 금지; 안전한 A/B 없으면 NEEDS_EDIT"
+    },
+    {
+      "id": "Q05",
+      "raw_text": "20~19시 불가",
+      "expected": "MUST_ASK",
+      "reason": "역전된 불가 범위",
+      "preserve": "불가 극성 보존; 임의 익일 종료 금지"
+    },
+    {
+      "id": "Q06",
+      "raw_text": "내일 7~8시 가능",
+      "expected": "MUST_ASK",
+      "reason": "오전/오후만 미해결",
+      "preserve": "내일=2026-10-18을 재질문/이동하지 않음"
+    },
+    {
+      "id": "Q07",
+      "raw_text": "다음주 월요일 7~8시 가능",
+      "expected": "MUST_ASK",
+      "reason": "오전/오후만 미해결",
+      "preserve": "날짜=2026-10-19 고정; 이미 명확한 월요일 재질문 금지"
+    },
+    {
+      "id": "Q08",
+      "raw_text": "7~8시 가능하고 홍대입구역이면 좋아요",
+      "expected": "MUST_ASK",
+      "reason": "가능 시간 오전/오후",
+      "preserve": "명시한 장소/부드러운 선호 보존"
+    },
+    {
+      "id": "Q09",
+      "raw_text": "서울이나 안산 중 어디 중앙역인지 아직 정하지 못했어요. 오후 7~8시 가능",
+      "expected": "MUST_ASK",
+      "reason": "명시적으로 미결인 장소",
+      "preserve": "이미 명확한 오후 재질문 금지; 임의 선택 금지"
+    },
+    {
+      "id": "Q10",
+      "raw_text": "7-8시쯤 가능",
+      "expected": "MUST_ASK",
+      "reason": "오전/오후와 근사 경계",
+      "preserve": "근사=±15/30분 발명 금지; 복합 모호성 안전 A/B 없으면 NEEDS_EDIT"
+    },
+    {
+      "id": "N01",
+      "raw_text": "오전 7~8시 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 오전",
+      "preserve": "07~08 보존"
+    },
+    {
+      "id": "N02",
+      "raw_text": "저녁 7~8시 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 저녁",
+      "preserve": "19~20 보존"
+    },
+    {
+      "id": "N03",
+      "raw_text": "19~20시 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "24시간제",
+      "preserve": "명시 시각 보존"
+    },
+    {
+      "id": "N04",
+      "raw_text": "저녁에만 가능해요. 7~8시요",
+      "expected": "MUST_NOT_ASK",
+      "reason": "문맥이 오전/오후 해소",
+      "preserve": "19~20 보존"
+    },
+    {
+      "id": "N05",
+      "raw_text": "매일 18~22시 가능하고 내일은 19시부터 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "유일하고 호환되는 부모 종료시각",
+      "preserve": "내일19~22시; 새 종료시각 발명 금지"
+    },
+    {
+      "id": "N06",
+      "raw_text": "주말 아무 때나 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "의도적으로 넓은 범위",
+      "preserve": "주말 전체 유지; 하루/시각 강제 선택 금지"
+    },
+    {
+      "id": "N07",
+      "raw_text": "토요일이든 일요일이든 둘 다 상관없어요",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 대안 OR",
+      "preserve": "두 날짜 보존"
+    },
+    {
+      "id": "N08",
+      "raw_text": "다음주 내내 아무 때나 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 넓은 기간",
+      "preserve": "임의 월요일 한 날짜로 축소 금지"
+    },
+    {
+      "id": "N09",
+      "raw_text": "강남역이나 홍대입구역 어느 쪽도 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "의도한 장소 대안",
+      "preserve": "장소 대안 OR 보존; 하나 선택 강요 금지"
+    },
+    {
+      "id": "N10",
+      "raw_text": "오늘 23시부터 내일 0시까지 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 자정 경계",
+      "preserve": "17일24:00 종료 보존"
+    },
+    {
+      "id": "N11",
+      "raw_text": "내일 0~1시 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 24시간제 날짜",
+      "preserve": "18일00~01 보존"
+    },
+    {
+      "id": "N12",
+      "raw_text": "다음주 월요일 저녁 7~8시 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 상대 날짜와 시각",
+      "preserve": "2026-10-19 19~20 보존"
+    },
+    {
+      "id": "N13",
+      "raw_text": "저녁 7~8시는 불가",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 불가",
+      "preserve": "UNAVAILABLE19~20 보존"
+    },
+    {
+      "id": "N14",
+      "raw_text": "19~22시 가능하고 20~21시를 더 선호해요",
+      "expected": "MUST_NOT_ASK",
+      "reason": "가능 구간과 부드러운 선호 분리",
+      "preserve": "선호 외 가용성 삭제 금지"
+    },
+    {
+      "id": "N15",
+      "raw_text": "토요일은 하루 종일 안 되고 일요일은 아무 때나 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "넓은 가능/불가 모두 명시",
+      "preserve": "극성·두 날짜·전체 범위 보존"
+    },
+    {
+      "id": "N16",
+      "raw_text": "오후 7~9시 가능. 온라인이나 오프라인 모두 괜찮아요",
+      "expected": "MUST_NOT_ASK",
+      "reason": "방식 둘 다 가능한 명시 대안",
+      "preserve": "시간·방식 OR 유지"
+    },
+    {
+      "id": "N17",
+      "raw_text": "회사 근처만 가능해요",
+      "expected": "MUST_NOT_ASK",
+      "reason": "기존 계약의 개인 기준 이동 제약",
+      "preserve": "실제 장소/좌표 발명 금지; 특정 장소 질문 강제 금지"
+    },
+    {
+      "id": "N18",
+      "raw_text": "2027년 1월 1일 19~20시 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "유효하지만 방 검색 범위 밖",
+      "preserve": "질문으로 기간 안으로 옮기지 않음; 후보0은 모호성 아님"
+    },
+    {
+      "id": "N19",
+      "raw_text": "2026년 10월 17일 23시부터 18일 1시까지 가능",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 익일 경계",
+      "preserve": "두 지역 날짜로 펼치되 종료 보존"
+    },
+    {
+      "id": "N20",
+      "raw_text": "평일 18~22시 가능하고 수요일은 안 돼요",
+      "expected": "MUST_NOT_ASK",
+      "reason": "명시 반복 범위와 예외",
+      "preserve": "수요일 제외; 불필요한 날짜 선택 금지"
+    }
+  ]
+}

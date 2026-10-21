@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-10-18T08:12:44.779376+00:00",
+  "finishedAt": "2026-10-18T08:20:55.261164+00:00",
+  "base": "18cdb5ddec4f9e09db50feb54337aae9516a0108",
+  "exitCode": 0,
+  "unchangedGuard": true,
+  "checks": [
+    "hook self-tests",
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "sourceFiles": 558,
+  "sourceBeforeAfterEqual": true,
+  "junit": {
+    "suites": 214,
+    "tests": 1717,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "allXmlAfterGuardStart": true,
+    "passed": 1713
+  },
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "actualModelCalls": 0,
+  "actualOAuthCalls": 0,
+  "newProviderSecrets": 0
+}

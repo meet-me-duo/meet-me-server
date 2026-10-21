@@ -1,0 +1,48 @@
+{
+  "recordedAt": "2026-10-17T19:15:54.361721+00:00",
+  "kind": "ORIGINAL_CHRONOLOGICAL_RED_HISTORY",
+  "sourceRevision": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckHttpPostgresTest.kt",
+      "originalSource": ".tdd/history/issue-107-pre-submit-initial48/original/PreSubmissionCheckHttpPostgresTest.kt",
+      "sha256": "e7e2a54d8884e44a9adfc9cbdda27afd95243733eae1f879e6ba4d5de95378e0",
+      "bytes": 28920
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckWorkerPostgresTest.kt",
+      "originalSource": ".tdd/history/issue-107-pre-submit-initial48/original/PreSubmissionCheckWorkerPostgresTest.kt",
+      "sha256": "48cef977caef550e85aa3f2697a0a3cba5ffc9f59cd10be327f34adc73fe940c",
+      "bytes": 46140
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionPrivacyQueuePostgresTest.kt",
+      "originalSource": ".tdd/history/issue-107-pre-submit-initial48/original/PreSubmissionPrivacyQueuePostgresTest.kt",
+      "sha256": "669bff90933d20caf126ad0a6b8cdce6a46d82d0ccffb04d7b46c57793dafcd9",
+      "bytes": 25772
+    }
+  ],
+  "originalRunClassification": {
+    "executed": 48,
+    "validAssertionRED": 44,
+    "excludedPlainTODO": 2,
+    "excludedMissingV16LegacyFixture": 2,
+    "environmentAndCompilerFailuresCountedAsRED": 0
+  },
+  "firstGreen": {
+    "executed": 48,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "testFingerprintsUnchanged": true
+  },
+  "localArtifactsNotCopied": [
+    {
+      "originalLocalPath": ".codex/tdd-evidence/issue-107-pre-submit-http.log",
+      "sha256": "53039f3fdca33f7900b31e39c99e6d6c565a9c81e13250dcecea41a3cc8222d9",
+      "bytes": 32733,
+      "copied": false
+    }
+  ],
+  "limitation": "Initial RED XML was overwritten by a subsequent serialized Gradle run; no claim that initial JUnit XML remains. Full raw log and exact original source fingerprints were retained locally; compact portable record does not copy raw log."
+}

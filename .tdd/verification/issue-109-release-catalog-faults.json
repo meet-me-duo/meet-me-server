@@ -1,0 +1,99 @@
+{
+  "workItem": "issue-109-release-catalog",
+  "status": "PASS",
+  "role": "Independent offline release contract test author /root/auth_tests; production implementation auth_impl",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "sha256": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859"
+    }
+  ],
+  "mutations": [
+    {
+      "name": "fault-publish-without-v11",
+      "tests": 9,
+      "exitCode": 1,
+      "failedTests": [
+        "publisher rejects V10-only source, duplicate versions, unknown V12 and symlinked V11"
+      ],
+      "freshRawLog": true,
+      "rawLog": ".codex/tdd-evidence/issue-109-release-catalog-fault-publish-without-v11.log",
+      "detected": true,
+      "source": "deploy/pipeline/publish_manifest.py",
+      "replacements": [
+        {
+          "from": "if len(paths) != 11:",
+          "to": "if len(paths) not in (10, 11):"
+        },
+        {
+          "from": "for version in range(1, 12):",
+          "to": "for version in range(1, len(paths) + 1):"
+        }
+      ]
+    },
+    {
+      "name": "fault-unsafe-auto-without-contract-equality",
+      "tests": 9,
+      "exitCode": 1,
+      "failedTests": [
+        "both complete contracts retain automatic updates without weakening exact history and fingerprints",
+        "V10 approved host requires explicit V11 transition and never silently upgrades automatically"
+      ],
+      "freshRawLog": true,
+      "rawLog": ".codex/tdd-evidence/issue-109-release-catalog-fault-unsafe-auto-without-contract-equality.log",
+      "detected": true,
+      "source": "deploy/pipeline/approved_release.py",
+      "replacements": [
+        {
+          "from": "            and facts[\"history\"] == record[\"history\"] == expected_history\n            and manifest[\"schemaFingerprint\"] == record[\"schemaFingerprint\"]\n            and manifest[\"guardFingerprint\"] == record[\"guardFingerprint\"]\n",
+          "to": ""
+        }
+      ]
+    },
+    {
+      "name": "fault-host-record-accepts-v12",
+      "tests": 9,
+      "exitCode": 1,
+      "failedTests": [
+        "host stored record parser accepts strict V10 and V11 with synthetic read-only bytes only"
+      ],
+      "freshRawLog": true,
+      "rawLog": ".codex/tdd-evidence/issue-109-release-catalog-fault-host-record-accepts-v12.log",
+      "detected": true,
+      "source": "deploy/pipeline/host-approved-release.py",
+      "replacements": [
+        {
+          "from": "len(record['history']) in (10, 11)",
+          "to": "len(record['history']) in (10, 11, 12)"
+        }
+      ]
+    }
+  ],
+  "restored": {
+    "name": "restored-green",
+    "tests": 9,
+    "exitCode": 0,
+    "failedTests": [],
+    "freshRawLog": true,
+    "rawLog": ".codex/tdd-evidence/issue-109-release-catalog-restored-green.log"
+  },
+  "sourceRestoration": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "e2752c2949e3b8a63493f19d7fa7f6489bf3c1cdd52ece283c8ccc601c0bade5",
+      "exactRestored": true
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "a5925de1808120c75b122659dd0c57d2686d87f4970d7fe7dd59101b1376896c",
+      "exactRestored": true
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6db169cd88620ed3ff04e942a54d4d1bd3e6c5c389613b167eb64581a6bbd945",
+      "exactRestored": true
+    }
+  ],
+  "boundary": "Local synthetic metadata, source copies and synthetic read-only host record bytes only; no AWS/production paths/commands/credentials",
+  "recordedAt": "2026-10-17T15:32:22.294365Z"
+}

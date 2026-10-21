@@ -1,5 +1,6 @@
 package com.meetme.server.coordination.application.port.output
 
+import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import java.time.Duration
 import java.time.LocalDate
@@ -19,6 +20,8 @@ data class NaturalLanguageBatchRequest(
     val searchEndDate: LocalDate,
     val inputs: List<NaturalLanguageInput>,
     val callTimeout: Duration = Duration.ofSeconds(15),
+    val observationContext: ParserObservationContext? = null,
+    val dispatchContext: AiProviderDispatchContext? = null,
 )
 
 data class ParserUsage(

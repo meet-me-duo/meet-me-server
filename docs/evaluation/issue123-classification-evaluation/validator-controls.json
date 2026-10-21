@@ -1,0 +1,9 @@
+{
+  "status": "PASS_LOCAL_VALIDATOR_CONTROLS_NO_MODEL",
+  "baseline": "PASS",
+  "DRAFT_status": "REJECTED_STATUS_NOT_FINAL",
+  "unregistered_raw_tamper": "REJECTED_SHA_MISMATCH",
+  "exact_restore": "PASS",
+  "source_asset_mutation": false,
+  "model_http_gradle_calls": 0
+}

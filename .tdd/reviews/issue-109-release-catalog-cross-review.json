@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-109-release-catalog-cross-review",
+  "reviewer": "/root/final_review",
+  "status": "APPROVED_TEST_DESIGN",
+  "reviewedAt": "2026-10-17T15:30:36.940178+00:00",
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "sha256": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859"
+    }
+  ],
+  "oracles": [
+    "Publisher exact V1..V11 source catalog, explicit fixed existing ten Flyway checksums plus V11, independent JS CRC32 and canonical SHA256 source/guard/archive fingerprints.",
+    "Reject V10-only current publication, duplicate/missing/unknown/symlink migration. Reader preserves only immutable complete V10/V11 catalogs and strict typed rows.",
+    "V10 host to V11 manifest never AUTO_READY; explicit transition approval and both refresh rules DISABLED remain mandatory. Complete matching V11 alone permits automatic updates.",
+    "Observed successful contiguous exact history 7..11, checksum/success/row/source/CI identity validation, no pending commands.",
+    "Host parser tested through synthetic record bytes without host/AWS/production mutation."
+  ],
+  "redEvidence": ".tdd/red/issue-109-release-catalog.json",
+  "redSummary": "9 test groups; seven named expected behavior failures and two existing rejection groups passed. Frozen independent expectations match narrow compatibility contract.",
+  "pending": [
+    "Production changes GREEN",
+    "Intentional unsafe transition/catalog/host parser faults detected and exact restoration",
+    "Original CI extras/checksum fixture contract supersession provenance"
+  ]
+}
