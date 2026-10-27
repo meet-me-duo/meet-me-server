@@ -87,13 +87,7 @@ class GeminiNaturalLanguageParserAdapter
             observation: ParserTransportObservationSession,
         ): NaturalLanguageBatchResult {
             if (properties.apiKey.isBlank()) throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
-            require(request.inputs.isNotEmpty() && request.inputs.size <= 50)
-            require(
-                request.inputs
-                    .map { it.inputRef }
-                    .toSet()
-                    .size == request.inputs.size,
-            )
+            validateFinalNaturalLanguageRequest(request)
             val budget = minOf(request.callTimeout, Duration.ofMillis(CALL_TIMEOUT_MILLIS.toLong()))
             if (budget.toMillis() <= 0) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
             val deadline = System.nanoTime() + budget.toNanos()

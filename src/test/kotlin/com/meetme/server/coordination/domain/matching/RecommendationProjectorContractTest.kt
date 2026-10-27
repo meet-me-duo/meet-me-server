@@ -44,13 +44,14 @@ class RecommendationProjectorContractTest {
     }
 
     @Test
-    fun `95-D03 same full window retains every N N-minus-one and N-minus-two participant set`() {
+    fun `95-D03 same full window retains only the maximal actual attendee set`() {
         val window = local("2026-10-07T18:00", "2026-10-07T22:00")
         val actual = project(MeetingMode.REMOTE, *(1L..4L).map { member(it, listOf(window)) }.toTypedArray())
         val variants = actual.options.single().variants
         assertEquals(window, actual.options.single().window)
-        assertEquals(11, variants.size)
-        assertEquals(mapOf(4 to 1, 3 to 4, 2 to 6), variants.groupingBy { it.participantIds.size }.eachCount())
+        // 2026-10-21 user policy supersedes the former 11 N/N-1/N-2 subset variants.
+        assertEquals(1, variants.size)
+        assertEquals(mapOf(4 to 1), variants.groupingBy { it.participantIds.size }.eachCount())
         assertEquals(variants.size, variants.map { it.participantIds.toSet() }.toSet().size)
         assertTrue(variants.all { it.meetingMode == MeetingMode.REMOTE })
         assertEquals(listOf(0), actual.primaryOptionIndexes)
@@ -90,7 +91,7 @@ class RecommendationProjectorContractTest {
     }
 
     @Test
-    fun `95-D04 five participant room cannot lower eligibility to two attendees`() {
+    fun `95-D04 five participant room preserves an actual two attendee option`() {
         val window = local("2026-10-07T18:00", "2026-10-07T20:00")
         val actual =
             project(
@@ -101,8 +102,17 @@ class RecommendationProjectorContractTest {
                 member(4, emptyList()),
                 member(5, emptyList()),
             )
-        assertEquals(emptyList(), actual.options)
-        assertEquals(emptyList(), actual.primaryOptionIndexes)
+        // 2026-10-21 user policy removes the former maximum-two-exclusions restriction.
+        assertEquals(window, actual.options.single().window)
+        assertEquals(
+            listOf(id(1), id(2)),
+            actual.options
+                .single()
+                .variants
+                .single()
+                .participantIds,
+        )
+        assertEquals(listOf(0), actual.primaryOptionIndexes)
     }
 
     @Test

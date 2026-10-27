@@ -93,14 +93,14 @@ test('immutable main release metadata retains historical V10 publication identit
   // in issue107-integrated-catalog.test.cjs C02; archived source expectations remain immutable.
 });
 
-test('actual integrated source publishes exactly V1 through V17 with independent source checksums', () => {
+test('actual integrated source publishes exactly V1 through V18 with independent source checksums', () => {
   const integrated = require('./fixtures/integrated-release-catalog.cjs');
-  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...integrated.scripts].sort());
+  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...integrated.currentScripts].sort());
   const fixture = archiveFixture([{ name: 'scripts', kind: 'dir' }, { name: 'scripts/fixture.sh', content: 'fixture\n' }]);
   try {
     const built = pythonCall('build_manifest', [root, fixture.archive, integrated.environment], 'publish_manifest.py');
     assert.equal(built.ok, true, 'Actual source must publish without synthetic or omitted SQL');
-    assert.deepEqual(built.result.migrations, integrated.scripts.map((script, i) => ({ version: String(i + 1), script,
+    assert.deepEqual(built.result.migrations, integrated.currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: integrated.crc(fs.readFileSync(path.join(root, 'src/main/resources/db/migration', script))) })));
     assert.equal(built.result.archiveSha256, integrated.hash(fs.readFileSync(fixture.archive)));
     assert.equal(integrated.validate(built.result).ok, true);

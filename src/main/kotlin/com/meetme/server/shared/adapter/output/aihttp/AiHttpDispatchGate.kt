@@ -58,6 +58,9 @@ class PreparedAiHttpRequest private constructor(
     internal fun spec() = AiPhysicalCallSpec(operation, ordinal, wholePayloadFingerprint, profile.profileFingerprint, attemptId)
 
     companion object {
+        // Admission of actual whole bytes, not a tokenizer or monetary proof. Existing capture/profile identity stays frozen.
+        private const val MAX_FINAL_WIRE_BYTES = 256 * 1024
+
         fun freeze(
             operation: AiPhysicalOperation,
             ordinal: Int,
@@ -67,6 +70,10 @@ class PreparedAiHttpRequest private constructor(
         ): PreparedAiHttpRequest {
             if (profile.captureLimitBytes <= 0 ||
                 body.size > profile.captureLimitBytes ||
+                (
+                    operation in setOf(AiPhysicalOperation.FINAL_PRIMARY, AiPhysicalOperation.FINAL_FALLBACK) &&
+                        body.size > MAX_FINAL_WIRE_BYTES
+                ) ||
                 profile.profileFingerprint.isBlank() ||
                 ordinal <= 0
             ) {

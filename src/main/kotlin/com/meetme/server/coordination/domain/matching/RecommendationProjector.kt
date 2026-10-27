@@ -5,6 +5,7 @@ import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import java.time.Duration
+import java.time.Instant
 import java.time.ZoneId
 import kotlin.math.abs
 
@@ -39,6 +40,7 @@ object RecommendationProjector {
         val ordered =
             participants.sortedBy { it.participantId.value.toString() }.map {
                 it.copy(
+                    availableTimes = TimeRangeMatcher.normalize(it.availableTimes),
                     explicitPreferences =
                         it.explicitPreferences.copy(
                             timeRanges = TimeRangeMatcher.normalize(it.explicitPreferences.timeRanges),
@@ -46,30 +48,22 @@ object RecommendationProjector {
                 )
             }
         val windows = linkedMapOf<InstantTimeRange, MutableList<RecommendationVariant>>()
-        for (size in ordered.size downTo maxOf(2, ordered.size - 2)) {
-            combinations(ordered, size) { subset ->
-                checkCancellation()
-                var common = TimeRangeMatcher.normalize(subset.first().availableTimes)
-                for (participant in subset.drop(1)) {
-                    common = TimeRangeMatcher.intersect(common, participant.availableTimes)
-                    if (common.isEmpty()) break
-                }
-                if (common.isNotEmpty()) {
-                    val eligibleVariants = variants(mode, subset)
-                    if (eligibleVariants.isNotEmpty()) {
-                        for (available in common) {
-                            for (window in preferenceWindows(available, subset, checkCancellation)) {
-                                checkCancellation()
-                                val scored =
-                                    eligibleVariants.map { variant ->
-                                        variant.copy(
-                                            preferenceCount = subset.count { matchesPreference(it.explicitPreferences, window, variant) },
-                                        )
-                                    }
-                                windows.getOrPut(window) { mutableListOf() }.addAll(scored)
-                            }
+        for (subset in attendeeGroups(mode, ordered, checkCancellation)) {
+            checkCancellation()
+            var common = subset.first().availableTimes
+            for (participant in subset.drop(1)) {
+                common = TimeRangeMatcher.intersect(common, participant.availableTimes)
+                if (common.isEmpty()) break
+            }
+            val eligibleVariants = variants(mode, subset)
+            for (available in common) {
+                for (window in preferenceWindows(available, subset, checkCancellation)) {
+                    checkCancellation()
+                    val scored =
+                        eligibleVariants.map { variant ->
+                            variant.copy(preferenceCount = subset.count { matchesPreference(it.explicitPreferences, window, variant) })
                         }
-                    }
+                    windows.getOrPut(window) { mutableListOf() }.addAll(scored)
                 }
             }
         }
@@ -77,8 +71,7 @@ object RecommendationProjector {
         val options =
             windows
                 .mapNotNull { (window, variants) ->
-                    variants
-                        .distinct()
+                    maximalVariants(variants, checkCancellation)
                         .sortedWith(variantComparator())
                         .takeIf { it.isNotEmpty() }
                         ?.let { RecommendationOption(window, it) }
@@ -229,25 +222,103 @@ object RecommendationProjector {
             .thenBy { it.meetingMode.name }
             .thenBy { it.representativeArea?.key.orEmpty() }
 
-    private fun combinations(
-        values: List<ParticipantMatchInput>,
-        size: Int,
-        consume: (List<ParticipantMatchInput>) -> Unit,
-    ) {
-        fun collect(
-            start: Int,
-            current: MutableList<ParticipantMatchInput>,
-        ) {
-            if (current.size == size) {
-                consume(current.toList())
-                return
+    /** Location compatibility is independent of time; discover it once, not for every time boundary. */
+    private fun attendeeGroups(
+        mode: MeetingMode,
+        ordered: List<ParticipantMatchInput>,
+        checkCancellation: () -> Unit,
+    ): List<List<ParticipantMatchInput>> {
+        val contexts = mutableListOf<List<ParticipantMatchInput>>()
+        if (mode != MeetingMode.IN_PERSON) contexts += ordered
+        if (mode != MeetingMode.REMOTE) {
+            val areas =
+                ordered
+                    .flatMap { it.offlineArea?.alternatives.orEmpty() }
+                    .map { it.key }
+                    .distinct()
+                    .sorted()
+            for (key in areas) {
+                checkCancellation()
+                contexts +=
+                    ordered.filter { participant ->
+                        participant.offlineArea
+                            ?.alternatives
+                            .orEmpty()
+                            .any { it.key == key }
+                    }
             }
-            for (index in start..values.size - (size - current.size)) {
-                current += values[index]
-                collect(index + 1, current)
-                current.removeAt(current.lastIndex)
+            val located = ordered.filter { it.offlineRegion != null }
+            if (located.size >= 2) {
+                val regions = located.map { requireNotNull(it.offlineRegion) }
+                for (group in GeoMatcher.overlappingParticipantGroups(regions, checkCancellation)) {
+                    contexts += group.map { located[it] }
+                }
             }
         }
-        collect(0, mutableListOf())
+        val groups = linkedMapOf<List<ParticipantId>, List<ParticipantMatchInput>>()
+        for (context in contexts.distinct()) {
+            checkCancellation()
+            for (group in temporalGroups(context, checkCancellation)) {
+                groups.putIfAbsent(group.map { it.participantId }, group)
+            }
+        }
+        return groups.values.toList()
+    }
+
+    /** Suffix intersections form a nested chain of at most N-1 attendee sets per boundary; never a powerset. */
+    private fun temporalGroups(
+        participants: List<ParticipantMatchInput>,
+        checkCancellation: () -> Unit,
+    ): List<List<ParticipantMatchInput>> {
+        val events = sortedMapOf<Instant, MutableList<Pair<ParticipantId, Boolean>>>()
+        for (participant in participants) {
+            for (range in participant.availableTimes) {
+                events.getOrPut(range.startInclusive) { mutableListOf() } += participant.participantId to true
+                events.getOrPut(range.endExclusive) { mutableListOf() } += participant.participantId to false
+            }
+        }
+        val current = mutableSetOf<ParticipantId>()
+        var suffixes = emptyList<Set<ParticipantId>>()
+        val groups = linkedMapOf<List<ParticipantId>, List<ParticipantMatchInput>>()
+        for ((index, entry) in events.entries.withIndex()) {
+            checkCancellation()
+            for ((id, starts) in entry.value) {
+                if (starts) current += id else current -= id
+            }
+            if (index < events.size - 1 && current.size >= 2) {
+                val next = linkedSetOf<Set<ParticipantId>>(current.toSet())
+                for (previous in suffixes) {
+                    checkCancellation()
+                    val intersection = previous intersect current
+                    if (intersection.size >= 2) next += intersection
+                }
+                suffixes = next.toList()
+                for (attendees in suffixes) {
+                    val group = participants.filter { it.participantId in attendees }
+                    groups.putIfAbsent(group.map { it.participantId }, group)
+                }
+            } else {
+                suffixes = emptyList()
+            }
+        }
+        return groups.values.toList()
+    }
+
+    private fun maximalVariants(
+        variants: List<RecommendationVariant>,
+        checkCancellation: () -> Unit,
+    ): List<RecommendationVariant> {
+        val unique = variants.distinct()
+        return unique.filter { variant ->
+            checkCancellation()
+            unique.none { other ->
+                checkCancellation()
+                other.participantIds.size > variant.participantIds.size &&
+                    other.meetingMode == variant.meetingMode &&
+                    other.representativeArea?.key == variant.representativeArea?.key &&
+                    other.representativePlace == variant.representativePlace &&
+                    other.participantIds.containsAll(variant.participantIds)
+            }
+        }
     }
 }

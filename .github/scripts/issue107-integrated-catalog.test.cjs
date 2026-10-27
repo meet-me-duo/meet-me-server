@@ -25,12 +25,12 @@ test('C01 immutable V1 through V15 SQL remains byte-identical to the separately 
   scripts.slice(0, 15).forEach((name, i) => assert.equal(hash(fs.readFileSync(path.join(root, 'src/main/resources/db/migration', name))), expected[i], name));
 });
 
-test('C02 publisher emits exactly canonical V1 through V17 in numeric order with independent checksums and fingerprints', () => {
+test('C02 publisher emits exactly canonical V1 through V18 in numeric order with independent checksums and fingerprints', () => {
   const value = fixture();
   try {
-    const built = publish(value); assert.equal(built.ok, true, 'The final approved V17 source must be publishable');
-    const catalog = scripts.map((script, i) => ({ version: String(i + 1), script, sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
-    assert.deepEqual(built.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    const built = publish(value); assert.equal(built.ok, true, 'The final approved V18 source must be publishable');
+    const catalog = f.currentScripts.map((script, i) => ({ version: String(i + 1), script, sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
+    assert.deepEqual(built.result.migrations, f.currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(built.result.schemaFingerprint, hash(canonical(catalog)));
     assert.equal(built.result.guardFingerprint, hash(canonical(currentGuardFiles.map(name => ({ path: name,
@@ -184,3 +184,6 @@ test('C12 final publication identity and exact schema guard image contracts cann
 
 // New independent V17 contract is included by the existing CI entrypoint exactly once.
 require('./issue123-v17-catalog.test.cjs');
+
+// Additive V18 contract follows the same committed CI entrypoint.
+require('./v18-release-catalog.test.cjs');

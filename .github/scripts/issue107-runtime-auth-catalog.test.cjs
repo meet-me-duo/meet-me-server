@@ -83,8 +83,9 @@ function fixture(current = true) {
   return value;
 }
 function publicationFixture() {
-  const value = fixture();
-  fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
+  const value = f.currentFixture();
+  // Preserve the original valid no-LF baseline so RA03 appends the one allowed LF.
+  fs.writeFileSync(path.join(value.directory, 'deploy/runtime-auth-mode'), requiredMode);
   return value;
 }
 function fingerprint(value, names = current17) {
@@ -221,7 +222,7 @@ test('RA11 auth guard transition still requires explicit approval two disabled r
 
 test('RA12 V16 and original migration inventory remain immutable and auth approval cannot insert sparse history', () => {
   assert.equal(hash(fs.readFileSync(path.join(root, 'src/main/resources/db/migration/V16__add_pre_submission_checks.sql'))), '65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e');
-  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...f.scripts].sort());
+  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...f.currentScripts].sort());
   const value = fixture();try {
     const next = release(value);
     for (const versions of f.catalogs.slice(3, 6)) {

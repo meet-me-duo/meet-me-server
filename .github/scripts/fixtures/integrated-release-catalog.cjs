@@ -17,6 +17,7 @@ const scripts = [
   'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
   'V17__add_durable_ai_room_budgets.sql',
 ];
+const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql'];
 const guardFiles = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
@@ -105,6 +106,10 @@ function fixture() {
 }
 function currentFixture() {
   const value = fixture();
+  const name = currentScripts[17];
+  const source = path.join(root, 'src/main/resources/db/migration', name);
+  if (fs.existsSync(source)) fs.copyFileSync(source, path.join(value.migrations, name));
+  else fs.writeFileSync(path.join(value.migrations, name), '-- synthetic test-only V18\nSELECT 18;\n');
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
   return value;
 }
@@ -115,6 +120,6 @@ const judge = (release, facts, action, approved = false) => python('validate_dep
 const mode = value => ({ ok: true, result: { mode: value } });
 const untrusted = { ok: false, reason: 'UNTRUSTED_RELEASE' };
 const denied = { ok: false, reason: 'UNSAFE_RELEASE_STATE' };
-module.exports = { fs, path, root, scripts, guardFiles, currentGuardFiles, range, catalogs, hash, canonical, clone, crc,
+module.exports = { fs, path, root, scripts, currentScripts, guardFiles, currentGuardFiles, range, catalogs, hash, canonical, clone, crc,
   expected, repository, sourceSha, oldImage, environment, rows, manifest, history, record, ready,
   python, fixture, currentFixture, publish, validate, readRecord, judge, mode, untrusted, denied };

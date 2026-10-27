@@ -99,12 +99,12 @@ test('VC01 V1 through V16 immutable SQL and separate seventeen-file runtime appr
   for (let i = 0; i < 16; i++) assert.equal(hash(fs.readFileSync(path.join(root, 'src/main/resources/db/migration', scripts[i]))), originalSqlHashes[i], scripts[i]);
 });
 
-test('VC02 current publisher accepts exactly V1 through V17 with independent SQL CRC and both inventory fingerprints', () => {
+test('VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints', () => {
   const value = f.currentFixture();try {
-    const result = publish(value);assert.equal(result.ok, true, 'Frozen additive V17 must be accepted by current publisher');
-    assert.deepEqual(result.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    const result = publish(value);assert.equal(result.ok, true, 'Frozen additive V18 must be accepted by current publisher');
+    assert.deepEqual(result.result.migrations, f.currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(result.result.schemaFingerprint, hash(canonical(sourceCatalog(value))));
+    assert.equal(result.result.schemaFingerprint, hash(canonical(f.currentScripts.map((script, i) => ({ version: String(i + 1), script, sha256: hash(fs.readFileSync(path.join(value.migrations, script))) })))));
     assert.equal(result.result.guardFingerprint, hash(canonical(currentApprovedPaths.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     assert.equal(result.result.archiveSha256, hash(fs.readFileSync(value.archive)));
@@ -241,15 +241,15 @@ test('VC11 offline package verifies historical V16 and current V17 and refuses S
   } finally { value.remove(); }
 });
 
-test('VC12 actual source must contain real V17 and publish without a synthetic SQL fallback', () => {
+test('VC12 actual source must contain real V18 and publish without a synthetic SQL fallback', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
-  assert.deepEqual(fs.readdirSync(directory).sort(), [...scripts].sort(), 'Actual-source gate requires real exact V17 SQL');
+  assert.deepEqual(fs.readdirSync(directory).sort(), [...f.currentScripts].sort(), 'Actual-source gate requires real exact V18 SQL');
   const archive = path.join(require('node:os').tmpdir(), `issue123-actual-${process.pid}-${Date.now()}.tar.gz`);
   fs.writeFileSync(archive, 'synthetic archive; SQL MUST be actual source');
   try {
     const result = f.python('build_manifest', [root, archive, f.environment], 'publish_manifest.py');
     assert.equal(result.ok, true);
-    assert.deepEqual(result.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    assert.deepEqual(result.result.migrations, f.currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(directory, script))) })));
   } finally { fs.rmSync(archive, { force: true }); }
 });

@@ -29,6 +29,7 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             deploy/preflight
+            deploy/runtime-auth-mode
       - name: Validate main target before production authority
         run: python3 deploy/preflight/run-preflight.py --main --validate
       - uses: actions/setup-java@v6

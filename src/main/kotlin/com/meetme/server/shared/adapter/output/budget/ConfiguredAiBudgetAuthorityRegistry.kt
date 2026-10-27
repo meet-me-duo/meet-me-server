@@ -5,6 +5,7 @@ import com.meetme.server.shared.application.port.output.AiBudgetAuthorityRegistr
 import com.meetme.server.shared.application.port.output.AiBudgetBillRequest
 import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
 import com.meetme.server.shared.application.port.output.AiBudgetQuoteRequest
+import com.meetme.server.shared.application.port.output.AiCompleteBillEvidenceCatalogPort
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.shared.application.port.output.AiVerifiedBudgetQuote
 import com.meetme.server.shared.application.port.output.AiVerifiedCompleteBill
@@ -16,6 +17,7 @@ import java.time.Clock
 class ConfiguredAiBudgetAuthorityRegistry(
     private val selection: ManagedAiRuntimeSelection,
     private val clock: Clock,
+    private val bills: AiCompleteBillEvidenceCatalogPort = AiCompleteBillEvidenceCatalogPort { emptyList() },
 ) : AiBudgetAuthorityRegistryPort {
     override fun quote(request: AiBudgetQuoteRequest): AiVerifiedBudgetQuote? {
         val policy = selection.policy?.takeIf { selection.enabled } ?: return null
@@ -82,7 +84,24 @@ class ConfiguredAiBudgetAuthorityRegistry(
         return AiVerifiedFinalReserve(policy.fingerprint, amount, unit, minOf(primary.validUntil, fallback.validUntil))
     }
 
-    override fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill? = null
+    override fun completeBill(request: AiBudgetBillRequest): AiVerifiedCompleteBill? {
+        if (!selection.enabled || selection.policy == null) return null
+        val evidence =
+            bills.entries().singleOrNull {
+                it.reservationId == request.reservationId &&
+                    it.quoteFingerprint == request.quoteFingerprint &&
+                    it.evidenceReference == request.evidenceReference
+            } ?: return null
+        if (!HASH.matches(evidence.quoteFingerprint) ||
+            !HASH.matches(evidence.evidenceFingerprint) ||
+            evidence.amount.signum() < 0 ||
+            evidence.amount > MAX_AMOUNT
+        ) {
+            return null
+        }
+        // Late actual charges are not dispatch authority; operation expiry must not discard an old complete bill.
+        return AiVerifiedCompleteBill(evidence.quoteFingerprint, evidence.evidenceFingerprint, evidence.amount, evidence.unit)
+    }
 
     companion object {
         private val HASH = Regex("[0-9a-f]{64}")
