@@ -3,6 +3,7 @@ package com.meetme.server.meetingroom.adapter.output.persistence
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingRoom
+import com.meetme.server.shared.adapter.output.persistence.NewRoomInsertTransactionReceipts
 import com.meetme.server.shared.domain.MeetingRoomId
 import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
@@ -24,33 +25,36 @@ class KomapperMeetingRoomRepository(
 
     override fun insertIfInviteAvailable(room: MeetingRoom): Boolean {
         val record = PersistenceMappers.toRecord(room)
-        return jdbcTemplate.update(
-            """
-            INSERT INTO meeting_rooms (
-                id, invite_code, purpose, meeting_mode, time_zone_id,
-                search_start_date, search_end_date, search_range_source,
-                expected_participants, submission_deadline, manual_only,
-                collection_status, closure_reason, closed_at, created_at, version
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT (invite_code) DO NOTHING
-            """.trimIndent(),
-            record.id,
-            record.inviteCode,
-            record.purpose,
-            record.meetingMode,
-            record.timeZoneId,
-            record.searchStartDate,
-            record.searchEndDate,
-            record.searchRangeSource,
-            record.expectedParticipants,
-            record.submissionDeadline,
-            record.manualOnly,
-            record.collectionStatus,
-            record.closureReason,
-            record.closedAt,
-            record.createdAt,
-            record.version,
-        ) == 1
+        val inserted =
+            jdbcTemplate.update(
+                """
+                INSERT INTO meeting_rooms (
+                    id, invite_code, purpose, meeting_mode, time_zone_id,
+                    search_start_date, search_end_date, search_range_source,
+                    expected_participants, submission_deadline, manual_only,
+                    collection_status, closure_reason, closed_at, created_at, version
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT (invite_code) DO NOTHING
+                """.trimIndent(),
+                record.id,
+                record.inviteCode,
+                record.purpose,
+                record.meetingMode,
+                record.timeZoneId,
+                record.searchStartDate,
+                record.searchEndDate,
+                record.searchRangeSource,
+                record.expectedParticipants,
+                record.submissionDeadline,
+                record.manualOnly,
+                record.collectionStatus,
+                record.closureReason,
+                record.closedAt,
+                record.createdAt,
+                record.version,
+            ) == 1
+        if (inserted) NewRoomInsertTransactionReceipts.recordSuccessfulInsert(room.id.value)
+        return inserted
     }
 
     override fun update(room: MeetingRoom) {

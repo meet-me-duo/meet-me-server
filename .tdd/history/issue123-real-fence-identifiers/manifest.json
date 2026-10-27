@@ -1,0 +1,8 @@
+{
+  "reason": "Metadata-only stable identifier disambiguation. JUnit XML labels duplicate between two parameterized methods. Prefix each parameter label with its exact enclosing public test method from the original RED failure stack. All 30 original assertions, timestamp, command, SHA and source baseline remain unchanged; no rerun or retroactive result.",
+  "originalSha256": "7423349b6366a720b94e0c7edbab203f7ca24622423c9a1b484822fc901a1d7e",
+  "currentSha256": "37ecd7552ae8fc184a36d62f50e2a7f4b05334639bb775960c1bc3698681a2d6",
+  "originalXmlSha256": "ba8bb8b1a8cfc383a563ad24f0e875e29b20d036eefe41538eb38218ad6d5ebb",
+  "originalAssertionCount": 30,
+  "uniqueIdentifiers": 30
+}

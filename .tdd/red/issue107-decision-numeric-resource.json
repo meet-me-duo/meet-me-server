@@ -1,0 +1,42 @@
+{
+  "workItem": "issue107-decision-numeric-resource",
+  "sourceRevision": "01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationNumericResourceTest.kt",
+      "sha256": "a7e0f1e18a8402d890ad8eeea3a6d4ef89d3232fddb49d2acdeb17d45b4e85bb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*OpenAiAmbiguityClassificationNumericResourceTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[1] kind = \"PROB_NEGATIVE_EXPONENT\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[2] kind = \"PROB_NEGATIVE_EXPONENT\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[3] kind = \"PROB_ZERO_NEGATIVE_EXPONENT\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[4] kind = \"PROB_ZERO_NEGATIVE_EXPONENT\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[5] kind = \"PROB_ZERO_POSITIVE_EXPONENT\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[6] kind = \"PROB_ZERO_POSITIVE_EXPONENT\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[7] kind = \"PROB_PRECISION\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[8] kind = \"PROB_PRECISION\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[9] kind = \"CONF_NEGATIVE_EXPONENT\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[10] kind = \"CONF_NEGATIVE_EXPONENT\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[11] kind = \"CONF_ZERO_NEGATIVE_EXPONENT\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[12] kind = \"CONF_ZERO_NEGATIVE_EXPONENT\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[13] kind = \"CONF_ZERO_POSITIVE_EXPONENT\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[14] kind = \"CONF_ZERO_POSITIVE_EXPONENT\", choice = \"INDETERMINATE\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[15] kind = \"CONF_PRECISION\", choice = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.classification.OpenAiAmbiguityClassificationNumericResourceTest#[16] kind = \"CONF_PRECISION\", choice = \"INDETERMINATE\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T03:15:54Z"
+}

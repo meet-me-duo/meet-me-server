@@ -1,0 +1,15 @@
+--- src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt original
++++ src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt timeout-unknown-refunded
+@@ -176,10 +176,11 @@
+             return previous == fingerprint
+         }
+         repository.insertEvent(AiBudgetStoredEvent(call.id, key, fingerprint, clock.instant(), observation))
++        repository.updateRoom(room.copy(held = room.held - call.hold, version = room.version + 1))
+         if (call.state !=
+             AiBudgetCallState.SETTLED
+         ) {
+-            repository.updateAccounting(call.id, AiBudgetCallState.UNKNOWN, call.hold, null, null, clock.instant())
++            repository.updateAccounting(call.id, AiBudgetCallState.UNKNOWN, BigInteger.ZERO, null, null, clock.instant())
+         }
+         return true
+     }

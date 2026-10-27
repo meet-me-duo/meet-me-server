@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-10-18T06:16:00Z",
+  "stage": "PUBLISHED_DRAFT_B377_EXACT_CI_SUCCESS_BEFORE_METADATA_COMPATIBILITY_FOLLOWUP",
+  "repository": "meet-me-duo/meet-me-server",
+  "branch": "feature/issue-123-durable-ai-budget",
+  "head": "b3770438cc5c2095b70dec4e195e406f1ecbe249",
+  "tree": "4c390d279911e2ad0b28a177f8efe4adbae86d5a",
+  "pr": 126,
+  "url": "https://github.com/meet-me-duo/meet-me-server/pull/126",
+  "draft": true,
+  "base": "01d00e7fcbaa48dd91a9b3308c0e6d320cdc01df",
+  "ci": {
+    "run": 39102015533,
+    "status": "completed",
+    "conclusion": "success",
+    "head": "b3770438cc5c2095b70dec4e195e406f1ecbe249",
+    "qualityJob": 117600045975,
+    "arm64Job": 117600046108,
+    "qualityConclusion": "success",
+    "arm64Conclusion": "success",
+    "qualityCheckout": "c67a0c955cad38a461c9aa96fe7b96a90be2725b",
+    "arm64Checkout": "b3770438cc5c2095b70dec4e195e406f1ecbe249",
+    "logs": {
+      "quality-gate-job.log": "6320d3a915a061520383e649f955c7d7e5dabb44a7f838c37e5ab2e25f3f8000",
+      "arm64-job.log": "f0e1220f3b81aeba5468d2a755a04b1ccf80bd5fbddff91ae0823ec21bf9b80f"
+    }
+  },
+  "lifecycle": {
+    "run": 39102015519,
+    "conclusion": "success"
+  },
+  "syntheticMerge": {
+    "sha": "c67a0c955cad38a461c9aa96fe7b96a90be2725b",
+    "tree": "4c390d279911e2ad0b28a177f8efe4adbae86d5a",
+    "equalsHeadTree": true
+  },
+  "status": "SUCCESS; superseded only after a later compatibility commit and its separate exact CI"
+}

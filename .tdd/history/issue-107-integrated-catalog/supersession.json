@@ -1,0 +1,29 @@
+{
+  "workItem": "issue107-integrated-catalog-oracle-supersession",
+  "recordedAt": "2026-10-17T18:17:16.914628Z",
+  "authority": "Parent delegates independent catalog/migration tests. Exact current publication V1..16; six explicit immutable historical reader inventories plus final16; no arbitrary discovery or other intermediate complete catalogs.",
+  "historicalArchives": "original-sha256.json",
+  "currentOracle": ".github/scripts/issue107-integrated-catalog.test.cjs and fixtures/integrated-release-catalog.cjs (frozen independent 12-test RED)",
+  "changes": [
+    "Original source publication expectations for V12, 109+110 sparse13-count and unbounded107 discovery are preserved byte-identically in history; current publication checks move to independent C01-C05 plus real-source publication test.",
+    "All existing historical manifest/record, successful prefix, explicit transition, disabled-rule, pending command, fingerprint, identity, driver/archive and failed-history assertions remain active except three old109 unknown12 examples.",
+    "The three unknown12 negative examples become unknown13 because V12 is now a separately approved immutable historical catalog; supported V12 is positively tested by108 and C06/C08. Their first failing execution remains local; no production behavior is changed by this test reconciliation.",
+    "Existing immutable source110 pins now assert the historical subset remains present instead of equating old sparse inventory to the entire integrated source. C01 pins all15 original raw bytes; real-source test pins exact16 names.",
+    "DB inventory counts13->16/latest15->16/V8 remaining5->8; original source/test snapshots retained. Existing legacy business assertions unchanged. Only newly introduced meeting_rooms.submission_protocol is excluded from pre-existing-column snapshots, with separate LEGACY and no-backfill assertions.",
+    "Core table-existence assertions restore actual108 proof tables and verify107/110 plus four new precheck tables. The migration author owns schema and implementation; this reviewer does not write SQL.",
+    "CI command adds frozen12 and restores existing108 catalog test entry. Production workflow triggers and permissions unchanged."
+  ],
+  "validation": {
+    "independentRed": "12 tests:6 expected assertion failures,6 controls; no setup errors",
+    "postImplementationFrozen": "Parent and independent combined run12 GREEN",
+    "historyReconciliation": "38 Node tests pass; Python checksum regression1 pass",
+    "faults": ".tdd/verification/issue107-integrated-catalog-faults.json",
+    "actualSource16AndJvm": "Actual V16 authored by implementation owner; complete CI-equivalent46 Node tests PASS with real SQL and no synthetic V16. JVM gate remains owned by independent server author/root.",
+    "historicalPipeline": "Final complete46 Node suite includes all8 pipeline tests, including actual exact16 source publication; PASS. Earlier V16-missing failure retained in local log.",
+    "archiveFingerprints": "All8 historical source/test archive SHA256 checked; frozen2 independent test hashes unchanged"
+  },
+  "operationalCalls": 0,
+  "paidProviderCalls": 0,
+  "remoteWrites": 0,
+  "productionEditsByTestAuthor": 0
+}

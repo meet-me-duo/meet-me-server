@@ -1,0 +1,284 @@
+{
+  "provenance": "Original inputs 4/28/30/48. recorded_response is prior actual response; expected_relation_response changes ONLY 48 manually as an approved contract fixture. No new model calls or extraction-accuracy claim.",
+  "reference_date": "2026-11-02",
+  "inputs": [
+    {
+      "originalId": 4,
+      "inputRef": "08248ca1-f50d-3553-9cf7-5ac1e841d26b",
+      "rawText": "아이 어린이집 보내고 나면 월수금 오전 10시부터 12시까지 시간 있어요."
+    },
+    {
+      "originalId": 28,
+      "inputRef": "402e17c9-c4eb-371d-bdff-23a5ea1dc086",
+      "rawText": "내일 오후 2~4시, 모레 오전 10~12시 가능해요"
+    },
+    {
+      "originalId": 30,
+      "inputRef": "7c06d745-a9fb-3aa6-b587-23e96e9fb1cd",
+      "rawText": "월수금 6시에 수업 끝나요. 이동 시간 있어서 저녁 7시 이후면 되고 10시엔 기숙사 들어가야 해요"
+    },
+    {
+      "originalId": 48,
+      "inputRef": "74714cde-d28e-3a66-bbb2-9f639169a5bf",
+      "rawText": "다른 분들 시간 먼저 봐주세요. 저는 수요일 오후 2~6시나 금요일 오전 10~12시가 좋고, 그 시간에 안 모이면 토요일 오전 11시부터 오후 3시 사이로도 맞출 수 있어요."
+    }
+  ],
+  "recorded_response": {
+    "schema_version": "3",
+    "results": [
+      {
+        "input_ref": "08248ca1-f50d-3553-9cf7-5ac1e841d26b",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "MONDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          }
+        ]
+      },
+      {
+        "input_ref": "402e17c9-c4eb-371d-bdff-23a5ea1dc086",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": "2026-11-03",
+            "day_of_week": null,
+            "start_time": "14:00",
+            "end_time": "16:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": "2026-11-04",
+            "day_of_week": null,
+            "start_time": "10:00",
+            "end_time": "12:00"
+          }
+        ]
+      },
+      {
+        "input_ref": "7c06d745-a9fb-3aa6-b587-23e96e9fb1cd",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "MONDAY",
+            "start_time": "19:00",
+            "end_time": "22:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "19:00",
+            "end_time": "22:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "19:00",
+            "end_time": "22:00"
+          }
+        ]
+      },
+      {
+        "input_ref": "74714cde-d28e-3a66-bbb2-9f639169a5bf",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "PREFERRED_TIME_WINDOW",
+            "polarity": null,
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "14:00",
+            "end_time": "18:00"
+          },
+          {
+            "type": "PREFERRED_TIME_WINDOW",
+            "polarity": null,
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "SATURDAY",
+            "start_time": "11:00",
+            "end_time": "15:00"
+          }
+        ]
+      }
+    ]
+  },
+  "expected_relation_response": {
+    "schema_version": "3",
+    "results": [
+      {
+        "input_ref": "08248ca1-f50d-3553-9cf7-5ac1e841d26b",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "MONDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          }
+        ]
+      },
+      {
+        "input_ref": "402e17c9-c4eb-371d-bdff-23a5ea1dc086",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": "2026-11-03",
+            "day_of_week": null,
+            "start_time": "14:00",
+            "end_time": "16:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": "2026-11-04",
+            "day_of_week": null,
+            "start_time": "10:00",
+            "end_time": "12:00"
+          }
+        ]
+      },
+      {
+        "input_ref": "7c06d745-a9fb-3aa6-b587-23e96e9fb1cd",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "MONDAY",
+            "start_time": "19:00",
+            "end_time": "22:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "19:00",
+            "end_time": "22:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "19:00",
+            "end_time": "22:00"
+          }
+        ]
+      },
+      {
+        "input_ref": "74714cde-d28e-3a66-bbb2-9f639169a5bf",
+        "clarification": null,
+        "rejection_code": null,
+        "conditions": [
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "14:00",
+            "end_time": "18:00"
+          },
+          {
+            "type": "TIME_WINDOW",
+            "polarity": "AVAILABLE",
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "PREFERRED_TIME_WINDOW",
+            "polarity": null,
+            "date": null,
+            "day_of_week": "WEDNESDAY",
+            "start_time": "14:00",
+            "end_time": "18:00"
+          },
+          {
+            "type": "PREFERRED_TIME_WINDOW",
+            "polarity": null,
+            "date": null,
+            "day_of_week": "FRIDAY",
+            "start_time": "10:00",
+            "end_time": "12:00"
+          },
+          {
+            "type": "CONDITIONAL_FALLBACK_TIME_WINDOW",
+            "activation": "WHOLE_ROOM_PRIMARY_UNAVAILABLE",
+            "date": null,
+            "day_of_week": "SATURDAY",
+            "start_time": "11:00",
+            "end_time": "15:00"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "status": "FROZEN_PRE_EXECUTION_MODE_PROPOSAL_FOR_ROOT_PLAN",
+  "preparedAt": "2026-10-18T05:59:33Z",
+  "mode": "STANDALONE_B_GENERATION_SEMANTIC_DIAGNOSTIC_WITH_PRIOR_A_AND_COUNT_RECORDS",
+  "executionOwner": "root only; this author performs no paid/provider calls or source edits",
+  "authorizationBoundary": {
+    "approvedAggregateGeminiAndOpenAiUsd": "2.00",
+    "approvalIsCombinedAcrossAllAttempts": true,
+    "maximumNewGenerateAttempts": 2,
+    "maximumNewDecisionsRequests": 0,
+    "maximumNewCountRequests": 0,
+    "newQuoteBeforeEachAttempt": "Root must retain all prior known spend/UNKNOWN holds and the next fixed-payload generation quote within the same aggregateUSD2. This mode does not select prices or release holds.",
+    "priorReservedUsd": "0.70918144",
+    "priorUnknownHoldsPreserved": true,
+    "productionActivationOrSecretChangePermitted": false
+  },
+  "immutableSemanticOracle": {
+    "path": "docs/evaluation/issue123-live-two-stage-oracle.json",
+    "sha256": "c69edcc525bde189765788edfd96fb05756c0e3a21d23cfcda357a7d52be1d64",
+    "caseId": "LIVE-KO-03",
+    "rawText": "10월 24일 토요일 8시부터 9시까지 가능해요.",
+    "referenceAt": "2026-10-18T04:00:00Z",
+    "timeZone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "searchStartDate": "2026-10-24",
+    "searchEndDate": "2026-10-25",
+    "expectedGenerationVerdict": "NEEDS_CHOICE",
+    "inheritWithoutChanges": [
+      "LTS02",
+      "LTS03",
+      "LTS04",
+      "LTS05",
+      "LTS06",
+      "LTS07",
+      "LTS08"
+    ],
+    "inheritedCriteriaCanonicalJsonSha256": "853222c6e096a27ddf7e85f392b620555e95cd2b3494cca9557cd80245d45a2e",
+    "canonicalization": "UTF-8 json.dumps(criteria,ensure_ascii=False,sort_keys=True,separators=(comma,colon))",
+    "originalOracleBytesUnchanged": true,
+    "noAnswerBasedOracleOrPromptChanges": true
+  },
+  "modeDelta": {
+    "reason": "A503 and a shared15-second timeout yielded no actual question. The separately authorized diagnostic isolates B question quality with a longer observation window; it does not change product policy.",
+    "replacesExecutionModeOnly": "The original oracle FRESH_A_PLUS_LIVE_B/runtime count1+generation1/shared15s declaration is not the execution mode of this diagnostic. This separate SHA-pinned declaration must be in the root execution plan before a request.",
+    "inheritedLts01FreshChain": "NOT_EXERCISED_IN_THIS_MODE. Historical A/count evidence plus B preserves context but cannot count as a new fresh A→count→B chain or product15-second pass.",
+    "productTimeoutSecondsUnchanged": 15,
+    "standaloneObservationTimeoutSeconds": 60,
+    "standaloneTimeoutIsNotProductionConfiguration": true,
+    "actualRuntimeSdkOrDurableMoneyAuthorityExercised": false
+  },
+  "reusedEvidence": {
+    "classification": "Previously actual rawCLEAR/confidence0.06 is normalized by existing syntheticthreshold0.8 to INDETERMINATE/LOW_CONFIDENCE. No new A and no threshold selection/tuning. Confidence is not CLEAR probability; recorded CLEAR probability0.37 remains separate.",
+    "classificationResponseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+    "syntheticThresholdProvenance": {
+      "value": 0.8,
+      "gitRevision": "e83d5280c7c236c99d64165893632920882527fe",
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    },
+    "count": {
+      "previousReportedTotalTokens": 530,
+      "responseSha256": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306",
+      "sameFrozenFullPayload": true,
+      "freshRuntimeCountGateVerified": false,
+      "billedInputCapProven": false
+    },
+    "priorOutcomes": "Original raw-label mismatch FAIL_STOP, attempt1 HTTP503 and attempt2 no-status TIMEOUT remain recorded failures; this mode never overwrites them."
+  },
+  "requestFreeze": {
+    "sourceLocalPath": ".codex/tdd-evidence/issue123-live-two-stage-attempt2/generation-request.json",
+    "sha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+    "utf8Bytes": 3111,
+    "newTextOrContextOrQuestionSchemaEdits": 0,
+    "model": "gemini-3.8-flash",
+    "api": "GenerateContent",
+    "candidateCount": 1,
+    "maxOutputTokensIncludingThoughts": 2048,
+    "thinkingLevel": "LOW",
+    "sameExactPayloadForBothAllowedAttempts": true,
+    "requestResponseUtf8ByteCap": 16384,
+    "rawCodepointLimitUnchanged": 500,
+    "mustNot": "No fresh classification/count, tools, added user data, AREA output, other model, profile change, prompt repair, automatic continuation or fallback."
+  },
+  "boundedObservation": {
+    "perAttemptAbsoluteSeconds": 60,
+    "starts": "At the same fixed point immediately before root standalone HTTP dispatch, encompassing connect/request/body read. No per-read or slow-chunk deadline reset.",
+    "concurrency": 1,
+    "maximumAttempts": 2,
+    "minimumInterAttemptGapSeconds": 10,
+    "sdkOrHttpAutomaticRetryRedirectFallbackContinuation": 0,
+    "secondAttemptAuthority": "Only the already authorized explicit root diagnostic second attempt after an eligible transient first failure, gap and remaining aggregate quote check. Not SDK retry, no third attempt.",
+    "eligibleFirstAttemptTransientFailures": [
+      "Observed HTTP408/429/500/502/503/504",
+      "Explicit transport connection-reset/connection-failure or absolute60-second timeout, retaining UNKNOWN transmission/bill status"
+    ],
+    "eligibilityLimit": "No inference of a second503 when no status exists. Classify from actual failure evidence. If Retry-After requires more than the bounded10-second gap, stop this plan rather than ignoring it or opening an unbounded wait. The root plan must pin its failure mapping before dispatch.",
+    "nonEligibleFailures": [
+      "HTTP400/401/403/404/405/413/422 or other nonlisted status/profile/auth/configuration failure",
+      "HTTP200 malformed/duplicate/oversize/truncated/invalid-schema response, refusal or MAX_TOKENS finish",
+      "Any semantic mismatch, CLEAR on this ambiguous case, NEEDS_EDIT safe abstention, or an unsafe/irrelevant question"
+    ],
+    "stopRules": [
+      "First valid semantic NEEDS_CHOICE success: stop, no second call.",
+      "First observed semantic or structural mismatch/safe abstention: stop, no repair or second call.",
+      "Only an eligible transient first failure can allow exactly one further same-payload attempt after10seconds.",
+      "Second result or failure is terminal. Budget/quote/source-integrity failure stops before outbound.",
+      "No accepted output or0-cost assumption after timeout/unknown response."
+    ]
+  },
+  "evaluationAndReporting": {
+    "successLabel": "STANDALONE_B_SEMANTIC_PASS_ONLY if actual response satisfies unchanged LTS02–08 and fixed input/context.",
+    "clear": "FAIL_SEMANTIC_CLEAR and STOP, even though reCLEAR is a legal general pipeline result.",
+    "needsEdit": "SAFE_ABSTENTION_TASK_INCOMPLETE and STOP, not question success.",
+    "invalidQuestion": "FAIL_UNSAFE_OR_IRRELEVANT_QUESTION and STOP.",
+    "transientProviderFailure": "FAIL_PROVIDER_OR_STRUCTURAL/TASK_INCOMPLETE for that attempt; semantic quality NOT_EVALUABLE. Keep failure even if separately allowed second attempt later succeeds.",
+    "noBResponse": "No question/intent-preservation result. Unknown status/usage remains null, never0 or a guessed503.",
+    "directEditBoundary": "No direct-edit provider JSON field exists. Existing application direct editing remains outside this standalone network diagnostic; no UI/answer/accepted-revision proof.",
+    "successDoesNotProve": [
+      "Fresh two-model A→count→B within product15seconds",
+      "Runtime SDK/worker/room/ownership integration or durable money authority execution",
+      "Calibrated production threshold, semantic accuracy/p50/p95, real billed cap, model reliability or production readiness"
+    ]
+  },
+  "evidenceBeforeAndAfter": {
+    "before": [
+      "Root nonpaid cause-check findings and quote/aggregate-budget prerequisites recorded separately without claiming this author performed them",
+      "This exact mode SHA plus original oraclec69 and payload3faf in the frozen root execution plan",
+      "Unchanged source/guard fingerprints, existing production flagsOFF/thresholdnull, bounded failure mapping and attempt identity"
+    ],
+    "after": [
+      "Each attempt own consumed marker/status or unknown, timestamps/whole absolute interval/response bytes and raw SHA",
+      "Exact unmodified actual response and production structural parser result before independent semantic LTS02–08 review",
+      "Known provider input/candidate/thought usage or null separately; failed/timeout UNKNOWN holds never auto-refunded",
+      "Per-attempt semantic/provider outcome retained even if another attempt succeeds; cumulative prior counts plus actual new generation attempts only",
+      "No raw credentials or live user/participant data in tracked records"
+    ]
+  },
+  "observedNewResult": null,
+  "authorSourceEdits": 0,
+  "authorExternalCalls": 0
+}

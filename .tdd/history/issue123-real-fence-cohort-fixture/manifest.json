@@ -1,0 +1,6 @@
+{
+  "originalSha256": "27416ad1bf6880f2c61db1dd1a5b5b6bbfcdfbaa25c5b6d22d013f8b32cd8ce8",
+  "correctedSha256": "c67870981321407aec23f3606bf59af17ba8330df92e9d5b37d5f9dacd921600",
+  "reason": "Existing FrozenSubmissionReader requires >=2 distinct immutable owners. Add a second legitimate historical manual-only version/interval to the frozen batch; no additional natural input, so source/context and all 30 public outcomes remain unchanged. Never weaken the existing batch validator. Fresh chronological RED is required for corrected bytes; original valid TODO RED bytes remain in history.",
+  "supersessionStatus": "Original30 TODO assertion run is superseded due to subsequently discovered final-cohort precondition defect; preserve original bytes without claiming the invalid final subset as final validated behavior. Fresh same-oracle RED requires two legitimate frozen owners."
+}

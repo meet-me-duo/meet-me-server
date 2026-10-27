@@ -1,0 +1,136 @@
+{
+  "workItem": "issue137-protected-final-reserve",
+  "sourceRevision": "d5fce878d06260157878295dbce58bd5c220d2d2",
+  "boundary": "Policy-derived one-invocation final headroom; immutable independent public contract tests, real PostgreSQL, one mutant at a time and byte-exact restoration.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/ConfiguredAiBudgetAuthorityRegistry.kt",
+      "sha256": "4b27ebce289f9220e9fd4594b8b56b0bb2165d4fb9ae359faf9d8297d083e95f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt",
+      "sha256": "fa80b33b8570856a3cc96f0b8a3c1ef923a1856d3b2b2482f270896e44484658"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123ProtectedFinalReserveRegistryTest.kt",
+      "sha256": "86b3c48976ca21887b0ff74533792ecce29951fd0d6d1c5d0183a5fdd7ac1d10"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123ProtectedFinalReservePostgresTest.kt",
+      "sha256": "ac37d7aa457c052419c0036dcaca86678269e2aa7b8c3010fef093402450e476"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableBudgetPostgresFixture.kt",
+      "sha256": "3c57ceb78f6e56971d627aaf0d00301a9ec6cf5386ecb5d865c66b33cb6ce1c1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetInitialPostgresTest.kt",
+      "sha256": "a9d5cbef54201ecc1833b1bcb73ad22e2a24775ad72672ea605d09b696cd68d8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetForeignScopePostgresTest.kt",
+      "sha256": "07f7da92f14dba5be869e53835fa30ea1707f2246a3eb467f31c64de0e9249e3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123FinalDispatchLifecyclePostgresTest.kt",
+      "sha256": "0e803251c87e8dcdc3f1750ced594725cfedbc28f85e77136e7c33c9c8ce40ba"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "four-to-three",
+      "sourcePath": "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/ConfiguredAiBudgetAuthorityRegistry.kt",
+      "sourceSha256": "4b27ebce289f9220e9fd4594b8b56b0bb2165d4fb9ae359faf9d8297d083e95f",
+      "mutantSha256": "24942fe5cb52b656fdf6fcac731ba514831a5ca2365559c8f6ea078d8ff0ad34",
+      "command": [
+        "python3",
+        "/workspace/jev-evaluation/deployment-20261020/run_integrated_gradle.py",
+        "test",
+        "--tests",
+        "*Issue123ProtectedFinalReserveRegistryTest.PF01*"
+      ],
+      "detectedBy": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReserveRegistryTest.PF01 derive four primary plus one fallback in the exact approved unit with earliest validity()",
+          "type": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "result": "DETECTED",
+      "log": ".codex/tdd-evidence/premerge-budget-20261020/four-to-three.log"
+    },
+    {
+      "fault": "omit-final-floor",
+      "sourcePath": "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt",
+      "sourceSha256": "fa80b33b8570856a3cc96f0b8a3c1ef923a1856d3b2b2482f270896e44484658",
+      "mutantSha256": "b67f65fe9d529433df000ceb22c663b8e558da926724fb2471c89e70d71be31b",
+      "command": [
+        "python3",
+        "/workspace/jev-evaluation/deployment-20261020/run_integrated_gradle.py",
+        "test",
+        "--tests",
+        "*Issue123ProtectedFinalReservePostgresTest.PF05*"
+      ],
+      "detectedBy": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF05 personal exposure plus protected final reserve must stay strictly below cap()",
+          "type": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "result": "DETECTED",
+      "log": ".codex/tdd-evidence/premerge-budget-20261020/omit-final-floor.log"
+    },
+    {
+      "fault": "permit-cap-equality",
+      "sourcePath": "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt",
+      "sourceSha256": "fa80b33b8570856a3cc96f0b8a3c1ef923a1856d3b2b2482f270896e44484658",
+      "mutantSha256": "faaf04d58a1a5608577746af7f49fa2541890982f807ec12921ce0d577aa4b00",
+      "command": [
+        "python3",
+        "/workspace/jev-evaluation/deployment-20261020/run_integrated_gradle.py",
+        "test",
+        "--tests",
+        "*Issue123ProtectedFinalReservePostgresTest.PF05*"
+      ],
+      "detectedBy": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.budget.Issue123ProtectedFinalReservePostgresTest.PF05 personal exposure plus protected final reserve must stay strictly below cap()",
+          "type": "org.opentest4j.AssertionFailedError"
+        }
+      ],
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "result": "DETECTED",
+      "log": ".codex/tdd-evidence/premerge-budget-20261020/permit-cap-equality.log"
+    }
+  ],
+  "restoredGreen": {
+    "command": [
+      "python3",
+      "/workspace/jev-evaluation/deployment-20261020/run_integrated_gradle.py",
+      "test",
+      "--tests",
+      "*Issue123ProtectedFinalReserveRegistryTest",
+      "--tests",
+      "*Issue123ProtectedFinalReservePostgresTest"
+    ],
+    "exitCode": 0,
+    "tests": 29,
+    "failures": 0,
+    "errors": 0,
+    "sourceRestored": true,
+    "testsUnchanged": true,
+    "log": ".codex/tdd-evidence/premerge-budget-20261020/protected-final-restored-green.log"
+  },
+  "paidModelCalls": 0,
+  "operatingWrites": 0,
+  "recordedAt": "2026-10-20T23:40:09.694594Z"
+}

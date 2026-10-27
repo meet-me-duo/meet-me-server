@@ -1,0 +1,286 @@
+{
+  "sourceRevision": "b3770438cc5c2095b70dec4e195e406f1ecbe249",
+  "scope": "Independent scratch FI of optional thoughtSignature Part transport representation; no original source/test edits and no paid calls.",
+  "baseline": {
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*PrecheckThoughtSignatureTransportTest"
+    ],
+    "cwd": "/tmp/issue123-independent-signature-fi",
+    "exit": 0,
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failuresDetail": [],
+    "recordedAt": "2026-10-18T06:25:35.007448Z"
+  },
+  "injections": [
+    {
+      "fault": "Restore text-only Part key restriction and reject documented optional thoughtSignature metadata.",
+      "label": "SIG-FI1-optional-support-deleted",
+      "source": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "patch": {
+        "old": "part.propertyNames().toSet() !in setOf(setOf(\"text\"), setOf(\"text\", \"thoughtSignature\"))",
+        "new": "part.propertyNames().toSet() != setOf(\"text\")",
+        "replaceCount": 1
+      },
+      "mutantSha256": "1e6a92833c70e9e11df2b67a1f1e0a8d83ffbee9fc64ba21835e62570ba4f983",
+      "originalAndRestoredSha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880",
+      "mutant": {
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PrecheckThoughtSignatureTransportTest.SIG01*"
+        ],
+        "cwd": "/tmp/issue123-independent-signature-fi",
+        "exit": 1,
+        "tests": 7,
+        "failures": 6,
+        "errors": 0,
+        "skipped": 0,
+        "failuresDetail": [
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[2] scenario = \"NULL\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Unexpected exception thrown: com.meetme.server.precheck.application.port.output.PrecheckProviderException: INVALID_RESPONSE"
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[3] scenario = \"EMPTY\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Unexpected exception thrown: com.meetme.server.precheck.application.port.output.PrecheckProviderException: INVALID_RESPONSE"
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[4] scenario = \"STANDARD_PADDED\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Unexpected exception thrown: com.meetme.server.precheck.application.port.output.PrecheckProviderException: INVALID_RESPONSE"
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[5] scenario = \"STANDARD_UNPADDED\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Unexpected exception thrown: com.meetme.server.precheck.application.port.output.PrecheckProviderException: INVALID_RESPONSE"
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[6] scenario = \"URL_PADDED\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Unexpected exception thrown: com.meetme.server.precheck.application.port.output.PrecheckProviderException: INVALID_RESPONSE"
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[7] scenario = \"URL_UNPADDED\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Unexpected exception thrown: com.meetme.server.precheck.application.port.output.PrecheckProviderException: INVALID_RESPONSE"
+          }
+        ],
+        "recordedAt": "2026-10-18T06:25:58.621769Z"
+      },
+      "restored": {
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PrecheckThoughtSignatureTransportTest.SIG01*"
+        ],
+        "cwd": "/tmp/issue123-independent-signature-fi",
+        "exit": 0,
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failuresDetail": [],
+        "recordedAt": "2026-10-18T06:26:21.024262Z"
+      }
+    },
+    {
+      "fault": "Accept malformed nonnull string signatures by omitting only base64 representation validation.",
+      "label": "SIG-FI2-base64-validation-skipped",
+      "source": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "patch": {
+        "old": "        decoder.decode(encoded)",
+        "new": "        // FI: omit representation validation while retaining string/type checks",
+        "replaceCount": 1
+      },
+      "mutantSha256": "f63277ba96998a1321b5c7be5df8d5200bf4f6065f20088ff484ea8e4e96a8f2",
+      "originalAndRestoredSha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880",
+      "mutant": {
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PrecheckThoughtSignatureTransportTest.SIG02*"
+        ],
+        "cwd": "/tmp/issue123-independent-signature-fi",
+        "exit": 1,
+        "tests": 9,
+        "failures": 5,
+        "errors": 0,
+        "skipped": 0,
+        "failuresDetail": [
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[5] scenario = \"BAD_CHARACTER\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[6] scenario = \"BAD_PADDING\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[7] scenario = \"BAD_LENGTH\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[8] scenario = \"WHITESPACE\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[9] scenario = \"MIXED\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          }
+        ],
+        "recordedAt": "2026-10-18T06:26:44.575083Z"
+      },
+      "restored": {
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PrecheckThoughtSignatureTransportTest.SIG02*"
+        ],
+        "cwd": "/tmp/issue123-independent-signature-fi",
+        "exit": 0,
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failuresDetail": [],
+        "recordedAt": "2026-10-18T06:27:07.973046Z"
+      }
+    },
+    {
+      "fault": "Permit arbitrary Part keys while preserving single candidate/part, required text and duplicate JSON checks.",
+      "label": "SIG-FI3-unknown-part-keys-allowed",
+      "source": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "patch": {
+        "old": "if (!part.isObject || part.propertyNames().toSet() !in setOf(setOf(\"text\"), setOf(\"text\", \"thoughtSignature\"))) invalid()",
+        "new": "if (!part.isObject) invalid()",
+        "replaceCount": 1
+      },
+      "mutantSha256": "80d96928347e088128630d7ff62b8342fc8f31a8d183df6294c281d18d6326f4",
+      "originalAndRestoredSha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880",
+      "mutant": {
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PrecheckThoughtSignatureTransportTest.SIG03*"
+        ],
+        "cwd": "/tmp/issue123-independent-signature-fi",
+        "exit": 1,
+        "tests": 5,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0,
+        "failuresDetail": [
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[1] fault = \"UNKNOWN_PART\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          },
+          {
+            "test": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest#[2] fault = \"THOUGHT_PART\"",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=NEEDS_CHOICE, prompt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0\uac00 \uc624\uc804 \uc2dc\uac04\ub300\uc778\uc9c0 \uc624\ud6c4(\uc800\ub141) \uc2dc\uac04\ub300\uc778\uc9c0 \uc54c\ub824\uc8fc\uc138\uc694., sourceExcerpt=8\uc2dc\ubd80\ud130 9\uc2dc\uae4c\uc9c0, choices=[PrecheckChoice("
+          }
+        ],
+        "recordedAt": "2026-10-18T06:27:31.417207Z"
+      },
+      "restored": {
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--console=plain",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PrecheckThoughtSignatureTransportTest.SIG03*"
+        ],
+        "cwd": "/tmp/issue123-independent-signature-fi",
+        "exit": 0,
+        "tests": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failuresDetail": [],
+        "recordedAt": "2026-10-18T06:27:53.985051Z"
+      }
+    }
+  ],
+  "final": {
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*PrecheckThoughtSignatureTransportTest"
+    ],
+    "cwd": "/tmp/issue123-independent-signature-fi",
+    "exit": 0,
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failuresDetail": [],
+    "recordedAt": "2026-10-18T06:28:07.184833Z"
+  },
+  "originalInventoryUnchanged": true,
+  "scratchExactRestored": true,
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckThoughtSignatureTransportTest.kt",
+      "sha256": "7acddc4e24866fe52d85c2cdbd2c37f11b40aaf4f11dccf6d48af4792ee353e3"
+    }
+  ],
+  "paidModelCalls": 0,
+  "recordedAt": "2026-10-18T06:28:07.280301Z"
+}

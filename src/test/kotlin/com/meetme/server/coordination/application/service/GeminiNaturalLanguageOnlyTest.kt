@@ -93,7 +93,7 @@ class GeminiNaturalLanguageOnlyTest {
     }
 
     @Test
-    fun `successful response with all invalid natural conditions yields neutral partial rather than analysis delayed`() {
+    fun `successful response with invalid empty conditions excludes attendance without analysis delayed`() {
         val f = NaturalLanguageOnlyFixture(listOf("invalid", "valid"))
         val parser = mock(NaturalLanguageParserPort::class.java)
         `when`(parser.parse(NaturalLanguageOnlyFixture.anyValue())).thenReturn(
@@ -110,10 +110,7 @@ class GeminiNaturalLanguageOnlyTest {
 
         assertEquals(CoordinationStatus.COMPLETED, f.run.status)
         assertEquals(CandidateQuality.PARTIAL, f.run.quality)
-        assertEquals(
-            listOf(f.utc(10, 13)),
-            f.singleCandidate().timeRanges,
-        )
+        assertTrue(f.run.candidates.isEmpty())
         verify(parser).parse(NaturalLanguageOnlyFixture.anyValue())
     }
 

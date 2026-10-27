@@ -1,0 +1,50 @@
+{
+  "recordedAt": "2026-10-17T19:16:55.593796+00:00",
+  "scope": "isolated local offline CI contracts; no production/AWS/paid model/OAuth calls",
+  "checks": [
+    {
+      "command": "bash deploy/scripts/verify-compose-secret-fidelity.sh",
+      "exitCode": 0,
+      "toolSession": 93013,
+      "log": ".codex/tdd-evidence/issue107-integrated-compose-fidelity.log"
+    },
+    {
+      "command": "bash deploy/tests/refresh-database-credential.test.sh",
+      "exitCode": 0,
+      "toolSession": 21798,
+      "log": ".codex/tdd-evidence/issue107-integrated-refresh-contract.log"
+    },
+    {
+      "command": "bash deploy/scripts/verify-nginx-runtime.sh",
+      "exitCode": 0,
+      "environment": "temporary private empty DOCKER_CONFIG only; inherited container proxy injection avoided, security flags unchanged",
+      "evidence": ".tdd/verification/issue107-nginx-local-environment.json"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/scripts/verify-compose-secret-fidelity.sh",
+      "sha256": "4ab6a30f2949421b3b79ccba2a7e2b8fa4eea9f843d428db76b214a372a5564f"
+    },
+    {
+      "path": "deploy/tests/refresh-database-credential.test.sh",
+      "sha256": "b615a17ac59275042c17a31c1f2516c4152a2420d835da649b582c3a99821b1d"
+    },
+    {
+      "path": "deploy/scripts/verify-nginx-runtime.sh",
+      "sha256": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368"
+    },
+    {
+      "path": "deploy/nginx/nginx.conf",
+      "sha256": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44"
+    }
+  ],
+  "otherGates": [
+    ".tdd/verification/issue107-integrated-offline-node.json",
+    ".tdd/verification/issue107-integrated-v8-guard.json"
+  ],
+  "limitations": [
+    "Local Docker/command stubs are contract validation; not production release proof.",
+    "ARM64 built image will be verified by exact published HEAD CI."
+  ]
+}

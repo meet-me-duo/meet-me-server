@@ -1,0 +1,10 @@
+{
+  "stage": "GENERATE",
+  "attempts": 1,
+  "state": "STOP_HTTP_FAILURE_UNKNOWN_HELD",
+  "startedAt": "2026-10-18T05:37:51.840404+00:00",
+  "requestSha256": "3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44",
+  "httpStatus": 503,
+  "elapsedHttpMs": 347.8,
+  "finishedAt": "2026-10-18T05:37:52.188562+00:00"
+}

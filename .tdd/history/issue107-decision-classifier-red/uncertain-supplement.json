@@ -1,0 +1,18 @@
+{
+  "why": "Independent design review identified an early-INDETERMINATE-return gap. Mandatory confidence/distribution checks apply before all assessments. Original101 test bytes and chronological RED remain unchanged.",
+  "tests": 7,
+  "assertionFailures": 7,
+  "errors": 0,
+  "canonical": ".tdd/red/issue107-decision-uncertain-validation.json",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationUncertainValidationTest.kt",
+      "sha256": "cb12d2978f76a79eb2b6d8d44006c339804c142a961c89f1f696514908926404"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "e8bd75698e37cc4b9cbeb9c625656045ad3a1e6590dcdecf8a5568dc4f9bb197"
+    }
+  ],
+  "logSha256": "7f1e854e962232394ff06db0d5d62ac0fa159e9fb42a9a73233d3759eb0f06c2"
+}

@@ -1,0 +1,78 @@
+{
+  "workItem": "issue107-runtime-auth-catalog-faults",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "boundary": "Frozen26 independent Node/Python adapter tests on a minimal36-file exact copy. Local tar/filesystem fixtures only; host privileged filesystem/unit transport is replaced by test harness as already specified. Original product/test source is never mutated. Not the full node/V8/mandatory gate; actual provider/OAuth/SSM/Secrets/operations0. Detailed copied-file manifest, exact patches/raw logs and baseline/restored26: .tdd/verification/issue107-runtime-auth-catalog-faults.json.",
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b3110c1a57b534c1600580756e28a1e1b73faad34502224f37fd059b0e0e0567"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a8a6cf384e4d42d539e3341e67cbc2066dfdd7782464694967ce64349629e9ce"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6523a1b7f3d4bfc5fbb10a8b8d9c9bd2dc3e56b8171a08d9d06fe223bf79ac95"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "7b0cbbfcc637fe23fe836801f9f092f4b70dbd167165b786c579d05513e0764e"
+    },
+    {
+      "path": ".github/scripts/issue107-integrated-catalog.test.cjs",
+      "sha256": "7df9328e5d2157cca17c488231bcdcd76678acc7b2183332f7e416bfd526fc66"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "a852a6be38de5a87bf79f44980830f3f53821a8efa64e11ac7a48aa0e4969972"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Publisher removes renderer from the seventeen-file approval fingerprint",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^RA02 ",
+        ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+        ".github/scripts/issue107-integrated-catalog.test.cjs"
+      ],
+      "detectedBy": "RA02 publisher fingerprints all seventeen including runtime auth mode renderer and compose",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Runner treats a present authenticated-runtime marker as historical fourteen-file approval",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^RA06 ",
+        ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+        ".github/scripts/issue107-integrated-catalog.test.cjs"
+      ],
+      "detectedBy": "RA06 runner accepts current seventeen and rejects fourteen-fingerprint downgrade when auth marker is present",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Host accepts an unknown present auth marker instead of failing closed",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^RA09 ",
+        ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+        ".github/scripts/issue107-integrated-catalog.test.cjs"
+      ],
+      "detectedBy": "RA09 installed host catalog reads exact historical14 and current17 while rejecting unknown marker",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T20:46:21.953475Z"
+}

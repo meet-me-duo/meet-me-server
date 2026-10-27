@@ -1,0 +1,52 @@
+# #123 standalone live two-stage pre-execution review
+
+**Runner/plan ACCEPTED CONDITIONALLY; no P1/P2 runner correction identified. Execution remains BLOCKED until the fresh unchanged mandatory full guard passes and the parent confirms its separate current-source review.** This is acceptance of the concrete bounded evaluation plan, not production activation or a proven billing hardcap.
+
+Reviewed 2026-10-18T05:34:44.671907+00:00. Read-only archive/source/manifest audit; no harness/callback execution, model/account HTTP, credentials, Gradle, source/test/config/branch/stage/remote changes. No new response or stage-consumed files existed when checked: actual inference total remained4.
+
+## Freeze and exact-wire checks
+
+Independent hashes match current temporary and immutable archive copies: execution plan SHA256 `368bafb75f2c36f0980501ea5b7b8a9669f5b8eb5e6705c49e4b6659b9aeb746`, Java harness `757bc8a0accdc2bfa47ff831244fbf5aac88349cc2d98daea80c68eb872716c9`, Python callback `e02933528a9de448f9071cbbda4f1b8985049eda3bb201c9541a8eba0351eac7`. The archive wire-manifest and local manifest bytes match. The compilation receipt has exit0 and the same Java source hash; this review did not recompile or execute it.
+
+All three production contract hashes in the plan match current source. Frozen oracle SHA256 `c69edcc525bde189765788edfd96fb05756c0e3a21d23cfcda357a7d52be1d64` matches its current file, preserves original raw FAIL/STOP, and distinguishes fresh-A routing from historical confidence0.06. No response-based change is authorized.
+
+| Stage | Full wire bytes | SHA256 |
+|---|---:|---|
+| Decisions A | 2397 | `fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52` |
+| Gemini count | 3172 | `1153b46eab50217239a307b73de69b0a5ef494d84fd78ce14ba3b1a7fb90702f` |
+| Gemini generation | 3111 | `3fafbb130ffeedca5e459e9747fd2329d8823f1db217802778ed1fa5dc76cd44` |
+
+Each is strictly below16KiB. Count wraps the exact generation object plus `model=models/gemini-3.8-flash`; no separately reconstructed prompt. A/B decoded raw text, reference instant, zone, locale and search dates agree exactly; B only adds the frozen synthetic input_ref. Generation is candidate1/maxOutputTokens2048/LOW with no thinkingBudget0, tools, media or cache settings.
+
+## Runner behavior reviewed
+
+- The callback pins the plan to an externally supplied SHA, requires executionPermitted and the root full-gate receipt exit0/source-before-after-current flag before reading a key or opening HTTP. The gate receipt inspected here still has exit2, so current execution fails closed. A future exit0 receipt must belong to the fresh current snapshot, not be manufactured or borrowed from an older run. Root owns that final evidence and explicit invocation.
+- Preparation is no-network and rejects any previous responses, stage consumed markers, callback metadata or live report. Existing requests/manifest must be byte-identical. Python validates fixed request path/SHA/size, uses a per-stage O_EXCL consumed marker initialized UNKNOWN_HELD before HTTP, and exclusively creates responses. Concurrent/accidental repeat entry cannot acquire the same stage marker. No reset/resume is authorized after failure.
+- The actual current TwoStage physical branch coordinates the bounded ports. A is parsed with the production strict contract and existing synthetic0.8; complete known input0..65536/output0 are required. Valid NEEDS_REVIEW or LOW_CONFIDENCE/MODEL_UNCERTAIN can reach B; confident CLEAR returns without count/generation; refusal/API/invalid data stop. There is no manual force-B or historical-response replacement.
+- B callback follows only the actual generating branch, checks current raw/check identity, runs count once, parses it through the production strict count parser, and permits generation only at1..4096. The sole generation uses the production request/schema and strict response parser, returned-usage validation, output2048 checks and known-input4096 guard. Missing usage remains null, not zero. Invalid/missing count stops without generation.
+- Current TwoStage keeps the earlier absolute request deadline; B receives only remaining time, then count and generation share a local cutoff based on that remainder. Each Python child is bounded by remaining time; Java bounds wait and forcibly kills process/descendants at timeout, covering stalled body reads as well as headers. Response and metadata sizes are capped. The scalar socket timeout alone would not suffice; the outer Java deadline is material to this acceptance.
+- Python has one urllib POST per selected stage, rejects redirects and contains no retry/fallback/continuation loop. Keys are read only in Python for headers, never query parameters; normal metadata excludes headers/keys/provider bodies. Error stderr is discarded and Java failure output contains typed codes. Only predeclared synthetic provider data is persisted locally. Unknown failures retain consumed evidence/reservation; structural or semantic failure grants no retry.
+
+## Accounting and post-execution interpretation
+
+Maximum additional physical requests3: A1/count1/generation1, serial1; existing actual inference4 remains separate. Callback invocations are not themselves proof of sent/billed HTTP: use consumed/raw/HTTP receipts to distinguish pre-call gate failure and unknown network exposure. A skip/failure can reduce the dispatched count without freeing unknown headroom.
+
+The selected amounts independently agree: prior reserveUSD0.07208960 retained + new AUSD0.01441792 + Gemini count/generationUSD0.30412800 = cumulativeUSD0.39063552; additional tax/fees/uncertainty headroomUSD0.60936448 within the sameUSD1. Count is reserved as a full-generation operation plus2.2 safety factor; its tariff is not assumed zero. Gemini81920-input allowance uses explicit small wire size plus framing margin as an engineering estimate, not a proven Gemini tokenizer/billed-input bound. [Official Standard rates](https://ai.google.dev/gemini-api/docs/pricing#gemini-3.8-flash) and [GenerateContent thought-inclusive cutoff](https://ai.google.dev/gemini-api/docs/generate-content/thinking#token-limits-and-max_output_tokens) support the price/output components. Tax/invoice remains unverified and the retained headroom is not released by successful JSON parsing.
+
+`live-two-stage.json accepted=true` is structural/pipeline return evidence, not an automatic semantic PASS. If fresh A is confident CLEAR, count/generation0 is correct control behavior but this fixed ambiguous-case oracle is FAIL_FRESH_A_CONFIDENT_CLEAR. If B returns legal CLEAR or NEEDS_EDIT, preserve it respectively as semantic failure or safe-abstention/task-incomplete. NEEDS_CHOICE still requires independent LTS01–08 grading of focused AM/PM question, exact excerpt, A/B complete proposals and preserved context/polarity; parser acceptance alone is insufficient. Original raw-label failure never becomes PASS from a later B answer. Missing B usage is permissible as unknown observation under the existing contract and must not be presented as complete cost settlement.
+
+This exercises production builders/contracts and actual TwoStage routing through custom Python HTTP ports. It does not exercise production SDK transport, Spring/runtime flag activation, real room/owner persistence, durable PG authority/fences, participant answer/recheck/UI or final AREA analysis. Synthetic deny-only authority proxies are explicit and make no production dispatch authorization claim. No population accuracy, confidence calibration/operating policy or p50/p95 follows from one case.
+
+Final parent prerequisites: fresh unchanged full-gate exit0 and separate current-source review, recheck plan/harness/callback/oracle/request hashes unchanged, then one explicit invocation only. The new guard was still running and its success was not assumed by this review. All raw results, unknown exposure and semantic grading must be preserved after execution; no additional call is approved by this report.
+
+## Explicit invoker follow-up (same read-only review)
+
+The parent subsequently prepared `/tmp/issue123-run-frozen-two-stage.py`, initial SHA256 `68b1c1f9ac96340adbf44904eaf28cbe7bb015bcec1433a277bd366f384c0338`. Its default branch is DRY_RUN_NO_NETWORK; only explicit `--execute-frozen` checks the full-gate success/fresh JUnit and every current source-manifest SHA, pins plan/harness/callback/oracle, recompiles the exact Java source, acquires an O_EXCL invocation marker and invokes once. Its25-second outer timeout kills the process group; inner routing still has the actual shared15-second bound. Keys are neither command arguments nor printed metadata. The classpath file includes `/tmp` and has no trailing newline. This review did not run either branch.
+
+One small evidence-link recommendation was sent to the parent: assert the source-manifest file SHA equals `gate.source.manifestSha256`, so the checked current source map is explicitly bound to that full-gate receipt. The inspected current values already match `dbd7913c59de85770d8dfdbd79933bece2aad7c0574988aaba8d371259e87a5e`, but the guard is exit2 and execution remains blocked. Freeze/archive the final invoker bytes after this narrow improvement; do not present this initial invoker hash as a later edited file. No other invoker P1/P2 was identified. As above, consumed-record count is attempted/unknown exposure evidence, not proof of provider receipt or settled billing.
+
+### Final invoker freeze and disposition
+
+The parent added exactly the requested source-manifest SHA→full-gate binding before execution. Final invoker SHA256 `af2ba832bdb95ba615412451b259ae3f9a14c143b6aa345e5fb9345274a7f4ee` independently matches `/tmp/issue123-run-frozen-two-stage.py` and its immutable `invoker.py` archive. The guard-bound source manifest is checked before any key read/HTTP. Plan368b/harness757b/callbacke029 remain unchanged. No stage consumed marker or new response was present at final review. The parent's DRY_RUN result is no-network preparation, not a live model result; this reviewer executed no harness/invoker branch.
+
+**Final pre-execution runner review SEALED: ACCEPTED, no unresolved P1/P2 or runner fix.** The unchanged fresh full guard/current-source review and explicit parent invocation remain required execution conditions. This seal does not convert a pending/failed guard to PASS or authorize any additional request beyond the fixed3-physical-call plan. Original raw oracle FAIL/STOP and retained totalUSD1 accounting boundaries remain intact.

@@ -1,0 +1,27 @@
+{
+  "workItem": "issue-109-identity",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/persistence/AccountIdentityPersistenceTest.kt",
+      "sha256": "66174673b7ebd21802fd2d6b7c8b7aa1ab6d95fe1c4c6d538b8cf34f2bf11565"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*AccountIdentityPersistenceTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest#concurrent first login for same identity yields one account and no orphans()",
+    "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest#display names trim whitespace and accept one through fifty Unicode code points()",
+    "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest#invalid identity or display name is rejected before any account is persisted()",
+    "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest#equal subjects across providers and equal names never implicitly merge accounts()",
+    "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest#identity insertion failure rolls back account creation and later retry succeeds()",
+    "com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest#same provider subject resolves existing account without profile based replacement()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-17T14:34:05Z"
+}

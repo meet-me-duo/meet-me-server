@@ -1,6 +1,6 @@
 name: Bug report
 description: 재현 가능한 백엔드 오류를 보고합니다.
-title: "[Bug] "
+title: "fix: "
 body:
   - type: textarea
     id: problem

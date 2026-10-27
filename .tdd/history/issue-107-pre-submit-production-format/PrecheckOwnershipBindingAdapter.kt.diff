@@ -1,0 +1,12 @@
+--- src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt.before
++++ src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt
+@@ -30,7 +30,8 @@
+         val provenance =
+             proof.provenance
+                 ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT)
+-        return "$prefix|${provenance.sessionId.value}|${provenance.validUntil.toEpochMilli()}|${provenance.grantGeneration ?: ""}|${proof.level.name}"
++        return "$prefix|${provenance.sessionId.value}|${provenance.validUntil.toEpochMilli()}|" +
++            "${provenance.grantGeneration ?: ""}|${proof.level.name}"
+     }
+ 
+     override fun isActive(

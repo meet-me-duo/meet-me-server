@@ -1,0 +1,116 @@
+{
+  "workItem": "issue-108-independent-implementation",
+  "baseline": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "branch": "feature/issue-108-guest-reaccess",
+  "status": "INDEPENDENT_IMPLEMENTATION_VERIFIED_INTEGRATION_PENDING",
+  "qualityGate": {
+    "exitCode": 0,
+    "durationSeconds": 502.888,
+    "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+    "tests": 710,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "suites": 116,
+    "recordedAt": "2026-10-17T14:54:28.324380Z",
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "hookSelfTests": "PASS via unchanged guard",
+    "actualGitCommitExecuted": false
+  },
+  "skippedTests": [
+    "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest.capture actual native schema for debugging explicitly marked unvalidated()",
+    "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest.verify correction public schemas then export actual native OpenAPI JSON()",
+    "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest.export actual generated OpenAPI JSON after Issue 83 GREEN()",
+    "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest.bounded live Gemini semantic probe()"
+  ],
+  "focused": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "red": {
+    "core": {
+      "tests": 35,
+      "failed": 35
+    },
+    "encoding": {
+      "tests": 7,
+      "failed": 7
+    },
+    "accountBoundary": {
+      "tests": 5,
+      "failed": 4,
+      "passed": 1
+    }
+  },
+  "faults": {
+    "injected": 3,
+    "assertionFailures": 12,
+    "groupedRuns": 1,
+    "oneIndependentClassPerBoundary": true,
+    "sourceAndFiveTestsRestoredExactly": true
+  },
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordHasher.kt",
+      "sha256": "1e49528cd93df1a6fb2a63a410318ae2d85cf23ee9991da083a2f5d990539925"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestReaccessAttemptGuard.kt",
+      "sha256": "958f4280f4db374f2096411aae5d5266a6ecbb833898bcaa023ed6c7d0ddec06"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestPasswordPort.kt",
+      "sha256": "181a4c133f14c736eaaa7bdfea2a3536071701618ac5b7e55a263886019f89fb"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestReaccessAttemptPort.kt",
+      "sha256": "9470d284501603987fd3cfc115e4d34e46a23817ae34d8868ee9a0832107610f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicy.kt",
+      "sha256": "4148d22281817d7027270fde86e187f0e659fd417afcd30de7b9b4be1d12f027"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/domain/GuestReaccess.kt",
+      "sha256": "891cf9dc3ddcbb28127bce62fcce2481e4738a331a0672727fae9873629ab9e7"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordEncodingBoundaryTest.kt",
+      "sha256": "403599e1dafc64813dec502d0aa262f574fbe27b91376ca47bd8f4c0bf5b286a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordHasherTest.kt",
+      "sha256": "f1adc8f3949994e30f8b0fd5e7023e2cd7d22af5866a053a63b05449be704122"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestReaccessAttemptGuardTest.kt",
+      "sha256": "829221965ac36cb76f912324fa7c6c7f6587786b2cf0b20b7c2fa8c71f3882c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/GuestReaccessAccountBoundaryTest.kt",
+      "sha256": "0cdee3fe3687bc7a84775d44b7402bc01ab556fff9dcd248967a87b1c5220998"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicyTest.kt",
+      "sha256": "5df51408aac2f6912249b1e504116301c4edeec7d2255dd1af57eda8b0aa328d"
+    }
+  ],
+  "sharedTrackedFilesChanged": [],
+  "commonContract": "Exact #109 account, proof and operation signatures received; actual skeleton/source patch not integrated",
+  "pending": [
+    "GuestOwnershipProofPort adapter and actual ParticipantOwnershipResolver source integration",
+    "V11 plus reserved V12, real HTTP and common join/submission/claim wiring",
+    "Real web RoomPage/auth/API integration and combined native OpenAPI export",
+    "Isolated PostgreSQL/Redis concurrency, two-device security, deadlines/confirmation, account conflicts and claim consent"
+  ],
+  "remoteWrites": false,
+  "recordedAt": "2026-10-17T14:55:06.579376Z"
+}

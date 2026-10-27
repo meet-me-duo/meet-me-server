@@ -1,0 +1,171 @@
+{
+  "workItem": "issue-109-final-review",
+  "reviewer": "/root/final_review",
+  "role": "independent final security and architecture reviewer; no auth/ownership runtime implementation; independently authored web API/UI tests receive separate test-oracle cross-review; explicitly delegated Controller OpenAPI annotation corrections only",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "status": "APPROVED_IMPLEMENTATION_SCOPE",
+  "reviewDocument": "docs/ISSUE_109_REVIEW.md",
+  "findings": [
+    {
+      "id": "R109-01",
+      "priority": "P1",
+      "status": "REMEDIATED_SERVER_FINAL_GATES_PASS",
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/oauth/OidcOAuthProviderAdapter.kt",
+      "summary": "Request timeout does not bound blocking body reads after ofInputStream receives headers",
+      "independentProbe": "300ms timeout plus 2200ms delayed body completed in 2528ms; local ephemeral HTTP server only"
+    },
+    {
+      "id": "R109-03",
+      "priority": "P1",
+      "status": "REMEDIATED_WEB_FINAL_GATES_AND_NATIVE_PASS",
+      "path": "../meet-me-web/src/pages/RoomPage.tsx",
+      "summary": "Authenticated account cannot explicitly claim a closed legacy guest HOST room because the claim UI appears only in collecting rooms",
+      "independentRed": "../meet-me-web/.tdd/red/issue-109-web-closed-claim.json"
+    },
+    {
+      "id": "R109-04",
+      "priority": "P1",
+      "status": "CORRECTED_REVERIFICATION_ACCEPTED",
+      "path": ".tdd/verification/issue-109-auth-faults.json",
+      "summary": "Four initial auth mutation runs failed compilation but reused stale XML and were incorrectly reported as detected; evidence invalidated and all seven reruns requested"
+    },
+    {
+      "id": "R109-05",
+      "priority": "P1",
+      "status": "REMEDIATED_SERVER_FINAL_GATES_PASS",
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/output/oauth/OidcOAuthProviderAdapter.kt",
+      "summary": "Production Kakao authorization scope uses spaces while official request contract specifies comma-delimited consent IDs; shared injected test endpoint masks provider-specific defaults",
+      "source": "https://developers.kakao.com/docs/en/kakaologin/rest-api",
+      "actualOperationalRejectionObserved": false
+    },
+    {
+      "id": "R109-06",
+      "priority": "P1",
+      "status": "REMEDIATED_WEB_FINAL_GATES_AND_NATIVE_PASS",
+      "foundBy": "/root",
+      "path": "../meet-me-web/src/auth/session.ts",
+      "summary": "Expired account session remains in UI while token getter returns null, allowing guest-cookie API fallback; reject before fetch when an existing account session has expired"
+    },
+    {
+      "id": "R109-07",
+      "priority": "P2",
+      "status": "REMEDIATED_WEB_FINAL_GATES_AND_NATIVE_PASS",
+      "path": "../meet-me-web/src/utils/createRoom.ts",
+      "summary": "Forwarding the ignored host_display_name can reject server-valid 50-codepoint Unicode account names at the UTF-16 @Size DTO boundary; omit the ignored field"
+    },
+    {
+      "id": "R109-08",
+      "priority": "P1",
+      "foundBy": "/root",
+      "status": "REMEDIATED_FINAL_CI_EXTRAS_AND_GUARD_PASS",
+      "path": "deploy/pipeline/publish_manifest.py",
+      "summary": "Existing release publication and approval validators require exactly V1..V10; the new V11 cannot produce trusted immutable publication metadata. Extend only explicit V10/V11 catalog compatibility while retaining checksum/source/guard/transition enforcement."
+    }
+  ],
+  "pending": [],
+  "operationalOAuthVerified": false,
+  "updatedAt": "2026-10-17T15:42:19.960123+00:00",
+  "serverReview": {
+    "status": "APPROVED_IMPLEMENTATION_SCOPE",
+    "reviewedAt": "2026-10-17T15:25:33.734335+00:00",
+    "baseRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+    "gateEvidence": ".codex/tdd-evidence/issue-109-final-gate/result.json",
+    "gateEvidenceSha256": "18f82024c7b0da47ef4d48861640e2305cb71a21d189ecbe521e86591c2b0a56",
+    "gateCommand": [
+      "sh",
+      "./gradlew",
+      "--no-daemon",
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "gateExit": 0,
+    "junitSuites": 130,
+    "tests": 773,
+    "passed": 769,
+    "skipped": 4,
+    "failures": 0,
+    "errors": 0,
+    "independentlyVerifiedSourceFingerprints": 297,
+    "activeRedTestFingerprintsVerified": 17,
+    "guardUnchangedFromHEAD": true,
+    "guardExit": 0,
+    "guardSelfTests": 12,
+    "scope": "Server code, migration, DB/Redis concurrency/security tests and generated OpenAPI reviewed. This approval does not certify actual Google/Kakao operational login, combined #108 proof adapter integration, deployment, or production DB changes.",
+    "finalSourceFingerprintsVerified": 304,
+    "postCatalogGuardEvidence": ".tdd/verification/issue-109-post-catalog-guard.json",
+    "postCatalogGuardExit": 0
+  },
+  "webReview": {
+    "status": "APPROVED_IMPLEMENTATION_SCOPE",
+    "reviewedAt": "2026-10-17T15:32:06.959218+00:00",
+    "baseRevision": "9b183978d5987f8fa8a5f02d542b17181e4929b4",
+    "manifest": "../meet-me-web/docs/verification/issue-109-web-final-manifest.json",
+    "manifestSha256": "538252f667f906447b3270164b4c14e8463d84cda06d969492f8077ae43ec072",
+    "independentlyVerifiedFinalFileFingerprints": 53,
+    "activeRedTestFingerprintsVerified": 8,
+    "unitTestsPassed": 364,
+    "unitFilesPassed": 29,
+    "browserScheduled": 384,
+    "browserPassed": 383,
+    "browserExistingIntentionalSkipped": 1,
+    "browserFailures": 0,
+    "typecheckBuildLintApiCheck": "PASS",
+    "nativeBrowserChecksPassed": 12,
+    "nativeCompletedAt": "2026-10-17T15:26:14.551Z",
+    "nativeServerMainSourceFingerprintsVerified": 156,
+    "nativeWebSourceFingerprintsVerified": 30,
+    "nativeApiRouteMocks": 0,
+    "nativeExternalRequests": 0,
+    "limitations": "Native uses isolated real Spring/PostgreSQL/Redis plus synthetic loopback OIDC/JWKS; production artifact browser suite uses mocked API fixtures. Actual Google/Kakao operational login is not verified.",
+    "nativeServerCompiledClassFingerprintsVerified": 605,
+    "legacyUnitFixtureSourceFingerprintsVerified": 10
+  },
+  "publicationReview": {
+    "status": "APPROVED_IMPLEMENTATION_SCOPE",
+    "testDesignCrossReview": ".tdd/reviews/issue-109-release-catalog-cross-review.json",
+    "faultEvidence": ".tdd/verification/issue-109-release-catalog-faults.json",
+    "independentTargetedTests": 9,
+    "existingTargetedTests": 7,
+    "mutantsDetected": 3,
+    "assertionFailures": 4,
+    "postRestoreTestsPassed": 9,
+    "sourceRestorationFingerprintsVerified": 3,
+    "scope": "Only exact catalog bounds/ranges changed in publisher, pure validator and host record parser; legacy V10 immutable consumption retained, new publication requires V11, identity/checksum/fingerprint/explicit transition enforcement unchanged. No AWS or deployment actions.",
+    "originalCiExtrasEvidence": ".tdd/reviews/issue-109-ci-extras.json",
+    "originalCiExtrasStatus": "PASS",
+    "originalCiExtrasSha256": "02673ed93a592c6aab9e44f494559b89a192773feeecd08ec73b3a21da1c00eb",
+    "ciCheckCounts": {
+      "deployment-policy": 13,
+      "production-preflight": 21,
+      "approved-release": 16,
+      "compose-secret-fidelity": "shell PASS",
+      "runtime-provider-env": 19,
+      "built-image-workflow": 12,
+      "database-credential-refresh": "shell PASS",
+      "issue-links": 9,
+      "nginx-runtime": "shell PASS",
+      "v8-release-guard": 37
+    },
+    "v8GuardTestsPassed": 37,
+    "environmentReverification": "Initial local JDK/file-mode/Docker-client and concurrent V8 timeouts retained transparently; exact source with prepared JDK17, Git-index modes, empty temporary Docker client configuration and unchanged serial V8 tests passed. No test timeout or deployment guard relaxation."
+  },
+  "reviewerPerformedRemoteWriteOrDeployment": false,
+  "remoteCiAndDraftPr": "Parent owns separately user-authorized commit/push/Draft PR and exact CI verification; this local review does not report their completion.",
+  "approvedAt": "2026-10-17T15:42:19.960123+00:00",
+  "openImplementationFindings": [],
+  "pendingImplementationChecks": [],
+  "externalValidationPending": [
+    "Actual Google/Kakao provider setup, safe runtime secret provisioning, real login/cancellation/relogin, production callback/Origin/Secure cookie/key rotation/device checks; isolated provider success is not operational OAuth success.",
+    "Combine the actual #108 password/request-proof adapter with this shared port and rerun integration; only substituted proof port plus default cookie adapter were available here.",
+    "#110 operational callback-query non-disclosure in nginx upstream error logs before activation.",
+    "Parent owns exact server Draft PR head remote CI, including actual ARM64 image build/runtime verification. Web exact-head CI success was separately reported by parent; this reviewer did not invoke remote writes."
+  ],
+  "scopeDecision": "Code and independently verified local server/web/security/migration/publication-compatibility implementation approved for the separately user-authorized commit/push/Draft PR workflow. No merge/deployment/production DB or operational login approval is implied.",
+  "evidenceCorrectionHistory": [
+    "First auth mutation report reused stale XML after compile failures; invalidated history retained, all seven rerun with compile/fresh-JUnit gate and final restored GREEN independently checked.",
+    "First ClaimConflictView test had invalid participant_id fixture; original RED invalidated. Corrected public context_id test is independently reviewed post-implementation regression GREEN, not preimplementation TDD.",
+    "Public scoped viewer/join four tests were added after implementation and accurately recorded as regression GREEN.",
+    "Existing issue99 publisher expectations intentionally extend actual catalog assertions only to V11, preserve all first ten checksums and legacy V10 synthetic/transition contracts; historical evidence left intact."
+  ]
+}

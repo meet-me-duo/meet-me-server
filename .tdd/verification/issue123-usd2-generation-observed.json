@@ -1,0 +1,76 @@
+{
+  "recordedAt": "2026-10-18T06:19:14.848293+00:00",
+  "status": "TWO_REQUESTS_STOPPED; ONE_CASE_SEMANTIC_PASS; ORIGINAL_PARSER_COMPATIBILITY_FAIL",
+  "historicalParserResultPreserved": true,
+  "oracleSha256": "c69edcc525bde189765788edfd96fb05756c0e3a21d23cfcda357a7d52be1d64",
+  "modeSha256": "871c42c29cb73882cb50d17f91433d7d70f293c27c7637231761d201254e5d7d",
+  "responseSha256": "983e23db4fab03c1f5c41e5ca8775e8cf798b122ba5dd9507114c9a7a7cc080a",
+  "responseBytes": 2766,
+  "rawResponseTracked": false,
+  "opaqueSignatureValueTrackedOrLogged": false,
+  "newCalls": {
+    "decisions": 0,
+    "count": 0,
+    "generation": 2
+  },
+  "cumulativeCalls": {
+    "decisions": 6,
+    "count": 2,
+    "generation": 4,
+    "evaluationHttpAttempts": 12,
+    "metadataReadOnlySeparate": 2
+  },
+  "newObservations": [
+    {
+      "http": 503,
+      "httpObservationMs": 548.4,
+      "reason": "UNAVAILABLE/high demand, this response only"
+    },
+    {
+      "http": 200,
+      "httpObservationMs": 5195.5,
+      "finishReason": "STOP",
+      "candidates": 1,
+      "parts": 1,
+      "usage": {
+        "input": 530,
+        "candidate": 188,
+        "thought": 366,
+        "outputIncludingThought": 554,
+        "total": 1084,
+        "serviceTier": "standard"
+      }
+    }
+  ],
+  "semantic": {
+    "LTS01FreshFullTwoStage": "NOT_EXERCISED",
+    "LTS02OriginalProductionParser": "FAIL_INVALID_RESPONSE_thoughtSignature",
+    "LTS03Through07": "PASS_ONE_CASE",
+    "LTS08ProposedAlternatives": "PASS_ONE_CASE",
+    "LTS08UiAndAcceptedPersistence": "NOT_EXERCISED"
+  },
+  "budget": {
+    "approvedAggregateUsd": "2.00",
+    "allPriorHeldUsd": "0.70918144",
+    "newMaximumReservedUsd": "0.304128",
+    "totalRetainedReservationUsd": "1.01330944",
+    "remainingEstimateHeadroomUsd": "0.98669056",
+    "knownUsageBaseEstimateUsd": "0.0027835",
+    "knownUsageConservative2point2EstimateUsd": "0.00612370",
+    "invoiceTaxAndFees": "UNVERIFIED",
+    "failedCountTimeoutBilling": "UNKNOWN",
+    "refunds": 0
+  },
+  "evidence": {
+    ".tdd/history/issue123-usd2-generation-diagnostic/observed/attempt1-client-observation.json": "fc7d679da31c9b4b4240496ea046d453fe7905fb190947e54f1dd4e4e98a208e",
+    ".tdd/history/issue123-usd2-generation-diagnostic/observed/attempt2-client-observation.json": "b68c1f74087310bc7ececf3e674fd9ce2bdcd380c7afa525d911902229f375ed",
+    ".tdd/history/issue123-usd2-generation-diagnostic/observed/diagnostic-batch-invocation.json": "a7e51005d94911f4ddb070b07af9c6078772e55977665b29cae4dd713e2466d1"
+  },
+  "limits": [
+    "Standalone B60-second diagnostic does not alter product15-second deadline",
+    "Prior A/count recorded, no fresh full TwoStage/SDK/ledger/UI proof",
+    "No retries or additional paid calls after known HTTP200",
+    "Original four-call raw-label FAIL and both prior full-flow failures preserved",
+    "Operating confidence null/OFF, price/activation/budget exhaustion policy unresolved"
+  ]
+}

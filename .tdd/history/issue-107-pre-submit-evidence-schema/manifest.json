@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-17T19:26:18.831585+00:00",
+  "reason": "Strict red-evidence schema projection only; full original detailed canonical bytes preserved. Current-fingerprint reconstructed RED uses separate workItems.",
+  "records": [
+    {
+      "path": ".tdd/red/issue-107-pre-submit-http.json",
+      "originalSource": ".tdd/history/issue-107-pre-submit-evidence-schema/issue-107-pre-submit-http.json.original",
+      "originalBytesSHA256": "61d0c8b9b20a4f037117f311d438d75b639ac5cb04b008049c0a450b9c4aa658",
+      "projectedBytesSHA256": "43914f2895f4a02b744bcf96a62bd034f3ef3478ffd244841f55259fa3015d22",
+      "projection": "Allowed seven fields only; timestamp normalized to equivalent UTC Z; admission failure objects become unique method-qualified strings using original XML stack frames. Original historical testFiles SHA unchanged; no current test fingerprint retroactively assigned."
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-boundary.json",
+      "originalSource": ".tdd/history/issue-107-pre-submit-evidence-schema/issue-107-pre-submit-boundary.json.original",
+      "originalBytesSHA256": "9decb5da0056ad6407e0dd155c45fd57a318a74d8d48ed9e9382832bc3d96d83",
+      "projectedBytesSHA256": "20b9086bcafc85e5c0271ac5c45934808280fe35613503e984dc53ad87aa548a",
+      "projection": "Allowed seven fields only; timestamp normalized to equivalent UTC Z; admission failure objects become unique method-qualified strings using original XML stack frames. Original historical testFiles SHA unchanged; no current test fingerprint retroactively assigned."
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-defense.json",
+      "originalSource": ".tdd/history/issue-107-pre-submit-evidence-schema/issue-107-pre-submit-defense.json.original",
+      "originalBytesSHA256": "44f55502c444ca8ee628f81b2abd0bb426aa56aca551f33e323d4268fcc26b5f",
+      "projectedBytesSHA256": "ed427900d85d8fbb94ef24b014f1256ebdb2b5b498256422065efe9ce40618b1",
+      "projection": "Allowed seven fields only; timestamp normalized to equivalent UTC Z; admission failure objects become unique method-qualified strings using original XML stack frames. Original historical testFiles SHA unchanged; no current test fingerprint retroactively assigned."
+    },
+    {
+      "path": ".tdd/red/issue-107-pre-submit-admission.json",
+      "originalSource": ".tdd/history/issue-107-pre-submit-evidence-schema/issue-107-pre-submit-admission.json.original",
+      "originalBytesSHA256": "24aeb66a5fce4bf874c9ed94aa314e241bc1b7d756ed8a105c9d7ab691a43d7d",
+      "projectedBytesSHA256": "0a473b109870836d412a8f5f6c392d3b606e2a5307c6c713a8bec4ef3ba5f986",
+      "projection": "Allowed seven fields only; timestamp normalized to equivalent UTC Z; admission failure objects become unique method-qualified strings using original XML stack frames. Original historical testFiles SHA unchanged; no current test fingerprint retroactively assigned."
+    }
+  ]
+}

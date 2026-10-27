@@ -1,0 +1,10 @@
+{
+  "compiledAt": "2026-10-18T05:31:12.226317+00:00",
+  "source": "/tmp/Issue123TwoStageSmokeHarness.java",
+  "sourceSha256": "757bc8a0accdc2bfa47ff831244fbf5aac88349cc2d98daea80c68eb872716c9",
+  "javacExitCode": 0,
+  "javacOutput": "",
+  "harnessExecutionsByAuthor": 0,
+  "httpCallsByAuthor": 0,
+  "repositorySourceOrTestEdits": 0
+}

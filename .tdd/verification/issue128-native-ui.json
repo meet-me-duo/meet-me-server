@@ -1,0 +1,71 @@
+{
+  "recordedAt": "2026-10-18T08:15:33.365284+00:00",
+  "status": "PASS_NATIVE_14_CURRENT_CANDIDATES_SYNTHETIC_PROVIDER_ONLY",
+  "serverBaseline": "18cdb5ddec4f9e09db50feb54337aae9516a0108",
+  "webBaseline": "02a68d8e50680e87dd153156e8bb7ea884a794cc",
+  "serverProjectionSha256": "fa872f579a51742553935eec9e4e321fac42710178e4c772ccbb0ef152e45f5c",
+  "webPanelSha256": "2bcf5ffa421d6f3ee30ad6c06224fa10da253fcafde8723ee4ea6c1c9942d8a2",
+  "newWebTestSha256": "ba446a4f16f54901f6cc23b976befea50c20457f920d265e82793eb80d678cd4",
+  "nativeScriptSha256": "f0743d90d7447e82edcaeb63de09bb50ed6d9981e7c03279e4481356a8d40322",
+  "webNativeReceiptSha256": "75eb68b34dd39b9401df7486c94724ef75ff783681f42fc93f972f3af6afc9d7",
+  "runtimeManifestSha256": "0c242dece87d8693f7ab47ba12d183fd763ba6fee979fb6563f02683895f4901",
+  "checks": [
+    "N01-real-POST202-durable-candidate-pending-without-false-completion",
+    "N02-real-question-explicit-full-choice-recheck-CLEAR",
+    "N03-real-direct-full-input-recheck-CLEAR",
+    "N04-broad-intent-preserved-given-synthetic-CLEAR",
+    "N11-real-reload-read-only-concurrent-CAS-one-winner-explicit-idempotency-replay",
+    "N05-manual-real-closure-does-not-wait-for-provider-late-CLEAR-not-accepted",
+    "N05-deadline-real-closure-does-not-wait-for-provider-late-CLEAR-not-accepted",
+    "N06-real-batch-freezes-only-accepted-pending-edit-uses-prior-version",
+    "N07-real-password-issued-HttpOnly-proof-own-read-host-not-other-owner",
+    "N08-real-REPLACE_ONLY-blind-save-check-no-read-or-accepted-elevation",
+    "N09-real-invalid-Bearer-wins-over-valid-guest-cookie",
+    "N10-real-OIDC-account-priority-logout-and-late-private-provider-isolation",
+    "N13-real-choice-cancel-question-null-preserved-raw-fresh-start-without-old-answer",
+    "N14-real-provider-failure-explicit-retry-pending-accepted-CLEAR"
+  ],
+  "requestsObserved": 154,
+  "apiRouteMocks": 0,
+  "externalRequests": 0,
+  "actualModelCalls": 0,
+  "actualOAuthProviderCalls": 0,
+  "automaticRetries": 0,
+  "productionAccess": false,
+  "postrunFingerprints": {
+    "source": {
+      "files": 482,
+      "unchanged": true,
+      "changedFileCount": 0
+    },
+    "frozen": {
+      "files": 1559,
+      "unchanged": true,
+      "changedFileCount": 0
+    },
+    "dependencyJars": {
+      "files": 216,
+      "unchanged": true,
+      "changedFileCount": 0
+    }
+  },
+  "portsStillOpen": {
+    "18920": false,
+    "18921": false,
+    "18922": false
+  },
+  "dockerContainersAfterShutdown": [],
+  "openapiSemanticEqualToWebSnapshot": true,
+  "openapiPaths": 36,
+  "openapiSchemas": 61,
+  "setupErrorsPreserved": [
+    "Initial preparation treated a legitimate absent Kotlin-only Java test output as a required directory; successful build retained, copy corrected under lock",
+    "Initial root postrun verifier resolved frozen relative paths against repository; original error kept, corrected runtime-final comparison passed"
+  ],
+  "limits": [
+    "Primary NativePrecheckProvider supplies explicit synthetic verdicts; actual TwoStage/classifier/generator wire and durable financial authority bypassed",
+    "Actual browser/HTTP/PG/Redis/local RSA and loopback OIDC plus guest proof; actual external providers not called",
+    "No accuracy, false-positive/negative rates, calibration, p50/p95, price or production readiness measurement",
+    "Old UNKNOWN holds and prior model failures retained; no new paid call or refund"
+  ]
+}

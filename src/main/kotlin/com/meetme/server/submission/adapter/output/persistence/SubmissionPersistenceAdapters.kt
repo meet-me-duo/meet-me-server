@@ -7,6 +7,7 @@ import com.meetme.server.shared.domain.SubmissionId
 import com.meetme.server.shared.domain.SubmissionVersionId
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.domain.ConditionalTimeActivation
 import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import com.meetme.server.submission.domain.Submission
@@ -185,6 +186,9 @@ class JdbcStructuredSubmissionRepository(
                 result.rejectionCode,
                 processedAt.atOffset(ZoneOffset.UTC),
             )
+            result.clarification?.let {
+                JdbcClarificationRepository(jdbcTemplate, objectMapper).record(result.submissionVersionId, it, processedAt)
+            }
         }
     }
 
@@ -210,6 +214,15 @@ class JdbcStructuredSubmissionRepository(
 internal object StructuredConditionJsonMapper {
     fun toMap(condition: StructuredCondition): Map<String, Any?> =
         when (condition) {
+            is StructuredCondition.ConditionalFallbackTimeWindow ->
+                mapOf(
+                    "type" to "CONDITIONAL_FALLBACK_TIME_WINDOW",
+                    "activation" to condition.activation.name,
+                    "date" to condition.date?.toString(),
+                    "day_of_week" to condition.dayOfWeek?.name,
+                    "start_time" to condition.startTime.toString(),
+                    "end_time" to if (condition.endsAtNextDayStart) END_OF_DAY else condition.endTime.toString(),
+                )
             is StructuredCondition.PreferredTimeWindow ->
                 mapOf(
                     "type" to "PREFERRED_TIME_WINDOW",
@@ -252,6 +265,19 @@ internal object StructuredConditionJsonMapper {
 
     fun fromMap(map: Map<String, Any?>): StructuredCondition =
         when (map["type"]) {
+            "CONDITIONAL_FALLBACK_TIME_WINDOW" -> {
+                require(map.keys == setOf("type", "activation", "date", "day_of_week", "start_time", "end_time"))
+                val rawEndTime = map.getValue("end_time").toString()
+                val endsAtNextDayStart = rawEndTime == END_OF_DAY
+                StructuredCondition.ConditionalFallbackTimeWindow(
+                    ConditionalTimeActivation.valueOf(map.getValue("activation").toString()),
+                    map["date"]?.toString()?.let(LocalDate::parse),
+                    map["day_of_week"]?.toString()?.let(DayOfWeek::valueOf),
+                    LocalTime.parse(map.getValue("start_time").toString()),
+                    if (endsAtNextDayStart) LocalTime.MIDNIGHT else LocalTime.parse(rawEndTime),
+                    endsAtNextDayStart,
+                )
+            }
             "PREFERRED_TIME_WINDOW" ->
                 map.getValue("end_time").toString().let { rawEndTime ->
                     require(map["polarity"] == null)

@@ -1,0 +1,85 @@
+{
+  "workItem": "issue-108-deadline-fixture-adaptation",
+  "authority": "Parent explicit approval: use authenticated HOST account fixture and separate expired/revoked guest actors; no business expectations or production deadline patch changes.",
+  "recordedAt": "2026-10-17T16:44:37Z",
+  "status": "VERIFIED",
+  "observedBefore": {
+    "tests": 37,
+    "failures": 37,
+    "errors": 0,
+    "reason": "Room creation expected201/actual401 before deadline behavior is reached",
+    "validBusinessRed": false,
+    "fullGateReported": {
+      "tests": 895,
+      "failures": 37,
+      "errors": 0,
+      "skipped": 4,
+      "suites": 137
+    },
+    "fullGateRawLog": ".codex/tdd-evidence/issue-108-integration-quality-gate.log"
+  },
+  "archivedBefore": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/SubmissionDeadlinePostgresTest.kt",
+      "archive": ".tdd/history/issue-108-deadline-fixture-adaptation/SubmissionDeadlinePostgresTest.before.kt",
+      "sha256": "13993021a357de9a6201361ae8548a6615e2f65569ff9ea91cb4e998f45b50b5"
+    },
+    {
+      "path": "build/test-results/test/TEST-com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest.xml",
+      "archive": ".codex/tdd-evidence/issue-108-deadline-fixture-before.xml",
+      "sha256": "67954e343163ceebf7e585c9ffdc63c04d3c627785c43039867c164885b30f32"
+    },
+    {
+      "path": ".tdd/red/deadline-submission-cutoff.json",
+      "archive": ".tdd/history/issue-108-deadline-fixture-adaptation/deadline-submission-cutoff.red.before.json",
+      "sha256": "156982b3a1d492d59406f7859d44183da268e616c34bc977554a08bcd71deaab"
+    },
+    {
+      "path": ".tdd/verification/deadline-submission-cutoff.json",
+      "archive": ".tdd/history/issue-108-deadline-fixture-adaptation/deadline-submission-cutoff.verification.before.json",
+      "sha256": "2e1e903fa51f57eccd5d63ca14e96e36fadb2c67e0acaa3d9002b45f3415548b"
+    }
+  ],
+  "plannedScope": [
+    "createDeadlineRoom uses accounts.newAccount and returns its cookie marker instead of expecting a guest credential from account HOST creation",
+    "EXPIRED/REVOKED create a genuine guest actor, expire/revoke only that actor session and submit as that actor",
+    "All business deadlines, error statuses/codes, room lock/time recheck, race and DB unchanged assertions remain identical"
+  ],
+  "afterTestSha256": "9dbc7e87cf86dcdf58837c21c1cf4ff1e33211f3f446e7a3715ec8075483808c",
+  "unchangedOutsideThreeApprovedFixtureSpans": true,
+  "businessAssertionChanges": 0,
+  "productionSourceChangesByTestAuthor": 0,
+  "focusedRunStatus": "GREEN",
+  "focusedRun": {
+    "tests": 37,
+    "failures": 0,
+    "errors": 0,
+    "command": [
+      "/tmp/issue108-integration-gradle-run",
+      "-Porg.gradle.java.installations.paths=/tmp/meetme108-toolchain/jdk-17.0.17+10",
+      "-Pkotlin.compiler.execution.strategy=in-process",
+      "-Pkotlin.incremental=false",
+      "--max-workers=2",
+      "-I",
+      "/tmp/issue108-unicode-deadline-author.gradle",
+      "runKtlintFormatOverTestSourceSet",
+      "runKtlintCheckOverTestSourceSet",
+      "test",
+      "--tests",
+      "*GuestDisplayNameUnicodeWebIntegrationTest",
+      "--tests",
+      "*SubmissionDeadlinePostgresTest"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue-108-unicode-and-deadline-red.log",
+    "xml": ".codex/tdd-evidence/issue-108-deadline-fixture-adapted-green.xml",
+    "recordedAt": "2026-10-17T16:52:39Z"
+  },
+  "historicalVerification": {
+    "activePathRemoved": ".tdd/verification/deadline-submission-cutoff.json",
+    "archive": ".tdd/history/issue-108-deadline-fixture-adaptation/deadline-submission-cutoff.verification.before.json",
+    "sha256": "2e1e903fa51f57eccd5d63ca14e96e36fadb2c67e0acaa3d9002b45f3415548b",
+    "byteIdenticalBeforeRemoval": true,
+    "scope": "Upstream PR #113 historical seven-fault results apply only to the original archived source/test fingerprints. They are not current #108 fault evidence. Current grouped F5 proof will use the adapted test SHA only.",
+    "recordedAt": "2026-10-17T16:54:09Z"
+  }
+}

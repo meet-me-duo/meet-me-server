@@ -1,0 +1,43 @@
+{
+  "workItem": "issue123-budget-foreign-scope",
+  "sourceRevision": "e83d5280c7c236c99d64165893632920882527fe",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetForeignScopePostgresTest.kt",
+      "sha256": "4af665c7addc2f69a8a901d95ba18bd5f1f01c3cf6b2a8323859ddd3e64352f3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetCoveragePostgresTest.kt",
+      "sha256": "48f5cc01843568a7abb41fda97fe32aa3832a7a6f9e78e3516e930e947da8a29"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*DurableAiBudgetDefaultAuthorityTest",
+    "--tests",
+    "*DurableAiBudgetInitialPostgresTest",
+    "--tests",
+    "*PostgresAiCallBudgetContractTest",
+    "--tests",
+    "*AiCallDispatchAndSettlementPostgresTest",
+    "--tests",
+    "*AiCallBudgetBootstrapPostgresTest",
+    "--tests",
+    "*Issue123BudgetAccountingDefensePostgresTest",
+    "--tests",
+    "*Issue123BudgetCoveragePostgresTest",
+    "--tests",
+    "*Issue123BudgetForeignScopePostgresTest",
+    "--tests",
+    "*Issue123DefaultBudgetAuthorityCompositionTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.budget.Issue123BudgetForeignScopePostgresTest.DB07 foreign reservation row lock cannot block a valid own-room claim denial()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-18T04:36:33Z"
+}

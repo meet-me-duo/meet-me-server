@@ -1,0 +1,328 @@
+{
+  "workItem": "issue-109-ci-extras",
+  "recordedAt": "2026-10-17T15:41:03.072441+00:00",
+  "scope": "Exact CI offline/local quality extras plus issue-links; no cloud APIs, deploy, push or real credentials",
+  "checks": [
+    {
+      "name": "deployment-policy",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/deploy-workflow.test.cjs",
+        ".github/scripts/deploy-guard-contract.test.cjs",
+        ".github/scripts/deploy-extraction-contract.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/deployment-policy.log"
+    },
+    {
+      "name": "production-preflight",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/production-preflight-contract.test.cjs"
+      ],
+      "exitCode": 1,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/production-preflight.log"
+    },
+    {
+      "name": "approved-release",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/approved-release-pipeline.test.cjs"
+      ],
+      "exitCode": 1,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/approved-release.log"
+    },
+    {
+      "name": "compose-secret-fidelity",
+      "command": [
+        "bash",
+        "deploy/scripts/verify-compose-secret-fidelity.sh"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/compose-secret-fidelity.log"
+    },
+    {
+      "name": "runtime-provider-env",
+      "command": [
+        "node",
+        "--test",
+        "deploy/tests/runtime-provider-env.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/runtime-provider-env.log"
+    },
+    {
+      "name": "built-image-workflow",
+      "command": [
+        "node",
+        "--test",
+        "deploy/tests/built-image-workflow.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/built-image-workflow.log"
+    },
+    {
+      "name": "database-credential-refresh",
+      "command": [
+        "bash",
+        "deploy/tests/refresh-database-credential.test.sh"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/database-credential-refresh.log"
+    },
+    {
+      "name": "v8-release-guard",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_v8_release_guard*.py",
+        "-v"
+      ],
+      "exitCode": 1,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/v8-release-guard.log"
+    },
+    {
+      "name": "nginx-runtime",
+      "command": [
+        "bash",
+        "deploy/scripts/verify-nginx-runtime.sh"
+      ],
+      "exitCode": 1,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/nginx-runtime.log"
+    },
+    {
+      "name": "issue-links",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/issue-links.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/issue-links.log"
+    }
+  ],
+  "baselineClassification": {
+    "approved-release": "Actual V11 source catalog defect corrected through independent issue-109 release-catalog RED/GREEN and fault verification; final frozen-source original 7 plus new 9 tests executed together.",
+    "production-preflight": "Local JAVA_HOME absent; exact source rerun with prepared JDK17 passed 21 tests.",
+    "nginx-runtime": "Local checkout configuration was 0600; exact source copied with Git-index modes and empty temporary Docker client config passed. No repository permissions/content/config changed.",
+    "v8-release-guard": "Initial concurrent run: 37 tests, 11 TimeoutExpired errors at original 15-second bound. Exact same tests and guard script bytes passed all 37 in a serial run with unchanged timeouts. No guard policy or test oracle relaxation."
+  },
+  "environmentReruns": [
+    {
+      "name": "production-preflight-jdk17",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/production-preflight-contract.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/production-preflight-jdk17.log",
+      "environmentAdjustment": "JAVA_HOME prepared JDK17"
+    },
+    {
+      "name": "nginx-runtime-ci-file-modes",
+      "command": [
+        "bash",
+        "/tmp/meetme-ci-nginx-checkout-co6y5c7p/deploy/scripts/verify-nginx-runtime.sh"
+      ],
+      "exitCode": 1,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/nginx-runtime-ci-file-modes.log",
+      "environmentAdjustment": "Exact SHA script/config copied to temporary checkout with CI-standard 644 files / 755 directories; repository source and permissions untouched"
+    }
+  ],
+  "nginxEquivalentCiCheckout": {
+    "exitCode": 0,
+    "localLog": ".codex/tdd-evidence/issue-109-ci-extras/nginx-runtime-empty-docker-config.log",
+    "sameBytes": true,
+    "fileModes": "Git index 100644 config and script; temporary directories 0755",
+    "dockerConfig": "temporary empty directory; no actual stored credentials read",
+    "repositoryChanged": false
+  },
+  "actualImageJob": "ARM64 Built Image is a separate actual CI job; local offline checks cover its workflow contract, not an executed image build.",
+  "status": "PASS",
+  "historicalEvidenceSupersession": {
+    "historicalEvidence": ".tdd/red/issue-99-approved-release-pipeline.json",
+    "historicalEvidenceUnmodified": true,
+    "historicalSourceRevision": "369c5ff3d5637d7f9b22eb0477a902bc67036d4f",
+    "testPath": ".github/scripts/approved-release-pipeline.test.cjs",
+    "historicalFrozenSha256": "a78db4c4374c3a0ce55b5544a325ddd246d7a5af7dfc602f8405cfef103f5ff7",
+    "immediatePriorSha256": "cebf2f1a68bcc8fe2d10225d67639ddd0573c5ee06528990ffd46065ad0a3f6b",
+    "currentSha256": "01b47f4fd025b3bc04ad05f5ec9bad6d11ed5cb4f1f666baa58660146d5d6933",
+    "intentionalChange": "Only the actual current-source publisher version/checksum expectations extend V1..V10 to V1..V11. All first ten checksum constants are unchanged; V11 checksum is -1822689491.",
+    "legacyContractPreserved": "Synthetic V10 manifests, records, first-transition approval, exact prefix, fingerprint and automatic-deploy assertions remain unchanged.",
+    "newIndependentRed": ".tdd/red/issue-109-release-catalog.json",
+    "newIndependentFaultProof": ".tdd/verification/issue-109-release-catalog-faults.json",
+    "reviewer": "/root/final_review independently accepted the two-line source catalog expectation update; historical evidence is retained and intentionally superseded for this current-source assertion only."
+  },
+  "finalChecks": [
+    {
+      "name": "deployment-policy",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/deploy-workflow.test.cjs",
+        ".github/scripts/deploy-guard-contract.test.cjs",
+        ".github/scripts/deploy-extraction-contract.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-deployment-policy.log",
+      "tests": 13
+    },
+    {
+      "name": "production-preflight",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/production-preflight-contract.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-production-preflight.log",
+      "tests": 21
+    },
+    {
+      "name": "approved-release",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/approved-release-pipeline.test.cjs",
+        ".github/scripts/issue109-release-catalog.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-approved-release.log",
+      "tests": 16
+    },
+    {
+      "name": "compose-secret-fidelity",
+      "command": [
+        "bash",
+        "deploy/scripts/verify-compose-secret-fidelity.sh"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-compose-secret-fidelity.log"
+    },
+    {
+      "name": "runtime-provider-env",
+      "command": [
+        "node",
+        "--test",
+        "deploy/tests/runtime-provider-env.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-runtime-provider-env.log",
+      "tests": 19
+    },
+    {
+      "name": "built-image-workflow",
+      "command": [
+        "node",
+        "--test",
+        "deploy/tests/built-image-workflow.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-built-image-workflow.log",
+      "tests": 12
+    },
+    {
+      "name": "database-credential-refresh",
+      "command": [
+        "bash",
+        "deploy/tests/refresh-database-credential.test.sh"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-database-credential-refresh.log"
+    },
+    {
+      "name": "issue-links",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/issue-links.test.cjs"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-issue-links.log",
+      "tests": 9
+    },
+    {
+      "name": "nginx-runtime",
+      "command": [
+        "bash",
+        "/tmp/meetme-ci-final-nginx-source-iepnoz4f/deploy/scripts/verify-nginx-runtime.sh"
+      ],
+      "exitCode": 0,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/final-nginx-runtime.log",
+      "ciCommand": [
+        "bash",
+        "deploy/scripts/verify-nginx-runtime.sh"
+      ],
+      "temporaryCheckout": "Same source SHA, Git-index 0644 config/script and 0755 temporary directories",
+      "sourceSha256": {
+        "deploy/scripts/verify-nginx-runtime.sh": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368",
+        "deploy/nginx/nginx.conf": "77c336eb4f08d15787aff54cf9d681a7a21f87a9b0622e5a242f36ca0fd2a594"
+      }
+    },
+    {
+      "name": "v8-release-guard",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "deploy/tests",
+        "-p",
+        "test_v8_release_guard*.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "tests": 37,
+      "seconds": 359.672,
+      "localLog": ".codex/tdd-evidence/issue-109-ci-extras/v8-release-guard-serial.log",
+      "originalTimeoutsUnchanged": true
+    }
+  ],
+  "environment": {
+    "jdk": "Prepared local JDK17 via JAVA_HOME",
+    "dockerConfig": "temporary empty client configuration; no credential/config reads or persistent changes",
+    "concurrency": "V8 serial alone; final remaining checks sequential"
+  },
+  "finalSourceFiles": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "d6a8e7b0f69d993be49766e6846967b279f4b25723531923d667ab9d01854cc0"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "01b47f4fd025b3bc04ad05f5ec9bad6d11ed5cb4f1f666baa58660146d5d6933"
+    },
+    {
+      "path": ".github/scripts/issue109-release-catalog.test.cjs",
+      "sha256": "9f3410f671f5f5a2806a8623632c027d82a99b572801b144da5948a79ca26859"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "e2752c2949e3b8a63493f19d7fa7f6489bf3c1cdd52ece283c8ccc601c0bade5"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "a5925de1808120c75b122659dd0c57d2686d87f4970d7fe7dd59101b1376896c"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "6db169cd88620ed3ff04e942a54d4d1bd3e6c5c389613b167eb64581a6bbd945"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "6a383a00eb9b334ad02703a603c74a6fb571ada809105c00a75dbdefa64b03e9"
+    }
+  ],
+  "v8TestAndGuardSourcesUnmodified": true,
+  "operationalActions": "No AWS or production control-plane calls, deploy, production database changes, registry publication, or ops policy expansion. No actual secret values inspected or emitted. Local Docker fixtures and synthetic data only; public test images pulled/cached for local checks. Final Docker checks used a temporary empty client configuration."
+}

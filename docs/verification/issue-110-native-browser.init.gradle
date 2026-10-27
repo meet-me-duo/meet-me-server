@@ -1,0 +1,13 @@
+// Local test-only entrypoint. Invoke in the credential-filtered verification environment.
+// Issue 110 uses unused local ports 18910 (API) and 18911 (web).
+allprojects {
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        tasks.register('issue110NativeBrowserServer', JavaExec) {
+            dependsOn tasks.named('testClasses')
+            classpath = sourceSets.test.runtimeClasspath
+            mainClass = 'com.meetme.server.shared.operations.OperatorNativeBrowserServerKt'
+            jvmArgs '--add-modules=jdk.httpserver'
+            systemProperty 'meetme.issue110.native.stop-file', System.getProperty('meetme.issue110.native.stop-file')
+        }
+    }
+}

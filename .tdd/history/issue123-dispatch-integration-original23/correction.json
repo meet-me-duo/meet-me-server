@@ -1,0 +1,21 @@
+{
+  "originalTarget": {
+    "tests": 23,
+    "failures": 13,
+    "passed": 10,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classification": "Mixed initial target: managed13 functional5 failures/8PASS but final style SHA requires new RED; PG10 had three fixture/layer mismatch failures excluded from valid product RED.",
+  "corrections": [
+    "Correct count query coordination_attempts.coordination_run_id instead of run_id",
+    "Move OFF missing-invocation repository successful legacy trace to in-memory repositories with real loopback SDK; real PG constraint rejected that artificial legacy constructor path",
+    "Assert ON unsupported composition bounded CONFIGURATION nonretryable or safe delayed return, with HTTP0; raw legacy DB failure does not qualify",
+    "Only import/format normalization for managed13; unchanged expectations",
+    "New actual worker lineage3 and independent OFF legacy2 preserve existing caps/field ownership"
+  ],
+  "rootAccepted": true,
+  "rawHistory": ".codex/tdd-evidence/issue123-dispatch-integration-original23",
+  "writeDeadlineRedPreservedAt": ".codex/tdd-evidence/issue123-dispatch-write-red",
+  "recordedAt": "2026-10-18T04:36:49.326775+00:00"
+}

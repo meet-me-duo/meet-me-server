@@ -1,0 +1,898 @@
+{
+  "schema_version": 1,
+  "dataset_id": "issue123-supplemental-semantic-contrast-v1",
+  "status": "FINAL_PRE_EXECUTION_ORACLE",
+  "synthetic_only": true,
+  "model_execution_count": 0,
+  "partition": "SUPPLEMENTAL_UNTUNED_BLIND_ALL_16",
+  "not_part_of_old_splits": true,
+  "shared_context": {
+    "referenceAt": "2026-11-04T03:00:00Z",
+    "timeZone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "searchStartDate": "2026-11-04",
+    "searchEndDate": "2026-11-18"
+  },
+  "model_input_allowlist": [
+    "rawText",
+    "referenceAt",
+    "timeZone",
+    "locale",
+    "searchStartDate",
+    "searchEndDate"
+  ],
+  "label_provenance": "Independent source-intent annotation before any responses. No confidence calibration or synthetic model outcomes.",
+  "access_policy": {
+    "author": "/root/server_precheck_tests",
+    "blind_to": [
+      "root",
+      "prompt_author",
+      "implementation_author"
+    ],
+    "independent_reviewer": "/root/review_pre_submit_design",
+    "cannot_claim_unseen_by_oracle_author": true
+  },
+  "pairs": [
+    {
+      "pair_id": "SUPP-P01",
+      "dimension": "DATE",
+      "members": [
+        "SUPP-P01-U",
+        "SUPP-P01-C"
+      ],
+      "changed_decision_factor": "공통 문장에서 후보 날짜를 11월 7일과 8일로 한정합니다. 바뀌는 요소는 두 번째 문장의 요일 하나뿐입니다. 2026년 11월 7일은 토요일, 8일은 일요일이므로 후보 집합 안에서 날짜·요일의 두 해석이 유일하게 정해집니다."
+    },
+    {
+      "pair_id": "SUPP-P02",
+      "dimension": "TIME",
+      "members": [
+        "SUPP-P02-U",
+        "SUPP-P02-C"
+      ],
+      "changed_decision_factor": "오전·오후 표시의 유무만 다릅니다. 명확한 문장의 오후는 뒤의 9시에도 같은 구간으로 적용됩니다."
+    },
+    {
+      "pair_id": "SUPP-P03",
+      "dimension": "PLACE",
+      "members": [
+        "SUPP-P03-U",
+        "SUPP-P03-C"
+      ],
+      "changed_decision_factor": "도시를 특정하는 수식어의 유무만 다릅니다. 전자는 고정 입력 문맥에 도시가 없고 중앙역이라는 이름이 여러 도시에 존재하므로 본인 수정이 필요합니다."
+    },
+    {
+      "pair_id": "SUPP-P04",
+      "dimension": "REFERENT",
+      "members": [
+        "SUPP-P04-U",
+        "SUPP-P04-C"
+      ],
+      "changed_decision_factor": "제외 시간의 적용 날짜를 가리키는 말만 바뀝니다. 그날은 앞서 나란히 제시된 두 날짜 중 어느 날인지 고정 문맥에서 정해지지 않습니다."
+    },
+    {
+      "pair_id": "SUPP-P05",
+      "dimension": "NEGATION",
+      "members": [
+        "SUPP-P05-U",
+        "SUPP-P05-C"
+      ],
+      "changed_decision_factor": "두 번째 문장의 부정 여부만 다릅니다. 전자는 동일한 구간의 가능·불가능이 충돌하며 후자는 같은 조건을 반복합니다."
+    },
+    {
+      "pair_id": "SUPP-P06",
+      "dimension": "EXCEPTION",
+      "members": [
+        "SUPP-P06-U",
+        "SUPP-P06-C"
+      ],
+      "changed_decision_factor": "예외 조건이 적용될 날짜를 특정하는 말만 다릅니다. 예외의 존재·시간·나머지 가능 시간은 동일합니다."
+    },
+    {
+      "pair_id": "SUPP-P07",
+      "dimension": "DEPENDENCY",
+      "members": [
+        "SUPP-P07-U",
+        "SUPP-P07-C"
+      ],
+      "changed_decision_factor": "의존 조건에서 앞 시간대를 갖는 역의 지시 대상만 다릅니다. 후보 두 곳과 두 시간대의 조건부 관계를 그대로 보존합니다."
+    },
+    {
+      "pair_id": "SUPP-P08",
+      "dimension": "FLEXIBLE_CONDITION",
+      "members": [
+        "SUPP-P08-U",
+        "SUPP-P08-C"
+      ],
+      "changed_decision_factor": "오후 조건의 적용 날짜만 다릅니다. 어느 날인지 물을 수 있지만 넓은 시간 범위 자체는 의도된 것이므로 정밀 시각을 물으면 안 됩니다."
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "SUPP-P01-U",
+      "pair_id": "SUPP-P01",
+      "dimension": "DATE",
+      "raw_text": "11월 7일과 8일 중 하루만 가능해요. 11월 7일 일요일 오후 2시부터 4시까지 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "공통 문장에서 후보 날짜를 11월 7일과 8일로 한정합니다. 바뀌는 요소는 두 번째 문장의 요일 하나뿐입니다. 2026년 11월 7일은 토요일, 8일은 일요일이므로 후보 집합 안에서 날짜·요일의 두 해석이 유일하게 정해집니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일 중 하루만 참여 가능",
+            "오후 2시부터 4시까지",
+            "충돌하는 일자·요일 중 하나만 사용자가 선택한 해석에 맞춰 해결"
+          ],
+          "unknown_facts": [
+            "두 명시 후보 중 7일이라는 날짜가 맞는지, 일요일인 8일이 맞는지"
+          ],
+          "forbidden_inferences": [
+            "선택된 해석에서 질문한 일자·요일의 충돌만 해결하고 시간·후보 범위·하루만 가능 조건을 바꾸지 않음",
+            "명시된 두 후보 밖의 다른 일요일을 제안하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일과 8일 중 하루만 가능해요. 11월 7일 토요일 오후 2시부터 4시까지 가능해요.",
+            "11월 7일과 8일 중 하루만 가능해요. 11월 8일 일요일 오후 2시부터 4시까지 가능해요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P01-C",
+      "pair_id": "SUPP-P01",
+      "dimension": "DATE",
+      "raw_text": "11월 7일과 8일 중 하루만 가능해요. 11월 7일 토요일 오후 2시부터 4시까지 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "공통 문장에서 후보 날짜를 11월 7일과 8일로 한정합니다. 바뀌는 요소는 두 번째 문장의 요일 하나뿐입니다. 2026년 11월 7일은 토요일, 8일은 일요일이므로 후보 집합 안에서 날짜·요일의 두 해석이 유일하게 정해집니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일 중 7일 하루만 참여 가능",
+            "11월 7일 토요일",
+            "오후 2시부터 4시까지"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "명시된 날짜·요일을 다른 날로 이동하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P02-U",
+      "pair_id": "SUPP-P02",
+      "dimension": "TIME",
+      "raw_text": "11월 7일 8시부터 9시까지 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "오전·오후 표시의 유무만 다릅니다. 명확한 문장의 오후는 뒤의 9시에도 같은 구간으로 적용됩니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일",
+            "8시부터 9시까지 한 시간 범위"
+          ],
+          "unknown_facts": [
+            "오전인지 오후인지"
+          ],
+          "forbidden_inferences": [
+            "시각이나 기간을 임의 확대·축소하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일 오전 8시부터 9시까지 가능해요.",
+            "11월 7일 오후 8시부터 9시까지 가능해요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P02-C",
+      "pair_id": "SUPP-P02",
+      "dimension": "TIME",
+      "raw_text": "11월 7일 오후 8시부터 9시까지 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "오전·오후 표시의 유무만 다릅니다. 명확한 문장의 오후는 뒤의 9시에도 같은 구간으로 적용됩니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일",
+            "오후 8시부터 9시까지"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "시각이나 기간을 임의 확대·축소하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P03-U",
+      "pair_id": "SUPP-P03",
+      "dimension": "PLACE",
+      "raw_text": "11월 7일 오후 2시부터 4시까지 중앙역 근처에서 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "도시를 특정하는 수식어의 유무만 다릅니다. 전자는 고정 입력 문맥에 도시가 없고 중앙역이라는 이름이 여러 도시에 존재하므로 본인 수정이 필요합니다."
+        },
+        "stage_b": {
+          "question_policy": "SAFE_EDIT_ONLY",
+          "primary_quality_target": "NEEDS_EDIT",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "CLEAR",
+            "NEEDS_CHOICE"
+          ],
+          "must_preserve": [
+            "11월 7일 오후 2시부터 4시까지",
+            "중앙역 근처라는 장소 조건"
+          ],
+          "unknown_facts": [
+            "어느 도시의 중앙역인지"
+          ],
+          "forbidden_inferences": [
+            "근처를 임의 반경이나 특정 가게로 바꾸지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": "도시가 특정되지 않아 원문만으로 두 가지 선택지가 전체 해석을 포괄한다고 보장할 수 없습니다. 도시 두 곳을 임의로 선택하지 않습니다.",
+          "expected_behavior_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SAFE_EDIT_BEHAVIOR_ONLY_NOT_QUESTION_SUCCESS_OR_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P03-C",
+      "pair_id": "SUPP-P03",
+      "dimension": "PLACE",
+      "raw_text": "11월 7일 오후 2시부터 4시까지 안산 중앙역 근처에서 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "도시를 특정하는 수식어의 유무만 다릅니다. 전자는 고정 입력 문맥에 도시가 없고 중앙역이라는 이름이 여러 도시에 존재하므로 본인 수정이 필요합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일 오후 2시부터 4시까지",
+            "안산 중앙역 근처"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "근처를 임의 반경이나 특정 가게로 바꾸지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P04-U",
+      "pair_id": "SUPP-P04",
+      "dimension": "REFERENT",
+      "raw_text": "11월 7일과 8일은 가능해요. 그날은 오후 2시부터 4시까지 빼주세요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "제외 시간의 적용 날짜를 가리키는 말만 바뀝니다. 그날은 앞서 나란히 제시된 두 날짜 중 어느 날인지 고정 문맥에서 정해지지 않습니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일에 참여 가능",
+            "오후 2시부터 4시까지 제외",
+            "한 날짜에 적용되는 제외 조건"
+          ],
+          "unknown_facts": [
+            "제외 조건이 7일인지 8일인지"
+          ],
+          "forbidden_inferences": [
+            "제외 조건은 선택된 하루에만 적용하고 두 날 모두에 확대하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일과 8일은 가능해요. 7일은 오후 2시부터 4시까지 빼주세요.",
+            "11월 7일과 8일은 가능해요. 8일은 오후 2시부터 4시까지 빼주세요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P04-C",
+      "pair_id": "SUPP-P04",
+      "dimension": "REFERENT",
+      "raw_text": "11월 7일과 8일은 가능해요. 7일은 오후 2시부터 4시까지 빼주세요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "제외 시간의 적용 날짜를 가리키는 말만 바뀝니다. 그날은 앞서 나란히 제시된 두 날짜 중 어느 날인지 고정 문맥에서 정해지지 않습니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일에 참여 가능",
+            "7일만 오후 2시부터 4시까지 제외"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "8일에도 같은 제외 조건을 추가하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P05-U",
+      "pair_id": "SUPP-P05",
+      "dimension": "NEGATION",
+      "raw_text": "11월 7일 오후 2시부터 4시까지는 가능해요. 같은 시간은 불가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "두 번째 문장의 부정 여부만 다릅니다. 전자는 동일한 구간의 가능·불가능이 충돌하며 후자는 같은 조건을 반복합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일 오후 2시부터 4시까지라는 동일한 구간",
+            "서로 반대인 가능 여부를 사용자가 결정"
+          ],
+          "unknown_facts": [
+            "해당 시간에 가능한지 불가능한지"
+          ],
+          "forbidden_inferences": [
+            "단순 반복을 모호함으로 취급하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일 오후 2시부터 4시까지 가능해요.",
+            "11월 7일 오후 2시부터 4시까지는 불가능해요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P05-C",
+      "pair_id": "SUPP-P05",
+      "dimension": "NEGATION",
+      "raw_text": "11월 7일 오후 2시부터 4시까지는 가능해요. 같은 시간은 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "두 번째 문장의 부정 여부만 다릅니다. 전자는 동일한 구간의 가능·불가능이 충돌하며 후자는 같은 조건을 반복합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일 오후 2시부터 4시까지 가능"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "단순 반복을 모호함으로 취급하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P06-U",
+      "pair_id": "SUPP-P06",
+      "dimension": "EXCEPTION",
+      "raw_text": "11월 7일과 8일은 오후 2시부터 6시까지 가능해요. 한 날은 예외로 오후 3시부터 4시까지 안 돼요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "예외 조건이 적용될 날짜를 특정하는 말만 다릅니다. 예외의 존재·시간·나머지 가능 시간은 동일합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일 오후 2시부터 6시까지 가능",
+            "그중 하루에만 오후 3시부터 4시까지 예외"
+          ],
+          "unknown_facts": [
+            "예외가 7일인지 8일인지"
+          ],
+          "forbidden_inferences": [
+            "예외가 적용되지 않는 다른 날의 오후 2시부터 6시까지 가능 조건을 그대로 유지",
+            "예외 시간은 오후 3시부터 4시까지이고 두 날 모두로 확대하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일과 8일은 오후 2시부터 6시까지 가능해요. 7일은 예외로 오후 3시부터 4시까지 안 돼요.",
+            "11월 7일과 8일은 오후 2시부터 6시까지 가능해요. 8일은 예외로 오후 3시부터 4시까지 안 돼요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P06-C",
+      "pair_id": "SUPP-P06",
+      "dimension": "EXCEPTION",
+      "raw_text": "11월 7일과 8일은 오후 2시부터 6시까지 가능해요. 7일은 예외로 오후 3시부터 4시까지 안 돼요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "예외 조건이 적용될 날짜를 특정하는 말만 다릅니다. 예외의 존재·시간·나머지 가능 시간은 동일합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일 오후 2시부터 6시까지 가능",
+            "7일에만 오후 3시부터 4시까지 예외"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "8일의 가능 시간은 그대로 유지",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P07-U",
+      "pair_id": "SUPP-P07",
+      "dimension": "DEPENDENCY",
+      "raw_text": "11월 7일 서울역과 용산역 근처가 후보예요. 그 역이면 오후 2시부터 4시까지, 다른 역이면 오후 4시부터 6시까지 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "의존 조건에서 앞 시간대를 갖는 역의 지시 대상만 다릅니다. 후보 두 곳과 두 시간대의 조건부 관계를 그대로 보존합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일",
+            "서울역과 용산역 근처 두 후보를 모두 유지",
+            "한 역은 오후 2시부터 4시, 다른 역은 오후 4시부터 6시"
+          ],
+          "unknown_facts": [
+            "앞 시간대가 서울역인지 용산역인지"
+          ],
+          "forbidden_inferences": [
+            "유효한 장소·시간 의존 조건을 한 장소나 한 시간대로 강제 축소하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일 서울역과 용산역 근처가 후보예요. 서울역이면 오후 2시부터 4시까지, 용산역이면 오후 4시부터 6시까지 가능해요.",
+            "11월 7일 서울역과 용산역 근처가 후보예요. 용산역이면 오후 2시부터 4시까지, 서울역이면 오후 4시부터 6시까지 가능해요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P07-C",
+      "pair_id": "SUPP-P07",
+      "dimension": "DEPENDENCY",
+      "raw_text": "11월 7일 서울역과 용산역 근처가 후보예요. 서울역이면 오후 2시부터 4시까지, 다른 역이면 오후 4시부터 6시까지 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "의존 조건에서 앞 시간대를 갖는 역의 지시 대상만 다릅니다. 후보 두 곳과 두 시간대의 조건부 관계를 그대로 보존합니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일",
+            "서울역 근처면 오후 2시부터 4시까지",
+            "용산역 근처면 오후 4시부터 6시까지",
+            "두 후보 모두 가능"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "유효한 장소·시간 의존 조건을 한 장소나 한 시간대로 강제 축소하지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P08-U",
+      "pair_id": "SUPP-P08",
+      "dimension": "FLEXIBLE_CONDITION",
+      "raw_text": "11월 7일과 8일은 아무 때나 괜찮아요. 그날은 오후만 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "NEEDS_REVIEW",
+          "confidence_target": null,
+          "reason": "오후 조건의 적용 날짜만 다릅니다. 어느 날인지 물을 수 있지만 넓은 시간 범위 자체는 의도된 것이므로 정밀 시각을 물으면 안 됩니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_ASK_MATERIAL_CHOICE",
+          "primary_quality_target": "NEEDS_CHOICE",
+          "safe_but_incomplete_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "forbidden_verdicts": [
+            "CLEAR"
+          ],
+          "must_preserve": [
+            "11월 7일과 8일 참여 가능",
+            "한 날짜는 오후만 가능",
+            "다른 날짜는 아무 때나 가능"
+          ],
+          "unknown_facts": [
+            "오후 조건이 7일인지 8일인지"
+          ],
+          "forbidden_inferences": [
+            "오후를 임의의 정확한 시각 범위로 바꾸지 않음",
+            "아무 때나라는 넓은 범위를 좁히라고 묻지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": [
+            "11월 7일과 8일은 가능해요. 7일은 오후만, 8일은 아무 때나 괜찮아요.",
+            "11월 7일과 8일은 가능해요. 8일은 오후만, 7일은 아무 때나 괜찮아요."
+          ],
+          "examples_are_nonexhaustive": true,
+          "direct_edit_must_remain_available": true,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "question_generation_success_verdicts": [
+            "NEEDS_CHOICE"
+          ],
+          "safe_abstention_verdicts": [
+            "NEEDS_EDIT"
+          ],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "SOURCE_GROUNDED_QUESTION_QUALITY_NOT_COMPLETED_SUBMISSION"
+        }
+      }
+    },
+    {
+      "case_id": "SUPP-P08-C",
+      "pair_id": "SUPP-P08",
+      "dimension": "FLEXIBLE_CONDITION",
+      "raw_text": "11월 7일과 8일은 아무 때나 괜찮아요. 7일은 오후만 가능해요.",
+      "oracle": {
+        "origin": "INDEPENDENT_PRE_EXECUTION_ORACLE_NOT_PROVIDER_OUTPUT",
+        "stage_a": {
+          "expected_decision": "CLEAR",
+          "confidence_target": null,
+          "reason": "오후 조건의 적용 날짜만 다릅니다. 어느 날인지 물을 수 있지만 넓은 시간 범위 자체는 의도된 것이므로 정밀 시각을 물으면 안 됩니다."
+        },
+        "stage_b": {
+          "question_policy": "MUST_NOT_ASK",
+          "primary_quality_target": "CLEAR",
+          "safe_but_incomplete_verdicts": [],
+          "forbidden_verdicts": [
+            "NEEDS_CHOICE",
+            "NEEDS_EDIT"
+          ],
+          "must_preserve": [
+            "11월 7일은 오후만 가능",
+            "11월 8일은 아무 때나 가능"
+          ],
+          "unknown_facts": [],
+          "forbidden_inferences": [
+            "오후를 임의의 정확한 시각 범위로 바꾸지 않음",
+            "아무 때나라는 넓은 범위를 좁히라고 묻지 않음",
+            "원문에 없는 날짜·장소·가능 여부 조건을 추가하지 않음"
+          ],
+          "grounded_resolution_examples": null,
+          "examples_are_nonexhaustive": false,
+          "direct_edit_must_remain_available": false,
+          "safe_edit_reason": null,
+          "expected_behavior_verdicts": [
+            "CLEAR"
+          ],
+          "question_generation_success_verdicts": [],
+          "safe_abstention_verdicts": [],
+          "safe_abstention_completes_submission": false,
+          "direct_edit_requirement_scope": "Existing product UI; not an extra provider JSON flag.",
+          "primary_target_kind": "ACCURATE_NO_QUESTION_BEHAVIOR"
+        }
+      }
+    }
+  ]
+}

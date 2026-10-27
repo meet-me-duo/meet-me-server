@@ -1,0 +1,26 @@
+{
+  "workItem": "issue-108-account-boundary",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/GuestReaccessAccountBoundaryTest.kt",
+      "sha256": "0cdee3fe3687bc7a84775d44b7402bc01ab556fff9dcd248967a87b1c5220998"
+    }
+  ],
+  "command": [
+    "bash",
+    "gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*GuestReaccessAccountBoundaryTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.participant.application.service.GuestReaccessAccountBoundaryTest.M06 회원 소유 기록의 null owner와 null active session은 OWNER가 아니다()",
+    "com.meetme.server.participant.application.service.GuestReaccessAccountBoundaryTest.M07 원래 소유 세션이 누락된 비회원 snapshot의 null 세션도 OWNER가 아니다()",
+    "com.meetme.server.participant.application.service.GuestReaccessAccountBoundaryTest.M07 owner가 없는 모든 snapshot은 회원 연결 암호와 요청 세션 조합에 관계없이 fail closed한다()",
+    "com.meetme.server.participant.application.service.GuestReaccessAccountBoundaryTest.M07 소유 세션 없는 비회원 snapshot은 정답 암호로도 권한을 만들지 않는다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T14:42:56.946037Z"
+}

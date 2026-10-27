@@ -1,0 +1,33 @@
+{
+  "workItem": "issue-109-auth-access-bearer",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/BearerAccountSecurityContractTest.kt",
+      "sha256": "cd5011c9d676e2ca4d5c4269769f3b2e2fa033ad408553b872d5a19ca50dd9e4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/security/AccessTokenSecurityContractTest.kt",
+      "sha256": "3c121b57ca58fb433fa8a0615f7e235e8fc7805c0819f7019ae3e15b958b350d"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "test",
+    "--tests",
+    "*AccessTokenSecurityContractTest",
+    "--tests",
+    "*BearerAccountSecurityContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.signature algorithm issuer audience kid and malformed tokens fail closed()",
+    "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.RS256 token has kid exact fifteen minute lifetime and independently verifiable signature()",
+    "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.expiration boundary rejects signed token at exp and accepts the preceding second()",
+    "com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.rotation accepts previous public key but signs with current kid()",
+    "com.meetme.server.account.adapter.input.web.BearerAccountSecurityContractTest.missing Authorization means guest and valid Bearer returns verified account()",
+    "com.meetme.server.account.adapter.input.web.BearerAccountSecurityContractTest.invalid malformed blank wrong scheme or duplicate Authorization fail closed()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-10-17T14:34:38.164963Z"
+}

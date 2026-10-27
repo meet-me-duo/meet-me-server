@@ -199,10 +199,12 @@ class CorrectionMeetingScenarioPostgresTest : CorrectionRoundPostgresFixture() {
             "DEADLINE" -> body["submission_deadline"] = NOW.plusSeconds(600).toString()
             else -> body["manual_only"] = true
         }
+        val hostCookie = accounts.newAccount("host")
         val created =
             mvc
                 .perform(
                     post("/api/rooms")
+                        .cookie(hostCookie)
                         .header("Origin", CorrectionRoundPostgresFixture.ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(body)),
@@ -210,9 +212,11 @@ class CorrectionMeetingScenarioPostgresTest : CorrectionRoundPostgresFixture() {
                 .andReturn()
                 .response
         val code = document(created).getValue("invite_code").toString()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
 
         fun credential(header: String?) = requireNotNull(header).substringAfter("meet_me_guest=").substringBefore(';')
-        val sessions = mutableListOf(CorrectionSession(code, credential(created.getHeader(HttpHeaders.SET_COOKIE))))
+        val sessions = mutableListOf(CorrectionSession(code, hostCookie.value))
         for (index in 1 until count) {
             val joined =
                 mvc

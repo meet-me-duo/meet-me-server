@@ -1,0 +1,99 @@
+--- a/src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckRateLimitRoutingContractTest.kt
++++ b/src/test/kotlin/com/meetme/server/submission/adapter/input/web/PrecheckRateLimitRoutingContractTest.kt
+@@ -17,20 +17,28 @@
+ import kotlin.test.assertEquals
+ import kotlin.test.assertFalse
+ 
+-/** Existing ADR-039 submission policy: per-session 30/minute and Redis failure opens writes. */
++/** Existing ADR-040 submission policy: per-session 30/minute and Redis failure opens writes. */
+ class PrecheckRateLimitRoutingContractTest {
+     @ParameterizedTest
+-    @ValueSource(strings = ["", "/3f96cc72-4a22-4147-9a29-b6768250c635/answer", "/3f96cc72-4a22-4147-9a29-b6768250c635/retry", "/3f96cc72-4a22-4147-9a29-b6768250c635/cancel"])
++    @ValueSource(
++        strings = [
++            "",
++            "/3f96cc72-4a22-4147-9a29-b6768250c635/answer",
++            "/3f96cc72-4a22-4147-9a29-b6768250c635/retry",
++            "/3f96cc72-4a22-4147-9a29-b6768250c635/cancel",
++        ],
++    )
+     fun `PS09 신규 검사 write 네 경로도 기존 제출 세션 30회 제한을 우회하지 못한다`(suffix: String) {
+         val observed = mutableListOf<Pair<Int, Duration>>()
+-        val filter = RateLimitFilter(
+-            RateLimitPort { _, limit, window ->
+-                observed += limit to window
+-                RateLimitDecision(false, Duration.ofSeconds(17))
+-            },
+-            RateLimitProperties(),
+-            ObjectMapper(),
+-        )
++        val filter =
++            RateLimitFilter(
++                RateLimitPort { _, limit, window ->
++                    observed += limit to window
++                    RateLimitDecision(false, Duration.ofSeconds(17))
++                },
++                RateLimitProperties(),
++                ObjectMapper(),
++            )
+         val request = request("POST", suffix)
+         val response = MockHttpServletResponse()
+         filter.doFilter(request, response, MockFilterChain())
+@@ -42,13 +50,21 @@
+     }
+ 
+     @ParameterizedTest
+-    @ValueSource(strings = ["", "/3f96cc72-4a22-4147-9a29-b6768250c635/answer", "/3f96cc72-4a22-4147-9a29-b6768250c635/retry", "/3f96cc72-4a22-4147-9a29-b6768250c635/cancel"])
++    @ValueSource(
++        strings = [
++            "",
++            "/3f96cc72-4a22-4147-9a29-b6768250c635/answer",
++            "/3f96cc72-4a22-4147-9a29-b6768250c635/retry",
++            "/3f96cc72-4a22-4147-9a29-b6768250c635/cancel",
++        ],
++    )
+     fun `PS09 신규 검사 write도 기존 제출 Redis 장애 fail open 정책을 유지한다`(suffix: String) {
+-        val filter = RateLimitFilter(
+-            RateLimitPort { _, _, _ -> throw DataAccessResourceFailureException("synthetic Redis unavailable") },
+-            RateLimitProperties(),
+-            ObjectMapper(),
+-        )
++        val filter =
++            RateLimitFilter(
++                RateLimitPort { _, _, _ -> throw DataAccessResourceFailureException("synthetic Redis unavailable") },
++                RateLimitProperties(),
++                ObjectMapper(),
++            )
+         val request = request("POST", suffix)
+         val response = MockHttpServletResponse()
+         val chain = MockFilterChain()
+@@ -59,11 +75,12 @@
+ 
+     @Test
+     fun `PS09 private current GET은 제출 write quota를 소비하지 않는다`() {
+-        val filter = RateLimitFilter(
+-            RateLimitPort { _, _, _ -> error("GET must not consume the write quota") },
+-            RateLimitProperties(),
+-            ObjectMapper(),
+-        )
++        val filter =
++            RateLimitFilter(
++                RateLimitPort { _, _, _ -> error("GET must not consume the write quota") },
++                RateLimitProperties(),
++                ObjectMapper(),
++            )
+         val request = request("GET", "/current")
+         val response = MockHttpServletResponse()
+         val chain = MockFilterChain()
+@@ -72,7 +89,10 @@
+         assertEquals(request, chain.request)
+     }
+ 
+-    private fun request(method: String, suffix: String): MockHttpServletRequest =
++    private fun request(
++        method: String,
++        suffix: String,
++    ): MockHttpServletRequest =
+         MockHttpServletRequest(method, "/api/rooms/abcdefghijklmnopqrstuv/submission/checks$suffix").apply {
+             remoteAddr = "203.0.113.19"
+             setCookies(Cookie("meet_me_guest", CREDENTIAL))

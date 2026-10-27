@@ -1,0 +1,959 @@
+{
+  "startedAt": "2026-10-17T19:25:32.895432+00:00",
+  "finishedAt": "2026-10-17T19:32:06.221865+00:00",
+  "exitCode": 0,
+  "command": "unchanged .codex/hooks/tdd_guard.py PreToolUse Bash git commit event (no commit performed)",
+  "gates": [
+    "hook self-tests",
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "totals": {
+    "tests": 1197,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4
+  },
+  "sourceChanged": [],
+  "failures": [],
+  "xmlFiles": 177,
+  "liveModelProbe": false,
+  "freshTestExecution": true,
+  "passed": 1193,
+  "xmlManifest": [
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.MeetMeServerApplicationTests.xml",
+      "sha256": "98952950721b8ecf106641476936078ffba490b98956bb74e31ae31c7d47916b",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.input.web.AuthEndToEndPostgresTest.xml",
+      "sha256": "c680e4af03643ccf40e31764d5b975680ae6f33a17dbb8e2ec7abe524b597333",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.input.web.AuthHttpSecurityContractTest.xml",
+      "sha256": "830624505dbebfc747ab4168bd80cd1ff540f4fcca33b271d0a613bde0c6bef2",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.input.web.BearerAccountSecurityContractTest.xml",
+      "sha256": "f1bb9ddc292d1ac7992e5b18ac0d3c44cf257b6ab9a9134ef084c3c1587566b0",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.oauth.GoogleIssuerCompatibilitySecurityTest.xml",
+      "sha256": "0ef27be18e0eac5509cdceb0d6a7dacc4ed0ec85513778b31677b3180d335751",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.oauth.OidcProviderDeadlineSecurityTest.xml",
+      "sha256": "fedf9e8c0f0ea6ba3fbb20e78b8d3e40016aa498c018098d5b600062c56e3cfb",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.oauth.OidcProviderSecurityContractTest.xml",
+      "sha256": "080cc6c02d8133b92b20303b43304ec57432c60d81f5a4505a18b5da805171ff",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.oauth.ProductionOAuthAuthorizationContractTest.xml",
+      "sha256": "712aff1dbe3f10f5bb9a989d754883bf5e1e91c09af44e3a6d05e54b564fa314",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.persistence.AccountIdentityPersistenceTest.xml",
+      "sha256": "27b875dd8b7d8001fab00fd66f01c42d6dab857d19eabcc896e7074ed88bf475",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.redis.RefreshAvailabilitySecurityContractTest.xml",
+      "sha256": "8dc7d2a2fd19d00d1a8c716bbe3d0f9caf7db62253ac795083cbf42d5cd452a2",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.redis.RefreshSessionSecurityContractTest.xml",
+      "sha256": "c1f125c5d04b1215e55ee5e29f53c86ca0d75d400d3eaef01b0068a1d99ffcb8",
+      "tests": 11
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.adapter.output.security.AccessTokenSecurityContractTest.xml",
+      "sha256": "f5c2b819afaf7aa3e7517cd11af237075c7d1badebddb4cfd965038b9e2a96ae",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.account.application.service.OAuthLoginSecurityContractTest.xml",
+      "sha256": "c34505656adecf03b4ac5a7bce69753dda711c596579124f49de52c53f6c288e",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.architecture.AggregatePackageArchitectureTest.xml",
+      "sha256": "9d7a77e2e97747c6317b548b97ca59a8c64a8aa1dda61c2d8b6739a3d39b6db0",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.config.AnonymousAccessPropertiesTest.xml",
+      "sha256": "edaa1943a456ffa28df6f5e802398e3139b619ff6e0dfda70cd8d5db151cc671",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.config.LocaleConfigurationTest.xml",
+      "sha256": "d6fba99f64635d8588611242d86b584531e3246ee3e771394ead63faa38f0eb2",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.config.MessageSourceConfigurationTest.xml",
+      "sha256": "594fddcd19b7d5a319941a08bbf47ed84dbb0f30b502e6ac702007d4196ca1da",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.AnalysisInvocationAdmissionDeadlinePostgresTest.xml",
+      "sha256": "5d29ea1a0e66f4f2e76ab6df87903dfcd06ce72ec16fea2535310dd3ac78845e",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest.xml",
+      "sha256": "d33f789850d8a07cb26007df797a44d6b0a53aada695b3b2a2dc169d8ca2b3bc",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.BoundedExecutionLifecyclePostgresTest.xml",
+      "sha256": "a95c2f4ab752f98d983d7e12f776a91581144e8b886fc6e19009149504b6e8ba",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.BoundedPublicationRollbackPostgresTest.xml",
+      "sha256": "bee445d1146f9bb5a915f06a7b55ee473501cbc1c96e243691b59fe9fdcef57b",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.ClarificationAccountOwnershipPostgresTest.xml",
+      "sha256": "2b3b4aa63b2ea1a94e569aa10f95bc960aa75d9e96ec455ec4f7c43d036cd1d7",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.ClarificationHttpPostgresTest.xml",
+      "sha256": "39e0eb307763e5f2cb5304f3f6c8002397826675a558af7f9acc1f90b2391d8f",
+      "tests": 16
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.ClarificationLifecyclePostgresTest.xml",
+      "sha256": "b0579efe1d4ed8769f49f60e2e894340add3c1ff88ec42d0f87f97829737c978",
+      "tests": 10
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.ClarificationOwnerDelegationPostgresTest.xml",
+      "sha256": "7cc9d47515f5771c71daf24b6a6a63c00a62d4980ad98e2869697548ef2a4a26",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionMeetingScenarioPostgresTest.xml",
+      "sha256": "2fb6b870947d456e4d8f1b05321e06371b59b88fe00dd37bc3094b8318e29e16",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundAdditionalPostgresTest.xml",
+      "sha256": "3a2cb4eb1fcf4163b112d42618b47bbf75d9c2a35f6a8bff24643226236f4cbf",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundConcurrencyPostgresTest.xml",
+      "sha256": "9a4b1c2621fcfccd274cebdd894f57bae32c9fe6f14f7f46fbf9322dbdafe3f6",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundConfirmationPostgresTest.xml",
+      "sha256": "3e3d61ff6ad4e6ce407d0a4d09dc0397988f89c91ea53f0e89491d4a3cf9fdc4",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundHttpPostgresTest.xml",
+      "sha256": "6cdab1525d5db862e3b972d3f230992b145b0a250002a5aabe2fd941e17d5c3c",
+      "tests": 14
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundLoggingPostgresTest.xml",
+      "sha256": "f905d4a141334310a3d83042e18359b6a64a0105119f2085f0eb5c8b4de012ef",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullOutcomePostgresTest.xml",
+      "sha256": "397cdf8cfbe513af51b6fef3b9c4b942194a0b3d3209b1eefcea95924e5d5c29",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundNullableSchemaPostgresTest.xml",
+      "sha256": "cabc30d58d4850966d2e2e7ca4a08caa1f28f7c0250f1695eaa4525dd95c6a8d",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest.xml",
+      "sha256": "10b12874673fc0e5c63d87753685a180afe3a2a98f4fc8ea3fddaef339a841da",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.CorrectionRoundViewerContextPostgresTest.xml",
+      "sha256": "204e17dea3624a249d7a2fa8d8d35ab632f0b80bad0bd9a263de5e4edbbe6af6",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.D2RejectedPreferencePostgresTest.xml",
+      "sha256": "eae2c115258952d85744f08230b0f59281db813f545f75faecc5041e3e0000cd",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.D2UnsafeHardTimePostgresTest.xml",
+      "sha256": "0fbaa53b4e1813a2676c315704a010c9ce21b862e0476930e4d2c12feb65a67c",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.DurableAnalysisInvocationPostgresTest.xml",
+      "sha256": "d4a2641473830cba23d6c0631e36e499fecc213e371ba4df3769113768effd13",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest.xml",
+      "sha256": "96ff27999c209d0c160fdfc61bdad5c1d716c7adf4d457196774adc1905fe7ae",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest.xml",
+      "sha256": "ded2655838da2b7d2367bb2c43d5253c98909a09fa084a384bf50e4b43c79876",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.MatchingResultNaturalLanguageOnlyWebTest.xml",
+      "sha256": "b2794624b991bd6ffbf87a0900508ca12e730bc79490768ae44299637485ad84",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.MatchingResultWebIntegrationTest.xml",
+      "sha256": "f4b2c01c76518ef99d28c0af63819198cb8966645f1c16afc7d500f4a265d3b0",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationBindingPostgresTest.xml",
+      "sha256": "26917471855be7d8939d86702a78c2394f4338eba6efb499555b496ea8347bc1",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationConfirmationPostgresTest.xml",
+      "sha256": "d24661709d19e85418f448bae743d2af715dc2503c77564fae09f2e8cb49f146",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationDatabaseGuardPostgresTest.xml",
+      "sha256": "95d22fe4a615561f3f2d4ec1db2402630f240bfddcdd2ec6cf8021fc390f3d57",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationHttpPostgresTest.xml",
+      "sha256": "0a1716c93951a09107a7f9c05881a46e49fcbdd2743334f87bd7c314d63964b0",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest.xml",
+      "sha256": "6fb0a1a47212a075d10e6a22f33781a433fe3b1633f5c3617b247ebeaadddb01",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationPublicationPostgresTest.xml",
+      "sha256": "5e84907862992d35a237f7c8d7733fb970bef8ac3c5f70b6f6ca02e6e59706bb",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationRetentionPostgresTest.xml",
+      "sha256": "d18017ef3bf7763ca64daad7d9d551870573ee1bbd3d4441522a898598c5dd48",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.input.web.RecommendationReviewRegressionPostgresTest.xml",
+      "sha256": "7097f1d4a23fbb6b118ae68c806d44ac1c53c763458acef316530e8a60b0a5d3",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest.xml",
+      "sha256": "0ab87b36baaef6de756e5b91d397d985b2da89a8ebd079de98ae505eeecfcd97",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.CandidateScenarioMatrixTest.xml",
+      "sha256": "12081962131c6e97c0a47f03d9bd65ce543cb27f9ed3aa22c9e8998f64e4e484",
+      "tests": 23
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.ClarificationProviderContractTest.xml",
+      "sha256": "b94e25121650581b2de7f1b7f25d20e8c8cb8a66e113a4f37786410487b53f3a",
+      "tests": 15
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.ClarificationReportedTimeRegressionTest.xml",
+      "sha256": "b38499ddefed7515a4369709bb39a736c66e7952d94e17237ac531f7bdab95f1",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.D2HardConditionShapeContractTest.xml",
+      "sha256": "ed0ba7daeb7b87e43f4d348a5a7a279be10b2cd032ebb692a2cac9223e748ba1",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.D2PreferenceProviderContractTest.xml",
+      "sha256": "382c2be4f9d35841e00c2efd9b053307b82cb98cff54f207b19e168ab8e39395",
+      "tests": 11
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.D2UnsafeHardTimeContractTest.xml",
+      "sha256": "512f8d800e4178d27386866b7aa8bcbe036b1ad00e61b15a89e98d6a72d38096",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiHighDemandBoundaryTest.xml",
+      "sha256": "daddd6a4ddd1f1d3d5d3b313a12ad67aed72e40a74fb7fbb3546463516ceb9da",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiNaturalLanguageParserAdapterTest.xml",
+      "sha256": "d7943f18c9f14e0b6bc1dc305ae01c6062c81a8712ed67ecc669e302a3a162e2",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiPlaceGroupingContractTest.xml",
+      "sha256": "9409bc2c76d532acad255b99daa988a6e6df28231ff000d20d6c6738d8af26a4",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiProviderAuthorityContractTest.xml",
+      "sha256": "69ba3af17f03e36734ef32e18d16e7e9de32f57e8b50905273ae9f3ed786ebe5",
+      "tests": 15
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiProviderFailureContractTest.xml",
+      "sha256": "2295dd6fc25a30d6d4b334a568fa11156de39319dbffd99306df6013463ca7b1",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiSemanticInstructionContractTest.xml",
+      "sha256": "caee42925cfcba661b8dabc4f5cae6664efbbda8f467964b69c75309fb6f3619",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextBoundaryReviewTest.xml",
+      "sha256": "11732c540c354b69df6791cf245e385fa5d7a68fab8358090abeb7cf89a5325b",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextContractTest.xml",
+      "sha256": "2986f5b4142b52295c3f7ac7dd29da90edb9750f09a0befbb8888ef563377ce3",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextProviderSafetyTest.xml",
+      "sha256": "cc3a0202caa48d954d1662bc49467d34874667e399a7d0a1e029af6fc70fc319",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiTimeContextSafetyReviewTest.xml",
+      "sha256": "fc9e0db9b326683a22ebf38135a90a363493cf999aa6e4996f81a48cd9c36710",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.GeminiTransportBudgetContractTest.xml",
+      "sha256": "36a57debb471e75f2980b66b43457680b329d9833d202e5440bd06da6e70a759",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.KakaoLocalPlaceAdapterTest.xml",
+      "sha256": "f29ae789a65cb69ee112c05330d82cc81958964831ab923c9569791c09431857",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.LunaExtendedTransportBudgetContractTest.xml",
+      "sha256": "b02c1a771e89f90dd96a21104bde0a599eda7af2e1c88571ee58e6106c1542dd",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.LunaProviderContractTest.xml",
+      "sha256": "bb24021ddccf919fea89ebe0fb72797a3fd09793dd55aae3bfc1b63fdc7bb66a",
+      "tests": 16
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.LunaTransportNoReplayContractTest.xml",
+      "sha256": "560b2a52d728d5e685c467115104173f1c333791da31d9614d11d243f9ed6e50",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.ParserTransportAdapterContractTest.xml",
+      "sha256": "0d37767aa5a67679c8c96f2e2be3c9d2295967784cd6135147b12691b6bc1bff",
+      "tests": 10
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.ParserTransportFailureContractTest.xml",
+      "sha256": "210d880303d7095e26c9b093e39f62b8492033a1c0820002777bf35c773c62a8",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.ParserTransportObservationSessionTest.xml",
+      "sha256": "bcbaa806672afe5d7d803f6d17c8ba7449779ddc6523bc32f70d8fde13fd008b",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.SearchScopeProviderResponseContractTest.xml",
+      "sha256": "324436384c6089906c46f4c9c5488d0f1d48ad3cc755af2211a59e10fd7e0344",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.integration.evaluation.ApprovalBudgetLedgerTest.xml",
+      "sha256": "72e986a37318a028a84301be417e3bdf1d936e75bda177529201c9d39e7f2106",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.adapter.output.redis.RedisCoordinationWorkQueueTest.xml",
+      "sha256": "7b4580b98fdba15c7ba1f4eb19b69203c23616eb4b6ce9a56d4d1e39adbb6de7",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.BoundedAdmissionBudgetContractTest.xml",
+      "sha256": "86c553f1a96b00513c2d5416e1a51029a27722fb70d1acdb3f4d28d1d88a5b2d",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest.xml",
+      "sha256": "ca0ea0e389cc560c81d920a6de716fb912f43f305166fa3d138a678d9b86beb2",
+      "tests": 27
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.CandidateSummaryBoundaryContractTest.xml",
+      "sha256": "a097cacfa2fc57a3e38b8e2e352bfde87573724d51b0c8e7b52f4a090913b3fa",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.CandidateSummaryMixedPatternContractTest.xml",
+      "sha256": "caa4e9e5445bea7c7d7068a8db631558db3435adc7440b257911947f4301644f",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.CandidateSummaryRendererTest.xml",
+      "sha256": "76d49a876592bee5d977c578ae5b14722a2f612b310d44a9e3e0aae4c4944cb7",
+      "tests": 11
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.ClarificationMatchingSafetyTest.xml",
+      "sha256": "2548446cc6a1771d808a8463b3831959119def9f3891bd247480b3a1e90f35f9",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.CoordinationWorkerTest.xml",
+      "sha256": "09c1c57095e58390f2fd9eefe92de0c94d75815bc23da229c57bccf7e143ed8e",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.FrozenSubmissionBoundaryTest.xml",
+      "sha256": "9d86fbf68a907831cddfaca44e8bd6b56074b7a93d6005c922ce768364db8adf",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.GeminiBatchProcessorObservationTest.xml",
+      "sha256": "315ad3023393bc52cb5b78895b0a8ca04a63227c1c79f3395e028a2d0d75377c",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.GeminiBatchProcessorTest.xml",
+      "sha256": "17d07751313a4b250fdfe7f679a486717e5489202340130ed3f04cbfb1acf289",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.GeminiBatchProcessorTransportContextTest.xml",
+      "sha256": "dd3dc6deea21b215f7c9aa6e0b7e797ef9e8af3f42ca826a50fe9b664b07a48a",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.GeminiNaturalLanguageOnlyTest.xml",
+      "sha256": "72084349cf075c2d8ebf9f40061aa1f2c47cd8de0e642d4f6c1f2d3c61337ac5",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.GeminiTimeReferenceDateTest.xml",
+      "sha256": "53035e896a19a4da45b6127a79b3a6a93bcf3eab838aca7d8582dc0dadc9a5bc",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.MatchingNaturalLanguageOnlyTest.xml",
+      "sha256": "d95caf8aa416aded319ad2185dddde79b8268378909e6a1b24262dfc08db562c",
+      "tests": 10
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.MatchingProcessorTest.xml",
+      "sha256": "b62c10aa03dfaa6183f557fdabe96fd8241aa6d9d5094ff0d516e7626145191c",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.MatchingUnrepresentableConstraintSafetyTest.xml",
+      "sha256": "3545ed33b35a04b818e0a46f5aa5f5ff9c0eee5337dcab7ff12f2891b9f57e9b",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.OutboxRelayTest.xml",
+      "sha256": "e2ab0410cb2d77d84e8b6f48c62ed78fc04c2756665a14eb3cb24e56c5ab1313",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.RejectedAdmissionFallbackContractTest.xml",
+      "sha256": "52a73f93a2dbd1fac6a47d317f10b76fe2a5417a38fccb4e597ad16307f247b8",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.application.service.WorkerPublicationBoundaryTest.xml",
+      "sha256": "c53f6edbaec3c60da586b23f1d16a496461d6a8f608430631757c72f64d0039c",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.CoordinationRunTest.xml",
+      "sha256": "483588d79d21f8d3d7e4a4cab80e97f056f9a480276630c59b045f31f99f3a8c",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcherTest.xml",
+      "sha256": "74aa35136ea631c336dac02a4e25f9628bb525c7e4688b3e865fdca6dbde659e",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.GeminiPlaceGroupMatcherTest.xml",
+      "sha256": "fa752e07337a694e645a6a512b8910ae9941cebe533af52b5c8ea9d2a7d8c3f4",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.GeoMatcherTest.xml",
+      "sha256": "119d0195d284ef280ee8c6881f2eeb9c24003afddee50f1afac9970299c41032",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.RecommendationPreferenceScopeContractTest.xml",
+      "sha256": "9c12b668f087fcbdf4d41dd27a18135357a66ff3af9574937d0686ce1c9bf7f3",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.RecommendationProjectorContractTest.xml",
+      "sha256": "1882d4a2408069746ab8bb0e48619d005ca3111eb9a558195c4c17d4f1d9f8d4",
+      "tests": 18
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.RecommendationProjectorD2ContractTest.xml",
+      "sha256": "e5e4d0b47c4a8da94bf64a3d65d6d7f5915c7d716050bfe60537d0d770dddafa",
+      "tests": 15
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.coordination.domain.matching.TimeRangeMatcherTest.xml",
+      "sha256": "47e34827c813a0571e149a9330792ebfa32194e99d83317b2706ce344d191573",
+      "tests": 15
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.adapter.input.web.AccountRoomArchiveCacheContractTest.xml",
+      "sha256": "5b73b32f41fcfe72714461cb2107b1381da2968712e9e7d3daaf2d4cc3fac933",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.adapter.input.web.RoomLifecycleWebIntegrationTest.xml",
+      "sha256": "2bab6faf38ea3de4cf9ecd59494665c3a80bc3cea64073d9ef305a43fccd2f8f",
+      "tests": 10
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest.xml",
+      "sha256": "6612c3640ec8e3821631e389fe5bf489e8d8192f0b693af847db52355e26cd58",
+      "tests": 17
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.adapter.input.web.ScopedGuestProofWebIntegrationTest.xml",
+      "sha256": "ca022ba47abc5c5dae40e5d0079e991c27fbe597245a9ece7dfd7c586bb51736",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.adapter.input.web.ScopedGuestViewerJoinWebIntegrationTest.xml",
+      "sha256": "9f43aee058a99744d817d0ca14cac54ebc5230ca37f6b8a555cbfeee3bbc1655",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.adapter.output.persistence.RoomDataRetentionRepositoryTest.xml",
+      "sha256": "c8b2daec445fa78aa445058fdb995a3bf812f4f70c8efdc1567299dabcf2b285",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.application.service.DeadlineClosureSchedulerTest.xml",
+      "sha256": "1ad186d6b2d445854c2834fd6fd7a0a5e023fd868bd22ef293779595440fa4e5",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.application.service.RoomLifecycleServiceTest.xml",
+      "sha256": "29c5a409c5d0445b5ff1073f18accfaeafbcc4a60268bdcb45f41c74c7495deb",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.domain.InviteCodeTest.xml",
+      "sha256": "d4a59e749eeffa696630bbe9e8a80b0a8f31e485d5a640a2436cafac5a59ae9b",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.meetingroom.domain.MeetingRoomTest.xml",
+      "sha256": "7f57fcaaa69ba8028a2389f6fc20e99549331765487dbcbbec80e9efce7e8f9f",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.input.web.GuestDisplayNameUnicodeWebIntegrationTest.xml",
+      "sha256": "b7d78a82154af0d4109e2b6871ed2d67ff7f4ff9040187f971f36bf8eeb612e2",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.input.web.GuestReaccessWebIntegrationTest.xml",
+      "sha256": "cd377f7d843ff4b2773f0ad0a357a66360cff3f0b5b9c99238bce206dee50ded",
+      "tests": 37
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.output.security.GuestCookieOwnershipProofAdapterTest.xml",
+      "sha256": "2f15b7596834023a167f7952c039e7f234706a1697bd6681c819bbc9e49fd77f",
+      "tests": 6
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.output.security.GuestCredentialServiceTest.xml",
+      "sha256": "5583b5d4585a180e7c1b766b30f28011ff038f902bde29487733563f13e8a771",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.output.security.GuestPasswordEncodingBoundaryTest.xml",
+      "sha256": "774328709a57ee15c6190d57f111a3302c35cb027728bdb1433bdab7e9dc9063",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.output.security.GuestPasswordHasherTest.xml",
+      "sha256": "e4061184f6839ed732bcf7998c015251703324959278f33aa83f30602fa09608",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.adapter.output.security.GuestReaccessAttemptGuardTest.xml",
+      "sha256": "43322d4025f680524b05c8f6ed5cb74cc788eff3e2948990539302841001b4ed",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.application.service.GuestReaccessAccountBoundaryTest.xml",
+      "sha256": "75655a8daab6adcf430f1bb867fb2b36f661dbd2f430e7e5a5c615c1420eb0b2",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.application.service.GuestReaccessPolicyTest.xml",
+      "sha256": "fcb635a3cff3beb4e0371b5e0f305edae6177bd72b1cdf8f8ede892b85c57635",
+      "tests": 15
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.application.service.ParticipantOwnershipResolverContractTest.xml",
+      "sha256": "d4366b62879959aa285f30dcd3f75f609daeb611637914d4b48b29101c31b1cd",
+      "tests": 26
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.participant.domain.ParticipantDisplayNameTest.xml",
+      "sha256": "aabed13b16687656e539535e675f7bb9f6cac044729a533ca112a17b5e6ee815",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRetryAfterContractTest.xml",
+      "sha256": "4e1f5a07732b12213d7404a9465bd241e167bc320ee03c122d8d7feed797265b",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest.xml",
+      "sha256": "5eaef81ac410b48eab475edc3d47a2d53c6c7295bd5dbf0feddf26f2168e3428",
+      "tests": 15
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.precheck.adapter.output.provider.PrecheckProviderUnicodeContractTest.xml",
+      "sha256": "e4a61cc03d195ce97b05498e4f1e4792086409f9e8cba7c7bc4bd7abf128c78d",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.input.web.CorrelationLoggingFilterTest.xml",
+      "sha256": "8b5a2319c8fb1cc36e195e1c4ee51fc7c363051b01c81810be5eaacaca85da57",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.input.web.InputRevisionRedisRateLimitTest.xml",
+      "sha256": "1e37777e9b17f6af0891aeb012e65f4ab9410127b19863f563e7996d6d88babf",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.input.web.RateLimitFilterTest.xml",
+      "sha256": "9c08def2e8cd1ca7b9aee8e2dcdebd84009dd2126567f299378f12de9ab1e3f1",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.observability.MicrometerAnalysisExecutionMetricsTest.xml",
+      "sha256": "976449c1ccf2f41caee5330410b16212a020d93eb5e3a055ae47167569b40bd9",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.AccountOwnershipMigrationTest.xml",
+      "sha256": "94b11a021f6c07bf2354411fa5b9987aad7eb5e65b6431aa2502bc93d78643aa",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.AnonymousRoomLifecycleMigrationTest.xml",
+      "sha256": "97dc1e51c573bd05d49c8331034cd0938ac41c4e90418fdf538879a73d05d2f4",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.xml",
+      "sha256": "1600855d497747bcff19e3afb928f4374496ba85fd358ea25f84435f22b60a15",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.xml",
+      "sha256": "1895214de7e77f5b89c87936608f32ed5d7e588960192d4b29faf29d190c175c",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.InputRevisionLegacyMigrationTest.xml",
+      "sha256": "044da92a2a6436a3c2fab93862fdc5f6e19da61608fc9dd2127db0674ed6c6dc",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.xml",
+      "sha256": "781f9565b37ba72a317df263f89784f24233e4b747a9f4c929ce6b87e38dcc37",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.MatchingResultsMigrationTest.xml",
+      "sha256": "8bc724dd0de56474be3fcc929ba5c5e907ed026c0a358ac3e00eb52b7beee76a",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.MeetingDurationRemovalMigrationTest.xml",
+      "sha256": "04870ed2f0136132c3b2367d42344b955f28b0fa7ddfba2f816117ea6ae88364",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.ReliableOutboxMigrationTest.xml",
+      "sha256": "e523e6c2f95932aa5af7f778c918b5ab4719945f54b3dfe21eab64ed15d3512c",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.persistence.SubmissionPipelineMigrationTest.xml",
+      "sha256": "5724d4383a5f925fb1f3cf0cdc2fcd6641fa811ae600a4f1869a0ebbace5a9df",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.adapter.output.redis.RedisRateLimiterTest.xml",
+      "sha256": "b461162418b4238b43c6d7cb5a438337023435a4893355d79c337b804b498a16",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.domain.time.TimeModelsTest.xml",
+      "sha256": "24660b983c29c7b3a26ef8026ea485c0419b0fa0872bbb00337aba559c031e83",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.AsyncParserTransportObservationAdapterTest.xml",
+      "sha256": "6fa327c25400cedb8841faa257a7b44e0105114bc02cb8566e2eb63e47b897e0",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorAccountDefaultDisabledHttpTest.xml",
+      "sha256": "df397b46b02226ceb01a8f34501118faec5290d402e505c14e55b0196855d846",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorAccountEmptyAllowlistHttpTest.xml",
+      "sha256": "55aa05ab916bc4fc1686f8a4735e45e52620ed6d24f61b3a4b3433693807036c",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorAccountHttpPostgresTest.xml",
+      "sha256": "8245c98b7b8900727a8c8983f57e9372ebdafde4c639ead2b57682f8b21f6ad0",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorAuditRetentionServiceTest.xml",
+      "sha256": "b0a7cbf9c8bf0f8a3c735c1796a6d0fbd9177853de0e06a2412ffcd869aa3660",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorAuditSchedulingContractTest.xml",
+      "sha256": "5d5f2291c15298db4cee368ba90c32a77bc1379e0407845943c7166ca44c39c9",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorControllerAuditBoundaryTest.xml",
+      "sha256": "7ce231504071c5961142668cf063b2b5c5ad4a4f1068c9da50a2c353ff40d730",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorNoStoreFilterTest.xml",
+      "sha256": "482bdf30c1db3c7a7ab29c0503336ae1c7926635399952f29260e9b4217dff29",
+      "tests": 5
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorQueryPostgresTest.xml",
+      "sha256": "ddaf5ad805a87ab1670975431fb2bdca14f53b8f68912f45834290fc2f420040",
+      "tests": 13
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorQueryServiceTest.xml",
+      "sha256": "bbbcf15e63b7cc2f3bb2d5891c819cdad6b4fa5e55173bf0507b7183f5c9564c",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.OperatorTransportQueryPostgresTest.xml",
+      "sha256": "b00a224cb05778092185528eb472dd82e618c3a503761eb1eaf624d77d1ec907",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.ParserTransportConcurrencyPostgresTest.xml",
+      "sha256": "bef490b2bd552b69bdaa3d5128711f33eeb9a9a0496cf4a9a3557799d173a32c",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.ParserTransportObservationPostgresTest.xml",
+      "sha256": "bb4e5acc2eb3136bece3e74b0b73819b422a3369503675963dc77f725ccb588d",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.shared.operations.ParserTransportStoreBoundednessTest.xml",
+      "sha256": "9f9af8a098367cb6ae295e57a11c6143f07da7010ff39ede6494020a13289829",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest.xml",
+      "sha256": "aa67e5c78506e827fab7f3c07694ac5f432cddc1c87cd1650d5000af07719e49",
+      "tests": 1
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionCheckHttpPostgresTest.xml",
+      "sha256": "576236b31e01152b14fae72e269976afce019d2cb984d8f3e5383dcbfc118c87",
+      "tests": 19
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionCheckRetentionPostgresTest.xml",
+      "sha256": "fff01735e39071ba64832f51144ea670677337f4122fd254f79db93502554748",
+      "tests": 8
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionCheckWorkerPostgresTest.xml",
+      "sha256": "f6540899826a4fd4fc3654ed518b55c86a6398c5fcb3c886a4dc097cb2e7ea9b",
+      "tests": 25
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PreSubmissionPrivacyQueuePostgresTest.xml",
+      "sha256": "278fb88b24c77d43f0b36a76ea612e9af4f286fe360c51aba629e14f4fc4f1d1",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest.xml",
+      "sha256": "d2fe8119072a5e8537988601ecc736c1e6258ed43beda6cc988ab3bce6aa8669",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PrecheckCorrectionCompatibilityPostgresTest.xml",
+      "sha256": "5fd1471d6a27725f6d0c0214a3c80cffee88d978b5fd4cc279a0f56c34edde39",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest.xml",
+      "sha256": "e130a7665215be16fb78911f920e156fefc0ac5dc35f25fd0deffdccd51868cb",
+      "tests": 12
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PrecheckInputShapeHttpPostgresTest.xml",
+      "sha256": "4a356f5af9027676c305b2fb9d5d71b96c644135d1fce83abbf96236ede3992d",
+      "tests": 7
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest.xml",
+      "sha256": "e92983196d5657afb396d06b937ed00cb59e289f74119e5c6d9361168ccc77a1",
+      "tests": 9
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.SubmissionDeadlinePostgresTest.xml",
+      "sha256": "b1f14b3b34fc637a752c0f643179bd90224c5667e87a7e961ddb5826374ee016",
+      "tests": 37
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyIntegrationTest.xml",
+      "sha256": "7f3c9d0fbe6e30fde6de58a9b9cb9c3ede6cc2bfddbc801b84fe690fbe95cae6",
+      "tests": 57
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.SubmissionNaturalLanguageOnlyWebTest.xml",
+      "sha256": "7e0f589001c3bbae39955355e98492307b6267aff249680d9e1c0492a7f4cbd2",
+      "tests": 25
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.input.web.SubmissionWebIntegrationTest.xml",
+      "sha256": "614a2ae0c9d93147aaba74949ba5ab9cd9cba6a2923dfec76b2e1e8245c4971a",
+      "tests": 20
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.output.persistence.D2PreferenceJsonMapperTest.xml",
+      "sha256": "5c3db4f2eef15f362308fc3d12c7d411c2dcda09bf5d2280a3886fff871ae218",
+      "tests": 3
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.adapter.output.persistence.StructuredConditionJsonMapperTest.xml",
+      "sha256": "3110ce618e2ae1ad6e074c84419d7989fd7d4e16061591073315a61e96510b0a",
+      "tests": 2
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.domain.SubmissionRulesTest.xml",
+      "sha256": "767db171cc2168d57adbcfe273368c11b26991b621c7504ce61e3317bb5b8700",
+      "tests": 4
+    },
+    {
+      "path": ".codex/tdd-evidence/issue107-final-guard-attempt4/xml/TEST-com.meetme.server.submission.domain.SubmissionTest.xml",
+      "sha256": "8c28c2b5361c903dcde5dd6f814dd584225e914fcad59aa1bc2a494def1fb98b",
+      "tests": 3
+    }
+  ],
+  "skippedTests": [
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+      "test": "capture actual native schema for debugging explicitly marked unvalidated()",
+      "reason": "Existing test skip condition; unchanged."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+      "test": "verify correction public schemas then export actual native OpenAPI JSON()",
+      "reason": "Existing test skip condition; unchanged."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+      "test": "bounded live Gemini semantic probe()",
+      "reason": "org.opentest4j.TestAbortedException: Assumption failed: assumption is not true"
+    },
+    {
+      "class": "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+      "test": "export actual generated OpenAPI JSON after Issue 83 GREEN()",
+      "reason": "Existing test skip condition; unchanged."
+    }
+  ],
+  "sourceManifest": ".tdd/verification/issue107-final-server-source-manifest.json",
+  "sourceManifestSha256": "26aeed13d80227554662e3c9e72ade2f60c333bf192e64a19d9f48b18336aec1",
+  "artifacts": [
+    {
+      "path": "build/libs/meet-me-server-0.0.1-SNAPSHOT-plain.jar",
+      "sha256": "53e6d0f89b354a39238ab8d9fe016f356731af66eeee83e2133ecc4253a27318",
+      "bytes": 1892153,
+      "containsTestOnlyNativeHarness": false,
+      "containsV16": true
+    },
+    {
+      "path": "build/libs/meet-me-server-0.0.1-SNAPSHOT.jar",
+      "sha256": "6f95bfa110ce1d26401a0a2906d8ac9852085582dc884a1112b1869641149d21",
+      "bytes": 77763750,
+      "containsTestOnlyNativeHarness": false,
+      "containsV16": true
+    }
+  ],
+  "rawEvidenceDirectory": ".codex/tdd-evidence/issue107-final-guard-attempt4",
+  "scope": "Unchanged required guard, actual isolated PostgreSQL/Redis/RS256/proof/synthetic provider; no actual paid model/OAuth/production access. Earlier three style-blocked guard attempts never reached full tests and are not counted.",
+  "remainingBeforePublication": [],
+  "remainingAfterPublication": [
+    "Exact published HEAD CI; authorized develop merge and actual merge SHA CI."
+  ],
+  "mainReady": false,
+  "localPublicationReview": ".tdd/reviews/issue107-independent-server-core-review.json"
+}

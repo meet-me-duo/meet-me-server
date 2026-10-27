@@ -1,0 +1,158 @@
+{
+  "workItem": "issue107-provider-independent-faults",
+  "recordedAt": "2026-10-17T18:35:57.454342+00:00",
+  "scope": "Isolated snapshot only; test source set restricted to the two unchanged independent provider tests. No external provider calls. Provider/model metadata-only final delta separately reviewed/retested.",
+  "sourceFingerprints": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "7aff0a972bd9e6ed00609ccf6fe79cb478b91fc344950a760d228148dda6e860"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "4eac4cdf703831b0bfc074856c29ed4c07f762d971ecdc79051f15e21a72f1a0"
+    }
+  ],
+  "testFingerprints": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "7227847aeae9d6f03b34acab4dd27ebc64f94eb76e96f5a6d91a6fff05275ba8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRetryAfterContractTest.kt",
+      "sha256": "35fa215b897b5a0105b45e3d31a9a66ee20e1fd8d230fbc80a679f54b9406728"
+    }
+  ],
+  "records": [
+    {
+      "fault": "unverified-cap-call",
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "detection": {
+        "exitCode": 1,
+        "tests": 16,
+        "failures": [
+          {
+            "test": "P12 unavailable bounded configuration fails before network()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=CLEAR, prompt=null, sourceExcerpt=null, choices=[], inputTokens=null, outputTokens=null, responseBytes=97)>."
+          }
+        ],
+        "log": ".codex/tdd-evidence/provider-faults/unverified-cap-call.log",
+        "logSha256": "0330bfecb8d4e2332b6969314e93f6660b4783074be2461d49ed683f221c18fa"
+      },
+      "restore": {
+        "exitCode": 0,
+        "tests": 16,
+        "failures": [],
+        "log": ".codex/tdd-evidence/provider-faults/unverified-cap-call-restored.log",
+        "logSha256": "b82b5f245bc311bcbc69f19cdf6769036f3b55910ea982f6fa1b195e9a9c678f"
+      }
+    },
+    {
+      "fault": "oversize-body",
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "detection": {
+        "exitCode": 1,
+        "tests": 16,
+        "failures": [
+          {
+            "test": "P08 oversized actual HTTP body is rejected without retry()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=CLEAR, prompt=null, sourceExcerpt=null, choices=[], inputTokens=null, outputTokens=null, responseBytes=16481)>."
+          },
+          {
+            "test": "P13 invalid raw input and oversized request are not sent or truncated()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=CLEAR, prompt=null, sourceExcerpt=null, choices=[], inputTokens=null, outputTokens=null, responseBytes=97)>."
+          }
+        ],
+        "log": ".codex/tdd-evidence/provider-faults/oversize-body.log",
+        "logSha256": "4c78719c692241784285bc756b4850f069ccf23ba8e297e78beb0ea47113643e"
+      },
+      "restore": {
+        "exitCode": 0,
+        "tests": 16,
+        "failures": [],
+        "log": ".codex/tdd-evidence/provider-faults/oversize-body-restored.log",
+        "logSha256": "b82b5f245bc311bcbc69f19cdf6769036f3b55910ea982f6fa1b195e9a9c678f"
+      }
+    },
+    {
+      "fault": "stalled-body-no-call-deadline",
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "detection": {
+        "exitCode": 1,
+        "tests": 16,
+        "failures": [
+          {
+            "test": "P11 timeout includes stalled response body and terminates the exchange()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected value to be true."
+          }
+        ],
+        "log": ".codex/tdd-evidence/provider-faults/stalled-body-no-call-deadline.log",
+        "logSha256": "3b393d5364cb285205a82221da570f764812a15a441ac5441d968ead5accf98c"
+      },
+      "restore": {
+        "exitCode": 0,
+        "tests": 16,
+        "failures": [],
+        "log": ".codex/tdd-evidence/provider-faults/stalled-body-no-call-deadline-restored.log",
+        "logSha256": "c6d2d6b58753426e9f6fe23d61fbe506247079cb1316375686e078883bb5377b"
+      }
+    },
+    {
+      "fault": "hidden-retry-after",
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "detection": {
+        "exitCode": 1,
+        "tests": 16,
+        "failures": [
+          {
+            "test": "P09 server error sends one physical request without hidden retry()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: expected: <SERVER> but was: <INVALID_RESPONSE>"
+          },
+          {
+            "test": "P16 server Retry After zero cannot authorize a second physical exchange()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: expected: <SERVER> but was: <INVALID_RESPONSE>"
+          }
+        ],
+        "log": ".codex/tdd-evidence/provider-faults/hidden-retry-after.log",
+        "logSha256": "f5188cc118bf5ee6738b4c5484da972cbf714fe75e3b5fbe1713c6f8b89a0319"
+      },
+      "restore": {
+        "exitCode": 0,
+        "tests": 16,
+        "failures": [],
+        "log": ".codex/tdd-evidence/provider-faults/hidden-retry-after-restored.log",
+        "logSha256": "2a8caa42ec4c610ccdba29e5ef417da97149e3a13cbfa2ff6dab9c51da268f53"
+      }
+    },
+    {
+      "fault": "unknown-json-field",
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "detection": {
+        "exitCode": 1,
+        "tests": 16,
+        "failures": [
+          {
+            "test": "P04 missing verdict unknown key invalid enum and malformed JSON are typed failures()",
+            "type": "org.opentest4j.AssertionFailedError",
+            "message": "org.opentest4j.AssertionFailedError: Expected an exception of class com.meetme.server.precheck.application.port.output.PrecheckProviderException to be thrown, but was completed successfully with the result: <PrecheckProviderResult(verdict=CLEAR, prompt=null, sourceExcerpt=null, choices=[], inputTokens=null, outputTokens=null, responseBytes=114)>."
+          }
+        ],
+        "log": ".codex/tdd-evidence/provider-faults/unknown-json-field.log",
+        "logSha256": "d032e04f36d0491da1db7591861d12c20f687020a4248a3aa70efa97fbcbbac6"
+      },
+      "restore": {
+        "exitCode": 0,
+        "tests": 16,
+        "failures": [],
+        "log": ".codex/tdd-evidence/provider-faults/unknown-json-field-restored.log",
+        "logSha256": "f9825e4447faf057b2a92446b2a79f8ee17f0149102ad1598360146a2996626e"
+      }
+    }
+  ],
+  "sourceRestored": true
+}

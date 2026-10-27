@@ -1,0 +1,15 @@
+{
+  "exitCode": 2,
+  "durationSeconds": 121.043,
+  "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+  "tests": 74,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suites": 2,
+  "recordedAt": "2026-10-17T17:09:47.255490Z",
+  "status": "FAILED_BEFORE_TESTS_KTLINT_DTO_ANNOTATION_LAYOUT",
+  "junitCountsAreFromPreviousFilteredRun": true,
+  "wholeSuiteExecuted": false,
+  "rawLogSha256": "80461fc8f9de8b6ebe4eec00be3bb52ee19d5d52b8c3633931ea1972988f89f9"
+}

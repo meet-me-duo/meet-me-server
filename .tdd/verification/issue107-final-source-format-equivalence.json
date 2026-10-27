@@ -1,0 +1,36 @@
+{
+  "workItem": "issue107-final-source-format-equivalence",
+  "reviewer": "/root/baseline_merge_review",
+  "recordedAt": "2026-10-17T19:20:23.871688+00:00",
+  "scope": "Two parent-authorized original production style fixes occurred while independent fault runner continued on earlier frozen scratch. Explicitly supersedes source fingerprints; not an unchanged-original claim.",
+  "records": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "oldSha256": "1e139f29cd98af7e9566dcd865f4c9b70e98a558f4dca742556272ddb93bbfcd",
+      "newSha256": "8291ef62126ba0a86c932b68bbdcc53f56b20d72d31ebcf6ce14449e79efe6ba",
+      "equivalence": "SQL_SELECT",
+      "sameStringValueOrInterpolationExpression": true,
+      "exactDiff": "--- /tmp/meetme107-independent-core-wswbx801/src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt\t2026-10-17 18:35:18.023307367 +0000\n+++ src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt\t2026-10-17 19:19:50.191598269 +0000\n@@ -298,6 +298,10 @@\n     }\n \n     companion object {\n-        private const val SELECT = \"SELECT k.*,c.id c_id,c.room_id,c.participant_id,c.revision,c.raw_text,c.locale,c.created_at,c.interpretation_reference_at,c.owner_binding,c.source_candidate_id,c.source_question_id,c.selected_choice_id,c.accepted_version_id FROM precheck_checks k JOIN precheck_candidates c ON c.id=k.candidate_id\"\n+        private const val SELECT =\n+            \"SELECT k.*,c.id c_id,c.room_id,c.participant_id,c.revision,c.raw_text,c.locale,c.created_at,\" +\n+                \"c.interpretation_reference_at,c.owner_binding,c.source_candidate_id,c.source_question_id,\" +\n+                \"c.selected_choice_id,c.accepted_version_id FROM precheck_checks k \" +\n+                \"JOIN precheck_candidates c ON c.id=k.candidate_id\"\n     }\n }\n",
+      "review": "Only quoted-literal concatenation/line wrapping. No guard, branch, SQL clause, binding delimiter/expression or field change."
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt",
+      "oldSha256": "0077fa93bd1756eba72e695f07c4e26251a600f56c5e6a053fca936585c307dc",
+      "newSha256": "2cd8db418bd946fcfec6446b766c9c1bbc4518db0fcd13381a761944f6524b87",
+      "equivalence": "BINDING_RETURN",
+      "sameStringValueOrInterpolationExpression": true,
+      "exactDiff": "--- /tmp/meetme107-independent-core-wswbx801/src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt\t2026-10-17 19:08:31.521603527 +0000\n+++ src/main/kotlin/com/meetme/server/precheck/adapter/output/security/PrecheckOwnershipBindingAdapter.kt\t2026-10-17 19:16:39.632099340 +0000\n@@ -30,7 +30,8 @@\n         val provenance =\n             proof.provenance\n                 ?: throw RoomLifecycleException(RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT)\n-        return \"$prefix|${provenance.sessionId.value}|${provenance.validUntil.toEpochMilli()}|${provenance.grantGeneration ?: \"\"}|${proof.level.name}\"\n+        return \"$prefix|${provenance.sessionId.value}|${provenance.validUntil.toEpochMilli()}|\" +\n+            \"${provenance.grantGeneration ?: \"\"}|${proof.level.name}\"\n     }\n \n     override fun isActive(\n",
+      "review": "Only quoted-literal concatenation/line wrapping. No guard, branch, SQL clause, binding delimiter/expression or field change."
+    }
+  ],
+  "sourceEditsByReviewer": 0,
+  "testEditsByReviewer": 0,
+  "requiredFinalEvidence": "Fresh exact formatted-source mandatory guard/full and native runtime rerun. Scratch faults remain behavior-applicable because both literal values/interpolation expressions are equal.",
+  "additionalIndentSupersession": "SQL concatenation lines303-305 indented12→16 after first literal split. No added/removed/changed quoted content; final join remains byte-identical.",
+  "histories": [
+    ".tdd/history/issue-107-pre-submit-production-format",
+    ".tdd/history/issue-107-pre-submit-production-indent"
+  ],
+  "finalManifestSha256": "f54e1283dfdaf92b7ec6f3139d0385eaafcb2651634a3909d00f6cacec3276f3",
+  "finalManifestCurrentMismatches": []
+}

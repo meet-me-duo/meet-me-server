@@ -59,7 +59,7 @@ class CorrectionRoundViewerContextPostgresTest : CorrectionRoundPostgresFixture(
 
     @Test
     fun `expired guest session room view has no self context`() {
-        val fixture = completedRoom()
+        val fixture = completedRoom(memberAccount = false)
         val before = child(room(fixture.member), "viewer")
         assertNotNull(before["context_id"])
         jdbc.update(
@@ -74,10 +74,12 @@ class CorrectionRoundViewerContextPostgresTest : CorrectionRoundPostgresFixture(
     }
 
     private fun sameNamedMembers(): Pair<CorrectionSession, CorrectionSession> {
+        val hostCookie = accounts.newAccount("host")
         val created =
             mvc
                 .perform(
                     post("/api/rooms")
+                        .cookie(hostCookie)
                         .header("Origin", CorrectionRoundPostgresFixture.ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -87,6 +89,8 @@ class CorrectionRoundViewerContextPostgresTest : CorrectionRoundPostgresFixture(
                 .andReturn()
                 .response
         val code = document(created).getValue("invite_code").toString()
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
 
         fun join(): CorrectionSession {
             val response =

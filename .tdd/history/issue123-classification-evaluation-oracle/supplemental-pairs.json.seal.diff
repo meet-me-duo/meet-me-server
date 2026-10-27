@@ -1,0 +1,11 @@
+--- reviewed-draft/supplemental-pairs.json
++++ sealed/supplemental-pairs.json
+@@ -1,7 +1,7 @@
+ {
+   "schema_version": 1,
+   "dataset_id": "issue123-supplemental-semantic-contrast-v1",
+-  "status": "REVISED_DRAFT_PENDING_INDEPENDENT_REVIEW",
++  "status": "FINAL_PRE_EXECUTION_ORACLE",
+   "synthetic_only": true,
+   "model_execution_count": 0,
+   "partition": "SUPPLEMENTAL_UNTUNED_BLIND_ALL_16",

@@ -1,0 +1,25 @@
+{
+  "workItem": "issue-109-auth-provider-scope",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/oauth/ProductionOAuthAuthorizationContractTest.kt",
+      "sha256": "10dd14d3a19310dcab42804e12022c98e18236148be65aca3e58d1821c30ab55"
+    }
+  ],
+  "command": [
+    "/tmp/meetme-109-tools/gradle-9.7.1/bin/gradle",
+    "-I",
+    "/tmp/meetme-109-prod-scope-format.init.gradle",
+    "runKtlintFormatOverTestSourceSet",
+    "test",
+    "--tests",
+    "*ProductionOAuthAuthorizationContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.adapter.output.oauth.ProductionOAuthAuthorizationContractTest.Kakao default authorization requests only comma separated openid and nickname consent IDs()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-17T15:09:13.290792Z"
+}

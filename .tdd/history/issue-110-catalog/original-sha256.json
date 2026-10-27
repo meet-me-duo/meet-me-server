@@ -1,0 +1,10 @@
+[
+  {
+    "File": "approved-release-pipeline.test.cjs.before.cjs",
+    "SHA256": "442ba36487d60f6beb62a02da6b1bb3a6265bad0804dd0b77590a4b302471f3a"
+  },
+  {
+    "File": "issue109-release-catalog.test.cjs.before.cjs",
+    "SHA256": "63fda2c71269bab1b409db9ec98be36b6dd92c8476fcf164b69c91de2342b10e"
+  }
+]

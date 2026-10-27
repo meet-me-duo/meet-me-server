@@ -1,0 +1,218 @@
+{
+  "workItem": "issue-107-provider-final-format-replay",
+  "recordedAt": "2026-10-17T19:33:33.812887Z",
+  "provenance": "SUPPLEMENTAL_RECONSTRUCTED_RED_AFTER_FORMAT_ONLY_CHANGE_NOT_CHRONOLOGICAL_FIRST_RED",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "0a31ce73a1c74aca991d36f67e59b96b1d557ac59da0f120136770a88a9e735c"
+    }
+  ],
+  "sourceSha256": "ab158294fa7237b2590272fd8412fd7f3838112d2d503a33f968f3c99e8ca214",
+  "baseline": {
+    "exitCode": 0,
+    "totals": {
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "log": ".codex/tdd-evidence/provider-final-format-replay/baseline18.log",
+    "logSha256": "518d33c393fe3a0afd087acfee92cd3c420584f939cb6aafcb0fbc81b9460543"
+  },
+  "reconstructedRed": {
+    "exitCode": 1,
+    "totals": {
+      "tests": 15,
+      "failures": 15,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [
+      {
+        "name": "P09 server error sends one physical request without hidden retry()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P03 partial usage retains unknown thinking cost rather than reporting zero()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P10 redirect cannot forward credentials or create a second exchange()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P05 incomplete duplicate unrelated or overlong proposals never become clear()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P14 exactly five hundred Unicode codepoints are sent without rewriting()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "java.util.NoSuchElementException"
+      },
+      {
+        "name": "P04 missing verdict unknown key invalid enum and malformed JSON are typed failures()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P01 one bounded request carries own context and clear does not invent unknown usage()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "java.util.NoSuchElementException"
+      },
+      {
+        "name": "P12 unavailable bounded configuration fails before network()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P06 clear or needs edit cannot carry an unanswered proposal()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P11 timeout includes stalled response body and terminates the exchange()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P07 known response text with truncation finish reason is not publishable()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P02 validated proposal preserves complete alternatives and known usage()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P15 zero budget makes no network request()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P08 oversized actual HTTP body is rejected without retry()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "name": "P13 invalid raw input and oversized request are not sent or truncated()",
+        "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+        "type": "org.opentest4j.AssertionFailedError"
+      }
+    ],
+    "log": ".codex/tdd-evidence/provider-final-format-replay/reconstructed-missing-behavior15.log",
+    "logSha256": "4bae397624bce497f374f9a2c93e724b09c8c8f324027ff96f936ce9222d3265"
+  },
+  "validAssertionRed": [
+    {
+      "name": "P09 server error sends one physical request without hidden retry()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P03 partial usage retains unknown thinking cost rather than reporting zero()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P10 redirect cannot forward credentials or create a second exchange()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P05 incomplete duplicate unrelated or overlong proposals never become clear()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P04 missing verdict unknown key invalid enum and malformed JSON are typed failures()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P12 unavailable bounded configuration fails before network()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P06 clear or needs edit cannot carry an unanswered proposal()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P11 timeout includes stalled response body and terminates the exchange()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P07 known response text with truncation finish reason is not publishable()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P02 validated proposal preserves complete alternatives and known usage()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P15 zero budget makes no network request()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P08 oversized actual HTTP body is rejected without retry()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    },
+    {
+      "name": "P13 invalid raw input and oversized request are not sent or truncated()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "org.opentest4j.AssertionFailedError"
+    }
+  ],
+  "excludedNonAssertionFailures": [
+    {
+      "name": "P14 exactly five hundred Unicode codepoints are sent without rewriting()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "java.util.NoSuchElementException"
+    },
+    {
+      "name": "P01 one bounded request carries own context and clear does not invent unknown usage()",
+      "class": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "type": "java.util.NoSuchElementException"
+    }
+  ],
+  "restored": {
+    "exitCode": 0,
+    "totals": {
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "command": [
+      "/tmp/meetme-provider-faults/gradlew",
+      "-p",
+      "/tmp/meetme-provider-faults",
+      "-I",
+      "/tmp/meetme-provider-only.init.gradle",
+      "--no-daemon",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*PrecheckProvider*ContractTest"
+    ],
+    "log": ".codex/tdd-evidence/provider-final-format-replay/restored18.log",
+    "logSha256": "befc493396a55f5b0f7945a93b7b95b4677f10fb294407d0c32fd503c1fb74ea"
+  },
+  "originalProductionChanged": false,
+  "realModelCalls": 0,
+  "scope": "Exact final adapter/contract/port in isolated snapshot; no-transport CLEAR stub reconstructed missing behavior. P01/P14 required a request before their later assertions and reached NoSuchElementException; these 2 are excluded from valid RED. Initial driver rejected its all15assertions assumption and restored original source in finally; only13 genuine assertion failures are claimed. Original source and final18GREEN verified."
+}

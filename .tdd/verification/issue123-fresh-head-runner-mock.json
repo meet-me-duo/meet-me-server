@@ -1,0 +1,318 @@
+{
+  "workItem": "issue123-fresh-head-runner-mock",
+  "sourceRevision": "4101038fd421351affa2a1fcdd5741083cb1a6b6",
+  "classification": "INDEPENDENT_ACTUAL_WHOLE_CLI_AND_ACTUAL_JAVA_PIPELINE_WITH_NO_REAL_NETWORK",
+  "passed": 25,
+  "failed": 0,
+  "cases": [
+    {
+      "case": "whole-success",
+      "result": "PASS",
+      "cliExit": 0,
+      "stubbedHttpStages": [
+        "CLASSIFY",
+        "COUNT",
+        "GENERATE"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "clear-A",
+      "result": "PASS",
+      "cliExit": 0,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "503-CLASSIFY",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "503-COUNT",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY",
+        "COUNT"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "503-GENERATE",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY",
+        "COUNT",
+        "GENERATE"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "count4097",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY",
+        "COUNT"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "body-timeout-CLASSIFY",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "status-timeout-CLASSIFY",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "oversize-CLASSIFY",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "redaction-CLASSIFY",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "redirect-CLASSIFY",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "duplicate-batch",
+      "result": "PASS",
+      "cliExit": 0,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "duplicate-stage",
+      "result": "PASS",
+      "cliExit": 0,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "shared-deadline",
+      "result": "PASS",
+      "cliExit": 0,
+      "stubbedHttpStages": [
+        "CLASSIFY",
+        "COUNT",
+        "GENERATE"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "bad-request-hash",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": false
+    },
+    {
+      "case": "bad-frozen-head",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": false
+    },
+    {
+      "case": "bad-plan-hash",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": false
+    },
+    {
+      "case": "blank-key",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "bad-old-hold",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": false
+    },
+    {
+      "case": "bad-cap",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": false
+    },
+    {
+      "case": "actual-head-mismatch",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": false
+    },
+    {
+      "case": "tamper-next-request",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "expired-before-open",
+      "result": "PASS",
+      "cliExit": 2,
+      "stubbedHttpStages": [],
+      "wholeActualCli": true,
+      "actualJavaHarness": true
+    },
+    {
+      "case": "concurrent-batch",
+      "result": "PASS",
+      "cliExitCodes": [
+        2,
+        0
+      ],
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "cliEntryPoint": "runner+actualJava",
+      "atomicO_EXCLRaceReachedByBoth": true
+    },
+    {
+      "case": "concurrent-stage",
+      "result": "PASS",
+      "cliExitCodes": [
+        2,
+        0
+      ],
+      "stubbedHttpStages": [
+        "CLASSIFY"
+      ],
+      "wholeActualCli": true,
+      "cliEntryPoint": "callback",
+      "atomicO_EXCLRaceReachedByBoth": true
+    }
+  ],
+  "helperSha256": {
+    "/tmp/issue123-run-fresh-head-two-stage.py": "c33889955a75b0f728ec4805463a3dcb1fdbbb76425daae89ce8db2d0cda89c4",
+    "/tmp/issue123-fresh-head-http-callback.py": "3a48a878696ec16f46e8ebeb81c218a597d07b645b96389c2602cdf294c93605",
+    "/tmp/Issue123FreshHeadTwoStageHarness.java": "667fc67dccdd312abf569a5ce3d51453fa267626d57fad1496929626eab7e764"
+  },
+  "frozenPlanSha256": "3a9fd47f2e5da20ed69f895abcd0c045aceeaefc1e12d98d24121fd6e8028330",
+  "testScripts": [
+    {
+      "path": ".tdd/history/issue123-fresh-head-runner-mock/verify.py",
+      "sha256": "0a635d29ab1536f25cf4e745cc09abd1723537e05d45069a1ae6c5c632d8d302"
+    },
+    {
+      "path": ".tdd/history/issue123-fresh-head-runner-mock/sitecustomize.py",
+      "sha256": "c6b2f6ae70f2615029f20cc3086bce070ff5ef5ac6dee04e883c36d849d22d66"
+    }
+  ],
+  "rawReceipt": ".codex/tdd-evidence/issue123-fresh-head-runner-mock/receipt-final.json",
+  "fixtureBindings": [
+    "runner BASE",
+    "runner FROZEN_PLAN_SHA256",
+    "runner CLASS_DIRECTORY",
+    "callback BASE"
+  ],
+  "bindingDetails": "Original helper files executed as actual CLI. Independent sitecustomize binds only runner BASE/frozen-plan/private class directory and callback BASE at main entry. Positive-path actual ROOT/HEAD4101038/557-source gate/manifest/official URLs and Java source/classpath remain read-only and validated. Direct callback CLI adds atomic stage race; all normal and pipeline branches execute the original runner and actual Java TwoStage/parser.",
+  "ioIsolation": "urllib opener completely stubbed in runner/callback children. socket connect/connect_ex/create_connection/DNS blocked before fixture initialization; initialization failure hard-exits. All keys synthetic or blank. Race tests only delay actual O_EXCL open until two processes reach it; actual OS claim is retained.",
+  "actualPaidCalls": 0,
+  "externalHttpRequests": 0,
+  "originalHelpersUnchanged": true,
+  "originalLiveBaseUnchanged": true,
+  "productSourceTestRulesChanges": 0,
+  "gradleRuns": 0,
+  "resolvedFinding": {
+    "id": "FRESH_CALLBACK_PREOPEN_EXPIRY",
+    "oldCallbackSha256": "3779f6b88abeaa02f1c451df557af65a4948b9456b4e51ec82ebacbaec9cad56",
+    "newCallbackSha256": "3a48a878696ec16f46e8ebeb81c218a597d07b645b96389c2602cdf294c93605",
+    "oldObserved": "Whole runner CLI+actual Java; locally expired callback budget still attempted one stubbed HTTP with .001 timeout, then failed and retained hold. This is a helper defect, not product RED.",
+    "newObserved": "Same expired-before-open case: zero OPEN_STUB, no httpStatus, failure result and UNKNOWN hold retained.",
+    "oldEvidence": ".codex/tdd-evidence/issue123-fresh-head-runner-mock/cases/expired-before-open",
+    "newEvidence": ".codex/tdd-evidence/issue123-fresh-head-runner-mock/cases-final/expired-before-open"
+  },
+  "initialFixtureSetupCorrection": {
+    "initialCases": 19,
+    "passing": 10,
+    "fixtureSetupFailures": 8,
+    "genuineHelperFindings": 1,
+    "reason": "Synthetic A omitted zero cached/cache-write/reasoning details, correctly yielding usageComplete=false. Added exact documented usage detail fields. Initial failures are preserved, not relabelled as valid helper/product RED.",
+    "history": ".tdd/history/issue123-fresh-head-runner-mock/initial-attempt-classification.json"
+  },
+  "scopeLimits": [
+    "No actual provider availability, response latency/quality or bill was measured.",
+    "No product SDK dispatch or production activation is claimed.",
+    "Parent alone may consume the approved single-use live batch after independent review."
+  ],
+  "recordedAt": "2026-10-18T07:19:58.113748Z",
+  "negativeSchedulingSeams": [
+    "Expired-before-open: callback monotonic advances16s immediately before the final local remaining-time guard; no real sleep/paid HTTP.",
+    "Actual-head mismatch: only git rev-parse HEAD result is stubbed to a conflicting revision, requiring pre-I/O rejection.",
+    "Atomic stage/batch race: schedule two processes at the same actual O_EXCL os.open; actual OS operation and flags remain intact."
+  ]
+}

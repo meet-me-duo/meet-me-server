@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-10-17 18:43:59 UTC",
+  "repository": "meet-me-duo/meet-me-server",
+  "pr": 118,
+  "prHead": "bd8818625aa51480e3a06c1fa17d3e223fa1cfbe",
+  "mergeSha": "9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9",
+  "event": "push",
+  "branch": "develop",
+  "runId": 39058071664,
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/meet-me-duo/meet-me-server/actions/runs/39058071664",
+  "jobs": [
+    {
+      "jobId": 117470073617,
+      "name": "Quality Gate",
+      "conclusion": "success",
+      "checkoutSha": "9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9",
+      "checkoutLogEvidence": [
+        "2026-10-17T18:26:13.2854085Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-10-17T18:26:13.2885659Z 9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9"
+      ]
+    },
+    {
+      "jobId": 117470073856,
+      "name": "ARM64 Built Image",
+      "conclusion": "success",
+      "checkoutSha": "9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9",
+      "checkoutLogEvidence": [
+        "2026-10-17T18:26:13.8423877Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-10-17T18:26:13.8446401Z 9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9"
+      ]
+    }
+  ],
+  "distinction": "Actual develop merge push CI. Separate from PR HEAD CI39054407191.",
+  "productionAccess": false
+}

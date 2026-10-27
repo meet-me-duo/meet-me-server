@@ -1,0 +1,107 @@
+{
+  "workItem": "issue-108-core",
+  "sourceRevision": "3232128bb1d0886c987e378a787633bd2aee6341",
+  "boundary": "Three faults in one grouped run, one independent test class per distinct boundary: password storage, replacement privacy, distributed rate-limit enforcement. No HTTP/DB/concurrency integration claim.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordHasher.kt",
+      "sha256": "1e49528cd93df1a6fb2a63a410318ae2d85cf23ee9991da083a2f5d990539925"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/adapter/output/security/GuestReaccessAttemptGuard.kt",
+      "sha256": "958f4280f4db374f2096411aae5d5266a6ecbb833898bcaa023ed6c7d0ddec06"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestPasswordPort.kt",
+      "sha256": "181a4c133f14c736eaaa7bdfea2a3536071701618ac5b7e55a263886019f89fb"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/port/output/GuestReaccessAttemptPort.kt",
+      "sha256": "9470d284501603987fd3cfc115e4d34e46a23817ae34d8868ee9a0832107610f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicy.kt",
+      "sha256": "4148d22281817d7027270fde86e187f0e659fd417afcd30de7b9b4be1d12f027"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/participant/domain/GuestReaccess.kt",
+      "sha256": "891cf9dc3ddcbb28127bce62fcce2481e4738a331a0672727fae9873629ab9e7"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordEncodingBoundaryTest.kt",
+      "sha256": "403599e1dafc64813dec502d0aa262f574fbe27b91376ca47bd8f4c0bf5b286a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestPasswordHasherTest.kt",
+      "sha256": "f1adc8f3949994e30f8b0fd5e7023e2cd7d22af5866a053a63b05449be704122"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/adapter/output/security/GuestReaccessAttemptGuardTest.kt",
+      "sha256": "829221965ac36cb76f912324fa7c6c7f6587786b2cf0b20b7c2fa8c71f3882c0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/GuestReaccessAccountBoundaryTest.kt",
+      "sha256": "0cdee3fe3687bc7a84775d44b7402bc01ab556fff9dcd248967a87b1c5220998"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/participant/application/service/GuestReaccessPolicyTest.kt",
+      "sha256": "5df51408aac2f6912249b1e504116301c4edeec7d2255dd1af57eda8b0aa328d"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Plaintext password returned for storage instead of a salted PBKDF2 hash",
+      "command": [
+        "bash",
+        "gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GuestPasswordHasherTest",
+        "--tests",
+        "*GuestReaccessPolicyTest",
+        "--tests",
+        "*GuestReaccessAttemptGuardTest"
+      ],
+      "detectedBy": "GuestPasswordHasherTest: P07 공백 하나도 길이 1인 암호로 보존한다(); P07 Unicode 코드 포인트 128개까지 허용하고 긴 입력은 조용히 절단하지 않는다(); P01 같은 암호도 무작위 salt로 서로 다른 해시를 만들고 각각 검증한다(); P03 대소문자와 정규화 형태가 다른 Unicode는 다른 암호다(); P01 hash는 확정한 PBKDF2 SHA256 cost와 salt 및 key 길이를 기록한다(); P03 암호 앞뒤 공백을 보존하고 trim한 입력을 거부한다(); P02 한 글자 다른 암호와 빈 암호는 증명으로 인정하지 않는다(); P07 선택 암호 없음은 null로 전달하며 빈 문자열 hash는 거부한다()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Unprotected cross-device replacement promoted to original-text read access",
+      "command": [
+        "bash",
+        "gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GuestPasswordHasherTest",
+        "--tests",
+        "*GuestReaccessPolicyTest",
+        "--tests",
+        "*GuestReaccessAttemptGuardTest"
+      ],
+      "detectedBy": "GuestReaccessPolicyTest: W01 암호 없는 기록에 임의 암호를 제출해도 읽기 권한으로 승격하지 않는다(); W01 암호 없는 기록의 다른 기기는 기존 원문 없는 대체 입력만 허용한다()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Denied distributed rate-limit decisions ignored",
+      "command": [
+        "bash",
+        "gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*GuestPasswordHasherTest",
+        "--tests",
+        "*GuestReaccessPolicyTest",
+        "--tests",
+        "*GuestReaccessAttemptGuardTest"
+      ],
+      "detectedBy": "GuestReaccessAttemptGuardTest: R01 IP 한도 초과는 공통 제한 코드와 Retry After로 거부한다(); R01 대상 한도 초과도 IP와 같은 제한 코드로 거부한다()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T14:45:45.480094Z"
+}

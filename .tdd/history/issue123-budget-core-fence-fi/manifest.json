@@ -1,0 +1,430 @@
+{
+  "baseline": {
+    "label": "baseline94",
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*DurableAiBudgetDefaultAuthorityTest",
+      "--tests",
+      "*DurableAiBudgetInitialPostgresTest",
+      "--tests",
+      "*PostgresAiCallBudgetContractTest",
+      "--tests",
+      "*AiCallDispatchAndSettlementPostgresTest",
+      "--tests",
+      "*AiCallBudgetBootstrapPostgresTest",
+      "--tests",
+      "*Issue123BudgetAccountingDefensePostgresTest",
+      "--tests",
+      "*Issue123BudgetCoveragePostgresTest",
+      "--tests",
+      "*Issue123BudgetForeignScopePostgresTest",
+      "--tests",
+      "*Issue123DefaultBudgetAuthorityCompositionTest",
+      "--tests",
+      "*Issue123ExecutionFencePostgresTest"
+    ],
+    "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+    "exitCode": 0,
+    "totals": {
+      "tests": 94,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "logSha256": "d58eeb70c6c6efa8a8ca041393bae0d2ad45f16b867b96ff354ec02793c729e7",
+    "xmlSha256": {
+      "TEST-com.meetme.server.shared.adapter.output.budget.DurableAiBudgetInitialPostgresTest.xml": "e584871844bdafee176e0d71dada21c3b172443edcdde3a983b862307100c80b",
+      "TEST-com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.xml": "629af4d3d5a9081aa186e7aa72ac8987c1e7c2886b4dcc9f3e3133704db38f4b",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123BudgetForeignScopePostgresTest.xml": "c3eae363f08271eafd32a8e946fd0955d096f98993385177ee16dc7827d22d46",
+      "TEST-com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.xml": "71fbbefdfb8ce8ce97d563a4c1845e2bf3a0727f1b0fa89d70f99e499f2abff6",
+      "TEST-com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.xml": "2e0e48a1cac769823acb20e7f75a3ad7411e8d955170e3b09cb9b0fadc1642b1",
+      "TEST-com.meetme.server.shared.adapter.output.persistence.Issue123ExecutionFencePostgresTest.xml": "3781f8769da8a19f0be5e19248d01109302b44de1362b97203d3662954746264",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123DefaultBudgetAuthorityCompositionTest.xml": "246ae0674e224e611004566352589c2056c8654a91ae1e87ced5ca5b827dfda9",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123BudgetAccountingDefensePostgresTest.xml": "7fe103eddade307959fee8b8b51f109fc90dfb115aebbac2fe8cf0dedb85e509",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123BudgetCoveragePostgresTest.xml": "711e01cf9fc3bf9b2e61037f68725261def8e97811720d0cc3a7003c34a1d4c9",
+      "TEST-com.meetme.server.shared.adapter.output.budget.AiCallBudgetBootstrapPostgresTest.xml": "14ff9b01bf1e4cd2e6d7fc0536d6744a9431014ee7c4423f8fb001b62dcfa7da"
+    }
+  },
+  "mutations": [
+    {
+      "label": "cap-equality-admitted",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*PostgresAiCallBudgetContractTest.DB03 strict exposure*"
+      ],
+      "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+      "exitCode": 1,
+      "totals": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest#DB03 strict exposure below cap admits 99 and rejects equality 100()",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: actual value is not null ==> expected: <null> but was: <AiBudgetReservation(execution=AiBudgetExecution(roomId=02e3c7d7-7b27-4d92-b4e9-d5175c53a46b, kind=PRECHECK, executionId=80ae4664-fa69-45a4-9cae-3a7938e35c46, generation=1, ownerToken=39a39b42-8e14-48cc-b1dd-84ca43a40716, version=1, sourceFingerprint=41cf6794ba4200b839c53531555f0f3998df4cbb01a4d5cb0b94e3ca5e23947d, contextFingerprint=ea7792a26f405e2ae9c6f49ca93bbe6076ceac0a1fc53d83426c7d7f2d9377e4), calls=[AiReservedPhysicalCall(reservationId=960c30c4-a346-49b5-9769-b8e0d3a31f92, call=AiPhysicalCallSpec(operation=PRECHECK_CLASSIFICATION, ordinal=1, wholePayloadFingerprint=244e923e87fcce8c6507c7ee3b506507c1775a14aaa3ac1c99c59a5197c598fd, profileFingerprint=d11e81bc8942960c211bce52582136c6852e1131625828cefe5c9b5412062d07, attemptId=null))])>"
+        }
+      ],
+      "logSha256": "aa928ba53f82dfbeafedf4780d6e94d49264862a641891ac912af310d4a35997",
+      "xmlSha256": {
+        "TEST-com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.xml": "d04a1dc206ecb757ce5899e1573a1c8ba13b7405724c6e0dc5b351775fce6499"
+      },
+      "fault": "Allow exposure equal to room cap, violating strict below-cap reservation.",
+      "mutantSha256": {
+        "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt": "b5543b64f04a01537b7ea4fe9a4791b05f01c977603bd6ac3aac40ce98e2c949"
+      },
+      "restoredSha256": {
+        "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt": "9c2fb6df1d10d010e2644f11ba1476c30f599174dc1f534519d3099448fcc246"
+      },
+      "restoredResult": {
+        "label": "cap-equality-admitted-restored",
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PostgresAiCallBudgetContractTest.DB03 strict exposure*"
+        ],
+        "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+        "exitCode": 0,
+        "totals": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failures": [],
+        "logSha256": "728404526038f041a30a9244254eee8f7009e8535fdcb9375430602487ad6345",
+        "xmlSha256": {
+          "TEST-com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.xml": "a28efa11040367d9f547c18cc48765b126917a70b41065a15fa232f26dbabed0"
+        }
+      }
+    },
+    {
+      "label": "physical-claim-renewed",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*PostgresAiCallBudgetContractTest.DB05 a consumed dispatch*"
+      ],
+      "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+      "exitCode": 1,
+      "totals": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest#DB05 a consumed dispatch claim is not renewed by reservation replay or a new coordinator()",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: expected: <1> but was: <2>"
+        }
+      ],
+      "logSha256": "db0cd577dad0d226f6c7b9618bea7a506e4faa17bb7fbd07ea0bccccd66c1248",
+      "xmlSha256": {
+        "TEST-com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.xml": "f82b1a0cf8eb89d95d1e6502c24a681ffb131d2bb497339dcf22765047d7f1a5"
+      },
+      "fault": "Remove both application state guard and persistence CAS so a consumed physical dispatch is renewed.",
+      "mutantSha256": {
+        "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt": "14e9f60ca295b4df825a36731cf22ef9c1b13640834783392a63957ec2b323e5",
+        "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt": "05f83623f073752a9885dd3894937eb2f20eea67432916f23104b6f3ab273d2b"
+      },
+      "restoredSha256": {
+        "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt": "9c2fb6df1d10d010e2644f11ba1476c30f599174dc1f534519d3099448fcc246",
+        "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt": "2584914db2f47bf72f5de91f7dc9272b9e146a4cf7ff64384dbeefc6b727ec63"
+      },
+      "restoredResult": {
+        "label": "physical-claim-renewed-restored",
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*PostgresAiCallBudgetContractTest.DB05 a consumed dispatch*"
+        ],
+        "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+        "exitCode": 0,
+        "totals": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failures": [],
+        "logSha256": "b15c30e96c5f81c0743e83843938c19d30c6bc73f84eeae1db4ef013557081d7",
+        "xmlSha256": {
+          "TEST-com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.xml": "3e8777a3acbc0fd0191855e667decb40b6b409d65a0dd8369a3289c92e18ff3f"
+        }
+      }
+    },
+    {
+      "label": "timeout-unknown-refunded",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*AiCallDispatchAndSettlementPostgresTest.DB11 timeout observation*"
+      ],
+      "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+      "exitCode": 1,
+      "totals": {
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest#DB11 timeout observation retains full hold and cannot mint another physical dispatch()",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: expected: <30> but was: <0>"
+        }
+      ],
+      "logSha256": "c96bb1021115d9835e13a1d79f188dfa0ef95a67ec26cfbf7ce60131293e909b",
+      "xmlSha256": {
+        "TEST-com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.xml": "b109739c71b31b368d810ee27ba96cea66cfdec8aa7a6ada6c0110d93a3bf1a3"
+      },
+      "fault": "Refund room and call hold on timeout/UNKNOWN observation despite unproven billing.",
+      "mutantSha256": {
+        "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt": "3c854480886786468727ef1cb827c33df918d24a4a5670ca580220f0c8ba8ef6"
+      },
+      "restoredSha256": {
+        "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt": "9c2fb6df1d10d010e2644f11ba1476c30f599174dc1f534519d3099448fcc246"
+      },
+      "restoredResult": {
+        "label": "timeout-unknown-refunded-restored",
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*AiCallDispatchAndSettlementPostgresTest.DB11 timeout observation*"
+        ],
+        "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+        "exitCode": 0,
+        "totals": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failures": [],
+        "logSha256": "da0243231bb3483d6413c54439c1a303d2e25cefff5e8b2baf4e8047fcaa3286",
+        "xmlSha256": {
+          "TEST-com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.xml": "92055e5d9af369aa1862d28e9f0053544d77885e410290595fa0496dffeba0a5"
+        }
+      }
+    },
+    {
+      "label": "actual-owner-binding-bypassed",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "test",
+        "--tests",
+        "*Issue123ExecutionFencePostgresTest.DB10 stale personal identity*"
+      ],
+      "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+      "exitCode": 1,
+      "totals": {
+        "tests": 13,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "failures": [
+        {
+          "test": "com.meetme.server.shared.adapter.output.persistence.Issue123ExecutionFencePostgresTest#[11] fault = \"ACCOUNT_CLAIM\"",
+          "type": "org.opentest4j.AssertionFailedError",
+          "message": "org.opentest4j.AssertionFailedError: Existing ownership and current revision/claim checks must remain authoritative: ACCOUNT_CLAIM ==> expected: <null> but was: <AiCurrentBudgetExecution(epochId=e9821f95-f359-4085-985c-99fe9ac857eb, deadlineAt=2026-10-18T00:00:15Z)>"
+        }
+      ],
+      "logSha256": "1db24ea852721314b366e500079af986e639a584bd1ae195a65fa50a08d49d68",
+      "xmlSha256": {
+        "TEST-com.meetme.server.shared.adapter.output.persistence.Issue123ExecutionFencePostgresTest.xml": "8ec0f5917b92225bb440094b5d7a43f3ecf1ae1874ff3742c725fc25743ab035"
+      },
+      "fault": "Bypass existing real ownership binding validity, allowing an account-claimed guest candidate to retain dispatch authority.",
+      "mutantSha256": {
+        "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt": "24df3712b68e5e8b8177cade2c9d422d54d841ed998ec7ac5ff542002986cef8"
+      },
+      "restoredSha256": {
+        "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt": "9a816338c3187805fe5bab6aefa053a0af5add45a1a04954e9e01e8538eeadd8"
+      },
+      "restoredResult": {
+        "label": "actual-owner-binding-bypassed-restored",
+        "command": [
+          "./gradlew",
+          "--offline",
+          "--no-daemon",
+          "--max-workers=2",
+          "test",
+          "--tests",
+          "*Issue123ExecutionFencePostgresTest.DB10 stale personal identity*"
+        ],
+        "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+        "exitCode": 0,
+        "totals": {
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failures": [],
+        "logSha256": "8c47b74767704674866a97f4f2ef2f2dc3dbf94313bd02b4896bcb295ff5ae41",
+        "xmlSha256": {
+          "TEST-com.meetme.server.shared.adapter.output.persistence.Issue123ExecutionFencePostgresTest.xml": "6f7ea2960faf52d1df7c7c83b2608d7a1a08ad0a4041348db406d3b8bf74fe40"
+        }
+      }
+    }
+  ],
+  "restored": {
+    "label": "restored94",
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--max-workers=2",
+      "test",
+      "--tests",
+      "*DurableAiBudgetDefaultAuthorityTest",
+      "--tests",
+      "*DurableAiBudgetInitialPostgresTest",
+      "--tests",
+      "*PostgresAiCallBudgetContractTest",
+      "--tests",
+      "*AiCallDispatchAndSettlementPostgresTest",
+      "--tests",
+      "*AiCallBudgetBootstrapPostgresTest",
+      "--tests",
+      "*Issue123BudgetAccountingDefensePostgresTest",
+      "--tests",
+      "*Issue123BudgetCoveragePostgresTest",
+      "--tests",
+      "*Issue123BudgetForeignScopePostgresTest",
+      "--tests",
+      "*Issue123DefaultBudgetAuthorityCompositionTest",
+      "--tests",
+      "*Issue123ExecutionFencePostgresTest"
+    ],
+    "workingDirectory": "/tmp/meetme-issue123-budget-fi-36ghh478",
+    "exitCode": 0,
+    "totals": {
+      "tests": 94,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failures": [],
+    "logSha256": "f0163d41dc5317e915c270996eca7181c9b68156a1c1ffcca0d86d497be1c8d5",
+    "xmlSha256": {
+      "TEST-com.meetme.server.shared.adapter.output.budget.DurableAiBudgetInitialPostgresTest.xml": "3018155ed78d541c59c1f86b53e4a95538a34a0843c5a82bf64cbf17ca42bb27",
+      "TEST-com.meetme.server.shared.adapter.output.budget.AiCallDispatchAndSettlementPostgresTest.xml": "0c43f5e42a00836ba0ba9698d4b147f05516572f3e3aa922f3eaea7aee820658",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123BudgetForeignScopePostgresTest.xml": "14ccab139ecfd3151ff52e10b43632d09d52b1a8e0c5efa894b4868b15c23b71",
+      "TEST-com.meetme.server.shared.adapter.output.budget.DurableAiBudgetDefaultAuthorityTest.xml": "1a177ae24300fd31b5d31a05577cbe7d040742bd123072b863363ee26a36486d",
+      "TEST-com.meetme.server.shared.adapter.output.budget.PostgresAiCallBudgetContractTest.xml": "ecce02be02257d295dc8c40c73f326137e2e05c3154fbb79f1367689b477900f",
+      "TEST-com.meetme.server.shared.adapter.output.persistence.Issue123ExecutionFencePostgresTest.xml": "777344b0e7381121fa69e2e492d51677e6a021939e489cf9f8bbd430df136f1a",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123DefaultBudgetAuthorityCompositionTest.xml": "f7df47b3a13201cc581e897d909156b8ec9abe212ed710afcb89794f70592040",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123BudgetAccountingDefensePostgresTest.xml": "1872af68d4e7272033a8fc6a3b098fc0e0c4a41f435feb47b26e180ca59d9b52",
+      "TEST-com.meetme.server.shared.adapter.output.budget.Issue123BudgetCoveragePostgresTest.xml": "53a0640a7080e617592e0596fc844f17229d530d947f9117265ce55ec5881f68",
+      "TEST-com.meetme.server.shared.adapter.output.budget.AiCallBudgetBootstrapPostgresTest.xml": "d01772c79996e5e01e5ae5efe61ea0ce558a67d711b9ca98d541bd7841f4c96f"
+    }
+  },
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt",
+      "sha256": "9a816338c3187805fe5bab6aefa053a0af5add45a1a04954e9e01e8538eeadd8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt",
+      "sha256": "2584914db2f47bf72f5de91f7dc9272b9e146a4cf7ff64384dbeefc6b727ec63"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt",
+      "sha256": "9c2fb6df1d10d010e2644f11ba1476c30f599174dc1f534519d3099448fcc246"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/AiCallBudgetBootstrapPostgresTest.kt",
+      "sha256": "3dc923098f3f7e17543d39b60465f1caeb19fd230504570d09ee2b036fe60a39"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/AiCallDispatchAndSettlementPostgresTest.kt",
+      "sha256": "6eb1f9afb0f21a477dbba310227d72d96515d580b1a124b09bbb4f3425548215"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetDefaultAuthorityTest.kt",
+      "sha256": "b4ab7b3a805bc6ec54dae45cc3d370f7648a0abb2589bc8fd7c84d8300b4acc0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableAiBudgetInitialPostgresTest.kt",
+      "sha256": "dda136d81ae7e5aada5086a5fffeb2ea70810ee433e9abde4c92de4c386eecaf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/DurableBudgetPostgresFixture.kt",
+      "sha256": "321ea5f7ab9ae9a3f5bac29ce7aafe612a7d47144bf8d5cd02d02ba13e49245d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetAccountingDefensePostgresTest.kt",
+      "sha256": "d20c75055d23af5f2d39f824a859fe6be19b45029d0241fbce6b8d92fe44c1a0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetCoveragePostgresTest.kt",
+      "sha256": "48f5cc01843568a7abb41fda97fe32aa3832a7a6f9e78e3516e930e947da8a29"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123BudgetForeignScopePostgresTest.kt",
+      "sha256": "4af665c7addc2f69a8a901d95ba18bd5f1f01c3cf6b2a8323859ddd3e64352f3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue123DefaultBudgetAuthorityCompositionTest.kt",
+      "sha256": "17575e4e98a36e12c53114b2f02c618db41cde1e65e2a5ab47b27eae60f7afa5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/PostgresAiCallBudgetContractTest.kt",
+      "sha256": "2bd8ef612d7e08ca92913535fa5d368260ff119364cfd5905ff5a05e4cf3df39"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue123ExecutionFencePostgresTest.kt",
+      "sha256": "c67870981321407aec23f3606bf59af17ba8330df92e9d5b37d5f9dacd921600"
+    }
+  ],
+  "copiedMainInventoryCount": 249,
+  "copiedMainInventorySha256": "1059ca7ad0cc21280e34dbabcad32b1682fbe8af00006f973c163d79e76e6b04",
+  "canonicalFullSourceTestInventoryCount": 475,
+  "canonicalFullSourceTestInventorySha256": "0b2dc92d668acbb5a718169a3897e5b8b788a0193f0c23729e372d1dcfa7e1f5",
+  "canonicalSourcesNeverEdited": true,
+  "scratchSourcesRestoredExactly": true,
+  "actualExternalModelCalls": 0,
+  "paidCalls": 0
+}

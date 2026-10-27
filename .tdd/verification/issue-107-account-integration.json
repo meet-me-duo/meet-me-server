@@ -1,0 +1,108 @@
+{
+  "workItem": "issue-107-account-integration",
+  "status": "LOCAL_SERVER_VERIFIED",
+  "baseRevision": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+  "initialFeatureRevision": "d459968b0e89e25b48eb1987acafa62e19d7e4b5",
+  "publishedRepairRevision": "dc145c3e0d9f4a12fe8cc367cf467377376bcc36",
+  "fullGate": {
+    "branch": "feature/issue-107-account-integration",
+    "base": "c06b60a9833ae77e5fce9cfef5719ab2f37470ff",
+    "featureCommit": "d459968b0e89e25b48eb1987acafa62e19d7e4b5",
+    "command": [
+      "/tmp/meetme-run-gradle",
+      "ktlintCheck",
+      "assemble",
+      "test",
+      "--no-daemon",
+      "--max-workers=2"
+    ],
+    "exitCode": 0,
+    "seconds": 666.094,
+    "results": {
+      "tests": 844,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4
+    },
+    "failedTests": []
+  },
+  "unchangedGuard": {
+    "exitCode": 0,
+    "seconds": 21.098,
+    "log": "/tmp/issue107-integration-final-guard.log",
+    "unchangedGuard": true,
+    "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+    "scope": "separate local account integration; cached successful 844 full tests reused; this event only runs the guard and does not create a commit"
+  },
+  "productionJarSmoke": {
+    "scope": "production boot JAR; local synthetic PostgreSQL and RSA only; no test classpath; no external OAuth or AI calls",
+    "checks": [
+      "production application health 200, no test-only owner bean",
+      "real signed JWT owner GET 200, other account 403, invalid Bearer 401",
+      "answer creates revision2 and provenance, source preserved, exact retry replay; no analysis work added",
+      "explicit HOST analysis queues exactly one new batch/run/outbox despite retry; AI invocations and attempts zero"
+    ],
+    "jarSha256": "605f7a003b31a9deba8553e73d483914df9a7459535703efcafce37ab5867a6e",
+    "status": "PASS",
+    "before": {
+      "submission_batches": 1,
+      "coordination_runs": 1,
+      "outbox_events": 1,
+      "coordination_attempts": 0,
+      "analysis_invocations": 0
+    },
+    "after": {
+      "submission_batches": 2,
+      "coordination_runs": 2,
+      "outbox_events": 2,
+      "coordination_attempts": 0,
+      "analysis_invocations": 0
+    },
+    "latestMigration": "13",
+    "migrationCount": 12,
+    "productionClassVerification": {
+      "realOwnerAdapterPresent": true,
+      "syntheticOwnerAbsent": true,
+      "testClassesAbsent": true
+    }
+  },
+  "faultInjection": {
+    "fault": "POST clarification answer downgraded to REPLACE_OWN while GET remains READ_OWN",
+    "sourceSha256": "efe458893c9c9f27c94adcdee28e64ad645f263a8e1e2bf475756562960f0b5e",
+    "testSha256": "9419a6607938502f76e17ef6b76fb2cd737957e8b8a192ae60a1d47564b7f762",
+    "command": [
+      "/tmp/meetme-run-gradle",
+      "test",
+      "--tests",
+      "*ClarificationAccountOwnershipPostgresTest.verified guest can read but replace only proof cannot read source or submit clarification answer*",
+      "--no-daemon",
+      "--max-workers=2"
+    ],
+    "exitCode": 1,
+    "result": {
+      "tests": "1",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0"
+    },
+    "failures": [
+      {
+        "test": "verified guest can read but replace only proof cannot read source or submit clarification answer()",
+        "message": "java.lang.AssertionError: Status expected:<403> but was:<200>"
+      }
+    ],
+    "restoredExactly": true,
+    "testUnchanged": true,
+    "failedChoice": "CANCEL",
+    "failureLine": 237
+  },
+  "independentReview": "docs/verification/issue-107-account-integration-review.md",
+  "fixtureMigration": "docs/verification/issue-107-integration-fixture-migration.json",
+  "nativeOpenApiSha256": "ccb1da582cbdc8bd5fc2d7f3ee400f2a1a09993c06a6a1ebb0505d5315cd24be",
+  "limits": [
+    "synthetic provider output seeded for completed batch; no actual model semantics",
+    "REPLACE_ONLY proof injected at proof port; actual issuer belongs to shared ownership work",
+    "no live Google/Kakao OAuth login or production/paid AI/deployment",
+    "local integration branch uncommitted/unpublished; independent Draft remains separate"
+  ]
+}

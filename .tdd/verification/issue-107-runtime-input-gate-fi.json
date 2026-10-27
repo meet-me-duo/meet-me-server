@@ -1,0 +1,158 @@
+{
+  "workItem": "issue-107-runtime-input-gate-fi",
+  "sourceRevision": "21a82f6b7a730172e5e88b4f639d82120a16e5a0",
+  "boundary": "Default-OFF fixed Gemini runtime profile, input preflight, bounded output, shared deadline and returned-usage uncertainty; synthetic transport only.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/GeminiPreSubmissionCheckProvider.kt",
+      "sha256": "1933450433cd538d5cbd07e66c0e5a1e1df7dd3c482262b3897b8423b6954fcb"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "72cfaa26b4a671fd8b87aa654d16d899a2b63c13e44c2baeae747ec9e14da2a1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRuntimeProperties.kt",
+      "sha256": "fa69926c24d920eb5353e867490d9052206736838c8a93236509f4552c55f81c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt",
+      "sha256": "e6e11c4362be689429150fb6c57e6dc779e25874c747a01d932af66b8a3a6981"
+    },
+    {
+      "path": "src/main/resources/application.yml",
+      "sha256": "b6f249c4263fb9aed7c44c1a96ce2a20186eae155c6cd57a66df1513f9deef19"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/GeminiConfiguration.kt",
+      "sha256": "d68ea93b2ca023fdd39db618728c4272b1e1f282abd0694d20dec36a956efd39"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRetryAfterContractTest.kt",
+      "sha256": "35fa215b897b5a0105b45e3d31a9a66ee20e1fd8d230fbc80a679f54b9406728"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
+      "sha256": "0a31ce73a1c74aca991d36f67e59b96b1d557ac59da0f120136770a88a9e735c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderUnicodeContractTest.kt",
+      "sha256": "97996e5012196f6c74a6d1028600923b4bb4755a7c316a62bdaca60801abfc24"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckRuntimeBindingContractTest.kt",
+      "sha256": "186b5e1f789688dc0dfdc7a692a4fe543c1c4892a2580d2f6aa1694d32e4583a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckRuntimeInputGateTransportTest.kt",
+      "sha256": "95cb3ac266134366b480423069043644840ce54eaf9d08f8fcf43edb8d6d324b"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Ignore disabled activation and accept configured API key",
+      "command": [
+        "bash",
+        "gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckRuntimeBindingContractTest.RR01*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest#[1] enabled = \"ABSENT\"; com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest#[2] enabled = \"false\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow preflight count4097 to reach generation",
+      "command": [
+        "bash",
+        "gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckRuntimeInputGateTransportTest.RI02*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest#RI02 count above 4096 rejects before generation and is never substituted for usage()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Send HIGH instead of pinned LOW thinking level",
+      "command": [
+        "bash",
+        "gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckRuntimeBindingContractTest.RR02*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest#RR02 actual environment opt in selects only the documented fixed production profile()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Send4096 instead of documented total output cap2048",
+      "command": [
+        "bash",
+        "gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckRuntimeBindingContractTest.RR02*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest#RR02 actual environment opt in selects only the documented fixed production profile()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Reset deadline after count to grant a fresh generation budget",
+      "command": [
+        "bash",
+        "gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckRuntimeInputGateTransportTest.RI13*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest#RI13 count and generation share one deadline rather than receiving fresh stage timeouts()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Report no unknown-usage observation for missing generation usage",
+      "command": [
+        "bash",
+        "gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-I",
+        "/tmp/meetme-provider-only.init.gradle",
+        "test",
+        "--tests",
+        "*PrecheckRuntimeInputGateTransportTest.RI07*"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest#RI07 count cannot fill missing returned provider usage()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-17T20:52:18Z"
+}

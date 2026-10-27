@@ -1,0 +1,77 @@
+{
+  "recordedAt": "2026-10-17T19:13:52.845574+00:00",
+  "command": "DOCKER_CONFIG=<private temporary empty Docker CLI config> bash deploy/scripts/verify-nginx-runtime.sh",
+  "exitCode": 0,
+  "sourceHashesBefore": {
+    "deploy/scripts/verify-nginx-runtime.sh": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368",
+    "deploy/nginx/nginx.conf": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44"
+  },
+  "sourceHashesAfter": {
+    "deploy/scripts/verify-nginx-runtime.sh": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368",
+    "deploy/nginx/nginx.conf": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44"
+  },
+  "sourceContentUnchanged": true,
+  "containerProxyPresence": [
+    "http_proxy=unset",
+    "https_proxy=unset",
+    "HTTP_PROXY=unset",
+    "HTTPS_PROXY=unset"
+  ],
+  "localEnvironmentOnly": "Private temporary Docker CLI config prevents environment-wide automatic HTTP(S)_PROXY injection into the two synthetic loopback test containers; original runtime flags, image, source, capabilities and checks are unchanged. Global Docker config and host proxy env remain unchanged.",
+  "operationalEndpoints": 0,
+  "applicationSecretReads": 0,
+  "awsCalls": 0,
+  "workItem": "issue107-integrated-nginx-local-environment-diagnosis",
+  "status": "UNMODIFIED_RUNTIME_SCRIPT_GREEN_AFTER_ISOLATED_CLIENT_ENV_NORMALIZATION",
+  "failureClassification": [
+    {
+      "stage": "initial materialized file",
+      "classification": "LOCAL_MATERIALIZATION_PERMISSIONS",
+      "evidence": ".codex/tdd-evidence/issue107-integrated-nginx-runtime.log",
+      "observation": "Public nginx.conf materialized mode0600 was unreadable in the cap-drop container; parent restored public config mode0644 without changing content."
+    },
+    {
+      "stage": "readable config under default Docker client environment",
+      "classification": "LOCAL_AUTOMATIC_CONTAINER_PROXY_INJECTION",
+      "evidence": ".codex/tdd-evidence/issue107-integrated-nginx-runtime-readable-green.log",
+      "observation": "Nginx listened on8080/8443 without configuration errors, but default BusyBox wget health probes failed."
+    }
+  ],
+  "controlledObservations": [
+    {
+      "evidence": ".codex/tdd-evidence/issue107-nginx-local-probe.log",
+      "observation": "Under the same runtime flags and default client environment, all HTTP(S)_PROXY/no_proxy variable names were configured; wget -Y off to127.0.0.1:8080/healthz exited0 while the original default health loop failed."
+    },
+    {
+      "evidence": ".codex/tdd-evidence/issue107-nginx-local-noproxy-probe.log",
+      "observation": "A literal127.0.0.1 no_proxy entry was already present. Explicit lowercase/uppercase no_proxy replacement still did not make default BusyBox wget succeed, so merely appending a loopback entry is not the fix for this environment."
+    },
+    {
+      "evidence": ".codex/tdd-evidence/issue107-integrated-nginx-runtime-isolated-cli-green.log",
+      "observation": "Unmodified original script exited0 using a private temporary empty Docker CLI config, avoiding automatic container proxy injection. Four HTTP(S)_PROXY names were verified unset without printing values."
+    }
+  ],
+  "inference": "The second failure depends on local automatic proxy injection and this image wget behavior, not on the source Nginx health handler or the runtime security flags. This is a local environment classification; it does not prove a general BusyBox no_proxy support claim.",
+  "normalizationScope": "Only DOCKER_CONFIG for this isolated synthetic-container command. No source, global Docker config, host proxy environment, image, firewall, capability, TLS policy or application configuration changes. Temporary config and all verifier-owned containers/network were cleaned up.",
+  "securityFlagsPreserved": [
+    "--read-only",
+    "--security-opt no-new-privileges:true",
+    "--cap-drop ALL",
+    "--cap-add CHOWN",
+    "--cap-add SETGID",
+    "--cap-add SETUID",
+    "read-only nginx/tls mounts",
+    "original tmpfs mounts"
+  ],
+  "originalScriptSha256": "bdb1301b1eaf173eacf86fa6cd2527495d6b8a4df58654dffa87a9ae550fd368",
+  "nginxConfigSha256": "111ed28211d6a559e73a426af2e8d9d4da133173b03aa3b13371c177ba7f4e44",
+  "runtimeImageId": "sha256:812d47f806db497c53f9b47e76bdab38bcf5d724c69d3986df5ee4336c210559",
+  "runtimeImageReference": "nginx:1.29-alpine (already cached; no new selection)",
+  "productionEdits": 0,
+  "testScriptEdits": 0,
+  "globalEnvironmentChanges": 0,
+  "processOrEnvironmentSecretValuesPrinted": 0,
+  "operationalEndpointCalls": 0,
+  "remoteWrites": 0,
+  "limits": "Local verifier scope only; no live deployment or operational TLS/backend scenario validation. Default injected-proxy environment still reproduces failure; use the documented isolated client config to rerun this local CI-equivalent verifier."
+}

@@ -1,0 +1,126 @@
+{
+  "recordedAt": "2026-10-18T06:22:57.795547+00:00",
+  "mode": "RECORDED_RESPONSES_OFFLINE_REPLAY",
+  "actualHttpCalls": 0,
+  "paidCalls": 0,
+  "sourceSha256": "7d1131259a0813c6622fe290712a4c2dfa32514c9f2e2adcf266eedfe79e4880",
+  "recordedBResponseSha256": "983e23db4fab03c1f5c41e5ca8775e8cf798b122ba5dd9507114c9a7a7cc080a",
+  "originalARequestSha256": "fbc526b0d3fe7e014cd3fd379dd8a9d969ec8218c659ff2e60df0ba8e1d81a52",
+  "recordedAResponseSha256": "7f6d7d7267a016e5f4b08426421936725122f674e6158e030abde4b1bd01609c",
+  "recordedCountResponseSha256": "21100ab895229cd890a807d9a7b16876e8466beaf335f7c015684099dcc8b306",
+  "parser": {
+    "accepted": true,
+    "verdict": "NEEDS_CHOICE",
+    "prompt": "8시부터 9시까지가 오전 시간대인지 오후(저녁) 시간대인지 알려주세요.",
+    "sourceExcerpt": "8시부터 9시까지",
+    "choices": [
+      {
+        "id": "A",
+        "label": "오전 8시부터 9시까지",
+        "proposedText": "10월 24일 토요일 오전 8시부터 9시까지 가능해요."
+      },
+      {
+        "id": "B",
+        "label": "오후 8시부터 9시까지",
+        "proposedText": "10월 24일 토요일 오후 8시부터 9시까지 가능해요."
+      }
+    ],
+    "inputTokens": 530,
+    "outputTokens": 554,
+    "responseBytes": 2766,
+    "provider": "GEMINI",
+    "model": "gemini-3.8-flash",
+    "returnedUsage": {
+      "inputTokens": 530,
+      "candidateTokens": 188,
+      "thoughtTokens": 366,
+      "invalid": false
+    }
+  },
+  "twoStage": {
+    "accepted": true,
+    "mode": "RECORDED_RESPONSES_OFFLINE_REPLAY",
+    "normalizedA": {
+      "accepted": true,
+      "assessment": "INDETERMINATE",
+      "reason": "LOW_CONFIDENCE",
+      "confidence": 0.06,
+      "inputTokens": 512,
+      "outputTokens": 0,
+      "usageComplete": true,
+      "provider": "OPENAI_DECISIONS",
+      "model": "gpt-6-luna",
+      "validationOnlyConfidenceThreshold": 0.8,
+      "operationalThresholdSelected": false
+    },
+    "preflightTotalTokens": 530,
+    "parsedB": {
+      "accepted": true,
+      "verdict": "NEEDS_CHOICE",
+      "prompt": "8시부터 9시까지가 오전 시간대인지 오후(저녁) 시간대인지 알려주세요.",
+      "sourceExcerpt": "8시부터 9시까지",
+      "choices": [
+        {
+          "id": "A",
+          "label": "오전 8시부터 9시까지",
+          "proposedText": "10월 24일 토요일 오전 8시부터 9시까지 가능해요."
+        },
+        {
+          "id": "B",
+          "label": "오후 8시부터 9시까지",
+          "proposedText": "10월 24일 토요일 오후 8시부터 9시까지 가능해요."
+        }
+      ],
+      "inputTokens": 530,
+      "outputTokens": 554,
+      "responseBytes": 2766,
+      "provider": "GEMINI",
+      "model": "gemini-3.8-flash"
+    },
+    "returnedBUsage": {
+      "inputTokens": 530,
+      "candidateTokens": 188,
+      "thoughtTokens": 366,
+      "invalid": false
+    },
+    "actualTwoStageResult": {
+      "accepted": true,
+      "verdict": "NEEDS_CHOICE",
+      "prompt": "8시부터 9시까지가 오전 시간대인지 오후(저녁) 시간대인지 알려주세요.",
+      "sourceExcerpt": "8시부터 9시까지",
+      "choices": [
+        {
+          "id": "A",
+          "label": "오전 8시부터 9시까지",
+          "proposedText": "10월 24일 토요일 오전 8시부터 9시까지 가능해요."
+        },
+        {
+          "id": "B",
+          "label": "오후 8시부터 9시까지",
+          "proposedText": "10월 24일 토요일 오후 8시부터 9시까지 가능해요."
+        }
+      ],
+      "inputTokens": 530,
+      "outputTokens": 554,
+      "responseBytes": 2766,
+      "provider": "GEMINI",
+      "model": "gemini-3.8-flash"
+    },
+    "actualTwoStageClassifierPortCalls": 1,
+    "actualTwoStageGeneratorPortCalls": 1,
+    "actualHttpCalls": 0,
+    "productionSdkTransportClaimed": false
+  },
+  "opaqueSignatureValueInResult": false,
+  "setupAttempt1": {
+    "failure": "ClassNotFoundException: root incorrectly used a package-qualified harness name; actual harness is in the default package",
+    "productFailure": false,
+    "actualHttpCalls": 0,
+    "rawEvidence": ".codex/tdd-evidence/issue123-thought-signature-offline-replay/parse-stderr.txt"
+  },
+  "limits": [
+    "Prior A/count responses plus later B response replayed; not fresh live flow",
+    "No production SDK/durable financial authority/UI persistence validation",
+    "Product15-second deadline and original historical parser failure unchanged"
+  ]
+}

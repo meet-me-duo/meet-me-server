@@ -1,0 +1,56 @@
+{
+  "workItem": "issue-110-account-109-integration",
+  "testFile": "src/test/kotlin/com/meetme/server/shared/operations/OperatorNativeBrowserServer.kt",
+  "originalCopy": ".tdd/history/issue-110-native-fixture-uuid/OperatorNativeBrowserServer.before.kt",
+  "beforeSha256": "cee83726d85ee33f5a5d23fe158ac919d5a3ad51fd014cd805a732d874618317",
+  "afterSha256": "67c464f0cfd89b62c4fa51c43586dd6a481ee69f49e4cc64cb71b7582830fdbe",
+  "occurrencesChanged": 25,
+  "uniqueIdsChanged": 10,
+  "ids": [
+    {
+      "before": "00000000-0000-0000-0000-000000000110",
+      "after": "00000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "10000000-0000-0000-0000-000000000110",
+      "after": "10000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "20000000-0000-0000-0000-000000000110",
+      "after": "20000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "30000000-0000-0000-0000-000000000110",
+      "after": "30000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "40000000-0000-0000-0000-000000000110",
+      "after": "40000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "50000000-0000-0000-0000-000000000110",
+      "after": "50000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "60000000-0000-0000-0000-000000000110",
+      "after": "60000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "70000000-0000-0000-0000-000000000110",
+      "after": "70000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "80000000-0000-0000-0000-000000000110",
+      "after": "80000000-0000-4000-8000-000000000110"
+    },
+    {
+      "before": "90000000-0000-0000-0000-000000000110",
+      "after": "90000000-0000-4000-8000-000000000110"
+    }
+  ],
+  "reason": "Synthetic native fixture UUIDs used version 0 and a non-RFC variant; actual browser Zod UUID validation correctly rejected the response. Replace only fixture IDs with version 4 / RFC variant 8, consistently across all SQL keys and the JVM allowlist.",
+  "classification": "synthetic fixture/harness setup failure; not product RED",
+  "productValidationChanged": false,
+  "independentHttpTestsChanged": false,
+  "executed": false
+}

@@ -1,0 +1,22 @@
+--- src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt original
++++ src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt physical-claim-renewed
+@@ -130,7 +130,7 @@
+         if (call.execution != request.execution ||
+             call.call != request.call ||
+             call.epochId != active.epochId ||
+-            call.state != AiBudgetCallState.RESERVED
++            false
+         ) {
+             return null
+         }
+--- src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt original
++++ src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt physical-claim-renewed
+@@ -204,7 +204,7 @@
+         jdbc.update(
+             """
+             UPDATE ai_call_reservations SET state='DISPATCH_INTENT',dispatch_token=?,dispatched_at=?,dispatch_deadline_at=?,lease_until=?,updated_at=?
+-            WHERE id=? AND state='RESERVED' AND dispatch_token IS NULL
++            WHERE id=?
+             """.trimIndent(),
+             dispatchToken,
+             time(at),

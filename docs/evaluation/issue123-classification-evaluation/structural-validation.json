@@ -1,0 +1,17 @@
+{
+  "status": "PASS_STRUCTURAL_ONLY_WITH_SEPARATE_SEMANTIC_REVIEW",
+  "original_split_counts": {
+    "development": 60,
+    "holdout": 60
+  },
+  "supplemental_cases": 16,
+  "supplemental_pairs": 8,
+  "unique_case_ids": 136,
+  "source_primary_gold_and_full_A_provenance_unchanged": true,
+  "DRAFT_inputs_rejected": true,
+  "final_SHA_pins_verified": true,
+  "semantic_pairs": "PASS_SEPARATE_INDEPENDENT_REVIEW_NOT_REGEX_OR_LITERAL_PROOF",
+  "model_calls": 0,
+  "http_calls": 0,
+  "model_accuracy_measured": false
+}

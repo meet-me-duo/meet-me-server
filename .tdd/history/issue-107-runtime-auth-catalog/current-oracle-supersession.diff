@@ -1,0 +1,24 @@
+diff --git a/.github/scripts/fixtures/integrated-release-catalog.cjs b/.github/scripts/fixtures/integrated-release-catalog.cjs
+index 0f89ae6..60b9bc1 100644
+--- a/.github/scripts/fixtures/integrated-release-catalog.cjs
++++ b/.github/scripts/fixtures/integrated-release-catalog.cjs
+@@ -24,6 +24,7 @@ const guardFiles = [
+   'pipeline/host-approved-release.py', 'pipeline/run-approved-release.py',
+   'pipeline/publish_manifest.py', 'preflight/host-preflight.sh',
+   'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
++  'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
+ ].sort();
+ const range = n => Array.from({ length: n }, (_, i) => i + 1);
+ const catalogs = [range(10), range(11), range(12), [...range(11), 13],
+@@ -91,7 +92,10 @@ function fixture() {
+   }
+   for (const name of guardFiles) {
+     const target = path.join(directory, 'deploy', name); fs.mkdirSync(path.dirname(target), { recursive: true });
+-    fs.copyFileSync(path.join(root, 'deploy', name), target);
++    const source = path.join(root, 'deploy', name);
++    // New marker may be unimplemented during independent RED; synthetic bytes stay in this temp fixture.
++    if (name === 'runtime-auth-mode' && !fs.existsSync(source)) fs.writeFileSync(target, 'oauth-rs256-required\n');
++    else fs.copyFileSync(source, target);
+   }
+   const archive = path.join(directory, 'release.tar.gz'); fs.writeFileSync(archive, 'synthetic offline archive');
+   return { directory, migrations, archive, remove() { fs.rmSync(directory, { recursive: true, force: true }); } };

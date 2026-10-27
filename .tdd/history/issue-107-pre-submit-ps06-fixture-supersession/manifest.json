@@ -1,0 +1,28 @@
+{
+  "recordedAt": "2026-10-17T19:11:44.989971+00:00",
+  "test": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckWorkerPostgresTest.kt",
+  "originalSHA256": "48cef977caef550e85aa3f2697a0a3cba5ffc9f59cd10be327f34adc73fe940c",
+  "currentSHA256": "366dd031be2f2717234025717975451aa7ab9b6715b64a85b4443cf53a271aeb",
+  "reason": "PS06 originally reused first question after AM acceptance, causing second AM full proposal to equal the now-current source. Independent structural same-source INVALID_RESPONSE rule intentionally precedes repeated-ambiguity policy. Only second synthetic provider fixture now supplies two distinct full proposals differing from source. Original NEEDS_EDIT/RECHECK_REQUIRES_EDIT/noncomplete/noaccepted expectations all unchanged.",
+  "originalRun": ".codex/tdd-evidence/precheck-final-focused-original95/",
+  "chronologicalRED": ".tdd/red/issue-107-pre-submit-http.json",
+  "supplementaryEvidence": "Current fixture needs fresh GREEN and separately labeled FI/reconstructed RED. Not a chronological first RED.",
+  "portableRecordedAt": "2026-10-17T19:15:54.361721+00:00",
+  "originalSource": ".tdd/history/issue-107-pre-submit-initial48/original/PreSubmissionCheckWorkerPostgresTest.kt",
+  "exactDiff": ".tdd/history/issue-107-pre-submit-ps06-fixture-supersession/exact.diff",
+  "original95Run": {
+    "tests": 95,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failuresDetail": [
+      {
+        "class": "com.meetme.server.submission.adapter.input.web.PreSubmissionCheckWorkerPostgresTest",
+        "test": "PS06 A 선택 후에도 모호하면 추가 질문 반복 대신 NEEDS_EDIT이며 완료가 아니다()",
+        "message": "org.opentest4j.AssertionFailedError: expected: <NEEDS_EDIT> but was: <FAILED>",
+        "classification": "INVALID_REUSED_PROVIDER_FIXTURE_AFTER_APPROVED_SAME_SOURCE_DEFENSE"
+      }
+    ]
+  },
+  "currentGreenEvidence": ".tdd/history/issue-107-pre-submit-current-focused95/manifest.json"
+}

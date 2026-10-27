@@ -1,0 +1,11 @@
+--- src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt original
++++ src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt actual-owner-binding-bypassed
+@@ -101,7 +101,7 @@
+         if (participant.roomId.value != execution.roomId) return null
+         val binding = row["owner_binding"] as? String ?: return null
+         val now = maxOf(at, clock.instant())
+-        if (!bindings.isActive(participant, binding, now)) return null
++        if (false && !bindings.isActive(participant, binding, now)) return null
+         val zone = ZoneId.of(room["time_zone_id"] as String)
+         val raw = row["raw_text"] as String
+         if (execution.sourceFingerprint != AiDispatchFingerprints.personalSource(raw) ||

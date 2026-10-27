@@ -1,0 +1,35 @@
+{
+  "workItem": "issue107-integrated-offline-node",
+  "recordedAt": "2026-10-17T18:51:08.357875+00:00",
+  "tests": 117,
+  "passed": 117,
+  "failed": 0,
+  "sourceFingerprints": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b7215c98a249d0c5cb5c9a7655f223fe4bd2d980775aba1ebd282b5ad6c8e3a1"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "277ed7a514e36a9d010b7984d7085f008e525f12dee3d925d41449a1db2c71c6"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "a1adb5c6ca3c9cc1df3346af2116673e7a7bb4ac664cfe7af8286ddb4a69523c"
+    },
+    {
+      "path": "src/main/resources/db/migration/V16__add_pre_submission_checks.sql",
+      "sha256": "65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e"
+    }
+  ],
+  "log": ".codex/tdd-evidence/issue107-integrated-offline-node-java17-green.log",
+  "logSha256": "a949b0b4720ce39f09bf613c8ca73fb93569d0f5854a1b5c9879cba72331e641",
+  "environment": "JAVA_HOME=/tmp/meetme-jdk17; standalone JDBC probe is synthetic and read-only. No production access.",
+  "previousAttempt": {
+    "log": ".codex/tdd-evidence/issue107-integrated-offline-node.log",
+    "passed": 115,
+    "failed": 2,
+    "category": "ENVIRONMENT_SETUP",
+    "reason": "JAVA_HOME absent; test fallback /workspace/toolchains/jdk-17.0.20.1+1 did not exist. javac spawn status null. Source/oracles unchanged on rerun."
+  }
+}

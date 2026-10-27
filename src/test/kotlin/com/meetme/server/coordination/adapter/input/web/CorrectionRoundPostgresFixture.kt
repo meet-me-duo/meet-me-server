@@ -1,6 +1,8 @@
 package com.meetme.server.coordination.adapter.input.web
 
+import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.shared.adapter.input.web.GuestCookie
+import com.meetme.server.shared.testsupport.AccountPrincipalTestFixture
 import jakarta.servlet.http.Cookie
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.context.DynamicPropertyRegistry
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
@@ -34,21 +37,29 @@ abstract class CorrectionRoundPostgresFixture {
 
     @Autowired protected lateinit var transactionManager: PlatformTransactionManager
 
+    @MockitoBean private lateinit var currentAccount: CurrentAccountPort
+
+    protected lateinit var accounts: AccountPrincipalTestFixture
+
     @BeforeEach
     fun cleanCorrectionDatabase() {
         jdbc.execute(
             "TRUNCATE structured_submission_results, normalized_places, final_confirmations, candidate_participants, " +
                 "candidate_time_ranges, candidates, coordination_attempts, outbox_events, coordination_runs, " +
                 "submission_batch_items, submission_batches, manual_availability_intervals, submission_versions, " +
-                "submission_heads, participants, meeting_rooms, guest_browser_sessions CASCADE",
+                "submission_heads, participants, meeting_rooms, guest_browser_sessions, account_users CASCADE",
         )
+        accounts = AccountPrincipalTestFixture(jdbc, currentAccount)
+        accounts.install()
     }
 
-    protected fun completedRoom(): CompletedCorrectionFixture {
+    protected fun completedRoom(memberAccount: Boolean = true): CompletedCorrectionFixture {
+        val hostCookie = accounts.newAccount("host")
         val created =
             mvc
                 .perform(
                     post("/api/rooms")
+                        .cookie(hostCookie)
                         .header("Origin", ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(
@@ -61,18 +72,22 @@ abstract class CorrectionRoundPostgresFixture {
                 .andReturn()
                 .response
         val code = document(created).getValue("invite_code").toString()
-        val host = CorrectionSession(code, cookieValue(created))
+        // Historical direct-submission/correction oracle: migrated rooms retain LEGACY.
+        jdbc.update("UPDATE meeting_rooms SET submission_protocol='LEGACY' WHERE invite_code=?", code)
+        val host = CorrectionSession(code, hostCookie.value)
+        val memberCookie = if (memberAccount) accounts.newAccount("member") else null
         val joined =
             mvc
                 .perform(
                     post("/api/rooms/{code}/participants", code)
+                        .also { request -> memberCookie?.let { request.cookie(it) } }
                         .header("Origin", ORIGIN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""{"display_name":"member"}"""),
                 ).andExpect(status().isCreated)
                 .andReturn()
                 .response
-        val member = CorrectionSession(code, cookieValue(joined))
+        val member = CorrectionSession(code, memberCookie?.value ?: cookieValue(joined))
         mvc.perform(save(host, "H0 original")).andExpect(status().isOk)
         mvc.perform(save(member, "M0 original")).andExpect(status().isOk)
         mvc
