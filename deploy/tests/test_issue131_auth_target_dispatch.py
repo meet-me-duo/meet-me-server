@@ -43,11 +43,16 @@ def archive(root, contract):
     files = {name: (ROOT / name).read_bytes() for name in contract}
     files.update({"preflight/compiled/ReadOnlyFlywayProbe.class": bytes.fromhex("cafebabe"),
                   "runtime-provider-mode": b"gemini-luna-required\n", "compose.production.yml": (ROOT / "compose.production.yml").read_bytes()})
+    # Executable transport metadata is independent of the frozen approval catalog.
+    helpers = ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh")
+    files.update({name: (ROOT / name).read_bytes() for name in helpers})
     if "runtime-ai-policy.json" in contract: files["runtime-ai-policy.json"] = POLICY
     p = root / ("archive-" + str(len(contract)) + ".tar.gz")
     with tarfile.open(p, "w:gz") as packed:
         for name, body in files.items():
-            item = tarfile.TarInfo(name); item.size = len(body); item.mode = 0o644; packed.addfile(item, io.BytesIO(body))
+            item = tarfile.TarInfo(name); item.size = len(body)
+            item.mode = 0o755 if name in helpers else 0o644
+            packed.addfile(item, io.BytesIO(body))
     manifest = {"sourceSha": SHA, "releaseId": SHA + "-11-1", "imageRepository": REPOSITORY,
                 "archiveSha256": digest(p.read_bytes()), "schemaFingerprint": digest(canonical([])), "migrations": [],
                 "guardFingerprint": digest(canonical([{"path": name, "sha256": digest(files[name])} for name in contract]))}

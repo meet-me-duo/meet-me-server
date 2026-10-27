@@ -73,6 +73,9 @@ jobs:
       - name: Verify persistent V8 release guard
         run: python3 -m unittest discover -s deploy/tests -p 'test_v8_release_guard*.py' -v
 
+      - name: Verify executable artifacts and stopped maintenance resume
+        run: python3 -m unittest discover -s deploy/tests -p 'test_issue141*.py' -v
+
       - name: Verify production Nginx runtime
         run: bash deploy/scripts/verify-nginx-runtime.sh
 

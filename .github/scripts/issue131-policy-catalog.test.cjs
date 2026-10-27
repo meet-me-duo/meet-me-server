@@ -36,9 +36,12 @@ try:
  if action=='lists':result={n:list(getattr(load(n),k)) for n,k in [('publish_manifest.py','GUARD_FILES'),('run-approved-release.py','CONTRACT_FILES'),('host-approved-release.py','BUNDLE')]}
  elif action=='pack':
   directory=pathlib.Path(v['directory'])/'deploy'
+  def helper_mode(info):
+   if info.isfile() and info.name in ('scripts/render-runtime-env.sh','scripts/export-certificate.sh'):info.mode=0o755
+   return info
   with tarfile.open(v['archive'],'w:gz') as a:
    for item in sorted(directory.rglob('*')):
-    if item.name!='.approved-release.tar.gz' and (item.is_file() or item.is_symlink()):a.add(item,arcname=str(item.relative_to(directory)),recursive=False)
+    if item.name!='.approved-release.tar.gz' and (item.is_file() or item.is_symlink()):a.add(item,arcname=str(item.relative_to(directory)),recursive=False,filter=helper_mode)
   result=True
  elif action=='runner':load('run-approved-release.py')._verify_package(pathlib.Path(v['archive']),v['manifest']);result=True
  elif action in ('hostBundle','hostArchive'):

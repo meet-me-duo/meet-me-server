@@ -42,13 +42,16 @@ print(json.dumps({'policyMode':mode('runtime-ai-policy.json'),'neighborMode':mod
             files.update({"pipeline/host-approved-release.py": entrypoint, "runtime-ai-policy.json": policy,
                           "preflight/compiled/ReadOnlyFlywayProbe.class": bytes.fromhex("cafebabe"),
                           "runtime-provider-mode": b"gemini-luna-required\n", "synthetic-private-neighbor": b"SYNTHETIC_ONLY\n"})
+            helpers = ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh")
+            files.update({name: (ROOT / name).read_bytes() for name in helpers})
             guard = [{"path": name, "sha256": digest(files[name])} for name in DRIVER.CONTRACT_FILES]
             manifest = {"releaseId": "a" * 40 + "-1-1", "migrations": [], "guardFingerprint": digest(canonical(guard)),
                         "schemaFingerprint": digest(canonical([]))}
             archive = root / "synthetic-release.tar.gz"
             with tarfile.open(archive, "w:gz") as package:
                 for name, body in files.items():
-                    info = tarfile.TarInfo(name); info.size = len(body); info.mode = 0o644
+                    info = tarfile.TarInfo(name); info.size = len(body)
+                    info.mode = 0o755 if name in helpers else 0o644
                     package.addfile(info, io.BytesIO(body))
             manifest["archiveSha256"] = digest(archive.read_bytes())
             # Validate the package with the actual verifier before invoking the actual generated extraction.
