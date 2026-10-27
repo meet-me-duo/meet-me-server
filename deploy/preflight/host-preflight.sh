@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 set +x
-[[ ( "$#" == 1 || ( "$#" == 2 && "$2" == oauth-rs256-required ) ) && ${#1} -le 32768 && "$1" =~ ^[A-Za-z0-9+/]+={0,2}$ ]] || exit 2
+maintenance_image=
+if [[ "$#" == 4 && "$2" == oauth-rs256-required && "$3" == maintenance-resume &&
+      "$4" =~ ^[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(\.cn)?/[A-Za-z0-9][A-Za-z0-9._/-]*@sha256:[0-9a-f]{64}$ ]]; then
+  maintenance_image="$4"
+else
+  [[ "$#" == 1 || ( "$#" == 2 && "$2" == oauth-rs256-required ) ]] || exit 2
+fi
+[[ ${#1} -le 32768 && "$1" =~ ^[A-Za-z0-9+/]+={0,2}$ ]] || exit 2
 python3 - "$1" <<'PY'
 import base64,sys
 try:
@@ -120,6 +127,74 @@ print(json.dumps(data))
 PY
 )
 
+# Explicit stopped maintenance uses the reviewed image's standalone reader only.
+# No application entrypoint or old application process is started.
+if [[ -n "$maintenance_image" ]]; then
+flyway=$(python3 - "$1" "$maintenance_image" "$host_metadata" <<'PY'
+import base64,json,os,pathlib,stat,subprocess,sys,tempfile
+result={'status':'unavailable','reason':'HELPER_FAILED'}
+probe_name=None
+try:
+    probe,image,metadata=sys.argv[1:]
+    observed=json.loads(metadata)
+    before=observed['containerBefore']
+    assert before.get('present') is True and before.get('running') is False and before.get('pid')==0
+    assert observed.get('phase')=='V8_STARTED' and observed.get('minimum-contract')=='input_revision_v8'
+    release=pathlib.Path(observed['currentRelease'])
+    assert release.parent==pathlib.Path('/opt/meet-me/releases')
+    environment=release/'.env.runtime'
+    for parent in reversed(environment.parents):
+        info=parent.lstat()
+        assert stat.S_ISDIR(info.st_mode) and info.st_uid==0 and not info.st_mode&0o022
+    fd=os.open(environment,os.O_RDONLY|os.O_NOFOLLOW)
+    with os.fdopen(fd,'rb') as stream:
+        info=os.fstat(stream.fileno())
+        assert stat.S_ISREG(info.st_mode) and info.st_uid==0 and stat.S_IMODE(info.st_mode)==0o600 and info.st_size<=65536
+        raw=stream.read(65537)
+    assert len(raw)<=65536 and b'\x00' not in raw and b'\r' not in raw
+    selected={}
+    keys={b'DATABASE_URL',b'DATABASE_USERNAME',b'DATABASE_PASSWORD'}
+    for line in raw.split(b'\n'):
+        key,separator,value=line.partition(b'=')
+        if key in keys:
+            assert separator and value and key not in selected
+            selected[key]=value
+    assert set(selected)==keys
+    with tempfile.TemporaryDirectory(prefix='meetme-history.') as temporary:
+        root=pathlib.Path(temporary)
+        classes=root/'classes';classes.mkdir(mode=0o755);classes.chmod(0o755)
+        class_file=classes/'ReadOnlyFlywayProbe.class'
+        class_file.write_bytes(base64.b64decode(probe,validate=True));class_file.chmod(0o644)
+        properties=classes/'empty.properties';properties.write_bytes(b'');properties.chmod(0o644)
+        env_file=root/'database.env'
+        env_fd=os.open(env_file,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+        with os.fdopen(env_fd,'wb') as stream:
+            for key in sorted(selected):stream.write(key+b'='+selected[key]+b'\n')
+        probe_name='meetme-history-'+root.name.split('.')[-1]
+        command=['docker','run','--pull=never','--rm','--name',probe_name,'--read-only','--network','host',
+                 '--cap-drop=ALL','--security-opt=no-new-privileges','--pids-limit','64','--memory','128m',
+                 '--user','10001:10001','--env-file',str(env_file),
+                 '--mount','type=bind,src='+str(classes)+',dst=/run/meetme-probe,readonly',
+                 '--tmpfs','/tmp:rw,nosuid,noexec,size=8388608','--entrypoint','timeout',image,
+                 '20s','java','-Xms8m','-Xmx32m','-Dloader.config.location=file:/run/meetme-probe/empty.properties',
+                 '-Dloader.home=/run/meetme-probe','-Dloader.path=/run/meetme-probe',
+                 '-Dloader.main=ReadOnlyFlywayProbe','-cp','/app/app.jar',
+                 'org.springframework.boot.loader.launch.PropertiesLauncher']
+        checked=subprocess.run(command,capture_output=True,text=True,timeout=40)
+        assert checked.returncode==0 and len(checked.stdout)<=16384
+        parsed=json.loads(checked.stdout)
+        assert type(parsed) is dict and parsed.get('status')=='success' and parsed.get('database')=='meetme'
+        result=parsed
+except Exception:
+    pass
+finally:
+    if probe_name:
+        try:subprocess.run(['docker','rm','-f',probe_name],capture_output=True,timeout=5)
+        except Exception:pass
+print(json.dumps(result))
+PY
+)
+else
 # Bounded standalone child JVM; existing application process is untouched.
 flyway=$(docker exec -i meet-me-app sh -s -- "$1" 2>/dev/null <<'SH' || true
 set -eu
@@ -138,6 +213,7 @@ env -i PATH=/opt/java/openjdk/bin:/usr/bin:/bin HOME="$probe_directory" \
     org.springframework.boot.loader.launch.PropertiesLauncher 2>/dev/null
 SH
 )
+fi
 python3 - "$host_metadata" "$flyway" <<'PY'
 import json,subprocess,sys
 host=json.loads(sys.argv[1])

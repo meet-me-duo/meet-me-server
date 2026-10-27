@@ -184,6 +184,12 @@ def main():
     parser.add_argument("--archive", default="release.tar.gz")
     parser.add_argument("--output", default="manifest.json")
     args = parser.parse_args()
+    spec = importlib.util.spec_from_file_location(
+        "publication_archive_validation", Path(__file__).with_name("run-approved-release.py"))
+    archive_validator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(archive_validator)
+    archive_validator.validate_archive(args.archive)
+    archive_validator.validate_executable_helpers(args.archive)
     manifest = build_manifest(Path(__file__).resolve().parents[2], args.archive, os.environ)
     with Path(args.output).open("x", encoding="utf-8") as destination:
         destination.write(canonical_bytes(manifest).decode("utf-8") + "\n")

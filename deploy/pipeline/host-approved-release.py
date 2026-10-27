@@ -381,21 +381,41 @@ def _archive(release, manifest):
     _require(probe[:4] == bytes.fromhex('cafebabe'))
 
 
-def _facts(manifest, attestation, release, post_deploy=False):
+def _require_executable_helpers(release):
+    for name in ('render-runtime-env.sh', 'export-certificate.sh'):
+        path = _safe(release / 'scripts' / name)
+        _require(path.stat().st_mode & stat.S_IXUSR and os.access(path, os.X_OK))
+
+
+def _facts(manifest, attestation, release, post_deploy=False, maintenance_resume=False):
+    _require(type(maintenance_resume) is bool)
+    _require(not (post_deploy and maintenance_resume))
     if post_deploy:
         _require(_current_release() == release)
         _require(_hash(_canonical(_installed_catalog(release))) == manifest['guardFingerprint'])
         _require(_schema(release, manifest['migrations']) == manifest['schemaFingerprint'])
     state = _read_state(manifest, verify_record=not post_deploy)
+    if maintenance_resume:
+        _require(state['guardTrusted'] and state['phase'] == 'V8_STARTED'
+                 and attestation['action'] == 'resume' and attestation['approveFirstTransition']
+                 and attestation['refreshRuleStates'] == ['DISABLED', 'DISABLED']
+                 and attestation['pendingCommands'] == 0)
     probe = base64.b64encode(_bytes(release / 'preflight/compiled/ReadOnlyFlywayProbe.class', 24576)).decode('ascii')
-    output = _run(['bash', str(_safe(release / 'preflight/host-preflight.sh')), probe], 55, strict_stderr=True)
+    command = ['bash', str(_safe(release / 'preflight/host-preflight.sh')), probe]
+    if maintenance_resume:
+        command += ['oauth-rs256-required', 'maintenance-resume', manifest['imageRef']]
+    output = _run(command, 55, strict_stderr=True)
     runner = _module('release_preflight', release / 'preflight/run-preflight.py')
     observation = runner.summarize_invocation('Success', output.decode('utf-8'), '')
     _require(observation['flyway']['status'] == 'success')
     before = observation['host'].get('containerBefore', {})
     after = observation['host'].get('containerAfter', {})
-    _require(before.get('present') is True and before.get('running') is True)
-    _require(after.get('running') is True and all(before.get(key) == after.get(key) for key in ('pid', 'restartCount')))
+    _require(before.get('present') is True and before.get('running') is (not maintenance_resume))
+    _require(after.get('running') is (not maintenance_resume)
+             and all(before.get(key) == after.get(key) for key in ('pid', 'restartCount')))
+    if maintenance_resume:
+        _require(observation['host'].get('phase') == 'V8_STARTED'
+                 and observation['host'].get('minimum-contract') == 'input_revision_v8')
     _require(before.get('image') == state['currentImage'])
     # State is reread after the bounded reader so a concurrent transition fails closed.
     _require(_read_state(manifest, verify_record=not post_deploy) == state)
@@ -407,7 +427,7 @@ def _facts(manifest, attestation, release, post_deploy=False):
 def _attestation(value, manifest):
     _require(type(value) is dict and set(value) == {
         'action', 'approveFirstTransition', 'refreshRuleStates', 'pendingCommands', 'manifestSha256'})
-    _require(value['action'] in {'automatic', 'deploy'} and type(value['action']) is str)
+    _require(value['action'] in {'automatic', 'deploy', 'resume'} and type(value['action']) is str)
     _require(type(value['approveFirstTransition']) is bool)
     _require(type(value['pendingCommands']) is int and value['pendingCommands'] == 0)
     _require(type(value['refreshRuleStates']) is list and len(value['refreshRuleStates']) == 2)
@@ -500,15 +520,19 @@ def deploy(manifest, attestation):
     attestation = _attestation(attestation, manifest)
     release = _safe(ROOT / 'releases' / manifest['releaseId'], directory=True)
     _archive(release, manifest)
-    facts = _facts(manifest, attestation, release)
+    _require_executable_helpers(release)
+    maintenance_resume = attestation['action'] == 'resume'
+    facts = (_facts(manifest, attestation, release, maintenance_resume=True)
+             if maintenance_resume else _facts(manifest, attestation, release))
     plan = validate_deploy_facts(manifest, facts, attestation['action'], attestation['approveFirstTransition'])
-    _require(plan['mode'] in {'AUTO_READY', 'TRANSITION_APPROVED'})
+    _require(plan['mode'] in {'AUTO_READY', 'TRANSITION_APPROVED', 'MAINTENANCE_RESUME_APPROVED'})
     # This lock serializes helpers; it is deliberately different from the lifecycle lock.
     with _lock(Path('/run/meet-me-approved-release.lock')):
-        facts = _facts(manifest, attestation, release)
+        facts = (_facts(manifest, attestation, release, maintenance_resume=True)
+                 if maintenance_resume else _facts(manifest, attestation, release))
         plan = validate_deploy_facts(manifest, facts, attestation['action'], attestation['approveFirstTransition'])
-        _require(plan['mode'] in {'AUTO_READY', 'TRANSITION_APPROVED'})
-        first = plan['mode'] == 'TRANSITION_APPROVED'
+        _require(plan['mode'] in {'AUTO_READY', 'TRANSITION_APPROVED', 'MAINTENANCE_RESUME_APPROVED'})
+        first = plan['mode'] in {'TRANSITION_APPROVED', 'MAINTENANCE_RESUME_APPROVED'}
         if first:
             _legacy_matches(release)
         if not os.path.lexists(STATE):
@@ -517,7 +541,8 @@ def deploy(manifest, attestation):
         evidence = _hash(_canonical(attestation))
         # Only short state writes hold the lifecycle lock; release before either shell entrypoint.
         with _lock(Path('/run/lock/meet-me-release.lock')):
-            _require(_facts(manifest, attestation, release) == facts)
+            _require((_facts(manifest, attestation, release, maintenance_resume=True)
+                      if maintenance_resume else _facts(manifest, attestation, release)) == facts)
             images = [manifest['imageRef']]
             if not first and facts['currentImage'] != manifest['imageRef']:
                 images.append(facts['currentImage'])

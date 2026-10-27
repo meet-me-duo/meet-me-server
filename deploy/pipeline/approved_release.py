@@ -136,7 +136,7 @@ def validate_deploy_facts(manifest, facts, action, approve_first_transition=Fals
         if "imageRef" in manifest:
             _require(manifest["imageRef"] == validated["imageRef"])
         _object(facts, FACT_FIELDS)
-        _require(type(action) is str and action in {"automatic", "preflight", "deploy"})
+        _require(type(action) is str and action in {"automatic", "preflight", "deploy", "resume"})
         _require(type(approve_first_transition) is bool)
         _require(type(facts["pendingCommands"]) is int and facts["pendingCommands"] == 0)
         _require(type(facts["guardTrusted"]) is bool)
@@ -159,6 +159,11 @@ def validate_deploy_facts(manifest, facts, action, approve_first_transition=Fals
             _migration_rows(record["history"], history=True)
             _require(tuple(int(row['version']) for row in record['history']) in COMPLETE_CATALOGS)
             _image(record["currentImage"], manifest["imageRepository"])
+
+        if action == "resume":
+            _require(approve_first_transition and facts["guardTrusted"]
+                     and facts["phase"] == "V8_STARTED" and states == ["DISABLED", "DISABLED"])
+            return {"mode": "MAINTENANCE_RESUME_APPROVED"}
 
         same_contract = (
             record is not None and facts["guardTrusted"] and facts["phase"] == "READY"
