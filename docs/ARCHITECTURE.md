@@ -430,6 +430,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 앱 전체를 중지하고 Docker 자동 재시작을 비활성화한 뒤 `V8_STARTED`와 sticky `input_revision_v8` marker를 원자적으로 영속화한다. 승인된 동일 이미지로 Flyway 실행·앱 교체·실제 Docker image와 health 확인을 완료해야 `current`와 `READY`를 기록한다. 실패 시 점검 상태를 유지하고 승인된 digest의 deploy로 roll-forward한다. Flyway downgrade·구 image 자동 fallback은 제공하지 않는다.
 - Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [운영 안내](USER_INTERVENTION.md)를 따른다.
 - `main` push CI의 정확 `head_sha`로 image와 run/attempt별 불변 release manifest를 게시한다. ADR-050에 따라 첫 V8→V9/V10 전환과 SQL/guard 실행 bundle 변경은 명시 승인으로 분리한다. main 읽기 preflight/deploy는 기존 게시물을 소비하고 다시 build하지 않는다. 성공 후 실제 Flyway history·READY·현재 digest·SQL/guard 지문을 root record에 저장하며, 같은 계약의 후속 main CI는 실제 상태를 재확인한 뒤 자동 배포한다. PR·`develop`·수동 CI와 실패한 CI는 자동 게시/배포하지 않는다. 기존 production 역할·보호규칙과 직렬화(cancel=false)는 유지한다.
+- 앱이 중지된 `V8_STARTED`는 명시적 `resume`과 전환 승인으로만 재개한다. 신뢰 guard·sticky marker·규칙 중지·활성 명령 없음·정확한 DB 이력을 다시 검증하고, 새 불변 릴리스의 실행 가능 helper를 앱 중지 전에 검사한다. DB 이력은 승인 이미지의 격리된 읽기 전용 JVM으로 조회하며 구 앱을 시작하지 않는다. 일반 배포의 실행 중 앱 조건은 유지한다. 세부 경계는 [중단 전환 재개](../deploy/MAINTENANCE_RESUME.md)를 따른다.
 
 ### 제출 MVP 토폴로지 선택 근거
 

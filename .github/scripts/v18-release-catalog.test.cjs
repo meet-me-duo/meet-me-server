@@ -28,9 +28,12 @@ function packageRelease(value, version = 18, omit = '') {
   fs.writeFileSync(path.join(value.directory, 'deploy/runtime-provider-mode'), 'gemini-luna-required\n');
   const code = String.raw`import pathlib,sys,tarfile
 root=pathlib.Path(sys.argv[1]);dest=pathlib.Path(sys.argv[2]);omitted=sys.argv[3]
+def helper_mode(info):
+ if info.isfile() and info.name in ('scripts/render-runtime-env.sh','scripts/export-certificate.sh'):info.mode=0o755
+ return info
 with tarfile.open(dest,'w:gz') as archive:
  for item in sorted((root/'deploy').rglob('*')):
-  if item.is_file():archive.add(item,arcname=str(item.relative_to(root/'deploy')),recursive=False)
+  if item.is_file():archive.add(item,arcname=str(item.relative_to(root/'deploy')),recursive=False,filter=helper_mode)
  for name in sys.argv[4:]:
   if name!=omitted:archive.add(root/'src/main/resources/db/migration'/name,arcname='migrations/'+name,recursive=False)
 `;

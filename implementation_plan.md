@@ -1,5 +1,18 @@
 # meet-me-server Implementation Plan
 
+## Issue #141 — 배포 권한과 중단 전환 재개 (2026-10-27 UTC)
+
+- [x] `[AGENT]` 기존 사용자 checkout의 변경을 보존하고 최신 develop 기반 별도 clone에서 수정한다.
+- [x] `[AGENT]` renderer/exporter의 Git 실행 비트, artifact 소비 검사와 앱 중지 전 실행 가능 검사를 추가한다.
+- [x] `[AGENT]` 일반 배포 조건을 유지하면서 explicit resume·V8_STARTED·앱 중지·규칙 중지·전역 활성 명령 없음·정확한 DB history를 요구한다.
+- [x] `[AGENT]` 독립 합성 회귀 23건, 전체 배포 Python 96건, 기존 배포 계약 21건과 runtime 환경 계약 96건을 통과한다. 독립 검토 두 차례 추가 차단 사항 없음, 결함 주입 4/4 탐지. 고정 guard/installer bytes는 변경하지 않는다.
+- [x] `[AGENT]` POSIX 전체 Gradle 게이트와 commit hook을 통과한다. JUnit 2163건·실패 0·오류 0·기존 skip 4건, ktlintCheck·assemble 성공.
+- [ ] `[AGENT]` 검증된 변경을 게시하고 원격 PR 필수 CI를 확인한다.
+- [ ] `[SHARED]` 승인된 main 병합 후 정확한 새 artifact/image를 고정하고 구 앱을 켜지 않는 DB history 검증을 통과한 경로로 전환한다.
+- [ ] `[SHARED]` digest/current/READY/Flyway/health/OpenAPI/auth mount/자동 계약을 실제 운영에서 확인한다. 두 EventBridge 규칙 복원은 별도 행동 승인 대상으로 유지한다.
+
+초기 Windows/Docker/jq 환경 실패는 실제 POSIX 실행으로 구분·재검증했다. 임시 jq는 fixture private bin에만 제공하며 저장소 assertion을 변경하지 않았다. 로컬 Desktop Compose bind 차이 1건은 canonical GitHub Ubuntu CI에서 확인하며 필수 CI 통과 전 병합하지 않는다. 코드 준비와 실제 운영 복구 완료를 구분한다.
+
 ## #137 main 병합 전 비용·최종 분석 보호 (2026-10-20 UTC)
 
 - [USER 2026-10-21] develop README 전체의 오래된 설명과 기록을 현재 구현에 맞춰 정리하고, develop 병합 후 README 근거와 불필요 항목의 실제 종료 여부까지 확인한다. 미완료 운영 업무와 main행 PR은 유지한다.

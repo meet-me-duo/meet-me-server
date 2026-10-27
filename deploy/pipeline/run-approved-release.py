@@ -155,8 +155,23 @@ def validate_archive(archive_path):
         raise ValueError("UNTRUSTED_ARCHIVE") from None
 
 
+def validate_executable_helpers(archive_path):
+    """Only reviewed regular owner-executable helpers may reach lifecycle authority."""
+    required = {"scripts/render-runtime-env.sh", "scripts/export-certificate.sh"}
+    with tarfile.open(archive_path, "r:gz") as archive:
+        found = set()
+        for member in archive:
+            if member.name in required:
+                _require(member.isfile() and not member.issym() and not member.islnk()
+                         and member.mode & 0o100 and not member.mode & 0o022)
+                _require(member.name not in found)
+                found.add(member.name)
+        _require(found == required)
+
+
 def _verify_package(archive_path, manifest):
     validate_archive(archive_path)
+    validate_executable_helpers(archive_path)
     with tarfile.open(archive_path, "r:gz") as archive:
         files = {member.name: archive.extractfile(member).read() for member in archive.getmembers() if member.isfile()}
     contract = LEGACY_CONTRACT_FILES
@@ -271,13 +286,16 @@ def _strict_state(status, stdout, stderr):
     return state
 
 
-def _host_preflight(instance, auth_required=False):
+def _host_preflight(instance, auth_required=False, maintenance_image=None):
     _require(type(auth_required) is bool)
     probe = BASE / "preflight/compiled/ReadOnlyFlywayProbe.class"
     payload = base64.b64encode(probe.read_bytes()).decode("ascii")
     _require(len(payload) <= 32768)
     script = (BASE / "preflight/host-preflight.sh").read_text()
     mode = " oauth-rs256-required" if auth_required else ""
+    if maintenance_image is not None:
+        _require(auth_required and re.fullmatch(r"[0-9]{12}\.dkr\.ecr\.[a-z0-9-]+\.amazonaws\.com(?:\.cn)?/[A-Za-z0-9][A-Za-z0-9._/-]*@sha256:[0-9a-f]{64}", maintenance_image))
+        mode += " maintenance-resume " + shlex.quote(maintenance_image)
     command = "bash -s -- " + payload + mode + " <<'MEETME_APPROVED_PREFLIGHT'\n" + script + "\nMEETME_APPROVED_PREFLIGHT"
     reader = _load("approved_preflight_reader", BASE / "preflight/run-preflight.py")
     return _ssm(instance, command, reader.summarize_invocation)
@@ -371,14 +389,29 @@ def _aws_facts(instance, region, repository, auth_required=False):
     return states, pending, valid_parameter
 
 
-def _collect_facts(instance, region, manifest, auth_required=False):
+def _collect_facts(instance, region, manifest, auth_required=False, maintenance_resume=False):
     _require(type(auth_required) is bool)
-    observed = _host_preflight(instance, auth_required=True) if auth_required else _host_preflight(instance)
+    _require(type(maintenance_resume) is bool)
+    initial_state = None
+    if maintenance_resume:
+        _require(auth_required)
+        initial_state = _host_state(instance, manifest)
+        _require(initial_state["guardTrusted"] and initial_state["phase"] == "V8_STARTED")
+        paused, active, _ = _aws_facts(instance, region, manifest["imageRepository"], auth_required=True)
+        _require(paused == ["DISABLED", "DISABLED"] and active == 0)
+        observed = _host_preflight(instance, auth_required=True,
+                                   maintenance_image=manifest["imageRepository"] + "@" + manifest["imageDigest"])
+    else:
+        observed = _host_preflight(instance, auth_required=True) if auth_required else _host_preflight(instance)
     _require(observed["flyway"]["status"] == "success")
     before, after = observed["host"]["containerBefore"], observed["host"]["containerAfter"]
-    _require(before.get("present") is True and before["running"] is True)
+    _require(before.get("present") is True and before["running"] is (not maintenance_resume))
     _require(all(before[key] == after[key] for key in ("running", "pid", "restartCount")))
     state = _host_state(instance, manifest)
+    if maintenance_resume:
+        _require(state == initial_state and state["guardTrusted"] and state["phase"] == "V8_STARTED"
+                 and observed["host"].get("phase") == "V8_STARTED"
+                 and observed["host"].get("minimum-contract") == "input_revision_v8")
     _require(state["currentImage"] == before["image"])
     states, pending, parameter_ready = (_aws_facts(instance, region, manifest["imageRepository"], auth_required=True)
                                         if auth_required else _aws_facts(instance, region, manifest["imageRepository"]))
@@ -459,7 +492,7 @@ def _deploy_result(status, stdout, stderr):
     result = json.loads(stdout)
     _require(type(result) is dict and set(result) == {"protocol", "mode", "sourceSha", "currentImage", "phase"})
     _require(result["protocol"] == "meet-me-approved-release-result-v1")
-    _require(result["mode"] in ("AUTO_READY", "TRANSITION_APPROVED") and result["phase"] == "READY")
+    _require(result["mode"] in ("AUTO_READY", "TRANSITION_APPROVED", "MAINTENANCE_RESUME_APPROVED") and result["phase"] == "READY")
     _require(type(result["sourceSha"]) is str and re.fullmatch(r"[0-9a-f]{40}", result["sourceSha"]))
     return result
 
@@ -479,7 +512,8 @@ def main():
         env = os.environ
         action = env["RELEASE_ACTION"]
         approve = env.get("APPROVE_FIRST_TRANSITION", "false")
-        _require(action in ("preflight", "automatic", "deploy") and approve in ("true", "false"))
+        _require(action in ("preflight", "automatic", "deploy", "resume") and approve in ("true", "false"))
+        _require(action != "resume" or approve == "true")
         event = json.loads(Path(env["GITHUB_EVENT_PATH"]).read_text())
         context = {"repository": env["GITHUB_REPOSITORY"], "ref": env["GITHUB_REF"],
                    "eventName": env["GITHUB_EVENT_NAME"], "sourceSha": env["SOURCE_SHA"]}
@@ -505,14 +539,16 @@ def main():
             _download(bucket, prefix + "release.tar.gz", archive, MAX_ARCHIVE)
             _require(hashlib.sha256(archive.read_bytes()).hexdigest() == manifest["archiveSha256"])
             auth_required = _verify_package(archive, manifest)
-            facts, parameter_ready = _collect_facts(instance, region, manifest, auth_required=auth_required)
+            facts, parameter_ready = _collect_facts(instance, region, manifest, auth_required=auth_required,
+                                                    maintenance_resume=action == "resume")
             plan = approved.validate_deploy_facts(validated, facts, action, approve == "true")
             summary.update({"action": action, "releaseId": manifest["releaseId"], "mode": plan["mode"],
                             "refreshRuleStates": facts["refreshRuleStates"], "pendingCommands": facts["pendingCommands"],
                             "parameterMetadataReady": parameter_ready})
             if action != "preflight" and plan["mode"] != "TRANSITION_REQUIRED":
                 _verify_origin(manifest, action)
-                fresh, parameter_ready = _collect_facts(instance, region, manifest, auth_required=auth_required)
+                fresh, parameter_ready = _collect_facts(instance, region, manifest, auth_required=auth_required,
+                                                        maintenance_resume=action == "resume")
                 summary.update({"refreshRuleStates": fresh["refreshRuleStates"], "pendingCommands": fresh["pendingCommands"],
                                 "parameterMetadataReady": parameter_ready})
                 fresh_plan = approved.validate_deploy_facts(validated, fresh, action, approve == "true")

@@ -63,9 +63,12 @@ function packageRelease(value, versions = range(17)) {
     sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) }))));
   const code = String.raw`import pathlib,sys,tarfile
 root=pathlib.Path(sys.argv[1]);dest=pathlib.Path(sys.argv[2]);names=sys.argv[3:]
+def helper_mode(info):
+ if info.isfile() and info.name in ('scripts/render-runtime-env.sh','scripts/export-certificate.sh'):info.mode=0o755
+ return info
 with tarfile.open(dest,'w:gz') as a:
  for item in sorted((root/'deploy').rglob('*')):
-  if item.is_file():a.add(item,arcname=str(item.relative_to(root/'deploy')),recursive=False)
+  if item.is_file():a.add(item,arcname=str(item.relative_to(root/'deploy')),recursive=False,filter=helper_mode)
  for name in names:a.add(root/'src/main/resources/db/migration'/name,arcname='migrations/'+name,recursive=False)
 `;
   const probe = path.join(value.directory, 'deploy/preflight/compiled');fs.mkdirSync(probe, { recursive: true });

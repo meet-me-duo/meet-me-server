@@ -31,9 +31,12 @@ try:
  elif action=='pack':
   import tarfile
   directory=pathlib.Path(value['directory'])/'deploy'
+  def helper_mode(info):
+   if info.isfile() and info.name in ('scripts/render-runtime-env.sh','scripts/export-certificate.sh'):info.mode=0o755
+   return info
   with tarfile.open(value['archive'],'w:gz') as archive:
    for item in sorted(directory.rglob('*')):
-    if item.name != '.approved-release.tar.gz' and (item.is_file() or item.is_symlink()):archive.add(item,arcname=str(item.relative_to(directory)),recursive=False)
+    if item.name != '.approved-release.tar.gz' and (item.is_file() or item.is_symlink()):archive.add(item,arcname=str(item.relative_to(directory)),recursive=False,filter=helper_mode)
   result=True
  elif action=='runner':
   load('run-approved-release.py')._verify_package(pathlib.Path(value['archive']),value['manifest']);result=True

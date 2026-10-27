@@ -101,6 +101,11 @@ function fixture() {
     if (name === 'runtime-auth-mode' && !fs.existsSync(source)) fs.writeFileSync(target, 'oauth-rs256-required\n');
     else fs.copyFileSync(source, target);
   }
+  // Transport helpers exist outside historical guard-fingerprint inventories too.
+  for (const name of ['scripts/render-runtime-env.sh', 'scripts/export-certificate.sh']) {
+    const target = path.join(directory, 'deploy', name); fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(path.join(root, 'deploy', name), target); fs.chmodSync(target, 0o755);
+  }
   const archive = path.join(directory, 'release.tar.gz'); fs.writeFileSync(archive, 'synthetic offline archive');
   return { directory, migrations, archive, remove() { fs.rmSync(directory, { recursive: true, force: true }); } };
 }
