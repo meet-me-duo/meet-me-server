@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import subprocess
 import sys
 import time
@@ -11,6 +12,61 @@ import urllib.request
 
 REPOSITORY = "meet-me-duo/meet-me-server"
 PROTOCOL = "meetme-readonly-preflight-v1"
+AUTH_PARAMETER_TYPES = {
+    "/meet-me/production/" + name: kind for name, kind in {
+        "secret/google-client-id": "SecureString",
+        "secret/google-client-secret": "SecureString",
+        "secret/kakao-client-id": "SecureString",
+        "secret/kakao-client-secret": "SecureString",
+        "config/google-redirect-uri": "String",
+        "config/kakao-redirect-uri": "String",
+        "config/auth-signing-key-id": "String",
+        "config/auth-issuer": "String",
+        "config/auth-audience": "String",
+        "config/auth-web-callback-uri": "String",
+        "config/allowed-origins": "String",
+    }.items()
+}
+
+
+def source_auth_mode():
+    """Reviewed source marker only; no guessed historical exemption or runtime values."""
+    marker = Path(__file__).resolve().parent.parent / "runtime-auth-mode"
+    try:
+        with os.fdopen(os.open(marker, os.O_RDONLY | os.O_NOFOLLOW), "rb") as stream:
+            info = os.fstat(stream.fileno())
+            if not stat.S_ISREG(info.st_mode) or info.st_size > 64:
+                raise ValueError()
+            value = stream.read(65)
+        if value not in (b"oauth-rs256-required", b"oauth-rs256-required\n"):
+            raise ValueError()
+        return "oauth-rs256-required"
+    except (OSError, ValueError):
+        raise ValueError("UNTRUSTED_AUTH_MODE") from None
+
+
+def auth_parameter_metadata():
+    """Names, types and versions only. Never GetParameter or decrypt/copy credentials."""
+    result = aws_call("ssm", "describe-parameters", "--parameter-filters",
+                      "Key=Name,Option=Equals,Values=" + ",".join(sorted(AUTH_PARAMETER_TYPES)),
+                      "--page-size", "50", "--max-items", "50")
+    if result["status"] != "success":
+        return result
+    try:
+        data = result["data"]
+        rows = data["Parameters"]
+        if data.get("NextToken") or type(rows) is not list or len(rows) != len(AUTH_PARAMETER_TYPES):
+            raise ValueError()
+        projected = {}
+        for row in rows:
+            name, kind, version = row["Name"], row["Type"], row["Version"]
+            if (name not in AUTH_PARAMETER_TYPES or name in projected or kind != AUTH_PARAMETER_TYPES[name]
+                    or type(version) is not int or version < 1):
+                raise ValueError()
+            projected[name] = {"Name": name, "Type": kind, "Version": version}
+        return {"status": "success", "data": [projected[name] for name in sorted(projected)]}
+    except (KeyError, TypeError, ValueError):
+        return {"status": "unavailable", "reason": "AUTH_PARAMETER_METADATA_INCOMPLETE"}
 
 
 def validate_target(pr, event):
@@ -284,6 +340,7 @@ def main():
     main_entry = arguments in (["--main"], ["--main", "--validate"])
     target = main_target if main_entry else event_target
     sha = target()
+    auth_mode = source_auth_mode()
     if arguments in (["--validate"], ["--main", "--validate"]):
         print("Approved source identity validated.")
         return
@@ -316,16 +373,17 @@ def main():
     reads["openaiParameterMetadata"] = project(aws_call("ssm", "describe-parameters", "--parameter-filters",
             "Key=Name,Option=Equals,Values=" + parameter),
         lambda d: [{k: p.get(k) for k in ("Name", "Type", "Version")} for p in d["Parameters"]])
+    reads["authParameterMetadata"] = auth_parameter_metadata()
     base = Path(__file__).resolve().parent
     compiled = base / "compiled" / "ReadOnlyFlywayProbe.class"
     payload = base64.b64encode(compiled.read_bytes()).decode("ascii")
     if len(payload) > 32768:
         raise ValueError("UNTRUSTED_TARGET")
     # Recheck exact head immediately before the single configured-instance call.
-    if target() != sha:
+    if target() != sha or source_auth_mode() != auth_mode:
         raise ValueError("UNTRUSTED_TARGET")
     script = base.joinpath("host-preflight.sh").read_text()
-    parameters = json.dumps({"commands": ["bash -s -- " + payload + " <<'MEETME_READONLY_SCRIPT'\n"
+    parameters = json.dumps({"commands": ["bash -s -- " + payload + " " + auth_mode + " <<'MEETME_READONLY_SCRIPT'\n"
                                           + script + "\nMEETME_READONLY_SCRIPT"],
                              "executionTimeout": ["60"]})
     sent = aws_call("ssm", "send-command", "--instance-ids", instance,

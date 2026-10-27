@@ -298,6 +298,23 @@ class MatchingResultService(
         locale: Locale,
     ): RecommendationListView {
         check(analysis == null || analysis.roomId == room.id.value)
+        val partial = options.any { option -> option.option.variants.any { it.participantIds.size < run.batch.submissionVersionIds.size } }
+        val frozenCohort =
+            if (partial) {
+                FrozenSubmissionReader
+                    .read(
+                        submissionRepository,
+                        run.batch,
+                    ).map { it.participantId }
+            } else {
+                emptyList()
+            }
+        val publicNames =
+            frozenCohort.associateWith { id ->
+                val member = requireNotNull(participantRepository.findById(id)) { "Frozen participant is missing" }
+                check(member.roomId == room.id)
+                member.displayName.value
+            }
         return RecommendationListView(
             analysis?.protocol,
             run.id.value,
@@ -324,6 +341,7 @@ class MatchingResultService(
                                         it.longitude.toDouble(),
                                     )
                                 },
+                            frozenCohort.filterNot { it in variant.participantIds }.map(publicNames::getValue),
                         )
                     },
                     renderWindow(option.option.window, room, locale),

@@ -74,26 +74,26 @@ test('PC01 current publisher runner and host each declare the same independently
   const lists = invoke('lists'); assert.equal(lists.ok, true);
   for (const list of Object.values(lists.result)) assert.deepEqual([...list].sort(), current18);
 });
-test('PC02 current publication fingerprints exact policy bytes without changing the V1 through V17 SQL catalog', () => {
-  const value = fixture(); try {
+test('PC02 current publication fingerprints exact policy bytes without changing the current V1 through V18 SQL catalog', () => {
+  const value = f.currentFixture(); try {
     const result = f.publish(value); assert.equal(result.ok, true);
     assert.equal(result.result.guardFingerprint, hash(canonical(current18.map(name => ({ path: name, sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
-    assert.deepEqual(result.result.migrations.map(row => row.script), f.scripts);
+    assert.deepEqual(result.result.migrations.map(row => row.script), f.currentScripts);
     const previous = result.result; fs.appendFileSync(path.join(value.directory, 'deploy/runtime-ai-policy.json'), '\n');
     const after = f.publish(value); assert.equal(after.ok, true); assert.notEqual(after.result.guardFingerprint, previous.guardFingerprint);
     assert.equal(after.result.schemaFingerprint, previous.schemaFingerprint);
   } finally { value.remove(); }
 });
 test('PC03 new publication rejects a missing policy while historical readers remain separate', () => {
-  const value = fixture(historical17); try { assert.deepEqual(f.publish(value), f.untrusted); } finally { value.remove(); }
+  const value = f.currentFixture(); try { fs.unlinkSync(path.join(value.directory, 'deploy/runtime-ai-policy.json')); assert.deepEqual(f.publish(value), f.untrusted); } finally { value.remove(); }
 });
 test('PC04 new publication rejects malformed duplicate-key oversized and unknown-field policy bytes', () => {
   for (const raw of ['[]', '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED","state":"UNCONFIGURED"}', '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED","extra":1}', ' '.repeat(65537)]) {
-    const value = fixture(); try { fs.writeFileSync(path.join(value.directory, 'deploy/runtime-ai-policy.json'), raw); assert.deepEqual(f.publish(value), f.untrusted); } finally { value.remove(); }
+    const value = f.currentFixture(); try { fs.writeFileSync(path.join(value.directory, 'deploy/runtime-ai-policy.json'), raw); assert.deepEqual(f.publish(value), f.untrusted); } finally { value.remove(); }
   }
 });
 test('PC05 current policy must be a real regular file with no source symlink', () => {
-  const value = fixture(); try {
+  const value = f.currentFixture(); try {
     const file = path.join(value.directory, 'deploy/runtime-ai-policy.json'), actual = path.join(value.directory, 'policy-source');
     fs.renameSync(file, actual); fs.symlinkSync(actual, file);
     assert.deepEqual(f.publish(value), f.untrusted);

@@ -66,6 +66,45 @@ object GeoMatcher {
         return best
     }
 
+    /** Maximal feasible memberships from the same circle-boundary witnesses used by legacy geometry. */
+    fun overlappingParticipantGroups(
+        regions: List<ParticipantAllowedRegion>,
+        checkCancellation: () -> Unit = {},
+    ): List<List<Int>> {
+        if (regions.size < 2) return emptyList()
+        val circles = regions.flatMap { it.alternatives }.map { EffectiveCircle(it.center, it.radiusMeters.toDouble()) }
+        val memberships = linkedSetOf<List<Int>>()
+
+        fun include(point: GeoCoordinate) {
+            checkCancellation()
+            val members = regions.indices.filter { contains(regions[it], point) }
+            if (members.size < 2 || memberships.any { it.containsAll(members) }) return
+            memberships.removeAll { members.containsAll(it) }
+            memberships += members
+        }
+        for (point in circles.map { it.center }.distinct()) {
+            include(point)
+            if (memberships.any { it.size == regions.size }) return memberships.toList()
+        }
+        for (first in circles.indices) {
+            checkCancellation()
+            for (second in first + 1 until circles.size) {
+                if (second % 128 == 0) checkCancellation()
+                // Unrelated distant regions must not change the local projection of a feasible pair.
+                val latitude = (circles[first].center.latitude.toDouble() + circles[second].center.latitude.toDouble()) / 2.0
+                val referenceLatitude = latitude.toRadians()
+                for (point in circleIntersections(
+                    circles[first].toProjected(referenceLatitude),
+                    circles[second].toProjected(referenceLatitude),
+                )) {
+                    include(point.toCoordinate(referenceLatitude))
+                    if (memberships.any { it.size == regions.size }) return memberships.toList()
+                }
+            }
+        }
+        return memberships.toList()
+    }
+
     private fun feasiblePoint(
         regions: List<ParticipantAllowedRegion>,
         margin: Double,

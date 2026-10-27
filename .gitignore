@@ -20,3 +20,11 @@ __pycache__/
 /.codex/tdd-evidence/
 
 !gradle/wrapper/gradle-wrapper.jar
+
+# Local-only records for this unpublished change; existing tracked history is retained.
+/.tdd/red/issue123-runtime-readiness.json
+/.tdd/red/partial-attendance-time-options.json
+/.tdd/reviews/issue123-runtime-readiness.json
+/.tdd/reviews/partial-attendance-time-options.json
+/.tdd/verification/issue123-runtime-readiness.json
+/.tdd/verification/partial-attendance-time-options.json

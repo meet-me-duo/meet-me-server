@@ -32,6 +32,9 @@ data class RecommendationVariantResponse(
     @field:JsonProperty("place")
     @field:Schema(description = "대면 대표 지역; 온라인은 null", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     val place: CandidatePlaceResponse?,
+    @field:JsonProperty("excluded_participant_names")
+    @field:Schema(description = "고정 분석 배치에서 이 조합에 참석하지 않는 참여자의 공개 이름; 전원 참석은 빈 배열", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    val excludedParticipantNames: List<String> = emptyList(),
 )
 
 @Schema(description = "실제로 가능한 하나의 연속 시간안")
@@ -41,7 +44,7 @@ data class RecommendationOptionResponse(
     val optionId: UUID,
     @field:JsonProperty("rank")
     @field:Schema(
-        description = "primary 표시 순서1~3; 대안은 null",
+        description = "동등한 시간 선택지의 primary 표시 순서1~3; 품질 등급이 아니며 대안은 null",
         requiredMode = Schema.RequiredMode.REQUIRED,
         nullable = true,
         minimum = "1",
@@ -52,7 +55,7 @@ data class RecommendationOptionResponse(
     @field:Schema(description = "사용자가 실제 시작·종료를 고를 수 있는 전체 연속 창", requiredMode = Schema.RequiredMode.REQUIRED)
     val timeRange: CandidateTimeRangeResponse,
     @field:JsonProperty("variants")
-    @field:Schema(description = "같은 시간의 모든 유효 방식·장소·참석 조합", requiredMode = Schema.RequiredMode.REQUIRED)
+    @field:Schema(description = "같은 시간의 유효 방식·장소별 최대 참석 가능 집합; 불필요한 하위집합 제외", requiredMode = Schema.RequiredMode.REQUIRED)
     val variants: List<RecommendationVariantResponse>,
     @field:JsonProperty("summary")
     @field:Schema(description = "실제 지역 날짜와 양쪽 종료 경계를 보존한 시간 설명", requiredMode = Schema.RequiredMode.REQUIRED)
