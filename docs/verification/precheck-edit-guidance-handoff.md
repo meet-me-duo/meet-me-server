@@ -1,6 +1,6 @@
 # 직접 수정 안내 연동
 
-2026-10-28 UTC, 안내 구현의 실제 native OpenAPI export는 `docs/openapi/precheck-edit-guidance.openapi.json`이다. SHA-256은 `eb8623729afdfa94632701397c5188c2aeb683fc02a09dd18e368948f8f5e5d1`이다. 이 작업 브랜치의 스냅샷이며 별도 내 모임 API 작업을 포함한 최종 통합 native OpenAPI는 병합 후 다시 확인한다.
+2026-10-28 UTC, 안내 구현의 실제 native OpenAPI export는 `docs/openapi/precheck-edit-guidance.openapi.json`이다. SHA-256은 `3028ed968241315c1d4e1c230491a7eb350ea0b9122cfcddf8aa84fdde075145`이다. 최신 main e799fb6와 동일한 develop0ce4b40을 로컬 통합한 실제 스냅샷이며 내 모임 필터·페이지 계약과 edit_guidance를 함께 확인했다.
 
 본인 `check.status=NEEDS_EDIT` 응답에 새 `check.edit_guidance`를 일반 텍스트로 보여준다. 필드는 required이며 값은 최대160 코드포인트 문자열 또는 null이다. 다른 상태에서는 null이다. 기존 A/B `check.question`은 이 상태에서 null로 유지한다. 안내를 HTML·Markdown·자동 링크로 해석하지 않고, A/B 버튼이나 자동 완료를 만들지 않는다. 기존 직접 수정/취소와 revision/CAS 경로를 사용한다. 구체 안내가 없는 이전 기록도 서버가 일반 안내를 제공하며, 구체 모델 진단처럼 표현하지 않는다.
 
@@ -19,3 +19,5 @@
 실제 합성 TF14는 최소 종료 시각만 질문했고 예약 내용·시간을 추측하지 않았다. 이 한 건을 전반적인 모델 정확성이나 사용자 방/운영 반영 검증으로 확대하지 않는다. 원본 응답 본문·키·사용자 방 식별자는 기록하지 않았다.
 
 최종 로컬 검증: 원본 commit guard ktlintCheck/assemble/test exit0, 2270 tests, 4 SKIP, 실패/오류0. source snapshot 전후 동일. FI4 모두 DETECTED 후 정확 복원. 원격 게시/PR/병합/운영 반영은 신규 이슈 게시 승인 대기로 미완료다.
+
+후속 실제 통합 전체 검증: 2278 tests, 4 SKIP, 실패/오류0. 원본 commit guard exit0와 src snapshot 전후 동일을 확인했다. 원격 작업·운영 반영은 수행하지 않았다.

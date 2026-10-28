@@ -9,7 +9,7 @@
 
 사용자 승인 #109는 기존 익명 제출 모드에서 계정 HOST로 전환하는 후속 버전이다. account 영역의 application port 뒤에 Google/Kakao OIDC, RSA JWT, Redis 회전 세션, JDBC 영구 계정 저장을 둔다. Domain에는 공급자·HTTP·Redis 타입을 노출하지 않는다. 계정 생성은 provider+subject unique 및 transaction으로 보호하고 이메일 자동 연결을 하지 않는다. login-only 공급자 토큰은 검증 뒤 폐기하며 Calendar 지속 grant/암호화 저장은 별도 범위다.
 
-participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 아카이브는 PostgreSQL HOST 소유권을 기준으로 읽고 기존 cleanup 기준30일을 expires_at으로 계산한다.
+participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 내 모임 목록은 PostgreSQL의 현재 계정 HOST·MEMBER 소유권을 기준으로 읽고 기존 cleanup 기준30일을 expires_at으로 계산한다. 2026-10-28 사용자 요청으로 ADR-051의 HOST 전용 목록 범위만 참여 목록까지 확장하며 인증·명시적 연결·권한 경계는 유지한다. AccountRoomArchivePort의 조회 조건은 역할·생성 시각 범위·이름·커서이며 JDBC adapter에서 계정 조건과 보존 조건을 항상 함께 적용한다. HTTP adapter는 KST 생성일과 불투명 커서를 application 값으로 변환하고 Domain에는 HTTP 형식을 노출하지 않는다. 자세한 계약은 [내 모임 목록 API](ACCOUNT_ROOM_HISTORY_API.md)를 따른다.
 
 Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 사용한다. provider issuer/audience/kid/signature/time 검증 뒤 서비스 Refresh를 cookie로만 발급하고 fixed frontend callback으로 돌아간다. Redis 회전·가족 폐기는 atomic script로 처리하며 실패 시 갱신을 허용하지 않는다. 서비스 RS256 private key는 mount된 외부 secret file, 검증 current/previous public key는 JWKS로 주입한다. 설정 없는 환경에서 임시 운영키를 만들지 않는다. 실제 앱/키/배포 및 운영 로그인은 별도 검증이다.
 

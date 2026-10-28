@@ -1,0 +1,76 @@
+{
+  "workItem": "account-room-history",
+  "sourceRevision": "84324bb11afd7b69316b151c580b90f3c8729b4d",
+  "boundary": "Current-account isolation, original exact 30-day retention anchors, and stable keyset pagination",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipController.kt",
+      "sha256": "25c602c42544f5f7bb9b0cb1e39c8102738a7d75a59e836ba038f34f7aee19d1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomParameters.kt",
+      "sha256": "f6f970775d6535a53bcc16030016f0c1d8c8beb92268a14fc163a8b53a79363d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomOwnershipUseCase.kt",
+      "sha256": "a7e523a04cc630933045bc72e5fd8b530f438cc0400507c4336ae34b88cfaabd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/AccountRoomArchivePort.kt",
+      "sha256": "63ed5e3d8fe28e065dedfd00f4a3ea70295084f951ba9fd7c6946320bf7da4ab"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomOwnershipService.kt",
+      "sha256": "8e375554e995c0a9da10d40510f844ac002c42a3f1ff1986172074e8b7fd454c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "sha256": "b1241c605a0e423d750b799345b13f36573785e3f8e5bb24c803caf28a9285c5"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHistoryWebIntegrationTest.kt",
+      "sha256": "8c4fc14179edf2a3b2170421d21e45a61f1ad26b4ccf0cab486d37821fbe0a90"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Replace unconditional p.user_id account predicate with a non-null UUID bind tautology",
+      "command": [
+        "sh",
+        "/tmp/account-history-gradle.sh",
+        "test",
+        "--tests",
+        "*AccountRoomHistoryWebIntegrationTest"
+      ],
+      "detectedBy": "all is default and roles expose only current account ownership with no guest adoption(); cursor pages resolve creation ties without duplicates when newer room arrives()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Exclude exact CLOSED retention boundary by changing closed_at >= cutoff to > cutoff",
+      "command": [
+        "sh",
+        "/tmp/account-history-gradle.sh",
+        "test",
+        "--tests",
+        "*AccountRoomHistoryWebIntegrationTest"
+      ],
+      "detectedBy": "existing thirty day boundaries include equality and keep closed and collecting anchors distinct()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Reverse equal-created-at UUID cursor comparison from > to <",
+      "command": [
+        "sh",
+        "/tmp/account-history-gradle.sh",
+        "test",
+        "--tests",
+        "*AccountRoomHistoryWebIntegrationTest"
+      ],
+      "detectedBy": "cursor pages resolve creation ties without duplicates when newer room arrives()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T13:56:56.483949Z"
+}
