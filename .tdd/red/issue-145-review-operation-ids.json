@@ -1,0 +1,32 @@
+{
+  "workItem": "issue-145-review-operation-ids",
+  "sourceRevision": "f196e6b8655fd17c097dc7db0549c7f3e1fcf3d2",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewOperationIdsPostgresTest.kt",
+      "sha256": "a9a2031da1ffdf3a917dc41d750c7252310969576d638ce3310889e25e9e8fc7"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+    "test",
+    "--tests",
+    "*ReviewOperationIdsPostgresTest",
+    "--tests",
+    "*AggregatePackageArchitectureTest",
+    "--tests",
+    "*CorePersistenceIntegrationTest",
+    "--tests",
+    "*DatabaseMigrationRunnerTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest",
+    "--console=plain",
+    "--max-workers=1"
+  ],
+  "failedTests": [
+    "com.meetme.server.review.ReviewOperationIdsPostgresTest.RV14 review operation ids are stable and unique across the whole native API()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T03:51:09.765259Z"
+}

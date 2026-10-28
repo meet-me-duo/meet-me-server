@@ -202,6 +202,13 @@ data class RoomResponse(
     @field:Schema(description = "방 생성 시 고정된 제출 확인 흐름", allowableValues = ["LEGACY", "PRE_SUBMIT_V1"])
     val submissionProtocol: String = "LEGACY",
 ) {
+    @field:JsonProperty("review_prompt_supported")
+    @field:Schema(
+        description = "리뷰 API 계약 지원 힌트. 참여·확정 여부와 claim이 최종 권한을 판정하며, 누락은 미지원",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+    )
+    val reviewPromptSupported: Boolean = true
+
     companion object {
         fun from(view: RoomView) =
             RoomResponse(

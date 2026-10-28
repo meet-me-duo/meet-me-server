@@ -1,0 +1,108 @@
+{
+  "workItem": "issue-145-v19-release-catalog-fi",
+  "sourceRevision": "bbf3a8364f1c971a292034ebf4038b1dbe2b3b80",
+  "boundary": "Exact complete V19 publisher inventory, manifest and host record catalogs, and unchanged automatic guard fingerprint; each single fault was detected by an intended Node assertion and every source/test/SQL byte was restored. Filtered sibling tests are not counted as executed.",
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b32f6a642cd79ddb8c0881a2509d299fd396fc199dd3439fbdb706b592f8e08f"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "b2952c0276bdadac9a917a83e7b7849c12c58349a8f42e2705e5654ea8dc9bf4"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "8f7d2e6967d74b0750a3fa680a5e6d4585feaec814a0b0773d557c3cb3291b7d"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "c562835f7037c8cbeaa24d8914900250cfc72f5fef33989ed134b31ba49c8825"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "1f5932ce51a2e6658f33b732c8af326c9690e662580823b1bcac2fb2f539297b"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "b9842437749fefc4f51c418103c8e8e296f7ce065e3809d764d5136923fc5530"
+    },
+    {
+      "path": ".github/scripts/issue131-policy-catalog.test.cjs",
+      "sha256": "1ef6b1b528dac8207c2c15ac4ac673bb0b5cc2cb9ef10e668a275b1d35d5e109"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "923bc60f9117b967f5707b5cad1d1fb1e7bf86afd76258670d9a0dc5723b58ee"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Allow extra migration files by weakening exact current inventory equality to a subset check",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^V19R02 ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-publisher-extra.log",
+        "--test-reporter=/workspace/checkpoints/review-release-catalog-20261028/node-events-reporter.mjs",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-publisher-extra-events.jsonl",
+        ".github/scripts/v19-review-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V19R02 current publication refuses every omission old complete V18 unknown additions and malformed V19 names or file kinds",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove complete manifest catalog membership while leaving per-row and historical-prefix checks intact",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^V19R04 ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-manifest-closed-catalog.log",
+        "--test-reporter=/workspace/checkpoints/review-release-catalog-20261028/node-events-reporter.mjs",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-manifest-closed-catalog-events.jsonl",
+        ".github/scripts/v19-review-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V19R04 readers reject gapped duplicate reversed renamed unknown V20 and malformed V19 metadata without a range wildcard",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove host automatic-record complete catalog membership while leaving row checks intact",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^V19R04 ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-host-closed-catalog.log",
+        "--test-reporter=/workspace/checkpoints/review-release-catalog-20261028/node-events-reporter.mjs",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-host-closed-catalog-events.jsonl",
+        ".github/scripts/v19-review-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V19R04 readers reject gapped duplicate reversed renamed unknown V20 and malformed V19 metadata without a range wildcard",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow automatic readiness despite a changed approved guard fingerprint",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern=^V19R06 ",
+        "--test-reporter=tap",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-automatic-guard-fingerprint.log",
+        "--test-reporter=/workspace/checkpoints/review-release-catalog-20261028/node-events-reporter.mjs",
+        "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-fi-automatic-guard-fingerprint-events.jsonl",
+        ".github/scripts/v19-review-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V19R06 unchanged V19 is automatic but approval cannot bypass historical or new row corruption and fingerprint drift",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T05:22:13.659134Z"
+}

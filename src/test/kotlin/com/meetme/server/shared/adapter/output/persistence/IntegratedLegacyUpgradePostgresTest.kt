@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Existing V8 rows survive exact V1..V18 integration without automatic linking or reanalysis. */
+/** Existing V8 rows survive exact V1..V19 integration without automatic linking or reanalysis. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,23 +18,30 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly eighteen versions and validates both independent legacy schemas`() {
-        assertEquals(18, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly nineteen versions and validates both independent legacy schemas`() {
+        assertEquals(19, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "18",
+            "19",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("18", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("19", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
                 "SELECT count(*)::text FROM information_schema.tables WHERE table_schema='public' AND table_name IN " +
                     "('recommendation_analyses','recommendation_options','recommendation_variants'," +
                     "'recommendation_variant_participants','recommendation_selections','analysis_invocations')",
+            ),
+        )
+        assertEquals(
+            "2",
+            scalar(
+                "SELECT count(*)::text FROM information_schema.tables WHERE table_schema='public' " +
+                    "AND table_name IN ('review_user_policies','review_prompts')",
             ),
         )
     }
@@ -47,7 +54,7 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(10, flyway().migrate().migrationsExecuted)
+        assertEquals(11, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
@@ -55,6 +62,9 @@ class IntegratedLegacyUpgradePostgresTest {
         assertEquals("3", scalar("SELECT count(*)::text FROM meeting_rooms WHERE submission_protocol='LEGACY'"))
         for (table in listOf("precheck_candidates", "precheck_checks", "precheck_executions", "precheck_operations")) {
             assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent checks or rewrite saved input")
+        }
+        for (table in listOf("review_user_policies", "review_prompts")) {
+            assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent review requests or user policy")
         }
         assertEquals("3", scalar("SELECT count(*)::text FROM ai_room_budgets"))
         assertEquals(

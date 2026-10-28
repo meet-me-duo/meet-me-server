@@ -94,7 +94,7 @@ class CorePersistenceIntegrationTest {
     @Test
     fun `Flyway 최초 마이그레이션을 적용하고 검증한다`() {
         assertEquals(
-            "18",
+            "19",
             flyway
                 .info()
                 .current()
@@ -128,6 +128,8 @@ class CorePersistenceIntegrationTest {
                     "ai_room_budgets",
                     "ai_call_reservations",
                     "ai_call_observations",
+                    "review_user_policies",
+                    "review_prompts",
                 ),
             ),
         )

@@ -660,3 +660,14 @@ Gemini와 Luna의 공통 schema_version 3에 `CONDITIONAL_FALLBACK_TIME_WINDOW`�
 Jev와 Luna는 기존 provider15초를 공유하고 Luna 자동 재시도·redirect·fallback·count HTTP는 없다. 실제 `PRECHECK_GENERATION` ordinal1 한 건의 고정 bytes/profile을 공통 예산 reserve/claim/usage와 결속한다. 기존 `PRECHECK_COUNT` operation은 역사 호환을 위해 유지하되 Luna 경로에서는 사용하지 않는다. usage는 답 검증 전에 관측하고 부재는 unknown으로 남기며 청구 완료 증명이나 자동 환급으로 바꾸지 않는다. 출력/추론을 합한 한도와 알려진 입력 usage 방어는 사후 검증이며 실제 청구 상한 증명이 아니다.
 
 운영 정책은 UNCONFIGURED이며 기본 네 flag OFF다. 실제 Standard 처리·공급자 지연/의미 품질·confidence calibration·실제 가격/방 cap과 target OAuth/secret readiness는 별도다. 기존 실제 Luna4/4는 최종 조건 해석만 검증했으며 새 개인 보완의 실제 검증으로 확대하지 않는다. main 병합을 사용자에게 남기며 운영 자동 활성화를 위해 임의의 정책·키·권한을 만들지 않는다.
+
+
+### 확정 결과 리뷰의 소유권·원자성 경계 (#145, ADR-062)
+
+`review` Aggregate 패키지의 Domain은 선택 조합과 사용자 정책을 표현하고 외부 프레임워크에 의존하지 않는다. Application 서비스는 기존 방·참여자 소유권과 결과 확정을 검증하고 `ReviewRepository` 뒤의 JDBC 저장소를 사용한다. 방 row lock → 본인 확인 → 사용자 policy row lock 순서로 같은 모임과 여러 모임의 경합을 직렬화한다. 읽는 시점에도 active revision과 확정 결과를 확인한다.
+
+V19는 계정 또는 게스트 세션 하나만 가리키는 `review_user_policies`와 참여자별 unique `review_prompts`를 추가한다. 사용자 정책을 방 수명과 분리하여 방 정리가 만족에 따른 영구 중단을 지우지 않게 한다. 모임 삭제는 해당 답변을 cascade 삭제하고 계정/게스트 정리는 소유 정책을 삭제한다. 기존 검증된 participant claim 전환의 SQL trigger만 계정 정책을 병합하고 해당 prompt 소유권을 옮긴다. 기존 account claim과 같은 트랜잭션이므로 실패 시 함께 롤백한다. trigger 오류와 JDBC 오류에는 자유 입력을 포함한 원본 PostgreSQL DETAIL/cause를 전달하지 않는다.
+
+claim은 숨겨진 모임도 SUPPRESSED로 소비한다. 같은 UUID의 PENDING 복구도 현재 사용자 정책을 다시 검사한다. submit은 terminal 상태를 조건부 갱신하고 같은 트랜잭션에서 정책을 저장한다. close는 첫 terminal 결과를 보존하고 이미 숨겨졌거나 만족한 사용자의 기한을 새로 연장하지 않는다. 응답은 `prompt_id`와 상태만 포함한다. 조회/운영자 API와 외부 전송은 없다. review 경로의 필터가 인증·JSON 해석 이전부터 성공/오류에 `Cache-Control: no-store`를 적용한다.
+
+네이티브 OpenAPI에는 세 POST와 필수/nullable 필드, 정수 선택, 기타 입력 초안 상한 및 RFC 9457 오류를 문서화한다. Swagger가 정수 enum을 문자열로 만드는 경우는 review 전용 native customizer에서 정수로 교정하며, 웹에는 실제 로컬 생성 문서의 review 경로와 참조 DTO만 동기화한다. AWS·실제 OAuth/AI 및 운영 배포는 이 로컬 검증에 포함하지 않는다.

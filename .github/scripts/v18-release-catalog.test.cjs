@@ -6,6 +6,8 @@ const { fs, path, root, range, hash, canonical, clone, crc } = f;
 // Public additive contract; historical fixtures intentionally retain their V17 defaults.
 const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const scripts = [...f.scripts, script18];
+// V17/V18 reader/transition/package cases below remain historical. Only current publication advanced to approved V19.
+const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql'];
 function release(version = 18) {
   const value = f.manifest(range(Math.min(version, 17)));
   if (version === 18) value.migrations.push({ version: '18', script: script18, checksum: 18 * 37 });
@@ -47,13 +49,14 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V18C01 publisher emits exactly V1 through V18 with independent SQL checksums and schema fingerprint', () => {
-  assert.deepEqual(f.currentScripts, scripts);
+test('V18C01 current publisher advances to exact approved V19 while V18 reader fixtures remain frozen', () => {
+  assert.deepEqual(f.currentScripts, latestScripts);
   const value = f.currentFixture(); try {
     const result = f.publish(value); assert.equal(result.ok, true);
-    assert.deepEqual(result.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    assert.deepEqual(result.result.migrations, latestScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(result.result.schemaFingerprint, hash(canonical(schema(value))));
+    assert.equal(result.result.schemaFingerprint, hash(canonical(latestScripts.map((script, i) => ({ version: String(i + 1), script,
+      sha256: hash(fs.readFileSync(path.join(value.migrations, script))) })))));
     assert.equal(result.result.guardFingerprint, hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
   } finally { value.remove(); }
@@ -127,6 +130,7 @@ test('V18C06 V18 SQL changes only its checksum and schema fingerprint while V1 t
     fs.appendFileSync(path.join(value.migrations, script18), '\n-- synthetic V18 byte change\n');
     const after = f.publish(value); assert.equal(after.ok, true);
     assert.deepEqual(after.result.migrations.slice(0, 17), before.result.migrations.slice(0, 17));
+    assert.deepEqual(after.result.migrations[18], before.result.migrations[18], 'Mutating V18 must not rewrite V19');
     assert.notEqual(after.result.migrations[17].checksum, before.result.migrations[17].checksum);
     assert.notEqual(after.result.schemaFingerprint, before.result.schemaFingerprint);
     assert.equal(after.result.guardFingerprint, before.result.guardFingerprint);
@@ -149,13 +153,13 @@ test('V18C07 offline packages preserve V17 support and verify V18 checksum schem
   } finally { value.remove(); }
 });
 
-test('V18C08 actual source publishes exactly real V18 without the synthetic RED fixture', () => {
+test('V18C08 current source publishes exact real V19 without changing historical V18 reader fixtures', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
-  assert.deepEqual(fs.readdirSync(directory).sort(), [...scripts].sort());
+  assert.deepEqual(fs.readdirSync(directory).sort(), [...latestScripts].sort());
   const value = f.currentFixture(); try {
     const result = f.python('build_manifest', [root, value.archive, f.environment], 'publish_manifest.py');
     assert.equal(result.ok, true);
-    assert.deepEqual(result.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    assert.deepEqual(result.result.migrations, latestScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(directory, script))) })));
   } finally { value.remove(); }
 });
