@@ -17,7 +17,8 @@ BASE = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("issue154_public_contract_pipeline", BASE / "pipeline/release_pipeline.py")
 PIPELINE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(PIPELINE)
-HEALTH = "https://api.meet-me.co.kr/actuator/health"
+# Nginx's public readiness response; application Actuator stays on internal 9090.
+HEALTH = "https://api.meet-me.co.kr/healthz"
 NATIVE = "https://api.meet-me.co.kr/v3/api-docs"
 
 
@@ -74,7 +75,7 @@ class Response:
 
 class Opener:
     def __init__(self, health=None, native=None, failure=None):
-        self.health = [Response({"status": "UP"})] if health is None else health
+        self.health = [Response(b"ok\n")] if health is None else health
         self.native = [Response(spec())] if native is None else native
         self.calls = []
         self.failure = failure
@@ -83,6 +84,9 @@ class Opener:
         self.calls.append((url, kwargs))
         if self.failure is not None:
             raise self.failure
+        # The observed public baseline is 404 here; Actuator is internal only.
+        if url == "https://api.meet-me.co.kr/actuator/health":
+            return Response(b"not found", status=404)
         responses = self.health if url == HEALTH else self.native if url == NATIVE else None
         if responses is None:
             raise AssertionError("arbitrary public verification URL")
@@ -197,7 +201,7 @@ class Issue154PublicContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             PIPELINE.validate_public_contract(candidate)
 
-    def test_exact_public_native_projection_and_health_up_satisfy_public_shape_proof(self):
+    def test_exact_public_native_projection_and_nginx_healthz_satisfy_public_shape_proof(self):
         opener = Opener()
         self.assertIs(self.verify(opener), True)
         self.assertEqual([HEALTH, NATIVE], [url for url, _ in opener.calls])
@@ -218,14 +222,25 @@ class Issue154PublicContractTests(unittest.TestCase):
                 self.assertIs(self.verify(Opener(native=[Response(original)])), False)
 
     def test_public_non200_or_unhealthy_status_cannot_be_verified(self):
-        for opener in (Opener(health=[Response({"status": "UP"}, status=503)]),
-                       Opener(health=[Response({"status": "DOWN"})]),
-                       Opener(native=[Response(spec(), status=503)])):
-            self.assertIs(self.verify(opener), False)
-            self.assertLessEqual(len(opener.calls), 6)
+        for endpoint in ("healthz", "native"):
+            for status in (199, 201, 204, 301, 302, 307, 308, 404, 503):
+                opener = (Opener(health=[Response(b"ok\n", status=status)]) if endpoint == "healthz"
+                          else Opener(native=[Response(spec(), status=status)]))
+                with self.subTest(endpoint=endpoint, status=status):
+                    self.assertIs(self.verify(opener), False)
+                    self.assertLessEqual(len(opener.calls), 6)
+
+    def test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches(self):
+        for raw in (b"", b"ok", b"ok\r\n", b"OK\n", b" ok\n", b"ok\n ", b"ok\n\x00",
+                    b"not ready\n", b'{"status":"UP"}', b'{"status":"DOWN"}',
+                    b'"ok\\n"', b"\xef\xbb\xbfok\n"):
+            opener = Opener(health=[Response(raw)])
+            with self.subTest(raw=raw):
+                self.assertIs(self.verify(opener), False)
+                self.assertEqual([HEALTH] * 3, [url for url, _ in opener.calls])
 
     def test_transient_public_read_can_recover_within_three_bounded_attempts(self):
-        opener = Opener(health=[Response({"status": "DOWN"}), Response({"status": "UP"})])
+        opener = Opener(health=[Response(b"not ready\n"), Response(b"ok\n")])
         with patch.object(PIPELINE.urllib.request, "build_opener", return_value=opener), patch.object(PIPELINE.time, "sleep") as sleep:
             self.assertIs(PIPELINE.verify_public_contract(contract()), True)
         self.assertEqual(3, len(opener.calls))

@@ -400,9 +400,10 @@ def _aws_facts(instance, region, repository, auth_required=False):
     return states, pending, valid_parameter
 
 
-def _collect_facts(instance, region, manifest, auth_required=False, maintenance_resume=False):
+def _collect_facts(instance, region, manifest, auth_required=False, maintenance_resume=False, require_healthy=False):
     _require(type(auth_required) is bool)
     _require(type(maintenance_resume) is bool)
+    _require(type(require_healthy) is bool)
     initial_state = None
     if maintenance_resume:
         _require(auth_required)
@@ -417,6 +418,8 @@ def _collect_facts(instance, region, manifest, auth_required=False, maintenance_
     _require(observed["flyway"]["status"] == "success")
     before, after = observed["host"]["containerBefore"], observed["host"]["containerAfter"]
     _require(before.get("present") is True and before["running"] is (not maintenance_resume))
+    if require_healthy:
+        _require(not maintenance_resume and before.get("health") == "healthy")
     _require(all(before[key] == after[key] for key in ("running", "pid", "restartCount")))
     state = _host_state(instance, manifest)
     if maintenance_resume:

@@ -1,0 +1,324 @@
+{
+  "workItem": "issue154-public-health-contract",
+  "kind": "INDEPENDENT_ISOLATED_FAULT_INJECTION",
+  "recordedAt": "2026-10-28T23:18:21.423280+00:00",
+  "sourceRevision": "bec9f78094a13c6dbaded18d2a5ad7881ebfe825",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_public_contract.py",
+      "sha256": "e8f1ea17fa585fea2b782eb11972ead254354f63b1f3b5edaed9b71585265b21"
+    },
+    {
+      "path": "deploy/tests/test_issue154_public_contract_audit.py",
+      "sha256": "23d4d73d227df8011f9116dc2ef5b9e3584f936ab61e1e358f357e61e0a1b1e2"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "ec3cb03a0d03fa5c0b7227888a77d0af9cb3718c6953ff3561396f0cd52ffff8"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a27ecf28fdbc5582d0bdb61a21f9ac8a62edd897d5191bec2581cb3c6db90951"
+    }
+  ],
+  "script": {
+    "path": ".tdd/verification/issue154-public-health-fi.py",
+    "sha256": "c92bf2c268645372229702988e62c5233a836b11ce1af7e6763e6eea0c6269ef"
+  },
+  "faults": [
+    {
+      "name": "wrong_public_health_url",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "opener.open(\"https://api.meet-me.co.kr/healthz\", timeout=10)",
+      "after": "opener.open(\"https://api.meet-me.co.kr/actuator/health\", timeout=10)",
+      "test": "test_issue154_public_contract.Issue154PublicContractTests.test_exact_public_native_projection_and_nginx_healthz_satisfy_public_shape_proof",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract.Issue154PublicContractTests.test_exact_public_native_projection_and_nginx_healthz_satisfy_public_shape_proof",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-wrong_public_health_url.log",
+      "mutatedSha256": "ee912ad17cbcb4bbb7fc92183111f71d45f45a1da7ea650738679777f658bcbd"
+    },
+    {
+      "name": "accept_arbitrary_health_body",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "_require(response.read(8193) == b\"ok\\n\")",
+      "after": "response.read(8193)",
+      "test": "test_issue154_public_contract.Issue154PublicContractTests.test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract.Issue154PublicContractTests.test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 12,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-accept_arbitrary_health_body.log",
+      "mutatedSha256": "259d1ceb5c246560a263b3af2f1b1781a096920ac6edd3827c9847021498ba25"
+    },
+    {
+      "name": "accept_json_up_instead_of_declared_healthz",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "_require(response.read(8193) == b\"ok\\n\")",
+      "after": "raw = response.read(8193)\n                _require(raw == b\"ok\\n\" or strict_json(raw, 8192).get(\"status\") == \"UP\")",
+      "test": "test_issue154_public_contract.Issue154PublicContractTests.test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract.Issue154PublicContractTests.test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-accept_json_up_instead_of_declared_healthz.log",
+      "mutatedSha256": "c94a1838ca9d7e70143b9e54d697cb938d9a509cdaee9f6e11f2bcc7514550eb"
+    },
+    {
+      "name": "truncate_health_body_to_ok_prefix",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "_require(response.read(8193) == b\"ok\\n\")",
+      "after": "_require(response.read(3) == b\"ok\\n\")",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_oversized_healthz_valid_ok_prefix_does_not_bypass_body_limit",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_oversized_healthz_valid_ok_prefix_does_not_bypass_body_limit",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-truncate_health_body_to_ok_prefix.log",
+      "mutatedSha256": "e197ef831dbfb03f8f2027da8b5839af6141a978e64e08e08e129238b817cb78"
+    },
+    {
+      "name": "bypass_health_status",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "with opener.open(\"https://api.meet-me.co.kr/healthz\", timeout=10) as response:\n                _require(response.status == 200)",
+      "after": "with opener.open(\"https://api.meet-me.co.kr/healthz\", timeout=10) as response:\n                pass",
+      "test": "test_issue154_public_contract.Issue154PublicContractTests.test_public_non200_or_unhealthy_status_cannot_be_verified",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract.Issue154PublicContractTests.test_public_non200_or_unhealthy_status_cannot_be_verified",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 9,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-bypass_health_status.log",
+      "mutatedSha256": "89ce0012ec6f8a2f6dec0fdcc455ff394de665c552d2c1144d1ca13fa230533f"
+    },
+    {
+      "name": "bypass_native_status",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "with opener.open(\"https://api.meet-me.co.kr/v3/api-docs\", timeout=10) as response:\n                _require(response.status == 200)",
+      "after": "with opener.open(\"https://api.meet-me.co.kr/v3/api-docs\", timeout=10) as response:\n                pass",
+      "test": "test_issue154_public_contract.Issue154PublicContractTests.test_public_non200_or_unhealthy_status_cannot_be_verified",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract.Issue154PublicContractTests.test_public_non200_or_unhealthy_status_cannot_be_verified",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 9,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-bypass_native_status.log",
+      "mutatedSha256": "be63a92320c26d17a452d97cd9a2a7ce0f038285bc6398921f61aebce4138890"
+    },
+    {
+      "name": "follow_public_redirects",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "raise ValueError(\"UNTRUSTED_PUBLIC_CONTRACT\")",
+      "after": "return super().redirect_request(*args, **kwargs)",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_real_redirect_request_is_rejected_instead_of_followed",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_real_redirect_request_is_rejected_instead_of_followed",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-follow_public_redirects.log",
+      "mutatedSha256": "0d1a4fac06b5507f674f525b9ccb241405e6d5bb7c1fc26669757acb7e96c522"
+    },
+    {
+      "name": "drop_native_body_limit_sentinel",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "strict_json(response.read(1048577), 1048576)",
+      "after": "strict_json(response.read(1048576), 1048576)",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_oversized_native_valid_json_prefix_does_not_bypass_body_limit",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_oversized_native_valid_json_prefix_does_not_bypass_body_limit",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-drop_native_body_limit_sentinel.log",
+      "mutatedSha256": "56cd28ecaed103fb1a6da5ff1416ac5da2f61d3265861905faac38370dfd8c4c"
+    },
+    {
+      "name": "omit_final_host_health_requirement",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "auth_required=r[\"auth\"], require_healthy=True)",
+      "after": "auth_required=r[\"auth\"], require_healthy=False)",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_actual_collector_cannot_certify_unhealthy_starting_or_missing_app_health",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_actual_collector_cannot_certify_unhealthy_starting_or_missing_app_health",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 4,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-omit_final_host_health_requirement.log",
+      "mutatedSha256": "8a1b9ebbf1a1d8674a86625c257cf6bd994112f835544fc4448778a016582ff9"
+    },
+    {
+      "name": "omit_rule_restore_health_requirement",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "facts, ready = self._facts(require_healthy=True)",
+      "after": "facts, ready = self._facts()",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_unhealthy_app_cannot_authorize_rule_restoration_with_unchanged_runtime_and_database",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_unhealthy_app_cannot_authorize_rule_restoration_with_unchanged_runtime_and_database",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 4,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-omit_rule_restore_health_requirement.log",
+      "mutatedSha256": "17c620e2687bc9a2bca0052fdee990b20387bba414f4404efe8c86b8bc8432c5"
+    },
+    {
+      "name": "disable_collector_health_guard",
+      "path": "deploy/pipeline/run-approved-release.py",
+      "before": "_require(not maintenance_resume and before.get(\"health\") == \"healthy\")",
+      "after": "pass",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_actual_collector_cannot_certify_unhealthy_starting_or_missing_app_health",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_actual_collector_cannot_certify_unhealthy_starting_or_missing_app_health",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 4,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-disable_collector_health_guard.log",
+      "mutatedSha256": "f5043b6cc9df60e03805d9b80c81e0dba817438798fcfb199e533a5071621de5"
+    },
+    {
+      "name": "substitute_latest_migration_for_full_history",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "facts[\"history\"] == expected",
+      "after": "facts[\"history\"][-1:] == expected[-1:]",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 5,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-substitute_latest_migration_for_full_history.log",
+      "mutatedSha256": "01adaab26e452797c91a4784790036fbd847ae6efd9a9ccda4679ef43f46035f"
+    },
+    {
+      "name": "omit_bound_image_check",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "facts[\"currentImage\"] == r[\"validated\"][\"imageRef\"]",
+      "after": "True",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-omit_bound_image_check.log",
+      "mutatedSha256": "7fd0fca740f6229c18572786224aff9caf82d65fd75c8d4e995e8ac3c2b43092"
+    },
+    {
+      "name": "omit_fresh_runtime_source_check",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "record.get(\"sourceSha\") == self.identity[\"sourceSha\"]",
+      "after": "True",
+      "test": "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 1,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-omit_fresh_runtime_source_check.log",
+      "mutatedSha256": "f6fa05f8b8e3a9100d0c3f94585940e6b78b2bfd90ab5f808a61e9de5c9f24b2"
+    },
+    {
+      "name": "omit_native_projection_check",
+      "path": "deploy/pipeline/release_pipeline.py",
+      "before": "_require(project_public_api(spec) == expected)",
+      "after": "pass",
+      "test": "test_issue154_public_contract.Issue154PublicContractTests.test_health_success_does_not_replace_missing_operation_field_or_schema",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "test_issue154_public_contract.Issue154PublicContractTests.test_health_success_does_not_replace_missing_operation_field_or_schema",
+        "-v"
+      ],
+      "detected": true,
+      "failedAssertions": 3,
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-fi-omit_native_projection_check.log",
+      "mutatedSha256": "48ed8e311a0212f52fc30b2244783d1041f6f67d548d9025e03171fa6356171c"
+    }
+  ],
+  "detected": 15,
+  "survivors": 0,
+  "setupErrors": 0,
+  "activeSourceMutated": false,
+  "networkCalls": 0,
+  "awsCalls": 0,
+  "secretReads": 0
+}

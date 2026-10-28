@@ -509,10 +509,12 @@ class AwsReleaseAdapter:
                 time.sleep(2)
         return len(result["data"])
 
-    def _facts(self):
+    def _facts(self, require_healthy=False):
         r = self.release
-        return self.driver._collect_facts(r["instance"], r["region"], r["manifest"], auth_required=r["auth"],
-                                         maintenance_resume=self.action == "resume")
+        options = {"auth_required": r["auth"], "maintenance_resume": self.action == "resume"}
+        if require_healthy:
+            options["require_healthy"] = True
+        return self.driver._collect_facts(r["instance"], r["region"], r["manifest"], **options)
 
     def validate_facts(self):
         r = self.release
@@ -601,7 +603,8 @@ class AwsReleaseAdapter:
         self.host_proof = None
         _require(payload.get("sourceSha") == self.identity["sourceSha"] and payload.get("phase") == "READY")
         # A prior command's successful stdout is not evidence of the current host.
-        facts, ready = self.driver._collect_facts(r["instance"], r["region"], r["manifest"], auth_required=r["auth"])
+        facts, ready = self.driver._collect_facts(r["instance"], r["region"], r["manifest"],
+                                                auth_required=r["auth"], require_healthy=True)
         expected = [dict(row, success=True) for row in r["manifest"]["migrations"]]
         record = facts["automaticContract"]
         valid = (ready is True and facts["phase"] == "READY" and facts["guardTrusted"] is True
@@ -619,7 +622,7 @@ class AwsReleaseAdapter:
     def safe_to_restore(self):
         if self.before.get("phase") != "READY" or self.before.get("guardTrusted") is not True:
             return False
-        facts, ready = self._facts()
+        facts, ready = self._facts(require_healthy=True)
         return ready is True and self.active_commands() == 0 and all(facts[key] == value for key, value in self.before.items())
 
 
@@ -679,7 +682,7 @@ def validate_public_contract(contract):
 
 
 def verify_public_contract(expected):
-    """Bounded public reads; health alone cannot attest a release or its API."""
+    """Bounded edge/API reads; app health belongs to the separate host proof."""
     class NoRedirect(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, *args, **kwargs):
             raise ValueError("UNTRUSTED_PUBLIC_CONTRACT")
@@ -688,10 +691,9 @@ def verify_public_contract(expected):
     for attempt in range(3):
         try:
             opener = urllib.request.build_opener(NoRedirect)
-            with opener.open("https://api.meet-me.co.kr/actuator/health", timeout=10) as response:
+            with opener.open("https://api.meet-me.co.kr/healthz", timeout=10) as response:
                 _require(response.status == 200)
-                health = strict_json(response.read(8193), 8192)
-                _require(type(health) is dict and health.get("status") == "UP")
+                _require(response.read(8193) == b"ok\n")
             with opener.open("https://api.meet-me.co.kr/v3/api-docs", timeout=10) as response:
                 _require(response.status == 200)
                 spec = strict_json(response.read(1048577), 1048576)

@@ -28,3 +28,9 @@
 - [독립 RED](../../.tdd/deployment/issue154-independent-red.json), [core·catalog FI](../../.tdd/verification/issue154-independent-fi.json)
 - [current catalog 변경](../../.tdd/supersessions/issue154-catalog.json), [Python fixture 보완](../../.tdd/supersessions/issue154-current-python-fixtures.json), [Node fixture 보완](../../.tdd/supersessions/issue154-current-node-fixtures.json)
 - [실제 native 계약](../../.tdd/verification/issue154-native-public-api-myrooms.json), [운영 pipeline](../../deploy/APPROVED_RELEASE_PIPELINE.md)
+
+## 운영 전 공개 경로·앱 건강 보완
+
+운영 읽기 대조에서 공개 Actuator 경로가404인 반면 선언된 Nginx healthz가 정확한200·ok개행이라는 차이를 발견했다. 이전 합성 fixture가 잘못된 공개 경로를 가정했다. 독립 테스트를 실제 공개 계약으로 고정하고 원본·SHA·supersession을 보존했으며 유효 RED28개에서 실패 assertion38개·설정 오류0을 확인했다. 또한 최종 host 증명과 규칙 복원이 unhealthy/starting/미확인 앱을 허용하는 결함을 재현하고, 해당 최종 경로에만 fresh healthy 조건을 추가했다. 앱이 중지된 maintenance-resume 사전점검은 유지한다.
+
+보완 후 전체 배포 Python311/311·Node172/172·원본 commit guard를 통과했다. 독립94개 GREEN·격리 결함 주입15/15탐지이며 미해결 P1/P2는 없다. 수정한 실제 공개 검증 함수도 기존 서비스에 읽기 전용으로 실행해 통과했다. 이는 새 릴리스의 runtime·DB·운영 전환 증명이 아니다. [보완 최종 근거](../../.tdd/verification/issue154-public-health-final.json)와 [독립 검토](../../.tdd/reviews/issue154-public-health-independent-review.json)를 따른다.

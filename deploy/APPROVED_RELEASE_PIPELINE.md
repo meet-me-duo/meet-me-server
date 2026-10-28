@@ -30,7 +30,7 @@ IAM의 `ManageMeetMeCredentialRefreshRules`는 기존 `meet-me-production-db-cre
 - APPLIED: 검증된 명령/host 응답과 fresh runtime·전체 이력 증명이 필요하다.
 - UNKNOWN: 명령 전송 응답 유실·timeout·취소·불명확 상태이다. false 또는 미실행으로 바꾸지 않는다.
 - 원래 규칙 상태를 확인하지 못했거나 active-command 수를 읽지 못하면 완료가 아니다.
-- 공개 health200만으로 완료하지 않는다. candidate archive에 묶인 `public-api-contract.json`의 operation/path/operationId와 schema 자체 property 이름을 실제 native OpenAPI와 비교한다.
+- 공개 `/healthz`의 정확한 200·`ok\n` 본문은 Nginx 접속 확인이다. 앱의 건강을 대신하지 않으며 최종 host 증명과 규칙 복원에는 실제 앱 컨테이너의 `healthy` 상태를 별도 요구한다. 의도적으로 앱을 중지한 maintenance-resume 사전점검은 이 최종 건강 조건과 구분한다. candidate archive에 묶인 `public-api-contract.json`의 operation/path/operationId와 schema 자체 property 이름도 실제 native OpenAPI와 비교한다.
 
 공개 계약 데이터는 실제 Spring native 명세를 독립 PostgreSQL/Redis 테스트에서 생성·비교한다. 예제·사용자 데이터·server URL·키를 포함하지 않는다. 이는 operation/property 이름의 형태 증명이며 모든 응답 타입·보안 의미·실제 로그인/리뷰 제출의 검증을 뜻하지 않는다. runtime의 정확한 image/source와 전체 DB 이력 증명도 별도로 필요하다.
 
