@@ -34,6 +34,7 @@ MIGRATION_SCRIPTS = (
     'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
     'V17__add_durable_ai_room_budgets.sql',
     'V18__align_recommendation_selection_attendance.sql',
+    'V19__add_confirmed_result_reviews.sql',
 )
 
 
