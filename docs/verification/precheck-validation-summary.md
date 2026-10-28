@@ -1,5 +1,7 @@
 # 제출 전 시간 조건·직접 수정 안내 검증
 
+최종 로컬 상태: 최신 main e799fb6와 동일한 develop0ce4b40을 통합했고 전체2278개 중2274 PASS·기존4 SKIP·실패/오류0이다. 독립 검토 미해결 P1/P2=0, 작업 트리는 깨끗하며 원격/운영 반영은 이슈 게시 승인 대기로 미완료다.
+
 ## 완료한 로컬 변경
 
 넓은 시간 가능 범위와 같은 연속 구간의 오전·오후 문맥을 강제로 좁히지 않도록 generation prompt를 보강했다. 보완문은 요일·반복 범위도 보존한다. 필요한 개인 사실을 추측해 A/B를 만드는 대신 NEEDS_EDIT에 구체적인 보완 질문을 담아 본인에게만 표시한다. 세 verdict와 strict model JSON의 네 필드 타입은 유지한다.
@@ -43,4 +45,4 @@ TF08의 정확한 입력을 최종 소스에서 다시 평가하지 않았다. T
 
 신규 이슈 생성은 자동 승인 심사에서 두 번 거절돼 새 이슈는 없다. 추가 재시도·다른 경로 우회·원격 게시·PR·develop/main 원격 병합·운영 배포는 하지 않았다. 정확한 승인 대상과 본문은 `precheck-issue-draft.md`에 보존했다.
 
-최신 main e799fb6/develop0ce4b40은 내 모임 API를 포함한다. 이 작업과 production source 경계는 겹치지 않으며 진행 문서 상단의 두 기록을 보존해 통합한다. 최신 통합 native OpenAPI는 병합 후 다시 생성해 내 모임 필터·페이지 계약과 edit_guidance가 함께 있는지 확인해야 한다.
+최신 main e799fb6/develop0ce4b40은 내 모임 API를 포함한다. 이 작업과 production source 경계는 겹치지 않으며 진행 문서 상단의 두 기록을 보존해 통합한다. 통합 후 실제 native OpenAPI를 다시 생성해 내 모임 필터·페이지 계약과 edit_guidance가 함께 있음을 확인했다. 파일은 docs/openapi/precheck-edit-guidance.openapi.json이며 SHA-256은3028ed968241315c1d4e1c230491a7eb350ea0b9122cfcddf8aa84fdde075145다.
