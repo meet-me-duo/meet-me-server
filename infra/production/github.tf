@@ -51,9 +51,9 @@ data "aws_iam_policy_document" "github_deploy" {
   }
 
   statement {
-    sid       = "ManageMeetMeCredentialRefreshRules"
-    effect    = "Allow"
-    actions   = ["events:DisableRule", "events:EnableRule"]
+    sid     = "ManageMeetMeCredentialRefreshRules"
+    effect  = "Allow"
+    actions = ["events:DisableRule", "events:EnableRule"]
     resources = [
       aws_cloudwatch_event_rule.database_credential_reconcile.arn,
       aws_cloudwatch_event_rule.database_credential_rotated.arn,
