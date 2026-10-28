@@ -175,7 +175,7 @@ try:
     assert type(data) is dict and data.get('protocol')=='meetme-managed-ai-policy-v1'
     threshold=''
     if data.get('state')=='UNCONFIGURED':
-        assert set(data)=={'protocol','state'} and enabled=='false'
+        assert set(data)=={'protocol','state'}
     else:
         assert data.get('state')=='CONFIGURED' and set(data)=={'protocol','state','unit','roomCap','minimumConfidence','operations'}
         unit=data['unit']
@@ -217,6 +217,12 @@ PY
   policy_sha256="${policy_info%%:*}"
   classifier_minimum_confidence="${policy_info#*:}"
   unset policy_info
+  # Only an enabled CONFIGURED policy yields a reviewed financial threshold.
+  # Provider activation without that policy keeps monetary enforcement disabled.
+  financial_budget_enabled=false
+  if [[ "$precheck_provider_enabled" == true && -n "$classifier_minimum_confidence" ]]; then
+    financial_budget_enabled=true
+  fi
   if [[ "$precheck_provider_enabled" == true ]]; then
     typesafe_api_key="$(get_auth_parameter secret/typesafe-api-key SecureString)"
   fi
@@ -274,11 +280,13 @@ trap 'rm -f "$temporary"' EXIT
     printf 'MEETME_PRECHECK_PROVIDER_ENABLED=%s\n' "$precheck_provider_enabled"
     printf 'MEETME_PRECHECK_DECISIONROUTING_ENABLED=%s\n' "$precheck_provider_enabled"
     printf 'MEETME_PRECHECK_CLASSIFIER_ENABLED=%s\n' "$precheck_provider_enabled"
-    printf 'MEETME_AI_BUDGET_ENABLED=%s\n' "$precheck_provider_enabled"
+    printf 'MEETME_AI_BUDGET_ENABLED=%s\n' "$financial_budget_enabled"
     printf 'MEETME_AI_BUDGET_POLICYPATH=/run/meetme-ai/runtime-ai-policy.json\n'
     printf 'MEETME_AI_BUDGET_POLICYSHA256=%s\n' "$policy_sha256"
-    if [[ "$precheck_provider_enabled" == true ]]; then
+    if [[ "$financial_budget_enabled" == true ]]; then
       printf 'MEETME_PRECHECK_CLASSIFIER_MINIMUMCONFIDENCE=%s\n' "$classifier_minimum_confidence"
+    fi
+    if [[ "$precheck_provider_enabled" == true ]]; then
       printf 'TYPESAFE_API_KEY=%s\n' "$typesafe_api_key"
     fi
   fi

@@ -2,6 +2,8 @@ package com.meetme.server.shared.adapter.output.aihttp
 
 import com.meetme.server.shared.application.port.output.AiDispatchModePort
 import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
+import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRuntimeProperties
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -13,7 +15,10 @@ import java.time.Clock
 class AiHttpDispatchConfiguration {
     @Bean
     @ConditionalOnMissingBean(AiDispatchModePort::class)
-    fun aiDispatchMode(properties: AiDispatchGateProperties): AiDispatchModePort = AiDispatchModePort { properties.enabled }
+    fun aiDispatchMode(
+        properties: AiDispatchGateProperties,
+        provider: PrecheckProviderRuntimeProperties = PrecheckProviderRuntimeProperties(),
+    ): AiDispatchModePort = AiDispatchModePort { properties.enabled }
 
     @Bean
     @ConditionalOnMissingBean(AiHttpDispatchGate::class)
@@ -21,5 +26,7 @@ class AiHttpDispatchConfiguration {
         properties: AiDispatchGateProperties,
         budget: DurableAiBudgetPort,
         clock: Clock,
+        provider: PrecheckProviderRuntimeProperties = PrecheckProviderRuntimeProperties(),
+        runtimeGuard: AiRuntimeDispatchGuardPort? = null,
     ): AiHttpDispatchGate = AiHttpDispatchGate(properties, budget, clock)
 }

@@ -1,5 +1,17 @@
 # meet-me-server Implementation Plan
 
+## Issue #144 — 실제 운영 AI 활성화 (2026-10-28 UTC)
+
+- [USER] 배포된 운영 환경에서 사용자와 지인들이 AI를 이용하게 한다. 정식 금액 정책은 추후 결정하며 별도 테스트 모드·만료·총 요청 슬롯·threshold 선택을 활성화 필수 조건으로 만들지 않는다.
+- [x] `[AGENT]` 미배포 TEST_OPERATION/V19 작업은 별도 작업 공간에 보존하고 이번 릴리스에서 제외했다. 최신 develop의 깨끗한 `feature/144-production-ai-activation`에서 기존 V18을 사용한다.
+- [x] `[AGENT]` 전송 권한·한 번의 HTTP와 금액 정책을 분리하는 최소 계약을 독립 검토했다. 신규 스키마·가짜 quote/permit·금전 READY 승격 없이 기존 실행 claim·owner/revision/deadline을 재사용한다.
+- [ ] `[AGENT]` 독립 RED 후 운영 3flag ON/budget OFF, 현재 실행 재검증·전송 보호, Jev threshold 미정의 Luna 검증을 구현한다.
+- [ ] `[AGENT]` 실제 PostgreSQL/TLS mock·금전 모드 회귀·결함 주입·원본 전체 hook·독립 리뷰·필수 CI를 통과한다.
+- [ ] `[AGENT]` 검증한 PR·main 병합·정확한 immutable artifact/image의 운영 배포와 설정 활성화를 수행하고 runtime 상태를 확인한다.
+- [SHARED] 기존 provider 키를 비밀값 없이 확인한다. 새 자격증명·IAM/인증 변경은 별도 행동 승인, 실제 유료 검증 호출은 구체적 범위 확인 전 실행하지 않는다. 개선 기능과 UI는 다른 작업에서 담당한다.
+
+상세 불변식은 `docs/ISSUE_144_PRODUCTION_AI_ACTIVATION.md`를 따른다. 실제 활성화와 유료 모델 응답 검증을 구분해 보고한다.
+
 ## Issue #141 — 배포 권한과 중단 전환 재개 (2026-10-27 UTC)
 
 - [x] `[AGENT]` 기존 사용자 checkout의 변경을 보존하고 최신 develop 기반 별도 clone에서 수정한다.

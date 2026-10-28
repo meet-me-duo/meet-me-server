@@ -11,6 +11,7 @@ import com.meetme.server.shared.application.port.output.AiCurrentBudgetExecution
 import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
 import com.meetme.server.shared.application.port.output.AiDispatchInputSnapshot
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
 import com.meetme.server.shared.domain.ParticipantId
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
@@ -32,7 +33,10 @@ class JdbcAiBudgetExecutionFence(
     private val coverage: AiBudgetCoverageEpochQueryPort,
     private val participants: ParticipantRepository,
     private val bindings: PrecheckOwnershipBindingPort,
-) : AiBudgetExecutionFencePort {
+) : AiBudgetExecutionFencePort, AiRuntimeDispatchGuardPort {
+    override fun authorize(request: AiBudgetReserveRequest, at: Instant): Instant? =
+        TODO("TDD RED: OA02 current execution dispatch authority without monetary policy")
+
     override fun lockAndValidate(
         request: AiBudgetReserveRequest,
         at: Instant,

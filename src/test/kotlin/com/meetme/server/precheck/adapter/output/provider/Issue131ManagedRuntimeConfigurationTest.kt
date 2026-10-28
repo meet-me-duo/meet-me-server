@@ -58,8 +58,8 @@ class Issue131ManagedRuntimeConfigurationTest {
     }
 
     @ParameterizedTest(name = "{displayName} [{index}] mask={0}")
-    @ValueSource(ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-    fun `MB02 any nonempty proper subset of the four flags fails startup`(mask: Int) {
+    @ValueSource(ints = [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14])
+    fun `MB02 unsupported partial provider and budget flag combinations fail startup`(mask: Int) {
         val file = policyFile()
         runner(file, mask, "0.73").run { context ->
             assertNotNull(context.startupFailure, "Partial ON must not become an unmanaged single-generator runtime")

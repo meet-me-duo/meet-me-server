@@ -12,6 +12,7 @@ import com.meetme.server.shared.application.port.output.AiBudgetUsage
 import com.meetme.server.shared.application.port.output.AiPhysicalCallSpec
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
 import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -118,6 +119,8 @@ class AiHttpDispatchGate(
     private val budget: DurableAiBudgetPort,
     private val clock: Clock,
     private val nanoTime: LongSupplier = LongSupplier(System::nanoTime),
+    private val runtimeGuard: AiRuntimeDispatchGuardPort? = null,
+    val enforceBudget: Boolean = properties.enabled,
 ) {
     fun prepareGroup(
         context: AiProviderDispatchContext?,

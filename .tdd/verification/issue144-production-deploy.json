@@ -1,0 +1,47 @@
+{
+  "workItem": "issue144-production-deploy",
+  "sourceRevision": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+  "recordedAt": "2026-10-28T02:37:22.703889Z",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "333f594d3b2df4da09c4d6fb5d2543ad9e08f2295921ec59a7b4478bedaec238"
+    }
+  ],
+  "red": ".tdd/deployment/issue144-production-deploy-red.json",
+  "python": {
+    "tests": 25,
+    "passed": 25,
+    "newTests": 8,
+    "newPassed": 8,
+    "rawLog": ".codex/tdd-evidence/issue144-production-python-green.log"
+  },
+  "catalog": "Exact V1-V18 source hashes and actual publication/package consumption pass; no new migration or mode",
+  "operatingValuesSelected": false,
+  "paidProviderCalls": 0,
+  "liveAwsCalls": 0,
+  "gitActions": 0,
+  "productionSourceChangesByTestAuthor": 0,
+  "existingOracleChange": {
+    "status": "DENIED_PENDING_PARENT_REVIEW",
+    "executed": false,
+    "attempts": 1,
+    "proposal": "../issue144-production-deploy-oracle-proposal.patch",
+    "proposalSha256": "ceb5e6ec893c61ac336bfb8be6e14cd2c2d0afce32b49cf1ce3f5848854955c4",
+    "targets": [
+      {
+        "path": "deploy/tests/issue131-runtime-bundle-env.test.cjs",
+        "currentSha256": "08fcd7d27bd7a49246117bcda9d093a2dc764f35a7f4032765146048c1c460a5",
+        "beforeArchive": ".tdd/history/issue144-production-ai-activation/issue131-runtime-bundle-env.test.before.cjs"
+      },
+      {
+        "path": "deploy/tests/runtime-auth-env.test.cjs",
+        "currentSha256": "153f781a59e0630ec25321382e3e3bd260aa75261f1dcf277a83b11d73e6f2b6",
+        "beforeArchive": ".tdd/history/issue144-production-ai-activation/runtime-auth-env.test.before.cjs"
+      }
+    ],
+    "reason": "Automatic approval review could verify only GitHub issue creation authorization and rejected the existing regression test change as potentially weakening validation. No workaround or retry was performed."
+  },
+  "nodeRegression": "Pending the explicit review of the two obsolete UNCONFIGURED+ON denial expectations",
+  "faultInjection": "Plan prepared; not executed for this new production activation scope"
+}
