@@ -1,0 +1,16 @@
+{
+  "baseRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "reason": "Issue154 current execution bundle contract18\u219223; preserve historical14/17/18 admission and original expectations",
+  "originals": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "1f5932ce51a2e6658f33b732c8af326c9690e662580823b1bcac2fb2f539297b",
+      "preservedAt": ".tdd/history/issue154-catalog/integrated-release-catalog.cjs.before"
+    },
+    {
+      "path": ".github/scripts/issue131-policy-catalog.test.cjs",
+      "sha256": "1ef6b1b528dac8207c2c15ac4ac673bb0b5cc2cb9ef10e668a275b1d35d5e109",
+      "preservedAt": ".tdd/history/issue154-catalog/issue131-policy-catalog.test.cjs.before"
+    }
+  ]
+}

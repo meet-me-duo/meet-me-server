@@ -1,0 +1,197 @@
+{
+  "workItem": "issue154-independent-deployment-contracts",
+  "recordedAt": "2026-10-28T15:04:36.775254+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_completion.py",
+      "sha256": "4f3485312ef80a42c1485d233a8b9ffe355569ddd403638f28a2af84a1a280d6"
+    },
+    {
+      "path": "deploy/tests/test_issue154_transition.py",
+      "sha256": "8bd5eb427ed8d3dd90f8dfb4304cbf3150243e4453583308ed07ebeb524d1459"
+    },
+    {
+      "path": "deploy/tests/test_issue154_pipeline.py",
+      "sha256": "5ae9de5a634887e2409eaf3d71c08d44210b57f746d13edc487423439a760e87"
+    },
+    {
+      "path": "deploy/tests/test_issue154_automatic.py",
+      "sha256": "bad0894bb8205ad2b85749c18ecda0ef4892b461e07a0c49cf9ea83328c9639b"
+    },
+    {
+      "path": ".github/scripts/issue154-pipeline-catalog.test.cjs",
+      "sha256": "06677515e019f9a2e9d816f97c42f5715bc28889eed4aa1a432f4a500bd60db2"
+    }
+  ],
+  "red": ".tdd/deployment/issue154-independent-red.json",
+  "focusedPython": {
+    "command": "python -m unittest discover -s deploy/tests -p test_issue154_*.py -v",
+    "tests": 102,
+    "passed": 102,
+    "rawLog": ".codex/tdd-evidence/issue154-independent-current-green.log"
+  },
+  "focusedCatalog": {
+    "command": "node --test .github/scripts/issue154-pipeline-catalog.test.cjs .github/scripts/issue131-policy-catalog.test.cjs",
+    "tests": 14,
+    "passed": 14,
+    "rawLog": ".codex/tdd-evidence/issue154-catalog-green.log"
+  },
+  "transitionFaultInjection": {
+    "scope": "isolated copies only; original shared source untouched",
+    "sourcePath": "deploy/pipeline/transition_orchestrator.py",
+    "sourceSha256": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f",
+    "testSha256": "8bd5eb427ed8d3dd90f8dfb4304cbf3150243e4453583308ed07ebeb524d1459",
+    "mutations": [
+      {
+        "mutation": "approval_removed",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_no_verified_approval_means_no_rule_mutation_or_deployment (test_issue154_transition.Issue154TransitionTests.test_no_verified_approval_means_no_rule_mutation_or_deployment)"
+        ]
+      },
+      {
+        "mutation": "ownership_removed",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_loss_of_ownership_after_pause_cannot_submit_or_restore_another_owner_rules (test_issue154_transition.Issue154TransitionTests.test_loss_of_ownership_after_pause_cannot_submit_or_restore_another_owner_rules)"
+        ]
+      },
+      {
+        "mutation": "pending_accepted",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_pending_command_or_bad_facts_prevents_deployment (test_issue154_transition.Issue154TransitionTests.test_pending_command_or_bad_facts_prevents_deployment) (field='pending', value=1)"
+        ]
+      },
+      {
+        "mutation": "intent_not_durable",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_send_intent_is_durable_before_any_command_submission_effect (test_issue154_transition.Issue154TransitionTests.test_send_intent_is_durable_before_any_command_submission_effect)"
+        ]
+      },
+      {
+        "mutation": "host_proof_removed",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified=False)",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified=1)",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified='true')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified=None)"
+        ]
+      },
+      {
+        "mutation": "restoration_falsified",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_successful_command_with_restore_failure_preserves_applied_and_incomplete_state (test_issue154_transition.Issue154TransitionTests.test_successful_command_with_restore_failure_preserves_applied_and_incomplete_state)"
+        ]
+      },
+      {
+        "mutation": "unknown_enables_rules",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Pending')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='InProgress')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Delayed')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Failed')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Cancelled')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='TimedOut')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Unknown')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified=False)",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified=1)",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified='true')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (hostVerified=None)"
+        ]
+      },
+      {
+        "mutation": "unknown_rolls_back",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Pending')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='InProgress')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Delayed')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Failed')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Cancelled')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='TimedOut')",
+          "test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules (test_issue154_transition.Issue154TransitionTests.test_failed_cancelled_pending_and_unverified_host_results_never_enable_rules) (status='Unknown')"
+        ]
+      },
+      {
+        "mutation": "known_command_resubmitted",
+        "exitCode": 1,
+        "validBehavioralRun": true,
+        "detected": true,
+        "failedTests": [
+          "test_known_command_reconciliation_queries_same_id_without_resubmission (test_issue154_transition.Issue154TransitionTests.test_known_command_reconciliation_queries_same_id_without_resubmission)",
+          "test_replaying_completed_operation_does_not_submit_another_deployment (test_issue154_transition.Issue154TransitionTests.test_replaying_completed_operation_does_not_submit_another_deployment)"
+        ]
+      }
+    ],
+    "allDetected": true,
+    "originalHashRestored": true
+  },
+  "catalogFaultInjection": {
+    "source": "deploy/pipeline/publish_manifest.py",
+    "sourceSha256": "b13b04bb03c1979d809ef75b266665f81e667fe86cecaef5f5a564f9adcc5933",
+    "testSha256": "06677515e019f9a2e9d816f97c42f5715bc28889eed4aa1a432f4a500bd60db2",
+    "scope": "isolatedsourcecopies only, realSQLcopiedunchanged, noAWS",
+    "mutations": [
+      {
+        "omittedGuardDependency": "pipeline/release_completion.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1
+      },
+      {
+        "omittedGuardDependency": "pipeline/transition_orchestrator.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1
+      },
+      {
+        "omittedGuardDependency": "pipeline/approval_gate.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1
+      },
+      {
+        "omittedGuardDependency": "pipeline/release_pipeline.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1
+      },
+      {
+        "omittedGuardDependency": "transition-approval.json",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1
+      }
+    ],
+    "allDetected": true,
+    "sharedOriginalUnchanged": true
+  },
+  "totalMutations": 14,
+  "allDetected": true,
+  "existingOracleSupersession": ".tdd/history/issue154-catalog/originals.json",
+  "originalProductionFilesMutatedInSharedWorktreeByTestAuthor": 0,
+  "operatingCalls": 0,
+  "paidCalls": 0,
+  "commitsOrRemoteWrites": 0
+}

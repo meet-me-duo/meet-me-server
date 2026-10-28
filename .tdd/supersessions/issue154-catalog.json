@@ -1,0 +1,48 @@
+{
+  "workItem": "issue154-catalog",
+  "reason": "Current execution bundle is18 historical dependencies plus4new Python modules and a typed transition approval policy. New publication requiresall23; fully historicalarchives keep exact14/17/18 admission. No missing-module fallback is permitted.",
+  "originals": [
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "1f5932ce51a2e6658f33b732c8af326c9690e662580823b1bcac2fb2f539297b",
+      "preservedAt": ".tdd/history/issue154-catalog/integrated-release-catalog.cjs.before"
+    },
+    {
+      "path": ".github/scripts/issue131-policy-catalog.test.cjs",
+      "sha256": "1ef6b1b528dac8207c2c15ac4ac673bb0b5cc2cb9ef10e668a275b1d35d5e109",
+      "preservedAt": ".tdd/history/issue154-catalog/issue131-policy-catalog.test.cjs.before"
+    }
+  ],
+  "modifiedCurrentTests": [
+    "PC01 current inventory assertion18\u219223",
+    "PC02 current fingerprint expected inventory18\u219223"
+  ],
+  "preservedHistoricalTests": "PC06 full archived18/17/14 admission and PC07 mutation rejection unchanged",
+  "currentTestFiles": [
+    {
+      "path": ".github/scripts/issue154-pipeline-catalog.test.cjs",
+      "sha256": "06677515e019f9a2e9d816f97c42f5715bc28889eed4aa1a432f4a500bd60db2"
+    }
+  ],
+  "finalFixtureSha256": "bff22c9fcd3bdb75a3907392ba1a24202b0d25536ee6d01c7116f023fb3ff28a",
+  "finalPolicyTestSha256": "43cbdef18bc15c99230e4523e57382a16d7b761c73211cd99ef5ee06761974bb",
+  "rawRed": ".codex/tdd-evidence/issue154-catalog-baseline-red.log",
+  "greenTests": 14,
+  "faultInjectedMissingInventoryDependenciesDetected": 5,
+  "originalSnapshotMatchesBaseRevision": true,
+  "additionalCycles": [
+    {
+      "receipt": ".tdd/supersessions/issue154-current-python-fixtures.json",
+      "reason": "RequiredreadonlypublicAPI DATAaddedtocurrentfixturesoutsideguardcatalog; exact3positivefixture/currentinventoryupdates",
+      "guardInventoryCount": 23,
+      "currentFixtureDataCopyBy": "pipelineintegrator",
+      "currentFixtureSha256": "4ef65a212401c41990ebca1d59a9bdeb0bff828cde9c06605d30f139881a89d8"
+    },
+    {
+      "receipt": ".tdd/supersessions/issue154-current-node-fixtures.json",
+      "reason": "ThreeadditionalCURRENTNodefixture/oracleextensions, preservingrealarchived18format",
+      "focusedTestsPassed": 35,
+      "isolatedNegativeFaultsDetected": 7
+    }
+  ]
+}

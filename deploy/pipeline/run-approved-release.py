@@ -21,7 +21,7 @@ import zlib
 REPOSITORY = "meet-me-duo/meet-me-server"
 BASE = Path(__file__).resolve().parent.parent
 MAX_ARCHIVE = 4 * 1024 * 1024
-CONTRACT_FILES = tuple(sorted((
+HISTORICAL_CONTRACT_FILES = tuple(sorted((
     "scripts/host-release-guard.sh", "scripts/install-host-release-guard.sh", "scripts/deploy-release.sh",
     "scripts/rollback-release.sh", "scripts/refresh-database-credential.sh", "compose.guard.yml",
     "meet-me-guarded-restart.service", "pipeline/approved_release.py", "pipeline/host-approved-release.py",
@@ -30,7 +30,12 @@ CONTRACT_FILES = tuple(sorted((
     "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml",
     "runtime-ai-policy.json",
 )))
-AUTH_CONTRACT_FILES = tuple(name for name in CONTRACT_FILES if name != "runtime-ai-policy.json")
+PIPELINE_FILES = (
+    "pipeline/release_completion.py", "pipeline/approval_gate.py",
+    "pipeline/transition_orchestrator.py", "pipeline/release_pipeline.py", "transition-approval.json",
+)
+CONTRACT_FILES = tuple(sorted(HISTORICAL_CONTRACT_FILES + PIPELINE_FILES))
+AUTH_CONTRACT_FILES = tuple(name for name in HISTORICAL_CONTRACT_FILES if name != "runtime-ai-policy.json")
 LEGACY_CONTRACT_FILES = tuple(name for name in AUTH_CONTRACT_FILES if name not in (
     "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml"))
 
@@ -182,6 +187,10 @@ def _verify_package(archive_path, manifest):
     if "runtime-ai-policy.json" in files:
         _require(auth_required)
         _runtime_policy_bytes(files["runtime-ai-policy.json"])
+        contract = HISTORICAL_CONTRACT_FILES
+    if set(PIPELINE_FILES) & set(files):
+        _require(set(PIPELINE_FILES) <= set(files) and contract == HISTORICAL_CONTRACT_FILES)
+        _require("public-api-contract.json" in files)
         contract = CONTRACT_FILES
     _require(set(contract) | {"migrations/" + row["script"] for row in manifest["migrations"]}
              | {"preflight/compiled/ReadOnlyFlywayProbe.class", "runtime-provider-mode", "compose.production.yml"} <= set(files))
@@ -232,7 +241,8 @@ def _github_run(run_id, attempt=None):
     return json.loads(raw)
 
 
-def _verify_origin(manifest, action):
+def _verify_origin(manifest, action, approved_pipeline=False):
+    _require(type(approved_pipeline) is bool)
     origin = manifest["origin"]
     run = _github_run(origin["ciRunId"])
     _require(type(run.get("id")) is int and str(run["id"]) == origin["ciRunId"])
@@ -248,7 +258,8 @@ def _verify_origin(manifest, action):
     _require(producer.get("path") == ".github/workflows/deploy.yml" and producer.get("name") == "Deploy Production")
     _require(producer.get("event") == "workflow_run" and producer.get("head_branch") == "main")
     if producer.get("status") == "in_progress":
-        _require(action == "automatic" and manifest["buildRunId"] == os.environ["GITHUB_RUN_ID"]
+        _require((action == "automatic" or (approved_pipeline and action in ("deploy", "resume")))
+                 and manifest["buildRunId"] == os.environ["GITHUB_RUN_ID"]
                  and manifest["buildRunAttempt"] == os.environ["GITHUB_RUN_ATTEMPT"])
     else:
         _require(producer.get("status") == "completed")
@@ -498,6 +509,9 @@ def _deploy_result(status, stdout, stderr):
 
 
 def main():
+    if len(sys.argv) == 2 and sys.argv[1].startswith("--pipeline-"):
+        return _load("release_pipeline_controller", BASE / "pipeline/release_pipeline.py").main(
+            sys.modules[__name__], sys.argv[1:])
     if sys.argv[1:] == ["--validate"]:
         validate_workflow_event(json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text()), {
             "repository": os.environ["GITHUB_REPOSITORY"], "ref": os.environ["GITHUB_REF"],

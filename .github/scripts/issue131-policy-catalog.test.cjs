@@ -15,6 +15,9 @@ const historical14 = [
 ].sort();
 const historical17 = [...historical14, 'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml'].sort();
 const current18 = [...historical17, 'runtime-ai-policy.json'].sort();
+// Issue154 changes only current publication; archived 14/17/18 contracts remain immutable below.
+const current23 = [...current18, 'pipeline/release_completion.py', 'pipeline/transition_orchestrator.py',
+  'pipeline/approval_gate.py', 'pipeline/release_pipeline.py', 'transition-approval.json'].sort();
 const sentinel = '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n';
 function fixture(inventory = current18) {
   const value = f.fixture();
@@ -72,15 +75,16 @@ function release(value, inventory) {
   fs.copyFileSync(value.archive, path.join(value.directory, 'deploy/.approved-release.tar.gz'));
   return result;
 }
-test('PC01 current publisher runner and host each declare the same independently fixed eighteen files', () => {
+test('PC01 current publisher runner and host each declare the same independently fixed twenty-three files', () => {
   assert.equal(historical14.length, 14); assert.equal(historical17.length, 17); assert.equal(current18.length, 18);
   const lists = invoke('lists'); assert.equal(lists.ok, true);
-  for (const list of Object.values(lists.result)) assert.deepEqual([...list].sort(), current18);
+  assert.equal(current23.length, 23);
+  for (const list of Object.values(lists.result)) assert.deepEqual([...list].sort(), current23);
 });
 test('PC02 current publication fingerprints exact policy bytes without changing the approved V1 through V19 SQL catalog', () => {
   const value = f.currentFixture(); try {
     const result = f.publish(value); assert.equal(result.ok, true);
-    assert.equal(result.result.guardFingerprint, hash(canonical(current18.map(name => ({ path: name, sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
+    assert.equal(result.result.guardFingerprint, hash(canonical(current23.map(name => ({ path: name, sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     assert.deepEqual(result.result.migrations.map(row => row.script), f.currentScripts);
     const previous = result.result; fs.appendFileSync(path.join(value.directory, 'deploy/runtime-ai-policy.json'), '\n');
     const after = f.publish(value); assert.equal(after.ok, true); assert.notEqual(after.result.guardFingerprint, previous.guardFingerprint);

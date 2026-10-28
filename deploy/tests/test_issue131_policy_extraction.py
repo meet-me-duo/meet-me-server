@@ -40,6 +40,7 @@ print(json.dumps({'policyMode':mode('runtime-ai-policy.json'),'neighborMode':mod
 '''
             files = {name: (ROOT / name).read_bytes() for name in DRIVER.CONTRACT_FILES}
             files.update({"pipeline/host-approved-release.py": entrypoint, "runtime-ai-policy.json": policy,
+                          "public-api-contract.json": (ROOT / "public-api-contract.json").read_bytes(),
                           "preflight/compiled/ReadOnlyFlywayProbe.class": bytes.fromhex("cafebabe"),
                           "runtime-provider-mode": b"gemini-luna-required\n", "synthetic-private-neighbor": b"SYNTHETIC_ONLY\n"})
             helpers = ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh")

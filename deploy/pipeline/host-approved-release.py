@@ -29,7 +29,7 @@ STATE = ROOT / 'state'
 LAUNCHER = Path('/opt/meet-me/guard/host-release-guard.sh')
 UNIT = Path('/etc/systemd/system/meet-me-guarded-restart.service')
 CONTRACT = STATE / 'automatic-release-contract.json'
-BUNDLE = (
+HISTORICAL_BUNDLE = (
     'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
     'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
     'scripts/refresh-database-credential.sh', 'compose.guard.yml',
@@ -40,7 +40,12 @@ BUNDLE = (
     'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
     'runtime-ai-policy.json',
 )
-AUTH_BUNDLE = tuple(name for name in BUNDLE if name != 'runtime-ai-policy.json')
+PIPELINE_FILES = (
+    'pipeline/release_completion.py', 'pipeline/approval_gate.py',
+    'pipeline/transition_orchestrator.py', 'pipeline/release_pipeline.py', 'transition-approval.json',
+)
+BUNDLE = HISTORICAL_BUNDLE + PIPELINE_FILES
+AUTH_BUNDLE = tuple(name for name in HISTORICAL_BUNDLE if name != 'runtime-ai-policy.json')
 LEGACY_BUNDLE = tuple(name for name in AUTH_BUNDLE if name not in (
     'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml'))
 ENV = {'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
@@ -230,13 +235,20 @@ def _unit(expected):
 def _release_bundle(release):
     marker = release / 'runtime-auth-mode'
     policy = release / 'runtime-ai-policy.json'
+    pipeline_present = [os.path.lexists(release / name) for name in PIPELINE_FILES]
+    if any(pipeline_present):
+        _require(all(pipeline_present))
+        for name in PIPELINE_FILES:
+            _bytes(release / name, 131072)
+        _bytes(release / 'public-api-contract.json', 131072)
     if not os.path.lexists(marker):
-        _require(not os.path.lexists(policy))
+        _require(not os.path.lexists(policy) and not any(pipeline_present))
         return LEGACY_BUNDLE
     _require(_bytes(marker, 64) in (b'oauth-rs256-required', b'oauth-rs256-required\n'))
     if os.path.lexists(policy):
         _runtime_policy_bytes(_bytes(policy, 65536))
-        return BUNDLE
+        return BUNDLE if any(pipeline_present) else HISTORICAL_BUNDLE
+    _require(not any(pipeline_present))
     return AUTH_BUNDLE
 
 

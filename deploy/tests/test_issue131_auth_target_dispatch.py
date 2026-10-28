@@ -27,6 +27,8 @@ AUTH17 = tuple(sorted(("scripts/host-release-guard.sh", "scripts/install-host-re
     "preflight/host-preflight.sh", "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java", "runtime-auth-mode",
     "scripts/render-runtime-env.sh", "compose.production.yml")))
 CURRENT18 = tuple(sorted(AUTH17 + ("runtime-ai-policy.json",)))
+CURRENT23 = tuple(sorted(CURRENT18 + ("pipeline/release_completion.py", "pipeline/transition_orchestrator.py",
+    "pipeline/approval_gate.py", "pipeline/release_pipeline.py", "transition-approval.json")))
 LEGACY14 = tuple(name for name in AUTH17 if name not in ("runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml"))
 SHA = "a" * 40
 REPOSITORY = "123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/meet-me/server"
@@ -60,13 +62,13 @@ def archive(root, contract):
 
 
 class Issue131TargetAuthDispatchTests(unittest.TestCase):
-    def test_DX04_publisher_fingerprints_exact_current_eighteen_including_exact_policy_bytes(self):
+    def test_DX04_publisher_fingerprints_exact_current_twenty_three_including_exact_policy_bytes(self):
         with tempfile.TemporaryDirectory(prefix="issue131-publisher-") as tmp:
             root = Path(tmp); shutil.copytree(ROOT, root / "deploy", ignore=shutil.ignore_patterns("tests", "compiled", "__pycache__"))
             shutil.copytree(ROOT.parent / "src/main/resources/db/migration", root / "src/main/resources/db/migration")
             release = root / "release.tar.gz"; release.write_bytes(b"SYNTHETIC_PUBLISHER_ARCHIVE_REFERENCE")
             first = PUBLISHER.build_manifest(root, release, ENV)
-            expected = digest(canonical([{"path": name, "sha256": digest((root / "deploy" / name).read_bytes())} for name in CURRENT18]))
+            expected = digest(canonical([{"path": name, "sha256": digest((root / "deploy" / name).read_bytes())} for name in CURRENT23]))
             self.assertEqual(first["guardFingerprint"], expected)
             policy = root / "deploy/runtime-ai-policy.json"; policy.write_bytes(policy.read_bytes() + b" ")
             second = PUBLISHER.build_manifest(root, release, ENV)

@@ -1,0 +1,21 @@
+{
+  "sourceRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "reason": "Current23publication/currentV19fixtures requirecompleteexecutionmodules andreadonlyAPI DATA; archived18guardformat remainsdistinct",
+  "originals": [
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "83a8ad163e5b587cdf3f3f2cc3a48b48dd1b8418852a0753595a619439aa9925",
+      "preservedAt": ".tdd/history/issue154-current-node-fixtures/issue107-runtime-auth-catalog.test.cjs.before"
+    },
+    {
+      "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+      "sha256": "35d89772027642a97817371e19510151d74d23f80d8866b0312ca9af99f9ff18",
+      "preservedAt": ".tdd/history/issue154-current-node-fixtures/issue123-v17-catalog.test.cjs.before"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "c562835f7037c8cbeaa24d8914900250cfc72f5fef33989ed134b31ba49c8825",
+      "preservedAt": ".tdd/history/issue154-current-node-fixtures/v19-review-release-catalog.test.cjs.before"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "protocol": "meet-me-transition-gate-policy-v1",
+  "state": "CONFIGURED",
+  "environment": {
+    "id": 25587773022,
+    "name": "production-transition-approval"
+  },
+  "reviewerIds": [156793718],
+  "gateJobName": "Approve production transition"
+}
