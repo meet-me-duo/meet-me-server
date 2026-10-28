@@ -82,7 +82,7 @@ function typesafeCalls(f) {
     .filter(call => call.name === '/fixture/production/secret/typesafe-api-key') : [];
 }
 
-test('DX01 only explicit opt-in plus complete immutable policy emits the atomic four flags and exact artifact threshold path SHA', () => {
+test('DX01 CONFIGURED opt-in preserves four flags and exact artifact threshold path SHA', () => {
   const f = fixture(); try {
     const r = f.render(); assert.equal(r.error, undefined); assert.equal(r.status, 0); quiet(r);
     const values = env(f); for (const name of flags) assert.equal(values[name], 'true', name);
@@ -105,12 +105,27 @@ test('DX01 sentinel plus OFF emits all four false without choosing an operating 
   } finally { f.remove(); }
 });
 
+test('OA01 valid UNCONFIGURED opt-in enables three AI features without money enforcement or an invented threshold', () => {
+  const f = fixture('true', '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n'); try {
+    const r = f.render(); assert.equal(r.error, undefined); assert.equal(r.status, 0); quiet(r);
+    const values = env(f); for (const name of flags.slice(0, 3)) assert.equal(values[name], 'true', name);
+    assert.equal(values.MEETME_AI_BUDGET_ENABLED, 'false');
+    assert.equal(values.MEETME_PRECHECK_CLASSIFIER_MINIMUMCONFIDENCE, undefined);
+    assert.equal(values.MEETME_AI_BUDGET_POLICYPATH, '/run/meetme-ai/runtime-ai-policy.json');
+    assert.equal(values.MEETME_AI_BUDGET_POLICYSHA256, digest(fs.readFileSync(f.artifact)));
+    assert.equal(values.TYPESAFE_API_KEY, 'SYNTHETIC_TYPESAFE_KEY');
+    assert.equal(typesafeCalls(f).length, 1);
+    assert.equal(fs.statSync(f.output).mode & 0o777, 0o600);
+  } finally { f.remove(); }
+});
+
 for (const kind of ['missing', 'sentinel', 'profileMissing', 'profileForeign', 'unknownField', 'duplicateThreshold', 'symlink']) {
   test(`DX01 ${kind} cannot activate or replace the previous raw environment`, () => {
     const p = policy(); if (kind === 'profileMissing') p.operations.pop();
     if (kind === 'profileForeign') p.operations[0].profileFingerprint = digest('unapproved-profile');
     if (kind === 'unknownField') p.verified = true;
-    const body = kind === 'sentinel' ? '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n'
+    // OA01 covers the now-valid sentinel; malformed sentinels must still fail atomically.
+    const body = kind === 'sentinel' ? '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED","verified":true}\n'
       : kind === 'duplicateThreshold' ? JSON.stringify(p).replace('"minimumConfidence":0.73', '"minimumConfidence":0.73,"minimumConfidence":0.74') : JSON.stringify(p);
     const f = fixture('true', kind === 'missing' ? null : body); try {
       if (kind === 'symlink') { const target = `${f.artifact}.target`; fs.renameSync(f.artifact, target); fs.symlinkSync(target, f.artifact); }

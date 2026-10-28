@@ -67,35 +67,24 @@ class Issue131ManagedRuntimeConfigurationTest {
     }
 
     @Test
-    fun `MB03 all flags and exact explicit policy bind without invented values`() {
+    fun `OA04 immutable financial metadata remains valid without being an activation prerequisite`() {
         val file = policyFile()
         runner(file, 15, "0.73").run { context ->
-            assertNull(context.startupFailure, "Complete synthetic configuration must bind")
-            val selection = context.getBean(ManagedAiRuntimeSelection::class.java)
-            assertTrue(selection.enabled)
-            val policy = assertNotNull(selection.policy)
-            assertEquals(hash(Files.readString(file)), policy.fingerprint)
-            assertEquals(AiBudgetUnit("TEST_SUBUNIT", 0), policy.unit)
-            assertEquals(BigInteger("1000"), policy.roomCap)
-            assertEquals(0.73, policy.minimumConfidence)
-            assertEquals(AiPhysicalOperation.entries.toSet(), policy.operations.keys)
-            val quote =
-                assertNotNull(
-                    assertDoesNotThrow {
-                        context
-                            .getBean(AiBudgetAuthorityRegistryPort::class.java)
-                            .quote(request(AiPhysicalOperation.PRECHECK_CLASSIFICATION, policy.fingerprint))
-                    },
-                    "The actual configured authority bean must replace the default DENY only for complete configuration",
-                )
-            assertEquals(BigInteger("3"), quote.maximumAmount)
+            assertNull(context.startupFailure, "Accepted provider configuration must bind")
         }
+        // Preserve financial artifact validation independently of operational admission.
+        val policy = assertNotNull(ManagedAiRuntimePolicyLoader.load(properties(file), clock))
+        assertEquals(hash(Files.readString(file)), policy.fingerprint)
+        assertEquals(AiBudgetUnit("TEST_SUBUNIT", 0), policy.unit)
+        assertEquals(BigInteger("1000"), policy.roomCap)
+        assertEquals(0.73, policy.minimumConfidence)
+        assertEquals(AiPhysicalOperation.entries.toSet(), policy.operations.keys)
     }
 
     @Test
-    fun `MB03 enabled flags require explicit matching classifier threshold`() {
+    fun `OA04 absent classifier threshold is allowed while an explicitly conflicting threshold remains invalid`() {
         val file = policyFile()
-        runner(file, 15).run { context -> assertNotNull(context.startupFailure) }
+        runner(file, 15).run { context -> assertNull(context.startupFailure) }
         runner(file, 15, "0.74").run { context -> assertNotNull(context.startupFailure) }
     }
 
@@ -103,7 +92,7 @@ class Issue131ManagedRuntimeConfigurationTest {
     fun `MB04 the default UNCONFIGURED artifact supplies no financial policy`() {
         val file = policyFile("""{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}""")
         assertNull(assertDoesNotThrow { ManagedAiRuntimePolicyLoader.load(properties(file), clock) })
-        runner(file, 15, "0.73").run { context -> assertNotNull(context.startupFailure) }
+        runner(file, 15, "0.73").run { context -> assertNull(context.startupFailure) }
     }
 
     enum class InvalidPolicy {

@@ -46,10 +46,15 @@ import kotlin.test.assertTrue
 @Import(Issue144ProductionRuntimeGuardPostgresTest.TimeConfiguration::class)
 class Issue144ProductionRuntimeGuardPostgresTest {
     @Autowired private lateinit var jdbc: JdbcTemplate
+
     @Autowired private lateinit var transactions: PlatformTransactionManager
+
     @Autowired private lateinit var fence: JdbcAiBudgetExecutionFence
+
     @Autowired private lateinit var participants: ParticipantRepository
+
     @Autowired private lateinit var bindings: PrecheckOwnershipBindingPort
+
     @Autowired private lateinit var credentials: GuestCredentialPort
 
     @BeforeEach
@@ -58,9 +63,10 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         jdbc.execute("TRUNCATE meeting_rooms, guest_browser_sessions, account_users CASCADE")
     }
 
-    private fun authorized(request: AiBudgetReserveRequest): Instant? = assertDoesNotThrow {
-        fence.authorize(request, START)
-    }
+    private fun authorized(request: AiBudgetReserveRequest): Instant? =
+        assertDoesNotThrow {
+            fence.authorize(request, START)
+        }
 
     @Test
     fun `OA02 valid personal execution needs no budget coverage and never promotes its room ledger`() {
@@ -70,12 +76,18 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         assertEquals(START.plusSeconds(15), authorized(f.request))
         assertEquals(START.plusSeconds(15), authorized(f.request), "Guard checks do not manufacture a counted permit")
         for (operation in listOf(AiPhysicalOperation.PRECHECK_COUNT, AiPhysicalOperation.PRECHECK_GENERATION)) {
-            val call = f.request.calls.single().copy(operation = operation, profileFingerprint = profiles.getValue(operation))
+            val call =
+                f.request.calls
+                    .single()
+                    .copy(operation = operation, profileFingerprint = profiles.getValue(operation))
             assertEquals(START.plusSeconds(15), authorized(f.request.copy(calls = listOf(call))))
         }
-        val pair = listOf(AiPhysicalOperation.PRECHECK_COUNT, AiPhysicalOperation.PRECHECK_GENERATION).map {
-            f.request.calls.single().copy(operation = it, profileFingerprint = profiles.getValue(it))
-        }
+        val pair =
+            listOf(AiPhysicalOperation.PRECHECK_COUNT, AiPhysicalOperation.PRECHECK_GENERATION).map {
+                f.request.calls
+                    .single()
+                    .copy(operation = it, profileFingerprint = profiles.getValue(it))
+            }
         assertEquals(START.plusSeconds(15), authorized(f.request.copy(calls = pair)))
         assertEquals(before, jdbc.queryForMap("SELECT * FROM ai_room_budgets WHERE room_id=?", f.room))
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM ai_call_reservations", Int::class.java))
@@ -83,8 +95,22 @@ class Issue144ProductionRuntimeGuardPostgresTest {
 
     @Test
     fun `OA02 personal authority rejects stale ownership revision claim lifecycle and profile`() {
-        for (fault in listOf("OWNER", "VERSION", "GENERATION", "SOURCE", "CONTEXT", "CLOSED", "DEADLINE",
-            "SESSION_REVOKED", "NEW_CANDIDATE", "UNCLAIMED", "OLD_CLAIM", "PROFILE", "PAYLOAD", "GROUP")) {
+        for (fault in listOf(
+            "OWNER",
+            "VERSION",
+            "GENERATION",
+            "SOURCE",
+            "CONTEXT",
+            "CLOSED",
+            "DEADLINE",
+            "SESSION_REVOKED",
+            "NEW_CANDIDATE",
+            "UNCLAIMED",
+            "OLD_CLAIM",
+            "PROFILE",
+            "PAYLOAD",
+            "GROUP",
+        )) {
             reset()
             val f = personal()
             var request = f.request
@@ -94,24 +120,41 @@ class Issue144ProductionRuntimeGuardPostgresTest {
                 "GENERATION" -> request = request.copy(execution = request.execution.copy(generation = 2))
                 "SOURCE" -> request = request.copy(execution = request.execution.copy(sourceFingerprint = hash("wrong source")))
                 "CONTEXT" -> request = request.copy(execution = request.execution.copy(contextFingerprint = hash("wrong context")))
-                "CLOSED" -> jdbc.update(
-                    "UPDATE meeting_rooms SET collection_status='CLOSED',closure_reason='MANUAL',closed_at=? WHERE id=?",
-                    timestamp(START), f.room)
+                "CLOSED" ->
+                    jdbc.update(
+                        "UPDATE meeting_rooms SET collection_status='CLOSED',closure_reason='MANUAL',closed_at=? WHERE id=?",
+                        timestamp(START),
+                        f.room,
+                    )
                 "DEADLINE" -> TIME.set(START.plusSeconds(15))
                 "SESSION_REVOKED" -> jdbc.update("UPDATE guest_browser_sessions SET revoked_at=? WHERE id=?", timestamp(START), f.session)
-                "NEW_CANDIDATE" -> jdbc.update(
-                    "INSERT INTO precheck_candidates(id,room_id,participant_id,revision,raw_text,locale,created_at," +
-                        "interpretation_reference_at,owner_binding) SELECT ?,room_id,participant_id,2,'new synthetic'," +
-                        "locale,created_at,interpretation_reference_at,owner_binding FROM precheck_candidates WHERE id=?",
-                    UUID.randomUUID(), f.candidate)
+                "NEW_CANDIDATE" ->
+                    jdbc.update(
+                        "INSERT INTO precheck_candidates(id,room_id,participant_id,revision,raw_text,locale,created_at," +
+                            "interpretation_reference_at,owner_binding) SELECT ?,room_id,participant_id,2,'new synthetic'," +
+                            "locale,created_at,interpretation_reference_at,owner_binding FROM precheck_candidates WHERE id=?",
+                        UUID.randomUUID(),
+                        f.candidate,
+                    )
                 "UNCLAIMED" -> jdbc.update("UPDATE precheck_checks SET claimed_at=NULL WHERE id=?", request.execution.executionId)
-                "OLD_CLAIM" -> jdbc.update("UPDATE precheck_checks SET claimed_at=? WHERE id=?",
-                    timestamp(START.minusSeconds(16)), request.execution.executionId)
+                "OLD_CLAIM" ->
+                    jdbc.update(
+                        "UPDATE precheck_checks SET claimed_at=? WHERE id=?",
+                        timestamp(START.minusSeconds(16)),
+                        request.execution.executionId,
+                    )
                 "PROFILE" -> request = request.copy(calls = listOf(request.calls.single().copy(profileFingerprint = hash("foreign"))))
                 "PAYLOAD" -> request = request.copy(calls = listOf(request.calls.single().copy(wholePayloadFingerprint = "invalid")))
-                "GROUP" -> request = request.copy(calls = request.calls + request.calls.single().copy(
-                    operation = AiPhysicalOperation.PRECHECK_GENERATION,
-                    profileFingerprint = profiles.getValue(AiPhysicalOperation.PRECHECK_GENERATION)))
+                "GROUP" ->
+                    request =
+                        request.copy(
+                            calls =
+                                request.calls +
+                                    request.calls.single().copy(
+                                        operation = AiPhysicalOperation.PRECHECK_GENERATION,
+                                        profileFingerprint = profiles.getValue(AiPhysicalOperation.PRECHECK_GENERATION),
+                                    ),
+                        )
             }
             assertNull(authorized(request), fault)
             assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM ai_call_reservations", Int::class.java))
@@ -138,7 +181,8 @@ class Issue144ProductionRuntimeGuardPostgresTest {
                     jdbc.execute("SELECT pg_stat_clear_snapshot()")
                     locked = jdbc.queryForObject(
                         "SELECT count(*) FROM pg_stat_activity WHERE datname=current_database() " +
-                            "AND pid<>pg_backend_pid() AND wait_event_type='Lock'", Int::class.java,
+                            "AND pid<>pg_backend_pid() AND wait_event_type='Lock'",
+                        Int::class.java,
                     )!! > 0
                     if (locked) break
                     Thread.sleep(10)
@@ -180,8 +224,12 @@ class Issue144ProductionRuntimeGuardPostgresTest {
                 "ATTEMPT" -> request = request.copy(calls = listOf(request.calls.single().copy(attemptId = UUID.randomUUID())))
                 "ORDINAL" -> request = request.copy(calls = listOf(request.calls.single().copy(ordinal = 4)))
                 "OLD_RUN" -> jdbc.update("UPDATE meeting_rooms SET active_run_id=NULL WHERE id=?", f.room)
-                "FINISHED" -> jdbc.update(
-                    "UPDATE analysis_invocations SET finished_at=? WHERE id=?", timestamp(START), request.execution.executionId)
+                "FINISHED" ->
+                    jdbc.update(
+                        "UPDATE analysis_invocations SET finished_at=? WHERE id=?",
+                        timestamp(START),
+                        request.execution.executionId,
+                    )
                 "DEADLINE" -> TIME.set(START.plusSeconds(15))
                 "PROFILE" -> request = request.copy(calls = listOf(request.calls.single().copy(profileFingerprint = hash("foreign final"))))
             }
@@ -215,7 +263,7 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         val token = UUID.randomUUID()
         jdbc.update(
             "INSERT INTO precheck_candidates(id,room_id,participant_id,revision,raw_text,locale,cr" +
-            "eated_at,interpretation_reference_at,owner_binding) VALUES (?,?,?,1,?,'ko-KR',?,?,?)",
+                "eated_at,interpretation_reference_at,owner_binding) VALUES (?,?,?,1,?,'ko-KR',?,?,?)",
             candidate,
             room,
             participant,
@@ -226,7 +274,7 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         )
         jdbc.update(
             "INSERT INTO precheck_checks(id,candidate_id,status,version,generation,retry_count,dea" +
-            "dline_at,owner_token,claimed_at) VALUES (?,?,'CHECKING',3,1,0,?,?,?)",
+                "dline_at,owner_token,claimed_at) VALUES (?,?,'CHECKING',3,1,0,?,?,?)",
             check,
             candidate,
             timestamp(START.plusSeconds(30)),
@@ -257,7 +305,9 @@ class Issue144ProductionRuntimeGuardPostgresTest {
                 execution,
                 listOf(
                     AiPhysicalCallSpec(
-                        AiPhysicalOperation.PRECHECK_CLASSIFICATION, 1, hash("synthetic-wire"),
+                        AiPhysicalOperation.PRECHECK_CLASSIFICATION,
+                        1,
+                        hash("synthetic-wire"),
                         profiles.getValue(AiPhysicalOperation.PRECHECK_CLASSIFICATION),
                     ),
                 ),
@@ -296,7 +346,7 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         )
         jdbc.update(
             "INSERT INTO participants(id,room_id,guest_session_id,role,display_name,joined_at) VAL" +
-            "UES (?,?,?,'MEMBER','synthetic manual',?)",
+                "UES (?,?,?,'MEMBER','synthetic manual',?)",
             manualParticipant,
             p.room,
             manualSession,
@@ -312,8 +362,8 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         jdbc.update("UPDATE submission_heads SET latest_version_id=? WHERE id=?", manualVersion, manualHead)
         jdbc.update(
             "INSERT INTO manual_availability_intervals(id,submission_version_id,interval_order,int" +
-            "erval_kind,local_date,start_time,end_time) VALUES (?,?,0,'DATED',DATE '2026-10-18',TI" +
-            "ME '10:00',TIME '11:00')",
+                "erval_kind,local_date,start_time,end_time) VALUES (?,?,0,'DATED',DATE '2026-10-18',TI" +
+                "ME '10:00',TIME '11:00')",
             UUID.randomUUID(),
             manualVersion,
         )
@@ -346,8 +396,8 @@ class Issue144ProductionRuntimeGuardPostgresTest {
             val oldInvocation = UUID.randomUUID()
             jdbc.update(
                 "INSERT INTO analysis_invocations(id,coordination_run_id,run_version,started_at,deadli" +
-                "ne_at,owner_token,gemini_attempts,luna_attempts,finished_at,policy_version) VALUES (?" +
-                ",?,?,?,?,?,3,0,?,'bounded-luna-v1')",
+                    "ne_at,owner_token,gemini_attempts,luna_attempts,finished_at,policy_version) VALUES (?" +
+                    ",?,?,?,?,?,3,0,?,'bounded-luna-v1')",
                 oldInvocation,
                 run,
                 previousVersion,
@@ -360,8 +410,8 @@ class Issue144ProductionRuntimeGuardPostgresTest {
                 globalAttempt++
                 jdbc.update(
                     "INSERT INTO coordination_attempts(id,coordination_run_id,attempt_number,started_at,fi" +
-                    "nished_at,failure_code,provider,model,policy_version,invocation_id) VALUES (?,?,?,?,?" +
-                    ",'NETWORK','GEMINI','gemini-3.8-flash','bounded-luna-v1',?)",
+                        "nished_at,failure_code,provider,model,policy_version,invocation_id) VALUES (?,?,?,?,?" +
+                        ",'NETWORK','GEMINI','gemini-3.8-flash','bounded-luna-v1',?)",
                     UUID.randomUUID(),
                     run,
                     globalAttempt,
@@ -373,8 +423,8 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         }
         jdbc.update(
             "INSERT INTO analysis_invocations(id,coordination_run_id,run_version,started_at,deadli" +
-            "ne_at,owner_token,gemini_attempts,luna_attempts,policy_version) VALUES (?,?,?,?,?,?,?" +
-            ",?,'bounded-luna-v1')",
+                "ne_at,owner_token,gemini_attempts,luna_attempts,policy_version) VALUES (?,?,?,?,?,?,?" +
+                ",?,'bounded-luna-v1')",
             invocation,
             run,
             runVersion,
@@ -389,8 +439,8 @@ class Issue144ProductionRuntimeGuardPostgresTest {
                 globalAttempt++
                 jdbc.update(
                     "INSERT INTO coordination_attempts(id,coordination_run_id,attempt_number,started_at,fi" +
-                    "nished_at,failure_code,provider,model,policy_version,invocation_id) VALUES (?,?,?,?,?" +
-                    ",'NETWORK','GEMINI','gemini-3.8-flash','bounded-luna-v1',?)",
+                        "nished_at,failure_code,provider,model,policy_version,invocation_id) VALUES (?,?,?,?,?" +
+                        ",'NETWORK','GEMINI','gemini-3.8-flash','bounded-luna-v1',?)",
                     UUID.randomUUID(),
                     run,
                     globalAttempt,
@@ -403,7 +453,7 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         globalAttempt++
         jdbc.update(
             "INSERT INTO coordination_attempts(id,coordination_run_id,attempt_number,started_at,pr" +
-            "ovider,model,policy_version,invocation_id) VALUES (?,?,?,?,?,?,'bounded-luna-v1',?)",
+                "ovider,model,policy_version,invocation_id) VALUES (?,?,?,?,?,?,'bounded-luna-v1',?)",
             attempt,
             run,
             globalAttempt,
@@ -436,9 +486,9 @@ class Issue144ProductionRuntimeGuardPostgresTest {
         val id = UUID.randomUUID()
         jdbc.update(
             "INSERT INTO meeting_rooms(id,invite_code,purpose,meeting_mode,time_zone_id,search_sta" +
-            "rt_date,search_end_date,search_range_source,manual_only,collection_status,created_at," +
-            "version) VALUES (?,?,'synthetic fence','EITHER','Asia/Seoul',DATE '2026-10-18',DATE '" +
-            "2026-10-20','HOST_SPECIFIED',true,'COLLECTING',?,0)",
+                "rt_date,search_end_date,search_range_source,manual_only,collection_status,created_at," +
+                "version) VALUES (?,?,'synthetic fence','EITHER','Asia/Seoul',DATE '2026-10-18',DATE '" +
+                "2026-10-20','HOST_SPECIFIED',true,'COLLECTING',?,0)",
             id,
             id.toString().replace("-", "").take(22),
             timestamp(START),
@@ -475,25 +525,30 @@ class Issue144ProductionRuntimeGuardPostgresTest {
     @TestConfiguration
     class TimeConfiguration {
         @Bean @Primary
-        fun clock(): Clock = object : Clock() {
-            override fun instant(): Instant = TIME.get()
-            override fun getZone(): ZoneId = ZoneOffset.UTC
-            override fun withZone(zone: ZoneId): Clock = this
-        }
+        fun clock(): Clock =
+            object : Clock() {
+                override fun instant(): Instant = TIME.get()
+
+                override fun getZone(): ZoneId = ZoneOffset.UTC
+
+                override fun withZone(zone: ZoneId): Clock = this
+            }
     }
 
     companion object {
         private val START = Instant.parse("2026-10-18T00:00:00Z")
         private const val RAW = "synthetic Sunday online meeting condition"
         private val TIME = AtomicReference(START)
-        private val profiles = mapOf(
-            AiPhysicalOperation.PRECHECK_CLASSIFICATION to "c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc",
-            AiPhysicalOperation.PRECHECK_COUNT to "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
-            AiPhysicalOperation.PRECHECK_GENERATION to "86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714",
-            AiPhysicalOperation.FINAL_PRIMARY to "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
-            AiPhysicalOperation.FINAL_FALLBACK to "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
-        )
+        private val profiles =
+            mapOf(
+                AiPhysicalOperation.PRECHECK_CLASSIFICATION to "c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc",
+                AiPhysicalOperation.PRECHECK_COUNT to "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
+                AiPhysicalOperation.PRECHECK_GENERATION to "86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714",
+                AiPhysicalOperation.FINAL_PRIMARY to "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
+                AiPhysicalOperation.FINAL_FALLBACK to "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
+            )
         private val postgres = PostgreSQLContainer("postgres:18-alpine").apply { start() }
+
         @JvmStatic @DynamicPropertySource
         fun database(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url", postgres::getJdbcUrl)
@@ -501,7 +556,10 @@ class Issue144ProductionRuntimeGuardPostgresTest {
             registry.add("spring.datasource.password", postgres::getPassword)
             registry.add("spring.flyway.enabled") { true }
         }
+
         @JvmStatic @AfterAll
-        fun stop() { postgres.stop() }
+        fun stop() {
+            postgres.stop()
+        }
     }
 }

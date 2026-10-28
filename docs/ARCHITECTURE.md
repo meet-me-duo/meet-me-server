@@ -660,3 +660,15 @@ Gemini와 Luna의 공통 schema_version 3에 `CONDITIONAL_FALLBACK_TIME_WINDOW`�
 Jev와 Luna는 기존 provider15초를 공유하고 Luna 자동 재시도·redirect·fallback·count HTTP는 없다. 실제 `PRECHECK_GENERATION` ordinal1 한 건의 고정 bytes/profile을 공통 예산 reserve/claim/usage와 결속한다. 기존 `PRECHECK_COUNT` operation은 역사 호환을 위해 유지하되 Luna 경로에서는 사용하지 않는다. usage는 답 검증 전에 관측하고 부재는 unknown으로 남기며 청구 완료 증명이나 자동 환급으로 바꾸지 않는다. 출력/추론을 합한 한도와 알려진 입력 usage 방어는 사후 검증이며 실제 청구 상한 증명이 아니다.
 
 운영 정책은 UNCONFIGURED이며 기본 네 flag OFF다. 실제 Standard 처리·공급자 지연/의미 품질·confidence calibration·실제 가격/방 cap과 target OAuth/secret readiness는 별도다. 기존 실제 Luna4/4는 최종 조건 해석만 검증했으며 새 개인 보완의 실제 검증으로 확대하지 않는다. main 병합을 사용자에게 남기며 운영 자동 활성화를 위해 임의의 정책·키·권한을 만들지 않는다.
+
+### 2026-10-28 금액과 운영 실행 권한 분리 (#144, ADR-061)
+
+이 절은 운영 분석에 금액 정책·coverage·잔여 cap을 요구하던 위 연결 계약을 대체한다. `ManagedAiRuntimeConfiguration`은 provider/routing/classifier 세 flag의 일관성을 검증한다. 예산 flag만 켜진 구성이 실행을 활성화하지 않게 하며, 세 기능이 켜지면 budget flag와 관계없이 같은 물리 전송 보호를 사용한다. 명시 제공한 artifact와 threshold의 구조·해시·유효시각·충돌 검사는 유지하지만 미설정 금액 정책은 새 활성화 조건이 아니다. 운영 selection은 금전 권한을 발급하지 않고 제공된 유효 정책은 metadata로만 보존한다.
+
+`AiRuntimeDispatchGuardPort`는 금액 대신 기존 PostgreSQL room과 현재 job claim을 검증한다. JDBC adapter는 별도의 짧은 트랜잭션으로 room→현재 실행을 잠가 본인 binding·revision/generation·owner·source/context·상태·attempt와 claim 기준 deadline을 확인한다. 고정 다섯 wire profile과 전체 payload SHA 형식을 검사한 뒤 deadline만 반환하고 HTTP 전에 잠금을 해제한다. 기존 재무 fence는 같은 기술 검증 뒤 coverage를 확인하는 별도 경계로 남는다. 운영 guard는 epoch·quote·cap·permit을 만들지 않는다.
+
+HTTP gate는 app와 network 경계에서 실행 권한을 다시 확인하고 실제 endpoint/method/body, operation 선택과 한 Call·한 network exchange를 보호한다. 반환된 wall-clock deadline과 기존 monotonic cutoff 중 더 이른 경계를 쓰며 자동 retry·redirect·인증 follow-up·non-2xx의 숨은 재전송을 허용하지 않는다. 개인15초, 최종60초/Gemini15초/Luna27초/완료3초, 기존 worker claim과 bounded 4+1 admission은 유지한다. 새 복구·동일 stage 재전송 경로를 추가하지 않으며 공급자 exactly-once를 주장하지 않는다.
+
+운영 경로는 재무 reserve/claim/observe를 호출하지 않고 실제 provider와 실행의 기존 usage 관측을 유지한다. 기존 HISTORICAL_UNKNOWN·UNCONFIGURED·READY 및 소진된 원장은 그대로 둔다. 신규 방의 기존 V17 trigger는 같은 생성 트랜잭션에서 UNCONFIGURED 행을 만들고, 운영 wiring은 이를 금액 READY로 승격하는 bootstrap 권한을 부여하지 않는다. 금액 정책이 시작 뒤 만료돼도 CREATE/분석을 차단하지 않으며 기존 직접 재무 컴포넌트의 receipt·rollback·savepoint·quote·정산 방어는 유지한다.
+
+운영 Jev threshold가 없으면 정상 wire 검증을 통과한 CLEAR도 INDETERMINATE로 전달해 Luna로 확인한다. 가짜 threshold를 선택하지 않고 malformed/refusal 정책과 실제 caller timeout은 유지한다. 직접 재무 컴포넌트 회귀와 현재 운영 graph 검증을 구분한다. AI는 V1–V18과 공개 API를 변경하지 않으며 폐기된 TEST_OPERATION/V19 자료는 적용하지 않는다. 코드·합성 검증과 AWS·운영 활성화는 별개다.

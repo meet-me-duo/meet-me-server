@@ -14,12 +14,14 @@ import kotlin.test.assertNull
 /** OA01: provider activation and monetary approval are separate accepted decisions. */
 class Issue144ProductionRuntimeConfigurationTest {
     @Test
-    fun `OA01 all three provider flags with budget OFF need neither policy nor confidence threshold`() {
-        runner(7, false).run { context ->
-            assertNull(context.startupFailure)
-            val selection = context.getBean(ManagedAiRuntimeSelection::class.java)
-            assertFalse(selection.enabled, "Monetary selection remains OFF")
-            assertNull(selection.policy)
+    fun `OA01 all three provider flags need neither monetary policy nor confidence threshold with either budget flag`() {
+        for (budget in listOf(false, true)) {
+            runner(7, budget).run { context ->
+                assertNull(context.startupFailure, "Missing monetary policy must not block accepted provider activation")
+                val selection = context.getBean(ManagedAiRuntimeSelection::class.java)
+                assertFalse(selection.enabled, "No monetary authority is invented from provider activation")
+                assertNull(selection.policy)
+            }
         }
     }
 
@@ -35,17 +37,23 @@ class Issue144ProductionRuntimeConfigurationTest {
     }
 
     @Test
-    fun `OA01 monetary enforcement still requires its existing explicit configured policy`() {
-        runner(7, true).run { assertNotNull(it.startupFailure) }
+    fun `OA01 a budget flag alone cannot activate an incoherent provider graph`() {
         runner(0, true).run { assertNotNull(it.startupFailure) }
     }
 
-    private fun runner(mask: Int, budget: Boolean): ApplicationContextRunner {
-        val flags = listOf(
-            "meetme.precheck.provider.enabled", "meetme.precheck.decision-routing.enabled", "meetme.precheck.classifier.enabled",
-        )
-        val values = flags.mapIndexed { index, key -> "$key=${mask and (1 shl index) != 0}" } +
-            "meetme.ai.budget.enabled=$budget"
+    private fun runner(
+        mask: Int,
+        budget: Boolean,
+    ): ApplicationContextRunner {
+        val flags =
+            listOf(
+                "meetme.precheck.provider.enabled",
+                "meetme.precheck.decision-routing.enabled",
+                "meetme.precheck.classifier.enabled",
+            )
+        val values =
+            flags.mapIndexed { index, key -> "$key=${mask and (1 shl index) != 0}" } +
+                "meetme.ai.budget.enabled=$budget"
         return ApplicationContextRunner()
             .withUserConfiguration(ManagedAiRuntimeConfiguration::class.java, AiBudgetAuthorityConfiguration::class.java)
             .withBean(Clock::class.java, Supplier { Clock.systemUTC() })

@@ -2,12 +2,16 @@
 
 ## Issue #144 — 실제 운영 AI 활성화 (2026-10-28 UTC)
 
-- [USER] 배포된 운영 환경에서 사용자와 지인들이 AI를 이용하게 한다. 정식 금액 정책은 추후 결정하며 별도 테스트 모드·만료·총 요청 슬롯·threshold 선택을 활성화 필수 조건으로 만들지 않는다.
+- [USER] 배포된 운영 환경에서 사용자와 지인들이 AI를 이용하게 한다. 최신 승인에 따라 정식 금액 정책 미설정과 금액 상한 초과를 이유로 방 생성·개인 검사·최종 분석을 차단하지 않는다. 별도 테스트 모드·만료·총 요청 슬롯·threshold 선택을 활성화 필수 조건으로 만들지 않으며 기술 안전장치는 유지한다.
 - [x] `[AGENT]` 미배포 TEST_OPERATION/V19 작업은 별도 작업 공간에 보존하고 이번 릴리스에서 제외했다. 최신 develop의 깨끗한 `feature/144-production-ai-activation`에서 기존 V18을 사용한다.
 - [x] `[AGENT]` 전송 권한·한 번의 HTTP와 금액 정책을 분리하는 최소 계약을 독립 검토했다. 신규 스키마·가짜 quote/permit·금전 READY 승격 없이 기존 실행 claim·owner/revision/deadline을 재사용한다.
-- [ ] `[AGENT]` 독립 RED 후 운영 3flag ON/budget OFF, 현재 실행 재검증·전송 보호, Jev threshold 미정의 Luna 검증을 구현한다.
-- [ ] `[AGENT]` 실제 PostgreSQL/TLS mock·금전 모드 회귀·결함 주입·원본 전체 hook·독립 리뷰·필수 CI를 통과한다.
-- [ ] `[AGENT]` 검증한 PR·main 병합·정확한 immutable artifact/image의 운영 배포와 설정 활성화를 수행하고 runtime 상태를 확인한다.
+- [x] `[AGENT]` 원격 checkpoint `c3c1de12a7faffb4fc6623db49f20288000a503f`와 Git blob26·활성 원본22개의 지문을 대조하고 별도 Cloud worktree에서 수신했다. 원본16 실행은14 FAIL/2 PASS로 보존하고 최신 금액 차단 제거 기대값을 독립 설계·원본 보존·supersession으로 분리했다.
+- [x] `[AGENT]` 운영 3flag ON과 budget OFF/ON을 분리하고 현재 실행 재검증·전송 보호, threshold 미정의 Luna 검증을 구현했다. 최신77 RED20 뒤 첫 GREEN의 테스트 설계 결함1을 독립 교정하고 원본 금액 coupling으로 RED20을 재확인한 뒤 exact 복원·최종77 PASS/skip0을 확인했다. native 운영 graph16과 runtime guard/gate11을 포함한다.
+- [x] `[AGENT]` 실제 PostgreSQL/TLS mock·금전 컴포넌트 회귀16·독립 결함 주입5/5·독립 리뷰를 통과했다. 기존 구성 회귀는 테스트 기대값 변경 없이31 PASS로 보완했고 최종 ktlintCheck·assemble·test exit0·255 suites/2193건(2189 PASS·기존4 SKIP·실패/오류0), source/resource/fixture548개 전후 동일과 원본 hook 함수 PASS를 확인했다.
+- [ ] `[AGENT]` 사용자의 최신 “AWS 작업만 남기고 전부 진행” 위임에 따라 별도 feature branch 게시·develop 대상 PR·정확 HEAD 필수 CI·안전한 develop 통합을 진행한다. main의 자동 AWS 게시·배포 연결을 확인했으므로 main 병합과 workflow dispatch는 보류한다.
+- [x] `[AGENT]` Node 기존 검사2개의 원래 거절·미실행·원본 bytes를 보존했다. 사용자의 정확한 추가 승인 뒤 부모 작업자가 기존 proposal을 적용하지 않고 한 번 수정해 성공했고 75/75 PASS/skip0을 확인했다. 잘못된 구성·sentinel·secret·환경 보존 검사는 독립 audit에서 유지됐다.
+- [x] `[AGENT]` 새 Python8을 기존 quality CI step에 명시적으로 연결했다. YAML parse와 정확한1줄 추가·나머지 구조 동일성, 기존 배포 보호13과 새8이 통과했다. 관련 Python19와 합쳐 실제27개가 통과했으며 Actions를 실행하지 않았다.
+- [ ] `[USER]` AWS 인증·운영 설정·배포는 귀가 후 개인 PC에서 이어간다. 새 위임의 feature 게시·PR·CI·develop 통합을 제외한 main 병합·AWS·운영 명령은 실행하지 않는다.
 - [SHARED] 기존 provider 키를 비밀값 없이 확인한다. 새 자격증명·IAM/인증 변경은 별도 행동 승인, 실제 유료 검증 호출은 구체적 범위 확인 전 실행하지 않는다. 개선 기능과 UI는 다른 작업에서 담당한다.
 
 상세 불변식은 `docs/ISSUE_144_PRODUCTION_AI_ACTIVATION.md`를 따른다. 실제 활성화와 유료 모델 응답 검증을 구분해 보고한다.
