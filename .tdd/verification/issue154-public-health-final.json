@@ -1,0 +1,62 @@
+{
+  "workItem": "issue154-public-health-contract",
+  "recordedAt": "2026-10-28T23:24:26.016147+00:00",
+  "baseLocalRevision": "bec9f78094a13c6dbaded18d2a5ad7881ebfe825",
+  "sourceFiles": {
+    "deploy/pipeline/release_pipeline.py": "ec3cb03a0d03fa5c0b7227888a77d0af9cb3718c6953ff3561396f0cd52ffff8",
+    "deploy/pipeline/run-approved-release.py": "a27ecf28fdbc5582d0bdb61a21f9ac8a62edd897d5191bec2581cb3c6db90951",
+    "deploy/tests/test_issue154_public_contract.py": "e8f1ea17fa585fea2b782eb11972ead254354f63b1f3b5edaed9b71585265b21",
+    "deploy/tests/test_issue154_public_contract_audit.py": "23d4d73d227df8011f9116dc2ef5b9e3584f936ab61e1e358f357e61e0a1b1e2"
+  },
+  "deploymentPython": {
+    "tests": 311,
+    "pass": 311,
+    "fail": 0,
+    "errors": 0,
+    "durationSeconds": 389.312,
+    "rawLog": ".codex/tdd-evidence/issue154-public-health-all-python.log"
+  },
+  "workflowNode": {
+    "tests": 172,
+    "pass": 172,
+    "fail": 0,
+    "rawLog": ".codex/tdd-evidence/issue154-public-health-all-node.log"
+  },
+  "originalCommitGuard": {
+    "exit": 0,
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue154-public-health-guard.log",
+    "gradleInputs": "Kotlin/build/native-data unchanged; existing265suites/2241pass/4skip cached rather than claimed fresh"
+  },
+  "independent": {
+    "review": ".tdd/reviews/issue154-public-health-independent-review.json",
+    "greenTests": 94,
+    "faultsDetected": 15,
+    "survivors": 0,
+    "setupErrors": 0,
+    "unresolvedP1P2": 0
+  },
+  "liveReadOnlyPublicBaseline": {
+    "beforeFixPublicActuatorHttp": 404,
+    "declaredPublicHealthzHttp": 200,
+    "healthzExactOkNewline": true,
+    "nativeOpenApiHttp": 200,
+    "nativeCandidateShapeMatches": true,
+    "fixedVerifierReturnedTrue": true,
+    "editGuidancePresent": false,
+    "scope": "Existing operating source only; no new rollout/runtime/DB claim"
+  },
+  "policyPreservation": [
+    "Stopped maintenance-resume preflight stays valid; only final proof and safe rule restoration opt into fresh healthy app requirement",
+    "Whole migration history/image/source/guard and active-command checks remain mandatory",
+    "Exact public200/boundedbody/noredirect/nativeprojection remain required",
+    "No PR158 prompt/logic/schema/guide adopted"
+  ],
+  "operatingDeployment": "NOT_ATTEMPTED pending exactupdatedHEAD PR/mainCI and actualprotectedgate",
+  "awsCallsByCloud": 0,
+  "secretReads": 0
+}

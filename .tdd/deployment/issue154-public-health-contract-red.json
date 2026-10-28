@@ -1,0 +1,50 @@
+{
+  "workItem": "issue154-public-health-contract",
+  "sourceRevision": "bec9f78094a13c6dbaded18d2a5ad7881ebfe825",
+  "recordedAt": "2026-10-28T23:16:36.899377+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_public_contract.py",
+      "sha256": "e8f1ea17fa585fea2b782eb11972ead254354f63b1f3b5edaed9b71585265b21"
+    },
+    {
+      "path": "deploy/tests/test_issue154_public_contract_audit.py",
+      "sha256": "23d4d73d227df8011f9116dc2ef5b9e3584f936ab61e1e358f357e61e0a1b1e2"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "deploy/tests",
+    "-p",
+    "test_issue154_public_contract*.py",
+    "-v"
+  ],
+  "failedTests": [
+    "test_issue154_public_contract.Issue154PublicContractTests.test_exact_public_native_projection_and_nginx_healthz_satisfy_public_shape_proof",
+    "test_issue154_public_contract.Issue154PublicContractTests.test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches",
+    "test_issue154_public_contract.Issue154PublicContractTests.test_public_transport_rejects_redirects_without_an_unsafe_retry_path",
+    "test_issue154_public_contract.Issue154PublicContractTests.test_transient_public_read_can_recover_within_three_bounded_attempts",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_actual_collector_cannot_certify_unhealthy_starting_or_missing_app_health",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_and_native_success_still_require_independent_host_parameter_readiness",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_healthz_reads_remain_bounded_for_very_large_response",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_oversized_healthz_valid_ok_prefix_does_not_bypass_body_limit",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_real_redirect_request_is_rejected_instead_of_followed",
+    "test_issue154_public_contract_audit.Issue154PublicContractAuditTests.test_unhealthy_app_cannot_authorize_rule_restoration_with_unchanged_runtime_and_database"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "expectedReason": "Current public verifier calls public Actuator404 rather than declared Nginx healthz200/exactok; real collector and host verifier incorrectly accept app unhealthy/starting/empty/missing health. Assertions fail after test setup and healthy runtime controls succeed. No import, syntax, environment or helper setup errors. Safe-to-restore likewise wrongly allows these unhealthy app states; healthy control passes. Final fingerprint replay supersedes exploratory runs.",
+  "rawLog": ".codex/tdd-evidence/issue154-public-health-contract-red.log",
+  "tests": 28,
+  "failureAssertions": 38,
+  "errors": 0,
+  "supersession": ".tdd/history/issue154-public-health-contract/supersession.json",
+  "productionFilesUnmodified": true,
+  "networkCalls": 0,
+  "awsCalls": 0,
+  "secretReads": 0
+}

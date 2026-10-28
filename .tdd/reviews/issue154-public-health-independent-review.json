@@ -1,0 +1,111 @@
+{
+  "workItem": "issue154-public-health-contract",
+  "kind": "INDEPENDENT_GREEN_AND_SOURCE_REVIEW",
+  "recordedAt": "2026-10-28T23:18:58.725252+00:00",
+  "sourceRevision": "bec9f78094a13c6dbaded18d2a5ad7881ebfe825",
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "ec3cb03a0d03fa5c0b7227888a77d0af9cb3718c6953ff3561396f0cd52ffff8"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a27ecf28fdbc5582d0bdb61a21f9ac8a62edd897d5191bec2581cb3c6db90951"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_public_contract.py",
+      "sha256": "e8f1ea17fa585fea2b782eb11972ead254354f63b1f3b5edaed9b71585265b21"
+    },
+    {
+      "path": "deploy/tests/test_issue154_public_contract_audit.py",
+      "sha256": "23d4d73d227df8011f9116dc2ef5b9e3584f936ab61e1e358f357e61e0a1b1e2"
+    }
+  ],
+  "supportingFixtures": [
+    {
+      "path": "deploy/tests/test_issue154_adapter.py",
+      "sha256": "8f639dfbc41b12b3833ac08881c251c3b68698438ba950619b168485adc53087"
+    },
+    {
+      "path": "deploy/tests/test_issue154_completion.py",
+      "sha256": "4f3485312ef80a42c1485d233a8b9ffe355569ddd403638f28a2af84a1a280d6"
+    },
+    {
+      "path": "deploy/tests/test_issue131_runtime_readiness.py",
+      "sha256": "0a129b275bc284b7a012ef69bb848d361db6c50fe7472002e1f204d7f1bdbcad"
+    },
+    {
+      "path": "deploy/tests/test_issue141_maintenance_facts.py",
+      "sha256": "890d1913e0a7af5098cf0dfe5ce9fcd8a7ed4770b4bb32bda61627d446fd6b4f"
+    }
+  ],
+  "results": [
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-independent-green.log",
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "rawLogSha256": "f470b99097b7b818b2967220041b4c00d21e6085b4b5eb2ee565df86bb482e08"
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-public-health-independent-host-regression.log",
+      "tests": 66,
+      "failures": 0,
+      "errors": 0,
+      "rawLogSha256": "96e6a14d6c7d0e96c59bce7becafea8a24eb35e97a97a97d823320252035f515"
+    }
+  ],
+  "faultInjectionSummary": ".tdd/verification/issue154-public-health-faults.json",
+  "faultsDetected": 15,
+  "faultSurvivors": 0,
+  "setupErrors": 0,
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "reviewedInvariants": [
+    "Public HTTPS healthz requires exact200 and exact ok newline bytes; bounded8193-byte read rejects any suffix or oversize.",
+    "Public native JSON retains exact immutable shape projection,200status,1048576body bound,10secondtimeout,3boundedattempts,noredirect.",
+    "Public readiness does not establish app health or runtime/database identity. verify_host requests healthy observed app and retains freshsource/image/phase/guard/wholehistory checks.",
+    "Rule restoration requests freshhealthy observed app and retains original runtime/DB equality plus active command drain.",
+    "Collector default require_healthyFalse preserves historical facts semantics and explicitly stopped V8 maintenance-resume. Finalverification opts into True; stoppedresume does not produce final host proof.",
+    "Original testbytes/SHA and every original case retained or explicitly superseded with stated publiccontract correction; current tests match finalRED hashes."
+  ],
+  "commands": [
+    [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "deploy/tests",
+      "-p",
+      "test_issue154_public_contract*.py",
+      "-v"
+    ],
+    [
+      "env",
+      "PYTHONPATH=deploy/tests",
+      "python3",
+      "-m",
+      "unittest",
+      "test_issue141_maintenance_facts",
+      "test_issue131_runtime_readiness",
+      "test_issue154_adapter",
+      "test_issue154_completion",
+      "-v"
+    ],
+    [
+      "python3",
+      ".tdd/verification/issue154-public-health-fi.py"
+    ]
+  ],
+  "productionFilesEditedByReviewer": false,
+  "testExpectationsChangedAfterFinalRed": false,
+  "networkCalls": 0,
+  "awsCalls": 0,
+  "secretReads": 0,
+  "remainingScope": "Root owns whole-repository mandatory guard, commits/PRs and separately authorized rollout. This local review is not evidence of a production rollout."
+}

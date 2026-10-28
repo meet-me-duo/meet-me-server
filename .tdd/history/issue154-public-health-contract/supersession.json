@@ -1,0 +1,172 @@
+{
+  "sourceRevision": "bec9f78094a13c6dbaded18d2a5ad7881ebfe825",
+  "contractSources": [
+    "deploy/nginx/nginx.conf HTTPS location = /healthz: return 200 \"ok\\n\"",
+    "deploy/compose.production.yml app healthcheck http://127.0.0.1:9090/actuator/health",
+    "docs/ADR.md ADR-045 readonly deployment checks and ADR-064 independent completion proof"
+  ],
+  "baselineReceipts": [
+    {
+      "path": "/workspace/checkpoints/review-release-20261028/issue154-public-baseline.json",
+      "httpCode": 404
+    },
+    {
+      "path": "/workspace/checkpoints/review-release-20261028/issue154-public-declared-baseline.json",
+      "healthzHttp": 200,
+      "healthzExactBody": true,
+      "nativeHttp": 200,
+      "nativeContractMatches": true
+    }
+  ],
+  "sharedFixtureCorrections": [
+    "HEALTH URL /actuator/health -> /healthz",
+    "Opener default JSON UP -> exact b\"ok\\n\"; legacy public actuator endpoint reproduces observed 404",
+    "Former DOWN/UP retry fixture becomes not-ready/exact-ok bytes",
+    "Former health503/DOWN negatives broadened to exact-body non200 and byte-level wrongbody/JSONUP negatives"
+  ],
+  "preservedRequirements": [
+    "public exact200",
+    "no redirects",
+    "health8192/native1048576 body bounds with sentinel byte",
+    "three bounded retry attempts and10-second request timeouts",
+    "native exact immutable projection and malformed inputs",
+    "no raw output leakage",
+    "fresh source/release/image/guard binding",
+    "whole exact DB history with old row/checksum/script/order/success negatives",
+    "parameter readiness independent from public health",
+    "actual internal application health independently required",
+    "rule restoration also requires fresh internal application health; unhealthy/starting/empty/missing cannot be restored"
+  ],
+  "files": [
+    {
+      "path": "deploy/tests/test_issue154_public_contract.py",
+      "originalSha256": "29f7ad18f6b097141d013dfc169ade5880a24cb8531536237cc7033e3c1bf907",
+      "replacementSha256": "e8f1ea17fa585fea2b782eb11972ead254354f63b1f3b5edaed9b71585265b21",
+      "cases": [
+        {
+          "originalTest": "test_projection_is_sorted_detached_and_allows_only_public_shape_fields",
+          "currentTest": "test_projection_is_sorted_detached_and_allows_only_public_shape_fields",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_projection_documents_shape_scope_without_claiming_type_semantic_equality",
+          "currentTest": "test_projection_documents_shape_scope_without_claiming_type_semantic_equality",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_all_standard_http_methods_are_projected_but_path_metadata_is_not",
+          "currentTest": "test_all_standard_http_methods_are_projected_but_path_metadata_is_not",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_invalid_source_spec_cannot_produce_an_empty_or_ambiguous_contract",
+          "currentTest": "test_invalid_source_spec_cannot_produce_an_empty_or_ambiguous_contract",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_contract_validation_preserves_a_valid_canonical_detached_value",
+          "currentTest": "test_contract_validation_preserves_a_valid_canonical_detached_value",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_contract_schema_types_unknown_fields_and_empty_operations_fail_closed",
+          "currentTest": "test_contract_schema_types_unknown_fields_and_empty_operations_fail_closed",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_missing_or_duplicated_route_method_identity_is_not_a_valid_contract",
+          "currentTest": "test_missing_or_duplicated_route_method_identity_is_not_a_valid_contract",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_unsorted_or_duplicate_property_names_and_operations_are_rejected",
+          "currentTest": "test_unsorted_or_duplicate_property_names_and_operations_are_rejected",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_large_or_control_character_contract_fields_are_rejected",
+          "currentTest": "test_large_or_control_character_contract_fields_are_rejected",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_exact_public_native_projection_and_health_up_satisfy_public_shape_proof",
+          "currentTest": "test_exact_public_native_projection_and_nginx_healthz_satisfy_public_shape_proof",
+          "status": "corrected_existing_health_premise"
+        },
+        {
+          "originalTest": "test_health_success_does_not_replace_missing_operation_field_or_schema",
+          "currentTest": "test_health_success_does_not_replace_missing_operation_field_or_schema",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_public_non200_or_unhealthy_status_cannot_be_verified",
+          "currentTest": "test_public_non200_or_unhealthy_status_cannot_be_verified",
+          "status": "corrected_existing_health_premise"
+        },
+        {
+          "originalTest": "test_transient_public_read_can_recover_within_three_bounded_attempts",
+          "currentTest": "test_transient_public_read_can_recover_within_three_bounded_attempts",
+          "status": "corrected_existing_health_premise"
+        },
+        {
+          "originalTest": "test_public_errors_and_oversized_response_do_not_leak_or_become_success",
+          "currentTest": "test_public_errors_and_oversized_response_do_not_leak_or_become_success",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_public_transport_rejects_redirects_without_an_unsafe_retry_path",
+          "currentTest": "test_public_transport_rejects_redirects_without_an_unsafe_retry_path",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_invalid_expected_contract_is_rejected_before_any_public_request",
+          "currentTest": "test_invalid_expected_contract_is_rejected_before_any_public_request",
+          "status": "unchanged_assertions"
+        }
+      ],
+      "addedTests": [
+        "test_healthz_requires_exact_nginx_bytes_not_json_up_or_near_matches"
+      ]
+    },
+    {
+      "path": "deploy/tests/test_issue154_public_contract_audit.py",
+      "originalSha256": "8f758d002aadaedafd8635571724efc77226a308e8635484df04f825b3468fed",
+      "replacementSha256": "23d4d73d227df8011f9116dc2ef5b9e3584f936ab61e1e358f357e61e0a1b1e2",
+      "cases": [
+        {
+          "originalTest": "test_oversized_native_valid_json_prefix_does_not_bypass_body_limit",
+          "currentTest": "test_oversized_native_valid_json_prefix_does_not_bypass_body_limit",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_oversized_health_valid_json_prefix_does_not_bypass_body_limit",
+          "currentTest": "test_oversized_health_valid_json_prefix_does_not_bypass_body_limit",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_real_redirect_request_is_rejected_instead_of_followed",
+          "currentTest": "test_real_redirect_request_is_rejected_instead_of_followed",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_unexpected_extra_operations_are_not_the_bound_candidate_contract",
+          "currentTest": "test_unexpected_extra_operations_are_not_the_bound_candidate_contract",
+          "status": "unchanged_assertions"
+        },
+        {
+          "originalTest": "test_operation_ids_are_unique_across_different_routes",
+          "currentTest": "test_operation_ids_are_unique_across_different_routes",
+          "status": "unchanged_assertions"
+        }
+      ],
+      "addedTests": [
+        "test_actual_collector_cannot_certify_unhealthy_starting_or_missing_app_health",
+        "test_healthz_and_native_success_cannot_replace_runtime_or_whole_database_history",
+        "test_healthz_and_native_success_still_require_independent_host_parameter_readiness",
+        "test_healthz_reads_remain_bounded_for_very_large_response",
+        "test_oversized_healthz_valid_ok_prefix_does_not_bypass_body_limit",
+        "test_unhealthy_app_cannot_authorize_rule_restoration_with_unchanged_runtime_and_database"
+      ]
+    }
+  ]
+}
