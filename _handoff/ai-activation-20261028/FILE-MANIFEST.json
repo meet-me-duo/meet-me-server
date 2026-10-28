@@ -65,9 +65,9 @@
     {
       "path": "_handoff/ai-activation-20261028/README.md",
       "gitMode": "100644",
-      "gitBlob": "aa1bab529313656563ab3761dd5e1b6a1c6353d1",
-      "sha256": "eff083111108a534699c100c09690f45c93d25b4da4f6d5ac07d4eab5004af50",
-      "bytes": 5730
+      "gitBlob": "25d6c703fa75575c5f9f2efbc58043b856f94d46",
+      "sha256": "0ed296f96dca9f792e8196bce9c75f4f3dc7e1e1324e9fc0c6778a72b24ee302",
+      "bytes": 7355
     },
     {
       "path": "_handoff/ai-activation-20261028/blocked-node-oracle.patch",
@@ -191,5 +191,7 @@
   ],
   "secretScan": "No high-confidence credential patterns found; environment/keys/raw logs/caches excluded",
   "qualityGate": "NOT PASSED; Kotlin TODO remains and 16 new executions not run",
-  "blockedOracleProposal": "Inactive patch only; exact test-oracle approval still pending"
+  "blockedOracleProposal": "Inactive patch only; exact test-oracle approval still pending",
+  "precedingCheckpointSha": "f3f350e9dd9affd3790b06ad70dbb85ec2585ff7",
+  "guidanceOnlyFollowup": "Latest explicit approval: no analysis blocking for missing monetary policy or exceeded monetary cap; preserve technical safety; code and AWS frozen"
 }

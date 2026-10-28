@@ -20,6 +20,14 @@ Kotlin은 아직 skeleton이다. AiRuntimeDispatchGuardPort, gate/factory의 추
 
 ## 다음 구현 범위
 
+### 이관 이후 전달된 금액 기반 분석 차단 제거 승인
+
+이미 승인된 요구는 **정식 비용 정책이 미정이라는 이유로 운영 AI 활성화를 차단하지 않는다**는 것이다. 별도 테스트 모드, 임의의 만료일·요청 슬롯·금액 정책을 활성화의 새 선행 조건으로 만들지 않는다.
+
+이후 사용자는 금액 상한 초과로 분석을 막는 조건 자체를 제거하자고 제안하고, "그래 안전장치를 유지한 채로 우선 정상 운영될 수 있도록 AI 제한을 해제하자고"라고 명시적으로 승인했다. 이 최신 승인은 기존의 정책 미정 상태 허용보다 범위가 넓다. **정식 비용 정책 미설정 및 금액 상한 초과를 이유로 분석을 차단하지 않는다.** 비용 관측·기록은 분석 차단과 분리한다. 아래 번호 목록은 이 추가 승인 이전의 구현 제안이므로 금전 경로의 차단 조건을 그대로 최종 요구로 확정하지 않는다. Cloud에서 최신 승인에 맞게 구현 범위를 재평가한다.
+
+권한 검증, 중복 전송 방지, 재시도 제한, timeout, 상태·정합성 검증, 비밀 보호는 유지한다. 금액 기반 차단 제거 승인을 기술적 안전장치 제거 또는 무제한 유료 검증 호출 승인으로 확대하지 않는다. 이관 freeze를 유지해 이번 갱신은 문서만 추가했으며 해당 승인에 따른 코드·테스트·운영 변경은 실행하지 않았다. Cloud 수신 후 코드·검증을 이어가고 AWS·운영 작업은 사용자가 귀가한 뒤 개인 PC에서 재개한다.
+
 1. provider/routing/classifier 3개 일관성과 금전 selection을 분리한다. budget OFF면 selection false/null, 기존 방의 금전 READY 승격 없음.
 2. gate와 AiDispatchModePort에 같은 physicalEnabled를 적용한다. worker/final context와 claim 기준 기한을 유지한다.
 3. 기존 JdbcAiBudgetExecutionFence의 room/owner/revision/generation/source/context/상태/deadline 검증을 재사용하되 금전 coverage만 금전 경로에 남긴다. 운영 guard는 짧은 트랜잭션으로 deadline만 반환한다.
