@@ -30,7 +30,7 @@ LEGACY_CATALOGS = (
     tuple(range(1, 12)) + (13,),
     tuple(range(1, 11)) + (14, 15), tuple(range(1, 12)) + (14, 15),
 )
-NEW_CATALOGS = (tuple(range(1, 17)), tuple(range(1, 18)), tuple(range(1, 19)))
+NEW_CATALOGS = (tuple(range(1, 17)), tuple(range(1, 18)), tuple(range(1, 19)), tuple(range(1, 20)))
 COMPLETE_CATALOGS = LEGACY_CATALOGS + NEW_CATALOGS
 MIGRATION_NAMES = (
     'create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
@@ -46,6 +46,7 @@ MIGRATION_SCRIPTS.update({
     16: 'V16__add_pre_submission_checks.sql',
     17: 'V17__add_durable_ai_room_budgets.sql',
     18: 'V18__align_recommendation_selection_attendance.sql',
+    19: 'V19__add_confirmed_result_reviews.sql',
 })
 
 

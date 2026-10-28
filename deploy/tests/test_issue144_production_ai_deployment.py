@@ -1,4 +1,4 @@
-"""OA01 production AI activation: synthetic renderer and immutable V18 release contracts.
+"""OA01 production AI activation: immutable V1-V18 history and approved V19 integration.
 
 Only local temporary files and a fake aws executable are used; no credential,
 SSM, provider, deployment, configuration activation or Gradle process is called.
@@ -15,6 +15,7 @@ import subprocess
 import tarfile
 import tempfile
 import unittest
+import zlib
 
 ROOT = Path(__file__).resolve().parents[2]
 DEPLOY = ROOT / "deploy"
@@ -65,6 +66,14 @@ HISTORICAL_SHA256 = {
     "V16__add_pre_submission_checks.sql": "65dd8b5831ced11f62bf00eb21fc5eb61bc34356c7d99da2228b8fdd80d8358e",
     "V17__add_durable_ai_room_budgets.sql": "912b8f227e6ea7c20fc05cf96d705982fb9737c5051c7c07e771494df482834b",
     "V18__align_recommendation_selection_attendance.sql": "67061520a8fb4a96412ec1b82e7b6a4d07a4ab7745187d0fc1c9c759b45eec27",
+}
+
+# Accepted review release inventory, fixed independently of production catalogs.
+# V1-V18 remain immutable history; only the reviewed V19 extends current publication.
+# See docs/verification/confirmed-review-release-20261028.md and ADR-062.
+CURRENT_SUPPORTED_SHA256 = {
+    **HISTORICAL_SHA256,
+    "V19__add_confirmed_result_reviews.sql": "b5e55df55f97f754239653252862e6631c570f1a724b05b063d8320826d5109f",
 }
 
 AWS_FIXTURE = '''#!/usr/bin/env python3
@@ -235,15 +244,17 @@ class Issue144ProductionRendererTests(unittest.TestCase):
 
 
 class Issue144ProductionPublicationTests(unittest.TestCase):
-    def test_OA01_artifact_remains_unconfigured_and_exact_v18_sql_stays_unchanged(self):
+    def test_OA01_artifact_remains_unconfigured_and_current_v19_preserves_v18_history(self):
         self.assertEqual(SENTINEL, json.loads((DEPLOY / "runtime-ai-policy.json").read_bytes()))
         directory = ROOT / "src/main/resources/db/migration"
-        self.assertEqual(set(HISTORICAL_SHA256), {p.name for p in directory.iterdir()})
-        for name, fingerprint in HISTORICAL_SHA256.items():
+        self.assertEqual(set(CURRENT_SUPPORTED_SHA256), {p.name for p in directory.iterdir()})
+        self.assertEqual(18, len(HISTORICAL_SHA256))
+        self.assertEqual(19, len(CURRENT_SUPPORTED_SHA256))
+        for name, fingerprint in CURRENT_SUPPORTED_SHA256.items():
             with self.subTest(script=name):
                 self.assertEqual(fingerprint, digest((directory / name).read_bytes().replace(b"\r\n", b"\n")))
 
-    def test_OA01_real_publisher_and_package_consumer_preserve_unconfigured_and_configured_v18(self):
+    def test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v19(self):
         environment = {"SOURCE_SHA": "a" * 40, "BUILD_RUN_ID": "144", "BUILD_RUN_ATTEMPT": "1",
                        "ECR_REPOSITORY_URL": "123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/meet-me/server",
                        "IMAGE_DIGEST": "sha256:" + "b" * 64, "CI_RUN_ID": "143", "CI_SHA": "a" * 40}
@@ -263,18 +274,68 @@ class Issue144ProductionPublicationTests(unittest.TestCase):
                               "preflight/compiled/ReadOnlyFlywayProbe.class": bytes.fromhex("cafebabe")})
                 for helper in ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh"):
                     files[helper] = (root / "deploy" / helper).read_bytes()
-                for name in HISTORICAL_SHA256:
+                for name in CURRENT_SUPPORTED_SHA256:
                     files["migrations/" + name] = (root / "src/main/resources/db/migration" / name).read_bytes()
-                with tarfile.open(archive, "w:gz") as packed:
-                    for name, body in files.items():
-                        item = tarfile.TarInfo(name)
-                        item.size = len(body)
-                        item.mode = 0o755 if name in ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh") else 0o644
-                        packed.addfile(item, io.BytesIO(body))
-                artifact = PUBLISHER.build_manifest(root, archive, environment)
-                self.assertEqual(list(HISTORICAL_SHA256), [row["script"] for row in artifact["migrations"]])
+                def pack(contents):
+                    with tarfile.open(archive, "w:gz") as packed:
+                        for name, body in contents.items():
+                            item = tarfile.TarInfo(name)
+                            item.size = len(body)
+                            item.mode = 0o755 if name in ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh") else 0o644
+                            packed.addfile(item, io.BytesIO(body))
+
+                pack(files)
+                try:
+                    artifact = PUBLISHER.build_manifest(root, archive, environment)
+                except ValueError as error:
+                    self.fail("Approved exact V19 publication must accept either policy: " + str(error))
+                self.assertEqual(list(CURRENT_SUPPORTED_SHA256), [row["script"] for row in artifact["migrations"]])
+                self.assertEqual([str(n) for n in range(1, 20)], [row["version"] for row in artifact["migrations"]])
+                expected_catalog = []
+                for row, (name, fingerprint) in zip(artifact["migrations"], CURRENT_SUPPORTED_SHA256.items()):
+                    body = files["migrations/" + name]
+                    self.assertEqual(fingerprint, digest(body.replace(b"\r\n", b"\n")))
+                    checksum = zlib.crc32("".join(body.decode("utf-8-sig").splitlines()).encode("utf-8"))
+                    self.assertEqual(checksum if checksum < 2 ** 31 else checksum - 2 ** 32, row["checksum"])
+                    expected_catalog.append({"version": row["version"], "script": name, "sha256": digest(body)})
+                self.assertEqual(digest(canonical(expected_catalog)), artifact["schemaFingerprint"])
                 self.assertTrue(DRIVER._verify_package(archive, artifact))
                 self.assertEqual(raw, files["runtime-ai-policy.json"])
+
+                directory = root / "src/main/resources/db/migration"
+                v19 = "V19__add_confirmed_result_reviews.sql"
+                for fault in ("missing19", "unknown20", "renamed19"):
+                    with self.subTest(catalog_fault=fault):
+                        source = directory / v19
+                        original = source.read_bytes()
+                        extra = directory / ("V20__unknown.sql" if fault == "unknown20" else "V19__unknown.sql")
+                        try:
+                            if fault != "unknown20":
+                                source.unlink()
+                            if fault != "missing19":
+                                extra.write_bytes(original)
+                            with self.assertRaisesRegex(ValueError, "^UNTRUSTED_RELEASE$"):
+                                PUBLISHER.build_manifest(root, archive, environment)
+                        finally:
+                            source.write_bytes(original)
+                            if extra.exists():
+                                extra.unlink()
+
+                for fault in ("missing19", "tampered19"):
+                    with self.subTest(package_fault=fault):
+                        changed = dict(files)
+                        entry = "migrations/" + v19
+                        if fault == "missing19":
+                            del changed[entry]
+                        else:
+                            changed[entry] += b"\n-- synthetic package tamper\n"
+                        try:
+                            pack(changed)
+                            with self.assertRaisesRegex(ValueError, "^UNTRUSTED_RELEASE_STATE$"):
+                                DRIVER._verify_package(archive, artifact)
+                        finally:
+                            pack(files)
+                self.assertTrue(DRIVER._verify_package(archive, artifact))
 
 
 if __name__ == "__main__":

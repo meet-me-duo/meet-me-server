@@ -1,5 +1,14 @@
 # meet-me-server Implementation Plan
 
+## 2026-10-28 AI·리뷰 비운영 통합 준비
+
+- [x] `[AGENT]` AI 원본 feature `5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89`와 Draft PR146, 정확 HEAD CI40636001470의 Quality Gate·ARM64 이미지 및 Lifecycle 성공을 보존했다.
+- [x] `[AGENT]` 리뷰 원본 feature `0f624216d16fe2e65c11da9468d0bcf4b9988ff7`와 PR147을 변경하지 않고 별도 worktree에서 정상 merge preview를 준비했다. V19·배포 catalog, 두 CI 검사와 ADR-061/062·양쪽 문서 이력을 함께 보존한다.
+- [x] `[AGENT]` 리뷰 PR147의 develop 정상 병합 `396b1583fec21636c399ced3aa87d7a817dd085f`를 확인하고, AI 원본 `5e60b495`에서 최신 develop을 별도 통합 branch로 정상 merge했다. 두 feature의 원본과 preview를 보존하고 AI develop 실제 병합은 리뷰 운영 선행·부모 GO까지 보류한다.
+- [x] `[AGENT]` 통합본의 ktlintCheck·assemble·test가 263 suites/2,236건 중 2,232 PASS·기존4 SKIP·실패/오류0으로 통과했다. source/resource/fixture565개 전후 동일, Node108·Python27 PASS와 독립 정적 검토 차단0을 확인했다. V18-only 배포 테스트는 원본18개 SHA를 보존하고 승인된 V19만 정확히 추가한 별도 기대값 승계·RED2·단일 FI 탐지2·복원 GREEN 근거로 남겼다.
+- [ ] `[AGENT]` 기존 PR146 head를 부모5e60+396b의 정상 merge commit으로 fast-forward 게시하고 결합된 정확 HEAD CI를 확인한다. 리뷰 운영 선행·부모 GO 전 AI develop 실제 병합은 보류한다.
+- [USER] AI main 병합·AWS 인증·운영 활성화·유료 모델 검증은 이 비운영 통합 승인에 포함하지 않는다. 아래 각 feature의 원래 검증·이관 기록은 당시 snapshot으로 보존한다.
+
 ## Issue #144 — 실제 운영 AI 활성화 (2026-10-28 UTC)
 
 - [USER] 배포된 운영 환경에서 사용자와 지인들이 AI를 이용하게 한다. 최신 승인에 따라 정식 금액 정책 미설정과 금액 상한 초과를 이유로 방 생성·개인 검사·최종 분석을 차단하지 않는다. 별도 테스트 모드·만료·총 요청 슬롯·threshold 선택을 활성화 필수 조건으로 만들지 않으며 기술 안전장치는 유지한다.
@@ -1597,3 +1606,27 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] [AGENT] 서버 exactCI39050251162는 ktlint/assemble/test·ARM64·배포정책/preflight를 통과했으나 #109 역사 catalog 테스트5/17이 기존V11상한과 현재V13지원 계약 충돌로 실패했다. 후속단계는SKIP이며 전체성공으로 집계하지 않는다. 원본원격로그를 보존했다.
 - [x] [AGENT] 독립설계자가 역사V10/V11 fixture와 현재V1..11+V13 fixture를 분리하고 requiredprefix/checksum/success/identity/pending/명시승인·두rulesDISABLED 불변식을 보존해 test oracle만 정렬한다. 제품/배포guard/SQL/CIworkflow는 변경하지 않는다. 기존generic13/FI4는 동일production 바이트의 근거이며 이번oracle교정을 새제품RED로 집계하지 않는다.
 - [ ] [AGENT] 관련Node전체17(내부generic13포함)·독립최종review·변경없는 mandatoryguard 확인 후 추가commit·push하고 새 정확HEAD의 전체CI를 확인한다. Commit/PR: 동일 커밋 예정, 기존Draft117 유지.
+
+
+## 2026-10-28 리뷰 Cloud 이관 체크포인트
+
+- 사용자 승인으로 미완성 리뷰 작업을 별도 feature/review-cloud-checkpoint-20261028에 commit·push하여 Cloud에서 정확한 SHA로 재개한다. 원본/Library/기존 미커밋 작업은 보존한다.
+- 서버 ReviewService TODO·HTTP16 중15 RED/명세1PASS, 미실행10개 및 기존 commit guard의 ktlint 실패를 숨기지 않는다. 웹 기능19·합성 Edge4 PASS와 최종 타입검사2개 오류를 구분한다.
+- 비밀/실행 로그/스크린샷은 제외하고 docs/checkpoints/confirmed-review-20261028의 파일 체크섬·원본 zip·재개 문서로 동일성을 확인한다. checkpoint commit은 기능 완료나 품질 게이트 통과가 아니다.
+- Cloud 수신 검증 전에는 이관 완료가 아니다. main/develop 변경·PR 병합·운영 배포·AWS 실행은 하지 않는다.
+
+
+## 2026-10-28 확정 결과 리뷰 Cloud 재개 (#145)
+
+- [x] [AGENT] 원격 exact checkpoint와 ZIP 23개 원본/Git blob manifest를 대조하고 독립 worktree에서 수신. 원본 동결 기록은 docs/checkpoints/confirmed-review-20261028에 보존.
+- [x] [AGENT] 독립 권한/전환·문서·비공개·롤백/cleanup 테스트를 보강하고 유효 RED 40(29 FAIL/11 PASS) 지문 기록.
+- [x] [AGENT] claim/submit/close, no-store와 native schema 구현. 정식 V19 실제 PostgreSQL에서 대상 40 PASS/실패0/skip0.
+- [x] [AGENT] 고유 operationId·웹 native 계약 동기화, architecture/migration 검사를 확장한 최종 ktlintCheck/assemble/test 2,200 PASS·기존 opt-in 4 SKIP·실패0(256 suites/2,204건 실제 실행).
+- [x] [AGENT] 독립 static review 차단0, FI 4/4 실제 assertion 탐지·원본 exact 복원. 실제 로컬 OAuth 대역/JWT·browser→Spring→PostgreSQL/Redis 12/12 PASS 및 소유 테스트 리소스 정상 정리.
+- [x] [AGENT] optional `review_prompt_supported` 힌트와 독립 HTTP/OpenAPI 2개를 RED→GREEN으로 검증했다. 최신 리뷰 대상 43 PASS와 구버전 힌트 누락 4건·신규 지원 12건의 실제 로컬 브라우저 검증 PASS를 확인했다. 이후 별도 clean release worktree의 변경하지 않은 mandatory guard가 ktlintCheck·assemble·test를 fresh 실행하여 257 suites/2,206건 중 2,202 PASS·기존 opt-in 4 SKIP·실패/오류0으로 통과했다. 앞선 2,200 PASS와 구분한다.
+- [x] [USER] 리뷰 디자인을 포함한 웹과 리뷰 서버·필요 V19 DB의 PR·CI·병합·운영 반영을 승인했다. AI 운영 활성화와 직접 AWS 인증은 별도 보류한다.
+- [x] [AGENT] 원본을 보존한 별도 리뷰 전용 릴리스 브랜치에서 정확한 V19 배포 카탈로그만 추가했다. 독립 유효 RED 6 FAIL/2 PASS 이후 신규 8 PASS, 기존 catalog·정책 합본 97 PASS, 독립 FI 4/4 탐지와 29개 지문 exact 복원·재GREEN 8 PASS를 확인했다.
+- [ ] [AGENT] 공개 저장소의 리뷰 code/test/docs/.tdd 전체 게시에 대한 구체 승인 후 원격 리뷰 전용 PR·정확 HEAD CI를 확인한다.
+- [ ] [AGENT] 실제 배포 전 immutable release 지문과 명시적 전환 preflight를 확인하고 승인된 리뷰만 운영에 반영한다. 실제 로그인·리뷰 제출은 인증된 계정 없이는 검증 완료로 표시하지 않는다.
+
+기존 구현 범위와 한계는 docs/verification/confirmed-result-review-cloud.md에 보존한다. 힌트 이후 전체 guard와 V19 카탈로그 독립 검증은 통과했다. 검증 요약과 독립 리뷰 도메인 소스의 각 첫 blob 게시가 공개 목적지·구체 승인 사유로 자동 검토에서 거절되어 둘 다 미실행·재시도0 상태다. 전체 공개 게시를 중단하고 구체 승인을 기다린다. commit/push/PR·main/develop 변경·운영 배포는 아직 실행하지 않았다. 원본 체크포인트 자료와 개발용 실행 도구는 릴리스 변경에서 제외했다.
