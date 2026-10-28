@@ -1581,3 +1581,11 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] [AGENT] 서버 exactCI39050251162는 ktlint/assemble/test·ARM64·배포정책/preflight를 통과했으나 #109 역사 catalog 테스트5/17이 기존V11상한과 현재V13지원 계약 충돌로 실패했다. 후속단계는SKIP이며 전체성공으로 집계하지 않는다. 원본원격로그를 보존했다.
 - [x] [AGENT] 독립설계자가 역사V10/V11 fixture와 현재V1..11+V13 fixture를 분리하고 requiredprefix/checksum/success/identity/pending/명시승인·두rulesDISABLED 불변식을 보존해 test oracle만 정렬한다. 제품/배포guard/SQL/CIworkflow는 변경하지 않는다. 기존generic13/FI4는 동일production 바이트의 근거이며 이번oracle교정을 새제품RED로 집계하지 않는다.
 - [ ] [AGENT] 관련Node전체17(내부generic13포함)·독립최종review·변경없는 mandatoryguard 확인 후 추가commit·push하고 새 정확HEAD의 전체CI를 확인한다. Commit/PR: 동일 커밋 예정, 기존Draft117 유지.
+
+
+## 2026-10-28 리뷰 Cloud 이관 체크포인트
+
+- 사용자 승인으로 미완성 리뷰 작업을 별도 feature/review-cloud-checkpoint-20261028에 commit·push하여 Cloud에서 정확한 SHA로 재개한다. 원본/Library/기존 미커밋 작업은 보존한다.
+- 서버 ReviewService TODO·HTTP16 중15 RED/명세1PASS, 미실행10개 및 기존 commit guard의 ktlint 실패를 숨기지 않는다. 웹 기능19·합성 Edge4 PASS와 최종 타입검사2개 오류를 구분한다.
+- 비밀/실행 로그/스크린샷은 제외하고 docs/checkpoints/confirmed-review-20261028의 파일 체크섬·원본 zip·재개 문서로 동일성을 확인한다. checkpoint commit은 기능 완료나 품질 게이트 통과가 아니다.
+- Cloud 수신 검증 전에는 이관 완료가 아니다. main/develop 변경·PR 병합·운영 배포·AWS 실행은 하지 않는다.

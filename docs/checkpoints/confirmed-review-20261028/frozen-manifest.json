@@ -1,0 +1,294 @@
+{
+  "format": 1,
+  "created_at_utc": "2026-10-28T02:51:45.489775+00:00",
+  "state": "FROZEN_UNCOMMITTED_DRAFT_NOT_CLOUD_VERIFIED",
+  "issue": "https://github.com/meet-me-duo/meet-me-server/issues/145",
+  "repositories": {
+    "server": {
+      "remote": "https://github.com/meet-me-duo/meet-me-server.git",
+      "base_sha": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+      "head_sha": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+      "branch": "feature/confirmed-result-review",
+      "new_commits": 0,
+      "commit_status": "No review commit created; service is RED draft and required commit guard is not passed",
+      "git_status": [
+        "?? docs/drafts/review-schema.sql",
+        "?? docs/verification/confirmed-result-review-independent-test-plan.md",
+        "?? src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewController.kt",
+        "?? src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewExceptionHandler.kt",
+        "?? src/main/kotlin/com/meetme/server/review/adapter/output/persistence/JdbcReviewRepository.kt",
+        "?? src/main/kotlin/com/meetme/server/review/application/port/output/ReviewRepository.kt",
+        "?? src/main/kotlin/com/meetme/server/review/application/service/ReviewService.kt",
+        "?? src/main/kotlin/com/meetme/server/review/domain/Review.kt",
+        "?? src/test/kotlin/com/meetme/server/review/ReviewHttpPostgresTest.kt",
+        "?? src/test/kotlin/com/meetme/server/review/ReviewPersistenceDefensePostgresTest.kt",
+        "?? src/test/kotlin/com/meetme/server/review/ReviewStoragePrivacyTest.kt"
+      ],
+      "files": [
+        {
+          "path": "docs/drafts/review-schema.sql",
+          "git_status": "untracked",
+          "size": 3986,
+          "sha256": "142236f4d3bde352111951b8ad586251ab6e66287405b0b9b3c1474a1ecb7bd6"
+        },
+        {
+          "path": "docs/verification/confirmed-result-review-independent-test-plan.md",
+          "git_status": "untracked",
+          "size": 4202,
+          "sha256": "9f2d661d8849057fde69d9d1a58aee543d3e3ae2bd82a181d961f1aab7707fcf"
+        },
+        {
+          "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewController.kt",
+          "git_status": "untracked",
+          "size": 5743,
+          "sha256": "a29ee690603ef3d738bd7376518bdc0a28147ca5bf2968a88829a744ad568a80"
+        },
+        {
+          "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewExceptionHandler.kt",
+          "git_status": "untracked",
+          "size": 1301,
+          "sha256": "5b0323dfb9948e5bee10ed3203d5e935f28f4246d5361eb161ffc09a99011d2b"
+        },
+        {
+          "path": "src/main/kotlin/com/meetme/server/review/adapter/output/persistence/JdbcReviewRepository.kt",
+          "git_status": "untracked",
+          "size": 4306,
+          "sha256": "74e9001bdd6680d2bb018fe2144d6d63fa3514fb56bfad3e993f7ef6e5c7d64a"
+        },
+        {
+          "path": "src/main/kotlin/com/meetme/server/review/application/port/output/ReviewRepository.kt",
+          "git_status": "untracked",
+          "size": 522,
+          "sha256": "75d61bb4d7677736eca0be340ee069f2d29f15b3df9543d1fd2591342af61a78"
+        },
+        {
+          "path": "src/main/kotlin/com/meetme/server/review/application/service/ReviewService.kt",
+          "git_status": "untracked",
+          "size": 2995,
+          "sha256": "d0d8f7d551db53a2afd2af2901ffa97f887aade052ff6388207f51053e6dc7c4"
+        },
+        {
+          "path": "src/main/kotlin/com/meetme/server/review/domain/Review.kt",
+          "git_status": "untracked",
+          "size": 2327,
+          "sha256": "402ad7ffc966c18e36a2c9485a41cdf3f5139d72061f470e3d7214b13fd3610f"
+        },
+        {
+          "path": "src/test/kotlin/com/meetme/server/review/ReviewHttpPostgresTest.kt",
+          "git_status": "untracked",
+          "size": 19460,
+          "sha256": "ebc682d04ad0fc9f21d8acbe4277ce225d7894cccf2925dbaf2bae4969f253ae"
+        },
+        {
+          "path": "src/test/kotlin/com/meetme/server/review/ReviewPersistenceDefensePostgresTest.kt",
+          "git_status": "untracked",
+          "size": 6862,
+          "sha256": "7cd9247fb965a5ea55d40329bf81bce4b57ce445d7e52785fa15a652691f50ac"
+        },
+        {
+          "path": "src/test/kotlin/com/meetme/server/review/ReviewStoragePrivacyTest.kt",
+          "git_status": "untracked",
+          "size": 4630,
+          "sha256": "6c055f58489bd3df529e3757bb445b7052c723839c4864198ea8ac655ff8b8b7"
+        }
+      ],
+      "excluded_files": [],
+      "tracked_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "web": {
+      "remote": "https://github.com/meet-me-duo/meet-me-web.git",
+      "base_sha": "656f757244104482e00605991967e62a12810b63",
+      "head_sha": "656f757244104482e00605991967e62a12810b63",
+      "branch": "feature/confirmed-result-review-draft",
+      "new_commits": 0,
+      "commit_status": "No review commit created; service is RED draft and required commit guard is not passed",
+      "git_status": [
+        " M src/api/client.ts",
+        " M src/pages/RoomPage.tsx",
+        "?? docs/verification/review-browser/review.spec.ts",
+        "?? docs/verification/review-desktop.png",
+        "?? docs/verification/review-mobile.png",
+        "?? docs/verification/review-playwright.config.ts",
+        "?? docs/verification/review-preview.html",
+        "?? docs/verification/review-preview.tsx",
+        "?? src/features/review/ReviewPrompt.contract.test.tsx",
+        "?? src/features/review/ReviewPrompt.test.tsx",
+        "?? src/features/review/ReviewPrompt.tsx",
+        "?? src/features/review/RoomPage.review.test.tsx",
+        "?? src/features/review/api.ts",
+        "?? src/features/review/review.css"
+      ],
+      "files": [
+        {
+          "path": "docs/verification/review-browser/review.spec.ts",
+          "git_status": "untracked",
+          "size": 3419,
+          "sha256": "695b111c675d8f024f03a822659564fb871314d02c4bf7e06945cd28a52a6869"
+        },
+        {
+          "path": "docs/verification/review-playwright.config.ts",
+          "git_status": "untracked",
+          "size": 613,
+          "sha256": "2c4943f29a796b653bf42bc189bec01f466163252273bada83920acac7ff9b90"
+        },
+        {
+          "path": "docs/verification/review-preview.html",
+          "git_status": "untracked",
+          "size": 285,
+          "sha256": "51e70893644279905e83d753e5d6750f412d4a5f531e275001f0f30dbd59a640"
+        },
+        {
+          "path": "docs/verification/review-preview.tsx",
+          "git_status": "untracked",
+          "size": 1438,
+          "sha256": "a04b2f7914c6c55297620148f20585a0650f021209f44bdceb7a83fcaf8fb9b6"
+        },
+        {
+          "path": "src/api/client.ts",
+          "git_status": "modified",
+          "size": 10020,
+          "sha256": "6f920611c07bab64ba41673487db19054c6e0591c0b420dc4f6a3453363a29b1"
+        },
+        {
+          "path": "src/features/review/ReviewPrompt.contract.test.tsx",
+          "git_status": "untracked",
+          "size": 7681,
+          "sha256": "942c96fb21ec763cb3eaf9d7ce0aba26908d3d4e024269b8ba647c1963381a07"
+        },
+        {
+          "path": "src/features/review/ReviewPrompt.test.tsx",
+          "git_status": "untracked",
+          "size": 5796,
+          "sha256": "fb03425094e0047e4e9d383b1a6aeaaec8ea3839c4cc11545f6ae2389d5de8fc"
+        },
+        {
+          "path": "src/features/review/ReviewPrompt.tsx",
+          "git_status": "untracked",
+          "size": 8431,
+          "sha256": "f73d77cf948f0d7a7481781b5f93737d05ff5d90579733446892b93e95059a76"
+        },
+        {
+          "path": "src/features/review/RoomPage.review.test.tsx",
+          "git_status": "untracked",
+          "size": 3424,
+          "sha256": "e2235f8467df897894ae9970286372c4342d5f63c9b5511401240cccdba0ebfe"
+        },
+        {
+          "path": "src/features/review/api.ts",
+          "git_status": "untracked",
+          "size": 973,
+          "sha256": "067f943a6857cbba2f1bb3a97f7b772bee6be3f677d3efacbac82779fe06ae2f"
+        },
+        {
+          "path": "src/features/review/review.css",
+          "git_status": "untracked",
+          "size": 2391,
+          "sha256": "f8b30cbb8bb22710914a53587b8c12e552078a4938d307dc20ced04052493d50"
+        },
+        {
+          "path": "src/pages/RoomPage.tsx",
+          "git_status": "modified",
+          "size": 53725,
+          "sha256": "3203b9c740b3f87d534bf12728655205251f9c96d81b8e05172a57dcf85ef0d4"
+        }
+      ],
+      "excluded_files": [
+        {
+          "path": "docs/verification/review-desktop.png",
+          "git_status": "untracked",
+          "size": 36624,
+          "sha256": "7aa371cfaea1237aa278f9afbf83caed1d8dbf6e82c4985de057349d36b96fa7",
+          "reason": "Browser screenshot stays local; not a requested transfer deliverable"
+        },
+        {
+          "path": "docs/verification/review-mobile.png",
+          "git_status": "untracked",
+          "size": 125404,
+          "sha256": "8a93726668acc6306e8d613791479e4b26a1c82c8d8e6cf59fb6d9452e16ea9b",
+          "reason": "Browser screenshot stays local; not a requested transfer deliverable"
+        }
+      ],
+      "tracked_patch_sha256": "463014323d3d84100f5c06c238e70bb6f85fa38ea04ee8e2c118e787e2c2f8d7"
+    }
+  },
+  "excluded": [
+    ".env and credentials",
+    ".git/history (clone the exact public base SHA)",
+    "node_modules/build/dist/cache",
+    "raw test logs and XML with verbose outputs",
+    "browser screenshots (local only)"
+  ],
+  "verification": {
+    "server_http_postgres": {
+      "tests": 16,
+      "failures": 15,
+      "passed": 1,
+      "cause": "All 15 fail at unimplemented ReviewService TODO; valid missing-behavior RED",
+      "command": ".\\gradlew.bat test --tests com.meetme.server.review.ReviewHttpPostgresTest --console=plain"
+    },
+    "server_written_not_run": [
+      "ReviewStoragePrivacyTest: 7",
+      "ReviewPersistenceDefensePostgresTest: 3"
+    ],
+    "web_author_ui": {
+      "passed": 7,
+      "source_caveat": "Before final pageshow lifecycle addition; full final rerun pending"
+    },
+    "web_independent_ui": {
+      "passed": 8,
+      "source_caveat": "Before final pageshow lifecycle addition; full final rerun pending"
+    },
+    "web_result_integration": {
+      "passed": 4,
+      "failed": 0,
+      "scope": "HOST/MEMBER after successful confirmed result; loading/failure/pre-confirmed excluded"
+    },
+    "web_native_browser": {
+      "passed": 4,
+      "failed": 0,
+      "scope": "Local synthetic fixture on desktop/mobile Edge; layout/focus/checked close raw privacy/reload/back. Not production or full live backend E2E."
+    },
+    "web_typecheck": {
+      "exit_code": 1,
+      "errors": [
+        "ReviewPrompt.contract.test.tsx:29 TS2532 possibly undefined",
+        "ReviewPrompt.contract.test.tsx:62 TS2532 possibly undefined"
+      ],
+      "note": "Test-only typing errors remain; no fix after user freeze"
+    },
+    "web_changed_file_lint": {
+      "exit_code": 0,
+      "scope": "features/review and api/client at earlier UI GREEN; final integration files not fully linted"
+    },
+    "not_completed": [
+      "ReviewService claim/submit/close implementation",
+      "GREEN server",
+      "fault injection",
+      "full required gates",
+      "generated OpenAPI export/snapshot and types",
+      "numbered Flyway migration conflict coordination",
+      "final native integrated frontend/backend E2E",
+      "commit/remote branch/PR",
+      "merge/deployment"
+    ]
+  },
+  "policies": {
+    "choices": {
+      "1": "불편한 점 없이 잘 이용했어요",
+      "2": "AI가 제가 입력한 조건을 잘못 이해했어요",
+      "3": "추천된 시간 중 마음에 드는 선택지가 없었어요",
+      "4": "응답이 느리거나 오류가 났어요",
+      "5": "기타"
+    },
+    "selection": "1 exclusive; 2-5 multiple; OTHER text optional including blank. Satisfied optout outranks checkbox hide. Non-satisfied submit itself hides for 7 days.",
+    "visibility": "User-level persistence, no same-room reask. Satisfaction stops automatic future requests permanently; dissatisfaction eligible after server elapsed 7 days at next distinct confirmed meeting. Checked close user-level 7 days, ordinary close unsubmitted eligible next meeting.",
+    "draft_privacy": "Unsubmitted choices/text only current screen memory; close sends hide_for_week only. No Web Storage draft, analytics/external forwarding/admin display.",
+    "implementation_draft_edges": [
+      "First committed terminal close/submit wins; semantically identical submit retry accepted; close retries never extend deadline",
+      "Claim consumes room even suppressed; same request UUID retry can recover only same pending prompt while globally eligible",
+      "Existing explicit verified guest->account claim SQL trigger merges satisfied/hidden state and transfers that participant prompt; no name/email/link identity inference",
+      "Technical OTHER limit proposed 2000 Unicode codepoints; NUL rejected before PostgreSQL; free text/DTO/DB exception redaction",
+      "Submit button proposed right-aligned row above footer; footer bottom-left small checkbox, bottom-right close. Placement/label still review draft"
+    ]
+  }
+}

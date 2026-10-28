@@ -1,0 +1,15 @@
+{
+  "purpose": "User explicitly approved incomplete checkpoint commit/push for Cloud transfer; not implementation completion or release",
+  "server_original_guard": {
+    "exit_code": 2,
+    "failed_task": "ktlintMainSourceSetCheck",
+    "result": "style violations; gate not passed",
+    "command": "Existing .codex/hooks/tdd_guard.py invoked with PreToolUse git-commit event",
+    "raw_log": "Local-only .codex/tdd-evidence/review-cloud-checkpoint-commit-gate.log (excluded)"
+  },
+  "code_changed_to_make_gate_green": false,
+  "hook_or_policy_modified": false,
+  "normal_git_commit_only": "No --no-verify or hook disabling. Preserve any active hooks.",
+  "web_final_typecheck": "2 test-only possibly-undefined errors retained",
+  "runtime_publish_merge": "Not authorized and not executed"
+}

@@ -1,0 +1,121 @@
+{
+  "base_sha": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+  "branch": "feature/review-cloud-checkpoint-20261028",
+  "self_note": "This manifest excludes its own bytes to avoid self-reference; verify its Git object through final commit SHA",
+  "files": [
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/FROZEN_RESUME.md",
+      "git_blob_sha256": "c9700385a97142019abe47e1ce19f2f469719779871599210f91de677456583b",
+      "working_copy_sha256": "352e091665109fef75aa97514afab5e4019c4f1a751c19f83a35ecf159556909",
+      "size_git_blob": 4006
+    },
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/README.md",
+      "git_blob_sha256": "24e86f169f9edd90fb0f4dc9785edf9b1ea422ea4937b7d8ad56614f21248846",
+      "working_copy_sha256": "2d5c19390877f6c576a40e1368a2945a169fb80735f7aa24c2905d785000b252",
+      "size_git_blob": 4076
+    },
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/commit-gate-status.json",
+      "git_blob_sha256": "b2f3e5668bc470ad8c9b44b1baed2a52c2dcf8fd0e8beba877d2834936779ba5",
+      "working_copy_sha256": "2c277978a903f774195001e2aa0ca18ef979ec90f2bd2c94f9ac3bf5e1586060",
+      "size_git_blob": 793
+    },
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/frozen-manifest.json",
+      "git_blob_sha256": "d6dad38d7c6323ce23e656cb600e853e350adb4c3513dde93cd4f92fc8d5c662",
+      "working_copy_sha256": "ef55ba7da5669084bbfb402a3ac0723e314d39f114c7be03e2d1b45e491c0df7",
+      "size_git_blob": 13262
+    },
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/meet-me-review-cloud-checkpoint-20261028.zip",
+      "git_blob_sha256": "e12a0a9cce361c792febc5948d4e4bfa21a2f3d01a306a801bd4e3878bcbc13e",
+      "working_copy_sha256": "e12a0a9cce361c792febc5948d4e4bfa21a2f3d01a306a801bd4e3878bcbc13e",
+      "size_git_blob": 59812
+    },
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/restore_checkpoint.py",
+      "git_blob_sha256": "dcd510bb0753c5d08090fc759e17be6ae95f05891c45a2b8dfb7e56a0d1bfd77",
+      "working_copy_sha256": "0800d796d818b93c892b796af9a3f9800618e5c4fd744a760dda58c126aa693e",
+      "size_git_blob": 1166
+    },
+    {
+      "path": "docs/checkpoints/confirmed-review-20261028/secret-scan.json",
+      "git_blob_sha256": "8573fe89e85deb3d98b2d491620224da93f547ab9f0b6344130207b3f0bc75fd",
+      "working_copy_sha256": "e2958c10cfbd0167b18c02bbe6c58e9acdd13c8552ec896580b8a31d58508dd1",
+      "size_git_blob": 506
+    },
+    {
+      "path": "docs/drafts/review-schema.sql",
+      "git_blob_sha256": "142236f4d3bde352111951b8ad586251ab6e66287405b0b9b3c1474a1ecb7bd6",
+      "working_copy_sha256": "142236f4d3bde352111951b8ad586251ab6e66287405b0b9b3c1474a1ecb7bd6",
+      "size_git_blob": 3986
+    },
+    {
+      "path": "docs/verification/confirmed-result-review-independent-test-plan.md",
+      "git_blob_sha256": "9f2d661d8849057fde69d9d1a58aee543d3e3ae2bd82a181d961f1aab7707fcf",
+      "working_copy_sha256": "9f2d661d8849057fde69d9d1a58aee543d3e3ae2bd82a181d961f1aab7707fcf",
+      "size_git_blob": 4202
+    },
+    {
+      "path": "implementation_plan.md",
+      "git_blob_sha256": "f9a2d78ebcd4a90b4776b047d05a56cc89494ad4ae45ebc042647ec882048268",
+      "working_copy_sha256": "99421b78cc84146b7b51e380521cd68df55b05c5a89a859fe4a7944f1643b135",
+      "size_git_blob": 305295
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewController.kt",
+      "git_blob_sha256": "a29ee690603ef3d738bd7376518bdc0a28147ca5bf2968a88829a744ad568a80",
+      "working_copy_sha256": "a29ee690603ef3d738bd7376518bdc0a28147ca5bf2968a88829a744ad568a80",
+      "size_git_blob": 5743
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewExceptionHandler.kt",
+      "git_blob_sha256": "5b0323dfb9948e5bee10ed3203d5e935f28f4246d5361eb161ffc09a99011d2b",
+      "working_copy_sha256": "5b0323dfb9948e5bee10ed3203d5e935f28f4246d5361eb161ffc09a99011d2b",
+      "size_git_blob": 1301
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/output/persistence/JdbcReviewRepository.kt",
+      "git_blob_sha256": "74e9001bdd6680d2bb018fe2144d6d63fa3514fb56bfad3e993f7ef6e5c7d64a",
+      "working_copy_sha256": "74e9001bdd6680d2bb018fe2144d6d63fa3514fb56bfad3e993f7ef6e5c7d64a",
+      "size_git_blob": 4306
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/application/port/output/ReviewRepository.kt",
+      "git_blob_sha256": "75d61bb4d7677736eca0be340ee069f2d29f15b3df9543d1fd2591342af61a78",
+      "working_copy_sha256": "75d61bb4d7677736eca0be340ee069f2d29f15b3df9543d1fd2591342af61a78",
+      "size_git_blob": 522
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/application/service/ReviewService.kt",
+      "git_blob_sha256": "d0d8f7d551db53a2afd2af2901ffa97f887aade052ff6388207f51053e6dc7c4",
+      "working_copy_sha256": "d0d8f7d551db53a2afd2af2901ffa97f887aade052ff6388207f51053e6dc7c4",
+      "size_git_blob": 2995
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/domain/Review.kt",
+      "git_blob_sha256": "402ad7ffc966c18e36a2c9485a41cdf3f5139d72061f470e3d7214b13fd3610f",
+      "working_copy_sha256": "402ad7ffc966c18e36a2c9485a41cdf3f5139d72061f470e3d7214b13fd3610f",
+      "size_git_blob": 2327
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewHttpPostgresTest.kt",
+      "git_blob_sha256": "ebc682d04ad0fc9f21d8acbe4277ce225d7894cccf2925dbaf2bae4969f253ae",
+      "working_copy_sha256": "ebc682d04ad0fc9f21d8acbe4277ce225d7894cccf2925dbaf2bae4969f253ae",
+      "size_git_blob": 19460
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewPersistenceDefensePostgresTest.kt",
+      "git_blob_sha256": "7cd9247fb965a5ea55d40329bf81bce4b57ce445d7e52785fa15a652691f50ac",
+      "working_copy_sha256": "7cd9247fb965a5ea55d40329bf81bce4b57ce445d7e52785fa15a652691f50ac",
+      "size_git_blob": 6862
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewStoragePrivacyTest.kt",
+      "git_blob_sha256": "6c055f58489bd3df529e3757bb445b7052c723839c4864198ea8ac655ff8b8b7",
+      "working_copy_sha256": "6c055f58489bd3df529e3757bb445b7052c723839c4864198ea8ac655ff8b8b7",
+      "size_git_blob": 4630
+    }
+  ]
+}
