@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Independent additional synthetic development case fixed before the weekday-scope prompt addition",
+  "references": ["ADR-053", "ADR-054", "ADR-059", "FR-008D"],
+  "limitations": [
+    "An exposed development example, not a blind benchmark or population quality estimate.",
+    "Evaluate both verdict and complete proposal preservation; verdict equality alone is insufficient."
+  ],
+  "context": {
+    "reference_at": "2026-10-28T06:00:00Z",
+    "time_zone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "search_start_date": "2026-10-28",
+    "search_end_date": "2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "TF13",
+      "category": "explicit-recurring-weekday-with-missing-meridiem",
+      "rawText": "매주 금요일 6시부터 8시까지 가능해요.",
+      "expectedVerdict": "NEEDS_CHOICE",
+      "reason": "The time-of-day is unresolved but the recurring Friday scope is explicit. Neither complete proposal may select only one Friday or drop the recurrence.",
+      "sourceExcerpt": "6시부터 8시까지",
+      "safeProposals": [
+        "매주 금요일 오전 6시부터 8시까지 가능해요.",
+        "매주 금요일 오후 6시부터 8시까지 가능해요."
+      ],
+      "proposalRequirements": [
+        "A and B preserve every-Friday scope, including all Fridays in the supplied search period.",
+        "A and B differ in morning versus afternoon; no other condition changes.",
+        "No single absolute date may replace the recurring weekday pattern.",
+        "Question and exact sourceExcerpt satisfy existing length and A/B field validation."
+      ]
+    }
+  ]
+}

@@ -150,7 +150,7 @@ class JdbcPrecheckRepository(
     ): Int =
         requireNotNull(
             jdbc.queryForObject(
-                """SELECT (SELECT count(*) FROM precheck_checks k JOIN precheck_candidates c ON c.id=k.candidate_id WHERE c.room_id=? AND c.participant_id=? AND k.question IS NOT NULL)
+                """SELECT (SELECT count(*) FROM precheck_checks k JOIN precheck_candidates c ON c.id=k.candidate_id WHERE c.room_id=? AND c.participant_id=? AND jsonb_array_length(k.question->'choices')=2)
             + (SELECT count(*) FROM submission_clarifications q JOIN submission_versions v ON v.id=q.source_version_id JOIN submission_heads h ON h.id=v.submission_id WHERE h.room_id=? AND h.participant_id=?)""",
                 Int::class.java,
                 roomId,

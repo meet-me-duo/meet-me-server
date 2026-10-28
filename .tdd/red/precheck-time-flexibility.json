@@ -1,0 +1,25 @@
+{
+  "workItem": "precheck-time-flexibility",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckTimeFlexibilityPolicyContractTest.kt",
+      "sha256": "246f4e55249083139ec65aeaa234570343a73875b37627db5b33ec8265aeef23"
+    }
+  ],
+  "command": [
+    "/workspace/precheck-tools/gradle-9.7.1/bin/gradle",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*PrecheckTimeFlexibilityPolicyContractTest"
+  ],
+  "failedTests": [
+    "TFP01 [1] kind = \"LUNA\"",
+    "TFP01 [2] kind = \"GEMINI\"",
+    "TFP03 [1] kind = \"LUNA\"",
+    "TFP03 [2] kind = \"GEMINI\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T15:03:53.500338Z"
+}

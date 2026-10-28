@@ -1,5 +1,17 @@
 # meet-me-server Implementation Plan
 
+## 2026-10-28 제출 전 시간 조건 오탐 개선
+
+- [USER] 네 가지 작업의 구현·검증·원격 게시·PR/CI·develop/main·운영 반영까지 승인했다. 이 항목의 main 병합·운영 배포는 내 모임 API·CI/CD 작업과 부모가 직렬화한다. 사용자 방 마감·수정·삭제·재입력, 키 추출/출력/신규 등록, IAM/권한 변경과 특정 PR review APPROVE는 수행하지 않는다.
+- [x] `[AGENT]` 운영 진단을 코드와 대조했다. 정상 Jev 반환 뒤 Luna가 NEEDS_EDIT로 답한 분기이며 시간 초과·인증·파싱·질문 한도·재검사 원인은 제외됐다. Jev 원판정과 Luna 구체 사유는 저장되지 않아 정확한 의미 오판 이유는 미확인이다.
+- [x] `[AGENT]` 독립 합성 oracle 12개(CLEAR7/NEEDS_CHOICE3/NEEDS_EDIT2)와 Luna/Gemini 정책 전송·원문/context 보존 테스트를 만들었다. 반복 요일 보존 TFP03을 추가한 최종 6개 테스트로 기존 prompt의 정책 누락을 다시 확인했고 4개가 유효 RED이며 errors0이다.
+- [x] `[AGENT]` 공통 generation prompt에 의도적 넓은 범위와 같은 연속 구간의 AM/PM 문맥을 구별하는 두 문단과 보완문의 반복 요일 범위 보존 문장만 보강했다. 정규식 의미 판정, 문장 예외 처리, threshold·schema·validator·라우팅·DB/API 변경은 없다.
+- [x] `[AGENT]` 최초 후보의 관련 115개 PASS·독립 검토를 확인했다. 최종 정책 3개를 각각 제거한 결함은 전송 테스트가 모두 탐지했고 source/test 지문을 정확히 복원했다. 첫 후보의 실제 합성6개는 verdict6/6이며 TF08 날짜 범위는 미확인으로 보존했다. 반복 요일 보존 문장을 추가한 최종 후보는 새 명시적 반복 요일 TF13 한 건을 추가 호출해 A/B 모두 매주 범위를 보존함을 확인했다. 실제 호출은 총7회이고 동일 입력 재호출0이다. mock 정책 테스트는 실제 모델 의미 정확성 증거로 취급하지 않는다.
+- [x] `[AGENT]` 추가 승인된 NEEDS_EDIT 안내를 구현했다. 기존 네 모델 필드의 타입을 유지하고 prompt/정확한 sourceExcerpt·빈 choices를 검증해 기존 JSON으로 보존한다. 새 본인 전용 edit_guidance는 최대160 코드포인트의 일반 텍스트이며 기존 A/B question은 null로 유지한다. legacy는 원인을 지어내지 않는 서버 안내를 제공한다. 새 DDL/guard 변경0, 독립 EG22+방향 제어문자6+정책6=집중34 PASS. 실제 새 합성 TF14는 예약 종료 시각만 질문했고 총 유료 호출은8회/동일 입력 재호출0이다.
+- [x] `[AGENT]` 최종 정확 source의 원본 commit guard 전체 품질 게이트를 통과했다: 2270 tests, 4 SKIP, 실패/오류0. TFP03 추가 전 첫 전체 실행은 취소했으며 완료 결과로 인용하지 않는다.
+- [x] `[AGENT]` 운영 strict Structured Output schema와 ADR-053/054/059·PR120의 3-verdict 도입 근거를 재조회했다. 특정 enum3개 자체의 사용자 직접 지정 근거는 확인되지 않았으며, NEEDS_EDIT를 제거하는 새 설계는 선택하지 않았다. 오후 전체 허용의 통과 요구와 현재 prompt 보강은 일치한다.
+- [ ] `[AGENT]` 원격 게시·정확 HEAD CI·develop/main·운영 반영은 미완료다. 신규 GitHub 이슈 생성은 자동 승인 심사에서 외부 게시의 구체 승인 부족으로 거절됐으며 재시도하지 않았다. 같은 범위의 기존 #107/#123/#130은 열려 있다.
+
 ## 2026-10-28 AI·리뷰 비운영 통합 준비
 
 - [x] `[AGENT]` AI 원본 feature `5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89`와 Draft PR146, 정확 HEAD CI40636001470의 Quality Gate·ARM64 이미지 및 Lifecycle 성공을 보존했다.

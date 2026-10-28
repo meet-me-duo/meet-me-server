@@ -1,0 +1,27 @@
+{
+  "workItem": "precheck-edit-guidance-bidi",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckEditGuidanceBidiContractTest.kt",
+      "sha256": "f2b33ae3fdfb47e8387e6aab7b28b3b5f2772257702e82ed4fb08d111ca5bb21"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*PrecheckEditGuidanceBidiContractTest"
+  ],
+  "failedTests": [
+    "[1] kind = \"LUNA\", codepoint = \"1564\"",
+    "[2] kind = \"GEMINI\", codepoint = \"1564\"",
+    "[3] kind = \"LUNA\", codepoint = \"8206\"",
+    "[4] kind = \"GEMINI\", codepoint = \"8206\"",
+    "[5] kind = \"LUNA\", codepoint = \"8207\"",
+    "[6] kind = \"GEMINI\", codepoint = \"8207\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T15:33:24.444388Z"
+}

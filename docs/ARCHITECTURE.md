@@ -568,6 +568,8 @@ ClarificationUseCase는 본인 소유권 확인 후 현재 활성 완료 배치�
 
 PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 전 확인의 기준으로 두며 기존 Submission version은 CLEAR accepted만 저장한다. `meeting_rooms.submission_protocol`은 기존 방 LEGACY, 신규 방 PRE_SUBMIT_V1을 구분한다. queue claim·비용 admission·완료 publish는 영속 세대와 room lock으로 fence하며 Redis 유실이 원문/검사 상태를 잃게 하지 않는다. 외부 provider는 개인 입력/context만 받는 별도 output port이다. 최종 분석은 전체 accepted frozen batch의 구조화·AREA 그룹·결정론적 매칭을 계속 수행한다.
 
+NEEDS_EDIT의 구체 안내는 기존 provider의 prompt/sourceExcerpt 필드를 사용한다. 서버는 안내의 최대160 코드포인트·단일행·표시 안전성과 원문 구간의 실제 일치·최대200 코드포인트, 선택지 없음을 검증한다. 현재 소유·revision·deadline의 publish 검증을 통과한 뒤 기존 question JSON에 id/prompt/sourceExcerpt/빈 choices 모양으로 보존하며 DDL이나 기존 JSON 필드를 변경하지 않는다. 실제 두 선택지가 있는 기록만 A/B 질문 한도에 포함한다. 본인 공개 응답은 A/B question과 직접 수정 안내를 구분하고 원문·안내·구간을 로그·지표에 넣지 않는다. 이전 null 안내 기록은 그대로 읽으며 서버 일반 안내가 모델의 구체 사유인 것처럼 표시되지 않게 한다. 이 확장은 실제 provider 재호출이나 accepted 반영을 추가하지 않는다.
+
 조회/답변/취소/retry/멱등 replay 모두 현재 본인 소유권과 인증을 검사하고 no-store 응답을 쓴다. REPLACE_ONLY는 조회 권한을 얻지 않으며 candidate epoch/generation CAS로 제한된 대체만 수행한다. typed native OpenAPI와 web generated contract를 최종 통합한다. 신규 V16은 기존 SQL bytes를 보존하는 additive migration이며 정확 catalog·guard·DB upgrade 검증을 수행한다. runtime 인증 전달/키 mount·migration 승인·provider cap 검증이 준비되지 않으면 main 배포를 진행하지 않는다.
 
 2026-10-17 runtime 준비본은 기본 OFF `meetme.precheck.provider.enabled`와 고정 Gemini3.8 GenerateContent/LOW/2048 profile을 사용했다. 개인 생성은 아래 2026-10-20 Luna 계약으로 대체한다. 전체 frozen request의 count1회 결과1..4096만 generation1회를 허용하고 둘은 공통15초/자동retry0을 공유한다. 기존 검사 admission6은 유지하며 최대 count6+generation6 HTTP를 operation별 관측한다. count값을 actual billed input으로 대체하지 않으며 known usage·unknown을 별도로 남긴다. 사전 제한·사후 usage 방어는 실제 청구 상한·의미 정확도·모임10원 보장이 아니다.

@@ -1,0 +1,81 @@
+{
+  "oracleSha256" : "ce025b63f71196dd2032dbb898143b8110188bfe9ff2a24e923e37ca5319d91f",
+  "sourceFingerprint" : "b037c1a2783a28a17899e2d051fd9c8756e6579944dbfe3ba1bbc96c026832e5",
+  "attempted" : 6,
+  "maximumCalls" : 6,
+  "results" : [ {
+    "id" : "TF02",
+    "expected" : "CLEAR",
+    "actual" : "CLEAR",
+    "matchesExpected" : true,
+    "latencyMs" : 2749,
+    "inputTokens" : 799,
+    "outputTokens" : 32,
+    "question" : null,
+    "sourceExcerpt" : null,
+    "choices" : [ ]
+  }, {
+    "id" : "TF05",
+    "expected" : "CLEAR",
+    "actual" : "CLEAR",
+    "matchesExpected" : true,
+    "latencyMs" : 1606,
+    "inputTokens" : 812,
+    "outputTokens" : 32,
+    "question" : null,
+    "sourceExcerpt" : null,
+    "choices" : [ ]
+  }, {
+    "id" : "TF06",
+    "expected" : "CLEAR",
+    "actual" : "CLEAR",
+    "matchesExpected" : true,
+    "latencyMs" : 1620,
+    "inputTokens" : 808,
+    "outputTokens" : 101,
+    "question" : null,
+    "sourceExcerpt" : null,
+    "choices" : [ ]
+  }, {
+    "id" : "TF08",
+    "expected" : "NEEDS_CHOICE",
+    "actual" : "NEEDS_CHOICE",
+    "matchesExpected" : true,
+    "latencyMs" : 3375,
+    "inputTokens" : 800,
+    "outputTokens" : 274,
+    "question" : "금요일 6시부터 8시까지가 오전인가요, 오후인가요?",
+    "sourceExcerpt" : "금요일 6시부터 8시까지 가능해요.",
+    "choices" : [ {
+      "id" : "A",
+      "label" : "오전",
+      "proposedText" : "2026년 10월 30일 금요일 오전 6시부터 오전 8시까지 가능해요."
+    }, {
+      "id" : "B",
+      "label" : "오후",
+      "proposedText" : "2026년 10월 30일 금요일 오후 6시부터 오후 8시까지 가능해요."
+    } ]
+  }, {
+    "id" : "TF11",
+    "expected" : "NEEDS_EDIT",
+    "actual" : "NEEDS_EDIT",
+    "matchesExpected" : true,
+    "latencyMs" : 2848,
+    "inputTokens" : 798,
+    "outputTokens" : 165,
+    "question" : null,
+    "sourceExcerpt" : null,
+    "choices" : [ ]
+  }, {
+    "id" : "TF12",
+    "expected" : "NEEDS_EDIT",
+    "actual" : "NEEDS_EDIT",
+    "matchesExpected" : true,
+    "latencyMs" : 3126,
+    "inputTokens" : 823,
+    "outputTokens" : 188,
+    "question" : null,
+    "sourceExcerpt" : null,
+    "choices" : [ ]
+  } ]
+}

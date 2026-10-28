@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "purpose": "ADR-053/054/059 semantic development regression oracle; synthetic inputs only",
+  "references": ["docs/PRD.md#제출-전-개인-모호성-확인", "ADR-053", "ADR-054", "ADR-059", "ADR-061"],
+  "authorship": "Independent test-design role; expected outcomes set before prompt implementation",
+  "limitations": [
+    "Mock provider output and policy-text assertions do not establish live-model semantic accuracy.",
+    "This is an exposed development set, not a blind benchmark or population error-rate estimate.",
+    "CLEAR confirms only that clarification is unnecessary; final whole-room interpretation and deterministic matching remain separate.",
+    "Broad afternoon availability is preserved without assigning new exact daypart boundaries in this oracle."
+  ],
+  "context": {
+    "reference_at": "2026-10-28T06:00:00Z",
+    "time_zone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "search_start_date": "2026-10-28",
+    "search_end_date": "2026-11-15"
+  },
+  "proposalContract": {
+    "NEEDS_CHOICE": "Exactly one question, exact nonempty source excerpt, and A/B complete proposedText values; preserve all unrelated conditions, alternatives, exclusions and preferences. Alternatives differ from each other and the original. Neither invents a private fact. Explicit acceptance is required.",
+    "NEEDS_EDIT": "No prompt, sourceExcerpt or choices. Use when no pair of safe complete interpretations exists without inventing facts or silently dropping contradictory requirements.",
+    "CLEAR": "No prompt, sourceExcerpt or choices. Do not normalize, rewrite or narrow the stored original."
+  },
+  "cases": [
+    {
+      "id": "TF01",
+      "category": "explicit-numeric-range",
+      "rawText": "수요일은 18시부터 20시까지 가능해요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "Explicit 24-hour endpoints determine the range."
+    },
+    {
+      "id": "TF02",
+      "category": "same-range-meridiem-context",
+      "rawText": "목요일 오후 6시부터 9시까지 가능해요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "The explicit afternoon qualifier scopes the same continuous range; do not ask whether its end is morning."
+    },
+    {
+      "id": "TF03",
+      "category": "broad-daypart",
+      "rawText": "토요일은 오후 중 아무 때나 괜찮아요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "Intentional broad afternoon availability is not a missing personal fact or a demand for exact endpoints."
+    },
+    {
+      "id": "TF04",
+      "category": "explicit-no-time-restriction",
+      "rawText": "이번 검색 기간에는 날짜와 시간 모두 제한 없어요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "An explicit absence of restrictions must not create a compulsory precision question."
+    },
+    {
+      "id": "TF05",
+      "category": "combined-specific-and-broad-clauses",
+      "rawText": "월요일과 수요일은 오후 6시에서 9시 사이, 일요일은 오후 내내 가능해요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "A concrete weekday range and a broad weekend range are both meaningful; neither requires a private boundary."
+    },
+    {
+      "id": "TF06",
+      "category": "broad-with-explicit-exclusion",
+      "rawText": "토요일 오후는 모두 괜찮지만 오후 3시부터 4시까지는 안 돼요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "Broad availability plus a definite exclusion is not a contradiction; preserve both."
+    },
+    {
+      "id": "TF07",
+      "category": "explicit-alternatives-and-soft-preference",
+      "rawText": "화요일 오후 2~4시 또는 금요일 저녁 7~9시 가능하고, 되도록 금요일이 좋아요.",
+      "expectedVerdict": "CLEAR",
+      "reason": "Two explicit alternatives and a soft preference do not require selecting a single alternative before submission."
+    },
+    {
+      "id": "TF08",
+      "category": "genuine-missing-meridiem",
+      "rawText": "금요일 6시부터 8시까지 가능해요.",
+      "expectedVerdict": "NEEDS_CHOICE",
+      "reason": "Morning and afternoon ranges materially differ and the supplied text/context does not resolve them.",
+      "sourceExcerpt": "6시부터 8시까지",
+      "safeProposals": [
+        "금요일 오전 6시부터 8시까지 가능해요.",
+        "금요일 오후 6시부터 8시까지 가능해요."
+      ]
+    },
+    {
+      "id": "TF09",
+      "category": "different-clause-qualifier-scope",
+      "rawText": "수요일 오전 9~11시 또는 목요일 7~9시 가능해요.",
+      "expectedVerdict": "NEEDS_CHOICE",
+      "reason": "Wednesday's qualifier must not silently determine a separate Thursday alternative; the resolved Wednesday alternative must remain in both proposals.",
+      "sourceExcerpt": "목요일 7~9시",
+      "safeProposals": [
+        "수요일 오전 9~11시 또는 목요일 오전 7~9시 가능해요.",
+        "수요일 오전 9~11시 또는 목요일 오후 7~9시 가능해요."
+      ]
+    },
+    {
+      "id": "TF10",
+      "category": "unresolved-alternative-survives-clear-alternative",
+      "rawText": "화요일 3시부터 5시까지 또는 금요일 오후 6시부터 8시까지 가능해요.",
+      "expectedVerdict": "NEEDS_CHOICE",
+      "reason": "A definite Friday alternative does not erase the unresolved Tuesday alternative; do not infer Tuesday's meridiem from a later separate clause.",
+      "sourceExcerpt": "화요일 3시부터 5시까지",
+      "safeProposals": [
+        "화요일 오전 3시부터 5시까지 또는 금요일 오후 6시부터 8시까지 가능해요.",
+        "화요일 오후 3시부터 5시까지 또는 금요일 오후 6시부터 8시까지 가능해요."
+      ]
+    },
+    {
+      "id": "TF11",
+      "category": "missing-required-private-boundary",
+      "rawText": "수요일은 제 수업이 끝난 뒤부터만 가능해요.",
+      "expectedVerdict": "NEEDS_EDIT",
+      "reason": "The class end time is a necessary private fact with no supplied value. A/B times would invent facts; simply repeating the symbolic boundary does not resolve it."
+    },
+    {
+      "id": "TF12",
+      "category": "unresolved-exact-contradiction",
+      "rawText": "토요일 오후 2~4시에만 가능해요. 같은 토요일 오후 2~4시에는 절대로 참석할 수 없어요. 둘 다 필수 조건이에요.",
+      "expectedVerdict": "NEEDS_EDIT",
+      "reason": "Explicit mutually inconsistent mandatory claims cannot be preserved in either complete interpretation; do not silently choose one or invent a correction."
+    }
+  ]
+}

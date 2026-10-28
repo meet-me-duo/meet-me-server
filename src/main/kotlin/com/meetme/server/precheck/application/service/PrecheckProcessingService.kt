@@ -195,7 +195,12 @@ class PrecheckProcessingService(
                     status = PrecheckStatus.CLEAR
                 }
             }
-            result.verdict == PrecheckVerdict.NEEDS_EDIT -> status = PrecheckStatus.NEEDS_EDIT
+            result.verdict == PrecheckVerdict.NEEDS_EDIT -> {
+                status = PrecheckStatus.NEEDS_EDIT
+                if (result.prompt != null && result.sourceExcerpt != null) {
+                    question = PrecheckQuestion(ids.next(), result.prompt, result.sourceExcerpt, emptyList())
+                }
+            }
             current.candidate.sourceCandidateId != null -> {
                 status = PrecheckStatus.NEEDS_EDIT
                 code = "RECHECK_REQUIRES_EDIT"

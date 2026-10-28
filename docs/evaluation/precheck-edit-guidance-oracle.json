@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Independent additional synthetic case fixed before implementation of concrete EDIT guidance",
+  "references": ["ADR-053", "ADR-059", "approved NEEDS_EDIT guidance extension"],
+  "limitations": ["Exposed single development case; does not establish general model reliability or operational deployment."],
+  "context": {
+    "reference_at": "2026-10-28T06:00:00Z",
+    "time_zone": "Asia/Seoul",
+    "locale": "ko-KR",
+    "search_start_date": "2026-10-28",
+    "search_end_date": "2026-11-15"
+  },
+  "cases": [
+    {
+      "id": "TF14",
+      "category": "required-private-event-boundary-needs-actionable-guidance",
+      "rawText": "목요일에는 제 개인 예약이 끝난 다음에만 만날 수 있어요.",
+      "expectedVerdict": "NEEDS_EDIT",
+      "reason": "The appointment end time is a required private fact with no supplied value. Do not guess a numeric time or create invented A/B choices.",
+      "guidanceRequirements": [
+        "A concrete single-line plain-text question or edit instruction asks for the Thursday appointment end time or the first available time.",
+        "prompt contains 1..160 Unicode codepoints and sourceExcerpt is an exact nonempty substring of the original with at most 200 codepoints.",
+        "choices is null or empty; no invented appointment duration, numeric end time, or location.",
+        "Guidance asks only for the minimum scheduling fact and does not request private event details."
+      ]
+    }
+  ]
+}

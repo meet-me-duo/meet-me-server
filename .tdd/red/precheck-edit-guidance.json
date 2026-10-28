@@ -1,0 +1,39 @@
+{
+  "workItem": "precheck-edit-guidance",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckEditGuidanceContractTest.kt",
+      "sha256": "aa7470aacac742954a871ad217ce07852bd685a09eb479ceacf2a6e49fe0bf53"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/PrecheckEditGuidancePostgresTest.kt",
+      "sha256": "828a3c67ac78d2aa5bc21f0004ff440f27ba97ada6ad1a5577878e96897082a3"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*PrecheckEditGuidanceContractTest",
+    "--tests",
+    "*PrecheckEditGuidancePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest 0 at com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest.EGP03 stored guidance consumes no AB quota and the existing three question limit remains enforced(PrecheckEditGuidancePostgresTest.kt:138)",
+    "com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest 1 at com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest.EGP04 legacy EDIT uses bounded generic server guidance without fabricating a model diagnosis(PrecheckEditGuidancePostgresTest.kt:181)",
+    "com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest 2 at com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest.EGP05 stale EDIT completion cannot publish guidance onto a newer candidate(PrecheckEditGuidancePostgresTest.kt:199)",
+    "com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest 3 at com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest.EGP06 generated OpenAPI advertises nullable edit guidance with maximum 160 characters(PrecheckEditGuidancePostgresTest.kt:224)",
+    "com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest 4 at com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest.EGP02 guidance does not authorize a forged choice and direct editing still requires recheck(PrecheckEditGuidancePostgresTest.kt:94)",
+    "com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest 5 at com.meetme.server.coordination.adapter.input.web.PrecheckEditGuidancePostgresTest.EGP01 EDIT guidance survives publication and reload privately without an AB question(PrecheckEditGuidancePostgresTest.kt:55)",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest 2 at com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest.parse(PrecheckEditGuidanceContractTest.kt:155)",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest 3 at com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest.parse(PrecheckEditGuidanceContractTest.kt:168)",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest 4 at com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest.parse(PrecheckEditGuidanceContractTest.kt:155)",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest 5 at com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest.parse(PrecheckEditGuidanceContractTest.kt:168)",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest 8 at com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest.parse(PrecheckEditGuidanceContractTest.kt:155)",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest 9 at com.meetme.server.precheck.adapter.output.provider.PrecheckEditGuidanceContractTest.parse(PrecheckEditGuidanceContractTest.kt:168)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T15:22:57.988825Z"
+}

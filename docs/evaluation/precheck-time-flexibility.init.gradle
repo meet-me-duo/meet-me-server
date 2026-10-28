@@ -1,0 +1,33 @@
+// Local opt-in launcher. Default exports six synthetic requests without reading a key or opening sockets.
+// -PevaluationOut=/tmp/new-output-dir is required; -PevaluationLive=true explicitly enables <=6 paid calls.
+allprojects {
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        tasks.register('precheckTimeFlexibilityEvaluation', JavaExec) {
+            dependsOn tasks.named('testClasses')
+            classpath = sourceSets.test.runtimeClasspath
+            mainClass = 'com.meetme.server.precheck.adapter.output.provider.PrecheckTimeFlexibilityEvaluation'
+            workingDir = project.projectDir
+            doFirst {
+                if (!project.hasProperty('evaluationOut')) {
+                    throw new GradleException('evaluationOut must name a new output directory')
+                }
+                setArgs(['--out=' + project.property('evaluationOut')])
+                if (project.findProperty('evaluationEditGuidance') == 'true') {
+                    args '--edit-guidance'
+                } else if (project.hasProperty('evaluationEditGuidance') && project.property('evaluationEditGuidance') != 'false') {
+                    throw new GradleException('evaluationEditGuidance must be true or false')
+                }
+                if (project.findProperty('evaluationWeekdayScope') == 'true') {
+                    args '--weekday-scope'
+                } else if (project.hasProperty('evaluationWeekdayScope') && project.property('evaluationWeekdayScope') != 'false') {
+                    throw new GradleException('evaluationWeekdayScope must be true or false')
+                }
+                if (project.findProperty('evaluationLive') == 'true') {
+                    args '--live'
+                } else if (project.hasProperty('evaluationLive') && project.property('evaluationLive') != 'false') {
+                    throw new GradleException('evaluationLive must be true or false')
+                }
+            }
+        }
+    }
+}
