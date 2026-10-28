@@ -1,0 +1,72 @@
+{
+  "workItem": "issue-145-cloud-review",
+  "sourceRevision": "f196e6b8655fd17c097dc7db0549c7f3e1fcf3d2",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewAdditionalBoundaryPostgresTest.kt",
+      "sha256": "2ce5e5e72147ce57833f9e3f596922b112a27b335526efea1ed0176b57d5d5a5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewHttpPostgresTest.kt",
+      "sha256": "74e5924b34cbb8b2bb521c191ad8011a1e736f2b7a2497bd5a482e1e9c7090d6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewNativeOpenApiPostgresTest.kt",
+      "sha256": "fe9d8054fb3ac4f4e8af5713a6d98a47062af89ce034b6687f20647fdd949405"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewPersistenceDefensePostgresTest.kt",
+      "sha256": "948e8c7718c8ca7138f237f744a77e2f4405d529427c49d8f06546758404cbe0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewPrivacyLifecyclePostgresTest.kt",
+      "sha256": "c659dfbc3aa5471351028135d208979a115420e55bb6a342095309be4cd1aeef"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewStoragePrivacyTest.kt",
+      "sha256": "0b8f11a129229d243e4895d674058471096163dbc69cc04b9c9db3f538825aa6"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+    "test",
+    "--tests",
+    "com.meetme.server.review.*",
+    "--console=plain",
+    "--max-workers=2"
+  ],
+  "failedTests": [
+    "com.meetme.server.review.ReviewPrivacyLifecyclePostgresTest.RV13 RV15 failed policy write rolls back private answer and exposes only sanitized 503(CapturedOutput)",
+    "com.meetme.server.review.ReviewPrivacyLifecyclePostgresTest.RV15 successful claim submit and close are no-store acknowledgments without answer text(CapturedOutput)",
+    "com.meetme.server.review.ReviewPrivacyLifecyclePostgresTest.RV15 malformed unauthorized forbidden absent and conflicting requests remain private no-store errors(CapturedOutput)",
+    "com.meetme.server.review.ReviewPrivacyLifecyclePostgresTest.RV13 room cleanup removes review answers while preserving user optout until account cleanup()",
+    "com.meetme.server.review.ReviewPrivacyLifecyclePostgresTest.RV12 RV13 verified guest claim failure rolls back participant policy and prompt ownership without private error leakage(CapturedOutput)",
+    "com.meetme.server.review.ReviewPersistenceDefensePostgresTest.RV13 failed policy write rolls submitted answer back and does not echo database private detail()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV04 all dissatisfaction choices and optional plain text are private and bounded by code points()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV11 pending other-room prompt cannot bypass satisfaction and checked late close preserves optout()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV05 same request recovers pending but fresh request never repeats same room()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV10 concurrent close and submit preserve first terminal without duplicate answer()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV09 checked close hides whole user for seven days and retry never extends deadline()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV07 dissatisfied seven day boundary and suppressed room never wakes after cooldown()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV02 missing proof outsider and other participants prompt cannot mutate()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV06 satisfied permanently stops same user across rooms and leaves another user eligible()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV03 invalid selections never consume pending prompt and OTHER alone empty is valid()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV12 guest satisfaction survives verified claim into account without linking unrelated guest()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV10 closed prompt cannot become a submission and checked replay cannot change ordinary close()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV10 semantic replay remains successful without changing original timestamp and changed answer conflicts()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV01 HOST and MEMBER each claim once only after confirmation()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV05 concurrent claims create one prompt and recover only winning request()",
+    "com.meetme.server.review.ReviewHttpPostgresTest.RV08 ordinary close is unsubmitted and next room can ask immediately()",
+    "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV02 prompt from another room stays private even for the same proven account()",
+    "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV11 older pending prompt cannot bypass a later dissatisfaction cooldown()",
+    "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV12 checked guest close keeps its deadline after verified account claim without linking another guest()",
+    "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV02 replacement only guest proof cannot recover or terminate an existing review prompt()",
+    "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV12 verified account claim transfers a pending prompt and preserves the original request identity()",
+    "com.meetme.server.review.ReviewNativeOpenApiPostgresTest.RV14 native endpoint errors and success reference their public schemas()",
+    "com.meetme.server.review.ReviewNativeOpenApiPostgresTest.RV14 choices and optional OTHER limit are represented in the generated request schema()",
+    "com.meetme.server.review.ReviewNativeOpenApiPostgresTest.RV14 claim close and terminal schemas expose no draft or owner identity()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T03:27:41.940580Z"
+}

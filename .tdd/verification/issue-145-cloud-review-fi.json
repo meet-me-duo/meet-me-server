@@ -1,0 +1,156 @@
+{
+  "workItem": "issue-145-cloud-review-fi",
+  "sourceRevision": "f196e6b8655fd17c097dc7db0549c7f3e1fcf3d2",
+  "boundary": "Proven review authority, global pending eligibility, terminal retry deadline immutability, and real PostgreSQL submit rollback; every service mutation was followed by byte-exact source/test restoration. Final unmutated full gate is recorded separately.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewController.kt",
+      "sha256": "0af45f533060984cc9541f6da62d0031ebe2765370cf848ea4afec269600ca2e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewExceptionHandler.kt",
+      "sha256": "d0f9475f1e767d3035a98024ece2b109d93727608bb94b5c7f55dbcb3cdc3bf8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewNoStoreFilter.kt",
+      "sha256": "6469c76274567fadb7c923bc8ddedd9f098d3f89a17d90c30c341631cad2ebf5"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/input/web/ReviewOpenApiConfiguration.kt",
+      "sha256": "fca727d6845a19aba4b19413b2df2a4a396ea2dd78e99c5e42f9066a32c43a68"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/adapter/output/persistence/JdbcReviewRepository.kt",
+      "sha256": "c573ed01929e5cf40519aa1705dd384dc371c167fdb67c916101f1e9c18eccec"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/application/port/output/ReviewRepository.kt",
+      "sha256": "2772b57f8f2c90beb17c384ccb0d6ca03eefdb99411eb0fee8288e72d7c02f7e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/application/service/ReviewService.kt",
+      "sha256": "548d401641854d805156a6af8870334fa2d2a1e63b30755a5e6ccafc549be322"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/review/domain/Review.kt",
+      "sha256": "e322dcfe14f733dd18f77c1de1d56ec1e928b1adeae543ec36867dc23493f59f"
+    },
+    {
+      "path": "src/main/resources/db/migration/V19__add_confirmed_result_reviews.sql",
+      "sha256": "b5e55df55f97f754239653252862e6631c570f1a724b05b063d8320826d5109f"
+    },
+    {
+      "path": "docs/drafts/review-schema.sql",
+      "sha256": "142236f4d3bde352111951b8ad586251ab6e66287405b0b9b3c1474a1ecb7bd6"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewAdditionalBoundaryPostgresTest.kt",
+      "sha256": "2ce5e5e72147ce57833f9e3f596922b112a27b335526efea1ed0176b57d5d5a5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewHttpPostgresTest.kt",
+      "sha256": "74e5924b34cbb8b2bb521c191ad8011a1e736f2b7a2497bd5a482e1e9c7090d6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewNativeBrowserServer.kt",
+      "sha256": "d8fcaf432ab193a544a7d9905b1049736f215c9db28e0acf0a404044b0110836"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewNativeOpenApiPostgresTest.kt",
+      "sha256": "fe9d8054fb3ac4f4e8af5713a6d98a47062af89ce034b6687f20647fdd949405"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewOperationIdsPostgresTest.kt",
+      "sha256": "a9a2031da1ffdf3a917dc41d750c7252310969576d638ce3310889e25e9e8fc7"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewPersistenceDefensePostgresTest.kt",
+      "sha256": "948e8c7718c8ca7138f237f744a77e2f4405d529427c49d8f06546758404cbe0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewPrivacyLifecyclePostgresTest.kt",
+      "sha256": "c659dfbc3aa5471351028135d208979a115420e55bb6a342095309be4cd1aeef"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewStoragePrivacyTest.kt",
+      "sha256": "0b8f11a129229d243e4895d674058471096163dbc69cc04b9c9db3f538825aa6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/architecture/AggregatePackageArchitectureTest.kt",
+      "sha256": "2ffbfd4847692e386f4c5d695317a90f2fda10643b5a489510d0da1b56fc38fa"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "58558cb1c3479c01c65f457a37de9a935c87fb31f227bf65eb87e25cdc2692b8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "7858808fa13e498261aaa3adc724629f66041fda2e51ffbb2ba475460b3fd5e5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "ac102a224ba8a83a9c2282774b61a3f559f4dabd4be858f43b4d9cfb586f9d8d"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Promote replacement-only guest proof to review authority by resolving REPLACE_OWN instead of READ_OWN",
+      "command": [
+        "python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "test",
+        "--tests",
+        "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV02 replacement only guest proof cannot recover or terminate an existing review prompt",
+        "--console=plain",
+        "--max-workers=2"
+      ],
+      "detectedBy": "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV02 replacement only guest proof cannot recover or terminate an existing review prompt()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove global eligibility refusal from submit so an older pending prompt can bypass another room cooldown",
+      "command": [
+        "python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "test",
+        "--tests",
+        "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV11 older pending prompt cannot bypass a later dissatisfaction cooldown",
+        "--console=plain",
+        "--max-workers=2"
+      ],
+      "detectedBy": "com.meetme.server.review.ReviewAdditionalBoundaryPostgresTest.RV11 older pending prompt cannot bypass a later dissatisfaction cooldown()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Recompute and persist suppression policy during semantically identical terminal submit replay",
+      "command": [
+        "python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "test",
+        "--tests",
+        "com.meetme.server.review.ReviewHttpPostgresTest.RV10 semantic replay remains successful without changing original timestamp and changed answer conflicts",
+        "--console=plain",
+        "--max-workers=2"
+      ],
+      "detectedBy": "com.meetme.server.review.ReviewHttpPostgresTest.RV10 semantic replay remains successful without changing original timestamp and changed answer conflicts()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove application submit transaction so a failing policy write can leave the submitted private answer committed",
+      "command": [
+        "python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "test",
+        "--tests",
+        "com.meetme.server.review.ReviewPersistenceDefensePostgresTest.RV13 failed policy write rolls submitted answer back and does not echo database private detail",
+        "--console=plain",
+        "--max-workers=2"
+      ],
+      "detectedBy": "com.meetme.server.review.ReviewPersistenceDefensePostgresTest.RV13 failed policy write rolls submitted answer back and does not echo database private detail()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T03:59:16.478493Z"
+}

@@ -4,7 +4,9 @@ import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.testcontainers.postgresql.PostgreSQLContainer
+import java.sql.DriverManager
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DatabaseMigrationRunnerTest {
     @Test
@@ -18,9 +20,9 @@ class DatabaseMigrationRunnerTest {
                 ),
             )
 
-        assertEquals(18, result.migrationsExecuted)
+        assertEquals(19, result.migrationsExecuted)
         assertEquals(
-            "18",
+            "19",
             Flyway
                 .configure()
                 .dataSource(postgres.jdbcUrl, postgres.username, postgres.password)
@@ -29,6 +31,18 @@ class DatabaseMigrationRunnerTest {
                 .current()
                 .version.version,
         )
+        DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password).use { connection ->
+            connection.createStatement().use { statement ->
+                statement
+                    .executeQuery(
+                        "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' " +
+                            "AND table_name IN ('review_user_policies','review_prompts')",
+                    ).use { rows ->
+                        assertTrue(rows.next())
+                        assertEquals(2, rows.getInt(1), "V19 must create both review persistence tables")
+                    }
+            }
+        }
     }
 
     companion object {

@@ -1,0 +1,121 @@
+{
+  "workItem": "issue-145-v19-release-catalog",
+  "sourceRevision": "bbf3a8364f1c971a292034ebf4038b1dbe2b3b80",
+  "recordedAt": "2026-10-28T05:16:53.047784Z",
+  "classification": "CHRONOLOGICAL_INDEPENDENT_NODE_CONTRACT_RED",
+  "schemaScope": "Node/Python contract evidence follows existing issue123-v17-catalog format; Kotlin-only RED schema is not changed or misused. FI evidence will use the existing fault-injection schema.",
+  "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-catalog-red-final.log",
+    "--test-reporter=/workspace/checkpoints/review-release-catalog-20261028/node-events-reporter.mjs",
+    "--test-reporter-destination=.codex/tdd-evidence/issue-145-v19-catalog-red-final-events.jsonl",
+    ".github/scripts/v19-review-release-catalog.test.cjs"
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "c562835f7037c8cbeaa24d8914900250cfc72f5fef33989ed134b31ba49c8825"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "1f5932ce51a2e6658f33b732c8af326c9690e662580823b1bcac2fb2f539297b"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "b9842437749fefc4f51c418103c8e8e296f7ce065e3809d764d5136923fc5530"
+    },
+    {
+      "path": ".github/scripts/issue131-policy-catalog.test.cjs",
+      "sha256": "1ef6b1b528dac8207c2c15ac4ac673bb0b5cc2cb9ef10e668a275b1d35d5e109"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "923bc60f9117b967f5707b5cad1d1fb1e7bf86afd76258670d9a0dc5723b58ee"
+    }
+  ],
+  "failedTests": [
+    "V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints",
+    "V19R02 current publication refuses every omission old complete V18 unknown additions and malformed V19 names or file kinds",
+    "V19R03 both metadata readers retain all historical complete catalogs and additionally accept exact V19",
+    "V19R05 V18 to V19 still requires explicit approval two disabled refresh rules and no pending commands",
+    "V19R06 unchanged V19 is automatic but approval cannot bypass historical or new row corruption and fingerprint drift",
+    "V19R07 V19 bytes change only the new row and schema fingerprint while V1 through V18 and guard remain unchanged"
+  ],
+  "totals": {
+    "executed": 8,
+    "passed": 2,
+    "assertionFailures": 6,
+    "setupErrors": 0,
+    "skipped": 0
+  },
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "sourceBefore": {
+    "deploy/pipeline/publish_manifest.py": "248006fa95c0ef4506fc7e544eb149bf28d163f5649d8c499d188e57320231e6",
+    "deploy/pipeline/approved_release.py": "dd03b7aab3a36e4f14c84eeddeaf5f3d1bf28aa61a97c456beb3be369ef63c73",
+    "deploy/pipeline/host-approved-release.py": "85e5629d270ffb34d89fe92e7263ff89ca25323c44d52b0d3319277bd3cadcc1"
+  },
+  "sourceAfter": {
+    "deploy/pipeline/publish_manifest.py": "248006fa95c0ef4506fc7e544eb149bf28d163f5649d8c499d188e57320231e6",
+    "deploy/pipeline/approved_release.py": "dd03b7aab3a36e4f14c84eeddeaf5f3d1bf28aa61a97c456beb3be369ef63c73",
+    "deploy/pipeline/host-approved-release.py": "85e5629d270ffb34d89fe92e7263ff89ca25323c44d52b0d3319277bd3cadcc1"
+  },
+  "sourceUnchanged": true,
+  "rawLog": ".codex/tdd-evidence/issue-145-v19-catalog-red-final.log",
+  "rawLogSha256": "179ea2030767c3ac549be7758c2170cb6f428a58ffe2301743c2190a0b9f24da",
+  "rawEvents": ".codex/tdd-evidence/issue-145-v19-catalog-red-final-events.jsonl",
+  "rawEventsSha256": "65741f6b8472c87fb512a16e31df9cf065b795df54a4a851a6717e9ab2b23a07",
+  "discardedPreliminaryDraft": "First draft mistakenly required private _verify_package to check raw archive digest; that check belongs to actual host/driver boundary. New test now exercises real host _archive wrong-digest refusal before catalog reads, replacing only bounded owned-fixture filesystem transport. The preliminary 7-failure run is not claimed as valid RED.",
+  "supersession": {
+    "reason": "User-approved review release adds known V19__add_confirmed_result_reviews.sql; current-source publication is exact complete V1..V19 while historical V1..V17 fixtures and all historical V18 metadata/transition/package behavior remain unchanged.",
+    "originals": {
+      ".github/scripts/v18-release-catalog.test.cjs": {
+        "sha256": "c6a1104077d37da78e211dc9fbf7eebd340a98a840d9e26e2a34e6120efc6b77",
+        "bytes": 10869
+      },
+      ".github/scripts/fixtures/integrated-release-catalog.cjs": {
+        "sha256": "bb4ecae7608679fc5d19d658c08764914983929a957c786e1cd1262e505862fb",
+        "bytes": 9651
+      },
+      ".github/scripts/issue131-policy-catalog.test.cjs": {
+        "sha256": "2ab211fdd7c407c3432ca03b377f50fef3fe3c282dba123130c86f50b6b8e079",
+        "bytes": 9144
+      },
+      ".github/scripts/approved-release-pipeline.test.cjs": {
+        "sha256": "f181b89459501f5c94350cb1844fe526e3d7231eab505db3d473f1284fc6a799",
+        "bytes": 18865
+      },
+      ".github/workflows/ci.yml": {
+        "sha256": "7398da47e101ef4bca80fd025c9092b2554fd3652f778b9348a49bcb271d8478",
+        "bytes": 4520
+      }
+    },
+    "externalOriginalByteBackup": "/workspace/checkpoints/review-release-catalog-20261028/originals",
+    "latestOnlyChanges": [
+      "fixture currentScripts/currentFixture extends the independent fixed list by known real V19",
+      "V18C01 and V18C08 current publisher assertions extend to exact19",
+      "V18C06 additionally asserts V19 unchanged while mutating only V18",
+      "PC02 and current actual-source publication test titles disclose exact19 latest premise"
+    ],
+    "historicalFixtureDefaultsRemain17": true,
+    "V18ReaderTransitionPackageTestsUnchanged": true,
+    "oldNegativeAssertionsRemoved": 0,
+    "productionConstantsUsedAsExpectedInventory": false,
+    "newSqlSynthesized": false
+  },
+  "ciEntry": {
+    "workflow": ".github/workflows/ci.yml",
+    "newQualityStep": "Verify exact V19 review release catalog",
+    "nodeFile": ".github/scripts/v19-review-release-catalog.test.cjs",
+    "existingJobsTriggersPermissionsUnchanged": true,
+    "deploymentWorkflowChanges": 0
+  },
+  "productsEditedByAuthor": 0,
+  "externalCalls": 0,
+  "gradleRuns": 0
+}

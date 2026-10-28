@@ -1,0 +1,25 @@
+{
+  "workItem": "issue-145-review-support-hint",
+  "sourceRevision": "f196e6b8655fd17c097dc7db0549c7f3e1fcf3d2",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/review/ReviewSupportHintPostgresTest.kt",
+      "sha256": "0ed38d1de38e265dc9faef507f6c8446b00eb7be76ddcde449808f4deeebe30e"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+    "test",
+    "--tests",
+    "com.meetme.server.review.ReviewSupportHintPostgresTest",
+    "--console=plain",
+    "--max-workers=1"
+  ],
+  "failedTests": [
+    "com.meetme.server.review.ReviewSupportHintPostgresTest.RS02 actual native schema preserves RoomResponse fields and documents an optional boolean review hint()",
+    "com.meetme.server.review.ReviewSupportHintPostgresTest.RS01 native room GET advertises review support without granting confirmation or participant authority()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T04:48:15.174994Z"
+}

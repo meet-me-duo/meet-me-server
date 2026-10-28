@@ -77,7 +77,7 @@ test('PC01 current publisher runner and host each declare the same independently
   const lists = invoke('lists'); assert.equal(lists.ok, true);
   for (const list of Object.values(lists.result)) assert.deepEqual([...list].sort(), current18);
 });
-test('PC02 current publication fingerprints exact policy bytes without changing the current V1 through V18 SQL catalog', () => {
+test('PC02 current publication fingerprints exact policy bytes without changing the approved V1 through V19 SQL catalog', () => {
   const value = f.currentFixture(); try {
     const result = f.publish(value); assert.equal(result.ok, true);
     assert.equal(result.result.guardFingerprint, hash(canonical(current18.map(name => ({ path: name, sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
