@@ -1,6 +1,8 @@
 package com.meetme.server.meetingroom.application.service
 
 import com.meetme.server.account.application.port.output.CurrentAccountPort
+import com.meetme.server.meetingroom.application.port.input.AccountRoomCursor
+import com.meetme.server.meetingroom.application.port.input.AccountRoomsQuery
 import com.meetme.server.meetingroom.application.port.input.AccountRoomsResult
 import com.meetme.server.meetingroom.application.port.input.GetRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
@@ -49,9 +51,17 @@ class RoomOwnershipService(
     }
 
     @Transactional(readOnly = true)
-    override fun accountRooms(): AccountRoomsResult {
+    override fun accountRooms(query: AccountRoomsQuery): AccountRoomsResult {
         val account = accounts.currentAccount() ?: fail(RoomLifecycleErrorCode.ACCOUNT_REQUIRED)
-        return AccountRoomsResult(archive.findHostedBy(account.accountId, clock.instant().minus(Duration.ofDays(30))))
+        val rows = archive.findByAccount(account.accountId, clock.instant().minus(Duration.ofDays(30)), query)
+        val page = rows.take(query.limit)
+        val nextCursor =
+            if (rows.size > query.limit) {
+                page.last().let { AccountRoomCursor(it.createdAt, it.roomId) }
+            } else {
+                null
+            }
+        return AccountRoomsResult(page, nextCursor)
     }
 
     private fun fail(code: RoomLifecycleErrorCode): Nothing = throw RoomLifecycleException(code)

@@ -1,0 +1,35 @@
+{
+  "workItem": "account-room-history",
+  "sourceRevision": "84324bb11afd7b69316b151c580b90f3c8729b4d",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHistoryWebIntegrationTest.kt",
+      "sha256": "8c4fc14179edf2a3b2170421d21e45a61f1ad26b4ccf0cab486d37821fbe0a90"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipWebIntegrationTest.kt",
+      "sha256": "8a7a235d659a33276f6e19f3c478aa50416d83526bde1df83654692c4971c415"
+    }
+  ],
+  "command": [
+    "sh",
+    "/tmp/account-history-gradle.sh",
+    "test",
+    "--tests",
+    "*AccountRoomHistoryWebIntegrationTest",
+    "--tests",
+    "*RoomOwnershipWebIntegrationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.OpenAPI documents query contract roles paging and validation response()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.default page limit is twenty and explicit maximum is one hundred()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.name search is trimmed case insensitive literal substring combined with role and date()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.creation dates use inclusive KST days independently of closed retention anchor()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.invalid role dates search limits and cursor return validation problem()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.existing thirty day boundaries include equality and keep closed and collecting anchors distinct()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.all is default and roles expose only current account ownership with no guest adoption()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.cursor pages resolve creation ties without duplicates when newer room arrives()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T13:52:37.032304Z"
+}
