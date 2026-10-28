@@ -1,0 +1,26 @@
+{
+  "oracleSha256" : "44ec67e00ba56fbb83c6faf1626d43d13fd4dd1f9a9976c824659ba48bcb3474",
+  "sourceFingerprint" : "ecf8318d497eb441e3802b8efe560e41dc5d300a640967e43f855ca5054d70c9",
+  "attempted" : 1,
+  "maximumCalls" : 1,
+  "results" : [ {
+    "id" : "TF13",
+    "expected" : "NEEDS_CHOICE",
+    "actual" : "NEEDS_CHOICE",
+    "matchesExpected" : true,
+    "latencyMs" : 2454,
+    "inputTokens" : 832,
+    "outputTokens" : 125,
+    "question" : "금요일 6시부터 8시까지가 오전 시간인가요, 오후 시간인가요?",
+    "sourceExcerpt" : "6시부터 8시까지",
+    "choices" : [ {
+      "id" : "A",
+      "label" : "오전",
+      "proposedText" : "매주 금요일 오전 6시부터 오전 8시까지 가능해요."
+    }, {
+      "id" : "B",
+      "label" : "오후",
+      "proposedText" : "매주 금요일 오후 6시부터 오후 8시까지 가능해요."
+    } ]
+  } ]
+}

@@ -1,0 +1,56 @@
+{
+  "workItem": "precheck-time-flexibility",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "boundary": "Canonical Luna/Gemini generation policy transmission only; no model semantic accuracy inference",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "0c900513faa5406832d8ef34800d4abaa726ce9834ee20c2c342ef93abd6b4d4"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckTimeFlexibilityPolicyContractTest.kt",
+      "sha256": "246f4e55249083139ec65aeaa234570343a73875b37627db5b33ec8265aeef23"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "broad-policy-omitted",
+      "command": [
+        "/workspace/precheck-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckTimeFlexibilityPolicyContractTest"
+      ],
+      "detectedBy": "TFP01 LUNA and GEMINI assertions, errors0",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "meridiem-policy-omitted",
+      "command": [
+        "/workspace/precheck-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckTimeFlexibilityPolicyContractTest"
+      ],
+      "detectedBy": "TFP01 LUNA and GEMINI assertions, errors0",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "weekday-scope-policy-omitted",
+      "command": [
+        "/workspace/precheck-tools/gradle-9.7.1/bin/gradle",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckTimeFlexibilityPolicyContractTest"
+      ],
+      "detectedBy": "TFP03 LUNA and GEMINI assertions, errors0",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T15:06:15.544525Z"
+}

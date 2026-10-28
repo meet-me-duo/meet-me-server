@@ -271,7 +271,13 @@ internal class PrecheckProviderContract(
                             }
                         }
                 } else {
-                    if (!nullOrMissing(payload.path("prompt")) || !nullOrMissing(payload.path("sourceExcerpt"))) invalid()
+                    val suppliedGuidance = !nullOrMissing(payload.path("prompt")) || !nullOrMissing(payload.path("sourceExcerpt"))
+                    if (suppliedGuidance) {
+                        if (verdict != PrecheckVerdict.NEEDS_EDIT) invalid()
+                        prompt = editGuidance(payload.path("prompt"))
+                        sourceExcerpt = boundedText(payload.path("sourceExcerpt"), 200)
+                        if (!request.rawText.contains(sourceExcerpt)) invalid()
+                    }
                     val rawChoices = payload.path("choices")
                     if (!nullOrMissing(rawChoices) && (!rawChoices.isArray || !rawChoices.isEmpty)) invalid()
                     emptyList()
@@ -313,6 +319,29 @@ internal class PrecheckProviderContract(
         maximum: Int,
     ): String = text(value).also { if (it.isBlank() || '\u0000' in it || it.codePointCount(0, it.length) !in 1..maximum) invalid() }
 
+    private fun editGuidance(value: JsonNode): String =
+        boundedText(value, 160).also { guidance ->
+            if (guidance.codePoints().anyMatch {
+                    Character.isISOControl(it) ||
+                        it in 0xD800..0xDFFF ||
+                        it in 0x2028..0x202E ||
+                        it in 0x2066..0x2069 ||
+                        it == 0x061C ||
+                        it in 0x200E..0x200F
+                }
+            ) {
+                invalid()
+            }
+            val lower = guidance.lowercase()
+            if ('<' in guidance ||
+                '>' in guidance ||
+                listOf("http://", "https://", "javascript:", "data:").any(lower::contains) ||
+                Regex("\\]\\s*\\(").containsMatchIn(guidance)
+            ) {
+                invalid()
+            }
+        }
+
     private fun nullOrMissing(value: JsonNode): Boolean = value.isNull || value.isMissingNode
 
     private fun token(value: JsonNode): Long? {
@@ -331,17 +360,23 @@ internal class PrecheckProviderContract(
 
             Preserve explicit flexibility, alternatives, soft preferences, exclusions, valid dependencies on other participants' availability, and permission for the group to choose dates or modes.
 
+            Broad availability such as an entire afternoon, evening, weekend, or unrestricted dates and times is a valid intentional condition. Exact numeric endpoints or a single preferred slot are not required for this check. Preserve that breadth without assigning new exact daypart boundaries; lack of precision alone is not a reason for a question or NEEDS_EDIT.
+
+            An explicit AM/PM qualifier applies to both endpoints of the same continuous range when the complete text supports that reading and does not specify a change of daypart. Do not re-ask a context-resolved endpoint. Do not carry that qualifier into a separate alternative or unrelated clause without support from the complete text. If morning and afternoon remain materially different unresolved interpretations, offer safe complete A/B proposals while preserving every other condition. Do not invent private event times to complete proposals.
+
             Clarify only an unresolved required personal/local fact or date/time/place/mode/polarity/exception/scope binding that changes the allowed conditions across plausible interpretations.
 
             Copying a symbolic personal boundary does not resolve its necessary missing value. Do not guess routine/event times or private locations, or require an exact home address; only the minimum usable starting-place reference may be needed.
 
             Missing numbers, unsupported schema shape, no matching candidates, or conditions outside the search period alone are not ambiguity.
 
-            Return CLEAR when no such material uncertainty remains; do not re-ask facts or bindings resolved by context. Otherwise return NEEDS_CHOICE with one question and exactly A/B alternatives only when both complete proposals safely interpret the input while preserving every other condition, polarity and preference. If two safe complete interpretations cannot be formed without inventing facts or permissions, return NEEDS_EDIT without question fields or choices.
+            Return CLEAR when no such material uncertainty remains; do not re-ask facts or bindings resolved by context. Otherwise return NEEDS_CHOICE with one question and exactly A/B alternatives only when both complete proposals safely interpret the input while preserving every other condition, polarity and preference. If two safe complete interpretations cannot be formed without inventing facts or permissions, return NEEDS_EDIT with a concrete clarification prompt and exact sourceExcerpt, but no choices. Ask for the minimum missing fact or identify the conflicting conditions so the participant knows what to edit; never invent the answer or a reason unsupported by the input. Do not merely say to edit or that checking failed.
 
             For NEEDS_CHOICE, prompt is 1..160 Unicode codepoints, sourceExcerpt is an exact 1..200 codepoint substring of raw_text, and choices each have id A/B, label 1..160 and proposedText 1..500. The two complete proposedText values must differ from each other and from raw_text. Preserve the original wording and all unrelated constraints; proposals require explicit user acceptance, never automatic original-text replacement.
 
-            Resolve relative dates against reference_at in time_zone, preserving that anchor in proposals using explicit dates. Return only the specified JSON verdict and optional question fields. Do not classify meaning using regex, generate time structures, AREA identifiers, locations for caching, final availability, matching candidates or cross-participant groups. Other participants' inputs are neither available nor requested. This check never replaces final whole-room analysis; personal AREA/cache results must not be merged, and participation or closing policies remain unchanged.
+            For NEEDS_EDIT, prompt is a single-line plain-text clarification of 1..160 Unicode codepoints and sourceExcerpt is an exact 1..200 codepoint substring of raw_text. Do not include markup, links, navigation instructions or control characters. Set choices to null. For CLEAR set prompt, sourceExcerpt and choices to null. These fields never authorize automatic completion or original-text replacement.
+
+            Resolve relative dates against reference_at in time_zone, preserving that anchor in proposals using explicit dates. Preserve weekday and recurrence scope in both complete proposals; do not replace a weekday pattern with one calendar date unless the original text explicitly limits it to that occurrence. Return only the specified JSON verdict and optional question fields. Do not classify meaning using regex, generate time structures, AREA identifiers, locations for caching, final availability, matching candidates or cross-participant groups. Other participants' inputs are neither available nor requested. This check never replaces final whole-room analysis; personal AREA/cache results must not be merged, and participation or closing policies remain unchanged.
             """.trimIndent()
 
         private fun boundedString(maximum: Int) = mapOf("type" to "string", "minLength" to 1, "maxLength" to maximum)

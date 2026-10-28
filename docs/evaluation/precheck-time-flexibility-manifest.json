@@ -1,0 +1,29 @@
+{
+  "mode" : "LIVE_EXPLICIT_OPT_IN",
+  "createdAt" : "2026-10-28T14:56:17.570378425Z",
+  "oracleSha256" : "ce025b63f71196dd2032dbb898143b8110188bfe9ff2a24e923e37ca5319d91f",
+  "sourceFingerprint" : "b037c1a2783a28a17899e2d051fd9c8756e6579944dbfe3ba1bbc96c026832e5",
+  "sourceFiles" : {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt" : "0f19b4bc58dfabcbda2a969dc668412294831db931fae27c038fa9e2b62fdcb5",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/LunaPreSubmissionCheckProvider.kt" : "5a8e8127c3e4ab0adcf97f758521f7d42982f0a69c784b9fc663a14f98d93a52",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRuntimeProperties.kt" : "fa69926c24d920eb5353e867490d9052206736838c8a93236509f4552c55f81c",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckTimeFlexibilityEvaluation.kt" : "04a5312e37c487249ad1ef484e800aaeaa770c926b4829864c7b70136393bf2b"
+  },
+  "compiledClasses" : {
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderContract" : "9be57751d190ce256753b83c8e9339ba4792e791cefd2061aef9ce26b76dc0a7",
+    "com.meetme.server.precheck.adapter.output.provider.LunaPreSubmissionCheckProvider" : "da7b3da9a3ea3ae86a9feca6064fbd32c4300a03a4b39ef52521630a809cd3be"
+  },
+  "fixedIds" : [ "TF02", "TF05", "TF06", "TF08", "TF11", "TF12" ],
+  "maximumCalls" : 6,
+  "retry" : 0,
+  "endpoint" : "https://api.openai.com/v1/responses",
+  "payloadSha256" : {
+    "TF02" : "36c2bf013fb309bfed76211620f529635155dfd18e84f8653b26add4619f06ee",
+    "TF05" : "0b4e25e2d7c5ba7952a61483c5abec1d4c02c7dbb19704eddada0e55ba380b98",
+    "TF06" : "31adcb322f312a55a71af4f66f85a703435997d61b555a0bd3ffac673f47cebf",
+    "TF08" : "ed6ff3b51bacfa83ee6ba6496fd3e0e027d5f4b068d0a2cc0740714f647d6410",
+    "TF11" : "225aec48b41fbc0b5ee936af76d5d050b3373af0fecd62a0af962d9a431ebb98",
+    "TF12" : "2493f5ee9c35b4ec0d80c3cdfbe4d49c543a32a9869ae187cd368a3eaea4bd54"
+  },
+  "limitations" : "Exposed synthetic development set; standalone generation only, not Jev or live-room behavior; usage is not billing proof."
+}

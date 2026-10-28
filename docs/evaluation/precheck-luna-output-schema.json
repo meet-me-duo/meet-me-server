@@ -1,0 +1,76 @@
+{
+  "type": "json_schema",
+  "name": "meet_me_personal_check_v1",
+  "strict": true,
+  "schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "verdict",
+      "prompt",
+      "sourceExcerpt",
+      "choices"
+    ],
+    "properties": {
+      "verdict": {
+        "type": "string",
+        "enum": [
+          "CLEAR",
+          "NEEDS_CHOICE",
+          "NEEDS_EDIT"
+        ]
+      },
+      "prompt": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 160
+      },
+      "sourceExcerpt": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "choices": {
+        "type": [
+          "array",
+          "null"
+        ],
+        "maxItems": 2,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "label",
+            "proposedText"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": [
+                "A",
+                "B"
+              ]
+            },
+            "label": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 160
+            },
+            "proposedText": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          }
+        }
+      }
+    }
+  }
+}

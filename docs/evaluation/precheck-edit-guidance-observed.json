@@ -1,0 +1,18 @@
+{
+  "oracleSha256" : "4b36477bedcdcdca87430897f61b1ca45a555be5d044467fe2e6f7ff311a0afe",
+  "sourceFingerprint" : "466a9c8b9a5916d73640c2926aac2053f2ea7a602e40c91baeb8c12ebd4140e0",
+  "attempted" : 1,
+  "maximumCalls" : 1,
+  "results" : [ {
+    "id" : "TF14",
+    "expected" : "NEEDS_EDIT",
+    "actual" : "NEEDS_EDIT",
+    "matchesExpected" : true,
+    "latencyMs" : 5183,
+    "inputTokens" : 966,
+    "outputTokens" : 212,
+    "question" : "검색 기간에 해당하는 목요일마다 개인 예약이 끝나는 시각을 알려 주세요.",
+    "sourceExcerpt" : "목요일에는 제 개인 예약이 끝난 다음에만 만날 수 있어요.",
+    "choices" : [ ]
+  } ]
+}

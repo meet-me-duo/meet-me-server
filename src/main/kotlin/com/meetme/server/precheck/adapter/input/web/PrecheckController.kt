@@ -252,7 +252,10 @@ data class PrecheckTextResponse(
         java.time.Instant,
 )
 
-@Schema(description = "비동기 검사 상태", requiredProperties = ["id", "status", "version", "question", "retry_allowed", "failure_code"])
+@Schema(
+    description = "비동기 검사 상태",
+    requiredProperties = ["id", "status", "version", "question", "retry_allowed", "failure_code", "edit_guidance"],
+)
 data class PrecheckStateResponse(
     @field:Schema(description = "검사 UUID") val id: UUID,
     @field:Schema(description = "검사 상태. CLEAR만 현재 원문의 제출 완료") val status: com.meetme.server.precheck.domain.PrecheckStatus,
@@ -260,6 +263,13 @@ data class PrecheckStateResponse(
     @field:Schema(description = "본인 선택 질문", nullable = true) val question: PrecheckQuestionResponse?,
     @field:JsonProperty("retry_allowed") @field:Schema(description = "현재 명시 재시도가 허용되는지") val retryAllowed: Boolean,
     @field:JsonProperty("failure_code") @field:Schema(description = "기술 실패 코드, 미확인은 null", nullable = true) val failureCode: String?,
+    @field:JsonProperty("edit_guidance")
+    @field:Schema(
+        description = "NEEDS_EDIT에서 본인에게만 제공하는 직접 수정 안내. 일반 텍스트로 표시하며 자동 반영하지 않음. 다른 상태는 null",
+        nullable = true,
+        maxLength = 160,
+    )
+    val editGuidance: String? = null,
 )
 
 @Schema(description = "원문을 자동 변경하지 않는 선택 질문", requiredProperties = ["id", "text", "source_excerpt", "options"])
@@ -304,7 +314,7 @@ private fun PrecheckSnapshot.wire() =
                 c.id,
                 c.status,
                 c.version,
-                c.question?.let { q ->
+                c.question?.takeUnless { c.status == com.meetme.server.precheck.domain.PrecheckStatus.NEEDS_EDIT }?.let { q ->
                     PrecheckQuestionResponse(
                         q.id,
                         q.prompt,
@@ -314,6 +324,11 @@ private fun PrecheckSnapshot.wire() =
                 },
                 c.retryAllowed,
                 c.failureCode,
+                if (c.status == com.meetme.server.precheck.domain.PrecheckStatus.NEEDS_EDIT) {
+                    c.question?.prompt ?: editGuidanceFallback(c.failureCode)
+                } else {
+                    null
+                },
             )
         },
         PrecheckRoomResponse(room.collectionStatus, room.stateVersion, room.submissionDeadline),
@@ -321,6 +336,14 @@ private fun PrecheckSnapshot.wire() =
         appliedToResult,
         outcome?.let { PrecheckOutcomeResponse(it.requestId, it.candidateRevision, it.checkId, it.checkStatus) },
     )
+
+private fun editGuidanceFallback(code: String?): String =
+    when (code) {
+        "SUBMISSION_BATCH_TEXT_LIMIT_EXCEEDED" -> "전체 입력 길이 제한을 넘었어요. 이번 입력을 줄인 뒤 다시 제출해 주세요."
+        "QUESTION_LIMIT_REACHED" -> "선택 질문 한도에 도달했어요. 가능한 날짜·시간과 예외 조건을 원문에 직접 적어 주세요."
+        "RECHECK_REQUIRES_EDIT" -> "선택한 보완문에도 확인할 부분이 남았어요. 가능한 날짜·시간과 예외 조건을 원문에 직접 적어 주세요."
+        else -> "구체적인 보완 안내를 확인할 수 없어요. 가능한 날짜·시간과 예외 조건을 원문에 직접 적어 다시 제출해 주세요."
+    }
 
 private fun strictText(node: JsonNode?): String? {
     require(node == null || node.isNull || node.isString) { "Invalid submission field type" }

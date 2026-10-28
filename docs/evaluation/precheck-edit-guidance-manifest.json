@@ -1,0 +1,25 @@
+{
+  "mode" : "LIVE_EXPLICIT_OPT_IN",
+  "evaluation" : "EDIT_GUIDANCE_ONE_CASE",
+  "createdAt" : "2026-10-28T15:27:46.095127913Z",
+  "oracleSha256" : "4b36477bedcdcdca87430897f61b1ca45a555be5d044467fe2e6f7ff311a0afe",
+  "sourceFingerprint" : "466a9c8b9a5916d73640c2926aac2053f2ea7a602e40c91baeb8c12ebd4140e0",
+  "sourceFiles" : {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt" : "e6ecaf11b1fc4918079f430d841b54e9a91687d0f930e4eec9e13f14f89e1416",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/LunaPreSubmissionCheckProvider.kt" : "5a8e8127c3e4ab0adcf97f758521f7d42982f0a69c784b9fc663a14f98d93a52",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderRuntimeProperties.kt" : "fa69926c24d920eb5353e867490d9052206736838c8a93236509f4552c55f81c",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckTimeFlexibilityEvaluation.kt" : "be100ff866f990fcbab10f78f56e1fbee4b42fc4ce33dce28d9c0907c4d4a9d5"
+  },
+  "compiledClasses" : {
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderContract" : "611ab1a024f13d02d432ecfe1db21587fa2c328619ffa5ce0f329ba533f4cdc8",
+    "com.meetme.server.precheck.adapter.output.provider.LunaPreSubmissionCheckProvider" : "da7b3da9a3ea3ae86a9feca6064fbd32c4300a03a4b39ef52521630a809cd3be"
+  },
+  "fixedIds" : [ "TF14" ],
+  "maximumCalls" : 1,
+  "retry" : 0,
+  "endpoint" : "https://api.openai.com/v1/responses",
+  "payloadSha256" : {
+    "TF14" : "bc7df4b212d5fd7527e8bc55598d82453b2a4e1c66a258e9e2655d49c0649b48"
+  },
+  "limitations" : "Exposed synthetic development set; standalone generation only, not Jev or live-room behavior; usage is not billing proof."
+}

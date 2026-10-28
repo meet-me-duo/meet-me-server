@@ -1,0 +1,92 @@
+{
+  "workItem": "precheck-edit-guidance",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "boundary": "Validated private edit guidance publication and A/B quota separation",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderContract.kt",
+      "sha256": "e66265242f169230270a2b167cfe91dc78a5f9c8a8c8c3b6715a1245b8149e99"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "sha256": "47fe55e3954241ce2c44659a6a293e169a95c796270c75074717e58acd1b4a16"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/input/web/PrecheckController.kt",
+      "sha256": "8c0734bdd02c754aa3271a464a66d5d243265bd3777370650c6671208e06f1ab"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckEditGuidanceContractTest.kt",
+      "sha256": "aa7470aacac742954a871ad217ce07852bd685a09eb479ceacf2a6e49fe0bf53"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckEditGuidanceBidiContractTest.kt",
+      "sha256": "f2b33ae3fdfb47e8387e6aab7b28b3b5f2772257702e82ed4fb08d111ca5bb21"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/PrecheckEditGuidancePostgresTest.kt",
+      "sha256": "828a3c67ac78d2aa5bc21f0004ff440f27ba97ada6ad1a5577878e96897082a3"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "edit-guidance-rejected",
+      "command": [
+        "sh",
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckEditGuidanceContractTest",
+        "--tests",
+        "*PrecheckEditGuidanceBidiContractTest"
+      ],
+      "detectedBy": "Independent EDIT contract/PG assertions; 6 failures, errors0",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "control-validation-removed",
+      "command": [
+        "sh",
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckEditGuidanceContractTest",
+        "--tests",
+        "*PrecheckEditGuidanceBidiContractTest"
+      ],
+      "detectedBy": "Independent EDIT contract/PG assertions; 8 failures, errors0",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "guidance-counted-as-choice",
+      "command": [
+        "sh",
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckEditGuidancePostgresTest"
+      ],
+      "detectedBy": "Independent EDIT contract/PG assertions; 2 failures, errors0",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "internal-guidance-question-exposed",
+      "command": [
+        "sh",
+        "./gradlew",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*PrecheckEditGuidancePostgresTest"
+      ],
+      "detectedBy": "Independent EDIT contract/PG assertions; 1 failures, errors0",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T15:38:52.545488Z"
+}

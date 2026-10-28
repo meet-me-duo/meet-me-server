@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-10-28T15:17:13.799215Z",
+  "command": [
+    "python3",
+    ".codex/hooks/tdd_guard.py"
+  ],
+  "tasks": [
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "exitCode": 0,
+  "sourceBefore": "03bfa1ced0e0b2329a1200e57898bed8b1b8b6c65825b144b5893e3237803941",
+  "sourceAfter": "03bfa1ced0e0b2329a1200e57898bed8b1b8b6c65825b144b5893e3237803941",
+  "sourceUnchanged": true,
+  "sourceFiles": 567,
+  "elapsedSeconds": 646.5,
+  "suites": 264,
+  "tests": {
+    "tests": 2242,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4
+  },
+  "phase": "Prompt-only candidate before edit-guidance implementation",
+  "sourceSnapshotPolicy": "Files present at gate start; edit-guidance tests added later were not part of this completed run"
+}

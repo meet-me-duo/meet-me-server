@@ -385,7 +385,7 @@ class PreSubmissionCheckService(
                     it.id,
                     requireNotNull(status),
                     it.version,
-                    if (open && status == PrecheckStatus.NEEDS_CHOICE) it.question else null,
+                    if (open && status in setOf(PrecheckStatus.NEEDS_CHOICE, PrecheckStatus.NEEDS_EDIT)) it.question else null,
                     open &&
                         it.status in RETRYABLE &&
                         it.retryCount == 0 &&
