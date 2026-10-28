@@ -395,9 +395,26 @@ for (const kind of ['OFF', 'LEGACY']) {
   });
 }
 
-test('AR29 managed policy must validate before any Typesafe credential lookup', () => {
+test('AR29 valid UNCONFIGURED activation preserves required auth and enables AI without money enforcement', () => {
   const f = managedTypesafeFixture(); try {
     fs.writeFileSync(f.policy, '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n');
+    const result = f.render(); assert.equal(result.error, undefined); assert.equal(result.status, 0); quiet(result);
+    const lines = Object.fromEntries(f.read().trimEnd().split('\n').map(line => [line.slice(0, line.indexOf('=')), line.slice(line.indexOf('=') + 1)]));
+    for (const [variable, , , value] of auth) assert.equal(lines[variable], value);
+    for (const [variable, value] of Object.entries(privatePaths)) assert.equal(lines[variable], value);
+    for (const name of ['MEETME_PRECHECK_PROVIDER_ENABLED', 'MEETME_PRECHECK_DECISIONROUTING_ENABLED', 'MEETME_PRECHECK_CLASSIFIER_ENABLED']) assert.equal(lines[name], 'true');
+    assert.equal(lines.MEETME_AI_BUDGET_ENABLED, 'false');
+    assert.equal(lines.MEETME_PRECHECK_CLASSIFIER_MINIMUMCONFIDENCE, undefined);
+    assert.equal(lines.TYPESAFE_API_KEY, typesafeKey);
+    assert.equal(typesafeCalls(f).length, 1);
+    assert.ok(f.calls().every(call => call.old_preserved));
+    assert.equal(fs.statSync(f.destination).mode & 0o777, 0o600);
+  } finally { f.remove(); }
+});
+
+test('AR30 malformed UNCONFIGURED policy still rejects before any Typesafe credential lookup', () => {
+  const f = managedTypesafeFixture(); try {
+    fs.writeFileSync(f.policy, '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED","verified":true}\n');
     preserved(f, f.render());
     assert.equal(typesafeCalls(f).length, 0);
   } finally { f.remove(); }

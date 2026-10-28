@@ -1,0 +1,28 @@
+{
+  "workItem": "issue144-production-deploy",
+  "sourceRevision": "03bbdc",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "6890d5c5147ef80767fc296813ebbd8d3082e4bf335bfc0d3b48ecb85bdd95db"
+    }
+  ],
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "deploy.tests.test_issue144_production_ai_deployment",
+    "-v"
+  ],
+  "failedTests": [
+    "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionPublicationTests.test_OA01_real_publisher_and_package_consumer_preserve_unconfigured_and_configured_v18",
+    "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionRendererTests.test_OA01_unconfigured_on_enables_three_features_without_money_or_threshold",
+    "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionRendererTests.test_OA01_unconfigured_on_still_requires_the_existing_typesafe_credential"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T02:29:08.888387Z",
+  "rawLog": ".codex/tdd-evidence/issue144-production-deploy-red.log",
+  "expectedReason": "OA01 UNCONFIGURED plus explicit feature opt-in is rejected by the old renderer",
+  "scope": "Synthetic renderer, V18 publisher and immutable package consumer only; no paid or live AWS calls",
+  "schemaNote": "Deployment evidence stored separately because shared RED schema restricts paths to Kotlin"
+}

@@ -1,0 +1,836 @@
+{
+  "createdAtUtc": "2026-10-28T03:13:48.827114+00:00",
+  "purpose": "Unfinished source checkpoint for Codex Cloud; not a release or passing quality gate",
+  "repository": "https://github.com/meet-me-duo/meet-me-server",
+  "active": {
+    "base": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+    "head": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+    "branch": "feature/144-production-ai-activation",
+    "localCommitsAfterBase": 0,
+    "files": [
+      {
+        "path": ".tdd/deployment/issue144-production-deploy-red.initial.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "2a3512f9a5e808f148293e39c7d11989d3047ee13b77886754df4053ae53534e",
+        "lfSha256": "2a3512f9a5e808f148293e39c7d11989d3047ee13b77886754df4053ae53534e",
+        "bytes": 1428
+      },
+      {
+        "path": ".tdd/deployment/issue144-production-deploy-red.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "b6cdc153cb1bf038fadd1a5e16d0937ef33a34e1fd198d90f772b830d2551e11",
+        "lfSha256": "b6cdc153cb1bf038fadd1a5e16d0937ef33a34e1fd198d90f772b830d2551e11",
+        "bytes": 1418
+      },
+      {
+        "path": ".tdd/history/issue144-production-ai-activation/issue131-runtime-bundle-env.test.before.cjs",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "08fcd7d27bd7a49246117bcda9d093a2dc764f35a7f4032765146048c1c460a5",
+        "lfSha256": "f2624d60dd082e62104ebfb3cc7a013d6446c0c1777821be1c2d8c6addeb0093",
+        "bytes": 10251
+      },
+      {
+        "path": ".tdd/history/issue144-production-ai-activation/runtime-auth-env.test.before.cjs",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "153f781a59e0630ec25321382e3e3bd260aa75261f1dcf277a83b11d73e6f2b6",
+        "lfSha256": "cc3e89a68d603056fc9a4b05c90ddd2a83547700efc750f7de58687d1788963b",
+        "bytes": 27744
+      },
+      {
+        "path": ".tdd/history/issue144-production-ai-activation/test_issue144_production_ai_deployment.initial.py",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "6890d5c5147ef80767fc296813ebbd8d3082e4bf335bfc0d3b48ecb85bdd95db",
+        "lfSha256": "6890d5c5147ef80767fc296813ebbd8d3082e4bf335bfc0d3b48ecb85bdd95db",
+        "bytes": 15503
+      },
+      {
+        "path": ".tdd/history/issue144-production-config-mask7/originals/src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "145df511235ec752650baed48938f783c01848b88b6aa38015979899df0299b4",
+        "lfSha256": "145df511235ec752650baed48938f783c01848b88b6aa38015979899df0299b4",
+        "bytes": 17916
+      },
+      {
+        "path": ".tdd/supersessions/issue144-production-config-mask7.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "c60c997d9fb2c8f8631e9090c07b5dc61df7f07cb8303dcdcd5bccdd6fd84d07",
+        "lfSha256": "6e3e6f70cb323a2d71994d9e7b07684348a99e36f40aaef775923f71123cc11c",
+        "bytes": 1345
+      },
+      {
+        "path": ".tdd/verification/issue144-production-deploy.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "ac52bab3dc7dec1ec4690b8c324d0484325f00be3f7ccd5fe378aeb412afa942",
+        "lfSha256": "eb5342d35967ec00ac4c3db1431f607a44a3a90def02deadc52d560b9c445d03",
+        "bytes": 2183
+      },
+      {
+        "path": "deploy/scripts/render-runtime-env.sh",
+        "status": "tracked-modified",
+        "mode": "100755",
+        "workingSha256": "6ddd5d3208efc053e31698b845be345f9bfec67f28db6097bd4616dc71db3e59",
+        "lfSha256": "6ddd5d3208efc053e31698b845be345f9bfec67f28db6097bd4616dc71db3e59",
+        "bytes": 14098
+      },
+      {
+        "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "333f594d3b2df4da09c4d6fb5d2543ad9e08f2295921ec59a7b4478bedaec238",
+        "lfSha256": "333f594d3b2df4da09c4d6fb5d2543ad9e08f2295921ec59a7b4478bedaec238",
+        "bytes": 15759
+      },
+      {
+        "path": "docs/ISSUE_144_PRODUCTION_AI_ACTIVATION.md",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "ad9211d1734219fc0cd305e48606882136868ab5b0f2311d4b29bc4ef37df6e7",
+        "lfSha256": "ad9211d1734219fc0cd305e48606882136868ab5b0f2311d4b29bc4ef37df6e7",
+        "bytes": 3646
+      },
+      {
+        "path": "implementation_plan.md",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "b25c1f3ec7f7fa131a0c982cd9a644f28b9f2bbeed68a3fea218918df594cbcb",
+        "lfSha256": "efba4eb74ca940cb4c3781d4dbad1209142f534e5570528c96a072c14b7e2905",
+        "bytes": 307688
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/JevClassifierOptions.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "c1208180194113a9e9b3f2c06eecccd105e11a424de32a38d97b4805949e563b",
+        "lfSha256": "a981880707604776225c45a596ae19fe30a9c4ce2c2292ebab0f1715d97e3881",
+        "bytes": 467
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchConfiguration.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "d4b3ca282b38bd78fdce7ee071500e495179b39f4c005a990798eacbc3f469cd",
+        "lfSha256": "c6a54df66bc37dcd82674c30856422e02655b331e4e601d5bd5f3b54b3f7e90d",
+        "bytes": 1550
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "8656c9974b04e32552e45eed90eb1f1d77fa943de03d69eb02562101cd58d92f",
+        "lfSha256": "ed1743ec595b9527425f7bab5a9113b9ebf62f13a1659d85d824a2111ef1f850",
+        "bytes": 16374
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "33fbd21ce7f38f89c21f4f2732f453c8c7025a0a0364888a299ad5350b4ec992",
+        "lfSha256": "1673dc6cd25432286e849b246a71e428aaa6aac9f2e0df6a73043357394d7da2",
+        "bytes": 15881
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/AiRuntimeDispatchGuardPort.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "85b3985cd307a22eec008be46a443acf9383d518855b6b05c31dfedc3ce79426",
+        "lfSha256": "85b3985cd307a22eec008be46a443acf9383d518855b6b05c31dfedc3ce79426",
+        "bytes": 305
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ProductionRuntimeGraphPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "43c8be99cef2d2df8da32286c1b57473c294ad236ed04c06383736059cd505a1",
+        "lfSha256": "43c8be99cef2d2df8da32286c1b57473c294ad236ed04c06383736059cd505a1",
+        "bytes": 13942
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "c89e503ce7e33265ff8d304df71889c1452887931dca499febaa5ba5c1449269",
+        "lfSha256": "c89e503ce7e33265ff8d304df71889c1452887931dca499febaa5ba5c1449269",
+        "bytes": 17925
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue144ProductionRuntimeConfigurationTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "525366a4a48b44ad649eba971b3ba1e7eb016a582ef8ee793e8e3c56a28e71b8",
+        "lfSha256": "525366a4a48b44ad649eba971b3ba1e7eb016a582ef8ee793e8e3c56a28e71b8",
+        "bytes": 2457
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue144ProductionRuntimeGateTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "305dd39ca811fe73c4242ef8658ae83bf4b12667f371d267d7e2a914355d6074",
+        "lfSha256": "305dd39ca811fe73c4242ef8658ae83bf4b12667f371d267d7e2a914355d6074",
+        "bytes": 8917
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue144ProductionRuntimeGuardPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "6d4d01068d187bd88befddb07a1237a2c19bc39f03a3767ffd8986a8083c8864",
+        "lfSha256": "eeb163b23bab59c5a626197e42b7b124f997c570109777601615a8cdbe0c6281",
+        "bytes": 25937
+      }
+    ],
+    "excluded": [],
+    "trackedPatchSha256": "656e6c52d2e4dcc10b497926ff4fd9a7130f36e345dba33492bd403b608b40b5"
+  },
+  "retiredReferenceOnly": {
+    "base": "bbf3a8364f1c971a292034ebf4038b1dbe2b3b80",
+    "head": "bbf3a8364f1c971a292034ebf4038b1dbe2b3b80",
+    "branch": "feature/144-ai-test-operation",
+    "localCommitsAfterBase": 0,
+    "files": [
+      {
+        "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "ea432cb07daa745a0bd69af9c7594d08ef728281a52e13784a89bb7efd2fb7ca",
+        "lfSha256": "086e2a486e7f0e64b22db485f3ea3c7b75afa436537f01908ec254ea73e5c177",
+        "bytes": 10027
+      },
+      {
+        "path": ".github/scripts/v18-release-catalog.test.cjs",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "3e95edefaa2ef811b77b1e1d63671c3040873606e40742e5323bdaec495fc4d5",
+        "lfSha256": "5fd0a94d40cb191778cee5e31c546f6c1d1b49e280e8c3f5ea6a06644ee63045",
+        "bytes": 11500
+      },
+      {
+        "path": ".tdd/deployment/issue144-deploy-initial-red.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "ebe3b2a1cc903f303cb09ed9fe0a93f2745e708c80a4b17298eed67612fb6d2a",
+        "lfSha256": "ef8f4f1861dcac954d42088b52a7dbbdf76c3e802cca2c575aa3f3549dc9c8f9",
+        "bytes": 1792
+      },
+      {
+        "path": ".tdd/deployment/issue144-deploy-red.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "555b23e6c9fa373eb79ec7b2ee2b7b391fc8d8b5b08628e3a54bbf543f0ff592",
+        "lfSha256": "555b23e6c9fa373eb79ec7b2ee2b7b391fc8d8b5b08628e3a54bbf543f0ff592",
+        "bytes": 2451
+      },
+      {
+        "path": ".tdd/deployment/issue144-deploy-verification.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "f33f8d2631145336680c0573768d8e8a5fa32be5aa77d450215aff318d6664eb",
+        "lfSha256": "7a5434d8e1ba0177033546be5a74a32e0826800eeb8158bd476a2c775cc36e54",
+        "bytes": 4317
+      },
+      {
+        "path": ".tdd/fault-injection/issue144-deploy.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "b8491c2b58b7a336807972dda94d85e232fda81363198497ea2ff0b6dc41be35",
+        "lfSha256": "b8491c2b58b7a336807972dda94d85e232fda81363198497ea2ff0b6dc41be35",
+        "bytes": 2995
+      },
+      {
+        "path": ".tdd/history/issue144-core-current-catalog/original-oracle-red.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "0b702bca664f6ad6635e807ec6a5712791fa7ac93edcd20a16e4b66ce080365c",
+        "lfSha256": "952981a2884d1b318264d052ccf09b9413c86a26a9a836110a01de525f125080",
+        "bytes": 1111
+      },
+      {
+        "path": ".tdd/history/issue144-core-current-catalog/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "6e5a5e038d77a4f810078ff8247fe9e29cc1731c4be5b87ec0b75d469ddc3a0a",
+        "lfSha256": "6e5a5e038d77a4f810078ff8247fe9e29cc1731c4be5b87ec0b75d469ddc3a0a",
+        "bytes": 12468
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/before-format/src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ManagedTestOperationPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "194a53f89c56157e300b5cb882cbe93b3c171baf525d0eb2d0e14c483549eef4",
+        "lfSha256": "194a53f89c56157e300b5cb882cbe93b3c171baf525d0eb2d0e14c483549eef4",
+        "bytes": 18175
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/before-format/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144CampaignCounterPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "88ac01a230dcde175f018b0406f569dec19bb768d28ab906d825abe2b157dad1",
+        "lfSha256": "88ac01a230dcde175f018b0406f569dec19bb768d28ab906d825abe2b157dad1",
+        "bytes": 8196
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/before-format/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationBudgetPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "lfSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "bytes": 23591
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/before-format/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationPolicyTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "8fc80205528038e7fc90bc8f57dc318ab20fcc2b960b1d7d64471d9c11da8c22",
+        "lfSha256": "8fc80205528038e7fc90bc8f57dc318ab20fcc2b960b1d7d64471d9c11da8c22",
+        "bytes": 14301
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/before-format/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "480ddc0e0c4666b6b3f5a3d4e05bb47fe45e36fc7218c6c405b17e2bc2390f23",
+        "lfSha256": "480ddc0e0c4666b6b3f5a3d4e05bb47fe45e36fc7218c6c405b17e2bc2390f23",
+        "bytes": 1305
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/before-format/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "c7f5c8d076b4833e85a4a1e8fc0206d3a828b6830565b42c20687c93dc3963d7",
+        "lfSha256": "c7f5c8d076b4833e85a4a1e8fc0206d3a828b6830565b42c20687c93dc3963d7",
+        "bytes": 12504
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/run-result.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "220e3e47e2b3c51a63ba945ca80af864a2cae599c76e3af1c4a912eebcc96f32",
+        "lfSha256": "220e3e47e2b3c51a63ba945ca80af864a2cae599c76e3af1c4a912eebcc96f32",
+        "bytes": 6786
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/superseded/issue144-test-operation-campaign-todo.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "64358faff565637cb7040ac278d6a91a6048f675748c096782a65ecf8271b11e",
+        "lfSha256": "64358faff565637cb7040ac278d6a91a6048f675748c096782a65ecf8271b11e",
+        "bytes": 3782
+      },
+      {
+        "path": ".tdd/history/issue144-current-review-red/superseded/issue144-test-operation-missing-behavior.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "518eab36cee62f5fc43083b2301e35d58a10e0b3d3d37d66e8ca46f7a5b2d0a1",
+        "lfSha256": "518eab36cee62f5fc43083b2301e35d58a10e0b3d3d37d66e8ca46f7a5b2d0a1",
+        "bytes": 4581
+      },
+      {
+        "path": ".tdd/history/issue144-deploy-initial/test_issue144_deployment_contract.before.py",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "067f73d64078b117d410bc048bc00854eddc111c03228af8f8b6edca0b3933f0",
+        "lfSha256": "067f73d64078b117d410bc048bc00854eddc111c03228af8f8b6edca0b3933f0",
+        "bytes": 22713
+      },
+      {
+        "path": ".tdd/history/issue144-deploy-initial/v18-release-catalog.before.cjs",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "c6a1104077d37da78e211dc9fbf7eebd340a98a840d9e26e2a34e6120efc6b77",
+        "lfSha256": "c6a1104077d37da78e211dc9fbf7eebd340a98a840d9e26e2a34e6120efc6b77",
+        "bytes": 10869
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-initial-freeze/format-copyback-manifest.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "dc567f4a0e9637a26593a773a8546dddbbf99b309f6e3343a19af17f8475c328",
+        "lfSha256": "dc567f4a0e9637a26593a773a8546dddbbf99b309f6e3343a19af17f8475c328",
+        "bytes": 1429
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-initial-freeze/originals/src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ManagedTestOperationPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "ec52472aab2a0ec588d082fe1c39852992a66ad4954fde2448f537af746aeaca",
+        "lfSha256": "ec52472aab2a0ec588d082fe1c39852992a66ad4954fde2448f537af746aeaca",
+        "bytes": 15763
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-initial-freeze/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144CampaignCounterPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "8527595258e60dd13fd538d4f43091817845852af7026384b759a7b6d37451bc",
+        "lfSha256": "8527595258e60dd13fd538d4f43091817845852af7026384b759a7b6d37451bc",
+        "bytes": 7771
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-initial-freeze/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationBudgetPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "ccf9f8e01734a64374ea7deb86ea05b31a1612d9bc7eaef2ee5f1362305f57b6",
+        "lfSha256": "ccf9f8e01734a64374ea7deb86ea05b31a1612d9bc7eaef2ee5f1362305f57b6",
+        "bytes": 21701
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-initial-freeze/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationPolicyTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "24e0e32977b8a8491cf35343b5fde77d39258d7f5fc6e3b3194333fc902f343d",
+        "lfSha256": "24e0e32977b8a8491cf35343b5fde77d39258d7f5fc6e3b3194333fc902f343d",
+        "bytes": 13459
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-red-format/originals/src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ManagedTestOperationPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "643cc12f17f5394042b4ce4a7ff73a57d469ea1649b83bc6a2b36bb846545569",
+        "lfSha256": "643cc12f17f5394042b4ce4a7ff73a57d469ea1649b83bc6a2b36bb846545569",
+        "bytes": 18176
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-red-format/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144CampaignCounterPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "3dc7e157e81b18d48263943c564b704dc4dd354f013f807365e8f60f391d23ed",
+        "lfSha256": "3dc7e157e81b18d48263943c564b704dc4dd354f013f807365e8f60f391d23ed",
+        "bytes": 8013
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-red-format/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationBudgetPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "lfSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "bytes": 23591
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-red-format/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationPolicyTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "4cbfe48257ea2b9b6f09ddf5b52a4fac016eda6122f9102fb74ddbbdfc632182",
+        "lfSha256": "4cbfe48257ea2b9b6f09ddf5b52a4fac016eda6122f9102fb74ddbbdfc632182",
+        "bytes": 14227
+      },
+      {
+        "path": ".tdd/history/issue144-kotlin-red-format/run-classification.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "933f74d1ac3c666be03784d02c8b5c5f61b24578a3d011cca71415a1f1f48e38",
+        "lfSha256": "933f74d1ac3c666be03784d02c8b5c5f61b24578a3d011cca71415a1f1f48e38",
+        "bytes": 10564
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/before-manifest.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "3dd3f13272a24b2ce3b38180aed9544826c33900b81f74ba4ca115b4730a2065",
+        "lfSha256": "3dd3f13272a24b2ce3b38180aed9544826c33900b81f74ba4ca115b4730a2065",
+        "bytes": 4079
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/issue144-test-operation-campaign-todo.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "64358faff565637cb7040ac278d6a91a6048f675748c096782a65ecf8271b11e",
+        "lfSha256": "64358faff565637cb7040ac278d6a91a6048f675748c096782a65ecf8271b11e",
+        "bytes": 3782
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/issue144-test-operation-missing-behavior.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "518eab36cee62f5fc43083b2301e35d58a10e0b3d3d37d66e8ca46f7a5b2d0a1",
+        "lfSha256": "518eab36cee62f5fc43083b2301e35d58a10e0b3d3d37d66e8ca46f7a5b2d0a1",
+        "bytes": 4581
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/originals/src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ManagedTestOperationPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "643cc12f17f5394042b4ce4a7ff73a57d469ea1649b83bc6a2b36bb846545569",
+        "lfSha256": "643cc12f17f5394042b4ce4a7ff73a57d469ea1649b83bc6a2b36bb846545569",
+        "bytes": 18176
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144CampaignCounterPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "3dc7e157e81b18d48263943c564b704dc4dd354f013f807365e8f60f391d23ed",
+        "lfSha256": "3dc7e157e81b18d48263943c564b704dc4dd354f013f807365e8f60f391d23ed",
+        "bytes": 8013
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationBudgetPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "lfSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "bytes": 23591
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationPolicyTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "4cbfe48257ea2b9b6f09ddf5b52a4fac016eda6122f9102fb74ddbbdfc632182",
+        "lfSha256": "4cbfe48257ea2b9b6f09ddf5b52a4fac016eda6122f9102fb74ddbbdfc632182",
+        "bytes": 14227
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "dcfb12e9652e38b0118076d951b6a1192499edd8955ce2a14b0afeff3fb19c1c",
+        "lfSha256": "b0172650e12c367667081b4440912f75a31e00bd83f7ef66dff7162a81e8999d",
+        "bytes": 1352
+      },
+      {
+        "path": ".tdd/history/issue144-test-adaptation-1/originals/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "52da0c799570f44f3b14ac306657eb7b70e8227346cafa924f6ff0f832533a16",
+        "lfSha256": "ffff8c57ca606ab9558bbc85258527fb0cd0be24dd624ad09bf749f9102058f1",
+        "bytes": 12778
+      },
+      {
+        "path": ".tdd/red/issue144-test-operation-current-red.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "6cc88a659491550026436cb2535e0e4dcbd44b330d93143e86f7e3709a3a0d53",
+        "lfSha256": "6cc88a659491550026436cb2535e0e4dcbd44b330d93143e86f7e3709a3a0d53",
+        "bytes": 2117
+      },
+      {
+        "path": ".tdd/reviews/issue144-deploy.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "0f8d3dc6809d022117f0a0d6221cd73fffd31bdf89472748313ae1bf01117060",
+        "lfSha256": "8ea0678a00a19f1071ea8ca81a3ce03cc503e8052d1bd3a86944bc1d20aad32a",
+        "bytes": 1968
+      },
+      {
+        "path": ".tdd/reviews/issue144-kotlin-independent-final-review.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "e111a93a975bdc107fa8efe64846c3564521a32e12ef6545bafa2a18f442e416",
+        "lfSha256": "e111a93a975bdc107fa8efe64846c3564521a32e12ef6545bafa2a18f442e416",
+        "bytes": 4825
+      },
+      {
+        "path": ".tdd/reviews/issue144-kotlin-independent-read-review.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "3c332fa84a7c7a1a5f717d12432e2650b3d5743d50d21d43f457b16add3eb40e",
+        "lfSha256": "3c332fa84a7c7a1a5f717d12432e2650b3d5743d50d21d43f457b16add3eb40e",
+        "bytes": 4985
+      },
+      {
+        "path": ".tdd/supersessions/issue144-core-current-catalog.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "a181f14b5db8fbe4649ca45054c952cf1b75f3da399093c89d598dc369e07c09",
+        "lfSha256": "01747622d4c460027806169a27ff113b2bdc87d7bc6f2d8fa2a5e677030a7287",
+        "bytes": 4579
+      },
+      {
+        "path": ".tdd/supersessions/issue144-deploy-oracle-adaptation.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "38ae48865cc4fa2e17902e76678c27f4a7e1594670c40201e5e023332674f50b",
+        "lfSha256": "8ffe2d2d4bc0db7b9fa1ce0be0414cb63007ff4e383fccb4bc2c6869fc2977c3",
+        "bytes": 2769
+      },
+      {
+        "path": ".tdd/supersessions/issue144-test-fixture-and-time-boundary.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "4325793afd1a6e975c3c874ff7696630f30038159e184aa6c593b6e420647dde",
+        "lfSha256": "4325793afd1a6e975c3c874ff7696630f30038159e184aa6c593b6e420647dde",
+        "bytes": 8272
+      },
+      {
+        "path": ".tdd/verification/issue144-deploy.json",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "b8491c2b58b7a336807972dda94d85e232fda81363198497ea2ff0b6dc41be35",
+        "lfSha256": "b8491c2b58b7a336807972dda94d85e232fda81363198497ea2ff0b6dc41be35",
+        "bytes": 2995
+      },
+      {
+        "path": "deploy/pipeline/approved_release.py",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "c5ffce4b985fa3a072b56a444d2e06aea276d99cfe6808b460c31f524b165a2a",
+        "lfSha256": "308aef5a024532e26aeaf1e4f847c3792e891d58be6aa4514d14de1f86631e45",
+        "bytes": 9142
+      },
+      {
+        "path": "deploy/pipeline/host-approved-release.py",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "606bd2bea9c1a124d3734aed733e907dde524235610fde39d2b1fddcc13d28e9",
+        "lfSha256": "606bd2bea9c1a124d3734aed733e907dde524235610fde39d2b1fddcc13d28e9",
+        "bytes": 32209
+      },
+      {
+        "path": "deploy/pipeline/publish_manifest.py",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "7cb5615700dc7455a21b7f8ba31e679afac62346fd5dd3b443f54f9465d62a6b",
+        "lfSha256": "4ebefb402c85b37c117e155ebee044d07312e9c1122416b0c7249dc52b1a7f61",
+        "bytes": 11922
+      },
+      {
+        "path": "deploy/pipeline/run-approved-release.py",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "97a6272df43f23f48537dfbc5d43731ae1963a0a5721f2cd856413d2742f4001",
+        "lfSha256": "97a6272df43f23f48537dfbc5d43731ae1963a0a5721f2cd856413d2742f4001",
+        "bytes": 35915
+      },
+      {
+        "path": "deploy/scripts/render-runtime-env.sh",
+        "status": "tracked-modified",
+        "mode": "100755",
+        "workingSha256": "939fd44fe67dde1b736432c6d9333c0b8f3a5f4307d3808c8f19ac6f23b500b5",
+        "lfSha256": "939fd44fe67dde1b736432c6d9333c0b8f3a5f4307d3808c8f19ac6f23b500b5",
+        "bytes": 14914
+      },
+      {
+        "path": "deploy/tests/test_issue144_deployment_contract.py",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "e60ab4ec02d49c160cee732726f31e35ac3943c0b48b083e370c067b4a8b3b09",
+        "lfSha256": "e60ab4ec02d49c160cee732726f31e35ac3943c0b48b083e370c067b4a8b3b09",
+        "bytes": 22748
+      },
+      {
+        "path": "docs/ADR.md",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "21a393fc4935add6e777cd40eb308b455e40e8172706938366e99177707d7219",
+        "lfSha256": "fafa8678798caac8ea94fd716c6220b801b3672dae6907979d3a4e20c3c089bf",
+        "bytes": 132760
+      },
+      {
+        "path": "docs/ARCHITECTURE.md",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "6c355c2d62fc62b8be99acbc8c41e9037bc7da100af4bd22652ec368d8901710",
+        "lfSha256": "17c5754e4a6359328a7852a6676807e3825978092ebf6a681f8114e830be8980",
+        "bytes": 126461
+      },
+      {
+        "path": "docs/ISSUE_144_TEST_OPERATION_CONTRACT.md",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "e83a1c26b9a7a974a172d37261defc1f574e9e5b41de5d939c94ea2056cfa209",
+        "lfSha256": "e83a1c26b9a7a974a172d37261defc1f574e9e5b41de5d939c94ea2056cfa209",
+        "bytes": 6472
+      },
+      {
+        "path": "docs/PRD.md",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "a97f7f7d293aacb12cbbf31fb4c11700713539bbf22e9eaacf04dfec92ea0700",
+        "lfSha256": "ebbb472b879606631309c8cf571b4ac65747191643a30b73aeea0f583897b659",
+        "bytes": 79306
+      },
+      {
+        "path": "implementation_plan.md",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "a89ee06cdecd7ca26f80968a7057978ddd8eceddccb0e64defb524929af69909",
+        "lfSha256": "ee33cfb6a6d4f08d1688c43db64c52de8c0eb758f95af085e7ac8e7d612a5957",
+        "bytes": 307722
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/config/ManagedAiRuntimeConfiguration.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "646edaf8ee80fd0ed688fdeeabce82199c0bb1023d1ff0dd4f7bc35a6bf77d45",
+        "lfSha256": "646edaf8ee80fd0ed688fdeeabce82199c0bb1023d1ff0dd4f7bc35a6bf77d45",
+        "bytes": 11851
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/budget/ConfiguredAiBudgetAuthorityRegistry.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "3fe6094343f7a6efeb67e8ae8053bc5ac7f158c9dd5e6246b7560e0afa214b43",
+        "lfSha256": "fb82d12be9d20b807191291373845d5c005cb940368bad9d17abcec59b74de9d",
+        "bytes": 5960
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiTestOperationCampaignAdapter.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "fffcda77010e6bfd6609aa49858c7827e7d16e615e46ea670bcc2820428b496e",
+        "lfSha256": "fffcda77010e6bfd6609aa49858c7827e7d16e615e46ea670bcc2820428b496e",
+        "bytes": 3523
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcDurableAiBudgetRepository.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "120f31dcb517255b2e8a6cef9eb3446773dcac421a8ce120c1358d30f9e51b58",
+        "lfSha256": "120f31dcb517255b2e8a6cef9eb3446773dcac421a8ce120c1358d30f9e51b58",
+        "bytes": 14808
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcNewRoomAiBudgetAdapter.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "e151d3dd74af79e72b362d0ad3cfcb2616261545f4c75ef7e97ebb8962b0dbef",
+        "lfSha256": "d8dd39b3da6019709f64188edbe9203dfb747393a9b52eede4a10ea3829e57aa",
+        "bytes": 3264
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/AiTestOperationCampaignPort.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "f7fa2b4ccfd465a861627be0b291e4384a10ab31a56e503c0d96011b5ca5686e",
+        "lfSha256": "f7fa2b4ccfd465a861627be0b291e4384a10ab31a56e503c0d96011b5ca5686e",
+        "bytes": 641
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/DurableAiBudgetPort.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "dd7e5668adb9614d4fb1175988a29a05db7b091731f6b6264ef19048210e6985",
+        "lfSha256": "282649524088a0ec192dc9f4a771e35546d12008b9553a264ccd9537e493c62a",
+        "bytes": 6883
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/application/service/DurableAiBudgetService.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "fdfc4ea252c94534944c5997091eb490d9568d030f4f586a53af1e43d0ec6618",
+        "lfSha256": "fdfc4ea252c94534944c5997091eb490d9568d030f4f586a53af1e43d0ec6618",
+        "bytes": 23945
+      },
+      {
+        "path": "src/main/resources/db/migration/V19__add_ai_test_operation_campaigns.sql",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "7a1bb0737f09ca34c5de6d47ed22135c8c9bded9aa90c9ae13ce0db9a74e6f77",
+        "lfSha256": "7a1bb0737f09ca34c5de6d47ed22135c8c9bded9aa90c9ae13ce0db9a74e6f77",
+        "bytes": 1043
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ManagedTestOperationPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "194a53f89c56157e300b5cb882cbe93b3c171baf525d0eb2d0e14c483549eef4",
+        "lfSha256": "194a53f89c56157e300b5cb882cbe93b3c171baf525d0eb2d0e14c483549eef4",
+        "bytes": 18175
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144CampaignCounterPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "88ac01a230dcde175f018b0406f569dec19bb768d28ab906d825abe2b157dad1",
+        "lfSha256": "88ac01a230dcde175f018b0406f569dec19bb768d28ab906d825abe2b157dad1",
+        "bytes": 8196
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationBudgetPostgresTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "lfSha256": "a760d947e1475853df8834fb10f34c053c4c463c3ae0caf9fa3f510afd2e31da",
+        "bytes": 23591
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/budget/Issue144TestOperationPolicyTest.kt",
+        "status": "untracked-added",
+        "mode": "100644",
+        "workingSha256": "8fc80205528038e7fc90bc8f57dc318ab20fcc2b960b1d7d64471d9c11da8c22",
+        "lfSha256": "8fc80205528038e7fc90bc8f57dc318ab20fcc2b960b1d7d64471d9c11da8c22",
+        "bytes": 14301
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "ebb5474337aa8bed48319f84efe6a7f13551d2c3ab057a4fff45481a42d78cdb",
+        "lfSha256": "ebb5474337aa8bed48319f84efe6a7f13551d2c3ab057a4fff45481a42d78cdb",
+        "bytes": 12468
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "480ddc0e0c4666b6b3f5a3d4e05bb47fe45e36fc7218c6c405b17e2bc2390f23",
+        "lfSha256": "480ddc0e0c4666b6b3f5a3d4e05bb47fe45e36fc7218c6c405b17e2bc2390f23",
+        "bytes": 1305
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+        "status": "tracked-modified",
+        "mode": "100644",
+        "workingSha256": "c7f5c8d076b4833e85a4a1e8fc0206d3a828b6830565b42c20687c93dc3963d7",
+        "lfSha256": "c7f5c8d076b4833e85a4a1e8fc0206d3a828b6830565b42c20687c93dc3963d7",
+        "bytes": 12504
+      }
+    ],
+    "excluded": [],
+    "trackedPatchSha256": "dc55e0b51e127d95eebd3c7633df06a208c67d672d453ae786c26f98913d28ea"
+  },
+  "snapshotSha256": "2d56a03d2502ba77afbaf2fa112cdca70f9841dc4f32f7f6e8e5d0750fb80c8f",
+  "proposalSha256": "ceb5e6ec893c61ac336bfb8be6e14cd2c2d0afce32b49cf1ce3f5848854955c4",
+  "newProductionTests": {
+    "rendererAndRelatedPython": {
+      "executed": 25,
+      "passed": 25,
+      "newTestsIncluded": 8
+    },
+    "kotlin": {
+      "plannedExecutions": 16,
+      "executed": 0,
+      "validRed": false,
+      "blockedBeforeBuild": "Windows-mounted Gradle FileAccessTimeJournal I/O error"
+    },
+    "nodeExistingOracles": {
+      "modified": false,
+      "status": "DENIED_NOT_EXECUTED",
+      "reasonVerbatim": "This retries the previously rejected modification of existing regression oracles, including removing a sentinel case; the transcript provides no new trusted user approval for weakening or reframing those tests."
+    },
+    "wholeQualityGate": "NOT PASSED for the new production implementation",
+    "paidProviderValidationCalls": 0
+  },
+  "retiredTestsNotEvidenceForProduction": {
+    "newKotlin": "37 passed for retired TEST_OPERATION only",
+    "wholeRun": {
+      "tests": 2200,
+      "failures": 40,
+      "skipped": 4
+    },
+    "focusedRecheck": {
+      "tests": 44,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "failureClassification": "1 V19 current-version oracle mismatch; 39 connection/context failures; connection root cause unconfirmed",
+    "kotlinFaultInjection": "4/4 detected; exact sources restored; retired scope only"
+  },
+  "operations": {
+    "newAiLocalCommitsBeforeCheckpoint": 0,
+    "newAiPullRequests": 0,
+    "newAiMainMerges": 0,
+    "newAiDeployments": 0,
+    "awsAfterHandoffPause": 0,
+    "localAwsAuthentication": "meet-me-admin expired; resume AWS only on personal PC after user returns"
+  },
+  "secretInspection": {
+    "highConfidenceCredentialPatternsFound": 0,
+    "rawLogsEnvironmentCredentialsKeysAndCachesIncluded": false,
+    "snapshotMembersVerified": true
+  }
+}

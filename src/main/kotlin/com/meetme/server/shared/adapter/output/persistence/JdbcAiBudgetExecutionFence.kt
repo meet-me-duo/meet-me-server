@@ -11,9 +11,13 @@ import com.meetme.server.shared.application.port.output.AiCurrentBudgetExecution
 import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
 import com.meetme.server.shared.application.port.output.AiDispatchInputSnapshot
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchProfiles
 import com.meetme.server.shared.domain.ParticipantId
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import java.sql.Timestamp
 import java.time.Clock
 import java.time.Instant
@@ -24,6 +28,11 @@ import java.util.UUID
 
 private typealias FenceRow = Map<String, Any?>
 
+private data class CurrentDispatchExecution(
+    val deadlineAt: Instant,
+    val coverageReferenceAt: Instant,
+)
+
 /** Room then existing claim locks; the coordinator acquires and rechecks its budget lock last. */
 @Component
 class JdbcAiBudgetExecutionFence(
@@ -32,11 +41,39 @@ class JdbcAiBudgetExecutionFence(
     private val coverage: AiBudgetCoverageEpochQueryPort,
     private val participants: ParticipantRepository,
     private val bindings: PrecheckOwnershipBindingPort,
-) : AiBudgetExecutionFencePort {
+) : AiBudgetExecutionFencePort,
+    AiRuntimeDispatchGuardPort {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    override fun authorize(
+        request: AiBudgetReserveRequest,
+        at: Instant,
+    ): Instant? {
+        if (request.calls.any {
+                it.profileFingerprint != AiRuntimeDispatchProfiles.fingerprints[it.operation] ||
+                    !PAYLOAD_HASH.matches(it.wholePayloadFingerprint)
+            }
+        ) {
+            return null
+        }
+        // The short transaction ends before the caller opens or continues an HTTP exchange.
+        // A current execution is authority; a monetary coverage epoch is not required here.
+        return currentExecution(request, at)?.deadlineAt?.takeIf { maxOf(at, clock.instant()) < it }
+    }
+
     override fun lockAndValidate(
         request: AiBudgetReserveRequest,
         at: Instant,
     ): AiCurrentBudgetExecution? {
+        val current = currentExecution(request, at) ?: return null
+        val epoch = coverage.trackedEpoch(request.execution.roomId, current.coverageReferenceAt) ?: return null
+        if (maxOf(at, clock.instant()) >= current.deadlineAt) return null
+        return AiCurrentBudgetExecution(epoch, current.deadlineAt)
+    }
+
+    private fun currentExecution(
+        request: AiBudgetReserveRequest,
+        at: Instant,
+    ): CurrentDispatchExecution? {
         val room = one("SELECT * FROM meeting_rooms WHERE id=? FOR UPDATE", request.execution.roomId) ?: return null
         return when (request.execution.kind) {
             AiBudgetExecutionKind.PRECHECK -> personal(request, room, at)
@@ -48,7 +85,7 @@ class JdbcAiBudgetExecutionFence(
         request: AiBudgetReserveRequest,
         room: FenceRow,
         at: Instant,
-    ): AiCurrentBudgetExecution? {
+    ): CurrentDispatchExecution? {
         val execution = request.execution
         if (room["submission_protocol"] != "PRE_SUBMIT_V1" || room["collection_status"] != "COLLECTING") return null
         if (request.calls.isEmpty() ||
@@ -125,9 +162,8 @@ class JdbcAiBudgetExecutionFence(
             )
         room.instant("submission_deadline")?.let { deadline = minOf(deadline, it) }
         deadline = bindingExpiry(participant, binding, deadline) ?: return null
-        val epoch = coverage.trackedEpoch(execution.roomId, row.instant("execution_queued_at") ?: return null) ?: return null
         if (maxOf(at, clock.instant()) >= deadline) return null
-        return AiCurrentBudgetExecution(epoch, deadline)
+        return CurrentDispatchExecution(deadline, row.instant("execution_queued_at") ?: return null)
     }
 
     private fun bindingExpiry(
@@ -164,7 +200,7 @@ class JdbcAiBudgetExecutionFence(
         request: AiBudgetReserveRequest,
         room: FenceRow,
         at: Instant,
-    ): AiCurrentBudgetExecution? {
+    ): CurrentDispatchExecution? {
         val execution = request.execution
         val call = request.calls.singleOrNull() ?: return null
         if (call.operation !in FINAL_OPERATIONS || call.attemptId == null) return null
@@ -247,9 +283,8 @@ class JdbcAiBudgetExecutionFence(
                 invocation.instant("deadline_at")!!.minusSeconds(if (primary) 30 else 3),
                 attempt.instant("started_at")!!.plusSeconds(if (primary) 15 else 27),
             )
-        val epoch = coverage.trackedEpoch(execution.roomId, invocation.instant("started_at") ?: return null) ?: return null
         if (maxOf(at, clock.instant()) >= deadline) return null
-        return AiCurrentBudgetExecution(epoch, deadline)
+        return CurrentDispatchExecution(deadline, invocation.instant("started_at") ?: return null)
     }
 
     /** Preserve FrozenSubmissionReader's cohort and UUID ordering, including historical versions. */
@@ -322,6 +357,7 @@ class JdbcAiBudgetExecutionFence(
         }
 
     companion object {
+        private val PAYLOAD_HASH = Regex("[0-9a-f]{64}")
         private val PERSONAL_OPERATIONS =
             setOf(AiPhysicalOperation.PRECHECK_CLASSIFICATION, AiPhysicalOperation.PRECHECK_COUNT, AiPhysicalOperation.PRECHECK_GENERATION)
         private val FINAL_OPERATIONS = setOf(AiPhysicalOperation.FINAL_PRIMARY, AiPhysicalOperation.FINAL_FALLBACK)

@@ -1,0 +1,108 @@
+{
+  "workItem": "issue144-review-current-v19",
+  "recordedAt": "2026-10-28T06:13:30.511723Z",
+  "status": "PASS",
+  "authorization": "Parent approved explicit oracle supersession for user-approved review V19 and AI/review integration; this does not modify prior Node2 files.",
+  "sourceRevision": "5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89",
+  "reviewParent": "0f624216d16fe2e65c11da9468d0bcf4b9988ff7",
+  "testFile": {
+    "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+    "beforeSha256": "333f594d3b2df4da09c4d6fb5d2543ad9e08f2295921ec59a7b4478bedaec238",
+    "afterSha256": "ade61a1dfe1f767e8cf80cd2d85ace9bbf23d53d90e579fa6778b30fb7d30938"
+  },
+  "originalPreservation": {
+    "gitRevision": "5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89",
+    "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+    "localOriginal": "/workspace/checkpoints/ai-review-integration-20261028/python-v19-supersession/original-test_issue144_production_ai_deployment.py",
+    "originalCombinedRed": {
+      "tests": 27,
+      "assertionFailures": 3,
+      "errors": 0,
+      "record": "/workspace/checkpoints/ai-review-integration-20261028/python-v19-supersession/original-failure.json"
+    }
+  },
+  "requirementSources": [
+    "docs/verification/confirmed-review-release-20261028.md exact approved V19 SHA256 and unchanged V1-V18",
+    "docs/ADR.md ADR-062",
+    "Parent-authorized normal AI/review integration preview"
+  ],
+  "superseded": [
+    {
+      "method": "test_OA01_artifact_remains_unconfigured_and_exact_v18_sql_stays_unchanged",
+      "old": "Current migration directory equals immutable history18",
+      "new": "Current migration directory equals historical18 plus explicitly approved V19; all19 SHA256 fixed independently of production."
+    },
+    {
+      "method": "test_OA01_real_publisher_and_package_consumer_preserve_unconfigured_and_configured_v18",
+      "old": "Current publisher/archive inventory equals history18 for both policies",
+      "new": "Current publisher/archive contains exact approved19 in version order; independent row CRC and complete schema fingerprint, raw policy preservation and valid package consumer all checked for both policies."
+    }
+  ],
+  "preserved": {
+    "historical18ShaConstantAstUnchanged": true,
+    "rendererSixTestsAstUnchanged": true,
+    "unconfiguredOnThreeFeaturesBudgetOffNoThreshold": true,
+    "configuredPolicyThresholdAndExplicitExpiryValidation": true,
+    "credentialFailureAndDestinationAtomicity": true,
+    "malformedDuplicateUnknownPolicyRejection": true,
+    "noProductionSourceOrSqlOrNodeChanges": true
+  },
+  "addedRefusalCases": [
+    "Publisher missingV19",
+    "Publisher unknownV20",
+    "Publisher renamedV19",
+    "Package missingV19",
+    "Package alteredV19 with original approved manifest"
+  ],
+  "redAfterFinalOracle": {
+    "mode": "isolated copy of original AI V18 publisher; current shared production unchanged",
+    "tests": 2,
+    "assertionFailures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "testSha256": "ade61a1dfe1f767e8cf80cd2d85ace9bbf23d53d90e579fa6778b30fb7d30938",
+    "rawLog": ".codex/tdd-evidence/issue144-review-python-supersession/red-v18.log"
+  },
+  "testDesignRepair": {
+    "reason": "Initial new package-negative cases used publisher error label UNTRUSTED_RELEASE; existing package-consumer refusal contract is UNTRUSTED_RELEASE_STATE. Correct exact boundary label without weakening refusal; prior RED invalidated and re-established using final test SHA.",
+    "beforeSha256": "23d2ff0fa390deb994b4a2491a5a99a5924a7efa2b5447f7768d414e0a690a96",
+    "beforeGreenFailureAssertions": 4,
+    "localRecord": "/workspace/checkpoints/ai-review-integration-20261028/python-v19-supersession/test-design-repair.json"
+  },
+  "green": {
+    "tests": 8,
+    "passed": 8,
+    "errors": 0,
+    "skipped": 0,
+    "rawLog": ".codex/tdd-evidence/issue144-review-python-supersession/green.log"
+  },
+  "faultInjection": ".tdd/verification/issue144-review-current-v19-fi.json",
+  "afterExactRestoration": {
+    "tests": 8,
+    "passed": 8,
+    "rawLog": ".codex/tdd-evidence/issue144-review-python-supersession/restored-green.log"
+  },
+  "actualCandidateCombined": {
+    "tests": 27,
+    "passed": 27,
+    "aiTests": 8,
+    "existingIssue131Tests": 19,
+    "errors": 0,
+    "skipped": 0,
+    "rawLog": ".codex/tdd-evidence/issue144-review-python-supersession/final-combined-27.log"
+  },
+  "unchangedSnapshot": {
+    "sourceResourcesFixtures": 565,
+    "allBeforeAfterShaMatch": true,
+    "sharedProductMutations": 0,
+    "mutationsOnlyInDisposableCopy": true,
+    "gradleRuns": 0,
+    "liveAwsCalls": 0,
+    "paidCalls": 0,
+    "remoteWrites": 0
+  },
+  "limitations": [
+    "Temporary-copy FI validates publisher closed inventory via real assertions. It is not an applied production migration, live AWS invocation or paid-provider proof.",
+    "Python oracle changes do not invalidate Kotlin-only combined gate inputs, but exact combined candidate publication/CI remains parent responsibility."
+  ]
+}

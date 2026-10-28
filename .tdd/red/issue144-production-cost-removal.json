@@ -1,0 +1,81 @@
+{
+  "workItem": "issue144-production-cost-removal",
+  "sourceRevision": "c3c1de12a7faffb4fc6623db49f20288000a503f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ConfiguredCostIndependentGraphPostgresTest.kt",
+      "sha256": "a35f89097d69fdea3a9be3cbfde2fdfe3743ae884e3afa59581c86dc345c9277"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144BudgetFlagCostIndependentGraphPostgresTest.kt",
+      "sha256": "73702bcae44a9ab88303053a85f069f3c7e12e2b6f128a9a1d384cdcf37ca2e9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ProductionRuntimeGraphPostgresTest.kt",
+      "sha256": "b1ced2b6c0f6497847c8935574bb2bc4efedef1416b81202847b518a19ad3445"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "sha256": "c9a09c1b5b0e05c74677becedbbe2265c4fd58243c21c828e5995af4e33d687c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt",
+      "sha256": "f1dd58855c6625f15cc5cb53d9abd18d0b05f440c471a751c8a812dfee4a723e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue144ProductionRuntimeConfigurationTest.kt",
+      "sha256": "21601ac07b43f4394568cdb99086302585c0089466f785c45ce945ff51a12359"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue144ProductionRuntimeGateTest.kt",
+      "sha256": "ace01fe83990f401d8aa79fe4471e1735c86cc569af253148a232f5fd5f6d85c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue144ProductionRuntimeGuardPostgresTest.kt",
+      "sha256": "10e542fb292f7613500c1332f00ef47da90da2f83ab203db25051f3fdd35550a"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+    "test",
+    "--tests",
+    "*Issue144ProductionRuntime*",
+    "--tests",
+    "*Issue144BudgetFlagCostIndependent*",
+    "--tests",
+    "*Issue144ConfiguredCostIndependent*",
+    "--tests",
+    "*Issue131ManagedRuntimeConfigurationTest",
+    "--tests",
+    "*Issue131ManagedRuntimeEnvironmentBindingTest",
+    "--console=plain",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=1g",
+    "-Pkotlin.compiler.execution.strategy=in-process"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[1] existing = \"false\", exhausted = \"false\", expiredPolicy = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[2] existing = \"true\", exhausted = \"false\", expiredPolicy = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[3] existing = \"false\", exhausted = \"true\", expiredPolicy = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[4] existing = \"true\", exhausted = \"true\", expiredPolicy = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[5] existing = \"false\", exhausted = \"false\", expiredPolicy = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[6] existing = \"true\", exhausted = \"false\", expiredPolicy = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[7] existing = \"false\", exhausted = \"true\", expiredPolicy = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ConfiguredCostIndependentGraphPostgresTest.[8] existing = \"true\", exhausted = \"true\", expiredPolicy = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144BudgetFlagCostIndependentGraphPostgresTest.[1] existing = \"false\", exhausted = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144BudgetFlagCostIndependentGraphPostgresTest.[2] existing = \"true\", exhausted = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144BudgetFlagCostIndependentGraphPostgresTest.[3] existing = \"false\", exhausted = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144BudgetFlagCostIndependentGraphPostgresTest.[4] existing = \"true\", exhausted = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.[1] existing = \"false\", exhausted = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.[2] existing = \"true\", exhausted = \"false\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.[3] existing = \"false\", exhausted = \"true\"",
+    "com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.[4] existing = \"true\", exhausted = \"true\"",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.OA04 absent classifier threshold is allowed while an explicitly conflicting threshold remains invalid()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeConfigurationTest.MB04 the default UNCONFIGURED artifact supplies no financial policy()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue131ManagedRuntimeEnvironmentBindingTest.OA04 actual environment permits accepted providers with either budget flag and no monetary artifact()",
+    "com.meetme.server.precheck.adapter.output.provider.Issue144ProductionRuntimeConfigurationTest.OA01 all three provider flags need neither monetary policy nor confidence threshold with either budget flag()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T04:04:03.146441Z"
+}

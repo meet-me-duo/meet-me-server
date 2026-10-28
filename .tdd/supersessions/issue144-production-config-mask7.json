@@ -1,0 +1,19 @@
+{
+  "workItem": "issue144-production-config-mask7",
+  "baselineShortRef": "03bbdc",
+  "recordedAt": "2026-10-28T02:33:16.806222+00:00",
+  "authority": "The accepted OA01 production activation contract makes provider/routing/classifier ON with budget OFF valid. Parent explicitly authorized excluding mask7 from the old negative oracle.",
+  "before": {
+    "path": ".tdd/history/issue144-production-config-mask7/originals/src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+    "sha256": "145df511235ec752650baed48938f783c01848b88b6aa38015979899df0299b4"
+  },
+  "after": {
+    "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+    "sha256": "c89e503ce7e33265ff8d304df71889c1452887931dca499febaa5ba5c1449269"
+  },
+  "change": "Exclude only mask7 from unsupported partial-configuration negatives and rename its label. All other masks and every monetary policy/threshold expected value are unchanged.",
+  "positiveReplacement": "Issue144ProductionRuntimeConfigurationTest.OA01 all three provider flags with budget OFF need neither policy nor confidence threshold",
+  "status": "AWAITING_INITIAL_RED_AND_FINAL_FORMAT",
+  "oldTestOperationRepositoryChanges": 0,
+  "productionChangesByTestAuthor": 0
+}

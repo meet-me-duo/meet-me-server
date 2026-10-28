@@ -1,0 +1,31 @@
+{
+  "workItem": "issue144-production-deploy",
+  "sourceRevision": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "333f594d3b2df4da09c4d6fb5d2543ad9e08f2295921ec59a7b4478bedaec238"
+    }
+  ],
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "deploy.tests.test_issue144_production_ai_deployment",
+    "-v"
+  ],
+  "failedTests": [
+    "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionRendererTests.test_OA01_unconfigured_on_enables_three_features_without_money_or_threshold",
+    "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionRendererTests.test_OA01_unconfigured_on_still_requires_the_existing_typesafe_credential"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T02:32:40.339041Z",
+  "rawLog": ".codex/tdd-evidence/issue144-production-deploy-red.log",
+  "tests": 8,
+  "passed": 6,
+  "failed": 2,
+  "errors": 0,
+  "expectedReason": "OA01 UNCONFIGURED plus explicit opt-in is rejected before three-feature activation and credential lookup",
+  "initialFixtureIssue": "Initial publisher fixture copied a Windows CRLF marker. It was not counted as RED; canonical marker correction is archived separately.",
+  "schemaNote": "Deployment evidence stored separately because shared RED schema restricts paths to Kotlin"
+}

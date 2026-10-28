@@ -1,0 +1,36 @@
+{
+  "workItem": "issue144-spring-composition-compatibility",
+  "sourceRevision": "c3c1de12a7faffb4fc6623db49f20288000a503f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123DispatchPublicBoundaryTest.kt",
+      "sha256": "160b36f1458983086ecdb1328778ffcc24ab57953f1da130eb6c995c14300c6c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue123ManagedDispatchCompositionTest.kt",
+      "sha256": "d49705af91e1ae22091626bf7c39273dba02d535f83101abb41e666be5653fb5"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+    "test",
+    "--tests",
+    "*Issue123DispatchPublicBoundaryTest",
+    "--tests",
+    "*Issue123ManagedDispatchCompositionTest",
+    "--tests",
+    "*LunaPrecheckManagedDispatchContractTest",
+    "--console=plain",
+    "--max-workers=1",
+    "--no-parallel",
+    "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=1g",
+    "-Pkotlin.compiler.execution.strategy=in-process"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123DispatchPublicBoundaryTest.AD08 managed ON creates actual classifier only with explicit route and keeps threshold absent by default()",
+    "com.meetme.server.shared.adapter.output.aihttp.Issue123ManagedDispatchCompositionTest.AD03 managed classifier cannot bypass any original explicit OFF switch(String) :: provider OFF"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-28T04:36:19.733396Z"
+}

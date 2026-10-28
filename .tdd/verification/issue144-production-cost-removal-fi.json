@@ -1,0 +1,121 @@
+{
+  "workItem": "issue144-production-cost-removal-fi",
+  "sourceRevision": "c3c1de12a7faffb4fc6623db49f20288000a503f",
+  "boundary": "Nonmonetary production AI dispatch: current execution ownership, network revocation, one-shot exchange, exact payload and missing-threshold Luna confirmation",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/JevAmbiguityClassifier.kt",
+      "sha256": "1918ff3ecf92ac349adfde02784d80dab9264fa758eab3fb159e01c09a27be48"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt",
+      "sha256": "5d957eea60a5f9c7d7bd216ab82b8ea9e7e1f3eeff54e2401d09d98c9719e85f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt",
+      "sha256": "f0b38a9425ec5b58abff15edf33494ccb9a3ebafc2e2c48b4116f828d5410340"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue144ProductionRuntimeGuardPostgresTest.kt",
+      "sha256": "10e542fb292f7613500c1332f00ef47da90da2f83ab203db25051f3fdd35550a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue144ProductionRuntimeGateTest.kt",
+      "sha256": "ace01fe83990f401d8aa79fe4471e1735c86cc569af253148a232f5fd5f6d85c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ProductionRuntimeGraphPostgresTest.kt",
+      "sha256": "b1ced2b6c0f6497847c8935574bb2bc4efedef1416b81202847b518a19ad3445"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Omit both current claim owner-token comparisons for personal execution",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--console=plain",
+        "--max-workers=1",
+        "--no-parallel",
+        "--tests",
+        "com.meetme.server.shared.adapter.output.persistence.Issue144ProductionRuntimeGuardPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.persistence.Issue144ProductionRuntimeGuardPostgresTest.OA02 personal authority rejects stale ownership revision claim lifecycle and profile()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Reuse application authority at network dispatch instead of rechecking current authority",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--console=plain",
+        "--max-workers=1",
+        "--no-parallel",
+        "--tests",
+        "com.meetme.server.shared.adapter.output.aihttp.Issue144ProductionRuntimeGateTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue144ProductionRuntimeGateTest.OA02 revocation after application authorization blocks the network exchange()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit application and network one-shot checks on an already prepared exchange",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--console=plain",
+        "--max-workers=1",
+        "--no-parallel",
+        "--tests",
+        "com.meetme.server.shared.adapter.output.aihttp.Issue144ProductionRuntimeGateTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue144ProductionRuntimeGateTest.OA02 nonmonetary exchange rechecks guard and permits only one application call()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit exact frozen payload digest comparison at the network boundary",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--console=plain",
+        "--max-workers=1",
+        "--no-parallel",
+        "--tests",
+        "com.meetme.server.shared.adapter.output.aihttp.Issue144ProductionRuntimeGateTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.aihttp.Issue144ProductionRuntimeGateTest.OA02 exact frozen body endpoint and method remain mandatory without monetary enforcement()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Treat Jev CLEAR without an explicitly selected confidence threshold as final instead of requiring Luna",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/checkpoints/review-20261028/cloud-gradle.py",
+        "-Dorg.gradle.jvmargs=-Xmx2g -XX:MaxMetaspaceSize=768m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--console=plain",
+        "--max-workers=1",
+        "--no-parallel",
+        "--tests",
+        "com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.OA04 new and existing rooms analyze regardless of a missing or exhausted monetary ledger :: [1] existing = \"false\", exhausted = \"false\"; com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.OA04 new and existing rooms analyze regardless of a missing or exhausted monetary ledger :: [2] existing = \"true\", exhausted = \"false\"; com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.OA04 new and existing rooms analyze regardless of a missing or exhausted monetary ledger :: [3] existing = \"false\", exhausted = \"true\"; com.meetme.server.coordination.adapter.input.web.Issue144ProductionRuntimeGraphPostgresTest.OA04 new and existing rooms analyze regardless of a missing or exhausted monetary ledger :: [4] existing = \"true\", exhausted = \"true\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T04:22:05.447688Z"
+}
