@@ -12,6 +12,7 @@
 - [x] `[AGENT]` 운영 strict Structured Output schema와 ADR-053/054/059·PR120의 3-verdict 도입 근거를 재조회했다. 특정 enum3개 자체의 사용자 직접 지정 근거는 확인되지 않았으며, NEEDS_EDIT를 제거하는 새 설계는 선택하지 않았다. 오후 전체 허용의 통과 요구와 현재 prompt 보강은 일치한다.
 - [x] `[AGENT]` 2026-10-28 22:40 UTC 사용자의 구체 승인 뒤 중복 이슈와 미실행을 재확인하고 이슈 생성을 한 번 재시도해 [#157](https://github.com/meet-me-duo/meet-me-server/issues/157)을 생성했다. 이전 거절 이력과 원본 패치·검증은 보존한다.
 - [ ] `[AGENT]` 검증한 fix 브랜치를 게시하고 정확 HEAD의 PR/CI를 확인한다. develop/main 병합·운영 변경은 CI/CD #154와 부모가 순서를 조율한 뒤 진행한다. Commit/PR: 동일 커밋 예정.
+- [x] `[AGENT]` PR158 최초 CI40782219173의 ARM64 이미지는 성공했으나 Quality Gate는 테스트 실행 전 compileTestKotlin의 GC overhead OOM으로 실패했다. 기존 로컬 전체 gate에서 사용한 1536MiB와 같은 Kotlin compiler daemon heap을 프로젝트 gradle.properties에 명시한다. 검사 생략·단언/기대값·런타임 heap 변경 없이 새 정확 HEAD CI로 확인한다. Commit/PR: 동일 커밋 예정 / PR158.
 
 - [x] `[AGENT]` 최신 main e799fb6와 동일 tree의 develop0ce4b40을 로컬 fix 브랜치에 정상 통합했다. 진행 문서 충돌 한 곳의 양쪽 기록을 보존했고 native OpenAPI에서 내 모임 필터/페이지와 edit_guidance를 함께 확인했다. 통합 원본 commit guard ktlintCheck/assemble/test exit0: 2278개 중 2274 PASS·기존4 SKIP·실패/오류0. 독립 검토 P1/P2=0. 이 결과는 로컬 통합 검증이며 원격 PR/CI와 develop/main 병합·운영 반영은 별도로 확인한다. Commit: 2bb69e8.
 
