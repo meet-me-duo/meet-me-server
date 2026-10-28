@@ -6,6 +6,7 @@ import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRuntim
 import com.meetme.server.shared.adapter.output.aihttp.AiDispatchGateProperties
 import com.meetme.server.shared.application.port.output.AiBudgetUnit
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchProfiles
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -66,14 +67,7 @@ object ManagedAiRuntimePolicyLoader {
         )
 
     // Frozen physical profiles include endpoint, method, model and capture limit; they are not a billing proof.
-    private val profiles =
-        mapOf(
-            AiPhysicalOperation.PRECHECK_CLASSIFICATION to "c8d01d4a04aa077e0488400dc3b4791753b8428db48c6712aa78f903608a4dfc",
-            AiPhysicalOperation.PRECHECK_COUNT to "658a65563b34d43f854cc47dcd93d274d23789745e718b5f7ef49e1b59e8e307",
-            AiPhysicalOperation.PRECHECK_GENERATION to "86e4593b78ec903e1c9b4bbbffe204d2b8343e1752d2b6353703ce3fb9b65714",
-            AiPhysicalOperation.FINAL_PRIMARY to "0a3fc94ba00d368b4e7c9a41d0b231faab5058aa893dc11082ef786fc0a08d04",
-            AiPhysicalOperation.FINAL_FALLBACK to "9c5021916c80178f58d235e55bbbad4889875560b710a505fbde5dedd1a824ab",
-        )
+    private val profiles = AiRuntimeDispatchProfiles.fingerprints
 
     fun load(
         properties: AiRuntimePolicyProperties,
@@ -195,14 +189,20 @@ class ManagedAiRuntimeConfiguration {
         budget: AiDispatchGateProperties,
         clock: Clock,
     ): ManagedAiRuntimeSelection {
-        val flags = listOf(provider.enabled, routing.enabled, classifier.enabled, budget.enabled)
+        val flags = listOf(provider.enabled, routing.enabled, classifier.enabled)
         require(flags.all { it } || flags.none { it }) { "Managed AI runtime configuration is incomplete" }
+        require(!budget.enabled || provider.enabled) { "A budget flag alone cannot activate managed AI" }
         if (flags.none { it }) return ManagedAiRuntimeSelection(false, null)
-        val policy = requireNotNull(ManagedAiRuntimePolicyLoader.load(policyProperties, clock)) { "Managed AI policy is required" }
         val threshold = classifier.minimumConfidence
-        require(threshold != null && threshold.isFinite() && threshold == policy.minimumConfidence) {
-            "Managed AI classifier threshold must match its policy"
+        require(threshold == null || threshold.isFinite() && threshold in 0.0..1.0) {
+            "Managed AI classifier threshold is invalid"
         }
-        return ManagedAiRuntimeSelection(true, policy)
+        // Explicit artifact bytes and structure are still validated. The optional artifact
+        // is metadata, not monetary authority for CREATE, worker, or provider dispatch.
+        val policy = ManagedAiRuntimePolicyLoader.load(policyProperties, clock)
+        require(policy == null || threshold == null || threshold == policy.minimumConfidence) {
+            "Managed AI classifier threshold must match its explicit policy"
+        }
+        return ManagedAiRuntimeSelection(false, policy)
     }
 }

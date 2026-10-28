@@ -39,8 +39,15 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-/** Synthetic approved configuration only; real PG/fence/authority/worker, canonical URLs, loopback TLS, no READY seed. */
-@Import(DurableAnalysisInvocationPostgresTest.ControlledTime::class, Issue131ManagedRuntimeRoomPostgresTest.Transport::class)
+/**
+ * Synthetic approved configuration only; real PG/fence/authority/worker, canonical URLs, loopback TLS, no READY seed.
+ * Legacy financial-component assertions are retained; production admission is verified by Issue144 graphs.
+ */
+@Import(
+    LegacyMonetaryComponentTestConfiguration::class,
+    DurableAnalysisInvocationPostgresTest.ControlledTime::class,
+    Issue131ManagedRuntimeRoomPostgresTest.Transport::class,
+)
 class Issue131ManagedRuntimeRoomPostgresTest : CorrectionRoundPostgresFixture() {
     @Autowired private lateinit var worker: PreSubmissionCheckWorker
 

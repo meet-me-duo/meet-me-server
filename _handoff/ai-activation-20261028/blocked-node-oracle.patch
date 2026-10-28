@@ -1,0 +1,32 @@
+*** Begin Patch
+*** Update File: C:\Users\jinhy\Documents\Codex\2026-10-27\task-2\meet-me-ai-production\deploy\tests\issue131-runtime-bundle-env.test.cjs
+@@
+-test('DX01 only explicit opt-in plus complete immutable policy emits the atomic four flags and exact artifact threshold path SHA', () => {
++test('DX01 CONFIGURED plus explicit opt-in preserves four flags and exact reviewed artifact threshold path SHA', () => {
+@@
+-for (const kind of ['missing', 'sentinel', 'profileMissing', 'profileForeign', 'unknownField', 'duplicateThreshold', 'symlink']) {
++test('OA01 UNCONFIGURED plus explicit opt-in enables three features without money enforcement or a chosen threshold', () => {
++  const f = fixture('true', '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n'); try {
++    const r = f.render(); assert.equal(r.error, undefined); assert.equal(r.status, 0); quiet(r);
++    const values = env(f); for (const name of flags.slice(0, 3)) assert.equal(values[name], 'true', name);
++    assert.equal(values.MEETME_AI_BUDGET_ENABLED, 'false');
++    assert.equal(values.MEETME_PRECHECK_CLASSIFIER_MINIMUMCONFIDENCE, undefined);
++    assert.equal(values.TYPESAFE_API_KEY, 'SYNTHETIC_TYPESAFE_KEY');
++    assert.equal(typesafeCalls(f).length, 1);
++    assert.equal(values.MEETME_AI_BUDGET_POLICYSHA256, digest(fs.readFileSync(f.artifact)));
++    assert.equal(fs.statSync(f.output).mode & 0o777, 0o600);
++  } finally { f.remove(); }
++});
++
++for (const kind of ['missing', 'profileMissing', 'profileForeign', 'unknownField', 'duplicateThreshold', 'symlink']) {
+@@
+-    const body = kind === 'sentinel' ? '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n'
+-      : kind === 'duplicateThreshold' ? JSON.stringify(p).replace('"minimumConfidence":0.73', '"minimumConfidence":0.73,"minimumConfidence":0.74') : JSON.stringify(p);
++    const body = kind === 'duplicateThreshold' ? JSON.stringify(p).replace('"minimumConfidence":0.73', '"minimumConfidence":0.73,"minimumConfidence":0.74') : JSON.stringify(p);
+*** Update File: C:\Users\jinhy\Documents\Codex\2026-10-27\task-2\meet-me-ai-production\deploy\tests\runtime-auth-env.test.cjs
+@@
+ test('AR29 managed policy must validate before any Typesafe credential lookup', () => {
+@@
+-    fs.writeFileSync(f.policy, '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED"}\n');
++    fs.writeFileSync(f.policy, '{"protocol":"meetme-managed-ai-policy-v1","state":"UNCONFIGURED","verified":true}\n');
+*** End Patch

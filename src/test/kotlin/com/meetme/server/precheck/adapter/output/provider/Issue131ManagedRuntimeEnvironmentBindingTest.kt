@@ -2,7 +2,7 @@ package com.meetme.server.precheck.adapter.output.provider
 
 import com.meetme.server.config.AiRuntimePolicyProperties
 import com.meetme.server.config.ManagedAiRuntimeConfiguration
-import com.meetme.server.config.ManagedAiRuntimeSelection
+import com.meetme.server.config.ManagedAiRuntimePolicyLoader
 import com.meetme.server.precheck.adapter.output.classification.AmbiguityClassifierRuntimeProperties
 import com.meetme.server.shared.adapter.output.aihttp.AiDispatchGateProperties
 import com.meetme.server.shared.adapter.output.budget.AiBudgetAuthorityConfiguration
@@ -38,9 +38,8 @@ class Issue131ManagedRuntimeEnvironmentBindingTest {
             val properties = context.getBean(AiRuntimePolicyProperties::class.java)
             assertEquals(directory.resolve("policy.json").toString(), properties.policyPath)
             assertEquals(hash(Files.readString(Path.of(properties.policyPath))), properties.policySha256)
-            val selection = context.getBean(ManagedAiRuntimeSelection::class.java)
-            assertTrue(selection.enabled)
-            assertEquals(properties.policySha256, assertNotNull(selection.policy).fingerprint)
+            val policy = assertNotNull(ManagedAiRuntimePolicyLoader.load(properties, Clock.fixed(NOW, ZoneOffset.UTC)))
+            assertEquals(properties.policySha256, policy.fingerprint)
         }
     }
 
@@ -58,6 +57,28 @@ class Issue131ManagedRuntimeEnvironmentBindingTest {
     fun `MB03 environment threshold conflict does not silently override immutable policy`() {
         runner(environment() + ("MEETME_PRECHECK_CLASSIFIER_MINIMUMCONFIDENCE" to "0.74"))
             .run { context -> assertNotNull(context.startupFailure) }
+    }
+
+    @Test
+    fun `OA04 actual environment permits accepted providers with either budget flag and no monetary artifact`() {
+        for (budget in listOf("false", "true")) {
+            val values =
+                mapOf(
+                    "MEETME_PRECHECK_PROVIDER_ENABLED" to "true",
+                    "MEETME_PRECHECK_DECISIONROUTING_ENABLED" to "true",
+                    "MEETME_PRECHECK_CLASSIFIER_ENABLED" to "true",
+                    "MEETME_AI_BUDGET_ENABLED" to budget,
+                )
+            runner(values).run { context ->
+                assertNull(context.startupFailure)
+                assertTrue(context.getBean(PrecheckProviderRuntimeProperties::class.java).enabled)
+                assertTrue(context.getBean(PrecheckDecisionRoutingProperties::class.java).enabled)
+                assertTrue(context.getBean(AmbiguityClassifierRuntimeProperties::class.java).enabled)
+                // This is raw budget configuration; the actual physical gate is asserted in native graph tests.
+                assertEquals(budget.toBoolean(), context.getBean(AiDispatchGateProperties::class.java).enabled)
+                assertNull(context.getBean(AmbiguityClassifierRuntimeProperties::class.java).minimumConfidence)
+            }
+        }
     }
 
     private fun runner(environment: Map<String, Any>): ApplicationContextRunner =

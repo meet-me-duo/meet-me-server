@@ -1,5 +1,30 @@
 # meet-me-server Implementation Plan
 
+## 2026-10-28 AI·리뷰 비운영 통합 준비
+
+- [x] `[AGENT]` AI 원본 feature `5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89`와 Draft PR146, 정확 HEAD CI40636001470의 Quality Gate·ARM64 이미지 및 Lifecycle 성공을 보존했다.
+- [x] `[AGENT]` 리뷰 원본 feature `0f624216d16fe2e65c11da9468d0bcf4b9988ff7`와 PR147을 변경하지 않고 별도 worktree에서 정상 merge preview를 준비했다. V19·배포 catalog, 두 CI 검사와 ADR-061/062·양쪽 문서 이력을 함께 보존한다.
+- [x] `[AGENT]` 리뷰 PR147의 develop 정상 병합 `396b1583fec21636c399ced3aa87d7a817dd085f`를 확인하고, AI 원본 `5e60b495`에서 최신 develop을 별도 통합 branch로 정상 merge했다. 두 feature의 원본과 preview를 보존하고 AI develop 실제 병합은 리뷰 운영 선행·부모 GO까지 보류한다.
+- [x] `[AGENT]` 통합본의 ktlintCheck·assemble·test가 263 suites/2,236건 중 2,232 PASS·기존4 SKIP·실패/오류0으로 통과했다. source/resource/fixture565개 전후 동일, Node108·Python27 PASS와 독립 정적 검토 차단0을 확인했다. V18-only 배포 테스트는 원본18개 SHA를 보존하고 승인된 V19만 정확히 추가한 별도 기대값 승계·RED2·단일 FI 탐지2·복원 GREEN 근거로 남겼다.
+- [ ] `[AGENT]` 기존 PR146 head를 부모5e60+396b의 정상 merge commit으로 fast-forward 게시하고 결합된 정확 HEAD CI를 확인한다. 리뷰 운영 선행·부모 GO 전 AI develop 실제 병합은 보류한다.
+- [USER] AI main 병합·AWS 인증·운영 활성화·유료 모델 검증은 이 비운영 통합 승인에 포함하지 않는다. 아래 각 feature의 원래 검증·이관 기록은 당시 snapshot으로 보존한다.
+
+## Issue #144 — 실제 운영 AI 활성화 (2026-10-28 UTC)
+
+- [USER] 배포된 운영 환경에서 사용자와 지인들이 AI를 이용하게 한다. 최신 승인에 따라 정식 금액 정책 미설정과 금액 상한 초과를 이유로 방 생성·개인 검사·최종 분석을 차단하지 않는다. 별도 테스트 모드·만료·총 요청 슬롯·threshold 선택을 활성화 필수 조건으로 만들지 않으며 기술 안전장치는 유지한다.
+- [x] `[AGENT]` 미배포 TEST_OPERATION/V19 작업은 별도 작업 공간에 보존하고 이번 릴리스에서 제외했다. 최신 develop의 깨끗한 `feature/144-production-ai-activation`에서 기존 V18을 사용한다.
+- [x] `[AGENT]` 전송 권한·한 번의 HTTP와 금액 정책을 분리하는 최소 계약을 독립 검토했다. 신규 스키마·가짜 quote/permit·금전 READY 승격 없이 기존 실행 claim·owner/revision/deadline을 재사용한다.
+- [x] `[AGENT]` 원격 checkpoint `c3c1de12a7faffb4fc6623db49f20288000a503f`와 Git blob26·활성 원본22개의 지문을 대조하고 별도 Cloud worktree에서 수신했다. 원본16 실행은14 FAIL/2 PASS로 보존하고 최신 금액 차단 제거 기대값을 독립 설계·원본 보존·supersession으로 분리했다.
+- [x] `[AGENT]` 운영 3flag ON과 budget OFF/ON을 분리하고 현재 실행 재검증·전송 보호, threshold 미정의 Luna 검증을 구현했다. 최신77 RED20 뒤 첫 GREEN의 테스트 설계 결함1을 독립 교정하고 원본 금액 coupling으로 RED20을 재확인한 뒤 exact 복원·최종77 PASS/skip0을 확인했다. native 운영 graph16과 runtime guard/gate11을 포함한다.
+- [x] `[AGENT]` 실제 PostgreSQL/TLS mock·금전 컴포넌트 회귀16·독립 결함 주입5/5·독립 리뷰를 통과했다. 기존 구성 회귀는 테스트 기대값 변경 없이31 PASS로 보완했고 최종 ktlintCheck·assemble·test exit0·255 suites/2193건(2189 PASS·기존4 SKIP·실패/오류0), source/resource/fixture548개 전후 동일과 원본 hook 함수 PASS를 확인했다.
+- [ ] `[AGENT]` 사용자의 최신 “AWS 작업만 남기고 전부 진행” 위임에 따라 별도 feature branch 게시·develop 대상 PR·정확 HEAD 필수 CI·안전한 develop 통합을 진행한다. main의 자동 AWS 게시·배포 연결을 확인했으므로 main 병합과 workflow dispatch는 보류한다.
+- [x] `[AGENT]` Node 기존 검사2개의 원래 거절·미실행·원본 bytes를 보존했다. 사용자의 정확한 추가 승인 뒤 부모 작업자가 기존 proposal을 적용하지 않고 한 번 수정해 성공했고 75/75 PASS/skip0을 확인했다. 잘못된 구성·sentinel·secret·환경 보존 검사는 독립 audit에서 유지됐다.
+- [x] `[AGENT]` 새 Python8을 기존 quality CI step에 명시적으로 연결했다. YAML parse와 정확한1줄 추가·나머지 구조 동일성, 기존 배포 보호13과 새8이 통과했다. 관련 Python19와 합쳐 실제27개가 통과했으며 Actions를 실행하지 않았다.
+- [ ] `[USER]` AWS 인증·운영 설정·배포는 귀가 후 개인 PC에서 이어간다. 새 위임의 feature 게시·PR·CI·develop 통합을 제외한 main 병합·AWS·운영 명령은 실행하지 않는다.
+- [SHARED] 기존 provider 키를 비밀값 없이 확인한다. 새 자격증명·IAM/인증 변경은 별도 행동 승인, 실제 유료 검증 호출은 구체적 범위 확인 전 실행하지 않는다. 개선 기능과 UI는 다른 작업에서 담당한다.
+
+상세 불변식은 `docs/ISSUE_144_PRODUCTION_AI_ACTIVATION.md`를 따른다. 실제 활성화와 유료 모델 응답 검증을 구분해 보고한다.
+
 ## Issue #141 — 배포 권한과 중단 전환 재개 (2026-10-27 UTC)
 
 - [x] `[AGENT]` 기존 사용자 checkout의 변경을 보존하고 최신 develop 기반 별도 clone에서 수정한다.

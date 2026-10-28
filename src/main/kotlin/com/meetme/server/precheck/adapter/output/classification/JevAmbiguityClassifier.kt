@@ -70,7 +70,12 @@ class JevAmbiguityClassifier(
             validateConfiguration()
             val managed = request.dispatchContext != null || dispatchGate?.properties?.enabled == true
             if (managed &&
-                (dispatchGate?.properties?.enabled != true || options.minimumConfidence?.let { !it.isFinite() || it !in 0.0..1.0 } != false)
+                (
+                    dispatchGate?.properties?.enabled != true ||
+                        options.minimumConfidence?.let { !it.isFinite() || it !in 0.0..1.0 } == true ||
+                        options.requireMinimumConfidence &&
+                        options.minimumConfidence == null
+                )
             ) {
                 fail("CONFIGURATION")
             }
@@ -142,7 +147,8 @@ class JevAmbiguityClassifier(
             val result =
                 if (managed &&
                     (
-                        requireNotNull(semantic.confidence) < requireNotNull(options.minimumConfidence) ||
+                        options.minimumConfidence == null ||
+                            requireNotNull(semantic.confidence) < options.minimumConfidence ||
                             semantic.probabilities.values.count { it == semantic.probabilities.values.maxOrNull() } != 1
                     )
                 ) {

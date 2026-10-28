@@ -1,0 +1,197 @@
+{
+  "purpose": "Unfinished source-only Cloud checkpoint, not a release",
+  "baseSha": "03bbdc1909d22c0bad4667eedea6e2a0c2ffef87",
+  "branch": "feature/144-production-ai-activation",
+  "hashFormat": "SHA256 of Git blob bytes; git show COMMIT:PATH",
+  "manifestSelfExcluded": true,
+  "snapshotSha256": "2d56a03d2502ba77afbaf2fa112cdca70f9841dc4f32f7f6e8e5d0750fb80c8f",
+  "files": [
+    {
+      "path": ".tdd/deployment/issue144-production-deploy-red.initial.json",
+      "gitMode": "100644",
+      "gitBlob": "860a125b8c314247132857456b3bb14ccb9b39e4",
+      "sha256": "2a3512f9a5e808f148293e39c7d11989d3047ee13b77886754df4053ae53534e",
+      "bytes": 1428
+    },
+    {
+      "path": ".tdd/deployment/issue144-production-deploy-red.json",
+      "gitMode": "100644",
+      "gitBlob": "bdeef3b4c3a5b3ff9b2872942048192df3e3ace1",
+      "sha256": "b6cdc153cb1bf038fadd1a5e16d0937ef33a34e1fd198d90f772b830d2551e11",
+      "bytes": 1418
+    },
+    {
+      "path": ".tdd/history/issue144-production-ai-activation/issue131-runtime-bundle-env.test.before.cjs",
+      "gitMode": "100644",
+      "gitBlob": "69d8caf3a641973c14cd1ad1277b55eeab117808",
+      "sha256": "f2624d60dd082e62104ebfb3cc7a013d6446c0c1777821be1c2d8c6addeb0093",
+      "bytes": 10116
+    },
+    {
+      "path": ".tdd/history/issue144-production-ai-activation/runtime-auth-env.test.before.cjs",
+      "gitMode": "100644",
+      "gitBlob": "797abca9106680e626f831507dee8582f741a179",
+      "sha256": "cc3e89a68d603056fc9a4b05c90ddd2a83547700efc750f7de58687d1788963b",
+      "bytes": 27340
+    },
+    {
+      "path": ".tdd/history/issue144-production-ai-activation/test_issue144_production_ai_deployment.initial.py",
+      "gitMode": "100644",
+      "gitBlob": "93722fc41ebcd41be6d9609abd49cafa9864f20c",
+      "sha256": "6890d5c5147ef80767fc296813ebbd8d3082e4bf335bfc0d3b48ecb85bdd95db",
+      "bytes": 15503
+    },
+    {
+      "path": ".tdd/history/issue144-production-config-mask7/originals/src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "gitMode": "100644",
+      "gitBlob": "fc4686fa03147f6763d848f58858ee8180b234c1",
+      "sha256": "145df511235ec752650baed48938f783c01848b88b6aa38015979899df0299b4",
+      "bytes": 17916
+    },
+    {
+      "path": ".tdd/supersessions/issue144-production-config-mask7.json",
+      "gitMode": "100644",
+      "gitBlob": "7daadd37e0d3f91332720fbe97dcfd41e4e197f2",
+      "sha256": "6e3e6f70cb323a2d71994d9e7b07684348a99e36f40aaef775923f71123cc11c",
+      "bytes": 1326
+    },
+    {
+      "path": ".tdd/verification/issue144-production-deploy.json",
+      "gitMode": "100644",
+      "gitBlob": "ec25b1bc5586f8795d3478d31c7eab8ab5b651b7",
+      "sha256": "eb5342d35967ec00ac4c3db1431f607a44a3a90def02deadc52d560b9c445d03",
+      "bytes": 2136
+    },
+    {
+      "path": "_handoff/ai-activation-20261028/README.md",
+      "gitMode": "100644",
+      "gitBlob": "25d6c703fa75575c5f9f2efbc58043b856f94d46",
+      "sha256": "0ed296f96dca9f792e8196bce9c75f4f3dc7e1e1324e9fc0c6778a72b24ee302",
+      "bytes": 7355
+    },
+    {
+      "path": "_handoff/ai-activation-20261028/blocked-node-oracle.patch",
+      "gitMode": "100644",
+      "gitBlob": "6a27e61dfcbde3f5f5ef4945e0db083e9ce143ab",
+      "sha256": "ceb5e6ec893c61ac336bfb8be6e14cd2c2d0afce32b49cf1ce3f5848854955c4",
+      "bytes": 2487
+    },
+    {
+      "path": "_handoff/ai-activation-20261028/checkpoint-state.json",
+      "gitMode": "100644",
+      "gitBlob": "1ac6c00c0c6a33eb30f9ccc26e348f9aac88178f",
+      "sha256": "a3fe9c466c02b43027ec8a2bff90f82ca40e6e5e9286c4773860a735bf474d3f",
+      "bytes": 40177
+    },
+    {
+      "path": "_handoff/ai-activation-20261028/source-snapshots.zip",
+      "gitMode": "100644",
+      "gitBlob": "710c8fc1129f2c6102f883345220680e727e96e3",
+      "sha256": "2d56a03d2502ba77afbaf2fa112cdca70f9841dc4f32f7f6e8e5d0750fb80c8f",
+      "bytes": 651089
+    },
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "gitMode": "100755",
+      "gitBlob": "eef4ab9d86f935277dc50c04006eae07fb83ba9f",
+      "sha256": "6ddd5d3208efc053e31698b845be345f9bfec67f28db6097bd4616dc71db3e59",
+      "bytes": 14098
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "gitMode": "100644",
+      "gitBlob": "a4e3a133027b89168281d4abc553f8c2e91a8be2",
+      "sha256": "333f594d3b2df4da09c4d6fb5d2543ad9e08f2295921ec59a7b4478bedaec238",
+      "bytes": 15759
+    },
+    {
+      "path": "docs/ISSUE_144_PRODUCTION_AI_ACTIVATION.md",
+      "gitMode": "100644",
+      "gitBlob": "4cefaaead0fb0baa534feae4469bafbc28222208",
+      "sha256": "ad9211d1734219fc0cd305e48606882136868ab5b0f2311d4b29bc4ef37df6e7",
+      "bytes": 3646
+    },
+    {
+      "path": "implementation_plan.md",
+      "gitMode": "100644",
+      "gitBlob": "1e3913955b1b7c4c957949d5bf5167dcc6b83928",
+      "sha256": "efba4eb74ca940cb4c3781d4dbad1209142f534e5570528c96a072c14b7e2905",
+      "bytes": 306093
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/JevClassifierOptions.kt",
+      "gitMode": "100644",
+      "gitBlob": "e9aa11c4701bcf2ba4ceba3d4c15750a4e99d85e",
+      "sha256": "a981880707604776225c45a596ae19fe30a9c4ce2c2292ebab0f1715d97e3881",
+      "bytes": 455
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchConfiguration.kt",
+      "gitMode": "100644",
+      "gitBlob": "1597c3e71405a68ace35fb43a5bd249d6c40767e",
+      "sha256": "c6a54df66bc37dcd82674c30856422e02655b331e4e601d5bd5f3b54b3f7e90d",
+      "bytes": 1518
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt",
+      "gitMode": "100644",
+      "gitBlob": "1c56f7e20714f4050114463ee43ae66ca7f0df31",
+      "sha256": "ed1743ec595b9527425f7bab5a9113b9ebf62f13a1659d85d824a2111ef1f850",
+      "bytes": 16007
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/JdbcAiBudgetExecutionFence.kt",
+      "gitMode": "100644",
+      "gitBlob": "64f02109cb3740543a3a7d81c5d2c581a20156a4",
+      "sha256": "1673dc6cd25432286e849b246a71e428aaa6aac9f2e0df6a73043357394d7da2",
+      "bytes": 15548
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/AiRuntimeDispatchGuardPort.kt",
+      "gitMode": "100644",
+      "gitBlob": "3afc7316ce59f90ad59e4cee5506a56584b6d3a1",
+      "sha256": "85b3985cd307a22eec008be46a443acf9383d518855b6b05c31dfedc3ce79426",
+      "bytes": 305
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ProductionRuntimeGraphPostgresTest.kt",
+      "gitMode": "100644",
+      "gitBlob": "d2af0b49b5e4a46a7cc2bc6accf768839fb0f031",
+      "sha256": "43c8be99cef2d2df8da32286c1b57473c294ad236ed04c06383736059cd505a1",
+      "bytes": 13942
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "gitMode": "100644",
+      "gitBlob": "e5f86eda775f705166c2fbc94020b4d9f83d111c",
+      "sha256": "c89e503ce7e33265ff8d304df71889c1452887931dca499febaa5ba5c1449269",
+      "bytes": 17925
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue144ProductionRuntimeConfigurationTest.kt",
+      "gitMode": "100644",
+      "gitBlob": "31154fe3f8a2ace420983895d8807b0c8b4192c0",
+      "sha256": "525366a4a48b44ad649eba971b3ba1e7eb016a582ef8ee793e8e3c56a28e71b8",
+      "bytes": 2457
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/Issue144ProductionRuntimeGateTest.kt",
+      "gitMode": "100644",
+      "gitBlob": "8eac60b8451e0e375bc7914a3c6033fbde7d84e3",
+      "sha256": "305dd39ca811fe73c4242ef8658ae83bf4b12667f371d267d7e2a914355d6074",
+      "bytes": 8917
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/Issue144ProductionRuntimeGuardPostgresTest.kt",
+      "gitMode": "100644",
+      "gitBlob": "5a32f794fcbb448d2ad529de29a6551aab010fc8",
+      "sha256": "eeb163b23bab59c5a626197e42b7b124f997c570109777601615a8cdbe0c6281",
+      "bytes": 25430
+    }
+  ],
+  "secretScan": "No high-confidence credential patterns found; environment/keys/raw logs/caches excluded",
+  "qualityGate": "NOT PASSED; Kotlin TODO remains and 16 new executions not run",
+  "blockedOracleProposal": "Inactive patch only; exact test-oracle approval still pending",
+  "precedingCheckpointSha": "f3f350e9dd9affd3790b06ad70dbb85ec2585ff7",
+  "guidanceOnlyFollowup": "Latest explicit approval: no analysis blocking for missing monetary policy or exceeded monetary cap; preserve technical safety; code and AWS frozen"
+}

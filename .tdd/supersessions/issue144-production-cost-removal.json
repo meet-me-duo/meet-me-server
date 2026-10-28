@@ -1,0 +1,173 @@
+{
+  "workItem": "issue144-production-cost-removal",
+  "sourceRevision": "c3c1de12a7faffb4fc6623db49f20288000a503f",
+  "recordedAt": "2026-10-28T03:45:31.531273+00:00",
+  "authority": "Latest explicit user approval: no analysis blocking for unset monetary policy or exceeded monetary cap; preserve technical safeguards. Parent explicitly authorized independent Kotlin expectation supersession; the then-denied Node oracles were independently resolved by the parent only after later exact user approval (approvedNodeFollowup).",
+  "originals": {
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue144ProductionRuntimeConfigurationTest.kt": {
+      "sha256": "525366a4a48b44ad649eba971b3ba1e7eb016a582ef8ee793e8e3c56a28e71b8",
+      "bytes": 2457
+    },
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt": {
+      "sha256": "c89e503ce7e33265ff8d304df71889c1452887931dca499febaa5ba5c1449269",
+      "bytes": 17925
+    },
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt": {
+      "sha256": "e54766dcb5e663baa5f79af26e4e2f4fa2e98f669643787ba636229156e0530b",
+      "bytes": 5838
+    },
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ProductionRuntimeGraphPostgresTest.kt": {
+      "sha256": "43c8be99cef2d2df8da32286c1b57473c294ad236ed04c06383736059cd505a1",
+      "bytes": 13942
+    },
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt": {
+      "sha256": "56e773e1afa62919b664d4a2770b5009414f70a652e441228e10fb9746971ca0",
+      "bytes": 17968
+    },
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeInsertReceiptPostgresTest.kt": {
+      "sha256": "f411c8535f4f0bb755c7f8a43b668ce17adaf92f354bdc11d101374fff08765a",
+      "bytes": 10842
+    },
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeSavepointPostgresTest.kt": {
+      "sha256": "59c8c43206acb920a032ddeb16400ea9eaea31fd03cdf3d4f04290661411942c",
+      "bytes": 7749
+    }
+  },
+  "preservedOriginalRoot": ".tdd/history/issue144-production-cost-removal/originals",
+  "latestTestFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeInsertReceiptPostgresTest.kt",
+      "sha256": "a91a89f2307a3cbd6ae7b8ca2b7dd78b26642cd77e2f9d33292b8aefd948806c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeRoomPostgresTest.kt",
+      "sha256": "fb0f717f5ab216104791d456eba42f1bbc76a69a9562486f0d2e7b4183301392"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue131ManagedRuntimeSavepointPostgresTest.kt",
+      "sha256": "4eed89e18ebcec49ae2f91d745dcdce757b96a59ace376272ee971e9c93e1bc8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144BudgetFlagCostIndependentGraphPostgresTest.kt",
+      "sha256": "73702bcae44a9ab88303053a85f069f3c7e12e2b6f128a9a1d384cdcf37ca2e9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ConfiguredCostIndependentGraphPostgresTest.kt",
+      "sha256": "a35f89097d69fdea3a9be3cbfde2fdfe3743ae884e3afa59581c86dc345c9277"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue144ProductionRuntimeGraphPostgresTest.kt",
+      "sha256": "b1ced2b6c0f6497847c8935574bb2bc4efedef1416b81202847b518a19ad3445"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/LegacyMonetaryComponentTestConfiguration.kt",
+      "sha256": "4531aeee1ab869b2d815b67e4ac6add13170c2a16ad6681ba3b975dfc000aa99"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeConfigurationTest.kt",
+      "sha256": "c9a09c1b5b0e05c74677becedbbe2265c4fd58243c21c828e5995af4e33d687c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt",
+      "sha256": "f1dd58855c6625f15cc5cb53d9abd18d0b05f440c471a751c8a812dfee4a723e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue144ProductionRuntimeConfigurationTest.kt",
+      "sha256": "21601ac07b43f4394568cdb99086302585c0089466f785c45ce945ff51a12359"
+    }
+  ],
+  "supersededExpectations": [
+    {
+      "surface": "Issue144 configuration",
+      "previous": "budget ON plus unset monetary policy rejects coherent providers",
+      "current": "coherent three-provider graph starts for either budget flag without inventing a monetary policy"
+    },
+    {
+      "surface": "Issue131 configuration/context binding",
+      "previous": "operational context itself must grant configured monetary authority; absent explicit classifier threshold or UNCONFIGURED artifact prevents activation",
+      "current": "artifact metadata and explicit threshold integrity remain validated, but missing monetary approval is not an operational activation prerequisite; direct financial registry unit contracts remain unchanged"
+    },
+    {
+      "surface": "Issue131 Room/InsertReceipt/Savepoint",
+      "previous": "financial CREATE/worker/expiry assertions were interpreted as the production configuration",
+      "current": "all original assertions remain exact in an explicit test-only legacy financial-component fixture; current production CREATE/worker/final behavior is verified separately by Issue144 graphs"
+    },
+    {
+      "surface": "Issue144 native operational graphs",
+      "previous": "two budget-OFF UNCONFIGURED new/existing-room cases",
+      "current": "budget OFF and ON, no policy, READY exhausted caps, and CONFIGURED metadata with financial expiry after startup cannot block valid analysis; original two cases retained"
+    }
+  ],
+  "unchangedSafeguards": [
+    "partial provider flag rejection",
+    "malformed protocol/JSON/units/amount/operations rejection",
+    "foreign profile, missing hash, symlink and immutable-byte verification",
+    "explicit conflicting classifier threshold rejection",
+    "expired provided artifact rejection at startup",
+    "standalone financial quote, bill, cap and settlement contracts",
+    "INSERT receipt/savepoint/rollback financial-component defenses",
+    "runtime owner/revision/generation/source/context/status/deadline/profile/payload/one-shot/retry/timeout guards"
+  ],
+  "blockedNodeFilesUnchanged": {
+    "deploy/tests/issue131-runtime-bundle-env.test.cjs": "f2624d60dd082e62104ebfb3cc7a013d6446c0c1777821be1c2d8c6addeb0093",
+    "deploy/tests/runtime-auth-env.test.cjs": "cc3e89a68d603056fc9a4b05c90ddd2a83547700efc750f7de58687d1788963b"
+  },
+  "execution": "Latest corrected expectations RED77 with 20 failures, exact candidate restore, focused GREEN77; independent FI5/5 real assertions and exact restoration; legacy monetary component suites GREEN16. Four original Spring composition regressions were repaired in two configuration files with no test edits, original31 GREEN. Final ktlintCheck/assemble/test exit0 in 9m13s:255 suites,2193 tests,2189 passed,4 existing skipped,0 failures/errors,548 source/resource/fixture files unchanged. Original hook validation functions PASS without commit. Remote CI/publication is now explicitly delegated and pending; operations/AWS remain unrun.",
+  "testDesignRepair": {
+    "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue131ManagedRuntimeEnvironmentBindingTest.kt",
+    "reason": "OA04 ApplicationContextRunner binds raw meetme.ai.budget.enabled, not the HTTP factory physical gate. Its expected raw boolean must equal its input; all 16 native graph cases separately require the actual gate and mode enabled.",
+    "previousSha256": "00edd198236ab44915939cf0cc89689dc3afd840adce97a32cf6701f0c9cd88b",
+    "currentSha256": "f1dd58855c6625f15cc5cb53d9abd18d0b05f440c471a751c8a812dfee4a723e",
+    "preservedPreviousBytes": "/workspace/checkpoints/ai-20261028/test-design-repair/Issue131ManagedRuntimeEnvironmentBindingTest.before-binding-fix.kt",
+    "recordedAt": "2026-10-28T03:58:42.148004+00:00",
+    "verification": "RED must be re-observed with the changed test fingerprint before final GREEN; earlier test-design failure is not an implementation failure."
+  },
+  "preparationExecutionRecord": "New Kotlin expectations not yet compiled, RED or GREEN; no FI performed",
+  "approvedNodeFollowup": {
+    "recordedAt": "2026-10-28T04:20:00.411663+00:00",
+    "historicalBlockedNodeShaField": "blockedNodeFilesUnchanged records the earlier pre-approval snapshot only",
+    "authority": "Parent received explicit user approval for precisely the two test updates while preserving malformed-config/secret/environment protections",
+    "owner": "Parent root applied once after preserving originals; this implementation worker did not retry the denied operation",
+    "evidence": "/workspace/checkpoints/ai-20261028/node-oracle-approved/independent-change-audit.json",
+    "baseline": {
+      "tests": 73,
+      "passed": 71,
+      "failed": 2
+    },
+    "approvedResult": {
+      "tests": 75,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0
+    },
+    "blockedPatchApplied": false,
+    "retryCountAfterNewApproval": 1,
+    "outcome": "SUCCESS",
+    "currentSha256": {
+      "deploy/tests/issue131-runtime-bundle-env.test.cjs": "9dc3807a89acea8c798a7facefff14314cb2232cc306fc5b874a20d26236d63c",
+      "deploy/tests/runtime-auth-env.test.cjs": "173c0ae002b290f6552bbc1631a28914dbe26516879b8c64e13224365f2f6305"
+    }
+  },
+  "finalVerification": {
+    "fullGateReceipt": "/workspace/checkpoints/ai-20261028/final-full-gate/result.json",
+    "originalHookReceipt": "/workspace/checkpoints/ai-20261028/original-hook-result.json",
+    "compositionRed": ".tdd/red/issue144-spring-composition-compatibility.json",
+    "fullGateTotals": {
+      "suites": 255,
+      "tests": 2193,
+      "passed": 2189,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0
+    },
+    "sourceResourceFixtureCount": 548,
+    "kotlinCount": 514,
+    "sourceResourceFixtureChangesDuringFullGate": 0,
+    "ciWorkflowAddedCommands": 1,
+    "remoteActionsExecuted": 0,
+    "commitsCreated": 0,
+    "awsOperationsExecuted": 0,
+    "publicationAuthorization": "All non-AWS preparation, feature publication/PR/CI and safe develop integration now delegated; recorded counters describe the prepublication verification snapshot."
+  },
+  "publicationScope": "Latest user delegated all non-AWS completion: feature publication, develop PR, exact-head CI and safe develop merge; main push/merge and production/manual AWS workflows remain deferred."
+}

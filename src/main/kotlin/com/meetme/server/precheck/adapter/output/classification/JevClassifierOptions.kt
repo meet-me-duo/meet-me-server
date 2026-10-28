@@ -8,4 +8,5 @@ data class JevClassifierOptions(
     val enabled: Boolean = false,
     val model: String = "jev-1.14.0",
     val minimumConfidence: Double? = null,
+    val requireMinimumConfidence: Boolean = true,
 )

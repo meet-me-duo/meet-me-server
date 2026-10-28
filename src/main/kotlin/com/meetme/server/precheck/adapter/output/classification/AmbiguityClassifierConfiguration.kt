@@ -5,8 +5,8 @@ import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderHttpTr
 import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRuntimeProperties
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationPort
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,7 +22,7 @@ import tools.jackson.databind.ObjectMapper
 class AmbiguityClassifierConfiguration {
     @Bean
     @ConditionalOnMissingBean(AmbiguityClassificationPort::class)
-    @ConditionalOnProperty(prefix = "meetme.ai.budget", name = ["enabled"], havingValue = "true")
+    @ConditionalOnExpression("\${meetme.ai.budget.enabled:false} || \${meetme.precheck.provider.enabled:false}")
     fun ambiguityClassifier(
         properties: TypesafeProperties,
         objectMapper: ObjectMapper,
@@ -38,6 +38,7 @@ class AmbiguityClassifierConfiguration {
             JevClassifierOptions(
                 enabled = activation.enabled && providerActivation.enabled && decisionRouting.enabled,
                 minimumConfidence = activation.minimumConfidence,
+                requireMinimumConfidence = dispatchGate.enforceBudget,
             ),
             client = transport.client,
             dispatchGate = dispatchGate,

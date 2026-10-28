@@ -1,0 +1,30 @@
+{
+  "workItem": "issue144-review-current-v19-fi",
+  "sourceRevision": "5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89",
+  "boundary": "Approved current V19 release inventory remains closed: unknown V20 must fail for both configured and unconfigured policies. One fault applied only to disposable publisher copy, real unittest assertions detected; shared source565 and final test SHA unchanged before/after.",
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b32f6a642cd79ddb8c0881a2509d299fd396fc199dd3439fbdb706b592f8e08f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "ade61a1dfe1f767e8cf80cd2d85ace9bbf23d53d90e579fa6778b30fb7d30938"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Replace exact current source inventory equality with subset acceptance in disposable publisher copy, permitting unapproved unknown V20",
+      "command": [
+        "python3",
+        "/workspace/checkpoints/ai-review-integration-20261028/python-v19-supersession/run-independent-python.py",
+        "fi-extra20"
+      ],
+      "detectedBy": "Issue144ProductionPublicationTests.test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v19 :: catalog_fault=unknown20, state=UNCONFIGURED and CONFIGURED; AssertionError: ValueError not raised (2 failures, 0 errors)",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-28T06:13:30.511723Z"
+}

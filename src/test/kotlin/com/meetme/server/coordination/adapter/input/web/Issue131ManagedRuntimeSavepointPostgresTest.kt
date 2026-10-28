@@ -30,8 +30,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-/** Real manager savepoints and public INSERT/initialize behavior; no access to private receipt representation. */
-@Import(DurableAnalysisInvocationPostgresTest.ControlledTime::class)
+/**
+ * Real manager savepoints and public INSERT/initialize behavior; no access to private receipt representation.
+ * Legacy financial-component assertions are retained; production admission is verified by Issue144 graphs.
+ */
+@Import(LegacyMonetaryComponentTestConfiguration::class, DurableAnalysisInvocationPostgresTest.ControlledTime::class)
 class Issue131ManagedRuntimeSavepointPostgresTest : CorrectionRoundPostgresFixture() {
     @Autowired private lateinit var rooms: MeetingRoomRepository
 

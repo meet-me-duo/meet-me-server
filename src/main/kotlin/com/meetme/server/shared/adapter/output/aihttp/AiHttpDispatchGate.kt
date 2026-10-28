@@ -12,6 +12,7 @@ import com.meetme.server.shared.application.port.output.AiBudgetUsage
 import com.meetme.server.shared.application.port.output.AiPhysicalCallSpec
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
 import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -26,6 +27,7 @@ import java.net.URI
 import java.security.MessageDigest
 import java.time.Clock
 import java.time.Duration
+import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -118,6 +120,8 @@ class AiHttpDispatchGate(
     private val budget: DurableAiBudgetPort,
     private val clock: Clock,
     private val nanoTime: LongSupplier = LongSupplier(System::nanoTime),
+    private val runtimeGuard: AiRuntimeDispatchGuardPort? = null,
+    val enforceBudget: Boolean = properties.enabled,
 ) {
     fun prepareGroup(
         context: AiProviderDispatchContext?,
@@ -135,7 +139,11 @@ class AiHttpDispatchGate(
             denyDispatch()
         }
         val request = AiBudgetReserveRequest(current.execution, frozen.map { it.spec() })
-        val reservation = accounting { budget.reserve(request) } ?: denyDispatch()
+        if (!enforceBudget) {
+            runtimeDeadline(request, current)
+            return PreparedAiDispatchGroup(current, frozen, null)
+        }
+        val reservation = guarded { budget.reserve(request) } ?: denyDispatch()
         if (reservation.execution != request.execution ||
             reservation.calls.size != frozen.size ||
             reservation.calls
@@ -191,6 +199,7 @@ class AiHttpDispatchGate(
         val networkUsed = AtomicBoolean()
         val expected = AtomicReference<PreparedAiHttpRequest>()
         val permit = AtomicReference<AiBudgetDispatchPermit>()
+        val authorityDeadline = AtomicReference<Instant>()
         val permitCutoff = AtomicReference<Long>()
         val client =
             base
@@ -208,15 +217,21 @@ class AiHttpDispatchGate(
                             remaining(context)
                             val (group, prepared) = prepare(chain.request())
                             remaining(context)
-                            val reserved = group.reservation?.calls?.singleOrNull { it.call == prepared.spec() } ?: denyDispatch()
-                            val claimed =
-                                accounting {
-                                    budget.claim(AiBudgetDispatchRequest(reserved.reservationId, context.execution, reserved.call))
+                            val deadline =
+                                if (enforceBudget) {
+                                    val reserved = group.reservation?.calls?.singleOrNull { it.call == prepared.spec() } ?: denyDispatch()
+                                    val claimed =
+                                        guarded {
+                                            budget.claim(AiBudgetDispatchRequest(reserved.reservationId, context.execution, reserved.call))
+                                        } ?: denyDispatch()
+                                    if (claimed.reservationId != reserved.reservationId) denyDispatch()
+                                    permit.set(claimed)
+                                    claimed.deadlineAt
+                                } else {
+                                    runtimeDeadline(AiBudgetReserveRequest(context.execution, listOf(prepared.spec())), context)
                                 }
-                                    ?: denyDispatch()
-                            if (claimed.reservationId != reserved.reservationId) denyDispatch()
-                            permit.set(claimed)
-                            val wallRemaining = Duration.between(clock.instant(), claimed.deadlineAt)
+                            authorityDeadline.set(deadline)
+                            val wallRemaining = Duration.between(clock.instant(), deadline)
                             if (wallRemaining.isNegative || wallRemaining.isZero) denyDispatch()
                             val localRemaining = remaining(context)
                             val allowed = if (wallRemaining >= Duration.ofNanos(localRemaining)) localRemaining else wallRemaining.toNanos()
@@ -242,10 +257,16 @@ class AiHttpDispatchGate(
                     val captured = snapshot(chain.request(), profile)
                     val prepared = expected.get() ?: denyDispatch()
                     if (digest(captured) != prepared.wholePayloadFingerprint) denyDispatch()
-                    val granted = permit.get() ?: denyDispatch()
+                    val grantedDeadline = authorityDeadline.get() ?: denyDispatch()
                     val cutoff = permitCutoff.get() ?: denyDispatch()
+                    val currentDeadline =
+                        if (enforceBudget) {
+                            permit.get()?.deadlineAt ?: denyDispatch()
+                        } else {
+                            runtimeDeadline(AiBudgetReserveRequest(context.execution, listOf(prepared.spec())), context)
+                        }
                     remaining(context)
-                    if (clock.instant() >= granted.deadlineAt || cutoff - nanoTime.asLong <= 0) denyDispatch()
+                    if (clock.instant() >= minOf(grantedDeadline, currentDeadline) || cutoff - nanoTime.asLong <= 0) denyDispatch()
                     val response =
                         chain.proceed(
                             chain
@@ -275,11 +296,15 @@ class AiHttpDispatchGate(
                 }.build()
         return GatedAiHttpExchange(client) { eventId, outcome, usage, failure ->
             val claimed = permit.get()
-            if (claimed == null) {
+            if (!enforceBudget) {
+                remaining(context)
+                if (authorityDeadline.get()?.let { clock.instant() >= it } == true) denyDispatch()
+                true
+            } else if (claimed == null) {
                 true
             } else {
                 val accepted =
-                    accounting {
+                    guarded {
                         budget.observe(
                             AiBudgetObservation(claimed.reservationId, claimed.dispatchToken, eventId, outcome, usage, failure),
                         )
@@ -351,7 +376,17 @@ class AiHttpDispatchGate(
             }
         }
 
-    private fun <T> accounting(call: () -> T): T =
+    private fun runtimeDeadline(
+        request: AiBudgetReserveRequest,
+        context: AiProviderDispatchContext,
+    ): Instant {
+        val deadline = guarded { runtimeGuard?.authorize(request, clock.instant()) } ?: denyDispatch()
+        remaining(context)
+        if (clock.instant() >= deadline) denyDispatch()
+        return deadline
+    }
+
+    private fun <T> guarded(call: () -> T): T =
         try {
             call()
         } catch (_: Exception) {
