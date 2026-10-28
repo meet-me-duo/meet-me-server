@@ -1,0 +1,153 @@
+{
+  "workItem": "issue154",
+  "sourceBaseRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "scope": "general automatic deployment and protected same-pipeline transition with honest operating completion",
+  "validation": {
+    "originalCommitGuard": {
+      "exitCode": 0,
+      "tasks": [
+        "ktlintCheck",
+        "assemble",
+        "test"
+      ],
+      "suites": 265,
+      "tests": 2245,
+      "passed": 2241,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "gradleInputs": 571,
+      "inputsUnchanged": true
+    },
+    "deploymentPython": {
+      "tests": 304,
+      "passed": 304,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 387.281
+    },
+    "node": {
+      "tests": 172,
+      "passed": 172,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 23.292
+    },
+    "independentIssue154Boundaries": {
+      "tests": 200,
+      "passed": 200,
+      "openP1P2": 0
+    },
+    "finalIndependentFaultInjection": {
+      "families": {
+        "approvalAndCompletion": 12,
+        "productionAdapter": 15,
+        "publicContract": 9,
+        "controllerAndPreparation": 9,
+        "completionCli": 10
+      },
+      "detected": 55,
+      "total": 55,
+      "isolatedCopiesOnly": true,
+      "originalHashesRestored": true
+    },
+    "nativeApiContract": {
+      "operations": 40,
+      "paths": 39,
+      "schemas": 65,
+      "dataSha256": "5805e9b3f083fb133ddb22247647b058870af5b53379c2791b01682691ae62dd",
+      "latestDriftDetected": [
+        "AccountRoomResponse.role",
+        "AccountRoomsResponse.has_more",
+        "AccountRoomsResponse.next_cursor"
+      ],
+      "proofScope": "native operation/property names; not full response/security semantics"
+    },
+    "realSourcePublisherSmoke": "PASS; synthetic identity, actual source archive/probe, no AWS",
+    "ssmCommandByteCaps": "actual generated state/deploy commands remain below existing61440byte cap; mocked transport"
+  },
+  "semantics": [
+    "UNKNOWN never means not deployed",
+    "valid APPLIED proof survives later executor failure while overall completion fails",
+    "contradictory executor source/mode proof cannot be green",
+    "rules restored only after safe known facts and exact original-state observations",
+    "read-only reconcile cannot take ownership, submit, restore or rollback"
+  ],
+  "sourceHashes": [
+    {
+      "path": "deploy/pipeline/approval_gate.py",
+      "sha256": "83361e964c03e03bda7760341920ac713ebf3e730b914321568dfd8f80de8a3b"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "b2952c0276bdadac9a917a83e7b7849c12c58349a8f42e2705e5654ea8dc9bf4"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "9483ff714aada396f986de7a8b3d426c76dcf06238159a093ee85ac866a6549a"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b053463db3252395ebe4419523d783941e21e0a48a35ed76f9322855a06bc533"
+    },
+    {
+      "path": "deploy/pipeline/release_completion.py",
+      "sha256": "5aaa1c5981d4913bcaad95b7e985cc6a003ebbf28ffd27e2f24bb2b672b97bdc"
+    },
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "1d5b4ac59ff6a9831c082a6fb3e205105623eaf9105f7fc6fb805f5441148666"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "e74ba50f37a6f712772c9056e42c470a95d58f90ff0398e45c5f917d9267dc53"
+    },
+    {
+      "path": "deploy/pipeline/transition_orchestrator.py",
+      "sha256": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "66c3c773eda1b0e7ed5de62e87dea981cadc23a5c92f738b4ea70323acd28f82"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "801eea2d1d89b6775f9a1107705bc155926ed75ac535c2ff0bca78241155ca46"
+    },
+    {
+      "path": "deploy/transition-approval.json",
+      "sha256": "df213784fb71fd3ac6bbca2d91c2b1c141fce1982b39173a6e70e3891f81212a"
+    },
+    {
+      "path": "deploy/public-api-contract.json",
+      "sha256": "5805e9b3f083fb133ddb22247647b058870af5b53379c2791b01682691ae62dd"
+    },
+    {
+      "path": "infra/production/github.tf",
+      "sha256": "73007f3e2cfb7598cf3d0df33c7a5467ead828c72b8c6d0b89d842787d5e1062"
+    }
+  ],
+  "preservation": {
+    "sqlV1ThroughV19": "UNCHANGED",
+    "hostFenceAndLifecycleLock": "UNCHANGED",
+    "historical14_17_18Archives": "explicit reader coverage retained",
+    "currentCatalog": "18→23 complete execution dependencies; read-only API data archive-bound",
+    "currentOracleChanges": "specific current inventory expectations/valid fixture data only, originals and SHA preserved in history; negative security/privacy assertions retained"
+  },
+  "deploymentState": {
+    "codeCommit": "same commit planned",
+    "remotePrCi": "NOT_YET_RUN",
+    "newPipelineOperatingRollout": "NOT_YET_APPLIED",
+    "securitySetup": "applied and re-queried by separate personal-PC task; Cloud performed no duplicate changes",
+    "existingOrdinaryAutoBaseline": "parent independently verified run40718457774 AUTO_READY/deployedtrue; not issue154 rollout proof",
+    "cloudAwsWrites": 0,
+    "realProviderCalls": 0,
+    "userLoginOrReviewSubmission": "not performed"
+  },
+  "limitations": [
+    "Actual GitHub runner public-API/gate approval accessibility and first protected transition remain rollout acceptance",
+    "Main integration is serialized after other approved server work",
+    "Read-only UNKNOWN reconciliation reports evidence but never authorizes ownership takeover or resubmission",
+    "Raw logs remain local-only; this summary contains no key values or user data"
+  ]
+}

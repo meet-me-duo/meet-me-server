@@ -1,0 +1,100 @@
+{
+  "workItem": "issue154-independent-deployment-contracts",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "recordedAt": "2026-10-28T15:04:36.775254+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_completion.py",
+      "sha256": "4f3485312ef80a42c1485d233a8b9ffe355569ddd403638f28a2af84a1a280d6"
+    },
+    {
+      "path": "deploy/tests/test_issue154_transition.py",
+      "sha256": "8bd5eb427ed8d3dd90f8dfb4304cbf3150243e4453583308ed07ebeb524d1459"
+    },
+    {
+      "path": "deploy/tests/test_issue154_pipeline.py",
+      "sha256": "5ae9de5a634887e2409eaf3d71c08d44210b57f746d13edc487423439a760e87"
+    },
+    {
+      "path": "deploy/tests/test_issue154_automatic.py",
+      "sha256": "bad0894bb8205ad2b85749c18ecda0ef4892b461e07a0c49cf9ea83328c9639b"
+    },
+    {
+      "path": ".github/scripts/issue154-pipeline-catalog.test.cjs",
+      "sha256": "06677515e019f9a2e9d816f97c42f5715bc28889eed4aa1a432f4a500bd60db2"
+    }
+  ],
+  "cycles": [
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-completion-red.log",
+      "tests": 21,
+      "expectedFailure": "MISSING_BEHAVIOR",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-completion-pending-unknown-red.log",
+      "tests": 22,
+      "expectedFailure": "CONTRACT_ASSERTION_OR_STRICT_BOUNDARY",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-transition-red.log",
+      "tests": 16,
+      "expectedFailure": "MISSING_BEHAVIOR",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-transition-rule-observation-red.log",
+      "tests": 17,
+      "expectedFailure": "CONTRACT_ASSERTION_OR_STRICT_BOUNDARY",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-transition-journal-red.log",
+      "tests": 18,
+      "expectedFailure": "CONTRACT_ASSERTION_OR_STRICT_BOUNDARY",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-pipeline-red.log",
+      "tests": 10,
+      "expectedFailure": "MISSING_BEHAVIOR",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-pipeline-marker-red.log",
+      "tests": 20,
+      "expectedFailure": "MISSING_BEHAVIOR",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-automatic-red.log",
+      "tests": 11,
+      "expectedFailure": "MISSING_BEHAVIOR",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    },
+    {
+      "rawLog": ".codex/tdd-evidence/issue154-catalog-baseline-red.log",
+      "tests": 5,
+      "expectedFailure": "CONTRACT_ASSERTION_OR_STRICT_BOUNDARY",
+      "note": "Historical cycle; final file hashes are bound separately by the explicit final-fingerprint replay."
+    }
+  ],
+  "finalFingerprintRedReplay": {
+    "rawLog": ".codex/tdd-evidence/issue154-final-fingerprint-red-replay.log",
+    "tests": 72,
+    "sourceVariant": "isolated pinned base driver + public API NotImplementedError skeletons; current shared production source never reset",
+    "expectedFailureCategory": "MISSING_BEHAVIOR",
+    "importsAndSyntaxValid": true
+  },
+  "catalogRed": {
+    "rawLog": ".codex/tdd-evidence/issue154-catalog-baseline-red.log",
+    "sourceVariant": "isolated pinned974b380 source plus new test/dependency fixture files",
+    "tests": 5,
+    "passed": 2,
+    "failed": 3,
+    "setupErrors": 0,
+    "timingDisclosure": "The first new catalog test run on the already updated shared implementation passed; only this pinned-base replay is claimed as catalog RED."
+  },
+  "schemaNote": "Deployment tests stored separately because shared Kotlin RED schema restricts paths; no production Kotlin edits by test author."
+}

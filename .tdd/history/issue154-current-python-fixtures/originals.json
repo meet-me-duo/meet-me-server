@@ -1,0 +1,21 @@
+{
+  "sourceRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "reason": "Current bundle23 and required readonly public API data; retain legacy18 and all security/AI/history assertions",
+  "originals": [
+    {
+      "path": "deploy/tests/test_issue131_auth_target_dispatch.py",
+      "sha256": "a47b57de56672ebe73c52fe08b8f231aabec06e553d3cf1270ea412145247ee4",
+      "preservedAt": ".tdd/history/issue154-current-python-fixtures/test_issue131_auth_target_dispatch.py.before"
+    },
+    {
+      "path": "deploy/tests/test_issue131_policy_extraction.py",
+      "sha256": "0da8477b0a66e47548228838f7fb189989595dfae87d7263570a4c463f15aa42",
+      "preservedAt": ".tdd/history/issue154-current-python-fixtures/test_issue131_policy_extraction.py.before"
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "ade61a1dfe1f767e8cf80cd2d85ace9bbf23d53d90e579fa6778b30fb7d30938",
+      "preservedAt": ".tdd/history/issue154-current-python-fixtures/test_issue144_production_ai_deployment.py.before"
+    }
+  ]
+}

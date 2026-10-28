@@ -71,6 +71,11 @@ jobs:
       - name: Verify isolated built image workflow
         run: node --test deploy/tests/built-image-workflow.test.cjs
 
+      - name: Verify deployment completion and approved transition orchestration
+        run: |
+          node --test .github/scripts/issue154-pipeline-catalog.test.cjs
+          python3 -m unittest discover -s deploy/tests -p 'test_issue154*.py' -v
+
       - name: Verify database credential refresh
         run: bash deploy/tests/refresh-database-credential.test.sh
 

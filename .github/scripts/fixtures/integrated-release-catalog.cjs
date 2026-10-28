@@ -29,8 +29,10 @@ const guardFiles = [
   'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
   'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
 ].sort();
-// Additive current publication fixture; historical seventeen-file fixture stays frozen.
-const currentGuardFiles = [...guardFiles, 'runtime-ai-policy.json'].sort();
+// Issue154 current publication adds the complete execution bundle; historical seventeen-file fixture stays frozen.
+const currentGuardFiles = [...guardFiles, 'runtime-ai-policy.json', 'pipeline/release_completion.py',
+  'pipeline/transition_orchestrator.py', 'pipeline/approval_gate.py', 'pipeline/release_pipeline.py',
+  'transition-approval.json'].sort();
 const range = n => Array.from({ length: n }, (_, i) => i + 1);
 const catalogs = [range(10), range(11), range(12), [...range(11), 13],
   [...range(10), 14, 15], [...range(11), 14, 15], range(16), range(17)];
@@ -121,6 +123,12 @@ function currentFixture() {
     }
   }
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
+  // Public API shape is archive-bound data, not a writer compatibility guard.
+  fs.copyFileSync(path.join(root, 'deploy/public-api-contract.json'), path.join(value.directory, 'deploy/public-api-contract.json'));
+  for (const name of currentGuardFiles.filter(name => !guardFiles.includes(name) && name !== 'runtime-ai-policy.json')) {
+    const target = path.join(value.directory, 'deploy', name); fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.copyFileSync(path.join(root, 'deploy', name), target);
+  }
   return value;
 }
 const publish = value => python('build_manifest', [value.directory, value.archive, environment], 'publish_manifest.py');

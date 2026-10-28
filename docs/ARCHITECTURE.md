@@ -431,6 +431,8 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - Compose의 앱 restart는 `no`이며 모든 공통 launcher Compose 호출의 마지막 override가 승인된 APP_IMAGE와 이 정책을 강제한다. guarded boot unit은 고정 launcher의 restart를 호출한다. 실제 root 호스트 설치·systemd enable·외부 배포/refresh 중지·직접 Docker 권한 통제는 별도 운영 선행조건이며 저장소 검증만으로 완료되지 않는다. 절차와 잔여 한계는 [운영 안내](USER_INTERVENTION.md)를 따른다.
 - `main` push CI의 정확 `head_sha`로 image와 run/attempt별 불변 release manifest를 게시한다. ADR-050에 따라 첫 V8→V9/V10 전환과 SQL/guard 실행 bundle 변경은 명시 승인으로 분리한다. main 읽기 preflight/deploy는 기존 게시물을 소비하고 다시 build하지 않는다. 성공 후 실제 Flyway history·READY·현재 digest·SQL/guard 지문을 root record에 저장하며, 같은 계약의 후속 main CI는 실제 상태를 재확인한 뒤 자동 배포한다. PR·`develop`·수동 CI와 실패한 CI는 자동 게시/배포하지 않는다. 기존 production 역할·보호규칙과 직렬화(cancel=false)는 유지한다.
 - 앱이 중지된 `V8_STARTED`는 명시적 `resume`과 전환 승인으로만 재개한다. 신뢰 guard·sticky marker·규칙 중지·활성 명령 없음·정확한 DB 이력을 다시 검증하고, 새 불변 릴리스의 실행 가능 helper를 앱 중지 전에 검사한다. DB 이력은 승인 이미지의 격리된 읽기 전용 JVM으로 조회하며 구 앱을 시작하지 않는다. 일반 배포의 실행 중 앱 조건은 유지한다. 세부 경계는 [중단 전환 재개](../deploy/MAINTENANCE_RESUME.md)를 따른다.
+- Issue #154는 ADR-050의 일반 자동 배포를 유지하면서 특별 전환의 승인·규칙 중지·drain·배포·검증·복원을 같은 pipeline으로 연결한다. 승인 전용 job은 AWS 권한을 갖지 않고 실제 배포는 기존 production OIDC 경계를 사용한다. 보호 환경의 실제 사용자 승인·같은 SHA/manifest/run/attempt를 검증하며 미구성 상태에서는 새 환경을 참조하지 않는다. 명령 전송 intent와 commandId·규칙 원래 상태를 영속 기록하고 응답 유실은 UNKNOWN으로 남긴다. 완료 증명은 runtime·전체 DB 이력·공개 API 계약·규칙 원래 상태·활성 명령 종료를 모두 요구하며 게시 또는 no-op 성공과 구분한다. 신규 IAM·환경 보호 설정은 구체 승인과 실제 재조회가 필요하며, 검증·배포 진행 상태는 implementation plan에 기록한다.
+- 공개 API 기대 데이터는 실제 native 명세의 operation/property 이름을 독립 비교하고 archiveSha로 candidate에 묶는다. 실행 코드·승인 정책의 guard 지문은 그대로 검증하며 이 읽기 전용 데이터만의 변경으로 DB maintenance를 요구하지 않는다. 세부 상태·복구 경계는 [운영 pipeline 안내](../deploy/APPROVED_RELEASE_PIPELINE.md)를 따른다.
 
 ### 제출 MVP 토폴로지 선택 근거
 

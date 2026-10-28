@@ -271,6 +271,7 @@ class Issue144ProductionPublicationTests(unittest.TestCase):
                 archive = root / "release.tar.gz"
                 files = {name: (root / "deploy" / name).read_bytes() for name in DRIVER.CONTRACT_FILES}
                 files.update({"runtime-provider-mode": b"gemini-luna-required\n",
+                              "public-api-contract.json": (root / "deploy/public-api-contract.json").read_bytes(),
                               "preflight/compiled/ReadOnlyFlywayProbe.class": bytes.fromhex("cafebabe")})
                 for helper in ("scripts/render-runtime-env.sh", "scripts/export-certificate.sh"):
                     files[helper] = (root / "deploy" / helper).read_bytes()

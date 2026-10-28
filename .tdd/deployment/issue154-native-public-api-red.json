@@ -1,0 +1,35 @@
+{
+  "workItem": "issue154-native-public-api-contract",
+  "sourceRevision": "974b3800e5098b400ef22a42f626b4cfb4f21782",
+  "recordedAt": "2026-10-28T15:17:21.382464+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/deployment/Issue154NativeApiContractPostgresTest.kt",
+      "sha256": "4d90ebc23e271822ab14f0566e617eea75849ace53098404eebd2a5d6511b4bc"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.deployment.Issue154NativeApiContractPostgresTest"
+  ],
+  "executionEnvironment": {
+    "GRADLE_USER_HOME": "/workspace/.task-cache/gradle",
+    "JAVA_HOME": "/workspace/.task-cache/jdk17"
+  },
+  "tests": 1,
+  "failed": 1,
+  "errors": 0,
+  "expectedFailureCategory": "MISSING_REVIEWED_PUBLIC_CONTRACT_DATA",
+  "expectedReason": "Actual nativeSpring /v3/api-docs withPostgres/Redis fixture returned40operations39paths65schemas while validreadonlycontractdata wasempty; exactprojectionassertionfailed",
+  "rawLog": ".codex/tdd-evidence/issue154-native-api-red.log",
+  "rawJUnit": ".codex/tdd-evidence/issue154-native-api-red.xml",
+  "actualProjection": "build/issue154-native-public-api-contract.json",
+  "actualProjectionSha256": "4f3f55f51e541dfb873c6c7ed28a6426a9de4ee04c7d4de21e680f6eeff819d2",
+  "styleCheck": "runKtlintCheckOverTestSourceSet PASS; no testsource changes afterRED",
+  "excludedAttempt": "Initialdefault/home/agent/.gradle lockpathnotwritable; no test executed, notcountedasRED",
+  "contractFileModifiedByTestAuthor": false,
+  "operatingOrPaidProviderCalls": 0
+}

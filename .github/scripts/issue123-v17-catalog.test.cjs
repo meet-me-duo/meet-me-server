@@ -31,6 +31,8 @@ const approvedPaths = [
   'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml',
 ].sort();
 const currentApprovedPaths = [...approvedPaths, 'runtime-ai-policy.json'].sort();
+const currentExecutionPaths = [...currentApprovedPaths, 'pipeline/release_completion.py', 'pipeline/transition_orchestrator.py',
+  'pipeline/approval_gate.py', 'pipeline/release_pipeline.py', 'transition-approval.json'].sort();
 const originalSqlHashes = [
   'f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515',
   '75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7',
@@ -108,7 +110,7 @@ test('VC02 current publisher accepts exactly V1 through V18 with independent SQL
     assert.deepEqual(result.result.migrations, f.currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(result.result.schemaFingerprint, hash(canonical(f.currentScripts.map((script, i) => ({ version: String(i + 1), script, sha256: hash(fs.readFileSync(path.join(value.migrations, script))) })))));
-    assert.equal(result.result.guardFingerprint, hash(canonical(currentApprovedPaths.map(name => ({ path: name,
+    assert.equal(result.result.guardFingerprint, hash(canonical(currentExecutionPaths.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     assert.equal(result.result.archiveSha256, hash(fs.readFileSync(value.archive)));
   } finally { value.remove(); }

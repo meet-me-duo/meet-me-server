@@ -14,6 +14,7 @@ on:
           - preflight
           - deploy
           - resume
+          - reconcile
         default: preflight
         required: true
       build_run_id:
@@ -29,6 +30,10 @@ on:
         description: Approve the reviewed first transition or stopped maintenance resume
         type: boolean
         default: false
+      operation_id:
+        description: Original operation SHA256 for read-only reconciliation
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -125,6 +130,8 @@ jobs:
             runtime-provider-mode \
             runtime-auth-mode \
             runtime-ai-policy.json \
+            transition-approval.json \
+            public-api-contract.json \
             nginx scripts pipeline preflight migrations
           python3 deploy/pipeline/publish_manifest.py --archive release.tar.gz --output manifest.json
           aws s3api put-object \
@@ -145,7 +152,7 @@ jobs:
           if-no-files-found: error
 
   approved-release:
-    name: Preflight and Approved Release
+    name: Classify Published Release
     needs: [build-publish]
     if: >-
       always() && github.repository == 'meet-me-duo/meet-me-server' &&
@@ -157,12 +164,18 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+      gate_ready: ${{ steps.plan.outputs.gate_ready }}
+      gate_environment: ${{ steps.plan.outputs.gate_environment }}
+      action: ${{ steps.plan.outputs.action }}
     env:
       SOURCE_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
       BUILD_RUN_ID: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_id || inputs.build_run_id }}
       BUILD_RUN_ATTEMPT: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_attempt || inputs.build_run_attempt }}
       RELEASE_ACTION: ${{ github.event_name == 'workflow_run' && 'automatic' || inputs.action }}
       APPROVE_FIRST_TRANSITION: ${{ github.event_name == 'workflow_dispatch' && inputs.approve_first_transition && 'true' || 'false' }}
+      OPERATION_ID: ${{ inputs.operation_id }}
       ECR_REPOSITORY_URL: ${{ vars.ECR_REPOSITORY_URL }}
       DEPLOYMENT_ARTIFACT_BUCKET: ${{ vars.DEPLOYMENT_ARTIFACT_BUCKET }}
       RUNTIME_INSTANCE_ID: ${{ vars.RUNTIME_INSTANCE_ID }}
@@ -194,14 +207,214 @@ jobs:
           role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Read facts and consume published release
-        run: python3 deploy/pipeline/run-approved-release.py
+      - name: Read facts and classify published release
+        id: plan
+        run: python3 deploy/pipeline/run-approved-release.py ${{ github.event_name == 'workflow_dispatch' && inputs.action == 'reconcile' && '--pipeline-reconcile' || '--pipeline-plan' }}
 
       - name: Preserve sanitized readiness result
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: approved-release-${{ github.run_id }}-${{ github.run_attempt }}
-          path: approved-release-summary.json
+          path: |
+            release-plan.json
+            approved-release-summary.json
+            recovery-report.json
           retention-days: 3
           if-no-files-found: warn
+
+
+  automatic-release:
+    name: Automatic Runtime Deployment
+    needs: [build-publish, approved-release]
+    if: >-
+      always() && needs.approved-release.result == 'success' &&
+      needs.approved-release.outputs.mode == 'AUTO_READY' &&
+      needs.approved-release.outputs.action != 'preflight'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SOURCE_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+      BUILD_RUN_ID: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_id || inputs.build_run_id }}
+      BUILD_RUN_ATTEMPT: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_attempt || inputs.build_run_attempt }}
+      RELEASE_ACTION: ${{ github.event_name == 'workflow_run' && 'automatic' || inputs.action }}
+      APPROVE_FIRST_TRANSITION: ${{ github.event_name == 'workflow_dispatch' && inputs.approve_first_transition && 'true' || 'false' }}
+      ECR_REPOSITORY_URL: ${{ vars.ECR_REPOSITORY_URL }}
+      DEPLOYMENT_ARTIFACT_BUCKET: ${{ vars.DEPLOYMENT_ARTIFACT_BUCKET }}
+      RUNTIME_INSTANCE_ID: ${{ vars.RUNTIME_INSTANCE_ID }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_MAX_ATTEMPTS: "1"
+      AWS_RETRY_MODE: standard
+    steps:
+      - name: Check out exact release driver
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+
+      - name: Read this run's validated release plan
+        uses: actions/download-artifact@v8
+        with:
+          name: approved-release-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Validate production entry before AWS authority
+        run: python3 deploy/pipeline/run-approved-release.py --validate
+
+      - name: Set up standalone Java compiler
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Compile read-only history probe
+        run: javac -d deploy/preflight/compiled deploy/preflight/ReadOnlyFlywayProbe.java
+
+      - name: Configure temporary AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Deploy unchanged contract and verify runtime
+        run: python3 deploy/pipeline/run-approved-release.py --pipeline-automatic
+
+      - name: Preserve deployment completion evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: deployment-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: deployment-result.json
+          retention-days: 3
+          if-no-files-found: warn
+
+  transition-approval:
+    name: Approve production transition
+    needs: [approved-release]
+    if: >-
+      needs.approved-release.result == 'success' &&
+      needs.approved-release.outputs.mode == 'TRANSITION_REQUIRED' &&
+      needs.approved-release.outputs.action == 'automatic' &&
+      needs.approved-release.outputs.gate_ready == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: ${{ needs.approved-release.outputs.gate_environment }}
+    permissions:
+      contents: read
+    steps:
+      - name: Continue the pinned transition after environment approval
+        run: echo "Protected transition gate completed for this workflow run"
+
+  transition-release:
+    name: Approved Runtime Transition
+    needs: [build-publish, approved-release, transition-approval]
+    if: >-
+      always() && needs.approved-release.result == 'success' &&
+      needs.approved-release.outputs.mode == 'TRANSITION_REQUIRED' &&
+      (needs.transition-approval.result == 'success' ||
+       (github.event_name == 'workflow_dispatch' && inputs.approve_first_transition == true &&
+        (inputs.action == 'deploy' || inputs.action == 'resume')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      SOURCE_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+      BUILD_RUN_ID: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_id || inputs.build_run_id }}
+      BUILD_RUN_ATTEMPT: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_attempt || inputs.build_run_attempt }}
+      RELEASE_ACTION: ${{ github.event_name == 'workflow_run' && 'automatic' || inputs.action }}
+      APPROVE_FIRST_TRANSITION: ${{ github.event_name == 'workflow_dispatch' && inputs.approve_first_transition && 'true' || 'false' }}
+      ECR_REPOSITORY_URL: ${{ vars.ECR_REPOSITORY_URL }}
+      DEPLOYMENT_ARTIFACT_BUCKET: ${{ vars.DEPLOYMENT_ARTIFACT_BUCKET }}
+      RUNTIME_INSTANCE_ID: ${{ vars.RUNTIME_INSTANCE_ID }}
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      AWS_MAX_ATTEMPTS: "1"
+      AWS_RETRY_MODE: standard
+    steps:
+      - name: Check out exact release driver
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+
+      - name: Read this run's validated release plan
+        uses: actions/download-artifact@v8
+        with:
+          name: approved-release-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Validate production entry before AWS authority
+        run: python3 deploy/pipeline/run-approved-release.py --pipeline-validate-transition
+
+      - name: Set up standalone Java compiler
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Compile read-only history probe
+        run: javac -d deploy/preflight/compiled deploy/preflight/ReadOnlyFlywayProbe.java
+
+      - name: Configure temporary AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Run approved transition and restore automation
+        run: python3 deploy/pipeline/run-approved-release.py --pipeline-transition
+
+      - name: Preserve deployment completion evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: deployment-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: deployment-result.json
+          retention-days: 3
+          if-no-files-found: warn
+
+  deployment-completion:
+    name: Verify Deployment or Read-only Outcome
+    needs: [build-publish, approved-release, automatic-release, transition-approval, transition-release]
+    if: >-
+      always() && github.repository == 'meet-me-duo/meet-me-server' &&
+      ((github.event_name == 'workflow_run' && needs.build-publish.result == 'success') ||
+       (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      SOURCE_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+      BUILD_RUN_ID: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_id || inputs.build_run_id }}
+      BUILD_RUN_ATTEMPT: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_attempt || inputs.build_run_attempt }}
+      NORMAL_RELEASE_RESULT: ${{ needs.automatic-release.result }}
+      TRANSITION_RELEASE_RESULT: ${{ needs.transition-release.result }}
+    steps:
+      - name: Check out exact completion verifier
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+
+      - name: Read this run's validated release plan
+        uses: actions/download-artifact@v8
+        with:
+          name: approved-release-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Read actual deployment evidence
+        if: >-
+          needs.approved-release.outputs.action != 'preflight' &&
+          needs.approved-release.outputs.action != 'reconcile' &&
+          (needs.automatic-release.result != 'skipped' || needs.transition-release.result != 'skipped')
+        continue-on-error: true
+        uses: actions/download-artifact@v8
+        with:
+          name: deployment-result-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Require bound runtime DB API and restoration proof
+        run: python3 deploy/pipeline/run-approved-release.py --pipeline-complete

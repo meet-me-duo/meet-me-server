@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 import sys
+import tarfile
 import zlib
 
 GUARD_FILES = tuple(sorted((
@@ -21,6 +22,8 @@ GUARD_FILES = tuple(sorted((
     "preflight/run-preflight.py", "preflight/ReadOnlyFlywayProbe.java",
     "runtime-auth-mode", "scripts/render-runtime-env.sh", "compose.production.yml",
     "runtime-ai-policy.json",
+    "pipeline/release_completion.py", "pipeline/approval_gate.py",
+    "pipeline/transition_orchestrator.py", "pipeline/release_pipeline.py", "transition-approval.json",
 )))
 
 MIGRATION_SCRIPTS = (
@@ -140,6 +143,11 @@ def build_manifest(repo_root, archive_path, environment):
         policy = source_path(root, "deploy/runtime-ai-policy.json")
         with policy.open("rb") as source:
             _runtime_policy_bytes(source.read(65537))
+        api_path = source_path(root, "deploy/public-api-contract.json")
+        api_spec = importlib.util.spec_from_file_location("publication_api_contract", source_path(root, "deploy/pipeline/release_pipeline.py"))
+        api_validator = importlib.util.module_from_spec(api_spec)
+        api_spec.loader.exec_module(api_validator)
+        api_validator.validate_public_contract(api_validator.strict_json(api_path.read_bytes(), 131072))
         migration_directory = source_path(root, "src/main/resources/db/migration", directory=True)
         paths = list(migration_directory.iterdir())
         rows, catalog = [], []
@@ -192,6 +200,10 @@ def main():
     archive_validator.validate_archive(args.archive)
     archive_validator.validate_executable_helpers(args.archive)
     manifest = build_manifest(Path(__file__).resolve().parents[2], args.archive, os.environ)
+    archive_validator._verify_package(args.archive, manifest)
+    with tarfile.open(args.archive, "r:gz") as archive:
+        expected = (Path(__file__).resolve().parent.parent / "public-api-contract.json").read_bytes()
+        _require(archive.extractfile("public-api-contract.json").read(131073) == expected)
     with Path(args.output).open("x", encoding="utf-8") as destination:
         destination.write(canonical_bytes(manifest).decode("utf-8") + "\n")
     print("Immutable release manifest prepared.")

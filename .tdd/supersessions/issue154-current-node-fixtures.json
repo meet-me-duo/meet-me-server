@@ -1,0 +1,184 @@
+{
+  "workItem": "issue154-current-node-fixtures",
+  "recordedAt": "2026-10-28T15:56:17.202257+00:00",
+  "sourceRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "files": [
+    {
+      "path": ".github/scripts/issue107-runtime-auth-catalog.test.cjs",
+      "sha256": "83a8ad163e5b587cdf3f3f2cc3a48b48dd1b8418852a0753595a619439aa9925",
+      "preservedAt": ".tdd/history/issue154-current-node-fixtures/issue107-runtime-auth-catalog.test.cjs.before",
+      "currentSha256": "7b059cb71a6535236b522b6f7eaf14653ea3bbc4a1e51e5cf041b039ef15316c"
+    },
+    {
+      "path": ".github/scripts/issue123-v17-catalog.test.cjs",
+      "sha256": "35d89772027642a97817371e19510151d74d23f80d8866b0312ca9af99f9ff18",
+      "preservedAt": ".tdd/history/issue154-current-node-fixtures/issue123-v17-catalog.test.cjs.before",
+      "currentSha256": "668606d81239f3cd833bbe5fa459be6ee68504ad6b6b7d5c26463689727d0a3c"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "c562835f7037c8cbeaa24d8914900250cfc72f5fef33989ed134b31ba49c8825",
+      "preservedAt": ".tdd/history/issue154-current-node-fixtures/v19-review-release-catalog.test.cjs.before",
+      "currentSha256": "9601e0f73016a68c021b023b7313b95fd86aa27e32eeaacff0ec818f95609c49"
+    }
+  ],
+  "exactRAAndVCModificationScopeVerified": true,
+  "V19R01ThroughR07ByteUnchanged": true,
+  "hostArchiveHashRefusalHelperByteUnchanged": true,
+  "changes": {
+    "issue107-runtime-auth-catalog.test.cjs": "Addexplicitcurrent23inventoryforRA01/RA02only; historical14/auth17/policy18constantsfunctionsandotherassertsretained",
+    "issue123-v17-catalog.test.cjs": "VC02currentpublisherfingerprint23only; VC01historicalSQL/runtime17oracleandothercasesunchanged",
+    "v19-review-release-catalog.test.cjs": "Currentfixturecopies5executiondepsandreadonlyAPI DATA; version19archiveuses23, version18archiveexplicitlyold18/no newdeps/data; strengthenhistoricalarchiveentryproofandaddV19R09sixomissionnegatives"
+  },
+  "initialRun": {
+    "rawLog": ".codex/tdd-evidence/issue154-current-node-fixtures-red.log",
+    "tests": 34,
+    "passed": 28,
+    "failed": 6,
+    "validAssertionFailures": 5,
+    "fixtureSetupFailuresExcludedFromRedClaims": 1,
+    "excludedReason": "V19R08 ENOENT missingpipelineapproval_gate.py inobsolete18filepositivefixture; fixture/setup failureisnotbehavioralRED",
+    "javaPath": "/workspace/.task-cache/jdk17/bin inPATH; nojavacenvironmentfailures"
+  },
+  "focusedGreen": {
+    "rawLog": ".codex/tdd-evidence/issue154-current-node-fixtures-green.log",
+    "tests": 35,
+    "passed": 35,
+    "failed": 0,
+    "newNegativeCase": "V19R09 rejectsall5missingexecutiondepsandmissingreadonlyDATAevenwithrefreshedarchivehash"
+  },
+  "faultInjection": {
+    "scope": "isolated production-source copies only; no sharedsource/SQL/test mutation",
+    "sourceSha256": {
+      "deploy/pipeline/publish_manifest.py": "b053463db3252395ebe4419523d783941e21e0a48a35ed76f9322855a06bc533",
+      "deploy/pipeline/run-approved-release.py": "e74ba50f37a6f712772c9056e42c470a95d58f90ff0398e45c5f917d9267dc53"
+    },
+    "testSha256": {
+      ".github/scripts/issue107-runtime-auth-catalog.test.cjs": "7b059cb71a6535236b522b6f7eaf14653ea3bbc4a1e51e5cf041b039ef15316c",
+      ".github/scripts/issue123-v17-catalog.test.cjs": "668606d81239f3cd833bbe5fa459be6ee68504ad6b6b7d5c26463689727d0a3c",
+      ".github/scripts/v19-review-release-catalog.test.cjs": "9601e0f73016a68c021b023b7313b95fd86aa27e32eeaacff0ec818f95609c49"
+    },
+    "mutations": [
+      {
+        "mutation": "guard_omits_pipeline_release_completion_py",
+        "sourcePath": "deploy/pipeline/publish_manifest.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (100.397299ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (107.01119ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (124.388801ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (117.586191ms)",
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (100.397299ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (107.01119ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (124.388801ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (117.586191ms)"
+        ]
+      },
+      {
+        "mutation": "guard_omits_pipeline_transition_orchestrator_py",
+        "sourcePath": "deploy/pipeline/publish_manifest.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (76.295364ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (88.119801ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (88.956433ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (106.449601ms)",
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (76.295364ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (88.119801ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (88.956433ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (106.449601ms)"
+        ]
+      },
+      {
+        "mutation": "guard_omits_pipeline_approval_gate_py",
+        "sourcePath": "deploy/pipeline/publish_manifest.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (65.391561ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (85.667058ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (98.391217ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (102.276707ms)",
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (65.391561ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (85.667058ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (98.391217ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (102.276707ms)"
+        ]
+      },
+      {
+        "mutation": "guard_omits_pipeline_release_pipeline_py",
+        "sourcePath": "deploy/pipeline/publish_manifest.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (72.342009ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (90.888362ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (92.517669ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (88.099071ms)",
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (72.342009ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (90.888362ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (92.517669ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (88.099071ms)"
+        ]
+      },
+      {
+        "mutation": "guard_omits_transition-approval_json",
+        "sourcePath": "deploy/pipeline/publish_manifest.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (69.084148ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (90.73875ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (91.881356ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (87.154874ms)",
+          "\u2716 RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog (69.084148ms)",
+          "\u2716 RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose (90.73875ms)",
+          "\u2716 VC02 current publisher accepts exactly V1 through V18 with independent SQL CRC and both inventory fingerprints (91.881356ms)",
+          "\u2716 V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints (87.154874ms)"
+        ]
+      },
+      {
+        "mutation": "readonly_data_guard_removed",
+        "sourcePath": "deploy/pipeline/run-approved-release.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 V19R09 current packages refuse every omitted pipeline dependency and readonly API data with refreshed archive hashes (790.195389ms)",
+          "\u2716 V19R09 current packages refuse every omitted pipeline dependency and readonly API data with refreshed archive hashes (790.195389ms)"
+        ]
+      },
+      {
+        "mutation": "legacy18_forced_to_new23",
+        "sourcePath": "deploy/pipeline/run-approved-release.py",
+        "detected": true,
+        "validBehavioralRun": true,
+        "exitCode": 1,
+        "failedCases": [
+          "\u2716 V19R08 offline packages accept exact historical18 and current19 but reject missing SQL or stale hashes even after repacking (154.98759ms)",
+          "\u2716 V19R08 offline packages accept exact historical18 and current19 but reject missing SQL or stale hashes even after repacking (154.98759ms)"
+        ]
+      }
+    ],
+    "allDetected": true,
+    "sharedOriginalsUnchanged": true
+  },
+  "guardCompatibilityCount": 23,
+  "historical18ArchiveConfirmed": {
+    "inventoryCount": 18,
+    "newPipelineDependenciesAbsent": true,
+    "readonlyDataAbsent": true,
+    "originalHashChecked": true
+  },
+  "SQLChecksumsOrNegativeCasesWeakened": false,
+  "approvalDisabledRulesPendingZeroAssertionsChanged": false,
+  "operatingOrPaidProviderCalls": 0,
+  "commitsOrRemoteWrites": 0
+}

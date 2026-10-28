@@ -1,5 +1,18 @@
 # meet-me-server Implementation Plan
 
+## Issue #154 — 승인 전환 자동화와 실제 배포 완료 검증 (2026-10-28 UTC)
+
+- [x] `[AGENT]` 기존 이슈와 현재 main/develop·열린 PR을 읽고 중복 없는 #154를 생성했다. 깨끗한 develop에서 `git pull --ff-only origin develop`을 통과한 뒤 `fix/154-cicd-completion`을 분기했다. 내 모임·웹·운영 AI 작업은 다른 담당과 분리한다.
+- [x] `[AGENT]` 독립 테스트 설계자가 완료 증명과 규칙 전환의 공개 계약을 고정하고 행동 skeleton의 유효 RED를 보존했다. 완료 증명의 runtime·전체 DB·공개 API·규칙 원래 상태·명령 종료 조건 21개 테스트는 첫 GREEN을 통과했다.
+- [x] `[AGENT]` 일반 main 배포 자동 완결, 특별 전환의 pipeline 승인 후 자동 계속, UNKNOWN·규칙 복원·중복 실행 금지와 안전한 로그/요약을 구현했다. 원본 SQL·host fence·잠금과 역사 archive 검증을 유지하고 현재 실행 의존성만 독립 검토로23개에 맞췄다. readonly API 기대 데이터는 실제 native 명세와 비교하고 archive에 묶었다.
+- [x] `[AGENT]` 원본 commit guard의 ktlintCheck·assemble·test exit0, 265 suites/2245건 중2241 PASS·기존4 SKIP·실패/오류0, 입력571개 전후 동일을 확인했다. 배포 Python304·Node172, 독립 신규 경계200·최종 감사 FI55/55를 통과했고 미해결 P1/P2는 없다. 실제 source package/publisher smoke도 mock 전송으로 통과했다.
+- [ ] `[AGENT]` 검증한 source tree를 커밋·게시하고 이슈154를 연결한 PR·정확한 원격 CI를 확인한다. source 게시·운영 적용을 구분한다. Commit/PR: 동일 커밋 예정.
+- [x] `[USER]` 기존 두 규칙에 한정한 IAM EnableRule/DisableRule와 새 보호 환경의 기존 reviewer·main-only·관리자 우회 금지·self-review 허용을 구체 승인했다. 기존 production과 OIDC 신뢰는 유지한다.
+- [x] `[SHARED]` 개인 PC 담당이 두 규칙에 한정한 `ManageMeetMeCredentialRefreshRules`와 새 승인 환경을 적용·재조회했다. 원래 5개 IAM statement·OIDC·기존 production은 보존했고 두 규칙은 ENABLED이다. 확인된 환경·reviewer ID만 비밀 없는 gate policy에 반영했다. Cloud의 보안 설정 중복 적용은 없으며 미구성 환경을 참조하지 않는 회귀도 유지한다.
+- [ ] `[SHARED]` 앞선 서버 입력 오탐 수정 이후 부모 작업과 통합·운영 순서를 조율하여 main 승격·릴리스·실제 runtime/DB/API·규칙 복원까지 검증한다. develop 통합으로 다른 main 승격에 섞이지 않게 조율한다. 특정 PR review APPROVE는 별도 행동 승인이 있을 때만 수행한다.
+
+아래 기존 항목은 각 게시 시점의 이력이다. #154 구현·검증·운영 적용 여부는 이 절과 해당 PR의 정확한 SHA/CI 근거로 구분한다. 신규 비밀값·원본 운영 로그·실사용자 데이터는 기록하지 않는다.
+
 ## #151 계정별 내 모임 목록 확장 (2026-10-28)
 
 - [USER 2026-10-28 14:11 UTC] 검증된 서버 API와 대응 웹의 커밋·원격 게시 → PR/필수 CI → develop/main 병합 → 운영 배포를 승인했다. 서버 API를 먼저 배포한다. main 병합 전 부모에게 진행 중인 AI 운영전환 완료를 확인해 배포를 직렬화하며 특정 PR review APPROVE는 별도 행동 승인 없이 실행하지 않는다. 기존 보안·DB 보존 정책과 배포 guard는 유지한다.
