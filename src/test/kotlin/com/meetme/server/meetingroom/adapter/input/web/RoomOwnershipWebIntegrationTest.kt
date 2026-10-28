@@ -434,7 +434,7 @@ class RoomOwnershipWebIntegrationTest {
         val result =
             mvc
                 .perform(
-                    get("/api/account/rooms"),
+                    get("/api/account/rooms").param("role", "HOST"),
                 ).andExpect(status().isOk)
                 .andExpect(jsonPath("$.rooms.length()").value(3))
                 .andReturn()

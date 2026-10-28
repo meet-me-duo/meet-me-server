@@ -1,5 +1,22 @@
 # meet-me-server Implementation Plan
 
+## #151 계정별 내 모임 목록 확장 (2026-10-28)
+
+- [USER 2026-10-28 14:11 UTC] 검증된 서버 API와 대응 웹의 커밋·원격 게시 → PR/필수 CI → develop/main 병합 → 운영 배포를 승인했다. 서버 API를 먼저 배포한다. main 병합 전 부모에게 진행 중인 AI 운영전환 완료를 확인해 배포를 직렬화하며 특정 PR review APPROVE는 별도 행동 승인 없이 실행하지 않는다. 기존 보안·DB 보존 정책과 배포 guard는 유지한다.
+
+- [x] `[AGENT]` 최신 main `84324bb11afd7b69316b151c580b90f3c8729b4d`를 확인하고 별도 `feature/account-room-history` 브랜치를 만들었다. 초기 로컬 구현 단계에서는 원격 Issue/PR 생성·게시와 develop/main 병합·운영 배포를 하지 않았고 기존 AI·리뷰 통합 이력과 운영 전환 설정을 보존했다.
+- [x] `[AGENT]` 사용자 확정: 주최·참여 전체 기본, HOST/MEMBER 필터, 모임 생성일 기준 KST 기간, 모임 이름 검색, 기존 30일 보관·삭제 유지. CLOSED는 마감 시각, COLLECTING은 생성 시각 기준이며 삭제 경계를 모두 생성일로 변경하지 않는다.
+- [x] `[AGENT]` 파라미터·역할·KST 경계·커서·30일 경계를 [API 계약](docs/ACCOUNT_ROOM_HISTORY_API.md)에 정리했다. 계정 조건·명시 claim·게스트 비자동귀속·CSRF 계약을 유지한다.
+- [x] `[AGENT]` 독립 HTTP/PostgreSQL 새 8개는 요구사항 단언 실패 RED, 기존 소유권 17개는 PASS(오류·skip 0)를 확인했다. 테스트 지문과 source revision을 `.tdd/red/account-room-history.json`, 원본을 로컬 `.codex/tdd-evidence/account-room-history.log`에 보존했다. 이후 port/service/JDBC/controller와 Swagger를 확장해 새 8+기존 17+no-store 1=26개 GREEN을 확인했다.
+- [x] `[AGENT]` 독립 검토 P1/P2=0. 계정 조건 우회·CLOSED 30일 경계 제외·같은 시각 UUID 커서 반전 3종을 모두 단언으로 탐지하고 매회 정확 복원 뒤 새 8개를 통과했다. RED 테스트와 생산 코드 지문은 동일하며 요약 JSON 스키마도 통과했다.
+- [x] `[AGENT]` JDK17/Gradle9.7.1의 `ktlintCheck assemble test` exit0. 264 suites / 2244 tests 중 2240 PASS·기존4 SKIP·실패/오류0이며 원본 로그와 XML을 로컬 보존했다. 실제 생성 OpenAPI의 query 타입·기본값·역할 enum·날짜·nullable 커서·오류 응답도 통과했고 source/test 지문이 동일하다. [검증 기록](docs/verification/account-room-history-20261028.md)에 결과와 미확인 범위를 구분했다.
+- [x] `[AGENT]` 열린 이슈·PR을 먼저 확인해 중복 기능이 없음을 확인하고 추적 [이슈151](https://github.com/meet-me-duo/meet-me-server/issues/151)을 생성했다. native OpenAPI를 `docs/openapi/account-room-history.openapi.json`에 동일 바이트로 포함했다. DB migration·스키마·release catalog·배포 guard·권한/보존 설정 변경0이다.
+- [x] `[AGENT]` 저장소 원본 `.codex/hooks/tdd_guard.py`를 실제 commit 이벤트로 실행해 exit0을 확인했다. 이전 fresh 전체2244 결과를 재사용할 수 있는 동일 생산 코드·테스트 상태이며 guard·빌드 파일·보호규칙을 수정하지 않았다.
+- [ ] `[AGENT]` 원본 commit guard로 필수 gate를 확인한 뒤 검증된 구현·문서·OpenAPI를 커밋·게시하고 이슈151을 연결한 develop PR과 정확 HEAD CI를 확인한다. Commit/PR: 동일 커밋 예정.
+- [ ] `[SHARED]` 보호조건을 충족한 develop 통합 후, 부모의 AI 운영전환 완료 확인을 받아 main 승격·서버 API 배포·운영 OpenAPI를 확인한다. 같은 승인 범위의 승격마다 사용자 재승인을 요구하지 않는다.
+
+최종 갱신: 2026-10-28. 구현·로컬 검증 완료 후 사용자 게시·승격·배포 승인을 받았고 원격 이슈151을 연결했다. 커밋·PR/CI를 준비하며 main 승격·운영 배포는 AI 전환 완료 확인 전 대기한다. 실제 OAuth·브라우저·운영 성공은 별도다.
+
 ## 2026-10-28 AI·리뷰 비운영 통합 준비
 
 - [x] `[AGENT]` AI 원본 feature `5e60b4958f9fb8b7d2a487890dd8c6b39cec3d89`와 Draft PR146, 정확 HEAD CI40636001470의 Quality Gate·ARM64 이미지 및 Lifecycle 성공을 보존했다.
