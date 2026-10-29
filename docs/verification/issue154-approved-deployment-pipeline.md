@@ -34,3 +34,11 @@
 운영 읽기 대조에서 공개 Actuator 경로가404인 반면 선언된 Nginx healthz가 정확한200·ok개행이라는 차이를 발견했다. 이전 합성 fixture가 잘못된 공개 경로를 가정했다. 독립 테스트를 실제 공개 계약으로 고정하고 원본·SHA·supersession을 보존했으며 유효 RED28개에서 실패 assertion38개·설정 오류0을 확인했다. 또한 최종 host 증명과 규칙 복원이 unhealthy/starting/미확인 앱을 허용하는 결함을 재현하고, 해당 최종 경로에만 fresh healthy 조건을 추가했다. 앱이 중지된 maintenance-resume 사전점검은 유지한다.
 
 보완 후 전체 배포 Python311/311·Node172/172·원본 commit guard를 통과했다. 독립94개 GREEN·격리 결함 주입15/15탐지이며 미해결 P1/P2는 없다. 수정한 실제 공개 검증 함수도 기존 서비스에 읽기 전용으로 실행해 통과했다. 이는 새 릴리스의 runtime·DB·운영 전환 증명이 아니다. [보완 최종 근거](../../.tdd/verification/issue154-public-health-final.json)와 [독립 검토](../../.tdd/reviews/issue154-public-health-independent-review.json)를 따른다.
+
+## 실제 승인 전환 후 규칙 제어 응답 보완
+
+배포40795593214는 실제 보호 환경 승인 후 전환 전제조건에서 실패했다. 전환·최종 로그는 runtime NOT_ATTEMPTED, rulesRestored true, pendingCommands0이며 최종 결과는 RECOVERY_REQUIRED다. 같은 작업을 재실행하지 않았다. AWS 공식 EnableRule/DisableRule의 정상 출력 없음 계약을 JSON 오류로 거부하는 코드 결함을 재현했다. 실제 호출·journal·lock 대조는 인증된 읽기 확인 전까지 원인 상관관계의 미확인 범위로 남긴다.
+
+기존 경계 검사가 첫 수정의 위치 오류를 탐지하여 읽기 전용 preflight를 원본으로 복구하고 승인된 전환 모듈에만 응답 처리·안전 진단을 배치했다. 기존 검사는 수정하지 않았다. 새 독립 RED19개를 고정한 뒤 전체 Python330·Node172·원본 commit guard, 독립 원본 Python50·Node29 및 격리 결함 주입21/21을 통과했다. 빈 읽기 응답·오류 종료·타임아웃·예상 밖 출력은 계속 실패하며 성공 응답도 정확한 규칙 재조회를 대신하지 않는다. 최초 수정의 이력과 판정 철회는 보존했다.
+
+[최종 검증](../../.tdd/verification/issue154-aws-control-final.json)과 [독립 검토](../../.tdd/reviews/issue154-aws-control-transport-independent-review.json)를 따른다. 보완의 원격 CI·운영 반영은 별도이며, 이전 작업 종료와 현재 규칙·lock을 확인하기 전 새 runtime 전환을 시작하지 않는다. 입력→분석→결과 로직은 포함하지 않는다.

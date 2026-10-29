@@ -38,6 +38,8 @@ IAM의 `ManageMeetMeCredentialRefreshRules`는 기존 `meet-me-production-db-cre
 
 ## 중단과 복구
 
+승인된 전환 모듈에서만 EventBridge의 정확한 EnableRule/DisableRule에 정상 종료·빈 stdout의 응답을 허용한다. 공통 읽기 전용 preflight는 원본을 유지하고, 전환 모듈이 없는 역사 archive는 기존 읽기 처리로 계속한다. 이는 전송 응답 확인이며 실제 규칙 상태·target 재조회를 대체하지 않는다. 실패 진단은 해당 두 명령과 허용된 이유 enum만 남기며 argv·stderr·원본 응답은 출력하지 않는다.
+
 명령 전송 전에 durable intent를 기록하고 받은 commandId를 보존한다. 동일 operation의 새 실행이 원래 owner를 임의로 탈취하거나 lease 시간만으로 재제출하지 않는다. 원래 DISABLED였던 규칙을 ENABLED로 바꾸지 않는다.
 
 실패 후 `finally: enable both`, 구 image 자동 재기동·rollback, Flyway history 삭제/수정은 하지 않는다. 안전한 READY와 실제 명령 종료를 확인한 경우에만 원래 규칙 상태로 복원할 수 있다. 공개 API 확인만 실패했다면 host가 안전한 경우 규칙은 복원할 수 있지만 결과는 DEPLOYED_UNVERIFIED이며 완료 false다. 복원 실패도 RESTORATION_REQUIRED로 남긴다.

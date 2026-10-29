@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import tempfile
 import tarfile
 import time
@@ -26,6 +27,43 @@ MARKER = "MEETME_DEPLOYMENT_RESULT_V1 "
 def _require(condition):
     if not condition:
         raise ValueError("UNTRUSTED_PIPELINE_RESULT")
+
+
+def aws_call(read_fallback, service, operation, *args):
+    """Decode the two no-output controls here; keep readonly transport unchanged.
+
+    Successful transport is only an acknowledgement. The owning adapter must
+    still validate authority/targets and read back the exact resulting states.
+    """
+    if service != "events" or operation not in ("enable-rule", "disable-rule"):
+        return read_fallback(service, operation, *args)
+    try:
+        command = ["aws", "--region", os.environ["AWS_REGION"], "--output", "json", service, operation, *args]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=25)
+        if result.returncode:
+            reason = "AWS_DENIED_OR_FAILED"
+        elif type(result.stdout) is not str or type(result.stderr) is not str:
+            reason = "AWS_UNEXPECTED_OUTPUT"
+        elif result.stderr != "":
+            reason = "AWS_UNEXPECTED_STDERR"
+        elif not result.stdout.strip():
+            return {"status": "success", "data": {}}
+        else:
+            data = json.loads(result.stdout)
+            if type(data) is dict and not data:
+                return {"status": "success", "data": {}}
+            reason = "AWS_UNEXPECTED_OUTPUT"
+    except subprocess.TimeoutExpired:
+        reason = "AWS_TIMEOUT"
+    except json.JSONDecodeError:
+        reason = "AWS_INVALID_JSON"
+    except (OSError, UnicodeError):
+        reason = "AWS_EXECUTION_FAILED"
+    except Exception:
+        reason = "AWS_UNAVAILABLE"
+    print("MEETME_AWS_CALL_FAILURE_V1 " + _canonical({
+        "service": "events", "operation": operation, "reason": reason}).decode("utf-8"))
+    return {"status": "unavailable", "reason": reason}
 
 
 def _module(name):

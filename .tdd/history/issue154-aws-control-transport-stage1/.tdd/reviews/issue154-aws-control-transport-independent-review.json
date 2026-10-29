@@ -1,0 +1,38 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "reviewedAt": "2026-10-29T01:04:50.944182+00:00",
+  "role": "Independent test designer/auditor; implementation by parent",
+  "sourceRevision": "284f8e2158c9536cbf71b519df46bee3b9d05ac5",
+  "reviewedSourceHashes": {
+    "deploy/preflight/run-preflight.py": "2cb84e56986ce06435dbb7c9ad05ae0b8ee1f17cada78421a4eb0637004acc44",
+    "deploy/pipeline/run-approved-release.py": "7117c94db9878291fd467d9f4ff39af6bee9bcd0e2c152b9ff5e29da791a7094",
+    "deploy/pipeline/release_pipeline.py": "ec3cb03a0d03fa5c0b7227888a77d0af9cb3718c6953ff3561396f0cd52ffff8",
+    "deploy/pipeline/transition_orchestrator.py": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f"
+  },
+  "frozenTestSha256": "ae280e3b4cf0558dc6b1b4a85273cfb3f3789ad855ea1654b5954a3fa2d18525",
+  "redReceipt": ".tdd/red/issue154-aws-control-transport.json",
+  "verificationReceipt": ".tdd/verification/issue154-aws-control-transport-independent-fi.json",
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "reviewedBehavior": [
+    "Only exact events enable-rule/disable-rule accepts documented no-output success, requiring zero exit, empty stderr and empty/whitespace stdout; exact JSON empty-object remains compatible.",
+    "Other metadata and unrelated writes keep JSON parsing; empty or malformed metadata fails. Nonzero, timeout and execution failures cannot fake success.",
+    "Unexpected stderr or structured write bodies fail with bounded reason enums. Driver prints exactly one canonical diagnostic for the two fixed write operations then retains generic ValueError. No argv, name, stdout, stderr or arbitrary exception/reason text is printed.",
+    "Exact two-rule, target, role, document, instance, ownership and approval checks remain enforced. Pause failure is restored through readback; an uncertain SSM submission remains UNKNOWN and is not repeated."
+  ],
+  "validation": {
+    "focusedGreen": 16,
+    "unchangedOriginalRegressions": 50,
+    "faultInjectionsDetected": 15,
+    "allMutantsHadAssertionFailuresWithoutErrors": true,
+    "restoredFull16AfterEveryMutation": true,
+    "activeSourceUntouchedByAuditor": true,
+    "testHashMatchesChronologicalRed": true
+  },
+  "limitations": [
+    "Documented AWS CLI contract reproduced locally. Actual failed rollout cause still requires authenticated read-only journal/rule/CloudTrail correlation; no real rollout, recovery, rerun or production completion demonstrated."
+  ],
+  "scope": "No original tests weakened; no business logic, provider, prompt, input-analysis-result or PR158 changes by auditor; no commits, pushes, PRs, AWS calls, security/environment changes or workflow reruns by auditor."
+}

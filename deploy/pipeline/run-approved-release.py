@@ -208,7 +208,11 @@ def _verify_package(archive_path, manifest):
 
 
 def aws_call(service, operation, *args):
-    return _load("approved_preflight_aws", BASE / "preflight/run-preflight.py").aws_call(service, operation, *args)
+    reader = _load("approved_preflight_aws", BASE / "preflight/run-preflight.py").aws_call
+    controller = BASE / "pipeline/release_pipeline.py"
+    if controller.is_file():
+        return _load("approved_pipeline_aws", controller).aws_call(reader, service, operation, *args)
+    return reader(service, operation, *args)
 
 
 def _aws(service, operation, *args):
