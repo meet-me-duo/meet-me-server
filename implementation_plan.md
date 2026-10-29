@@ -1,5 +1,14 @@
 # meet-me-server Implementation Plan
 
+## 운영자 메뉴 capability와 두 계정 설정 (2026-10-29 UTC)
+
+- [x] `[USER]` 승인된 운영자 전용 계정 메뉴와 본인 외 확인된 계정 한 개의 추가 허용 요청을 확인했다. 후속 지시로 검증된 서버 변경의 게시·PR·CI·develop/main 통합과 공식 artifact 준비까지 승인받았다. 실제 계정 설정은 PC 담당과 조율하며 보호 승인을 대신하지 않는다.
+- [x] `[AGENT]` 깨끗한 develop을 ff-only로 9e5aa38까지 갱신한 뒤 feature/operator-capabilities-two-accounts를 분리했다. main445ed47c와 tree가 같으며 보류 분석·UI 실험을 포함하지 않는다. 기존 단일 계정 release40891524010의 DEPLOYED_VERIFIED 증거는 로컬 인계 기록에 보존한다.
+- [x] `[AGENT]` 독립 테스트 설계/RED 이후 기존 운영 인가를 공유하는 계정 capability와 엄격한 1~2 UUID 전달을 구현했다. 관련 인증·인가·Spring/native OpenAPI 39 PASS, renderer 90 PASS, Kotlin 결함 주입 7/7·renderer 9/9 탐지와 정확한 원본 복원을 확인했다. JWT·DB Role·SQL 변경은 없다.
+- [x] `[AGENT]` 실제 OpenAPI/배포 공개 계약 일치와 독립 검토 P1/P2 없음, Python 전체 371 PASS를 확인했다. Node 전체 386건 중 384 PASS·JDK PATH 누락에 따른 javac ENOENT 2건은 해당 파일을 올바른 JDK 환경에서 다시 실행해 21/21 PASS로 확인했다. 테스트 단언·timeout을 변경하지 않았다. 전체 ktlintCheck·assemble·test는 10분33초 SUCCESS, 271 suites/2272건 중2268 PASS·기존4 SKIP·실패/오류0이다. 실행환경 연결 단절 후 기존 완료 로그와 XML을 확인했으며 테스트를 중복 실행하지 않았고 저장한20파일 지문도 일치했다.
+- [ ] `[AGENT]` 새 공개 이슈 생성은 명시 승인 부족과 기존 #110 관련성 사유로 자동 승인 검토에서 거절됐다. 미생성 확인·재시도 0이며 #110 open/#167 closed를 변경하지 않았다. 저장소는 열린 이슈의 Closes 연결과 develop 병합 시 자동 종료를 요구하므로 단순 Refs만으로 PR을 진행하지 않는다. 새 이슈에 대한 구체 승인 또는 기존 이슈 수명주기 결정 전 원격 PR·CI·병합은 대기한다.
+- [ ] `[SHARED]` 검증된 호환 renderer 이후 PC의 안전한 두 계정 설정과 공식 runtime 반영을 조율한다. 실제 식별자는 코드·문서·로그에 넣지 않는다.
+
 ## 운영자 runtime 설정 전달 준비 (2026-10-29 UTC)
 
 - [x] `[USER]` 특정 Google 계정 하나의 운영자 허용 및 기능 활성화 승인을 확인했다. 최초 Cloud 준비·diff 보고 후 최소 변경의 전체 검사·feature 커밋/게시·PR/정확 CI 및 develop/main 통합까지 위임받았다. 실제 UUID·운영 parameter 입력은 PC 담당과 분리하며 보호 승인을 대신하거나 전환을 선행하지 않는다.

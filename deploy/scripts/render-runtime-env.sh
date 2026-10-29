@@ -144,7 +144,10 @@ try:
     if kind=="enabled":
         assert value in ("true","false")
     else:
-        assert kind=="operator" and re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",value)
+        assert kind=="operator"
+        identifiers=value.split(",")
+        assert 1<=len(identifiers)<=2 and len(set(identifiers))==len(identifiers)
+        assert all(re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",identifier) for identifier in identifiers)
     print(value)
 except Exception:
     sys.exit(72)

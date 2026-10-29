@@ -1,0 +1,37 @@
+{
+  "workItem": "operator-two-account-renderer",
+  "reviewedAt": "2026-10-29T15:20:35.719898+00:00",
+  "status": "INDEPENDENT_REVIEW_PASSED_LOCAL_SCOPE",
+  "sourceRevision": "9e5aa38b54136813d4096d7e157d4580e2c70ca0",
+  "approvedSourceHashes": {
+    "deploy/scripts/render-runtime-env.sh": "844838497db4413bc571a68cd855fe905c7667b74964b95cd760e08e121f49be"
+  },
+  "frozenTestHashes": {
+    "deploy/tests/runtime-operations-env.test.cjs": "f237f45741c6ce8e79a9d5eeefaf3d2c7c0ac9381134a5aea4d20b5ba4b17bb5"
+  },
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "reviewedBoundaries": [
+    "Production diff replaces only the single-value regex assertion with split, one-or-two bound, uniqueness and all-element canonical validation.",
+    "Exact original value is emitted without trimming, filtering, dropping or reordering accounts. Empty, duplicate, excess and malformed entries fail before env replacement.",
+    "Default OFF, required secret lookup, raw typed JSON checks, atomic0600 output, cleanup and no-log behavior are unchanged.",
+    "Only obsolete two-account refusal expectation is replaced; all other historical protections remain and new malformed-list cases strengthen coverage."
+  ],
+  "validation": {
+    "redTests": 90,
+    "redAssertionFailures": 2,
+    "redSetupErrors": 0,
+    "finalGreen": 90,
+    "mutantsDetected": 9,
+    "mutantSetupErrors": 0
+  },
+  "verificationReceipt": ".tdd/verification/operator-two-account-renderer-fi.json",
+  "limitations": [
+    "Renderer-only audit. Kotlin capability, actual Spring binding, broad regression and native OpenAPI verification are separate checks.",
+    "No operating parameter registration, authenticated real-user access verification, remote publication or deployment performed."
+  ],
+  "operatingChangesPerformed": false,
+  "rawLogsPublished": false
+}

@@ -1,0 +1,29 @@
+{
+  "workItem": "operator-two-account-renderer",
+  "sourceRevision": "9e5aa38b54136813d4096d7e157d4580e2c70ca0",
+  "recordedAt": "2026-10-29T15:14:33.286863+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-operations-env.test.cjs",
+      "sha256": "f237f45741c6ce8e79a9d5eeefaf3d2c7c0ac9381134a5aea4d20b5ba4b17bb5"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "3e63b6cc7c43a3e12e26d2e898765fda88361c8545afcb49caa270504fe20bfd"
+    }
+  ],
+  "command": "node --test deploy/tests/runtime-operations-env.test.cjs",
+  "testsRun": 90,
+  "failureCount": 2,
+  "errorCount": 0,
+  "passingTests": 88,
+  "failedTests": [
+    "OP11 two distinct canonical UUIDs render exactly in supplied order forward",
+    "OP11 two distinct canonical UUIDs render exactly in supplied order reverse"
+  ],
+  "expectedFailureClassification": "Original renderer rejects two distinct canonical UUIDs. Forward and reverse exact-delivery cases fail status assertion 1 != 0.",
+  "rawLogSha256": "a5f1678f5b30dd4b1e8d400617238a8a9c0055b3de1f2731790962449430678c",
+  "rawLogsPublished": false
+}
