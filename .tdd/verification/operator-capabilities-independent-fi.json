@@ -1,0 +1,214 @@
+{
+  "workItem": "operator-capabilities",
+  "reviewer": "operator_capability_tests",
+  "recordedAt": "2026-10-29T15:36:08.196579+00:00",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "sha256": "fdb893ce392cc7348c44df61d72f0f67a2d374965de779474221efbc9bcf4ad0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorAccessPolicy.kt",
+      "sha256": "2422d15cbbdbe360dbe2c3b29f79591cde52dad0d6a18886acd455030d63b3f9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "sha256": "a9fc5f76b7c8540f11aaf8b93500bbf555cc88b31ca5fb43136cc3ed5945df93"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthOperatorCapabilityContractTest.kt",
+      "sha256": "42e2e47c13e37edc3efe2a776574c60714a542fba62b55aad44a1c93e29a82a1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorCapabilitySpringWiringTest.kt",
+      "sha256": "59f3293d45634d10339325948a4a63bfc0a211a448a6af1fc87e9913909de90e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRuntimeEnvironmentBindingTest.kt",
+      "sha256": "fed8bf30774596f723bd7bc74a41ab7730cf49862bdaed4a5568de19aefab018"
+    }
+  ],
+  "mutants": [
+    {
+      "id": "M1-ignore-enable",
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorAccessPolicy.kt",
+      "mutantSha256": "cc4566cdf9accdc638ab1f616a764fde5951f936bb54790f234876c4307c5d6d",
+      "expectedTestPrefix": "OC02",
+      "detected": true,
+      "tests": 14,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OW02 disabled configured graph denies query and capability for listed accounts()",
+        "OC04 me exposes explicit false for outsiders disabled and empty allowlist()",
+        "OC08 refresh with disabled or empty policy remains authenticated but not authorized()",
+        "OC02 disabled and empty policy never grant even an authenticated identity()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M1-ignore-enable.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    },
+    {
+      "id": "M2-ignore-membership",
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorAccessPolicy.kt",
+      "mutantSha256": "904938acd8fe42279abb6e4065006ce7d2d3adf4b3ad160f2ce149ef02b0a7ad",
+      "expectedTestPrefix": "OC01",
+      "detected": true,
+      "tests": 14,
+      "failures": 6,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OW01 real Spring graph grants both configured accounts and denies third with unchanged audit semantics()",
+        "OC07 refresh never inherits an operators capability for an unlisted rotated account()",
+        "OC04 me exposes explicit false for outsiders disabled and empty allowlist()",
+        "OC08 refresh with disabled or empty policy remains authenticated but not authorized()",
+        "OC01 enabled policy grants each approved identity and denies outsider and anonymous()",
+        "OC02 disabled and empty policy never grant even an authenticated identity()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M2-ignore-membership.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    },
+    {
+      "id": "M3-first-account-only",
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorAccessPolicy.kt",
+      "mutantSha256": "a262e52f8fb33326d50c4cc4f8cfe42872ee446af18b727d3fe24681ed05c8d7",
+      "expectedTestPrefix": "OC01",
+      "detected": true,
+      "tests": 14,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OW01 real Spring graph grants both configured accounts and denies third with unchanged audit semantics()",
+        "OC03 me exposes true for either approved account and only that accounts safe fields()",
+        "OC01 enabled policy grants each approved identity and denies outsider and anonymous()",
+        "OC06 refresh computes capability for rotated principal independently of current bearer identity()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M3-first-account-only.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    },
+    {
+      "id": "M4-refresh-wrong-principal",
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "mutantSha256": "71d60f98b1b992680923e901e058a32c2d83be0944c9024346bbbe02e188baa7",
+      "expectedTestPrefix": "OC06",
+      "detected": true,
+      "tests": 14,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OC07 refresh never inherits an operators capability for an unlisted rotated account()",
+        "OC06 refresh computes capability for rotated principal independently of current bearer identity()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M4-refresh-wrong-principal.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    },
+    {
+      "id": "M5-cache-protected-account",
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "mutantSha256": "1de115ed11594f126463393849b25bae44c7cbd0c3d1bb119016dd16a82e6ef1",
+      "expectedTestPrefix": "OC03",
+      "detected": true,
+      "tests": 14,
+      "failures": 5,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OC03 me exposes true for either approved account and only that accounts safe fields()",
+        "OC07 refresh never inherits an operators capability for an unlisted rotated account()",
+        "OC04 me exposes explicit false for outsiders disabled and empty allowlist()",
+        "OC06 refresh computes capability for rotated principal independently of current bearer identity()",
+        "OC05 legacy controller construction defaults to false without changing account identity()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M5-cache-protected-account.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    },
+    {
+      "id": "M6-bypass-query-policy",
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "mutantSha256": "056045a3608b205c15858314f28a44453a3927f66eaaf700b7f19aa45fa9ebcc",
+      "expectedTestPrefix": "OW01",
+      "detected": true,
+      "tests": 14,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OW01 real Spring graph grants both configured accounts and denies third with unchanged audit semantics()",
+        "OW02 disabled configured graph denies query and capability for listed accounts()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M6-bypass-query-policy.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    },
+    {
+      "id": "M7-bypass-allowed-audit",
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "mutantSha256": "e5d0dff2d837d950509ed506260b4ddf763a751020ccde5a6dd0a3d079a6f811",
+      "expectedTestPrefix": "OW03",
+      "detected": true,
+      "tests": 14,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "failedTests": [
+        "OW01 real Spring graph grants both configured accounts and denies third with unchanged audit semantics()",
+        "OW03 positive capability never bypasses fail closed protected query audit()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "exitCode": 1,
+      "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/M7-bypass-allowed-audit.log",
+      "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorCapabilitySpringWiringTest"
+    }
+  ],
+  "sourceRestoredExactly": true,
+  "testsUnchanged": true,
+  "scope": "Local synthetic tests. No operating invocation or account changes."
+}

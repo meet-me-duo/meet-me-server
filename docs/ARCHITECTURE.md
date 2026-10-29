@@ -694,4 +694,10 @@ claim은 숨겨진 모임도 SUPPRESSED로 소비한다. 같은 UUID의 PENDING 
 
 ### 운영자 runtime 설정 전달
 
-OAuth 필수 release의 공식 renderer는 선택적 `operations-enabled` 설정을 기본 OFF로 전달하고, 활성화 시에만 SecureString의 정규 UUID 하나를 기존 `OperatorQueryProperties`로 전달한다. 실제 accountId 인가·기본 거부·감사 경계는 변경하지 않는다. UUID를 release artifact나 로그에 포함하지 않으며 잘못된 성공 응답은 원자 교체 전에 거부한다. 설정 이름·실패 의미·승인된 배포 절차는 [운영자 runtime 계약](../deploy/OPERATIONS_RUNTIME.md)을 따른다.
+OAuth 필수 release의 공식 renderer는 선택적 `operations-enabled` 설정을 기본 OFF로 전달하고, 활성화 시에만 SecureString의 정규 UUID 1~2개를 기존 `OperatorQueryProperties`로 전달한다. 실제 accountId 인가·기본 거부·감사 경계는 변경하지 않는다. UUID를 release artifact나 로그에 포함하지 않으며 잘못된 성공 응답은 원자 교체 전에 거부한다. 설정 이름·실패 의미·승인된 배포 절차는 [운영자 runtime 계약](../deploy/OPERATIONS_RUNTIME.md)을 따른다.
+
+### 운영자 메뉴 권한 계약과 두 계정 설정
+
+`OperatorAccessPolicy`는 기존 활성화·accountId 허용 목록 판정을 공유하며 운영 조회 서비스와 계정 HTTP 응답이 같은 조건을 사용한다. `AccountResponse.capabilities.canViewOperations`는 me와 refresh 응답에 동일하게 포함되고 refresh에서는 회전된 세션의 principal을 기준으로 계산한다. 실제 조회의 인증·인가·감사·no-store는 유지하며 메뉴 capability로 보호 경계를 대체하지 않는다.
+
+renderer는 승인된 두 계정을 위해 엄격한 SecureString의 쉼표 구분 UUID 1~2개를 전달하고 기존 한 계정과 OFF 환경에 호환된다. 비정상 목록은 원자 교체 전에 거부한다. account_users/participants 스키마와 JWT에는 변경이 없고 HOST/MEMBER는 계속 방별 권한이다.

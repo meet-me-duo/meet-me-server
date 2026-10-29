@@ -1,0 +1,108 @@
+{
+  "workItem": "operator-capabilities",
+  "reviewer": "operator_capability_tests",
+  "independentTestDesigner": true,
+  "recordedAt": "2026-10-29T15:36:50.109660+00:00",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "sha256": "fdb893ce392cc7348c44df61d72f0f67a2d374965de779474221efbc9bcf4ad0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorAccessPolicy.kt",
+      "sha256": "2422d15cbbdbe360dbe2c3b29f79591cde52dad0d6a18886acd455030d63b3f9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "sha256": "a9fc5f76b7c8540f11aaf8b93500bbf555cc88b31ca5fb43136cc3ed5945df93"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthOperatorCapabilityContractTest.kt",
+      "sha256": "42e2e47c13e37edc3efe2a776574c60714a542fba62b55aad44a1c93e29a82a1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorCapabilitySpringWiringTest.kt",
+      "sha256": "59f3293d45634d10339325948a4a63bfc0a211a448a6af1fc87e9913909de90e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRuntimeEnvironmentBindingTest.kt",
+      "sha256": "fed8bf30774596f723bd7bc74a41ab7730cf49862bdaed4a5568de19aefab018"
+    }
+  ],
+  "p1p2Findings": [],
+  "checks": [
+    "Shared enabled, identity and allowlist predicate remains authoritative for protected queries",
+    "Me uses authenticated principal; refresh uses rotated principal; no role or JWT change",
+    "Account JSON has only id, displayName and one boolean capability; no allowlist data",
+    "Actual Spring injection and exact two-member Set binding tested",
+    "Anonymous, outsider, disabled, invalid Origin and absent refresh credential remain denied",
+    "Positive capability does not bypass protected-query audit failure",
+    "Resolved OpenAPI reference schema and native publication contract match"
+  ],
+  "testDesignRepair": "A bare OpenAPI schema reference has no sibling description in ModelConverters output. Description is asserted on the resolved capability schema; exact fields, reference resolution, boolean type and flag description remain required. Final revised fingerprints were rerun against baseline response + TODO policy skeleton.",
+  "freshRed": {
+    "tests": 20,
+    "failures": 12,
+    "errors": 0,
+    "skipped": 0,
+    "failedTests": [
+      "OW01 real Spring graph grants both configured accounts and denies third with unchanged audit semantics()",
+      "OW03 positive capability never bypasses fail closed protected query audit()",
+      "OW02 disabled configured graph denies query and capability for listed accounts()",
+      "OC03 me exposes true for either approved account and only that accounts safe fields()",
+      "OC07 refresh never inherits an operators capability for an unlisted rotated account()",
+      "OC04 me exposes explicit false for outsiders disabled and empty allowlist()",
+      "OC08 refresh with disabled or empty policy remains authenticated but not authorized()",
+      "OC01 enabled policy grants each approved identity and denies outsider and anonymous()",
+      "OC11 generated account schema describes a minimal boolean capability without operator identities()",
+      "OC02 disabled and empty policy never grant even an authenticated identity()",
+      "OC06 refresh computes capability for rotated principal independently of current bearer identity()",
+      "OC05 legacy controller construction defaults to false without changing account identity()"
+    ],
+    "failureTypes": [
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError",
+      "kotlin.NotImplementedError",
+      "org.opentest4j.AssertionFailedError",
+      "kotlin.NotImplementedError",
+      "org.opentest4j.AssertionFailedError",
+      "org.opentest4j.AssertionFailedError"
+    ],
+    "exitCode": 1,
+    "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/revised-schema-red.log",
+    "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorRuntimeEnvironmentBindingTest --tests *OperatorCapabilitySpringWiringTest"
+  },
+  "green": {
+    "tests": 39,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failedTests": [],
+    "failureTypes": [],
+    "exitCode": 0,
+    "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/revised-schema-green.log",
+    "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorRuntimeEnvironmentBindingTest --tests *OperatorCapabilitySpringWiringTest --tests *AuthHttpSecurityContractTest --tests *OperatorQueryServiceTest --tests *Issue154NativeApiContractPostgresTest"
+  },
+  "faultsDetected": 7,
+  "faultsAttempted": 7,
+  "restoredGreen": {
+    "tests": 39,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failedTests": [],
+    "failureTypes": [],
+    "exitCode": 0,
+    "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/restored-final-green.log",
+    "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorRuntimeEnvironmentBindingTest --tests *OperatorCapabilitySpringWiringTest --tests *AuthHttpSecurityContractTest --tests *OperatorQueryServiceTest --tests *Issue154NativeApiContractPostgresTest"
+  },
+  "sourceRestoredExactly": true,
+  "testsUnchanged": true
+}

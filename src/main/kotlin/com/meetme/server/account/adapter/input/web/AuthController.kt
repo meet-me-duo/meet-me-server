@@ -11,7 +11,9 @@ import com.meetme.server.account.domain.OAuthProvider
 import com.meetme.server.account.domain.RefreshRotation
 import com.meetme.server.config.AccountAuthProperties
 import com.meetme.server.config.AnonymousAccessProperties
+import com.meetme.server.config.OperatorQueryProperties
 import com.meetme.server.shared.adapter.input.web.ApiProblemSchema
+import com.meetme.server.shared.application.service.operations.OperatorAccessPolicy
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -36,13 +38,24 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Collections
 
+@Schema(description = "현재 계정의 화면 접근 권한. 실제 API 인가를 대체하지 않는다")
+data class AccountCapabilitiesResponse(
+    @field:Schema(description = "운영 조회가 활성화되고 현재 계정이 명시적 운영자 허용 목록에 포함된 경우 true")
+    val canViewOperations: Boolean,
+)
+
 @Schema(description = "로그인 계정. 이메일과 공급자 토큰은 포함하지 않는다")
 data class AccountResponse(
     @field:Schema(description = "계정 UUID") val id: String,
     @field:Schema(description = "계정 표시 이름") val displayName: String,
+    @field:Schema(description = "현재 계정에 대해 서버가 확인한 화면 접근 권한")
+    val capabilities: AccountCapabilitiesResponse,
 ) {
     companion object {
-        fun from(principal: AccountPrincipal) = AccountResponse(principal.accountId.toString(), principal.displayName)
+        fun from(
+            principal: AccountPrincipal,
+            canViewOperations: Boolean,
+        ) = AccountResponse(principal.accountId.toString(), principal.displayName, AccountCapabilitiesResponse(canViewOperations))
     }
 }
 
@@ -63,6 +76,7 @@ class AuthController(
     private val properties: AccountAuthProperties,
     private val origins: AnonymousAccessProperties,
     private val clock: Clock,
+    private val operatorAccess: OperatorAccessPolicy = OperatorAccessPolicy(OperatorQueryProperties()),
 ) {
     @GetMapping("/{provider}/start")
     @Operation(summary = "Google 또는 Kakao 로그인 시작")
@@ -150,7 +164,7 @@ class AuthController(
                 AuthResponse(
                     accessToken,
                     clock.instant().truncatedTo(ChronoUnit.SECONDS).plusSeconds(900),
-                    AccountResponse.from(session.principal),
+                    AccountResponse.from(session.principal, operatorAccess.canViewOperations(session.principal.accountId)),
                 ),
             )
     }
@@ -170,12 +184,12 @@ class AuthController(
             content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
         ),
     )
-    fun me(): ResponseEntity<AccountResponse> =
-        headers(HttpStatus.OK).body(
-            AccountResponse.from(
-                current.currentAccount() ?: throw AuthFailure("AUTH_ACCESS_REQUIRED"),
-            ),
+    fun me(): ResponseEntity<AccountResponse> {
+        val principal = current.currentAccount() ?: throw AuthFailure("AUTH_ACCESS_REQUIRED")
+        return headers(HttpStatus.OK).body(
+            AccountResponse.from(principal, operatorAccess.canViewOperations(principal.accountId)),
         )
+    }
 
     @PostMapping("/logout")
     @Operation(summary = "현재 기기 Refresh 패밀리 로그아웃. Access는 최대 15분 유효")
