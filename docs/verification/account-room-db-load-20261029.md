@@ -112,3 +112,7 @@ CI/CD 복구 완료와 부모 조율 후 승인된 runtime DB에서 [metadata-on
 최신 develop `bccf36e405536c689f03b33ff5768030bb058d73`에서 원본 `.codex/hooks/tdd_guard.py`를 실제 commit 이벤트로 실행했다. guard exit0,638.59초이며 `ktlintCheck assemble test` 결과 XML은268 suites/2252건 중2248 PASS·기존4 SKIP·실패/오류0이다. 최종 V20 SHA99062f·checksum-881458142와 독립 테스트 지문을 다시 확인했다. 새 기록은 `.tdd/verification/issue161-publication-final.json`이며 최초4bc/시간 제한 전2250건 기록은 역사 근거로 보존한다.
 
 원격 게시·PR와 정확 HEAD CI는 이 검증 뒤 진행한다. 운영 반영은 승인되었지만 CI/CD 복구 완료와 부모의 직렬 배포 조율, 기존 승인 전환 및 실제 metadata 검증을 완료하기 전에는 운영 성공으로 표시하지 않는다.
+
+## 첫 원격 CI의 컴파일 메모리 보완
+
+[PR164의 첫 CI40809811773](https://github.com/meet-me-duo/meet-me-server/actions/runs/40809811773)는 ARM64 이미지·이슈 연결을 통과했으나 Quality Gate의 compileTestKotlin에서 GC overhead OutOfMemoryError로 실패했다. 테스트 단언 실패가 아니며 이후 검사는 실행되지 않았다. 로컬 전체 검증에서 이미 사용한 Gradle/Kotlin heap2GB·workers2를 CI 명령에도 명시한다. 필수 ktlintCheck/assemble/test·배포 검사·권한·승인 조건은 유지한다. [Kotlin 공식 문서](https://kotlinlang.org/docs/gradle-compilation-and-caches.html#setting-kotlin-daemon-s-jvm-arguments)의 daemon JVM argument 설정을 따른다. CI/CD 운영 전환 복구 코드와 operating runtime 설정은 변경하지 않는다.
