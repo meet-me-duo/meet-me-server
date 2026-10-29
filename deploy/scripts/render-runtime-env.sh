@@ -116,6 +116,44 @@ get_auth_parameter() {
   fi
 }
 
+read_operations_parameter() {
+  # Called only in command substitution; raw responses never enter shell variables.
+  set +e
+  aws ssm get-parameter \
+    --region "$region" --name "$parameter_root/$1" \
+    --with-decryption --output json 2>/dev/null |
+    python3 -I -c '
+import json,re,sys
+try:
+    name,expected_type,kind=sys.argv[1:]
+    raw=sys.stdin.buffer.read(65537)
+    assert len(raw)<=65536 and b"\x00" not in raw
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            if key in result:raise ValueError()
+            result[key]=value
+        return result
+    def invalid_constant(value):raise ValueError()
+    data=json.loads(raw.decode("utf-8"),object_pairs_hook=unique,parse_constant=invalid_constant)
+    assert type(data) is dict and type(data.get("Parameter")) is dict
+    parameter=data["Parameter"]
+    assert parameter.get("Name")==name and parameter.get("Type")==expected_type
+    value=parameter.get("Value")
+    assert type(value) is str
+    if kind=="enabled":
+        assert value in ("true","false")
+    else:
+        assert kind=="operator" and re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",value)
+    print(value)
+except Exception:
+    sys.exit(72)
+' "$parameter_root/$1" "$2" "$3" 2>/dev/null
+  operations_status=("${PIPESTATUS[@]}")
+  if [[ "${operations_status[0]}" != 0 ]]; then return 71; fi
+  if [[ "${operations_status[1]}" != 0 ]]; then return 72; fi
+}
+
 if [[ "$auth_required" == true ]]; then
   google_client_id="$(get_auth_parameter secret/google-client-id SecureString)"
   google_client_secret="$(get_auth_parameter secret/google-client-secret SecureString)"
@@ -128,6 +166,21 @@ if [[ "$auth_required" == true ]]; then
   auth_audience="$(get_auth_parameter config/auth-audience String)"
   auth_web_callback_uri="$(get_auth_parameter config/auth-web-callback-uri String)"
   allowed_origins="$(get_auth_parameter config/allowed-origins String)"
+  operations_enabled=false
+  if operations_parameter="$(read_operations_parameter config/operations-enabled String enabled)"; then
+    operations_enabled="$operations_parameter"
+  else
+    operations_lookup_status="$?"
+    if [[ "$operations_lookup_status" != 71 ]]; then
+      runtime_fail 'Operator runtime configuration is invalid'
+    fi
+  fi
+  unset operations_parameter
+  if [[ "$operations_enabled" == true ]]; then
+    if ! operations_operator_user_ids="$(read_operations_parameter secret/operations-operator-user-ids SecureString operator)"; then
+      runtime_fail 'Operator runtime configuration is invalid or unavailable'
+    fi
+  fi
   precheck_provider_enabled=false
   if precheck_parameter="$(
     set +e
@@ -265,6 +318,10 @@ trap 'rm -f "$temporary"' EXIT
   fi
   printf 'APP_ALLOWED_ORIGINS=%s\n' "$allowed_origins"
   if [[ "$auth_required" == true ]]; then
+    printf 'MEETME_OPERATIONS_ENABLED=%s\n' "$operations_enabled"
+    if [[ "$operations_enabled" == true ]]; then
+      printf 'MEETME_OPERATIONS_OPERATORUSERIDS=%s\n' "$operations_operator_user_ids"
+    fi
     printf 'GOOGLE_CLIENT_ID=%s\n' "$google_client_id"
     printf 'GOOGLE_CLIENT_SECRET=%s\n' "$google_client_secret"
     printf 'GOOGLE_REDIRECT_URI=%s\n' "$google_redirect_uri"

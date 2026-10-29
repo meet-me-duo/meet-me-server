@@ -1,0 +1,58 @@
+{
+  "workItem": "admin-runtime-config",
+  "status": "INDEPENDENT_REVIEW_PASSED_LOCAL_SCOPE",
+  "reviewedAt": "2026-10-29T11:43:43.780650+00:00",
+  "sourceRevision": "d3fbc2d0a12eb0fbd7a843f47c7679c03e723e00",
+  "approvedSourceHashes": {
+    "deploy/scripts/render-runtime-env.sh": "3e63b6cc7c43a3e12e26d2e898765fda88361c8545afcb49caa270504fe20bfd",
+    ".github/workflows/ci.yml": "43ba7a55f798cd5b8b6b0b36c687ed65702f69971751315ec24ca31c85990438"
+  },
+  "frozenTestHashes": {
+    "deploy/tests/runtime-operations-env.test.cjs": "9f6e4e0f665622e4e6eae123b17c34bfd7e39f0192129b7c8bb4cc997d66560b"
+  },
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "reviewedBoundaries": [
+    "Only required-auth release resolves optional operations flag. Original markerless release behavior and existing authorization application code remain unchanged.",
+    "AWS nonzero flag lookup defaults OFF; successful malformed/type/name/value/duplicate/multiple/nonstandard/oversized/raw-NUL JSON fails before replacement. Pipeline statuses distinguish lookup and parse failure.",
+    "Enabled mode requires one lowercase canonical UUID from the exact requested SecureString; disabled mode never reads or emits allowlist and clears stale file entries. UUID versions are not narrowed.",
+    "Inline Python validates raw bytes before Bash substitution; raw responses, identities and provider errors never enter public diagnostics. Exact environment names are passed through existing compose env_file.",
+    "All validation precedes mktemp and rename. Original umask077, chmod0600, cleanup trap and atomic final replacement remain. Active old env remains intact on required-secret/validation/rename failure.",
+    "Only renderer production file changed by 57 additions. No business/identity/role/provider/login, IAM, actual parameter, migration or deployment behavior added. Parent documentation records Google/account correspondence responsibility, revocation semantics and release guard transition.",
+    "CI adds only a separate Verify operator runtime delivery step invoking node --test deploy/tests/runtime-operations-env.test.cjs. Exact diff is three inserted lines; the existing auth step and every other workflow byte are preserved. No additional execution is delegated into the existing concurrent auth file list."
+  ],
+  "validation": {
+    "newTestsGreen": 72,
+    "faultInjectionsDetected": 17,
+    "allMutantsHadAssertionFailuresWithoutSetupErrors": true,
+    "finalRestoredTestsGreen": 72,
+    "originalTrackedFilesCompared": 65,
+    "originalTrackedFileMismatches": 0,
+    "originalRegressionUniqueMethodsPassed": 87,
+    "originalRegressionInitialTimeouts": 2,
+    "originalTimeoutMethodsPassedUnchangedOnRetry": true,
+    "ciRegistrationReadOnlyVerified": true
+  },
+  "redReceipt": ".tdd/red/admin-runtime-config.json",
+  "verificationReceipt": ".tdd/verification/admin-runtime-config-independent-fi.json",
+  "remainingBeforePublication": [
+    "User-controlled actual Google account mapping, parameter input and deployed session/API verification remain separate authorized follow-up work; no operating action performed by this audit."
+  ],
+  "operatingChangesPerformed": false,
+  "parentReportedValidation": {
+    "independentlyRepeated": false,
+    "springBindingTestsPassed": 4,
+    "existingServiceTestsPassed": 12,
+    "ktlintPassed": true,
+    "wholeNode": {
+      "tests": 368,
+      "pass": 367,
+      "timeouts": 1,
+      "timeoutMethod": "AR15",
+      "originalRefreshRetryPassed": 3
+    },
+    "note": "Parent-reported checks; independent original AR15/16/24 retry evidence is recorded in the linked FI receipt."
+  }
+}
