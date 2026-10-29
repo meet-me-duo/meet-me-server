@@ -1,0 +1,24 @@
+{
+  "workItem": "account-room-history-index",
+  "sourceRevision": "e799fb60b5029d42c601e4a33c51e0ba1beacaff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    }
+  ],
+  "command": [
+    "/tmp/account-room-tools/gradle.sh",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*AccountRoomHistoryIndexMigrationPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHistoryIndexMigrationPostgresTest.claimed owner enters account lookup while other rooms and saved submission remain unchanged()",
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHistoryIndexMigrationPostgresTest.upgrade from nineteen preserves every fixture value and original ownership constraints()",
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHistoryIndexMigrationPostgresTest.fresh latest migration supports account history without narrowing owners and validates on rerun()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T00:10:33.783372Z"
+}

@@ -1,0 +1,42 @@
+{
+  "workItem": "issue161-ci-memory",
+  "recordedAt": "2026-10-29T03:10:36.475123+00:00",
+  "failedRemoteRun": 40809811773,
+  "failedJob": 123237198471,
+  "head": "3512350df67c0815f9872180bf5a8651f5ae23b9",
+  "failure": "compileTestKotlin OutOfMemoryError: GC overhead limit exceeded before tests",
+  "change": "Quality Gate JVM heap2GB for Gradle and Kotlin, workers2; tasks and security conditions unchanged",
+  "guard": {
+    "exitCode": 0,
+    "seconds": 9.79,
+    "event": {
+      "hook_event_name": "PreToolUse",
+      "tool_name": "Bash",
+      "cwd": "/workspace/meet-me-server",
+      "tool_input": {
+        "command": "git commit -m \"ci: 계정 조회 검증의 Kotlin 컴파일 메모리 확보\""
+      }
+    },
+    "unchangedProductionAndTests": true,
+    "fullGateResultReused": "268 suites/2252 total/2248 passed/4 skipped/0 failed/error"
+  },
+  "node": {
+    "firstRun": {
+      "total": 180,
+      "passed": 178,
+      "failed": 2,
+      "cause": "javac absent from shell PATH; no source regression"
+    },
+    "correctJdkPathAffectedModuleRerun": 21,
+    "builtImageContract": 12,
+    "distinctPassingTestsAfterCorrection": 192
+  },
+  "independentReview": {
+    "reviewer": "history_contract_review_astra",
+    "openP1": 0,
+    "openP2": 0
+  },
+  "productionAndTestsUnchanged": true,
+  "operatingActions": false,
+  "remoteOutcome": "Pending new SHA CI"
+}

@@ -11,6 +11,8 @@
 
 participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 내 모임 목록은 PostgreSQL의 현재 계정 HOST·MEMBER 소유권을 기준으로 읽고 기존 cleanup 기준30일을 expires_at으로 계산한다. 2026-10-28 사용자 요청으로 ADR-051의 HOST 전용 목록 범위만 참여 목록까지 확장하며 인증·명시적 연결·권한 경계는 유지한다. AccountRoomArchivePort의 조회 조건은 역할·생성 시각 범위·이름·커서이며 JDBC adapter에서 계정 조건과 보존 조건을 항상 함께 적용한다. HTTP adapter는 KST 생성일과 불투명 커서를 application 값으로 변환하고 Domain에는 HTTP 형식을 노출하지 않는다. 자세한 계약은 [내 모임 목록 API](ACCOUNT_ROOM_HISTORY_API.md)를 따른다.
 
+Issue161의 계정 목록 접근 경로는 `participants(user_id, room_id) WHERE user_id IS NOT NULL` B-tree와 기존 HOST 인덱스를 사용한다. JDBC adapter는 이 조회의 statement만 named server preparation을 끄고, 선택된 role의 반환값을 enum 상수로 투영하면서 실제 role 조건은 바인딩한다. 풀·다른 조회의 준비문 정책과 PostgreSQL의 인덱스 선택은 유지한다. 날짜는 meeting_rooms의 원본 생성일로 필터·정렬하며 새 날짜/role 인덱스나 조회 모델은 추가하지 않는다. 후보별 회귀·재계획 비용과 운영 적용 제약은 [DB 부하 검증](verification/account-room-db-load-20261029.md)에 기록한다.
+
 Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 사용한다. provider issuer/audience/kid/signature/time 검증 뒤 서비스 Refresh를 cookie로만 발급하고 fixed frontend callback으로 돌아간다. Redis 회전·가족 폐기는 atomic script로 처리하며 실패 시 갱신을 허용하지 않는다. 서비스 RS256 private key는 mount된 외부 secret file, 검증 current/previous public key는 JWKS로 주입한다. 설정 없는 환경에서 임시 운영키를 만들지 않는다. 실제 앱/키/배포 및 운영 로그인은 별도 검증이다.
 
 계정·소유권은 ADR-051과 위 계약을 기준으로 하며 아래 익명 제출 MVP 구조보다 우선한다. 외부 설정은 [운영 안내](USER_INTERVENTION.md)를 따른다.

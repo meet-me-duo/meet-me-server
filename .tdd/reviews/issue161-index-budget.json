@@ -1,0 +1,126 @@
+{
+  "workItem": "issue161-index-budget",
+  "recordedAt": "2026-10-29T02:47:03.507479+00:00",
+  "reviewer": "/root/history_contract_review_astra",
+  "role": "Independent test author/reviewer, separate from production implementer",
+  "scopeResult": "PASS",
+  "openP1": 0,
+  "openP2": 0,
+  "sourceFiles": [
+    {
+      "path": "/workspace/meet-me-server/src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+      "sha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "/workspace/meet-me-server/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexBudgetPostgresTest.kt",
+      "sha256": "c02386bb514d2231c59d2432a358d61be30fe5c74bd508a523643972cd25046c"
+    },
+    {
+      "path": "/workspace/meet-me-server/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    }
+  ],
+  "findings": [],
+  "verified": [
+    "Unpublished V20 adds SET LOCAL lock_timeout=5s and statement_timeout=120s inside existing Flyway transaction; original CREATE INDEX body unchanged.",
+    "No runtime lookup, connection/global DB policy, ownership, retention or analysis source change in budget increment.",
+    "Actual CREATE INDEX event trigger observes positive lock<=5000ms and statement<=120000ms; physical migration session is borrowed again and both settings restored to original0.",
+    "Blocked index creation returns PostgreSQL55P03 before harness12s limit. All seeded business snapshots, full Flyway history and full index inventory remain unchanged; ix_account_rooms absent. Removing blocker permits exactly one successful migration, validation and zero-op rerun.",
+    "Frozen budget test SHA c02386... unchanged since valid RED2; original three migration tests SHA870286... unchanged.",
+    "Four new fault injections detect missing budgets, omitted index and guest-data rewrite on the new SQL; exact restore and positive controls confirmed.",
+    "Python release-catalog independent SQL checksum updated to actual new SQL bytes; old versions remain unchanged."
+  ],
+  "verification": {
+    "red": ".tdd/red/issue161-account-room-index-budget.json",
+    "focused": {
+      "log": "/tmp/account-room-load/issue161-budget-focused-green.log",
+      "testsReportedByParent": 7,
+      "buildSuccessfulAndKtlintRead": true
+    },
+    "faults": ".tdd/verification/issue161-index-budget-faults.json",
+    "node": {
+      "log": "/tmp/account-room-load/issue161-budget-node.log",
+      "passed": 192,
+      "failed": 0,
+      "skipped": 0,
+      "summaryRead": true
+    },
+    "python": {
+      "beforeBudgetChange": {
+        "log": "/tmp/account-room-load/issue161-current-develop-python.log",
+        "passed": 330,
+        "seconds": 437.184,
+        "summaryRead": true
+      },
+      "afterBudgetChangeAffectedSuite": {
+        "log": "/tmp/account-room-load/issue161-budget-python.log",
+        "passed": 8,
+        "seconds": 4.276,
+        "summaryRead": true
+      }
+    },
+    "finalCommitGuard": {
+      "state": "PASS",
+      "reviewedAt": "2026-10-29T03:00:50.463915+00:00",
+      "receipt": "/tmp/account-room-load/issue161-budget-commit-guard-receipt.json",
+      "receiptSha256": "e4287fa6f37d860186d80a2ab76964361087cf7520eba67194e9788a6fdf63be",
+      "exitCode": 0,
+      "elapsedSeconds": 638.59,
+      "tasks": [
+        "ktlintCheck",
+        "assemble",
+        "test"
+      ],
+      "executor": "parent",
+      "reviewMethod": "Read parent guard receipt and independently sum current original-repository JUnit XML; verify V20 and frozen test fingerprints. No rerun.",
+      "xmlDirectory": "build/test-results/test",
+      "suites": 268,
+      "tests": 2252,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "passed": 2248,
+      "xmlManifestSha256": "0023e32f9b4604f49b7496d8ea87eede5ce172be232c700b397676820a326d22",
+      "sourceAndFrozenTestFingerprintsMatch": true,
+      "noCommitExecutedByHook": true
+    }
+  },
+  "readOnlySchemaScript": {
+    "file": {
+      "path": "/workspace/meet-me-server/docs/verification/sql/issue161-account-history-index-readonly.sql",
+      "sha256": "773d352d7dc566fbc185bba43dcf39e633168afaee91a6ad4c4b9930da5763e4"
+    },
+    "executed": false,
+    "assessment": "Two metadata SELECT statements only: pg_class/pg_index/index definitions and V20 Flyway version/script/checksum/success. No participant, room or personal business values read; no DDL/DML.",
+    "expectedNamesVerifiedAgainstMigrations": [
+      "ix_account_rooms",
+      "ix_account_host_rooms",
+      "uq_room_host",
+      "uq_participant_room_user"
+    ],
+    "limitations": "Inspection report, not an automatic pass/fail assertion or operational receipt. Missing participant relation raises regclass error; caller must compare actual definition, validity and checksum with reviewed artifact. Execution requires parent deployment coordination."
+  },
+  "ciReview": {
+    "path": ".github/workflows/ci.yml",
+    "assessment": "Only V19 catalog step name and command extend to include v20-account-room-index-release-catalog.test.cjs; no permission, deployment or approval condition changed."
+  },
+  "historicalEvidenceScope": {
+    "priorReview": ".tdd/reviews/issue161-account-room-db-load.json",
+    "retained": "Unchanged JDBC semantics/preparation and performance interpretation only",
+    "superseded": "Old V20 SQL hash, old migration fault exact-SHA reuse, old schema fingerprint and old full2250 test count are not current budget proof. New migration FI4 here replaces reuse."
+  },
+  "reviewerActions": {
+    "temporarySqlMutants": 4,
+    "sourceRestored": true,
+    "testChangesAfterFrozenRed": 0,
+    "operatingDbActions": 0,
+    "benchmarkActions": 0,
+    "remoteActions": 0
+  },
+  "remainingConstraints": [
+    "No operating work executed by reviewer; any deployment and metadata inspection remains parent coordinated.",
+    "Budgets are statement-local and do not guarantee total deployment completion time; PostgreSQL cancellation/rollback and scheduling may add overhead."
+  ]
+}
