@@ -49,6 +49,35 @@ class OperatorRuntimeEnvironmentBindingTest {
     }
 
     @Test
+    fun `two distinct canonical renderer IDs bind to the exact approved set`() {
+        val first = "11111111-2222-3333-4444-555555555555"
+        val second = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+        listOf("$first,$second", "$second,$first").forEach { value ->
+            runner(
+                mapOf(
+                    "MEETME_OPERATIONS_ENABLED" to "true",
+                    "MEETME_OPERATIONS_OPERATORUSERIDS" to value,
+                ),
+            ).run { context ->
+                assertNull(context.startupFailure)
+                val properties = context.getBean(OperatorQueryProperties::class.java)
+                assertTrue(properties.enabled)
+                assertEquals(setOf(UUID.fromString(first), UUID.fromString(second)), properties.operatorUserIds)
+            }
+        }
+    }
+
+    @Test
+    fun `one malformed member prevents binding an otherwise valid two member list`() {
+        runner(
+            mapOf(
+                "MEETME_OPERATIONS_ENABLED" to "true",
+                "MEETME_OPERATIONS_OPERATORUSERIDS" to "11111111-2222-3333-4444-555555555555,invalid-account",
+            ),
+        ).run { context -> assertNotNull(context.startupFailure) }
+    }
+
+    @Test
     fun `invalid UUID fails actual Spring binding`() {
         runner(
             mapOf(

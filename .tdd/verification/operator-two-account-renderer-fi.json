@@ -1,0 +1,99 @@
+{
+  "workItem": "operator-two-account-renderer",
+  "recordedAt": "2026-10-29T15:20:35.719898+00:00",
+  "sourceRevision": "9e5aa38b54136813d4096d7e157d4580e2c70ca0",
+  "testFiles": [
+    {
+      "path": "deploy/tests/runtime-operations-env.test.cjs",
+      "sha256": "f237f45741c6ce8e79a9d5eeefaf3d2c7c0ac9381134a5aea4d20b5ba4b17bb5"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/scripts/render-runtime-env.sh",
+      "sha256": "844838497db4413bc571a68cd855fe905c7667b74964b95cd760e08e121f49be"
+    }
+  ],
+  "mode": "Independent controlled defects in disposable local copies; shared source and frozen tests never mutated.",
+  "mutants": [
+    {
+      "mutation": "drop-second-id",
+      "testNamePattern": "^OP11",
+      "assertionFailures": 2,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "allow-third-account",
+      "testNamePattern": "OP12 three distinct",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "allow-duplicate-account",
+      "testNamePattern": "^OP06",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "validate-first-account-only",
+      "testNamePattern": "OP12 uppercase second",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "normalize-list-whitespace",
+      "testNamePattern": "OP12 space after comma",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "discard-empty-list-elements",
+      "testNamePattern": "OP12 trailing comma",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "overwrite-before-validation",
+      "testNamePattern": "OP12 short second",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "emit-sensitive-list-to-stderr",
+      "testNamePattern": "^OP11",
+      "assertionFailures": 2,
+      "setupErrors": 0,
+      "detected": true
+    },
+    {
+      "mutation": "ignore-parameter-name-type",
+      "testNamePattern": "OP09.secret/operations-operator-user-ids.0 missing Name",
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "detected": true
+    }
+  ],
+  "allDetected": true,
+  "setupErrors": 0,
+  "sharedSourceUnchanged": true,
+  "sharedTestUnchanged": true,
+  "finalGreen": {
+    "command": "node --test --test-reporter=tap deploy/tests/runtime-operations-env.test.cjs",
+    "tests": 90,
+    "passed": 90,
+    "failed": 0,
+    "skipped": 0,
+    "rawLogSha256": "4fce26ba1037e565bc792c9a469320a2888839586cc11a82fe99917d008ff087"
+  },
+  "liveAwsCalls": 0,
+  "realIdentifiersUsed": false,
+  "remoteWrites": 0,
+  "rawLogsPublished": false
+}

@@ -25,9 +25,10 @@ import java.util.UUID
 class OperatorQueryService(
     private val query: OperationsQueryRepository,
     private val audit: OperatorAccessAuditPort,
-    private val properties: OperatorQueryProperties,
+    properties: OperatorQueryProperties,
     private val clock: Clock,
     private val identity: OperatorIdentityPort? = null,
+    private val operatorAccess: OperatorAccessPolicy = OperatorAccessPolicy(properties),
 ) {
     fun listRooms(
         limit: String? = null,
@@ -69,7 +70,7 @@ class OperatorQueryService(
             append(route, targetId, null, AuditOutcome.DENIED)
             throw OperatorQueryException(OperatorQueryError.OPERATOR_UNAUTHENTICATED)
         }
-        if (!properties.enabled || actor !in properties.operatorUserIds) {
+        if (!operatorAccess.canViewOperations(actor)) {
             append(route, targetId, actor, AuditOutcome.DENIED)
             throw OperatorQueryException(OperatorQueryError.OPERATOR_FORBIDDEN)
         }

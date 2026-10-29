@@ -1,0 +1,31 @@
+{
+  "workItem": "operator-two-account-renderer",
+  "recordedAt": "2026-10-29T15:20:35.719898+00:00",
+  "sourceRevision": "9e5aa38b54136813d4096d7e157d4580e2c70ca0",
+  "status": "PASS",
+  "requirement": "Support the two approved operator accounts while retaining one-account compatibility, default OFF and malformed-value failure. Actual identities remain runtime-only.",
+  "supersedes": ".tdd/red/admin-runtime-config.json",
+  "scope": {
+    "testFile": "deploy/tests/runtime-operations-env.test.cjs",
+    "beforeSha256": "9f6e4e0f665622e4e6eae123b17c34bfd7e39f0192129b7c8bb4cc997d66560b",
+    "afterSha256": "f237f45741c6ce8e79a9d5eeefaf3d2c7c0ac9381134a5aea4d20b5ba4b17bb5",
+    "oldExpectation": "Reject two distinct canonical UUIDs.",
+    "newExpectation": "Accept exactly one or two distinct lowercase canonical UUIDs separated by one comma, preserve exact supplied order, reject all other list forms.",
+    "addedCases": 19,
+    "removedObsoleteCases": 1
+  },
+  "preserved": [
+    "single-account delivery",
+    "OFF and unavailable-flag behavior with no allowlist read",
+    "duplicate-ID rejection",
+    "strict parameter name/type/JSON/UTF8/size validation",
+    "atomic replacement and previous-byte preservation",
+    "0600 permissions and temporary cleanup",
+    "private-value and raw-diagnostic non-disclosure",
+    "markerless legacy behavior"
+  ],
+  "redReceipt": ".tdd/red/operator-two-account-renderer.json",
+  "verificationReceipt": ".tdd/verification/operator-two-account-renderer-fi.json",
+  "historicalRecordsPreserved": true,
+  "rawLogsPublished": false
+}

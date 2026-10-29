@@ -1,0 +1,60 @@
+{
+  "workItem": "operator-capabilities",
+  "sourceRevision": "9e5aa38b54136813d4096d7e157d4580e2c70ca0",
+  "recordedAt": "2026-10-29T15:32:03.682297+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AuthOperatorCapabilityContractTest.kt",
+      "sha256": "42e2e47c13e37edc3efe2a776574c60714a542fba62b55aad44a1c93e29a82a1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorCapabilitySpringWiringTest.kt",
+      "sha256": "59f3293d45634d10339325948a4a63bfc0a211a448a6af1fc87e9913909de90e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRuntimeEnvironmentBindingTest.kt",
+      "sha256": "fed8bf30774596f723bd7bc74a41ab7730cf49862bdaed4a5568de19aefab018"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/account/adapter/input/web/AuthController.kt",
+      "sha256": "f432adc00965c726fa56db65f385ac8dfc6ee4393809d0d366eb98f2f123ead4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorAccessPolicy.kt",
+      "sha256": "bd7f84d41f81788596ad542117b18be5fedb1c012a176624fa009969d1f6f970"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "sha256": "a9fc5f76b7c8540f11aaf8b93500bbf555cc88b31ca5fb43136cc3ed5945df93"
+    }
+  ],
+  "command": "./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g test --tests *AuthOperatorCapabilityContractTest --tests *OperatorRuntimeEnvironmentBindingTest --tests *OperatorCapabilitySpringWiringTest",
+  "testsRun": 20,
+  "failureCount": 12,
+  "errorCount": 0,
+  "passingTests": 8,
+  "failedTests": [
+    "OW01 real Spring graph grants both configured accounts and denies third with unchanged audit semantics()",
+    "OW03 positive capability never bypasses fail closed protected query audit()",
+    "OW02 disabled configured graph denies query and capability for listed accounts()",
+    "OC03 me exposes true for either approved account and only that accounts safe fields()",
+    "OC07 refresh never inherits an operators capability for an unlisted rotated account()",
+    "OC04 me exposes explicit false for outsiders disabled and empty allowlist()",
+    "OC08 refresh with disabled or empty policy remains authenticated but not authorized()",
+    "OC01 enabled policy grants each approved identity and denies outsider and anonymous()",
+    "OC11 generated account schema describes a minimal boolean capability without operator identities()",
+    "OC02 disabled and empty policy never grant even an authenticated identity()",
+    "OC06 refresh computes capability for rotated principal independently of current bearer identity()",
+    "OC05 legacy controller construction defaults to false without changing account identity()"
+  ],
+  "failureClassification": {
+    "missingCapabilityAssertions": 10,
+    "explicitSkeletonTODO": 2,
+    "setupFailures": 0
+  },
+  "rawLog": ".codex/tdd-evidence/operator-capabilities-independent/revised-schema-red.log",
+  "testDesignRepair": "A bare OpenAPI schema reference has no sibling description in ModelConverters output. Description is asserted on the resolved capability schema; exact fields, reference resolution, boolean type and flag description remain required. Final revised fingerprints were rerun against baseline response + TODO policy skeleton.",
+  "scope": "Synthetic identities and keys only. No real account, provider, runtime or production DB mutation."
+}
