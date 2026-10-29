@@ -59,6 +59,9 @@ jobs:
       - name: Verify runtime provider key delivery
         run: node --test deploy/tests/runtime-provider-env.test.cjs
 
+      - name: Verify operator runtime delivery
+        run: node --test deploy/tests/runtime-operations-env.test.cjs
+
       - name: Verify auth runtime delivery and isolated key mounts
         run: node --test deploy/tests/runtime-auth-env.test.cjs deploy/tests/runtime-auth-compose.test.cjs deploy/tests/runtime-auth-raw-json.test.cjs
 

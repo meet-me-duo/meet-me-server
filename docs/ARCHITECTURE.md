@@ -691,3 +691,7 @@ claim은 숨겨진 모임도 SUPPRESSED로 소비한다. 같은 UUID의 PENDING 
 ### #154 OIDC 복구 진단과 이전 작업 검사
 
 기존 production OIDC의 고정 namespace 읽기로 journal·owner 제한 필드를 별도 진단하며 reconcile v1 계약은 보존한다. 분류와 실행 전 상태 검사는 미확정 journal·미해제 또는 변경 중인 owner를 운영 쓰기 전에 차단한다. 진단은 잠금의 소유권을 변경하지 않고 기존 권한·신뢰·보호 환경을 유지한다. 구체적인 조건과 출력 범위는 [운영 pipeline 안내](../deploy/APPROVED_RELEASE_PIPELINE.md)를 따른다.
+
+### 운영자 runtime 설정 전달
+
+OAuth 필수 release의 공식 renderer는 선택적 `operations-enabled` 설정을 기본 OFF로 전달하고, 활성화 시에만 SecureString의 정규 UUID 하나를 기존 `OperatorQueryProperties`로 전달한다. 실제 accountId 인가·기본 거부·감사 경계는 변경하지 않는다. UUID를 release artifact나 로그에 포함하지 않으며 잘못된 성공 응답은 원자 교체 전에 거부한다. 설정 이름·실패 의미·승인된 배포 절차는 [운영자 runtime 계약](../deploy/OPERATIONS_RUNTIME.md)을 따른다.

@@ -1,0 +1,221 @@
+{
+  "workItem": "admin-runtime-config",
+  "recordedAt": "2026-10-29T11:42:52.034681+00:00",
+  "sourceRevision": "d3fbc2d0a12eb0fbd7a843f47c7679c03e723e00",
+  "reviewRole": "Independent test author and auditor; parent implemented production",
+  "scope": "Disposable local copies, synthetic AWS only, no credentials/network/remote/operating actions; active source and frozen tests never mutated by auditor",
+  "hashes": {
+    "deploy/scripts/render-runtime-env.sh": "3e63b6cc7c43a3e12e26d2e898765fda88361c8545afcb49caa270504fe20bfd",
+    "deploy/tests/runtime-operations-env.test.cjs": "9f6e4e0f665622e4e6eae123b17c34bfd7e39f0192129b7c8bb4cc997d66560b"
+  },
+  "originalTrackedTestsCompared": 65,
+  "originalTrackedTestMismatches": 0,
+  "baseline": {
+    "command": "node --test --test-reporter=tap deploy/tests/runtime-operations-env.test.cjs",
+    "exitCode": 0,
+    "tests": 72,
+    "pass": 72,
+    "fail": 0,
+    "errors": 0,
+    "rawLog": ".codex/tdd-evidence/admin-runtime-config-independent-green.log",
+    "rawLogSha256": "3bda0fa6d0474b2d6a273161742a07ba824d2e03430bfdedd372c5ffc9302aa6"
+  },
+  "faultInjections": [
+    {
+      "id": "F01",
+      "fault": "lookup failure activates instead of denying",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "198a37e51ce826cc29b110ac1de31e90b0b4575ceac07da795dae0cccf0436ce",
+      "logSha256": "b137210d520d49dbbb017f205064a56333fc75c099b33f810ddb6a1932764c5c"
+    },
+    {
+      "id": "F02",
+      "fault": "disabled reads allowlist",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "160c010383395757effc8488ca6c45fdeb590e5e728dac8e9eed7fd2355f1b86",
+      "logSha256": "6d1ebb3901559f135b99cb03640795d47962ca0280c5c1ffb84a7a7448650fbf"
+    },
+    {
+      "id": "F03",
+      "fault": "multiple canonical UUIDs accepted",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "2ba3d61aca17b0318a76da385d9c0aad56efe95723a89be8c5547aabb9fc7781",
+      "logSha256": "7590ea93173eec7a9440a0d1cf125e1713e34924c9ddd1f87fc31aef219cc296"
+    },
+    {
+      "id": "F04",
+      "fault": "parameter Name binding removed",
+      "detected": true,
+      "assertionFailures": 2,
+      "setupErrors": 0,
+      "mutantSha256": "11ca5eba68bc5a2c6a31e42fbc0677e39b493752941a67cc970e862acf1e94d4",
+      "logSha256": "263f7ea44147548aa8bfc6dcb9413296d80cc3e688f3cdbcc7692a50c95bbe2f"
+    },
+    {
+      "id": "F05",
+      "fault": "SecureString type binding removed",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "d56ff6a0b31a5ba4893ac3f9755bbfd3df2e4760dc27a5567a2720537fe05755",
+      "logSha256": "b352ddaee85690450fe83bc8b6286506d10dae9728052f07bad1b8196789c67e"
+    },
+    {
+      "id": "F06",
+      "fault": "duplicate JSON key check removed",
+      "detected": true,
+      "assertionFailures": 6,
+      "setupErrors": 0,
+      "mutantSha256": "12285a536e1de992536cb36eef0f97ba61c211f07f017942ae0d56d89b7abb21",
+      "logSha256": "3fdf3282968f799029b40dffe7d69bb239012e03b66dcae9ffdd9e55acd31be4"
+    },
+    {
+      "id": "F07",
+      "fault": "multiple JSON documents accepted",
+      "detected": true,
+      "assertionFailures": 2,
+      "setupErrors": 0,
+      "mutantSha256": "1024693c5beed6c9e6a057446c4c5918db5346dbe801ecb4b92b7c9a45d38518",
+      "logSha256": "fb938241c711372b7ce99ef43ea9555d788f76ee60f18e607cd263948af4ca11"
+    },
+    {
+      "id": "F08",
+      "fault": "raw NUL silently normalized",
+      "detected": true,
+      "assertionFailures": 2,
+      "setupErrors": 0,
+      "mutantSha256": "09010b6eedd998e2cffdfaeffe68a3dcd615fc2d0ccfac436e97202afd736c60",
+      "logSha256": "ad01b99a5257cc3c55e776845deccd7700b5991c468e8c10dc5a1b77ed81d329"
+    },
+    {
+      "id": "F09",
+      "fault": "64KiB bound removed",
+      "detected": true,
+      "assertionFailures": 2,
+      "setupErrors": 0,
+      "mutantSha256": "90b598b8b17ba752e48c00f2a379e45c308d6d19bbfa012b76e6a420b9bf6dc5",
+      "logSha256": "2895ef1a9fce6867a672bd8e9e6b55368abbfe0c853b2ff9f98cb25e9fb18f2d"
+    },
+    {
+      "id": "F10",
+      "fault": "private UUID leaked to stdout",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "e90cc4a8170fb67e7a318375bb7887572d1ea4d5e91f8f680fbc7b6ea530a051",
+      "logSha256": "b91ddcfdb9e2c91c12c293168f0ac788d8b385f3eacefcbf26d5a70f2673cbb1"
+    },
+    {
+      "id": "F11",
+      "fault": "private UUID leaked to stderr",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "c7dba5ad307deed46d565f4b0eaa994d01c0416efc2fec461efeefa1218ea8b2",
+      "logSha256": "ee4038e7749999aeb0521821331205d6fd6c713c1e210082f6509bc7f6c7fc68"
+    },
+    {
+      "id": "F12",
+      "fault": "old environment truncated before validation",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "3ca81caefab27a527e632fc1dbf998074e75cdf44ee49114d05409cb6dc3a6f5",
+      "logSha256": "6ff9bea46a145f8569ceeba589e26bfd2da7915a1a1a8b0fbb90be171c84809f"
+    },
+    {
+      "id": "F13",
+      "fault": "failed rename leaves sensitive temporary env",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "0a29dee1be5422c67a6de1d9b4a76175fa0c32ba584134843a8b87e61fbfc3e8",
+      "logSha256": "2902ea9b740a67ffdaa11729612ae261e26ef051bd3340a711300a6e479fd964"
+    },
+    {
+      "id": "F14",
+      "fault": "published env becomes world readable",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "c72f053a8d86431f3f0f2d3113f6aa845155ab43ce8f22e23637890a181d2ee5",
+      "logSha256": "7500cd8b0e17b4ae8c158857043cd44b3f6c43c3e8809854f4c4f3b19ffac450"
+    },
+    {
+      "id": "F15",
+      "fault": "successful invalid flag silently becomes OFF",
+      "detected": true,
+      "assertionFailures": 17,
+      "setupErrors": 0,
+      "mutantSha256": "748bd63ae00be042676e229da40a9db01e6fa81c46dc815e8f4d269832c13a4b",
+      "logSha256": "5aad2a67005ed2736183bb7e9edec39f5ddb9adb4a934db0d2fd715160783398"
+    },
+    {
+      "id": "F16",
+      "fault": "unavailable allowlist gets a fabricated authorized UUID",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "1cf7dc0a1709e696e80189e6b99b81bd387dace98beb6e05c52496028187ee84",
+      "logSha256": "5c34fd4e97873892a4aebfe3a23fca3b93a54f73bca7f36f87ab57abc8ee6371"
+    },
+    {
+      "id": "F17",
+      "fault": "UUID case normalized instead of rejected",
+      "detected": true,
+      "assertionFailures": 1,
+      "setupErrors": 0,
+      "mutantSha256": "a74569380973ecccb4400da4846b9658ab4bb1759bf363c1df505c9cfecfd975",
+      "logSha256": "f6c834a03430d672e379921ade5ad176eba0feda2c548c4bdf7b0c4f6f97a5f3"
+    }
+  ],
+  "faultInjectionSummary": {
+    "attempted": 17,
+    "detected": 17,
+    "setupErrors": 0,
+    "isolatedOnly": true,
+    "exactSourceRestoreAfterEach": true
+  },
+  "restored": {
+    "tests": 72,
+    "pass": 72,
+    "fail": 0,
+    "logSha256": "5981d7c530ef1f040100046d8965d8e010b03faabad040623116fd2710d3160d",
+    "rawLog": ".codex/tdd-evidence/admin-runtime-config-fi/restored.log"
+  },
+  "originalRegression": {
+    "command": "node --test --test-reporter=tap deploy/tests/runtime-provider-env.test.cjs deploy/tests/runtime-auth-env.test.cjs deploy/tests/runtime-auth-raw-json.test.cjs",
+    "exitCode": 1,
+    "tests": 87,
+    "pass": 85,
+    "fail": 2,
+    "failureClassification": "AR16 and AR24 existing nested logical-host Python fixtures exceeded their original 20-second timeout during concurrent validation. No oracle was changed.",
+    "rawLog": ".codex/tdd-evidence/admin-runtime-config-original-regression.log",
+    "rawLogSha256": "0fac22dded740a3618283917b23e5d70858831108022437846313126c31da3d5"
+  },
+  "originalRefreshRetry": {
+    "command": "node --test --test-reporter=tap --test-name-pattern='^AR(15|16|24) ' deploy/tests/runtime-auth-env.test.cjs",
+    "exitCode": 0,
+    "tests": 3,
+    "pass": 3,
+    "fail": 0,
+    "note": "Original AR15, AR16 and AR24 passed unchanged in isolated retry; every original method passed at least once.",
+    "rawLog": ".codex/tdd-evidence/admin-runtime-config-refresh-retry.log",
+    "rawLogSha256": "6cea6b52cc6b512a45a10dad8bc6922f314fc5ba02604b2ebb6313dc8aba61b5"
+  },
+  "harness": {
+    "path": ".codex/tdd-evidence/run-admin-runtime-config-fi.py",
+    "sha256": "61bd4260ce6c5579e4ed0a6915f2627c8c325e903b8614b0acc9eccc24d924e0",
+    "note": "An initial supplementary case-normalization trial selected the neighboring whitespace test and passed; corrected selector, reran all 17 mutants, then restored all 72 tests. No test expectations changed."
+  },
+  "limitations": [
+    "Local synthetic verification only; no live account-provider correspondence, actual parameter values, deployed session/API verification, publication or operating change.",
+    "Parent owns separate real Spring environment binding and existing authorization service Gradle validation."
+  ]
+}
