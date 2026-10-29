@@ -1,0 +1,26 @@
+{
+  "workItem": "issue161-account-room-lookup-preparation",
+  "sourceRevision": "4bc1170faefc706943f074f9204cc279368109d0",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+      "sha256": "868edbc4638e8afe4c8f8c6b116badd7b0c64b2801ba445e4ae05bdf73e89767"
+    }
+  ],
+  "command": [
+    "/tmp/account-room-tools/gradle.sh",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*AccountRoomLookupPreparationPostgresTest",
+    "--max-workers=1",
+    "--no-parallel",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx2g"
+  ],
+  "failedTests": [
+    "com.meetme.server.meetingroom.adapter.output.persistence.AccountRoomLookupPreparationPostgresTest.account lookup repetition never populates named server cache while an unrelated statement still prepares()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T02:07:19.562395Z"
+}

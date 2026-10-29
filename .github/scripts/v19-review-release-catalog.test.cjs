@@ -5,11 +5,12 @@ const f = require('./fixtures/integrated-release-catalog.cjs');
 const { fs, path, root, range, hash, canonical, clone, crc } = f;
 
 // Approved public inventory, independent of every production Python catalog constant.
-// Historical V17/V18 manifests remain valid reader contracts; only current publication requires V19.
+// Historical V17/V18/V19 manifests remain reader contracts; current publication also requires the reviewed V20.
 const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const script19 = 'V19__add_confirmed_result_reviews.sql';
 const scripts = [...f.scripts, script18, script19];
 assert.equal(scripts.length, 19);
+const currentScripts = [...scripts, 'V20__add_account_room_history_index.sql'];
 const historicalGuard18 = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
@@ -26,7 +27,7 @@ const currentData = 'public-api-contract.json';
 
 function fixture() {
   const value = f.fixture();
-  for (const script of scripts) {
+  for (const script of currentScripts) {
     const source = path.join(root, 'src/main/resources/db/migration', script);
     assert.equal(fs.existsSync(source), true, 'Every approved migration must exist; no SQL or missing behavior is synthesized');
     fs.copyFileSync(source, path.join(value.migrations, script));
@@ -46,7 +47,7 @@ function release(version = 19) {
 }
 
 function schema(value, version = 19) {
-  return scripts.slice(0, version).map((script, index) => ({ version: String(index + 1), script,
+  return currentScripts.slice(0, version).map((script, index) => ({ version: String(index + 1), script,
     sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
 }
 
@@ -124,15 +125,15 @@ print(json.dumps(result))
   assert.deepEqual(JSON.parse(result.stdout), { ok: false, reason: 'UNSAFE_HOST_RELEASE', reads: ['.approved-release.tar.gz'] });
 }
 
-test('V19R01 actual publisher admits exactly real V1 through V19 with independent checksums and both fingerprints', () => {
+test('V19R01 current publisher retains V19 in the exact latest inventory with independent checksums and both fingerprints', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
-  assert.deepEqual(fs.readdirSync(directory).sort(), [...scripts].sort());
+  assert.deepEqual(fs.readdirSync(directory).sort(), [...currentScripts].sort());
   const value = fixture(); try {
     const built = f.publish(value);
-    assert.equal(built.ok, true, 'The approved complete V19 publication is supported');
-    assert.deepEqual(built.result.migrations, scripts.map((script, index) => ({ version: String(index + 1), script,
+    assert.equal(built.ok, true, 'The complete current publication including V19 and V20 is supported');
+    assert.deepEqual(built.result.migrations, currentScripts.map((script, index) => ({ version: String(index + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value))));
+    assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value, 20))));
     assert.equal(built.result.guardFingerprint, hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     const actual = f.python('build_manifest', [root, value.archive, f.environment], 'publish_manifest.py');
@@ -142,11 +143,11 @@ test('V19R01 actual publisher admits exactly real V1 through V19 with independen
   } finally { value.remove(); }
 });
 
-test('V19R02 current publication refuses every omission old complete V18 unknown additions and malformed V19 names or file kinds', () => {
-  for (const fault of [...range(19).map(n => `missing-${n}`), 'duplicate19', 'wrong19', 'leadingZero19', 'unknown20', 'extra', 'directory19', 'symlink19']) {
+test('V19R02 current publication refuses every omission old complete V19 unknown additions and malformed V19 names or file kinds', () => {
+  for (const fault of [...range(20).map(n => `missing-${n}`), 'duplicate19', 'wrong19', 'leadingZero19', 'unknown20', 'extra', 'directory19', 'symlink19']) {
     const value = fixture(); try {
       const latest = path.join(value.migrations, script19);
-      if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, scripts[Number(fault.slice(8)) - 1]));
+      if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, currentScripts[Number(fault.slice(8)) - 1]));
       if (fault === 'duplicate19') fs.copyFileSync(latest, path.join(value.migrations, 'V19__duplicate.sql'));
       if (fault === 'wrong19') fs.renameSync(latest, path.join(value.migrations, 'V19__unapproved.sql'));
       if (fault === 'leadingZero19') fs.renameSync(latest, path.join(value.migrations, 'V019__add_confirmed_result_reviews.sql'));

@@ -1,0 +1,26 @@
+{
+  "workItem": "issue161-account-room-index-budget",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexBudgetPostgresTest.kt",
+      "sha256": "c02386bb514d2231c59d2432a358d61be30fe5c74bd508a523643972cd25046c"
+    }
+  ],
+  "command": [
+    "/tmp/account-room-tools/gradle.sh",
+    "test",
+    "--tests",
+    "*AccountRoomHistoryIndexBudgetPostgresTest",
+    "--max-workers=1",
+    "--no-parallel",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx2g"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHistoryIndexBudgetPostgresTest.actual index DDL has finite lock and statement budgets that do not leak into pooled sessions()",
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHistoryIndexBudgetPostgresTest.blocked index creation times out without partial state and succeeds after blocker release()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T02:40:50.730117+00:00"
+}

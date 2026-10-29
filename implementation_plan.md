@@ -1,5 +1,23 @@
 # meet-me-server Implementation Plan
 
+## Issue #161 — 계정 모임 조회의 DB 부하 최적화 (2026-10-29)
+
+- [USER/부모 위임] 공개 이슈 제목 `perf: 계정 모임 조회의 DB 부하 최적화`와 인덱스·검색 후보/합성 측정/다참여 회귀/결과에 따른 최소안·적용검증 범위를 구체 승인했다. AWS/RDS 부담을 피하며 성능 실험은 격리 합성 DB만 사용한다. 운영 반복쿼리·부하테스트·테스트 데이터 삽입은 금지한다. 입력→분석→결과·모호성 판정 및 보류 PR158/웹51은 제외한다.
+- [USER/부모 후속 승인] 검증된 #161 변경의 커밋·원격 게시·PR·CI를 승인했다. 운영 DB 적용·배포는 CI/CD 복구 완료와 부모 조율 전까지 대기한다. 보류 PR158·분석 로직은 포함하지 않으며 PR review APPROVE·보호 우회를 수행하지 않는다.
+- [x] `[AGENT]` 기존 거절은 미실행·재시도0으로 보존했다. 새 승인 후 중복을 조회하고 정확한 새 제목으로 한 번 재시도해 [이슈161](https://github.com/meet-me-duo/meet-me-server/issues/161)을 생성했다. 재조회한 제목·본문·open 상태가 요청과 일치한다.
+- [x] `[AGENT]` 원래 사용자 feature와 깨끗한 작업 트리를 보존했다. 최신 develop4bc1170를 `git pull --ff-only origin develop`로 확인한 뒤 별도 `chore/161-account-room-db-load`를 만들었다. 해당 tree는 main c152ba70와 같다.
+- [x] `[AGENT]` 모임10만·참가자50만의 합성 분포(일반5000계정×30개/5000계정×40개·다참여1계정10100개·빈계정1개)에서 full/partial·HOST 유지/제거·생성일·GIN 후보와 읽기/쓰기 비용을 대조했다. 계정 partial2컬럼은 일반 조회를 크게 줄이지만 다참여 auto/generic에서 비고유 버퍼 증가가 있어 최종 채택하지 않았다.
+- [x] `[AGENT]` SQL PREPARE 모사와 실제 Spring JDBC 저장소·PGJDBC42.7.13·Hikari 단일 연결 반복 실행을 구분해 검증했다. 실제 repository 실행은 로컬 auto_explain으로 관측하고, 후속 EXPLAIN 실행이 계획 이력에 미치는 영향과 구분한다. 모든 대상은 비민감 합성 DB이며 결과 내용/순서 지문을 대조한다.
+- [x] `[USER/AGENT]` 사용자가 계정 선두 인덱스 기본안과 role 증설을 피하는 단순 구성을 확정했다. 2열 account partial+조회 statement의 prepare0+필터된 role 상수 투영을 최소안으로 선택했다. 인덱스 사용을 강제하지 않으며 전역 pool/session 정책은 유지한다. 별도 날짜 index는 실제 JDBC19개에서 dense 첫 목록3983→1544 이득과 HOST0 5→316936/희귀검색3195→101079 회귀를 확인해 제외했다. 날짜 복제 조회 모델352개 비교는 기본 목록 이득과 검색 회귀·동기화/쓰기 비용을 문서화하고 이번 구조에 도입하지 않는다.
+- [x] `[AGENT]` V20 계정 index와 정확 migration catalog, 해당 JDBC statement/role projection 및 PG compile dependency를 최소 구현했다. 기존 V1~V19/보관/권한·분석 로직 변경0. 독립 신규2개는 valid RED1/control1→GREEN, migration/히스토리/소유권 포함 집중30 PASS·ktlintCheck PASS다. 실제 생산class로 mixed/history32 probe의 결과/순서와 named cache 부재·connection5/auto를 재검증했다. 별도 원본 Node180·Python311 PASS이며 이전 archive 결과를 새 JDBC 검증으로 전용하지 않는다.
+- [x] `[AGENT]` 독립 리뷰 P1/P2=0, 새 준비 설정 제거·잘못된 role 투영 FI2를 예상 assertion으로 탐지하고 매회 exact restore/2GREEN을 확인했다. 원본 `ktlintCheck assemble test`9분37초 SUCCESS,267 suites/2250중2246 PASS·기존4 SKIP·실패/오류0. 최종 실제 JDBC283관측/24키 결과 불일치0, structural352대조와 raw근거를 보존했다. 검토용 patch/PR 초안을 로컬 산출물로 정리하며 원격 source 게시·PR·병합·운영 실행은 하지 않았다.
+- [x] `[AGENT]` 기존4bc1170 산출물/전체 검증과 stash를 보존한 뒤 최신 develop bccf36e(PR162 CI복구)에 FF+apply했다. 생산/독립 테스트와 catalog SHA를 유지하고 보류158 ancestry가 false임을 확인했다. 원본 commit guard exit0(10.36초, 동일 Kotlin 결과 재사용), CI에V20 catalog 테스트를 연결한 Node192 PASS·최신 배포 Python330 PASS다. 아래 운영 시간 제한 보완 후 새 최종 검증과 게시를 수행한다. Commit/PR: 동일 커밋 예정.
+- [x] `[USER/AGENT]` 운영 반영까지 추가 승인되었으며 안전한 인덱스 생성·잠금 시간 제한·실제 스키마 검증이 필수다. V20 transaction 범위 lock wait5초/statement120초 예산을 추가하고 독립 PG budget2 validRED→GREEN, rollback·retry·동일session설정복귀 및 FI4 탐지/매회exactrestore를 확인했다. 새SQL99062f의 schema615e197a/guard5aff722d와 checksum-881458142를 고정하고 metadata-only 운영 확인SQL을 준비했다. 원본 commit guard638.59초 exit0,268 suites/2252중2248 PASS·기존4 SKIP·실패/오류0를 확인했다. Node192·변경 영향 Python8 PASS이며 직전 통합 Python330 PASS와 구분한다. 운영 AWS/RDS 실험은 금지하며 새 로컬 벤치마크도 수행하지 않는다.
+- [ ] `[SHARED]` 실제 인덱스 생성의 잠금·리소스·트랜잭션 제약과 안전 배포를 평가해 부모와 조율한다. CI/CD154의 운영 전환 승인 gate 완료 전 동일 서버 배포·운영DB 변경을 시작하지 않는다.
+
+최종 갱신: 2026-10-29 UTC. 계정 선두 최소안의 로컬 구현과 최초 독립·전체 검증을 완료했고, 운영 승인에 추가된 잠금 예산과 최종 전체 검증을 완료했다. 게시·PR/정확 HEAD CI를 이어가며 Commit/PR은 동일 커밋 예정이다. 계정 인덱스와 그 조회의 준비문/role 투영만 변경하며 권한·보관·검색·정렬 계약은 유지한다. [측정·선정 근거](docs/verification/account-room-db-load-20261029.md). 운영 실행은 CI/CD 복구 이후 부모 조율 대기다.
+
+
 ## Issue #154 — 승인 전환 자동화와 실제 배포 완료 검증 (2026-10-28 UTC)
 
 - [x] `[AGENT]` 기존 이슈와 현재 main/develop·열린 PR을 읽고 중복 없는 #154를 생성했다. 깨끗한 develop에서 `git pull --ff-only origin develop`을 통과한 뒤 `fix/154-cicd-completion`을 분기했다. 내 모임·웹·운영 AI 작업은 다른 담당과 분리한다.
