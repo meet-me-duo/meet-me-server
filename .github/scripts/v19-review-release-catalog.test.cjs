@@ -10,6 +10,19 @@ const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const script19 = 'V19__add_confirmed_result_reviews.sql';
 const scripts = [...f.scripts, script18, script19];
 assert.equal(scripts.length, 19);
+const historicalGuard18 = [
+  'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
+  'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
+  'scripts/refresh-database-credential.sh', 'compose.guard.yml',
+  'meet-me-guarded-restart.service', 'pipeline/approved_release.py',
+  'pipeline/host-approved-release.py', 'pipeline/run-approved-release.py',
+  'pipeline/publish_manifest.py', 'preflight/host-preflight.sh',
+  'preflight/run-preflight.py', 'preflight/ReadOnlyFlywayProbe.java',
+  'runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml', 'runtime-ai-policy.json',
+].sort();
+const pipelineDependencies = ['pipeline/release_completion.py', 'pipeline/transition_orchestrator.py',
+  'pipeline/approval_gate.py', 'pipeline/release_pipeline.py', 'transition-approval.json'];
+const currentData = 'public-api-contract.json';
 
 function fixture() {
   const value = f.fixture();
@@ -19,6 +32,9 @@ function fixture() {
     fs.copyFileSync(source, path.join(value.migrations, script));
   }
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
+  for (const name of [...pipelineDependencies, currentData]) {
+    fs.copyFileSync(path.join(root, 'deploy', name), path.join(value.directory, 'deploy', name));
+  }
   return value;
 }
 
@@ -39,23 +55,26 @@ function packageRelease(value, version = 19, omitted = '') {
   result.migrations = scripts.slice(0, version).map((script, index) => ({ version: String(index + 1), script,
     checksum: crc(fs.readFileSync(path.join(value.migrations, script))) }));
   result.schemaFingerprint = hash(canonical(schema(value, version)));
-  result.guardFingerprint = hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
+  const guardInventory = version === 18 ? historicalGuard18 : f.currentGuardFiles;
+  result.guardFingerprint = hash(canonical(guardInventory.map(name => ({ path: name,
     sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) }))));
   const probe = path.join(value.directory, 'deploy/preflight/compiled'); fs.mkdirSync(probe, { recursive: true });
   fs.writeFileSync(path.join(probe, 'ReadOnlyFlywayProbe.class'), Buffer.from('cafebabe', 'hex'));
   fs.writeFileSync(path.join(value.directory, 'deploy/runtime-provider-mode'), 'gemini-luna-required\n');
   const source = String.raw`import pathlib,sys,tarfile
-root=pathlib.Path(sys.argv[1]);dest=pathlib.Path(sys.argv[2]);omitted=sys.argv[3]
+root=pathlib.Path(sys.argv[1]);dest=pathlib.Path(sys.argv[2]);omitted=sys.argv[3];legacy=sys.argv[4]=='18'
+new_dependencies={'pipeline/release_completion.py','pipeline/transition_orchestrator.py','pipeline/approval_gate.py','pipeline/release_pipeline.py','transition-approval.json','public-api-contract.json'}
 def helper_mode(info):
  if info.isfile() and info.name in ('scripts/render-runtime-env.sh','scripts/export-certificate.sh'):info.mode=0o755
  return info
 with tarfile.open(dest,'w:gz') as archive:
  for item in sorted((root/'deploy').rglob('*')):
-  if item.is_file():archive.add(item,arcname=str(item.relative_to(root/'deploy')),recursive=False,filter=helper_mode)
- for name in sys.argv[4:]:
+  relative=str(item.relative_to(root/'deploy'))
+  if item.is_file() and relative!=omitted and (not legacy or relative not in new_dependencies):archive.add(item,arcname=relative,recursive=False,filter=helper_mode)
+ for name in sys.argv[5:]:
   if name!=omitted:archive.add(root/'src/main/resources/db/migration'/name,arcname='migrations/'+name,recursive=False)
 `;
-  const packed = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-c', source, value.directory, value.archive, omitted, ...scripts.slice(0, version)], {
+  const packed = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-c', source, value.directory, value.archive, omitted, String(version), ...scripts.slice(0, version)], {
     encoding: 'utf8', timeout: 10000, env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, PYTHONDONTWRITEBYTECODE: '1' },
   });
   assert.equal(packed.status, 0, 'Archive setup/import/runtime failures are invalid RED');
@@ -64,6 +83,19 @@ with tarfile.open(dest,'w:gz') as archive:
   return result;
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
+
+function assertHistorical18Package(value, manifest) {
+  const listed = cp.spawnSync(process.env.PYTHON_EXECUTABLE ?? 'python3', ['-c',
+    'import json,sys,tarfile\nwith tarfile.open(sys.argv[1],"r:gz") as archive:print(json.dumps(archive.getnames()))', value.archive], {
+    encoding: 'utf8', timeout: 10000, env: { PATH: process.env.PATH, SystemRoot: process.env.SystemRoot, PYTHONDONTWRITEBYTECODE: '1' },
+  });
+  assert.equal(listed.status, 0); assert.equal(listed.stderr, '');
+  const members = JSON.parse(listed.stdout);
+  for (const name of [...pipelineDependencies, currentData]) assert.equal(members.includes(name), false, `Historical18 must not contain ${name}`);
+  assert.equal(historicalGuard18.length, 18);
+  assert.equal(manifest.guardFingerprint, hash(canonical(historicalGuard18.map(name => ({ path: name,
+    sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
+}
 
 function rejectHostArchiveHashBeforeCatalog(value, manifest) {
   const directory = path.join(value.directory, 'host-bad-archive-hash'); fs.mkdirSync(directory);
@@ -201,7 +233,11 @@ test('V19R07 V19 bytes change only the new row and schema fingerprint while V1 t
 
 test('V19R08 offline packages accept exact historical18 and current19 but reject missing SQL or stale hashes even after repacking', () => {
   const value = fixture(); try {
-    for (const version of [18, 19]) assert.equal(verify(value, packageRelease(value, version)).ok, true, `V${version}`);
+    for (const version of [18, 19]) {
+      const manifest = packageRelease(value, version);
+      if (version === 18) assertHistorical18Package(value, manifest);
+      assert.equal(verify(value, manifest).ok, true, `V${version}`);
+    }
     const exact = packageRelease(value);
     for (const field of ['schemaFingerprint', 'guardFingerprint']) {
       const tampered = clone(exact); tampered[field] = hash('wrong immutable fingerprint');
@@ -217,6 +253,14 @@ test('V19R08 offline packages accept exact historical18 and current19 but reject
     for (const omitted of [scripts[0], script18, script19]) {
       const incomplete = packageRelease(value, 19, omitted);
       assert.equal(verify(value, incomplete).ok, false, omitted);
+    }
+  } finally { value.remove(); }
+});
+
+test('V19R09 current packages refuse every omitted pipeline dependency and readonly API data with refreshed archive hashes', () => {
+  const value = fixture(); try {
+    for (const omitted of [...pipelineDependencies, currentData]) {
+      assert.equal(verify(value, packageRelease(value, 19, omitted)).ok, false, omitted);
     }
   } finally { value.remove(); }
 });

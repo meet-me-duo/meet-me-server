@@ -1,0 +1,17 @@
+{
+  "sourceRevision": "bec9f78094a13c6dbaded18d2a5ad7881ebfe825",
+  "recordedAt": "2026-10-28T23:14:03.101735+00:00",
+  "reason": "Correct erroneous public Actuator JSON health premise to existing Nginx HTTPS /healthz exact 200 and ok newline; preserve host app readiness, native projection and full DB proof independently.",
+  "originals": [
+    {
+      "path": "deploy/tests/test_issue154_public_contract.py",
+      "sha256": "29f7ad18f6b097141d013dfc169ade5880a24cb8531536237cc7033e3c1bf907",
+      "preservedAt": ".tdd/history/issue154-public-health-contract/test_issue154_public_contract.py.before"
+    },
+    {
+      "path": "deploy/tests/test_issue154_public_contract_audit.py",
+      "sha256": "8f758d002aadaedafd8635571724efc77226a308e8635484df04f825b3468fed",
+      "preservedAt": ".tdd/history/issue154-public-health-contract/test_issue154_public_contract_audit.py.before"
+    }
+  ]
+}

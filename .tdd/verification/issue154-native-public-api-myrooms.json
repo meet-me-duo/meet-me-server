@@ -1,0 +1,68 @@
+{
+  "workItem": "issue154-native-public-api-myrooms",
+  "sourceRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "recordedAt": "2026-10-28T15:27:16.256142+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/deployment/Issue154NativeApiContractPostgresTest.kt",
+      "sha256": "4d90ebc23e271822ab14f0566e617eea75849ace53098404eebd2a5d6511b4bc"
+    }
+  ],
+  "red": ".tdd/deployment/issue154-native-public-api-myrooms-red.json",
+  "nativeExecution": {
+    "endpoint": "/v3/api-docs",
+    "actualSpringPostgresRedis": true,
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "errors": 0,
+    "operations": 40,
+    "paths": 39,
+    "schemas": 65,
+    "rawLog": ".codex/tdd-evidence/issue154-native-api-myrooms-green.log",
+    "rawJUnit": ".codex/tdd-evidence/issue154-native-api-myrooms-green.xml"
+  },
+  "data": {
+    "path": "deploy/public-api-contract.json",
+    "priorSha256": "4f3f55f51e541dfb873c6c7ed28a6426a9de4ee04c7d4de21e680f6eeff819d2",
+    "sha256": "5805e9b3f083fb133ddb22247647b058870af5b53379c2791b01682691ae62dd",
+    "actualExportBytesMatch": true,
+    "derivedFromSourceParsing": false,
+    "guardCatalogChanged": false
+  },
+  "schemaPropertyChanges": [
+    {
+      "schema": "AccountRoomResponse",
+      "before": [
+        "created_at",
+        "expires_at",
+        "invite_code",
+        "purpose"
+      ],
+      "after": [
+        "created_at",
+        "expires_at",
+        "invite_code",
+        "purpose",
+        "role"
+      ]
+    },
+    {
+      "schema": "AccountRoomsResponse",
+      "before": [
+        "rooms"
+      ],
+      "after": [
+        "has_more",
+        "next_cursor",
+        "rooms"
+      ]
+    }
+  ],
+  "priorNativeVerification": ".tdd/verification/issue154-native-public-api.json",
+  "supersedesOnlyDataSnapshot": true,
+  "testExpectationsChanged": false,
+  "existingNativeOraclesChanged": false,
+  "operatingOrPaidProviderCalls": 0,
+  "fullGate": "Root owns next full gate; not claimed by focused run"
+}

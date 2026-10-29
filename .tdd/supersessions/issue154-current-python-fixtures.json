@@ -1,0 +1,72 @@
+{
+  "workItem": "issue154-current-python-fixtures",
+  "recordedAt": "2026-10-28T15:45:23.594153+00:00",
+  "sourceRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "reason": "Currentexecution23 strengthenspublisherfingerprint; completecurrentarchives also needreadonlyAPI DATA. Historical18/17/14 readersandoldAI/securityrequirementsremain unchanged.",
+  "files": [
+    {
+      "path": "deploy/tests/test_issue131_auth_target_dispatch.py",
+      "sha256": "a47b57de56672ebe73c52fe08b8f231aabec06e553d3cf1270ea412145247ee4",
+      "preservedAt": ".tdd/history/issue154-current-python-fixtures/test_issue131_auth_target_dispatch.py.before",
+      "currentSha256": "b5f27ce08ea202016319167f98cd46d9dd91497f1c51ef524726144444102868"
+    },
+    {
+      "path": "deploy/tests/test_issue131_policy_extraction.py",
+      "sha256": "0da8477b0a66e47548228838f7fb189989595dfae87d7263570a4c463f15aa42",
+      "preservedAt": ".tdd/history/issue154-current-python-fixtures/test_issue131_policy_extraction.py.before",
+      "currentSha256": "f2c19f4201a410a63497ed599f9c6e8e492ec9b61cdb5d2574e3aacec0a94ab8"
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "ade61a1dfe1f767e8cf80cd2d85ace9bbf23d53d90e579fa6778b30fb7d30938",
+      "preservedAt": ".tdd/history/issue154-current-python-fixtures/test_issue144_production_ai_deployment.py.before",
+      "currentSha256": "4111b415feeb067287110566500878610c7bbe89b08cd7972c5bc5665f1f1e11"
+    }
+  ],
+  "exactAuthorizedDiffVerified": true,
+  "changes": {
+    "test_issue131_auth_target_dispatch.py": "Only explicitCURRENT23constantandDX04currentpublishertestname/expectedinventory18\u219223; CURRENT18definitionandalllegacyarchivecallsunchanged",
+    "test_issue131_policy_extraction.py": "OnlyrequiredreadonlypublicAPI DATAbytes addedtovalidnew23archive; allprivacy/filemode/UID10001assertionsunchanged",
+    "test_issue144_production_ai_deployment.py": "OnlyrequiredreadonlypublicAPI DATAbytes addedtoOA01validarchive; ON/OFF/sentinel/secretprotection/cap-removalsemanticsandV1-V19history/assertionsunchanged"
+  },
+  "baselineFailure": {
+    "tests": 17,
+    "failed": 1,
+    "errors": 3,
+    "rawLog": ".codex/tdd-evidence/issue154-current-python-fixtures-red.log",
+    "classification": "ObsoletecurrentinventoryassertionandpositivefixturesmissingnewrequiredDATA; not weakeningruntimevalidation"
+  },
+  "newRequiredDataRegression": {
+    "testPath": "deploy/tests/test_issue154_public_api_archive_data.py",
+    "testSha256": "2ee300a7f63a231c06fb7be9b456ea200760a2b4c407f97081d8300b9d92f99f",
+    "tests": 3,
+    "passed": 3,
+    "rawGreenLog": ".codex/tdd-evidence/issue154-public-api-archive-data-green.log",
+    "faultInjection": {
+      "sourcePath": "deploy/pipeline/run-approved-release.py",
+      "sourceSha256": "e74ba50f37a6f712772c9056e42c470a95d58f90ff0398e45c5f917d9267dc53",
+      "testPath": "deploy/tests/test_issue154_public_api_archive_data.py",
+      "testSha256": "2ee300a7f63a231c06fb7be9b456ea200760a2b4c407f97081d8300b9d92f99f",
+      "mutation": "omit required readonly public API data presence assertion",
+      "isolatedSourceCopiesOnly": true,
+      "detected": true,
+      "tests": 3,
+      "failed": 1,
+      "passed": 2,
+      "setupErrors": 0,
+      "sharedOriginalUnchanged": true,
+      "rawLog": ".codex/tdd-evidence/issue154-public-api-data-omission-red.log"
+    }
+  },
+  "focusedGreen": {
+    "tests": 20,
+    "passed": 20,
+    "failed": 0,
+    "errors": 0,
+    "rawLog": ".codex/tdd-evidence/issue154-current-python-fixtures-green.log"
+  },
+  "guardCompatibilityInventoryCount": 23,
+  "publicDataAddedToGuardCatalog": false,
+  "operatingOrPaidProviderCalls": 0,
+  "commitsOrRemoteWrites": 0
+}

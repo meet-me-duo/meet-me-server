@@ -1,0 +1,46 @@
+{
+  "workItem": "issue154-native-public-api-contract",
+  "recordedAt": "2026-10-28T15:19:13.871344+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/deployment/Issue154NativeApiContractPostgresTest.kt",
+      "sha256": "4d90ebc23e271822ab14f0566e617eea75849ace53098404eebd2a5d6511b4bc"
+    }
+  ],
+  "red": ".tdd/deployment/issue154-native-public-api-red.json",
+  "nativeExecution": {
+    "springNativeEndpoint": "/v3/api-docs",
+    "postgresContainer": true,
+    "redisFixture": true,
+    "operations": 40,
+    "paths": 39,
+    "schemas": 65,
+    "projection": "exact all operations(path,lowercase method,operationId) plus own schema property names; no production projection helper reused",
+    "tests": 1,
+    "passed": 1,
+    "failed": 0,
+    "errors": 0,
+    "rawLog": ".codex/tdd-evidence/issue154-native-api-green.log",
+    "rawJUnit": ".codex/tdd-evidence/issue154-native-api-green.xml"
+  },
+  "data": {
+    "path": "deploy/public-api-contract.json",
+    "sha256": "4f3f55f51e541dfb873c6c7ed28a6426a9de4ee04c7d4de21e680f6eeff819d2",
+    "source": "actual native Spring export from this focusedtest run, copied by root after validRED",
+    "readonlyByTestAuthor": true,
+    "archiveShaBound": true,
+    "guardCompatibilityInventoryUnchanged": 23
+  },
+  "styleCheck": {
+    "task": "runKtlintCheckOverTestSourceSet",
+    "result": "PASS",
+    "rawLog": ".codex/tdd-evidence/issue154-native-api-style.log"
+  },
+  "fullGate": "owned by root; not claimed by focused regression",
+  "sourceApiFutureChange": "Issue151/MyRooms API changes must regenerate this data from actual native Spring output and rerun exactcomparison; no source-code-parsing fixture",
+  "existingNativeOraclesChanged": false,
+  "operatingAwsOrPaidProviderCalls": 0,
+  "commitsOrRemoteWrites": 0,
+  "historicalBaselineSnapshot": true,
+  "supersededDataSnapshotBy": ".tdd/verification/issue154-native-public-api-myrooms.json"
+}

@@ -4,7 +4,7 @@ const cp = require('node:child_process');
 const f = require('./fixtures/integrated-release-catalog.cjs');
 const { fs, path, root, hash, canonical, clone, publish, ready, record, judge, mode, denied } = f;
 
-// Historical14 and auth17 reader contracts remain frozen; only current18 may publish.
+// Historical14/auth17/policy18 reader contracts remain frozen; current publication uses the full execution23 contract.
 // No constant is imported from production to build the expected catalog.
 const historical14 = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
@@ -19,6 +19,8 @@ assert.equal(historical14.length, 14, 'Frozen pre-runtime-auth oracle must remai
 const additions = ['runtime-auth-mode', 'scripts/render-runtime-env.sh', 'compose.production.yml'];
 const current17 = [...historical14, ...additions].sort();
 const current18 = [...current17, 'runtime-ai-policy.json'].sort();
+const current23 = [...current18, 'pipeline/release_completion.py', 'pipeline/transition_orchestrator.py',
+  'pipeline/approval_gate.py', 'pipeline/release_pipeline.py', 'transition-approval.json'].sort();
 const requiredMode = 'oauth-rs256-required';
 function py(action, value = {}) {
   const source = String.raw`import importlib.util,json,pathlib,sys
@@ -109,15 +111,15 @@ function pack(value) {
 }
 function assertRejected(value, label) { assert.equal(value.ok, false, label); }
 
-test('RA01 publisher runner and host pin the same exact current eighteen-file approval catalog', () => {
+test('RA01 publisher runner and host pin the same exact current twenty-three-file approval catalog', () => {
   const result = py('lists');assert.equal(result.ok, true);
-  for (const [name, list] of Object.entries(result.result)) assert.deepEqual([...list].sort(), current18, name);
+  for (const [name, list] of Object.entries(result.result)) assert.deepEqual([...list].sort(), current23, name);
 });
 
-test('RA02 publisher fingerprints all eighteen including policy runtime auth mode renderer and compose', () => {
+test('RA02 publisher fingerprints all twenty-three execution files including policy runtime auth renderer and compose', () => {
   const value = publicationFixture();try {
     const built = publish(value);assert.equal(built.ok, true);
-    assert.equal(built.result.guardFingerprint, fingerprint(value, current18));
+    assert.equal(built.result.guardFingerprint, fingerprint(value, current23));
     assert.notEqual(built.result.guardFingerprint, fingerprint(value, historical14));
   } finally { value.remove(); }
 });

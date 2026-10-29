@@ -1,0 +1,58 @@
+{
+  "workItem": "issue154-native-public-api-myrooms",
+  "sourceRevision": "0ce4b4026865ccdcfa5f012a35be3bb0101df2ee",
+  "recordedAt": "2026-10-28T15:26:17.961098+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/deployment/Issue154NativeApiContractPostgresTest.kt",
+      "sha256": "4d90ebc23e271822ab14f0566e617eea75849ace53098404eebd2a5d6511b4bc"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.deployment.Issue154NativeApiContractPostgresTest"
+  ],
+  "tests": 1,
+  "failed": 1,
+  "errors": 0,
+  "expectedFailureCategory": "ACTUAL_NATIVE_API_CONTRACT_DRIFT",
+  "expectedReason": "ActualSpringPOSTGRES/RedisnativeGET succeeded; AccountRoomResponse addsrole, AccountRoomsResponse adds has_more,next_cursor whileoperation/path/schemacountsstay40/39/65; exactreadonlycontractcomparisonfails",
+  "rawLog": ".codex/tdd-evidence/issue154-native-api-myrooms-red.log",
+  "rawJUnit": ".codex/tdd-evidence/issue154-native-api-myrooms-red.xml",
+  "priorDataSha256": "4f3f55f51e541dfb873c6c7ed28a6426a9de4ee04c7d4de21e680f6eeff819d2",
+  "actualExportSha256": "5805e9b3f083fb133ddb22247647b058870af5b53379c2791b01682691ae62dd",
+  "schemaPropertyChanges": [
+    {
+      "schema": "AccountRoomResponse",
+      "before": [
+        "created_at",
+        "expires_at",
+        "invite_code",
+        "purpose"
+      ],
+      "after": [
+        "created_at",
+        "expires_at",
+        "invite_code",
+        "purpose",
+        "role"
+      ]
+    },
+    {
+      "schema": "AccountRoomsResponse",
+      "before": [
+        "rooms"
+      ],
+      "after": [
+        "has_more",
+        "next_cursor",
+        "rooms"
+      ]
+    }
+  ],
+  "projectionDerivedFrom": "ActualSpring /v3/api-docs, notsourcecodeparsingorcountpadding",
+  "operatingOrPaidProviderCalls": 0
+}
