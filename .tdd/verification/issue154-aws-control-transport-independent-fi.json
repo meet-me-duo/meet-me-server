@@ -1,0 +1,823 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "cycle": "stage2-controller-owned-transport",
+  "recordedAt": "2026-10-29T01:19:50.214136+00:00",
+  "reviewerRole": "Independent test designer/auditor; parent implemented production",
+  "sourceRevision": "284f8e2158c9536cbf71b519df46bee3b9d05ac5",
+  "redReceipt": ".tdd/red/issue154-aws-control-transport.json",
+  "supersededStage1": ".tdd/history/issue154-aws-control-transport-stage1/supersession.json",
+  "scope": "Offline subprocess fakes only; all mutations in disposable isolated copy; no active source mutation, AWS, network or workflow rerun",
+  "hashes": {
+    "deploy/tests/test_issue154_aws_control_transport.py": "985dc4c22dfdd855312f2f4f1464e316052156e7af6394d07b61ded5d0c643ed",
+    "deploy/tests/test_issue154_adapter.py": "8f639dfbc41b12b3833ac08881c251c3b68698438ba950619b168485adc53087",
+    "deploy/tests/test_issue154_transition.py": "8bd5eb427ed8d3dd90f8dfb4304cbf3150243e4453583308ed07ebeb524d1459",
+    "deploy/tests/test_preflight_command_reads.py": "ce0ecbe8073f280548b13109116b8ad92fdaf136becdd4f56e1779d2bf1decfc",
+    "deploy/preflight/run-preflight.py": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040",
+    "deploy/pipeline/run-approved-release.py": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+    "deploy/pipeline/release_pipeline.py": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+    "deploy/pipeline/transition_orchestrator.py": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f",
+    ".github/scripts/approved-release-pipeline.test.cjs": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1",
+    ".github/scripts/production-preflight-contract.test.cjs": "98b21dd59fe062efdba727dc38901bc020ff19bacf30fa62c65009b710cabfe2"
+  },
+  "baseline": {
+    "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+    "exitCode": 0,
+    "testsRun": 19,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingTestMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/baseline-green.log",
+    "rawLogSha256": "fc28755a4e13e550cae3accbe4220b9c0a10af266c719b86a48b4e791cb129f8"
+  },
+  "originalNodeBaseline": {
+    "command": "JAVA_HOME=/workspace/.task-cache/jdk17 PATH=/workspace/.task-cache/jdk17/bin:$PATH node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs .github/scripts/production-preflight-contract.test.cjs",
+    "exitCode": 0,
+    "testsRun": 29,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingTestMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/original-node-baseline-green.log",
+    "rawLogSha256": "f1cdc419ed253753a3be6787056fff4393650b72153c74072ec430c30f854c66"
+  },
+  "faultInjections": [
+    {
+      "id": "F01-control-allowlist-broadened",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Reads and unrelated writes must preserve the original fallback",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "5f205dd4c5dcb95cea3921432f75924a3b38c57d0437ae61b12bff8bf3e66161",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F01-control-allowlist-broadened.patch",
+      "mutationPatchSha256": "f1a5b25564673cacd35cdef8255097b12db472c03b62a3d82501bf8a8f489e20",
+      "mutation": {
+        "command": "python -m unittest deploy.tests.test_issue154_aws_control_transport.AwsControlTransportTests.test_empty_output_does_not_turn_reads_or_other_writes_into_success -v",
+        "exitCode": 1,
+        "testsRun": 1,
+        "failureCount": 22,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_empty_output_does_not_turn_reads_or_other_writes_into_success"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F01-control-allowlist-broadened.log",
+        "rawLogSha256": "0a08e176e5e61f0933d37de19f40c486843ac9122fccbfe2692bea4a37e624a8"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F01-control-allowlist-broadened-restored.log",
+        "rawLogSha256": "2ef49f87a655d2e9d852372ebdb9c702ab5e294ea956738c9370edb20b3e26ab"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F02-nonzero-exit-invented-success",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Nonzero exit cannot become success",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "46d3b735494513818cdf59db79da2ee36d74fee9b2928e7ae4b75c5566ceba81",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F02-nonzero-exit-invented-success.patch",
+      "mutationPatchSha256": "8c79de37a42a50240c3c4c2a4d315a1f35f9362d0395a266d3002f3ed71918dc",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F02-nonzero-exit-invented-success.log",
+        "rawLogSha256": "3c530060f273dfb4e05558cb7d1c89b7c4c9f4786638deba2c2ba718e4c8eb61"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F02-nonzero-exit-invented-success-restored.log",
+        "rawLogSha256": "a2507d585e78310e444eeecba632d9abb4b2ca3141a849427345545d18b623e2"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F03-timeout-invented-success",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Timeout effects remain uncertain",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "5663f777eca8e43904e32d3027c44e6581cee9af0519bc4fc13bf5849e53a813",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F03-timeout-invented-success.patch",
+      "mutationPatchSha256": "fd8288e1e8bd9c725490b083152d8d6f5f6e4e5b28be3e10aa66344383ec5051",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 5,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure",
+          "test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F03-timeout-invented-success.log",
+        "rawLogSha256": "510d0c227cdc75b2f168150e6c8ac68a93bb50db1e947a504d69e9271a4545f1"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F03-timeout-invented-success-restored.log",
+        "rawLogSha256": "f49a318fe3abd461b3fa605adc0e3fe5adbd21a79da43b6850199c01fe2c41c3"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F04-os-failure-invented-success",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Execution failure cannot fake success",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "cd8373a41bb37456e349d48a87310b977118bd70371436203f951b45ee8793b3",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F04-os-failure-invented-success.patch",
+      "mutationPatchSha256": "5003f5bc9a7cd06831e1a6d0a7f77d34cd936113bc311e20665cf2aee0d97818",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 6,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F04-os-failure-invented-success.log",
+        "rawLogSha256": "4762c00ff7e8dd14b16fa839fdb43107a87fb31a1b2260b6997ffd0ecb53205b"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F04-os-failure-invented-success-restored.log",
+        "rawLogSha256": "6b5aa04d74da3323279e1312ae8b100ec0cfd4a794577d6f70cd02a5132c1e71"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F05-stderr-ignored",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Only empty stderr can acknowledge a no-output control",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "567c27409895e50a6f685016440c455d58eee7908c7b4541a19669f25fe9a1b0",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F05-stderr-ignored.patch",
+      "mutationPatchSha256": "d4d08cfca28d86e4f4cfff854413b625ea90775c3ef4282eae10bd0e4a9f2ae6",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 14,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_no_output_writes_reject_stderr_and_nonempty_json_objects"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F05-stderr-ignored.log",
+        "rawLogSha256": "555dd9cc4090a6a2be42e224a1ddf7b751e74a1dbb249a52fb5933ad945704fd"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F05-stderr-ignored-restored.log",
+        "rawLogSha256": "a6b24a2ad27160126fbb55772b175108cb0e9af771ace57400b54f9100f27fc1"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F06-unexpected-json-accepted",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Unexpected JSON control bodies cannot be accepted",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "0c99ecf0f9972f8fad02cfeb29c674d3a223eb9a3f82bfc59874cfc4fdd08ea4",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F06-unexpected-json-accepted.patch",
+      "mutationPatchSha256": "eb452ebd4752d4fa6befd5d8bb225ee8290379472810b04b53ddfb54c2aae716",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 24,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_malformed_and_nonobject_write_bodies_still_fail_driver",
+          "test_no_output_writes_reject_stderr_and_nonempty_json_objects"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F06-unexpected-json-accepted.log",
+        "rawLogSha256": "0e91377a3e675c0ed71fe4b910ad95389d3c578159eb3c8890f20972da6de8c6"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F06-unexpected-json-accepted-restored.log",
+        "rawLogSha256": "ab79c32060407c32d8f1b1254809c0c59953e9015b7d88f884158e50741e05e1"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F07-malformed-json-ignored",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Malformed nonempty control output cannot be accepted",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "2c6eb84017cdd8e240d7359fc00295c3a8e9ba03a23571302b5c9d1f08208e6c",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F07-malformed-json-ignored.patch",
+      "mutationPatchSha256": "6d50ed37114d3b730890ffb75eeac793db204bddf626a4b44caa618901624647",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 32,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_malformed_and_nonobject_write_bodies_still_fail_driver",
+          "test_no_output_writes_reject_stderr_and_nonempty_json_objects"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F07-malformed-json-ignored.log",
+        "rawLogSha256": "534e3a1325d36421790a81be09d7e7117ba2b715de6a4692392437730de831b5"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F07-malformed-json-ignored-restored.log",
+        "rawLogSha256": "435b4229b5048d7ddd6311335077c871a093b14de01051605365c24be3bfc26f"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F08-marker-argv-leak",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Diagnostic cannot contain argv or captured payload",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "38a626551b72fd3bbabda6006649f1fb2e1c5645c4b35ede6ac608016769db77",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F08-marker-argv-leak.patch",
+      "mutationPatchSha256": "c493ae40dc92f1fde25240f0b431aa6e77d3d15e0d238fd90957170e29c1772e",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 54,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure",
+          "test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted",
+          "test_malformed_and_nonobject_write_bodies_still_fail_driver",
+          "test_no_output_writes_reject_stderr_and_nonempty_json_objects"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F08-marker-argv-leak.log",
+        "rawLogSha256": "2c0823dcd8842ba244c059b41b108a3b41b4398c118eaae2b7c10e6c538d87fc"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F08-marker-argv-leak-restored.log",
+        "rawLogSha256": "4808862761cdd64dd9a229e2f057871ac633391f01df2aa99c4c58d6b26eb2dd"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F09-marker-exception-text-leak",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Arbitrary exception text cannot become a reason enum",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "841f8c147bf1ef0d5650b0beddeacba1e6993a0d9f7847defebbcb78197a8b69",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F09-marker-exception-text-leak.patch",
+      "mutationPatchSha256": "0e8f6b3b9a99bd53b7a88adebb20e56dbdd3c5553aa14ee9da2914c6d0cfe377",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 3,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F09-marker-exception-text-leak.log",
+        "rawLogSha256": "0c87030ebb5fd356c7add127c73e0f744715b8dd604fd37db9a4d12373f25987"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F09-marker-exception-text-leak-restored.log",
+        "rawLogSha256": "2adfd6574a26f6c54553834097be794fcb56abe9514bf3da8890c8cd750e5e9b"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F10-diagnostic-removed",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "A caught core failure retains the bounded operation diagnostic",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "c5a5e09563a803b0d48cf64ff66f2bfc76e4cdfd007e4dc2815dc74b02d4790d",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F10-diagnostic-removed.patch",
+      "mutationPatchSha256": "200768eb29b0b0496da6a1b807e807ec439e2c153dda62b2d6d3de164e808346",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 54,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure",
+          "test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted",
+          "test_malformed_and_nonobject_write_bodies_still_fail_driver",
+          "test_no_output_writes_reject_stderr_and_nonempty_json_objects"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F10-diagnostic-removed.log",
+        "rawLogSha256": "79c0e8bceded034da45dbbc30cafd32e456f74bf5734efca761590711520927c"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F10-diagnostic-removed-restored.log",
+        "rawLogSha256": "856371d37079fdd0e263f2f9418de478257b6a01649b15ce7f73b09d4ac01dd5"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F11-target-binding-skipped",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Each write requires exact target and metadata revalidation",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "b8d8c8c09dd649c4253d8ae1d6c026844a26d2fce76fdbc7a737c4fe4db78837",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F11-target-binding-skipped.patch",
+      "mutationPatchSha256": "c4a0b0d864f524dd3a21dd27b27036b31d9437c7db018add4c520a0d194a5aa7",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 21,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_empty_or_malformed_rule_and_target_metadata_cannot_authorize_write",
+          "test_exact_target_binding_is_revalidated_for_both_rules",
+          "test_rule_identity_state_target_cardinality_and_pagination_remain_strict"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F11-target-binding-skipped.log",
+        "rawLogSha256": "d1dca2cc9ba064688cfd70323a5a1d2fda01de13b89d47e66143fded6078d367"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F11-target-binding-skipped-restored.log",
+        "rawLogSha256": "435b4229b5048d7ddd6311335077c871a093b14de01051605365c24be3bfc26f"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F12-approval-gate-skipped",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Ownership is not approval",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "defe5aa09efc156dfb1de1e589035dd347cb43412e22732d958078088a0a78fb",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F12-approval-gate-skipped.patch",
+      "mutationPatchSha256": "93ec09267e427837b2a768bb60a91b531b35bc21acf560fd1fda0213241416c5",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_claim_approval_and_exact_rule_still_gate_empty_output_writes"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F12-approval-gate-skipped.log",
+        "rawLogSha256": "7091a2756d010857b6f47f09a8665fe21da364d37d4619288d28fb4eae7bfc32"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F12-approval-gate-skipped-restored.log",
+        "rawLogSha256": "510c750f3f0d43f52edc6eb18aa6bcc3c4952588f647b3ff658b5ef6fdc7880c"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F13-ownership-gate-skipped",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Approval is not ownership",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "25448705ed8298bc426845d9594d2dd8bdab4bf3bfc792a9f6bbbb967fc6c3a9",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F13-ownership-gate-skipped.patch",
+      "mutationPatchSha256": "fb2ad4d163c702482fb2c96d297c33884467af0279673469003e4940c8bb164c",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_claim_approval_and_exact_rule_still_gate_empty_output_writes"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F13-ownership-gate-skipped.log",
+        "rawLogSha256": "80ac4141d36c114b731f6badd4a3321166b59bdfa078ee9a2ec227eec7d27e87"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F13-ownership-gate-skipped-restored.log",
+        "rawLogSha256": "9f72194f805c24c9a51593708266f1421be775f030a5bcacc304a309513ec97f"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F14-rule-readback-fabricated",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Write acknowledgement does not replace observed rule state",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "d636a2cde3c21d8181fbe32beb5ec28c774c1f1ae0f25dbfede1a8186c53f311",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F14-rule-readback-fabricated.patch",
+      "mutationPatchSha256": "623c4656374f34b89617d40fdf5781d91f17cca83cd74b550ace4e051064fe26",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_both_exact_rules_pause_and_restore_through_real_transport_and_strict_readback",
+          "test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted",
+          "test_lost_ssm_send_reply_remains_unknown_with_rules_paused_and_no_second_send",
+          "test_successful_transition_sends_once_and_restores_both_rules_without_duplicate_writes"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F14-rule-readback-fabricated.log",
+        "rawLogSha256": "65cd16eb31edb5bf9106092d324ae962f73257079ee5698911610b7b5d924838"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F14-rule-readback-fabricated-restored.log",
+        "rawLogSha256": "fea676ad3e864747f26eaaeebeed2b6b42ff35748b28cb431227582125ca1c63"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F15-duplicate-ssm-send",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "SSM submission cannot be duplicated",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "661842926630cba5fbbd5823aebf309c23a078a38412499dfef63a2e4f84566a",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F15-duplicate-ssm-send.patch",
+      "mutationPatchSha256": "5d66db325210303d2ea75d2eea118b739283f648922de3a08f6cd5c0814a26d6",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_successful_transition_sends_once_and_restores_both_rules_without_duplicate_writes"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F15-duplicate-ssm-send.log",
+        "rawLogSha256": "a1c36099d7a1b5ab15f5d9ff4d57fca3072a67d7183d20be58974a43ab4430a6"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F15-duplicate-ssm-send-restored.log",
+        "rawLogSha256": "d7b779c514a8b199a10c3363ae1f7a276b346adf39ba5a223162d923ad0ca51a"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F16-unknown-send-guessed-not-attempted",
+      "sourcePath": "deploy/pipeline/transition_orchestrator.py",
+      "invariant": "Uncertain SSM submission stays UNKNOWN on entry and reentry",
+      "originalSourceSha256": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f",
+      "mutantSourceSha256": "676e6e36f54a80dce1a205459737bb71bb00e6170db14a07b01ff061f8d88312",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F16-unknown-send-guessed-not-attempted.patch",
+      "mutationPatchSha256": "07dedc71d921f2a112c12a9cb8211733886e2c6a368aff67139064aeeab7889d",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_lost_ssm_send_reply_remains_unknown_with_rules_paused_and_no_second_send"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F16-unknown-send-guessed-not-attempted.log",
+        "rawLogSha256": "7d11e557a4681d99212f7db96749370ce6b7c6c978237baa5d0d867558b35bf3"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F16-unknown-send-guessed-not-attempted-restored.log",
+        "rawLogSha256": "556a2bfa4a616f7814d81f18439150d8ab40bbaced49a8d741a37eb3543508c1"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F17-legacy-fallback-invented-success",
+      "sourcePath": "deploy/pipeline/run-approved-release.py",
+      "invariant": "Archives lacking the optional controller keep original transport",
+      "originalSourceSha256": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+      "mutantSourceSha256": "9b6b18efdcbfa89baedd82ee3c44c12d161911bb34bb09281d6fe5a5a0ebead9",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F17-legacy-fallback-invented-success.patch",
+      "mutationPatchSha256": "98ebbebc0ba6685eb9c9c0893d35bc0022171f16a22f75032573be30d4c076e7",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_legacy_archive_without_optional_controller_keeps_read_transport"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F17-legacy-fallback-invented-success.log",
+        "rawLogSha256": "92a4889787cf52f5914997426d590f25193eecb85b104f29343e9e66a6deacbf"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F17-legacy-fallback-invented-success-restored.log",
+        "rawLogSha256": "35a07ee477a405772dbb4dbeae9ba486e7be69dd178de64812fe520662e3b63a"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F18-control-literal-in-legacy-wrapper",
+      "sourcePath": "deploy/pipeline/run-approved-release.py",
+      "invariant": "Original architecture oracle excludes control operations from publication/wrapper/host",
+      "originalSourceSha256": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+      "mutantSourceSha256": "a4e0b351796536624a16c75739e3dff0b51f7c606b14bba1e51a1c28ea6de467",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F18-control-literal-in-legacy-wrapper.patch",
+      "mutationPatchSha256": "3f7b31e451d12ce337e0238e7e72c9b0e92e3b24529df96fab71bce65eeb1179",
+      "mutation": {
+        "command": "JAVA_HOME=/workspace/.task-cache/jdk17 PATH=/workspace/.task-cache/jdk17/bin:$PATH node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs .github/scripts/production-preflight-contract.test.cjs",
+        "exitCode": 1,
+        "testsRun": 29,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F18-control-literal-in-legacy-wrapper.log",
+        "rawLogSha256": "593a928ba0494edc476db8baacc8ac109bceed5b3dfaa0f814234c292b26bead"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F18-control-literal-in-legacy-wrapper-restored.log",
+        "rawLogSha256": "a9d18362ed76487f70a7718d8dacab922fec53bec5c958e804ea8c9f6a2ae114"
+      },
+      "restoredNode": {
+        "command": "JAVA_HOME=/workspace/.task-cache/jdk17 PATH=/workspace/.task-cache/jdk17/bin:$PATH node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs .github/scripts/production-preflight-contract.test.cjs",
+        "exitCode": 0,
+        "testsRun": 29,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F18-control-literal-in-legacy-wrapper-restored-node.log",
+        "rawLogSha256": "047bf4e4e508fc6b63e2196686476c6b84eac7ecd3f14bca59890a5226f16431"
+      }
+    },
+    {
+      "id": "F19-readonly-preflight-empty-control-normalized",
+      "sourcePath": "deploy/preflight/run-preflight.py",
+      "invariant": "Shared readonly preflight retains its original decoder",
+      "originalSourceSha256": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040",
+      "mutantSourceSha256": "76a48c7af3823f26c96f96d4e526228c6e972ef79485af482a6cdc8cd0313a15",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F19-readonly-preflight-empty-control-normalized.patch",
+      "mutationPatchSha256": "b91da4133a9e30b3c42fe123ea5b85dd2c986c1577d53b3533afab7dc771994d",
+      "mutation": {
+        "command": "python -m unittest deploy.tests.test_issue154_aws_control_transport.AwsControlTransportTests.test_readonly_preflight_retains_original_empty_control_rejection -v",
+        "exitCode": 1,
+        "testsRun": 1,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_readonly_preflight_retains_original_empty_control_rejection"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F19-readonly-preflight-empty-control-normalized.log",
+        "rawLogSha256": "504334181ab2836f6ed7722a884ea112771e78d56a38cc7e15752146245ec5fb"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F19-readonly-preflight-empty-control-normalized-restored.log",
+        "rawLogSha256": "510c750f3f0d43f52edc6eb18aa6bcc3c4952588f647b3ff658b5ef6fdc7880c"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F20-read-failure-invented-success",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "Noncontrol fallback responses pass through unchanged",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "74d415d0fa5d7e4f2aa0a766ee07201921f4f66fc9ee3dbf74a9aabdee790043",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F20-read-failure-invented-success.patch",
+      "mutationPatchSha256": "94908611c7bc50c7f6a38b236874a55e6a769d7072f6be3ff7e0d672dcf5340c",
+      "mutation": {
+        "command": "python -m unittest deploy.tests.test_issue154_aws_control_transport.AwsControlTransportTests.test_controller_reads_delegate_unchanged_without_control_diagnostics -v",
+        "exitCode": 1,
+        "testsRun": 1,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_controller_reads_delegate_unchanged_without_control_diagnostics"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F20-read-failure-invented-success.log",
+        "rawLogSha256": "c9d09d97e156d301e507ee022e0f27d1089ca8228f36f86783e68bb5461cab1d"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F20-read-failure-invented-success-restored.log",
+        "rawLogSha256": "e66bfefbf0561f63dc3b2b0374451b672c0e779b310d8fae2cbada02b2390733"
+      },
+      "restoredNode": null
+    },
+    {
+      "id": "F21-control-retry-after-parse-failure",
+      "sourcePath": "deploy/pipeline/release_pipeline.py",
+      "invariant": "A failed acknowledgement cannot cause a duplicate control write",
+      "originalSourceSha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+      "mutantSourceSha256": "69179a7b43725d648e2ca4d5c040466c277724556e17e82f91a4ff230b4931b8",
+      "mutationPatch": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F21-control-retry-after-parse-failure.patch",
+      "mutationPatchSha256": "4e7c06e52f2aea41ae40173e7ddfb1bf61e5d2c24a43521002fdcb3418031564",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 1,
+        "testsRun": 19,
+        "failureCount": 54,
+        "errorCount": 0,
+        "failingTestMethods": [
+          "test_control_failure_marker_preserves_only_safe_subprocess_reason",
+          "test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure",
+          "test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted",
+          "test_malformed_and_nonobject_write_bodies_still_fail_driver",
+          "test_no_output_writes_reject_stderr_and_nonempty_json_objects"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F21-control-retry-after-parse-failure.log",
+        "rawLogSha256": "274f5e95c26fe21ae0ab4276dfdf336413d13bea399d0b728e1dd4a3ac67dbb2"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+        "exitCode": 0,
+        "testsRun": 19,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingTestMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/F21-control-retry-after-parse-failure-restored.log",
+        "rawLogSha256": "fc28755a4e13e550cae3accbe4220b9c0a10af266c719b86a48b4e791cb129f8"
+      },
+      "restoredNode": null
+    }
+  ],
+  "finalRestored": {
+    "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v",
+    "exitCode": 0,
+    "testsRun": 19,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingTestMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/final-restored-green.log",
+    "rawLogSha256": "b858f62ed1628fc2020861259b17e6dac6adb23f6a0ea8e25ff12f6be6c58349"
+  },
+  "originalNodeFinal": {
+    "command": "JAVA_HOME=/workspace/.task-cache/jdk17 PATH=/workspace/.task-cache/jdk17/bin:$PATH node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs .github/scripts/production-preflight-contract.test.cjs",
+    "exitCode": 0,
+    "testsRun": 29,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingTestMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/original-node-final-green.log",
+    "rawLogSha256": "019bc35c160f4f4b19e1e670e0f4c098a9e99d258a507deb40e644af4bad087d"
+  },
+  "unchangedOriginalRegressionSuites": [
+    {
+      "command": "python -m unittest discover -s deploy/tests -p test_issue154_adapter.py -v",
+      "exitCode": 0,
+      "testsRun": 26,
+      "failureCount": 0,
+      "errorCount": 0,
+      "failingTestMethods": [],
+      "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/test_issue154_adapter-regression.log",
+      "rawLogSha256": "3853bf2bb6e7cc95e940422200f90398dec33a4e18efeec708e66cd34f42eda8"
+    },
+    {
+      "command": "python -m unittest discover -s deploy/tests -p test_issue154_transition.py -v",
+      "exitCode": 0,
+      "testsRun": 19,
+      "failureCount": 0,
+      "errorCount": 0,
+      "failingTestMethods": [],
+      "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/test_issue154_transition-regression.log",
+      "rawLogSha256": "f40dd52bf410da880b24c21b7e142ae1aac338227a8f001b9fc172c473023437"
+    },
+    {
+      "command": "python -m unittest discover -s deploy/tests -p test_preflight_command_reads.py -v",
+      "exitCode": 0,
+      "testsRun": 5,
+      "failureCount": 0,
+      "errorCount": 0,
+      "failingTestMethods": [],
+      "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/independent-fi-stage2/test_preflight_command_reads-regression.log",
+      "rawLogSha256": "539de2913c836b8324dcce481f2efede6440058ab5985db7b6cff8714ad38a59"
+    }
+  ],
+  "activeSourceUnchangedDuringAudit": true,
+  "originalFilesUnchangedFromHEAD": [
+    "deploy/tests/test_issue154_adapter.py",
+    "deploy/tests/test_issue154_transition.py",
+    "deploy/tests/test_preflight_command_reads.py",
+    "deploy/preflight/run-preflight.py",
+    ".github/scripts/approved-release-pipeline.test.cjs",
+    ".github/scripts/production-preflight-contract.test.cjs"
+  ],
+  "driverAwsValidationUnchangedFromHEAD": true,
+  "harnessPath": ".codex/tdd-evidence/issue154-aws-control-transport/run-independent-fi-stage2.py",
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "operationalLimit": "Local documented AWS CLI contract only. Sole actual rollout cause requires authenticated readonly journal/rule/CloudTrail correlation. No real deployment, recovery, rerun or operating completion demonstrated.",
+  "harnessNotes": [
+    "Discarded setup attempt lacked copied migration fixtures/JDK selection; its log is preserved. A partial bytecode-disabled attempt was intentionally interrupted to avoid repeated module parse cost; no partial run is represented as final FI. Final runs clear isolated __pycache__ before each command and enable per-run caching, with exact source hashes checked.",
+    "F01, F19 and F20 select unchanged focused contract methods so deliberate corruption of generic metadata paths does not prevent unrelated adapter fixture construction. All other Python mutants run the full19. F18 runs the unchanged original Node architecture oracles. Every mutation restores exact original bytes and reruns full19."
+  ],
+  "harnessSha256": "f38991a3dae6763d587e6a80d4d4efc86998e3aa3a2264d83813ea2d0c657624"
+}

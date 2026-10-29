@@ -1,0 +1,61 @@
+{
+  "workItem": "issue154-recovery-inspection",
+  "status": "INDEPENDENT_REVIEW_PASSED",
+  "reviewedAt": "2026-10-29T03:41:05.386489+00:00",
+  "reviewerRole": "Independent test author and auditor; parent implemented production",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "approvedSourceHashes": {
+    "deploy/pipeline/release_pipeline.py": "dc892d8f94d958c9f8d72805868f66d7a837687ddf893f1ab9715a2a3b9c43f3",
+    ".github/workflows/deploy.yml": "8121e9883ef0242bb3d7df4e51365e4a20e38cbe29c817d4285a37c25212aed7",
+    "deploy/pipeline/run-approved-release.py": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+    "deploy/preflight/run-preflight.py": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040"
+  },
+  "frozenTestHashes": {
+    "deploy/tests/test_issue154_recovery_inspection.py": "f06ff6dd4497d90bd32d69d88586279cf74cfa5a9201a9b3200752b97bab1a1e",
+    "deploy/tests/test_issue154_recovery_inspection_audit.py": "906f5542bfcd8bd9489a5784e54440a6abdd1c48e642e5197b05ddab65b2cd0c",
+    "deploy/tests/test_issue154_recovery_inspection_fi_contract.py": "f3aaf93dcfb6d11e57868c0d461b4ca6331917b50ea377f889ca7e962b317211",
+    "deploy/tests/test_issue154_recovery_inspection_namespace_projection_audit.py": "1cdb6485439c765ba3c67cc9767b355f67a691c859d8beda502c2cf9eea57d28",
+    "deploy/tests/test_issue154_recovery_inspection_projection_audit.py": "bf73344dccc8fdb8ebf88db842e012d4e9811253f55fe1833b97ffb68ec87c3e"
+  },
+  "verificationReceipt": ".tdd/verification/issue154-recovery-inspection-independent-fi.json",
+  "redReceipts": [
+    ".tdd/red/issue154-recovery-inspection.json",
+    ".tdd/red/issue154-recovery-inspection-audit.json",
+    ".tdd/red/issue154-recovery-inspection-projection-audit.json",
+    ".tdd/red/issue154-recovery-inspection-namespace-projection-audit.json"
+  ],
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "resolvedFindings": [
+    "Contradictory namespace KeyCount could prove a false fresh installation; separate real RED captured before fix.",
+    "Unread journals were incorrectly labeled MISSING after owner/namespace failure; separate real REDs captured before fixes."
+  ],
+  "withdrawnCandidate": "Suspected automatic APPLIED/UNTOUCHED incompatibility withdrawn after actual original run_automatic produced RESTORED and the next guard was SAFE_TERMINAL. Sanitized actual-core replay preserved locally.",
+  "reviewedBoundaries": [
+    "Inspection projects only approved journal/owner metadata after canonical identity, protocol/schema and bounded JSON validation. Raw holder, ETag, command ID, identities, exception text and provider payloads are absent from reports.",
+    "S3 GetObject requests bytes=0-131072 and verifies bounded local length and optional ContentRange. Namespace reads use the fixed bucket/instance hash prefix with max-keys1 and strict KeyCount/Contents/truncation consistency.",
+    "Only a truly empty namespace permits a missing owner. An orphan object, denied/malformed read, active owner, unfinished/UNKNOWN journal or changing owner snapshot blocks progress. Unknown or uninspected journal status is UNAVAILABLE until absence is actually proven.",
+    "Released terminal NOT_ATTEMPTED requires null command and exact original rules. APPLIED additionally requires terminal journal and full prior original identity/current image/READY/trusted guard/history binding using already-collected facts, with no fresh host probe or SSM send.",
+    "Planning fences prior state before provider/gate/output paths. Execution rechecks before ownership/core/mutation. Real adapter FakeAwsDriver boundaries and mutation traps prove unsafe first-main plans/executors stop. Same-operation UNKNOWN remains UNKNOWN.",
+    "Existing reconcile_known_operation function bytes and v1 schema/decision remain unchanged. Existing known-command observation is retained; the new projection is separately emitted and uploaded as recovery-inspection.json. Workflow change adds only this artifact path and no permission or authority.",
+    "Entire production/workflow/documentation diff reviewed. No business logic, SQL, provider prompt, input-analysis-result, PR158, credentials, IAM/environment settings, lock deletion or forced ownership change."
+  ],
+  "validation": {
+    "newTestsGreen": 41,
+    "originalReconcileAdapterControllerTestsGreen": 51,
+    "originalNodeOraclesGreen": 29,
+    "faultInjectionsDetected": 21,
+    "eachMutantCompiledAndHadAssertionFailuresWithoutErrors": true,
+    "full41PassedAfterEachExactRestore": true,
+    "originalFixtureFilesCompared": 65,
+    "originalFixtureMismatches": 0,
+    "originalReconcileV1FunctionByteUnchanged": true,
+    "activeProductionAndFrozenTestsNeverMutatedByAuditor": true
+  },
+  "evidenceProvenance": "test_issue154_recovery_inspection_fi_contract.py is post-implementation coverage. Its baseline is GREEN; mutated failures are FI evidence, not invented chronological production RED.",
+  "limitations": [
+    "Local safety fence and bounded diagnostics only; no live OIDC inspection, runtime/DB proof, remote CI, main merge or deployment demonstrated by this audit."
+  ]
+}

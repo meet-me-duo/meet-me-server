@@ -1,0 +1,57 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "cycle": "stage2-controller-owned-transport",
+  "status": "STAGE2_INDEPENDENT_REVIEW_PASSED",
+  "reviewedAt": "2026-10-29T01:20:13.505861+00:00",
+  "role": "Independent test designer/auditor; production implemented by parent",
+  "sourceRevision": "284f8e2158c9536cbf71b519df46bee3b9d05ac5",
+  "supersededStage1": ".tdd/history/issue154-aws-control-transport-stage1/supersession.json",
+  "scope": "This approval applies only to the stage2 exact hashes below. Stage1 focused approval remains withdrawn due retained Node architecture oracle; stage1 bytes and evidence retained unchanged.",
+  "reviewedSourceHashes": {
+    "deploy/preflight/run-preflight.py": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040",
+    "deploy/pipeline/run-approved-release.py": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+    "deploy/pipeline/release_pipeline.py": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+    "deploy/pipeline/transition_orchestrator.py": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f"
+  },
+  "retainedOriginalOracleHashes": {
+    "deploy/tests/test_issue154_adapter.py": "8f639dfbc41b12b3833ac08881c251c3b68698438ba950619b168485adc53087",
+    "deploy/tests/test_issue154_transition.py": "8bd5eb427ed8d3dd90f8dfb4304cbf3150243e4453583308ed07ebeb524d1459",
+    "deploy/tests/test_preflight_command_reads.py": "ce0ecbe8073f280548b13109116b8ad92fdaf136becdd4f56e1779d2bf1decfc",
+    "deploy/preflight/run-preflight.py": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040",
+    ".github/scripts/approved-release-pipeline.test.cjs": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1",
+    ".github/scripts/production-preflight-contract.test.cjs": "98b21dd59fe062efdba727dc38901bc020ff19bacf30fa62c65009b710cabfe2"
+  },
+  "frozenTestSha256": "985dc4c22dfdd855312f2f4f1464e316052156e7af6394d07b61ded5d0c643ed",
+  "redReceipt": ".tdd/red/issue154-aws-control-transport.json",
+  "verificationReceipt": ".tdd/verification/issue154-aws-control-transport-independent-fi.json",
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "reviewedBehavior": [
+    "Exact events enable-rule/disable-rule transport and failure diagnostics live only in existing release_pipeline.py controller, which already owns authorized rule mutations. Driver.aws_call delegates generically to the optional controller.",
+    "Legacy _aws validation and shared readonly preflight remain original. Archives without the optional controller retain original read transport. All other operations delegate the original read fallback unchanged.",
+    "Control acknowledgement requires zero exit, empty stderr and empty/whitespace stdout; exact JSON empty-object remains compatible. Malformed, unexpected nonempty JSON, timeout, nonzero and execution errors fail without repeated writes.",
+    "Controller emits only canonical fixed service/operation/reason enum. No argv, rule name, captured stdout/stderr or exception text crosses the diagnostic boundary. Core-caught pause failure retains the bounded marker.",
+    "Exact two-rule/target/document/role/instance/ownership/approval and strict rule readback remain intact. Lost pause replies are read back and safely restored. Uncertain SSM send remains UNKNOWN across reentry without duplicate send.",
+    "Reviewed entire production and documentation diff: no business logic, input-analysis-result, prompt or PR158 change; operating completion remains unchecked and actual-cause correlation explicitly pending."
+  ],
+  "validation": {
+    "focusedGreen": 19,
+    "unchangedOriginalPythonRegressions": 50,
+    "unchangedOriginalNodeOracles": 29,
+    "faultInjectionsDetected": 21,
+    "allMutantsProducedAssertionFailuresWithoutErrors": true,
+    "restoredFull19AfterEveryMutation": true,
+    "originalNodeArchitectureMutationDetectedAndRestored": true,
+    "activeSourceNeverMutatedByAuditor": true,
+    "readonlyPreflightByteExactHEAD": true,
+    "legacyDriverAwsValidationFunctionByteExactHEAD": true,
+    "originalOraclesByteExactHEAD": true,
+    "stage2FrozenTestHashMatchesNewChronologicalRed": true
+  },
+  "limitations": [
+    "Local documented AWS CLI contract only. Sole actual rollout cause requires authenticated readonly journal/rule/CloudTrail correlation. No real deployment, recovery, rerun or operating completion demonstrated."
+  ],
+  "externalActions": "No AWS/network/security/environment mutation, workflow retry, commit, push or PR by auditor."
+}

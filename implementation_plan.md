@@ -1,12 +1,24 @@
 # meet-me-server Implementation Plan
 
+## Issue #154 — OIDC 복구 진단과 이전 작업 안전 검사 (2026-10-29 UTC)
+
+- [x] `[USER]` 기존 OIDC 권한만 사용하는 reconcile 제한 읽기 진단과 분류·실행 전 안전 검사의 구현, 독립 검증, 게시·PR·CI·main 반영과 진단 실행을 승인했다. 새 IAM·신뢰·보호 설정, 잠금 삭제·강제 인수, 입력→분석→결과 변경과 #158·#161은 포함하지 않는다.
+- [x] `[AGENT]` 깨끗한 develop에서 `git pull --ff-only origin develop`으로 bccf36e4를 받은 뒤 `fix/154-recovery-inspection`을 분기했다. 기존 PR #163은 보존하며 이 보완을 먼저 develop에 통합한 후 해당 main PR의 정확한 HEAD를 다시 검증한다.
+- [x] `[AGENT]` 독립 RED로 기존 reconcile v1 보존, 제한된 projection·대상 결합·일관된 owner snapshot·비밀값 비노출과 mutation 전 안전 정지를 고정하고 구현했다. namespace 응답 건수 일관성과 미조회/실제 부재 구분도 독립 RED 후 보완했다. 기존 OIDC 읽기만 사용하며 진단이 소유권을 취득하거나 해제하지 않는다.
+- [x] `[AGENT]` 최종 관련 Python267·Node288·원본 commit guard를 통과했다. 독립41개 및 결함 주입21/21 탐지, 원본65개 지문 보존·원본Python51/Node29 통과를 확인했다. 전체Python369는 마지막 표시 사례2개 추가 전 실행이며 최종267에 해당 변경을 포함했다. 최초 main 분류/실행의 미확정 작업 차단을 검증했고 실제 운영 관측은 아직 미완료다.
+- [ ] `[AGENT]` 검증된 파일을 커밋·게시한다. Commit/PR: 동일 커밋 예정.
+- [ ] `[AGENT]` 정확 HEAD 원격 CI 후 develop에 통합하고 기존 PR #163을 갱신해 main CI를 검증한다. 분석 #158과 DB 최적화 #164는 포함하지 않는다.
+- [ ] `[SHARED]` main 반영 후 기존 GitHub 인증 경로에서 정확한 `action=reconcile`을 실행하고 제한된 journal·owner 증거를 조회한다. 실제 보호 환경 승인이 필요하면 해당 run의 링크를 안내하며, 확인 전 운영 완료를 표시하지 않는다.
+
+현재 진행(2026-10-29 UTC): 제한 진단·안전 검사 구현과 로컬 검증 완료. 원격 게시·정확 CI·main 반영·실제 OIDC 진단은 후속이며 운영 완료로 표시하지 않는다.
+
 ## Issue #154 — 승인 전환 자동화와 실제 배포 완료 검증 (2026-10-28 UTC)
 
 - [x] `[AGENT]` 기존 이슈와 현재 main/develop·열린 PR을 읽고 중복 없는 #154를 생성했다. 깨끗한 develop에서 `git pull --ff-only origin develop`을 통과한 뒤 `fix/154-cicd-completion`을 분기했다. 내 모임·웹·운영 AI 작업은 다른 담당과 분리한다.
 - [x] `[AGENT]` 독립 테스트 설계자가 완료 증명과 규칙 전환의 공개 계약을 고정하고 행동 skeleton의 유효 RED를 보존했다. 완료 증명의 runtime·전체 DB·공개 API·규칙 원래 상태·명령 종료 조건 21개 테스트는 첫 GREEN을 통과했다.
 - [x] `[AGENT]` 일반 main 배포 자동 완결, 특별 전환의 pipeline 승인 후 자동 계속, UNKNOWN·규칙 복원·중복 실행 금지와 안전한 로그/요약을 구현했다. 원본 SQL·host fence·잠금과 역사 archive 검증을 유지하고 현재 실행 의존성만 독립 검토로23개에 맞췄다. readonly API 기대 데이터는 실제 native 명세와 비교하고 archive에 묶었다.
 - [x] `[AGENT]` 원본 commit guard의 ktlintCheck·assemble·test exit0, 265 suites/2245건 중2241 PASS·기존4 SKIP·실패/오류0, 입력571개 전후 동일을 확인했다. 배포 Python304·Node172, 독립 신규 경계200·최종 감사 FI55/55를 통과했고 미해결 P1/P2는 없다. 실제 source package/publisher smoke도 mock 전송으로 통과했다.
-- [ ] `[AGENT]` PR #156의 정확 HEAD CI·Terraform 검증 성공 후 develop795e3bfd에 병합했고 main PR #159를 생성했다. 운영 읽기 대조에서 공개 health 경로와 최종 앱 건강 확인 누락을 발견해 독립 RED28개를 고정·수정했다. 보완 Python311·Node172·원본 guard·독립94개 및 FI15/15를 통과했고 실제 공개 읽기도 통과했다. 새 HEAD CI·운영 완료 증명은 별도 확인한다. Commit/PR: 보완 동일 커밋 예정 / #156·#159.
+- [ ] `[AGENT]` #156·#160을 develop/main c152ba70에 병합하고 main CI40792861829를 통과했다. 실제 보호 승인 후 배포40795593214는 전환 전제조건에서 실패했고 로그는 runtime미시도·규칙원상복원·pending0을 확인했다. 정상 빈 CLI 출력 결함을 독립 RED19개로 고정·수정하고 Python330·Node172·원본 guard·독립 FI21/21을 통과했다. 읽기 preflight·기존 검사는 원본을 유지한다. 실제 실패 상관관계·이전 lock/rules 읽기와 새 CI·운영 완료 증명은 후속 확인한다. Commit/PR: 응답 보완 동일 커밋 예정 / #154·#159.
 - [x] `[USER]` 기존 두 규칙에 한정한 IAM EnableRule/DisableRule와 새 보호 환경의 기존 reviewer·main-only·관리자 우회 금지·self-review 허용을 구체 승인했다. 기존 production과 OIDC 신뢰는 유지한다.
 - [x] `[SHARED]` 개인 PC 담당이 두 규칙에 한정한 `ManageMeetMeCredentialRefreshRules`와 새 승인 환경을 적용·재조회했다. 원래 5개 IAM statement·OIDC·기존 production은 보존했고 두 규칙은 ENABLED이다. 확인된 환경·reviewer ID만 비밀 없는 gate policy에 반영했다. Cloud의 보안 설정 중복 적용은 없으며 미구성 환경을 참조하지 않는 회귀도 유지한다.
 - [ ] `[SHARED]` 사용자가 PR #158의 사전확인 프롬프트·판정·안내 변경을 보류하고 #154 운영 반영을 먼저 요청했다. 해당 변경이 tree/ancestry에 없음을 확인하고 단독 main 승격·실제 승인 전환·runtime/DB/API·규칙 복원까지 검증한다. 특정 PR review APPROVE는 별도 행동 승인이 있을 때만 수행한다.

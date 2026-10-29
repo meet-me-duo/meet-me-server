@@ -12,6 +12,7 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import tempfile
 import tarfile
 import time
@@ -26,6 +27,43 @@ MARKER = "MEETME_DEPLOYMENT_RESULT_V1 "
 def _require(condition):
     if not condition:
         raise ValueError("UNTRUSTED_PIPELINE_RESULT")
+
+
+def aws_call(read_fallback, service, operation, *args):
+    """Decode the two no-output controls here; keep readonly transport unchanged.
+
+    Successful transport is only an acknowledgement. The owning adapter must
+    still validate authority/targets and read back the exact resulting states.
+    """
+    if service != "events" or operation not in ("enable-rule", "disable-rule"):
+        return read_fallback(service, operation, *args)
+    try:
+        command = ["aws", "--region", os.environ["AWS_REGION"], "--output", "json", service, operation, *args]
+        result = subprocess.run(command, capture_output=True, text=True, timeout=25)
+        if result.returncode:
+            reason = "AWS_DENIED_OR_FAILED"
+        elif type(result.stdout) is not str or type(result.stderr) is not str:
+            reason = "AWS_UNEXPECTED_OUTPUT"
+        elif result.stderr != "":
+            reason = "AWS_UNEXPECTED_STDERR"
+        elif not result.stdout.strip():
+            return {"status": "success", "data": {}}
+        else:
+            data = json.loads(result.stdout)
+            if type(data) is dict and not data:
+                return {"status": "success", "data": {}}
+            reason = "AWS_UNEXPECTED_OUTPUT"
+    except subprocess.TimeoutExpired:
+        reason = "AWS_TIMEOUT"
+    except json.JSONDecodeError:
+        reason = "AWS_INVALID_JSON"
+    except (OSError, UnicodeError):
+        reason = "AWS_EXECUTION_FAILED"
+    except Exception:
+        reason = "AWS_UNAVAILABLE"
+    print("MEETME_AWS_CALL_FAILURE_V1 " + _canonical({
+        "service": "events", "operation": operation, "reason": reason}).decode("utf-8"))
+    return {"status": "unavailable", "reason": reason}
 
 
 def _module(name):
@@ -264,6 +302,191 @@ def _canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
 
 
+class RecoverySafetyError(ValueError):
+    """Carry only the sanitized prior-state observation, never an AWS exception."""
+
+    def __init__(self, report):
+        super().__init__("UNRESOLVED_PRIOR_OPERATION")
+        self.report = copy.deepcopy(report)
+
+
+def _recovery_journal(record, op_id):
+    """Validate the durable wire record before projecting any of its fields."""
+    _require(type(record) is dict)
+    identity = _module("release_completion").validate_identity(record.get("identity"))
+    core = _module("transition_orchestrator")
+    _require(record.get("operationId") == op_id == core.operation_id(identity))
+    if record.get("protocol") == core.PROTOCOL:
+        return core._validate_record(record, identity, op_id)
+    fields = {"protocol", "identity", "operationId", "sequence", "deploymentState", "commandId",
+              "originalRules", "outcome", "rulesState"}
+    _require(set(record) == fields and record["protocol"] == "meet-me-automatic-operation-v1")
+    _require(type(record["sequence"]) is int and record["sequence"] > 0)
+    _require(type(record["deploymentState"]) is str and record["deploymentState"] in {"NOT_ATTEMPTED", "UNKNOWN", "APPLIED"})
+    _require(type(record["outcome"]) is str and record["outcome"] in
+             {"NOT_DEPLOYED", "APPLIED", "RECOVERY_REQUIRED", "RESTORATION_REQUIRED"})
+    _require(type(record["rulesState"]) is str and record["rulesState"] in core.RULE_STATES)
+    core._rules(record["originalRules"])
+    command = record["commandId"]
+    _require(command is None or core._command_id(command))
+    _require(command is None or record["deploymentState"] != "NOT_ATTEMPTED")
+    _require(record["deploymentState"] != "APPLIED" or command is not None)
+    return copy.deepcopy(record)
+
+
+def _inspection_report(op_id):
+    return {"protocol": "meet-me-recovery-inspection-v1", "operationId": op_id,
+            "journal": {"status": "UNAVAILABLE", **{key: None for key in (
+                "protocol", "sequence", "phase", "deploymentState", "rulesState", "outcome", "reason", "commandIdPresent")}},
+            "owner": {"status": "MISSING", "released": None, "identityMatches": None},
+            "safeToProceed": False, "reason": "UNFINISHED_OPERATION"}
+
+
+def _applied_prior_host_matches(record, adapter, facts):
+    """Use only the host facts already read by release preparation; no new probe."""
+    original = record["identity"]
+    image = adapter.release["manifest"]["imageRepository"] + "@" + original["imageDigest"]
+    contract = facts.get("automaticContract")
+    history = facts.get("history")
+    if not (facts.get("phase") == "READY" and facts.get("guardTrusted") is True
+            and facts.get("currentImage") == image and type(contract) is dict
+            and contract.get("protocol") == "meet-me-automatic-release-v1"
+            and contract.get("currentImage") == image and type(history) is list and history
+            and contract.get("history") == history
+            and all(contract.get(key) == original[key] for key in ("sourceSha", "buildRunId", "buildRunAttempt"))):
+        return False
+    return all(type(row) is dict and set(row) == {"version", "script", "checksum", "success"}
+               and row["success"] is True and type(row["version"]) is str
+               and re.fullmatch(r"[0-9.]{1,32}", row["version"])
+               and type(row["script"]) is str and re.fullmatch(r"V[0-9._]+__[A-Za-z0-9_]+\.sql", row["script"])
+               and type(row["checksum"]) is int for row in history)
+
+
+def _inspect_recovery(adapter, requested=None):
+    core = _module("transition_orchestrator")
+    selected = requested if requested is not None else core.operation_id(adapter.identity)
+    report = _inspection_report(selected)
+    try:
+        first, etag = adapter.read_owner_for_inspection()
+    except Exception:
+        report["owner"]["status"], report["reason"] = "UNAVAILABLE", "OWNER_UNAVAILABLE"
+        return report
+
+    if first is None and requested is None:
+        try:
+            empty = adapter.inspection_namespace_empty()
+            _require(type(empty) is bool)
+            last, last_etag = adapter.read_owner_for_inspection()
+            if last is not None or last_etag != etag:
+                report["reason"] = "SNAPSHOT_CHANGED"
+            elif empty:
+                report["journal"]["status"] = "MISSING"
+                report.update(safeToProceed=True, reason="FRESH_NAMESPACE")
+            else:
+                report["reason"] = "NONEMPTY_NAMESPACE"
+        except Exception:
+            report["reason"] = "OWNER_UNAVAILABLE"
+        return report
+
+    if first is not None:
+        report["owner"].update(status="PRESENT", released=first["released"])
+        if requested is None:
+            selected = first["operationId"]
+            report["operationId"] = selected
+
+    record = None
+    try:
+        raw = adapter.read_operation_for_reconcile(selected)
+        if raw is None:
+            report["journal"]["status"] = "MISSING"
+            report["reason"] = "JOURNAL_MISSING"
+        else:
+            record = _recovery_journal(raw, selected)
+            report["journal"] = {"status": "VALID", **{key: record.get(key) for key in (
+                "protocol", "sequence", "phase", "deploymentState", "rulesState", "outcome", "reason")},
+                "commandIdPresent": record["commandId"] is not None}
+    except Exception:
+        report["journal"]["status"], report["reason"] = "UNAVAILABLE", "JOURNAL_UNAVAILABLE"
+
+    if record is not None:
+        matches = (first is not None and first["operationId"] == selected and first["identity"] == record["identity"])
+        report["owner"]["identityMatches"] = matches if first is not None else None
+        if first is None:
+            report["reason"] = "OWNER_MISSING"
+        elif not matches:
+            report["reason"] = "IDENTITY_MISMATCH"
+        elif not first["released"]:
+            report["reason"] = "OWNER_ACTIVE"
+        else:
+            try:
+                if requested is not None:
+                    candidate = _module("release_completion").validate_identity(adapter.identity)
+                    _require(all(candidate[key] == record["identity"][key] for key in (
+                        "sourceSha", "buildRunId", "buildRunAttempt", "releaseId", "imageDigest")))
+            except Exception:
+                report["reason"] = "IDENTITY_MISMATCH"
+            else:
+                transition = record["protocol"] == core.PROTOCOL
+                state = record["deploymentState"]
+                terminal = (state == "NOT_ATTEMPTED" and record["commandId"] is None
+                            and record["rulesState"] in {"RESTORED", "UNTOUCHED"}
+                            and ((transition and record["phase"] == "FAILED" and record["outcome"] == "FAILED")
+                                 or (not transition and record["outcome"] == "NOT_DEPLOYED")))
+                applied = (state == "APPLIED" and record["commandId"] is not None
+                           and record["rulesState"] == "RESTORED" and record["outcome"] == "APPLIED"
+                           and (not transition or record["phase"] == "COMPLETE"))
+                if not terminal and not applied:
+                    report["reason"] = "UNFINISHED_OPERATION"
+                else:
+                    try:
+                        facts = adapter.inspection_facts()
+                        _require(type(facts) is dict and facts.get("ruleStates") == record["originalRules"])
+                    except Exception:
+                        report["reason"] = "RULES_UNVERIFIED"
+                    else:
+                        if applied and not _applied_prior_host_matches(record, adapter, facts):
+                            report["reason"] = "HOST_UNVERIFIED"
+                        else:
+                            report.update(safeToProceed=True, reason="SAFE_TERMINAL")
+    try:
+        last, last_etag = adapter.read_owner_for_inspection()
+        if last != first or last_etag != etag:
+            report.update(safeToProceed=False, reason="SNAPSHOT_CHANGED")
+            report["owner"] = {"status": "UNAVAILABLE", "released": None, "identityMatches": None}
+    except Exception:
+        report.update(safeToProceed=False, reason="SNAPSHOT_CHANGED")
+        report["owner"] = {"status": "UNAVAILABLE", "released": None, "identityMatches": None}
+    return report
+
+
+def inspect_recovery_state(operation_id, adapter):
+    """Project a requested operation without claiming, releasing or polling it."""
+    _require(type(operation_id) is str and re.fullmatch(r"[0-9a-f]{64}", operation_id))
+    return _inspect_recovery(adapter, operation_id)
+
+
+def _emit_inspection(report):
+    data = _canonical(report)
+    _require(len(data) <= 8192)
+    Path("recovery-inspection.json").write_bytes(data + b"\n")
+    print("MEETME_RECOVERY_INSPECTION_V1 " + data.decode("utf-8"))
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with Path(summary).open("a", encoding="utf-8") as stream:
+            stream.write("### Read-only prior operation inspection\n\n")
+            stream.write("- Prior state safe to proceed: **" + str(report["safeToProceed"]).lower() + "**\n")
+            stream.write("- Inspection reason: **" + report["reason"] + "**\n")
+            stream.write("- This is not deployment completion and does not release ownership.\n\n")
+
+
+def require_recovery_safe(adapter):
+    report = _inspect_recovery(adapter)
+    _emit_inspection(report)
+    if report["safeToProceed"] is not True:
+        raise RecoverySafetyError(report)
+    return report
+
+
 def _github(driver, suffix):
     _require(type(suffix) is str and re.fullmatch(r"[A-Za-z0-9_./?=&-]+", suffix))
     request = urllib.request.Request("https://api.github.com/repos/" + driver.REPOSITORY + "/" + suffix,
@@ -391,9 +614,19 @@ class AwsReleaseAdapter:
             return None, None
         _require(objects[0].get("Key") == key)
         target = self.release["directory"] / (uuid.uuid4().hex + ".json")
-        metadata = aws("s3api", "get-object", "--bucket", bucket, "--key", key, str(target))
+        metadata = aws("s3api", "get-object", "--bucket", bucket, "--key", key,
+                       "--range", "bytes=0-131072", str(target))
+        _require(type(metadata) is dict)
         _require(type(metadata.get("ETag")) is str and re.fullmatch(r'"[A-Za-z0-9-]+"', metadata["ETag"]))
         _require(target.is_file() and not target.is_symlink())
+        size = target.stat().st_size
+        _require(type(metadata.get("ContentLength")) is int and 0 < size <= 131072
+                 and metadata["ContentLength"] == size)
+        if "ContentRange" in metadata:
+            content_range = metadata["ContentRange"]
+            _require(type(content_range) is str)
+            match = re.fullmatch(r"bytes 0-([0-9]+)/([0-9]+)", content_range)
+            _require(match is not None and int(match[1]) + 1 == int(match[2]) == size)
         return _file_json(target, 131072), metadata["ETag"]
 
     def _write_object(self, key, value, etag):
@@ -414,6 +647,23 @@ class AwsReleaseAdapter:
             _require(type(value["holder"]) is str and re.fullmatch(r"[0-9a-f]{32}", value["holder"]))
             _require(value["operationId"] == _module("transition_orchestrator").operation_id(value["identity"]))
         return value, etag
+
+    def read_owner_for_inspection(self):
+        return self._owner()
+
+    def inspection_namespace_empty(self):
+        listing = self.driver._aws("s3api", "list-objects-v2", "--bucket", self.release["bucket"],
+                                   "--prefix", self.root_key, "--max-keys", "1")
+        _require(type(listing) is dict and type(listing.get("IsTruncated")) is bool)
+        objects = listing.get("Contents", [])
+        _require(type(objects) is list and len(objects) <= 1)
+        _require(type(listing.get("KeyCount")) is int and listing["KeyCount"] == len(objects))
+        _require(all(type(item) is dict and type(item.get("Key")) is str
+                     and item["Key"].startswith(self.root_key) for item in objects))
+        return listing["IsTruncated"] is False and not objects
+
+    def inspection_facts(self):
+        return dict(copy.deepcopy(self.before), ruleStates=self.read_rules())
 
     def claim_operation(self, op_id, identity):
         _require(identity == self.identity and op_id == _module("transition_orchestrator").operation_id(identity))
@@ -762,7 +1012,9 @@ def _outputs(plan):
 
 def plan_pipeline(driver, env):
     with prepare_release(driver, env) as release:
-        release["parameterReady"] = release["parameterReady"] and AwsReleaseAdapter(release, "automatic").provider_ready()
+        adapter = AwsReleaseAdapter(release, "automatic")
+        require_recovery_safe(adapter)
+        release["parameterReady"] = release["parameterReady"] and adapter.provider_ready()
         config = _gate_config()
         gate_ready, gate_name = False, None
         if release["mode"] == "TRANSITION_REQUIRED" and release["action"] == "automatic":
@@ -818,6 +1070,7 @@ def reconcile_pipeline(driver, env):
         Path("release-plan.json").write_bytes(_canonical(plan) + b"\n")
         _outputs(plan)
         _emit_reconciliation(report)
+        _emit_inspection(inspect_recovery_state(op_id, adapter))
 
 
 def _validate_reconciliation_report(report, plan, env):
@@ -911,6 +1164,7 @@ def execute_pipeline(driver, env, transition):
         state, outcome = "UNKNOWN", "RECOVERY_REQUIRED"
         operation_reason = "OPERATION_UNAVAILABLE"
         try:
+            require_recovery_safe(adapter)
             operation = {"identity": release["identity"], "action": action, "approvalVerified": True}
             response = (_module("transition_orchestrator").run_transition(operation, adapter) if transition
                         else run_automatic(release["identity"], adapter))
@@ -919,6 +1173,15 @@ def execute_pipeline(driver, env, transition):
             candidate_reason = response.get("reason", outcome)
             if type(candidate_reason) is str and candidate_reason in allowed_reasons:
                 operation_reason = candidate_reason
+        except RecoverySafetyError as failure:
+            operation_reason = "UNFINISHED_OPERATION"
+            prior = failure.report
+            current_op = _module("transition_orchestrator").operation_id(release["identity"])
+            if prior["operationId"] != current_op:
+                state = "NOT_ATTEMPTED"
+            elif prior["journal"]["status"] == "VALID":
+                state = prior["journal"]["deploymentState"]
+            raise
         finally:
             safe_operation = {"operationId": _module("transition_orchestrator").operation_id(release["identity"]),
                               "reason": operation_reason}
