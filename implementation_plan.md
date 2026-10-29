@@ -1,5 +1,17 @@
 # meet-me-server Implementation Plan
 
+## Issue #154 — OIDC 복구 진단과 이전 작업 안전 검사 (2026-10-29 UTC)
+
+- [x] `[USER]` 기존 OIDC 권한만 사용하는 reconcile 제한 읽기 진단과 분류·실행 전 안전 검사의 구현, 독립 검증, 게시·PR·CI·main 반영과 진단 실행을 승인했다. 새 IAM·신뢰·보호 설정, 잠금 삭제·강제 인수, 입력→분석→결과 변경과 #158·#161은 포함하지 않는다.
+- [x] `[AGENT]` 깨끗한 develop에서 `git pull --ff-only origin develop`으로 bccf36e4를 받은 뒤 `fix/154-recovery-inspection`을 분기했다. 기존 PR #163은 보존하며 이 보완을 먼저 develop에 통합한 후 해당 main PR의 정확한 HEAD를 다시 검증한다.
+- [x] `[AGENT]` 독립 RED로 기존 reconcile v1 보존, 제한된 projection·대상 결합·일관된 owner snapshot·비밀값 비노출과 mutation 전 안전 정지를 고정하고 구현했다. namespace 응답 건수 일관성과 미조회/실제 부재 구분도 독립 RED 후 보완했다. 기존 OIDC 읽기만 사용하며 진단이 소유권을 취득하거나 해제하지 않는다.
+- [x] `[AGENT]` 최종 관련 Python267·Node288·원본 commit guard를 통과했다. 독립41개 및 결함 주입21/21 탐지, 원본65개 지문 보존·원본Python51/Node29 통과를 확인했다. 전체Python369는 마지막 표시 사례2개 추가 전 실행이며 최종267에 해당 변경을 포함했다. 최초 main 분류/실행의 미확정 작업 차단을 검증했고 실제 운영 관측은 아직 미완료다.
+- [ ] `[AGENT]` 검증된 파일을 커밋·게시한다. Commit/PR: 동일 커밋 예정.
+- [ ] `[AGENT]` 정확 HEAD 원격 CI 후 develop에 통합하고 기존 PR #163을 갱신해 main CI를 검증한다. 분석 #158과 DB 최적화 #164는 포함하지 않는다.
+- [ ] `[SHARED]` main 반영 후 기존 GitHub 인증 경로에서 정확한 `action=reconcile`을 실행하고 제한된 journal·owner 증거를 조회한다. 실제 보호 환경 승인이 필요하면 해당 run의 링크를 안내하며, 확인 전 운영 완료를 표시하지 않는다.
+
+현재 진행(2026-10-29 UTC): 제한 진단·안전 검사 구현과 로컬 검증 완료. 원격 게시·정확 CI·main 반영·실제 OIDC 진단은 후속이며 운영 완료로 표시하지 않는다.
+
 ## Issue #154 — 승인 전환 자동화와 실제 배포 완료 검증 (2026-10-28 UTC)
 
 - [x] `[AGENT]` 기존 이슈와 현재 main/develop·열린 PR을 읽고 중복 없는 #154를 생성했다. 깨끗한 develop에서 `git pull --ff-only origin develop`을 통과한 뒤 `fix/154-cicd-completion`을 분기했다. 내 모임·웹·운영 AI 작업은 다른 담당과 분리한다.

@@ -1,0 +1,29 @@
+{
+  "workItem": "issue154-recovery-inspection-projection-audit",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "recordedAt": "2026-10-29T03:32:02.069777+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_recovery_inspection_projection_audit.py",
+      "sha256": "bf73344dccc8fdb8ebf88db842e012d4e9811253f55fe1833b97ffb68ec87c3e"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "70fbd5318bc61d8cb5fed83be87c5ff64adf74a481c558a444a93218aec3fd35"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection_projection_audit.py -v > .codex/tdd-evidence/issue154-recovery-inspection-projection-audit-red.log 2>&1",
+  "testsRun": 2,
+  "failureCount": 2,
+  "errorCount": 0,
+  "failedTests": [
+    "test_issue154_recovery_inspection_projection_audit.RecoveryInspectionUnavailableProjectionTests.test_denied_owner_read_does_not_claim_unread_existing_journal_is_missing.test_denied_owner_read_does_not_claim_unread_existing_journal_is_missing",
+    "test_issue154_recovery_inspection_projection_audit.RecoveryInspectionUnavailableProjectionTests.test_malformed_owner_does_not_claim_unread_existing_journal_is_missing.test_malformed_owner_does_not_claim_unread_existing_journal_is_missing"
+  ],
+  "expectedFailureCategory": "CONTRACT_ASSERTION: owner denial or malformed owner is reported while the unread existing journal is mislabeled MISSING rather than UNAVAILABLE",
+  "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-projection-audit-red.log",
+  "rawLogSha256": "7bdc1d9c5c2a89107158e5c0e8c829a3c089f312dbcea1d057901aa6052febd5",
+  "scope": "Synthetic readonly metadata only; no original-test or production edits by auditor"
+}
