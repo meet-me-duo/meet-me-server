@@ -116,3 +116,9 @@ CI/CD 복구 완료와 부모 조율 후 승인된 runtime DB에서 [metadata-on
 ## 첫 원격 CI의 컴파일 메모리 보완
 
 [PR164의 첫 CI40809811773](https://github.com/meet-me-duo/meet-me-server/actions/runs/40809811773)는 ARM64 이미지·이슈 연결을 통과했으나 Quality Gate의 compileTestKotlin에서 GC overhead OutOfMemoryError로 실패했다. 테스트 단언 실패가 아니며 이후 검사는 실행되지 않았다. 로컬 전체 검증에서 이미 사용한 Gradle/Kotlin heap2GB·workers2를 CI 명령에도 명시한다. 필수 ktlintCheck/assemble/test·배포 검사·권한·승인 조건은 유지한다. [Kotlin 공식 문서](https://kotlinlang.org/docs/gradle-compilation-and-caches.html#setting-kotlin-daemon-s-jvm-arguments)의 daemon JVM argument 설정을 따른다. CI/CD 운영 전환 복구 코드와 operating runtime 설정은 변경하지 않는다.
+
+## 운영 완료된 CI/CD main 통합
+
+부모가 main bb07f3b/배포40819827692의 DEPLOYED_VERIFIED를 확인하고 직렬 대기를 해제했다. 해당 main을 작업 브랜치에 정상 merge했으며 진행 문서만 양쪽 기록을 보존해 해결했다. V20/JDBC/독립 테스트는112c4675와 동일하고 upstream 복구 진단·배포 workflow를 그대로 보존했다. 원본 commit guard15.55초 exit0(동일 Kotlin 전체 결과 재사용), Node192 PASS 및 독립 읽기 검토 P1/P2=0이다. 보류158은 어느 부모의 ancestry에도 없다.
+
+이 통합 단계의 schema는 `615e197aedf104d52c2ef3ed71e6136b036e7b258e24fb27301f866fe19b0243`, guard는 `825cf18d7c6b622e08df3aa251d3687f9c7cfd4c625ffbbe513e25307018113d`이며 V20 checksum은 -881458142다. 앞선 guard5aff722d는 최초 PR 검증 단계의 역사값이다. 정확한 새 HEAD CI 후 develop/main 및 기존 승인 전환을 진행하고 runtime·스키마·공개 계약·규칙 복원을 확인한다. 운영 성공은 아직 미확인이다.

@@ -36,6 +36,16 @@ IAM의 `ManageMeetMeCredentialRefreshRules`는 기존 `meet-me-production-db-cre
 
 공개 계약은 실행 코드나 배포 권한 정책이 아닌 읽기 전용 기대 데이터다. archiveSha로 불변 릴리스에 묶되 compatibility guard 지문을 이 데이터만으로 변경하지 않는다. API만 바뀐 일반 배포를 불필요한 DB maintenance로 바꾸지 않기 위해서다. 반면 실행 의존 모듈과 승인 정책은 완전한 guard catalog에 포함하며 과거18/17/14 catalog의 명시적 읽기 지원은 유지한다.
 
+## 제한된 OIDC 복구 진단
+
+기존 `action=reconcile`의 v1 판정과 `recovery-report.json`을 유지하고, 별도 `MEETME_RECOVERY_INSPECTION_V1`·`recovery-inspection.json`에 검증된 journal 상태·sequence·commandId 존재 여부와 owner의 released·식별 일치만 출력한다. holder·ETag·실제 commandId·원본 JSON·예외·비밀값은 출력하지 않는다. safeToProceed는 이전 작업 검사이며 운영 완료 증명이 아니다.
+
+설정된 instance의 SHA-256 namespace와 검증된 operation ID로 경로를 파생한다. 제한된 listing과 S3 Range 요청을 사용하고 131072바이트 초과·길이/범위 불일치를 거부한다. owner의 전후 내용과 ETag가 같아야 하며, owner 부재는 namespace가 실제로 비어 있을 때만 초기 상태다. orphan journal·send claim·조회 거절·손상·UNKNOWN·미해제 owner·변경 중인 snapshot은 안전 정지한다.
+
+분류 단계는 gate 출력 전에 검사하고, 실행 단계도 claim·운영 쓰기 전에 재검사한다. 이전 APPLIED는 이미 수집한 실제 host·history·자동 배포 계약과 원래 identity를 대조한다. NOT_ATTEMPTED 종료 기록은 commandId 없음과 원래 규칙 복원을 요구한다. 동일 operation의 UNKNOWN을 미실행으로 바꾸지 않는다. 검사 자체는 새 host probe·command polling·잠금 삭제·강제 인수·재배포를 하지 않는다.
+
+기존 workflow에 정확한 `action=reconcile`, `build_run_id`, `build_run_attempt`, `operation_id`, `approve_first_transition=false`를 전달한다. 새 IAM·OIDC 신뢰·환경 보호 설정은 필요하지 않으며 실제 workflow 실행과 보호 승인은 별도 확인한다.
+
 ## 중단과 복구
 
 승인된 전환 모듈에서만 EventBridge의 정확한 EnableRule/DisableRule에 정상 종료·빈 stdout의 응답을 허용한다. 공통 읽기 전용 preflight는 원본을 유지하고, 전환 모듈이 없는 역사 archive는 기존 읽기 처리로 계속한다. 이는 전송 응답 확인이며 실제 규칙 상태·target 재조회를 대체하지 않는다. 실패 진단은 해당 두 명령과 허용된 이유 enum만 남기며 argv·stderr·원본 응답은 출력하지 않는다.

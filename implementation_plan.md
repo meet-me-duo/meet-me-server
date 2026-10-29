@@ -14,10 +14,22 @@
 - [x] `[AGENT]` 기존4bc1170 산출물/전체 검증과 stash를 보존한 뒤 최신 develop bccf36e(PR162 CI복구)에 FF+apply했다. 생산/독립 테스트와 catalog SHA를 유지하고 보류158 ancestry가 false임을 확인했다. 원본 commit guard exit0(10.36초, 동일 Kotlin 결과 재사용), CI에V20 catalog 테스트를 연결한 Node192 PASS·최신 배포 Python330 PASS다. 아래 운영 시간 제한 보완 후 새 최종 검증과 게시를 수행한다. Commit/PR: 동일 커밋 예정.
 - [x] `[USER/AGENT]` 운영 반영까지 추가 승인되었으며 안전한 인덱스 생성·잠금 시간 제한·실제 스키마 검증이 필수다. V20 transaction 범위 lock wait5초/statement120초 예산을 추가하고 독립 PG budget2 validRED→GREEN, rollback·retry·동일session설정복귀 및 FI4 탐지/매회exactrestore를 확인했다. 새SQL99062f의 schema615e197a/guard5aff722d와 checksum-881458142를 고정하고 metadata-only 운영 확인SQL을 준비했다. 원본 commit guard638.59초 exit0,268 suites/2252중2248 PASS·기존4 SKIP·실패/오류0를 확인했다. Node192·변경 영향 Python8 PASS이며 직전 통합 Python330 PASS와 구분한다. 운영 AWS/RDS 실험은 금지하며 새 로컬 벤치마크도 수행하지 않는다.
 - [x] `[AGENT]` source3512350을 게시하고 [PR164](https://github.com/meet-me-duo/meet-me-server/pull/164)를 생성했다. CI40809811773의 ARM64·이슈 연결은 PASS, Quality Gate는 compileTestKotlin의 GC overhead OOM으로 테스트 실행 전에 실패했다. 검증을 줄이지 않고 로컬 전체 검증과 같은 Gradle/Kotlin2GB·workers2를 CI 명령에 명시했다. 같은 로컬 명령9초/원본 guard9.79초 exit0(동일 전체2252 결과 재사용), Node는 JDK PATH 설정을 보완한 관련21 재실행 포함192개 통과, 독립 검토 P1/P2=0. Commit/PR: 후속 동일 커밋 예정 / #164.
-- [ ] `[SHARED]` 실제 인덱스 생성의 잠금·리소스·트랜잭션 제약과 안전 배포를 평가해 부모와 조율한다. CI/CD154의 운영 전환 승인 gate 완료 전 동일 서버 배포·운영DB 변경을 시작하지 않는다.
+- [x] `[SHARED]` 부모가 CI/CD154의 main bb07f3b/배포40819827692 DEPLOYED_VERIFIED를 확인해 직렬 대기를 해제했다. 운영 반영 승인 범위에서 최신main을 통합하고 정확HEAD CI 후 develop/main 병합·V20 적용·metadata 확인을 진행한다. 실제 보호 환경 gate가 나오면 해당 실행 승인을 기다린다.
+- [x] `[AGENT]` HEAD112c4675의 CI40810653673 Quality Gate·ARM64·이슈 연결 SUCCESS를 확인했다. 최신 main bb07f3b의 복구 진단을 정상 merge하며 계획 문서 양쪽 이력을 모두 보존했다. Commit/PR: 동일 커밋 예정 / #164.
 
-최종 갱신: 2026-10-29 UTC. 계정 선두 최소안의 로컬 구현과 최초 독립·전체 검증을 완료했고, 운영 승인에 추가된 잠금 예산과 최종 전체 검증을 완료했다. 게시·PR/정확 HEAD CI를 이어가며 Commit/PR은 동일 커밋 예정이다. 계정 인덱스와 그 조회의 준비문/role 투영만 변경하며 권한·보관·검색·정렬 계약은 유지한다. [측정·선정 근거](docs/verification/account-room-db-load-20261029.md). 운영 실행은 CI/CD 복구 이후 부모 조율 대기다.
+최종 갱신: 2026-10-29 UTC. 계정 선두 최소안의 로컬 구현과 최초 독립·전체 검증을 완료했고, 운영 승인에 추가된 잠금 예산과 최종 전체 검증을 완료했다. 게시·PR/정확 HEAD CI를 이어가며 Commit/PR은 동일 커밋 예정이다. 계정 인덱스와 그 조회의 준비문/role 투영만 변경하며 권한·보관·검색·정렬 계약은 유지한다. [측정·선정 근거](docs/verification/account-room-db-load-20261029.md). CI/CD 운영 완료와 부모 직렬 진행 승인을 받았으며 통합본 CI 후 병합·V20 운영 적용을 이어간다.
 
+## Issue #154 — OIDC 복구 진단과 이전 작업 안전 검사 (2026-10-29 UTC)
+
+- [x] `[USER]` 기존 OIDC 권한만 사용하는 reconcile 제한 읽기 진단과 분류·실행 전 안전 검사의 구현, 독립 검증, 게시·PR·CI·main 반영과 진단 실행을 승인했다. 새 IAM·신뢰·보호 설정, 잠금 삭제·강제 인수, 입력→분석→결과 변경과 #158·#161은 포함하지 않는다.
+- [x] `[AGENT]` 깨끗한 develop에서 `git pull --ff-only origin develop`으로 bccf36e4를 받은 뒤 `fix/154-recovery-inspection`을 분기했다. 기존 PR #163은 보존하며 이 보완을 먼저 develop에 통합한 후 해당 main PR의 정확한 HEAD를 다시 검증한다.
+- [x] `[AGENT]` 독립 RED로 기존 reconcile v1 보존, 제한된 projection·대상 결합·일관된 owner snapshot·비밀값 비노출과 mutation 전 안전 정지를 고정하고 구현했다. namespace 응답 건수 일관성과 미조회/실제 부재 구분도 독립 RED 후 보완했다. 기존 OIDC 읽기만 사용하며 진단이 소유권을 취득하거나 해제하지 않는다.
+- [x] `[AGENT]` 최종 관련 Python267·Node288·원본 commit guard를 통과했다. 독립41개 및 결함 주입21/21 탐지, 원본65개 지문 보존·원본Python51/Node29 통과를 확인했다. 전체Python369는 마지막 표시 사례2개 추가 전 실행이며 최종267에 해당 변경을 포함했다. 최초 main 분류/실행의 미확정 작업 차단을 검증했고 실제 운영 관측은 아직 미완료다.
+- [ ] `[AGENT]` 검증된 파일을 커밋·게시한다. Commit/PR: 동일 커밋 예정.
+- [ ] `[AGENT]` 정확 HEAD 원격 CI 후 develop에 통합하고 기존 PR #163을 갱신해 main CI를 검증한다. 분석 #158과 DB 최적화 #164는 포함하지 않는다.
+- [ ] `[SHARED]` main 반영 후 기존 GitHub 인증 경로에서 정확한 `action=reconcile`을 실행하고 제한된 journal·owner 증거를 조회한다. 실제 보호 환경 승인이 필요하면 해당 run의 링크를 안내하며, 확인 전 운영 완료를 표시하지 않는다.
+
+현재 진행(2026-10-29 UTC): 제한 진단·안전 검사 구현과 로컬 검증 완료. 원격 게시·정확 CI·main 반영·실제 OIDC 진단은 후속이며 운영 완료로 표시하지 않는다.
 
 ## Issue #154 — 승인 전환 자동화와 실제 배포 완료 검증 (2026-10-28 UTC)
 

@@ -1,0 +1,61 @@
+{
+  "workItem": "issue154-recovery-inspection",
+  "recordedAt": "2026-10-29T03:40:16.832388+00:00",
+  "baseRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "sourceAndTestSha256": {
+    "deploy/pipeline/release_pipeline.py": "dc892d8f94d958c9f8d72805868f66d7a837687ddf893f1ab9715a2a3b9c43f3",
+    ".github/workflows/deploy.yml": "8121e9883ef0242bb3d7df4e51365e4a20e38cbe29c817d4285a37c25212aed7",
+    "deploy/tests/test_issue154_recovery_inspection.py": "f06ff6dd4497d90bd32d69d88586279cf74cfa5a9201a9b3200752b97bab1a1e",
+    "deploy/tests/test_issue154_recovery_inspection_audit.py": "906f5542bfcd8bd9489a5784e54440a6abdd1c48e642e5197b05ddab65b2cd0c",
+    "deploy/tests/test_issue154_recovery_inspection_fi_contract.py": "f3aaf93dcfb6d11e57868c0d461b4ca6331917b50ea377f889ca7e962b317211",
+    "deploy/tests/test_issue154_recovery_inspection_namespace_projection_audit.py": "1cdb6485439c765ba3c67cc9767b355f67a691c859d8beda502c2cf9eea57d28",
+    "deploy/tests/test_issue154_recovery_inspection_projection_audit.py": "bf73344dccc8fdb8ebf88db842e012d4e9811253f55fe1833b97ffb68ec87c3e"
+  },
+  "finalRelatedPython": {
+    "tests": 267,
+    "passed": 267,
+    "failures": 0,
+    "errors": 0,
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-final-related.log"
+  },
+  "broaderPython": {
+    "tests": 369,
+    "passed": 369,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 376.985,
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-final-python.log",
+    "qualification": "Started before last two namespace projection cases and final projection generalization; final changed module was rechecked by 267 related tests. Do not treat this intermediate run as an exact final whole-tree run."
+  },
+  "node": {
+    "tests": 288,
+    "passed": 288,
+    "failures": 0,
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-all-node-jdk17.log",
+    "qualification": "JDK17 JAVA_HOME/PATH supplied. Earlier no-JDK invocation failed environment probe and was corrected, without test changes."
+  },
+  "originalCommitGuard": {
+    "exit": 0,
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-final-guard.log",
+    "scope": "Existing Kotlin/build sources unchanged; cached suite results are not a fresh full JVM run."
+  },
+  "originalTestFiles": {
+    "count": 65,
+    "sha256Mismatches": 0
+  },
+  "independentVerification": ".tdd/verification/issue154-recovery-inspection-independent-fi.json",
+  "independentReview": ".tdd/reviews/issue154-recovery-inspection-independent-review.json",
+  "preserved": [
+    "reconcile v1 function unchanged",
+    "UNKNOWN never converted to not attempted for same operation",
+    "No production application, analysis, prompt or SQL changes",
+    "No IAM/trust/environment permission changes",
+    "No owner deletion, takeover, rule mutation or new host command in limited inspection"
+  ],
+  "rollout": "Local implementation and validation only; exact remote CI, main integration and live read-only inspection remain pending. No original operation replay or denied artifact retry."
+}

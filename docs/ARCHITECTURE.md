@@ -687,3 +687,7 @@ V19는 계정 또는 게스트 세션 하나만 가리키는 `review_user_polici
 claim은 숨겨진 모임도 SUPPRESSED로 소비한다. 같은 UUID의 PENDING 복구도 현재 사용자 정책을 다시 검사한다. submit은 terminal 상태를 조건부 갱신하고 같은 트랜잭션에서 정책을 저장한다. close는 첫 terminal 결과를 보존하고 이미 숨겨졌거나 만족한 사용자의 기한을 새로 연장하지 않는다. 응답은 `prompt_id`와 상태만 포함한다. 조회/운영자 API와 외부 전송은 없다. review 경로의 필터가 인증·JSON 해석 이전부터 성공/오류에 `Cache-Control: no-store`를 적용한다.
 
 네이티브 OpenAPI에는 세 POST와 필수/nullable 필드, 정수 선택, 기타 입력 초안 상한 및 RFC 9457 오류를 문서화한다. Swagger가 정수 enum을 문자열로 만드는 경우는 review 전용 native customizer에서 정수로 교정하며, 웹에는 실제 로컬 생성 문서의 review 경로와 참조 DTO만 동기화한다. AWS·실제 OAuth/AI 및 운영 배포는 이 로컬 검증에 포함하지 않는다.
+
+### #154 OIDC 복구 진단과 이전 작업 검사
+
+기존 production OIDC의 고정 namespace 읽기로 journal·owner 제한 필드를 별도 진단하며 reconcile v1 계약은 보존한다. 분류와 실행 전 상태 검사는 미확정 journal·미해제 또는 변경 중인 owner를 운영 쓰기 전에 차단한다. 진단은 잠금의 소유권을 변경하지 않고 기존 권한·신뢰·보호 환경을 유지한다. 구체적인 조건과 출력 범위는 [운영 pipeline 안내](../deploy/APPROVED_RELEASE_PIPELINE.md)를 따른다.
