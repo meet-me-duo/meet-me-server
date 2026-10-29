@@ -7,7 +7,7 @@ const { fs, path, root, range, hash, canonical, clone, crc } = f;
 const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const scripts = [...f.scripts, script18];
 // V17/V18 reader/transition/package cases below remain historical. Only current publication advanced to approved V19.
-const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql'];
+const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql'];
 function release(version = 18) {
   const value = f.manifest(range(Math.min(version, 17)));
   if (version === 18) value.migrations.push({ version: '18', script: script18, checksum: 18 * 37 });

@@ -1,0 +1,337 @@
+{
+  "workItem": "issue161-index-budget",
+  "recordedAt": "2026-10-29T02:47:03.507479+00:00",
+  "executorAndIndependentTestAuthor": "/root/history_contract_review_astra",
+  "implementer": "parent",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "sourceFiles": [
+    {
+      "path": "/workspace/meet-me-server/src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+      "sha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "/workspace/meet-me-server/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexBudgetPostgresTest.kt",
+      "sha256": "c02386bb514d2231c59d2432a358d61be30fe5c74bd508a523643972cd25046c"
+    },
+    {
+      "path": "/workspace/meet-me-server/src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    }
+  ],
+  "boundary": "Finite transaction-local index DDL budgets; lock-timeout atomic rollback/retry and additive index/data preservation",
+  "result": "PASS",
+  "injections": [
+    {
+      "name": "lock-zero",
+      "mutantSha256": "23cc7e0f9e8952e296ae8df4d622e17a798d3e3dc49b20a389601dea040e2569",
+      "restoredSqlSha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a",
+      "detection": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexBudgetPostgresTest.actual index DDL*"
+        ],
+        "exitCode": 1,
+        "log": "/tmp/account-room-load/issue161-budget-fi-lock-zero.log",
+        "logSha256": "87730e1e657aff4fc3551fd588f810305e298a11d741506a423e4bd8bc2e642b",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexBudgetPostgresTest",
+            "tests": 1,
+            "failures": 1,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [
+              {
+                "name": "actual index DDL has finite lock and statement budgets that do not leak into pooled sessions()",
+                "message": "org.opentest4j.AssertionFailedError: Actual index DDL must have a positive lock budget at most 5000ms: 81,0,120000",
+                "type": "org.opentest4j.AssertionFailedError"
+              }
+            ],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-lock-zero-AccountRoomHistoryIndexBudgetPostgresTest.xml",
+            "xmlSha256": "62380ee05f7fe66c62615e518da123b9415fe2ee170225d8cdf6ceb75cdc70ff"
+          }
+        ]
+      },
+      "restoredControl": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexBudgetPostgresTest"
+        ],
+        "exitCode": 0,
+        "log": "/tmp/account-room-load/issue161-budget-fi-lock-zero-restored.log",
+        "logSha256": "bc75059e6db6d1e6d6cf8654305cb86e088defd458ddb2c2c60abd0d1956698d",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexBudgetPostgresTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-lock-zero-restored-AccountRoomHistoryIndexBudgetPostgresTest.xml",
+            "xmlSha256": "4f482e1db409e3a5da032a20c59dba03b26eab44efee7ed7697fbe0e781cccad"
+          }
+        ]
+      },
+      "completedAt": "2026-10-29T02:44:45.637965+00:00"
+    },
+    {
+      "name": "statement-zero",
+      "mutantSha256": "a0a58033ea87a390af4d85635f0ad3ec68462f150997772ca154faf5a31f11d0",
+      "restoredSqlSha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a",
+      "detection": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexBudgetPostgresTest.actual index DDL*"
+        ],
+        "exitCode": 1,
+        "log": "/tmp/account-room-load/issue161-budget-fi-statement-zero.log",
+        "logSha256": "5dacb4fab3f0fb4ff34ea59b547dd197081305e20e6868dc5287ad3d64f80cd7",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexBudgetPostgresTest",
+            "tests": 1,
+            "failures": 1,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [
+              {
+                "name": "actual index DDL has finite lock and statement budgets that do not leak into pooled sessions()",
+                "message": "org.opentest4j.AssertionFailedError: Actual index DDL must have a positive statement budget at most 120000ms: 81,5000,0",
+                "type": "org.opentest4j.AssertionFailedError"
+              }
+            ],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-statement-zero-AccountRoomHistoryIndexBudgetPostgresTest.xml",
+            "xmlSha256": "e456d69bd342db917dd33253054aaaa5b941d1af7a3bdabbbdd4b641b3be4ab4"
+          }
+        ]
+      },
+      "restoredControl": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexBudgetPostgresTest"
+        ],
+        "exitCode": 0,
+        "log": "/tmp/account-room-load/issue161-budget-fi-statement-zero-restored.log",
+        "logSha256": "bc75059e6db6d1e6d6cf8654305cb86e088defd458ddb2c2c60abd0d1956698d",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexBudgetPostgresTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-statement-zero-restored-AccountRoomHistoryIndexBudgetPostgresTest.xml",
+            "xmlSha256": "2248f6a3136e4410e0d2f22b86f3002af45569f80d141c0f3f39ab53f82abec3"
+          }
+        ]
+      },
+      "completedAt": "2026-10-29T02:45:10.353782+00:00"
+    },
+    {
+      "name": "index-omitted",
+      "mutantSha256": "8a91f70c39dfaf64cd766853a5e4780dac490971821a23a9bfb645b23dd88e84",
+      "restoredSqlSha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a",
+      "detection": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexMigrationPostgresTest"
+        ],
+        "exitCode": 1,
+        "log": "/tmp/account-room-load/issue161-budget-fi-index-omitted.log",
+        "logSha256": "352b0232d07fc1bd06d9f5259334135970a6c2b7fdc643680129a11766a7ff9a",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexMigrationPostgresTest",
+            "tests": 3,
+            "failures": 3,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [
+              {
+                "name": "claimed owner enters account lookup while other rooms and saved submission remain unchanged()",
+                "message": "org.opentest4j.AssertionFailedError: Need a valid user-leading access path covering account HOST and MEMBER, not just HOST",
+                "type": "org.opentest4j.AssertionFailedError"
+              },
+              {
+                "name": "upgrade from nineteen preserves every fixture value and original ownership constraints()",
+                "message": "org.opentest4j.AssertionFailedError: Need a valid user-leading access path covering account HOST and MEMBER, not just HOST",
+                "type": "org.opentest4j.AssertionFailedError"
+              },
+              {
+                "name": "fresh latest migration supports account history without narrowing owners and validates on rerun()",
+                "message": "org.opentest4j.AssertionFailedError: Need a valid user-leading access path covering account HOST and MEMBER, not just HOST",
+                "type": "org.opentest4j.AssertionFailedError"
+              }
+            ],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-index-omitted-AccountRoomHistoryIndexMigrationPostgresTest.xml",
+            "xmlSha256": "ee752e57c395c2bd491637a22d59038491b780bdf379921c5ea5c55cccab0556"
+          }
+        ]
+      },
+      "restoredControl": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexBudgetPostgresTest",
+          "--tests",
+          "*AccountRoomHistoryIndexMigrationPostgresTest"
+        ],
+        "exitCode": 0,
+        "log": "/tmp/account-room-load/issue161-budget-fi-index-omitted-restored.log",
+        "logSha256": "7671ef208acd9bb53435d197a3cb2cc80e25c32574cfe515965b121f5e802cc2",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexBudgetPostgresTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-index-omitted-restored-AccountRoomHistoryIndexBudgetPostgresTest.xml",
+            "xmlSha256": "c6cbfe4936df77afae330453f94bdddcac7b758d17b2414853b7390e2dd715bb"
+          },
+          {
+            "suite": "AccountRoomHistoryIndexMigrationPostgresTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-index-omitted-restored-AccountRoomHistoryIndexMigrationPostgresTest.xml",
+            "xmlSha256": "b994cb43daa373d2ea78f49108d9e09a6aa540e416241dc6b0ca4bb1f9ad5b38"
+          }
+        ]
+      },
+      "completedAt": "2026-10-29T02:45:41.214188+00:00"
+    },
+    {
+      "name": "guest-rewritten",
+      "mutantSha256": "cf2c7f23bee089eef437973bfe72a5a24941dd5756e40c3612dcc58be624fcc9",
+      "restoredSqlSha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a",
+      "detection": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexMigrationPostgresTest"
+        ],
+        "exitCode": 1,
+        "log": "/tmp/account-room-load/issue161-budget-fi-guest-rewritten.log",
+        "logSha256": "b7ff856b6a48979de9398d19ab76b7b37f99d0535a75fd1f452a6ce3a62391f8",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexMigrationPostgresTest",
+            "tests": 3,
+            "failures": 1,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [
+              {
+                "name": "upgrade from nineteen preserves every fixture value and original ownership constraints()",
+                "message": "org.opentest4j.AssertionFailedError: Index migration must not rewrite any account, guest, room, participant or submission value ==> expected: <{account_users=[{\"id\": \"80a5c28b-a53b-44fb-8aff-a2f691ea4bd9\", \"created_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"same synthetic name\"}, {\"id\": \"d4c7c624-88a3-4a43-b5cb-bf16602f20d9\", \"created_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"same synthetic name\"}], guest_browser_sessions=[{\"id\": \"5019a0d5-8de6-428f-9f55-1a76ce9183e1\", \"created_at\": \"2026-10-01T00:00:00+00:00\", \"expires_at\": \"2026-11-01T00:00:00+00:00\", \"revoked_at\": null, \"credential_digest\": \"synthetic-a\"}, {\"id\": \"e5bf7f92-e6ca-4ce3-a120-728c139ba15c\", \"created_at\": \"2026-10-01T00:00:00+00:00\", \"expires_at\": \"2026-11-01T00:00:00+00:00\", \"revoked_at\": null, \"credential_digest\": \"synthetic-b\"}], meeting_rooms=[{\"id\": \"a75855a0-b0b0-49d4-b53a-6bf9340c1271\", \"purpose\": \"synthetic history\", \"version\": 0, \"closed_at\": null, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"invite_code\": \"a75855a0b0b049d4b53a6b\", \"manual_only\": true, \"meeting_mode\": \"EITHER\", \"time_zone_id\": \"Asia/Seoul\", \"active_run_id\": null, \"closure_reason\": null, \"search_end_date\": \"2026-11-10\", \"collection_status\": \"COLLECTING\", \"search_start_date\": \"2026-10-28\", \"revision_generation\": 0, \"search_range_source\": \"DEFAULTED\", \"submission_deadline\": null, \"submission_protocol\": \"PRE_SUBMIT_V1\", \"expected_participants\": null, \"active_revision_round_id\": null, \"correction_analysis_count\": 0}, {\"id\": \"c1965a5b-5c83-4f80-9360-e4530510f62b\", \"purpose\": \"synthetic history\", \"version\": 0, \"closed_at\": null, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"invite_code\": \"c1965a5b5c834f809360e4\", \"manual_only\": true, \"meeting_mode\": \"EITHER\", \"time_zone_id\": \"Asia/Seoul\", \"active_run_id\": null, \"closure_reason\": null, \"search_end_date\": \"2026-11-10\", \"collection_status\": \"COLLECTING\", \"search_start_date\": \"2026-10-28\", \"revision_generation\": 0, \"search_range_source\": \"DEFAULTED\", \"submission_deadline\": null, \"submission_protocol\": \"PRE_SUBMIT_V1\", \"expected_participants\": null, \"active_revision_round_id\": null, \"correction_analysis_count\": 0}, {\"id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"purpose\": \"synthetic history\", \"version\": 0, \"closed_at\": null, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"invite_code\": \"eed8f3694bb147f29036b6\", \"manual_only\": true, \"meeting_mode\": \"EITHER\", \"time_zone_id\": \"Asia/Seoul\", \"active_run_id\": null, \"closure_reason\": null, \"search_end_date\": \"2026-11-10\", \"collection_status\": \"COLLECTING\", \"search_start_date\": \"2026-10-28\", \"revision_generation\": 0, \"search_range_source\": \"DEFAULTED\", \"submission_deadline\": null, \"submission_protocol\": \"PRE_SUBMIT_V1\", \"expected_participants\": null, \"active_revision_round_id\": null, \"correction_analysis_count\": 0}], participants=[{\"id\": \"028d2fea-6d30-4038-8f83-290282a31b79\", \"role\": \"HOST\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": \"80a5c28b-a53b-44fb-8aff-a2f691ea4bd9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"0d3f415e-8da1-4825-a6a5-5a2a7b169bd7\", \"role\": \"HOST\", \"room_id\": \"c1965a5b-5c83-4f80-9360-e4530510f62b\", \"user_id\": \"d4c7c624-88a3-4a43-b5cb-bf16602f20d9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"3b86cb4e-5d65-49d3-90f1-355eba40e510\", \"role\": \"MEMBER\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": \"d4c7c624-88a3-4a43-b5cb-bf16602f20d9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"3c842976-f7b4-4521-a368-2315cc0bdf0e\", \"role\": \"MEMBER\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": null, \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": \"e5bf7f92-e6ca-4ce3-a120-728c139ba15c\"}, {\"id\": \"64381c36-316d-4e8a-aab1-eea3d8a026e8\", \"role\": \"MEMBER\", \"room_id\": \"c1965a5b-5c83-4f80-9360-e4530510f62b\", \"user_id\": \"80a5c28b-a53b-44fb-8aff-a2f691ea4bd9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"6f342818-362f-4716-807d-c92460fb8b77\", \"role\": \"HOST\", \"room_id\": \"a75855a0-b0b0-49d4-b53a-6bf9340c1271\", \"user_id\": null, \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": \"5019a0d5-8de6-428f-9f55-1a76ce9183e1\"}, {\"id\": \"94ccafd2-9532-429d-ac4c-2fde0eea4f69\", \"role\": \"MEMBER\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": null, \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": \"5019a0d5-8de6-428f-9f55-1a76ce9183e1\"}], submission_heads=[{\"id\": \"2f8a2687-fb48-466e-a3bb-a31aed813807\", \"room_id\": \"a75855a0-b0b0-49d4-b53a-6bf9340c1271\", \"participant_id\": \"6f342818-362f-4716-807d-c92460fb8b77\", \"latest_version_id\": \"9a220fe9-5cd9-458f-821e-c374eb37c53f\"}], submission_versions=[{\"id\": \"9a220fe9-5cd9-458f-821e-c374eb37c53f\", \"locale\": \"ko-KR\", \"raw_text\": \"synthetic saved original\", \"revision\": 1, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"submission_id\": \"2f8a2687-fb48-466e-a3bb-a31aed813807\"}]}> but was: <{account_users=[{\"id\": \"80a5c28b-a53b-44fb-8aff-a2f691ea4bd9\", \"created_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"same synthetic name\"}, {\"id\": \"d4c7c624-88a3-4a43-b5cb-bf16602f20d9\", \"created_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"same synthetic name\"}], guest_browser_sessions=[{\"id\": \"5019a0d5-8de6-428f-9f55-1a76ce9183e1\", \"created_at\": \"2026-10-01T00:00:00+00:00\", \"expires_at\": \"2026-11-01T00:00:00+00:00\", \"revoked_at\": null, \"credential_digest\": \"synthetic-a\"}, {\"id\": \"e5bf7f92-e6ca-4ce3-a120-728c139ba15c\", \"created_at\": \"2026-10-01T00:00:00+00:00\", \"expires_at\": \"2026-11-01T00:00:00+00:00\", \"revoked_at\": null, \"credential_digest\": \"synthetic-b\"}], meeting_rooms=[{\"id\": \"a75855a0-b0b0-49d4-b53a-6bf9340c1271\", \"purpose\": \"synthetic history\", \"version\": 0, \"closed_at\": null, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"invite_code\": \"a75855a0b0b049d4b53a6b\", \"manual_only\": true, \"meeting_mode\": \"EITHER\", \"time_zone_id\": \"Asia/Seoul\", \"active_run_id\": null, \"closure_reason\": null, \"search_end_date\": \"2026-11-10\", \"collection_status\": \"COLLECTING\", \"search_start_date\": \"2026-10-28\", \"revision_generation\": 0, \"search_range_source\": \"DEFAULTED\", \"submission_deadline\": null, \"submission_protocol\": \"PRE_SUBMIT_V1\", \"expected_participants\": null, \"active_revision_round_id\": null, \"correction_analysis_count\": 0}, {\"id\": \"c1965a5b-5c83-4f80-9360-e4530510f62b\", \"purpose\": \"synthetic history\", \"version\": 0, \"closed_at\": null, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"invite_code\": \"c1965a5b5c834f809360e4\", \"manual_only\": true, \"meeting_mode\": \"EITHER\", \"time_zone_id\": \"Asia/Seoul\", \"active_run_id\": null, \"closure_reason\": null, \"search_end_date\": \"2026-11-10\", \"collection_status\": \"COLLECTING\", \"search_start_date\": \"2026-10-28\", \"revision_generation\": 0, \"search_range_source\": \"DEFAULTED\", \"submission_deadline\": null, \"submission_protocol\": \"PRE_SUBMIT_V1\", \"expected_participants\": null, \"active_revision_round_id\": null, \"correction_analysis_count\": 0}, {\"id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"purpose\": \"synthetic history\", \"version\": 0, \"closed_at\": null, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"invite_code\": \"eed8f3694bb147f29036b6\", \"manual_only\": true, \"meeting_mode\": \"EITHER\", \"time_zone_id\": \"Asia/Seoul\", \"active_run_id\": null, \"closure_reason\": null, \"search_end_date\": \"2026-11-10\", \"collection_status\": \"COLLECTING\", \"search_start_date\": \"2026-10-28\", \"revision_generation\": 0, \"search_range_source\": \"DEFAULTED\", \"submission_deadline\": null, \"submission_protocol\": \"PRE_SUBMIT_V1\", \"expected_participants\": null, \"active_revision_round_id\": null, \"correction_analysis_count\": 0}], participants=[{\"id\": \"028d2fea-6d30-4038-8f83-290282a31b79\", \"role\": \"HOST\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": \"80a5c28b-a53b-44fb-8aff-a2f691ea4bd9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"0d3f415e-8da1-4825-a6a5-5a2a7b169bd7\", \"role\": \"HOST\", \"room_id\": \"c1965a5b-5c83-4f80-9360-e4530510f62b\", \"user_id\": \"d4c7c624-88a3-4a43-b5cb-bf16602f20d9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"3b86cb4e-5d65-49d3-90f1-355eba40e510\", \"role\": \"MEMBER\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": \"d4c7c624-88a3-4a43-b5cb-bf16602f20d9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"3c842976-f7b4-4521-a368-2315cc0bdf0e\", \"role\": \"MEMBER\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": null, \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"fault rewritten guest\", \"guest_session_id\": \"e5bf7f92-e6ca-4ce3-a120-728c139ba15c\"}, {\"id\": \"64381c36-316d-4e8a-aab1-eea3d8a026e8\", \"role\": \"MEMBER\", \"room_id\": \"c1965a5b-5c83-4f80-9360-e4530510f62b\", \"user_id\": \"80a5c28b-a53b-44fb-8aff-a2f691ea4bd9\", \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"synthetic participant\", \"guest_session_id\": null}, {\"id\": \"6f342818-362f-4716-807d-c92460fb8b77\", \"role\": \"HOST\", \"room_id\": \"a75855a0-b0b0-49d4-b53a-6bf9340c1271\", \"user_id\": null, \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"fault rewritten guest\", \"guest_session_id\": \"5019a0d5-8de6-428f-9f55-1a76ce9183e1\"}, {\"id\": \"94ccafd2-9532-429d-ac4c-2fde0eea4f69\", \"role\": \"MEMBER\", \"room_id\": \"eed8f369-4bb1-47f2-9036-b68ac48ed3b8\", \"user_id\": null, \"joined_at\": \"2026-10-28T00:00:00+00:00\", \"display_name\": \"fault rewritten guest\", \"guest_session_id\": \"5019a0d5-8de6-428f-9f55-1a76ce9183e1\"}], submission_heads=[{\"id\": \"2f8a2687-fb48-466e-a3bb-a31aed813807\", \"room_id\": \"a75855a0-b0b0-49d4-b53a-6bf9340c1271\", \"participant_id\": \"6f342818-362f-4716-807d-c92460fb8b77\", \"latest_version_id\": \"9a220fe9-5cd9-458f-821e-c374eb37c53f\"}], submission_versions=[{\"id\": \"9a220fe9-5cd9-458f-821e-c374eb37c53f\", \"locale\": \"ko-KR\", \"raw_text\": \"synthetic saved original\", \"revision\": 1, \"created_at\": \"2026-10-28T00:00:00+00:00\", \"submission_id\": \"2f8a2687-fb48-466e-a3bb-a31aed813807\"}]}>",
+                "type": "org.opentest4j.AssertionFailedError"
+              }
+            ],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-guest-rewritten-AccountRoomHistoryIndexMigrationPostgresTest.xml",
+            "xmlSha256": "298db5a7fb2aa06380a9005490ed3f41876c379255a7b3b787241405a2e21ed3"
+          }
+        ]
+      },
+      "restoredControl": {
+        "command": [
+          "/tmp/account-room-tools/gradle.sh",
+          "test",
+          "--max-workers=1",
+          "--no-parallel",
+          "-Pkotlin.compiler.execution.strategy=in-process",
+          "-Dorg.gradle.jvmargs=-Xmx2g",
+          "--tests",
+          "*AccountRoomHistoryIndexBudgetPostgresTest",
+          "--tests",
+          "*AccountRoomHistoryIndexMigrationPostgresTest"
+        ],
+        "exitCode": 0,
+        "log": "/tmp/account-room-load/issue161-budget-fi-guest-rewritten-restored.log",
+        "logSha256": "96a924756216ace56d6683ce14aebb043383bbdf50517809b1158a8d4e587320",
+        "suites": [
+          {
+            "suite": "AccountRoomHistoryIndexBudgetPostgresTest",
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-guest-rewritten-restored-AccountRoomHistoryIndexBudgetPostgresTest.xml",
+            "xmlSha256": "7b8fda6ea2ce90cee23328f8803d82f472406341f978ede22ad7f559eea73406"
+          },
+          {
+            "suite": "AccountRoomHistoryIndexMigrationPostgresTest",
+            "tests": 3,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "failedTests": [],
+            "xml": "/tmp/account-room-load/issue161-budget-fi-guest-rewritten-restored-AccountRoomHistoryIndexMigrationPostgresTest.xml",
+            "xmlSha256": "47b0ae21674a816b5785952368d92d4ee83d496c05e6b72272f180d46b299eb5"
+          }
+        ]
+      },
+      "completedAt": "2026-10-29T02:46:12.786431+00:00"
+    }
+  ],
+  "exactRestorationVerified": true,
+  "testEditsDuringFaultInjection": false,
+  "environment": "Only disposable local Testcontainers PostgreSQL synthetic fixtures; no benchmark or operating DB",
+  "supersedesMigrationFaultReuse": {
+    "oldRecord": ".tdd/verification/account-room-history-index-faults.json",
+    "reason": "Old SQL cd3ac13... changed to99062f...; both old migration fault classes re-executed on new SQL. Old exact-SHA reuse claims are historical only."
+  },
+  "limitations": [
+    "Statement timeout positivity/upper bound observed at actual DDL and omission detected; no 120-second pg_sleep or forced statement-timeout workload performed.",
+    "Lock failure SQLSTATE55P03, no index/history/data change and successful retry are exercised by the frozen budget test."
+  ],
+  "fullCurrentGate": "Pending parent commit guard after restored-source notification"
+}

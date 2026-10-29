@@ -1,0 +1,266 @@
+{
+  "workItem": "issue161-current-develop-integration",
+  "recordedAt": "2026-10-29T02:34:07.848879+00:00",
+  "reviewer": "/root/history_contract_review_astra",
+  "scopeResult": "PASS_FOR_BASE_INTEGRATION",
+  "openP1": 0,
+  "openP2": 0,
+  "baseRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "headEqualsOriginDevelop": true,
+  "reviewedIntegration": "Latest develop PR162 CI transport recovery plus unchanged Issue161 code/test patch",
+  "fileComparison": {
+    "manifest": "/workspace/shared/account-room-load-issue161/files.json",
+    "originalFiles": 26,
+    "exactMatchesAtReview": 24,
+    "changedDocuments": [
+      "implementation_plan.md",
+      "docs/verification/account-room-db-load-20261029.md"
+    ],
+    "documentChanges": "Implementation plan preserves latest develop section with additive Issue161 section. Benchmark document adds local database location proof per parent, followed by authorized publishing/status updates. These documents remain parent-owned and may be updated after this review.",
+    "files": [
+      {
+        "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+        "beforeSha256": "2b0c6dddaadd06a1620593f76ab5af1230b046fcccbe5b49327954236f1ab3cb",
+        "currentSha256": "2b0c6dddaadd06a1620593f76ab5af1230b046fcccbe5b49327954236f1ab3cb",
+        "equal": true
+      },
+      {
+        "path": ".github/scripts/v18-release-catalog.test.cjs",
+        "beforeSha256": "58b0e8bb663658b6de1449b1dd327405e8ee4576c4f9bba901a8c4e16876320c",
+        "currentSha256": "58b0e8bb663658b6de1449b1dd327405e8ee4576c4f9bba901a8c4e16876320c",
+        "equal": true
+      },
+      {
+        "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+        "beforeSha256": "dd8f95b359b8e0e2f3be996e7f7615b76645340d6f45bb5a9f7a53d64f05db5d",
+        "currentSha256": "dd8f95b359b8e0e2f3be996e7f7615b76645340d6f45bb5a9f7a53d64f05db5d",
+        "equal": true
+      },
+      {
+        "path": "build.gradle.kts",
+        "beforeSha256": "410337926d998bb6806f72cb69e5a5a77cf208a4a9b514d64c02aa96e45c8d45",
+        "currentSha256": "410337926d998bb6806f72cb69e5a5a77cf208a4a9b514d64c02aa96e45c8d45",
+        "equal": true
+      },
+      {
+        "path": "deploy/pipeline/approved_release.py",
+        "beforeSha256": "d26a7f5a50621334f1b661cfc0193c9c1ac912d20c0be5277981dcafa060f428",
+        "currentSha256": "d26a7f5a50621334f1b661cfc0193c9c1ac912d20c0be5277981dcafa060f428",
+        "equal": true
+      },
+      {
+        "path": "deploy/pipeline/host-approved-release.py",
+        "beforeSha256": "751ac1625e42b35279b6930a1b58eb158c767dea351b6dcc3d41688a5efe8125",
+        "currentSha256": "751ac1625e42b35279b6930a1b58eb158c767dea351b6dcc3d41688a5efe8125",
+        "equal": true
+      },
+      {
+        "path": "deploy/pipeline/publish_manifest.py",
+        "beforeSha256": "3157fc0da0519f76238b91b49e3055eb3d34fde731a865fbe131b45c168f5eb3",
+        "currentSha256": "3157fc0da0519f76238b91b49e3055eb3d34fde731a865fbe131b45c168f5eb3",
+        "equal": true
+      },
+      {
+        "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+        "beforeSha256": "fabe0cc71ad9b581abce95622774c20f81e4818cb726fe23267a46edad786eb9",
+        "currentSha256": "fabe0cc71ad9b581abce95622774c20f81e4818cb726fe23267a46edad786eb9",
+        "equal": true
+      },
+      {
+        "path": "docs/ARCHITECTURE.md",
+        "beforeSha256": "c7e65d439694d557f1a9e43863a9c754bc59e5d9f0f92e62d6dee1deebd85bcf",
+        "currentSha256": "c7e65d439694d557f1a9e43863a9c754bc59e5d9f0f92e62d6dee1deebd85bcf",
+        "equal": true
+      },
+      {
+        "path": "implementation_plan.md",
+        "beforeSha256": "7a45e9f81b856f667198cb133d93970d2021bad027f48d197305e22571e13604",
+        "currentSha256": "cc6855d6e73b681176643d18c6c9c268f9e5a4638b35a6003feaf4f2c7783a54",
+        "equal": false
+      },
+      {
+        "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+        "beforeSha256": "c1cb2f9bd2f7088be89b55cd91003d80f912627a95cef3affbc604ffd201ae83",
+        "currentSha256": "c1cb2f9bd2f7088be89b55cd91003d80f912627a95cef3affbc604ffd201ae83",
+        "equal": true
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+        "beforeSha256": "2c8aad38d3c2cb5e2fff82a1a0ab2d4ecc9cc29a61eb8f25def874e5f2d99a44",
+        "currentSha256": "2c8aad38d3c2cb5e2fff82a1a0ab2d4ecc9cc29a61eb8f25def874e5f2d99a44",
+        "equal": true
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+        "beforeSha256": "88390ff2579052c3f98a0a9f0c0a736375d5e86cacc156dff4c136d40ffbef03",
+        "currentSha256": "88390ff2579052c3f98a0a9f0c0a736375d5e86cacc156dff4c136d40ffbef03",
+        "equal": true
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+        "beforeSha256": "472f9440c5a6ebbdf3160e638989591587493528aefc5ad137ffb306cb4bb5c4",
+        "currentSha256": "472f9440c5a6ebbdf3160e638989591587493528aefc5ad137ffb306cb4bb5c4",
+        "equal": true
+      },
+      {
+        "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+        "beforeSha256": "4ad8644122aa0d971d87bd995b2370daab5cc022fc050e973a68ae55f468fa26",
+        "currentSha256": "4ad8644122aa0d971d87bd995b2370daab5cc022fc050e973a68ae55f468fa26",
+        "equal": true
+      },
+      {
+        "path": ".tdd/red/account-room-history-index.json",
+        "beforeSha256": "c70cacd0d6589f3ca90a24711a8ee551fad2f95b697d74089ee609244581f92e",
+        "currentSha256": "c70cacd0d6589f3ca90a24711a8ee551fad2f95b697d74089ee609244581f92e",
+        "equal": true
+      },
+      {
+        "path": ".tdd/red/issue161-account-room-lookup-preparation.json",
+        "beforeSha256": "502a2a355c3946142700894429e88b3356c105a9ae3eb9be563d1f9900d46a37",
+        "currentSha256": "502a2a355c3946142700894429e88b3356c105a9ae3eb9be563d1f9900d46a37",
+        "equal": true
+      },
+      {
+        "path": ".tdd/reviews/account-room-history-index.json",
+        "beforeSha256": "44754bf18fcf930d7ed6444313ae56f776a73f1bbb654a82763a61c8a636806f",
+        "currentSha256": "44754bf18fcf930d7ed6444313ae56f776a73f1bbb654a82763a61c8a636806f",
+        "equal": true
+      },
+      {
+        "path": ".tdd/reviews/issue161-account-room-db-load.json",
+        "beforeSha256": "b34bcfc955ec6df566567b311deb48f6974c3c95720b80e6ea8b721d32c286d8",
+        "currentSha256": "b34bcfc955ec6df566567b311deb48f6974c3c95720b80e6ea8b721d32c286d8",
+        "equal": true
+      },
+      {
+        "path": ".tdd/verification/account-room-history-index-faults.json",
+        "beforeSha256": "bcb4a3ddb8810fb2e687e6561b2fa927952a049eaba335805a8b26938c3dded5",
+        "currentSha256": "bcb4a3ddb8810fb2e687e6561b2fa927952a049eaba335805a8b26938c3dded5",
+        "equal": true
+      },
+      {
+        "path": ".tdd/verification/issue161-account-room-db-load.json",
+        "beforeSha256": "351ee3492204eaedf5234455546de07612a7bbd632e3b9647fb9ac2388b80010",
+        "currentSha256": "351ee3492204eaedf5234455546de07612a7bbd632e3b9647fb9ac2388b80010",
+        "equal": true
+      },
+      {
+        "path": ".tdd/verification/issue161-account-room-lookup-faults.json",
+        "beforeSha256": "4d146b111d1171110598a68865779c25aa5fa4bb9cfbddccfa4cedf7962bf684",
+        "currentSha256": "4d146b111d1171110598a68865779c25aa5fa4bb9cfbddccfa4cedf7962bf684",
+        "equal": true
+      },
+      {
+        "path": "docs/verification/account-room-db-load-20261029.md",
+        "beforeSha256": "ebb07eaec7175f96e8f5e15e60130dbd86d04743c21192e2d9548ed8cb3665b6",
+        "currentSha256": "c152751b1ae1f60ddb86e66e890f9cf10a59cbab805ed553ee48cb71f2d0127b",
+        "equal": false
+      },
+      {
+        "path": "src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+        "beforeSha256": "cd3ac13d1cd71b667d04ef8a63b9928c01f887bee041e35b0119e3b20d447264",
+        "currentSha256": "cd3ac13d1cd71b667d04ef8a63b9928c01f887bee041e35b0119e3b20d447264",
+        "equal": true
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+        "beforeSha256": "868edbc4638e8afe4c8f8c6b116badd7b0c64b2801ba445e4ae05bdf73e89767",
+        "currentSha256": "868edbc4638e8afe4c8f8c6b116badd7b0c64b2801ba445e4ae05bdf73e89767",
+        "equal": true
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+        "beforeSha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5",
+        "currentSha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5",
+        "equal": true
+      }
+    ]
+  },
+  "ciRecoveryPreserved": {
+    "exactComparedWithOriginDevelop": [
+      "deploy/pipeline/release_pipeline.py",
+      "deploy/pipeline/run-approved-release.py",
+      "deploy/tests/test_issue154_aws_control_transport.py"
+    ],
+    "result": "All byte-identical",
+    "issue161ProductionDeployDelta": "Only exact V20 catalog/name additions in publish_manifest.py, approved_release.py, host-approved-release.py"
+  },
+  "heldPr158": {
+    "ref": "origin/held-pr158",
+    "sha": "6d40259b4c8492198043271cff438d85cf6dad55",
+    "ancestorOfCurrentHead": false,
+    "gitMergeBaseExitCode": 1,
+    "included": false
+  },
+  "fingerprints": {
+    "evidence": "/workspace/shared/account-room-load-issue161/current-develop-fingerprints.json",
+    "independentlyRecomputed": true,
+    "method": "Read explicit catalog constants via AST; SHA256 actual migration and guard bytes in canonical sorted-key JSON; baseline bytes from git show bccf36e and candidate from working tree. No publisher execution.",
+    "latestDevelopBefore": {
+      "migrationCount": 19,
+      "guardFileCount": 23,
+      "schemaFingerprint": "f7d1365270922d4c0af784e482fc59a2b28f0272583ac272ce6940aa818f91a8",
+      "guardFingerprint": "9dba9b9a1bc8f7ae6a2148bdc03134e1e754039b782cb9157616f4382e2a1771"
+    },
+    "issue161After": {
+      "migrationCount": 20,
+      "guardFileCount": 23,
+      "schemaFingerprint": "66fbc6bf7bc6fd42e7e720ac18257f8443574fed583c6e7846c6de472f242a45",
+      "guardFingerprint": "5aff722d6cd0a9a75bdc9d1ede81650565206aef7ab8482329c704e6081b6a29"
+    },
+    "baseRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+    "oldEvidencePreservedAt": "/workspace/shared/account-room-load-issue161/fingerprints.json"
+  },
+  "validation": {
+    "priorFullKotlin": "267 suites/2250 tests,2246 passed/4 skipped/failures0/errors0 independently verified in issue161-account-room-db-load.json; Kotlin production/test hashes unchanged by integration.",
+    "commitGuard": {
+      "receipt": "/tmp/account-room-load/issue161-commit-guard-receipt.json",
+      "exitCode": 0,
+      "elapsedSeconds": 10.36,
+      "kind": "Parent execution receipt reviewed; cached unchanged Gradle verification may be reused; not a fresh 9-minute test rerun. No commit executed by this hook receipt."
+    },
+    "node": {
+      "log": "/tmp/account-room-load/issue161-current-develop-node.log",
+      "tests": 180,
+      "passed": 180,
+      "failed": 0,
+      "skipped": 0,
+      "summaryReadByReviewer": true
+    },
+    "python": {
+      "log": "/tmp/account-room-load/issue161-current-develop-python.log",
+      "state": "PASS",
+      "tests": 330,
+      "seconds": 437.184,
+      "summaryReadByReviewer": true
+    }
+  },
+  "databaseLocation": {
+    "proof": "/workspace/shared/account-room-load-issue161/database-location-proof.json",
+    "containerName": "account-room-load-pg",
+    "containerId": "e9282943416cb5d4d73b0dd92efe953b868be84d9eceeb199504fa889354a020",
+    "dockerEndpoint": "unix:///var/run/docker.sock",
+    "storage": "Docker local volume mounted at /var/lib/postgresql",
+    "publishedHostPorts": 0,
+    "jdbcTarget": "127.0.0.1:5432/postgres within database container network namespace",
+    "clientNetworkArgument": "--network=container:account-room-load-pg",
+    "assessment": "Parent inspect/self-report proof is consistent with local synthetic DB and inspected Java/run scripts. Reviewer did not connect to database or Docker. This evidence does not grant operating database authority."
+  },
+  "constraints": [
+    "Additional benchmarking/writes stopped per parent steering.",
+    "Operating load experiments remain prohibited.",
+    "No operating deployment or DB change before parent coordination; commit/push/PR approval is not operating authorization."
+  ],
+  "reviewerActions": {
+    "sourceEdits": 0,
+    "testEdits": 0,
+    "testReruns": 0,
+    "databaseActions": 0,
+    "remoteActions": 0,
+    "reportOnly": ".tdd/reviews/issue161-current-develop-integration.json"
+  },
+  "followupBudgetReview": {
+    "path": ".tdd/reviews/issue161-index-budget.json",
+    "reason": "Later budget SQL changes supersede this snapshot hash/fingerprint and require new final guard; CI V20 test addition independently reviewed there."
+  }
+}

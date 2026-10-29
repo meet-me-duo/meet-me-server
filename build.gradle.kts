@@ -50,7 +50,7 @@ dependencies {
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
     implementation("org.flywaydb:flyway-database-postgresql")
     ksp("org.komapper:komapper-processor")
-    runtimeOnly("org.postgresql:postgresql")
+    implementation("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")

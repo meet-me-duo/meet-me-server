@@ -1,0 +1,144 @@
+{
+  "recordedAt": "2026-10-29T01:00:09.432631+00:00",
+  "reviewer": "/root/history_contract_tests",
+  "scope": "Supplemental independent review of index-only patch transplanted onto current main c152; local archive only",
+  "baseRevision": "c152ba7014e801d47a80f5b8292b182319d2ce86",
+  "scopeResult": "PASS",
+  "openP1": 0,
+  "openP2": 0,
+  "productionFiles": [
+    {
+      "path": "src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+      "sha256": "cd3ac13d1cd71b667d04ef8a63b9928c01f887bee041e35b0119e3b20d447264"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "3157fc0da0519f76238b91b49e3055eb3d34fde731a865fbe131b45c168f5eb3"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "d26a7f5a50621334f1b661cfc0193c9c1ac912d20c0be5277981dcafa060f428"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "751ac1625e42b35279b6930a1b58eb158c767dea351b6dcc3d41688a5efe8125"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "4ad8644122aa0d971d87bd995b2370daab5cc022fc050e973a68ae55f468fa26"
+    }
+  ],
+  "verified": [
+    "Current main AGENTS/architecture/development/user-intervention instructions unchanged",
+    "All existing Kotlin/JDBC API, V1..V19 SQL, infra and CI workflows equal c152 base; no new analysis behavior introduced",
+    "Only three production Python exact catalog/name entries extended to20; no security/approval decisions changed",
+    "All23 required guard files retained; approval_gate, transition_orchestrator, release_completion, release_pipeline and transition-approval marker unchanged; public-api-contract unchanged",
+    "Shared fixture latest inventory and V18/V19 current publication arrays extended to20 while historical reader/approval/invalid metadata expectations retained",
+    "Independent V20 fixture changed one setup call f.fixture to f.currentFixture; assertions unchanged and complete current23 guard bundle/public API supplied",
+    "New current-base catalog RED6 assertion failures/2 controls; current Node final180 PASS/skips0",
+    "SQL and Kotlin test exact SHA equal previously FI2-reviewed versions; original exact-restore and six restored controls remain applicable to unchanged persistence boundary; no FI repetition while validation reads source"
+  ],
+  "fingerprints": {
+    "baseline": "c152ba7014e801d47a80f5b8292b182319d2ce86",
+    "before": {
+      "migrationCount": 19,
+      "guardFileCount": 23,
+      "schemaFingerprint": "f7d1365270922d4c0af784e482fc59a2b28f0272583ac272ce6940aa818f91a8",
+      "guardFingerprint": "68eb12c51113689ce96bd0f2f266e77c3ac2c8779e3e72a1af58ae7a5cca78fc"
+    },
+    "after": {
+      "migrationCount": 20,
+      "guardFileCount": 23,
+      "schemaFingerprint": "66fbc6bf7bc6fd42e7e720ac18257f8443574fed583c6e7846c6de472f242a45",
+      "guardFingerprint": "032b18964056fcb22ac3e9153ace26175ce24221670dd9e977026943b64d4fc8"
+    },
+    "method": "Independent SHA256 over explicit public23 inventory and actual SQL bytes, canonical JSON; offline source only"
+  },
+  "reuseEvidence": {
+    "priorFaults": "fault-evidence.json",
+    "reuseReason": "Exact same V20 SQL cd3ac13... and frozen migration test870286...; current base changed deploy protection only; parent explicitly requested no repeat of identical persistence FI"
+  },
+  "verificationStatus": {
+    "currentCatalogRed": {
+      "log": "/tmp/account-room-load/current-catalog-red.log",
+      "tests": 8,
+      "expectedAssertionFailures": 6,
+      "controlsPassed": 2,
+      "fixtureError": false
+    },
+    "node": {
+      "log": "/tmp/account-room-load/current-node-all-verified.log",
+      "tests": 180,
+      "passed": 180,
+      "failed": 0,
+      "skipped": 0
+    },
+    "fullGradle": {
+      "log": "/tmp/account-room-load/current-full-gate.log",
+      "state": "PASS: memory-adjusted final full ktlintCheck/assemble/test successful after exact current-version oracle correction",
+      "validBehavioralFailure": false,
+      "testsExecutedInFailedAttempt": 0,
+      "retryLog": "/tmp/account-room-load/current-full-gate-final.log",
+      "retrySettings": [
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "--max-workers=2"
+      ],
+      "suites": 266,
+      "tests": 2248,
+      "passed": 2244,
+      "skipped": 4,
+      "failures": 0,
+      "errors": 0,
+      "independentlySummedXml": true
+    },
+    "python": {
+      "log": "/tmp/account-room-load/current-deploy-tests.log",
+      "state": "Parent confirms current-base Python310 PASS; one Git-index-dependent archive case excluded exactly as documented"
+    }
+  },
+  "limitations": [
+    "Fingerprints are offline source calculations, not a publication, operating preflight, AUTO_READY or deployed receipt",
+    "No remote approval, repository branch/publication, operating DB or deployment authority exercised",
+    "Performance acceptance remains workload-dependent; typed PREPARE/auto diagnostics expose dense hit/row and warmup tradeoffs, not a net operating load guarantee"
+  ],
+  "mutationsByReviewer": {
+    "temporaryAuthoredTestSetup": "one fixture delegation line only",
+    "currentArchiveProductionOrTests": false,
+    "originalRepository": false,
+    "remote": false,
+    "operatingDb": false
+  },
+  "approvalBlock": {
+    "action": "Create new public GitHub Issue",
+    "target": "meet-me-duo/meet-me-server",
+    "state": "denied by automatic approval review; unresolved as confirmed by parent",
+    "reason": "Task approval did not explicitly authorize creating a new public issue",
+    "alreadyCompleted": "Authorized temporary archive patch/test preparation and independent source review only",
+    "retryByReviewer": false,
+    "remoteActionsByReviewer": false
+  },
+  "followupReviews": [
+    {
+      "reviewedAt": "2026-10-29T00:41:25.327542+00:00",
+      "file": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "baselineSha256": "58558cb1c3479c01c65f457a37de9a935c87fb31f227bf65eb87e25cdc2692b8",
+      "currentSha256": "2c8aad38d3c2cb5e2fff82a1a0ab2d4ecc9cc29a61eb8f25def874e5f2d99a44",
+      "diff": "Only exact latest Flyway version expectation changes from19 to20",
+      "assessment": "PASS: strict equality retained for added V20; Flyway.validate and schema/table checks untouched; no expected behavior removed or broadened",
+      "productionFingerprintsUnchanged": true,
+      "independentMigrationTestFingerprintUnchanged": true
+    },
+    {
+      "type": "Typed generic/auto plan interpretation",
+      "assessment": "PASS WITH PERFORMANCE LIMITS: supports typical-case candidate; dense buffer/row tradeoff and warmup-dependent plan selection prohibit all-plan/net-operating-load guarantees",
+      "evidence": "jdbc-plan-additional-review.json"
+    }
+  ]
+}

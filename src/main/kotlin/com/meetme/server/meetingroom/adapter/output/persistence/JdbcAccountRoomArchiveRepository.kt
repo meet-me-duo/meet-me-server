@@ -4,7 +4,10 @@ import com.meetme.server.meetingroom.application.port.input.AccountRoomView
 import com.meetme.server.meetingroom.application.port.input.AccountRoomsQuery
 import com.meetme.server.meetingroom.application.port.output.AccountRoomArchivePort
 import com.meetme.server.participant.domain.ParticipantRole
+import org.postgresql.PGStatement
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.PreparedStatementSetter
 import org.springframework.stereotype.Repository
 import java.time.Duration
 import java.time.Instant
@@ -46,9 +49,11 @@ class JdbcAccountRoomArchiveRepository(
         }
         arguments += query.limit + 1
         val additionalWhere = conditions.joinToString("") { " AND $it" }
+        // The predicate still proves this role; avoid a heap fetch solely to return its known value.
+        val roleProjection = query.role?.let { "'${it.name}'::varchar AS role" } ?: "p.role"
         return jdbc.query(
             """
-            SELECT r.id, r.invite_code, r.purpose, r.created_at, p.role,
+            SELECT r.id, r.invite_code, r.purpose, r.created_at, $roleProjection,
                 CASE WHEN r.collection_status = 'CLOSED' THEN r.closed_at ELSE r.created_at END AS retention_anchor
             FROM meeting_rooms r JOIN participants p ON p.room_id = r.id
             WHERE p.user_id = ?
@@ -58,6 +63,12 @@ class JdbcAccountRoomArchiveRepository(
             ORDER BY r.created_at DESC, r.id ASC
             LIMIT ?
             """.trimIndent(),
+            PreparedStatementSetter { statement ->
+                // Account sizes vary sharply: let PostgreSQL plan this lookup for each bound account.
+                // Keep the connection default and preparation of all other statements unchanged.
+                statement.unwrap(PGStatement::class.java).prepareThreshold = 0
+                ArgumentPreparedStatementSetter(arguments.toTypedArray()).setValues(statement)
+            },
             { rs, _ ->
                 AccountRoomView(
                     rs.getString("invite_code"),
@@ -68,7 +79,6 @@ class JdbcAccountRoomArchiveRepository(
                     rs.getObject("id", UUID::class.java),
                 )
             },
-            *arguments.toTypedArray(),
         )
     }
 }

@@ -36,7 +36,7 @@ jobs:
           cache: gradle
 
       - name: Run quality gate
-        run: ./gradlew --no-daemon ktlintCheck assemble test
+        run: ./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g ktlintCheck assemble test
 
       - name: Verify production deployment policy
         run: node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs
@@ -47,8 +47,8 @@ jobs:
       - name: Verify first transition and subsequent automatic release contract
         run: node --test .github/scripts/approved-release-pipeline.test.cjs .github/scripts/issue108-release-catalog.test.cjs .github/scripts/issue109-release-catalog.test.cjs .github/scripts/issue110-release-catalog.test.cjs .github/scripts/issue107-integrated-catalog.test.cjs .github/scripts/issue107-runtime-auth-catalog.test.cjs
 
-      - name: Verify exact V19 review release catalog
-        run: node --test .github/scripts/v19-review-release-catalog.test.cjs
+      - name: Verify exact review and account history release catalogs
+        run: node --test .github/scripts/v19-review-release-catalog.test.cjs .github/scripts/v20-account-room-index-release-catalog.test.cjs
 
       - name: Verify OAuth proxy log privacy
         run: node --test .github/scripts/issue110-nginx-privacy.test.cjs

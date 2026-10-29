@@ -18,7 +18,7 @@ const scripts = [
   'V17__add_durable_ai_room_budgets.sql',
 ];
 // Current publication is the explicitly approved complete V19 catalog; scripts/manifest keep historical V17 defaults.
-const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql', 'V19__add_confirmed_result_reviews.sql'];
+const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql', 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql'];
 const guardFiles = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',

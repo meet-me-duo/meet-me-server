@@ -1,0 +1,39 @@
+{
+  "workItem": "issue161-bb07-integration",
+  "recordedAt": "2026-10-29T05:08:22.175126+00:00",
+  "parents": [
+    "112c4675fb55218826ffb8afb3a8fee21491f78e",
+    "bb07f3b4c42f41430504f2d0e6b0490a285fa205"
+  ],
+  "productionAndFrozenTestsUnchanged": true,
+  "upstreamRecoveryPreserved": true,
+  "held158Included": false,
+  "node": 192,
+  "commitGuard": {
+    "exitCode": 0,
+    "seconds": 15.55,
+    "event": {
+      "hook_event_name": "PreToolUse",
+      "tool_name": "Bash",
+      "cwd": "/workspace/meet-me-server",
+      "tool_input": {
+        "command": "git commit -m \"merge: 운영 검증된 CI/CD 복구의 계정 조회 브랜치 통합\""
+      }
+    }
+  },
+  "fingerprints": {
+    "schemaFingerprint": "615e197aedf104d52c2ef3ed71e6136b036e7b258e24fb27301f866fe19b0243",
+    "guardFingerprint": "825cf18d7c6b622e08df3aa251d3687f9c7cfd4c625ffbbe513e25307018113d",
+    "migrationCount": 20,
+    "guardCount": 23,
+    "v20Checksum": -881458142,
+    "integratedMain": "bb07f3b4c42f41430504f2d0e6b0490a285fa205"
+  },
+  "independentReadReview": {
+    "reviewer": "history_contract_review_astra",
+    "openP1": 0,
+    "openP2": 0,
+    "filesEditedByReviewer": 0
+  },
+  "operatingActions": false
+}

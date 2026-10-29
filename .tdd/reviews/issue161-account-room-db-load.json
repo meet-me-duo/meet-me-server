@@ -1,0 +1,211 @@
+{
+  "workItem": "issue161-account-room-db-load",
+  "recordedAt": "2026-10-29T02:16:41.610937+00:00",
+  "reviewer": "/root/history_contract_review_astra",
+  "roleSeparation": {
+    "implementation": "parent",
+    "testAuthorAndFaultExecutor": "/root/history_contract_tests",
+    "reviewerAuthoredSourceOrTests": false
+  },
+  "baseRevision": "4bc1170faefc706943f074f9204cc279368109d0",
+  "branch": "chore/161-account-room-db-load",
+  "scopeResult": "PASS",
+  "openP1": 0,
+  "openP2": 0,
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "sha256": "c1cb2f9bd2f7088be89b55cd91003d80f912627a95cef3affbc604ffd201ae83"
+    },
+    {
+      "path": "src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+      "sha256": "cd3ac13d1cd71b667d04ef8a63b9928c01f887bee041e35b0119e3b20d447264"
+    },
+    {
+      "path": "build.gradle.kts",
+      "sha256": "410337926d998bb6806f72cb69e5a5a77cf208a4a9b514d64c02aa96e45c8d45"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "3157fc0da0519f76238b91b49e3055eb3d34fde731a865fbe131b45c168f5eb3"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "d26a7f5a50621334f1b661cfc0193c9c1ac912d20c0be5277981dcafa060f428"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "751ac1625e42b35279b6930a1b58eb158c767dea351b6dcc3d41688a5efe8125"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+      "sha256": "868edbc4638e8afe4c8f8c6b116badd7b0c64b2801ba445e4ae05bdf73e89767"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    }
+  ],
+  "contracts": [
+    "FR-109C",
+    "FR-109D",
+    "docs/ACCOUNT_ROOM_HISTORY_API.md",
+    ".agents/rules/development.md"
+  ],
+  "findings": [],
+  "verified": [
+    "Only JDBC lookup PreparedStatement setter changes its own PGStatement threshold; connection/session policy untouched and existing Spring argument binder retained.",
+    "Role projection derives solely from ParticipantRole enum used in retained p.role bind predicate; unfiltered query still returns p.role. No request string is interpolated.",
+    "Account equality, retained-row cutoff, created-date predicates, literal strpos search, mixed-direction keyset, limit+1 and expiresAt mapping are unchanged.",
+    "V20 is additive partial (user_id,room_id) index only. Existing HOST index, ownership/uniqueness constraints and prior V1..V19 SQL are unchanged.",
+    "PG driver moves runtimeOnly to implementation for adapter PGStatement dependency; no Domain dependency introduced.",
+    "Three Python catalog changes append exact V20 inventory/name only. Guard inventory, approval/security logic and public API unchanged. Updated current-version test expectations remain exact, historical contracts retained.",
+    "New independent test inspects server pg_prepared_statements after repetitions through real Hikari/PGJDBC/Spring; unrelated statement still prepares, connection threshold5 and plan_cache_mode auto remain. No private-method expectation.",
+    "Semantic test covers account/guest isolation, HOST and MEMBER, unfiltered own roles, inclusive retention cutoff, closed vs collecting anchor, created-date range, literal symbols/case, empty account, tied-order keyset and limit+1. Frozen SHA matches original valid RED.",
+    "Both independent fault injections produce intended assertion failure and retain the other control; each restored run passes both tests. Current source/test hashes match both restoration records."
+  ],
+  "red": {
+    "path": ".tdd/red/issue161-account-room-lookup-preparation.json",
+    "log": "/tmp/account-room-load/lookup-preparation-red.log",
+    "expectedBehavioralFailures": 1,
+    "semanticControlPassed": 1
+  },
+  "verification": {
+    "focused": {
+      "log": "/tmp/account-room-load/issue161-focused-green.log",
+      "logBuildSuccessfulVerified": true,
+      "testsReportedByParent": 30,
+      "ktlintCheck": "PASS"
+    },
+    "faults": ".tdd/verification/issue161-account-room-lookup-faults.json",
+    "node": {
+      "status": "Parent reports 180 PASS; existing catalog review supports unchanged catalog scope"
+    },
+    "python": {
+      "status": "Parent reports 311 PASS"
+    },
+    "fullFinalGates": {
+      "state": "PASS",
+      "tasks": [
+        "ktlintCheck",
+        "assemble",
+        "test"
+      ],
+      "executor": "parent",
+      "reviewedAt": "2026-10-29T02:24:27.392089+00:00",
+      "log": "/tmp/account-room-load/issue161-full-final.log",
+      "logSha256": "91638ddd90e97cbfc7bd3a404f2c86ad6411aa21e781d7fb3fa24bc3463ffd47",
+      "buildResult": "BUILD SUCCESSFUL in 9m 37s",
+      "exitCodeReportedByParent": 0,
+      "xmlDirectory": "build/test-results/test",
+      "suites": 267,
+      "tests": 2250,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 4,
+      "passed": 2246,
+      "independentlySummedXml": true,
+      "xmlManifestSha256": "bc39f2591e109bff3222f07538f03a403a4c29b406128cc3edef9dff064d2f20",
+      "productionAndFrozenTestHashesUnchanged": true,
+      "note": "Current original-repository gate independently checked; not reused from prior archive. No rerun by reviewer."
+    }
+  },
+  "migrationEvidenceReuse": {
+    "review": ".tdd/reviews/account-room-history-index.json",
+    "faults": ".tdd/verification/account-room-history-index-faults.json",
+    "reason": "Exact unchanged V20 cd3ac13... and migration test870286... hashes independently verified",
+    "scope": "Migration boundary only; earlier report approval state and old full gate are historical, not current authorization or JDBC result"
+  },
+  "performanceAudit": {
+    "source": "docs/verification/account-room-db-load-20261029.md",
+    "actualJdbcObservations": 283,
+    "priorObservations": 251,
+    "productionFinalObservations": 32,
+    "independentResultComparison": {
+      "key": [
+        "shape",
+        "probeUser"
+      ],
+      "keys": 24,
+      "rowCountAndFingerprintMismatches": 0
+    },
+    "productionFinal": {
+      "mode": "production",
+      "wrapperSqlAndThresholdMutationBranches": "false under production mode, inspected in ProductionJdbcProbe.java",
+      "sourceHashMatchesCurrent": true,
+      "connectionPrepareThreshold": 5,
+      "planCacheMode": "auto",
+      "namedLookupStatements": 0,
+      "allNamedBeforeExplain": 0,
+      "resultMatchesPrototype": "32/32",
+      "observedStatementPrepareThreshold": 5,
+      "observationTiming": "Captured immediately after connection.prepareStatement before repository PreparedStatementSetter; NOT observation of final threshold. Server cache absence plus independent unrelated-statement test validate intended boundary."
+    },
+    "compositeProposal": {
+      "observations": 352,
+      "kind": "Structural snapshot SQL PREPARE comparison; not actual production JDBC or synchronization implementation"
+    },
+    "rootSharedHitPlusReadComparisons": {
+      "normalAll": [
+        9977,
+        124
+      ],
+      "denseAll": [
+        3983,
+        3983
+      ],
+      "denseHostZero": [
+        291199,
+        5
+      ],
+      "normalHost": [
+        44,
+        45
+      ],
+      "dateIndexDenseAll": [
+        3983,
+        1544
+      ],
+      "dateIndexDenseHostZero": [
+        5,
+        316936
+      ],
+      "dateIndexDenseRare": [
+        3195,
+        101079
+      ],
+      "dateIndexDenseCursor": [
+        4446,
+        26333
+      ]
+    },
+    "conclusion": "Evidence supports agreed minimal combined candidate and rejecting extra date index for this workload; no universal or operating net-load guarantee.",
+    "limitations": [
+      "Index+lookup preparation+role projection are a combined treatment; no isolated projection effect claimed.",
+      "Actual auto_explain probe and later EXPLAIN are distinct; later plan selection can change.",
+      "Root hits+reads count nonunique buffer accesses, not physical disk reads or total DB load.",
+      "Local elapsed includes instrumentation/NOTICE/parsing and is not production latency or throughput.",
+      "Physical heap/visibility/cache and execution order are not fully controlled. Covering index visibility stress does not measure full write maintenance cost.",
+      "Pool1, synthetic distribution, limited warmup/filter/cursor combinations do not represent operating concurrency and all workload distributions.",
+      "Creation-time index replication/read-model proposals need separate transactional synchronization and authorization/retention design."
+    ]
+  },
+  "remainingConstraints": [
+    "No operating DB load experiment authorized or performed.",
+    "Operating migration/deployment remains prohibited until CI154 recovery and parent coordination; ordinary transactional index build has maintenance/write-lock cost."
+  ],
+  "reviewerActions": {
+    "writtenFiles": [
+      ".tdd/reviews/issue161-account-room-db-load.json",
+      ".tdd/verification/issue161-account-room-lookup-faults.json"
+    ],
+    "sourceEdits": false,
+    "testEdits": false,
+    "databaseActions": false,
+    "remoteWrites": false,
+    "rerunTests": false
+  },
+  "blockers": []
+}

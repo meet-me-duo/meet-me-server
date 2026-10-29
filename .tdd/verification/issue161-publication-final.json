@@ -1,0 +1,70 @@
+{
+  "workItem": "issue161-publication-final",
+  "recordedAt": "2026-10-29T03:01:02.289824+00:00",
+  "baseRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "originalEvidenceRevision": "4bc1170faefc706943f074f9204cc279368109d0",
+  "commitGuard": {
+    "exitCode": 0,
+    "elapsedSeconds": 638.59,
+    "command": [
+      "python",
+      ".codex/hooks/tdd_guard.py"
+    ],
+    "event": {
+      "hook_event_name": "PreToolUse",
+      "tool_name": "Bash",
+      "cwd": "/workspace/meet-me-server",
+      "tool_input": {
+        "command": "git commit -m \"perf: 계정 모임 조회의 계정 인덱스와 실행 계획 회귀 방지\""
+      }
+    },
+    "v20Sha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a",
+    "noCommitExecutedByHook": true
+  },
+  "fullGate": {
+    "command": "./gradlew --no-daemon ktlintCheck assemble test",
+    "suites": 268,
+    "tests": 2252,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 4,
+    "passed": 2248,
+    "xmlAggregateSha256": "8933db335cbbdfa80c5f13537c7dabbfa0400f10b24a2fe3ff5b6f645041f40f"
+  },
+  "nodeTests": 192,
+  "deploymentPython": {
+    "latestDevelopBeforeBudget": 330,
+    "budgetAffectedPublicationRerun": 8
+  },
+  "focusedBudgetAndMigration": 7,
+  "independentBudgetFaultInjections": 4,
+  "queryFaultInjections": 2,
+  "operationalActions": false,
+  "pending": "Push/PR/exact-head CI; operating transition only after CI/CD recovery and parent coordination",
+  "sourceFiles": [
+    {
+      "path": "build.gradle.kts",
+      "sha256": "410337926d998bb6806f72cb69e5a5a77cf208a4a9b514d64c02aa96e45c8d45"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "sha256": "c1cb2f9bd2f7088be89b55cd91003d80f912627a95cef3affbc604ffd201ae83"
+    },
+    {
+      "path": "src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+      "sha256": "99062f8dfb8bbca178c204be4eb5a297e99868f4193b290dbb3f4261d711cc8a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+      "sha256": "868edbc4638e8afe4c8f8c6b116badd7b0c64b2801ba445e4ae05bdf73e89767"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexBudgetPostgresTest.kt",
+      "sha256": "c02386bb514d2231c59d2432a358d61be30fe5c74bd508a523643972cd25046c"
+    }
+  ]
+}

@@ -38,6 +38,7 @@ MIGRATION_SCRIPTS = (
     'V17__add_durable_ai_room_budgets.sql',
     'V18__align_recommendation_selection_attendance.sql',
     'V19__add_confirmed_result_reviews.sql',
+    'V20__add_account_room_history_index.sql',
 )
 
 

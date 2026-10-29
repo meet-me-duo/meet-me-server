@@ -1,0 +1,59 @@
+{
+  "workItem": "issue161-account-room-db-load",
+  "recordedAt": "2026-10-29T02:24:27.885999+00:00",
+  "baseRevision": "4bc1170faefc706943f074f9204cc279368109d0",
+  "fullGate": {
+    "command": [
+      "/tmp/account-room-tools/gradle.sh",
+      "--max-workers=2",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "exitCode": 0,
+    "elapsed": "9m37s",
+    "suites": 267,
+    "total": 2250,
+    "passed": 2246,
+    "skipped": 4,
+    "failures": 0,
+    "errors": 0,
+    "log": "/tmp/account-room-load/issue161-full-final.log",
+    "logSha256": "91638ddd90e97cbfc7bd3a404f2c86ad6411aa21e781d7fb3fa24bc3463ffd47"
+  },
+  "focusedTests": 30,
+  "nodeTests": 180,
+  "deploymentPythonTests": 311,
+  "freshQueryFaultInjections": 2,
+  "unchangedMigrationFaultEvidence": ".tdd/verification/account-room-history-index-faults.json",
+  "actualJdbcObservations": 283,
+  "actualJdbcResultMismatches": 0,
+  "structuralPrototypeObservations": 352,
+  "sourceFiles": [
+    {
+      "path": "build.gradle.kts",
+      "sha256": "410337926d998bb6806f72cb69e5a5a77cf208a4a9b514d64c02aa96e45c8d45"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "sha256": "c1cb2f9bd2f7088be89b55cd91003d80f912627a95cef3affbc604ffd201ae83"
+    },
+    {
+      "path": "src/main/resources/db/migration/V20__add_account_room_history_index.sql",
+      "sha256": "cd3ac13d1cd71b667d04ef8a63b9928c01f887bee041e35b0119e3b20d447264"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+      "sha256": "868edbc4638e8afe4c8f8c6b116badd7b0c64b2801ba445e4ae05bdf73e89767"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHistoryIndexMigrationPostgresTest.kt",
+      "sha256": "870286c884052cfb9cef1d045f3edf980ce9de8cfdc01bb28d6099a3047d96e5"
+    }
+  ],
+  "remoteSourcePublication": false,
+  "operationalActions": false,
+  "pending": "CI154 recovery and parent coordination before merge/deploy/operating migration"
+}
