@@ -1,5 +1,16 @@
 # meet-me-server Implementation Plan
 
+## 운영자 runtime 설정 전달 준비 (2026-10-29 UTC)
+
+- [x] `[USER]` 특정 Google 계정 하나의 운영자 허용 및 기능 활성화 승인을 확인했다. 최초 Cloud 준비·diff 보고 후 최소 변경의 전체 검사·feature 커밋/게시·PR/정확 CI 및 develop/main 통합까지 위임받았다. 실제 UUID·운영 parameter 입력은 PC 담당과 분리하며 보호 승인을 대신하거나 전환을 선행하지 않는다.
+- [x] `[AGENT]` 최신 main40aea513과 developd3fbc2d0의 파일 동일성을 확인하고 깨끗한 develop pull 후 feature/admin-runtime-config로 분리했다. 기존 운영자 기본 OFF·빈 allowlist·accountId 인가는 보존하며 실험 브랜치를 포함하지 않는다. 코드 준비만 승인된 단계이므로 원격 이슈 생성도 후속 게시 단계에 남긴다.
+- [x] `[AGENT]` 독립 합성 RED72개(70 assertion FAIL·2 PASS·설정 오류0) 후 공식 renderer에 선택적 OFF flag와 활성화 시 SecureString 단일 UUID 전달을 구현했다. 새72개 GREEN, 실제 계정값 사용0, 기존 테스트 수정0이다.
+- [x] `[AGENT]` 실제 Spring 바인딩4·기존 인가12·ktlintCheck·assemble PASS, 신규72 PASS 및 독립 결함 주입17/17 탐지를 확인했다. Node 전체368 실행은367 PASS/기존AR15 fixture20초 timeout1이며 해당 원본을 포함한AR15/16/24 단독3 PASS로 재확인했다. 기존 테스트65개 지문은 동일하다. 기본 컴파일 OOM은 현재 CI의 기존2GB 옵션으로 해소했으며 기대값·timeout을 바꾸지 않았다. 추가 순차 Node 전체368/368 PASS를 확인했으며 기존 병렬 timeout 이력은 보존한다. 전체 Kotlin 품질 게이트 ktlintCheck·assemble·test는2256개 중2252 PASS/기존4 SKIP/실패·오류0로 통과했다. 원격 CI·실제 운영은 아직 실행하지 않았다.
+- [x] `[AGENT]` 신규 계약72개를 CI 별도step에 등록하고 독립 diff 검토를 완료했다. 생산 변경은 renderer57줄뿐이며 설정·전환·권한 회수 계약을 deploy/OPERATIONS_RUNTIME.md에 기록했다. 실제 UUID는 사용하거나 보관하지 않았다. 게시 전 검토용 로컬 diff와 검증 기록을 남긴다.
+- [ ] `[AGENT]` 전체 Kotlin 품질 검사와 순차 Node 회귀를 완료했으며 커밋·게시·PR/정확 CI를 진행한다. 관련 #110의 넓은 범위를 자동 종료하지 않도록 별도 설정 전달 이슈를 제안했으나 특정 공개 이슈 생성 승인 검토가 거절되어 이슈 생성과 종속 PR은 대기한다. 생성 재조회 결과 없음, 재시도0이다.
+- [ ] `[SHARED]` 보호 전환 전 PC 준비 상태를 조율하고 승인 계정 대응·안전한 parameter 입력·실제 세션 권한을 별도 검증한다. 현재 미실행이다.
+
+
 ## Issue #161 — 계정 모임 조회의 DB 부하 최적화 (2026-10-29)
 
 - [USER/부모 위임] 공개 이슈 제목 `perf: 계정 모임 조회의 DB 부하 최적화`와 인덱스·검색 후보/합성 측정/다참여 회귀/결과에 따른 최소안·적용검증 범위를 구체 승인했다. AWS/RDS 부담을 피하며 성능 실험은 격리 합성 DB만 사용한다. 운영 반복쿼리·부하테스트·테스트 데이터 삽입은 금지한다. 입력→분석→결과·모호성 판정 및 보류 PR158/웹51은 제외한다.

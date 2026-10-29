@@ -86,6 +86,7 @@ if args[:2]==['secretsmanager','get-secret-value']:
  print(json.dumps({'password':'synthetic-only-password'}));sys.exit(0)
 if args[:2]!=['ssm','get-parameter']:sys.exit(98)
 name=arg('--name');key=name.rsplit('/',1)[-1]
+if key=='operations-enabled':sys.exit(9)
 if key=='typesafe-api-key' and os.environ.get('ISSUE144_TYPESAFE_MISSING')=='1':sys.exit(9)
 values={'precheck-provider-enabled':os.environ['ISSUE144_ENABLED'],'database-url':'jdbc:postgresql://fixture.invalid/fixture','redis-port':'6379','redis-ssl-enabled':'true'}
 value=values.get(key,'synthetic-only-value')
