@@ -1,0 +1,28 @@
+{
+  "workItem": "issue154-recovery-inspection-audit",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "recordedAt": "2026-10-29T03:26:48.884011+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_recovery_inspection_audit.py",
+      "sha256": "906f5542bfcd8bd9489a5784e54440a6abdd1c48e642e5197b05ddab65b2cd0c"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "277e8af785961d3cb412ac4032c722b6522986f779321bba9cd99d5ad36a8c64"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection_audit.py -v > .codex/tdd-evidence/issue154-recovery-inspection-audit-red.log 2>&1",
+  "testsRun": 2,
+  "failureCount": 4,
+  "errorCount": 0,
+  "failedTests": [
+    "RecoveryInspectionNamespaceAuditTests.test_positive_or_mistyped_key_count_cannot_be_empty_with_omitted_or_empty_contents"
+  ],
+  "expectedFailureCategory": "CONTRACT_ASSERTION: contradictory or mistyped namespace KeyCount is treated as fresh despite an orphan journal; a real empty namespace with explicit zero KeyCount and omitted Contents remains a passing control",
+  "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-audit-red.log",
+  "rawLogSha256": "6989852a8e292cdca343ec37cb1f9d40768f679e8e79929d62f0b3205daee750",
+  "scope": "Synthetic S3 metadata only; original tests/production unchanged by auditor; no remote calls"
+}

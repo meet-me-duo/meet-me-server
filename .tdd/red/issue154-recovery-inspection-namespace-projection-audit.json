@@ -1,0 +1,29 @@
+{
+  "workItem": "issue154-recovery-inspection-namespace-projection-audit",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "recordedAt": "2026-10-29T03:34:39.031310+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_recovery_inspection_namespace_projection_audit.py",
+      "sha256": "1cdb6485439c765ba3c67cc9767b355f67a691c859d8beda502c2cf9eea57d28"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "20a9414de4904857f40c2658c8c277889dfc249cab3c38fabfe0f80fc93a8a09"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection_namespace_projection_audit.py -v > .codex/tdd-evidence/issue154-recovery-inspection-namespace-projection-audit-red.log 2>&1",
+  "testsRun": 2,
+  "failureCount": 2,
+  "errorCount": 0,
+  "failedTests": [
+    "test_issue154_recovery_inspection_namespace_projection_audit.RecoveryInspectionNamespaceProjectionTests.test_existing_orphan_journal_is_unavailable_rather_than_falsely_missing.test_existing_orphan_journal_is_unavailable_rather_than_falsely_missing",
+    "test_issue154_recovery_inspection_namespace_projection_audit.RecoveryInspectionNamespaceProjectionTests.test_namespace_read_denial_does_not_prove_that_a_journal_is_missing.test_namespace_read_denial_does_not_prove_that_a_journal_is_missing"
+  ],
+  "expectedFailureCategory": "CONTRACT_ASSERTION: unread orphan journal or denied namespace is incorrectly projected as MISSING rather than UNAVAILABLE",
+  "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-namespace-projection-audit-red.log",
+  "rawLogSha256": "229fdf28829ef86fa821bec75c3b7f9118acaa1ae5385c57a11016c3a1ce8004",
+  "scope": "Synthetic readonly ports; original tests and production unmodified by auditor"
+}

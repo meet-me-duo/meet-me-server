@@ -1,0 +1,749 @@
+{
+  "workItem": "issue154-recovery-inspection",
+  "recordedAt": "2026-10-29T03:38:29.527295+00:00",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "reviewRole": "Independent test designer and reviewer; parent implemented production",
+  "scope": "All AWS/host ports synthetic. Mutations only in disposable isolated copy; no active production or original oracle edits; no network/GitHub/AWS/operating execution",
+  "hashes": {
+    "deploy/pipeline/release_pipeline.py": "dc892d8f94d958c9f8d72805868f66d7a837687ddf893f1ab9715a2a3b9c43f3",
+    ".github/workflows/deploy.yml": "8121e9883ef0242bb3d7df4e51365e4a20e38cbe29c817d4285a37c25212aed7",
+    "deploy/pipeline/run-approved-release.py": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+    "deploy/preflight/run-preflight.py": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040",
+    "deploy/tests/test_issue154_recovery_inspection.py": "f06ff6dd4497d90bd32d69d88586279cf74cfa5a9201a9b3200752b97bab1a1e",
+    "deploy/tests/test_issue154_recovery_inspection_audit.py": "906f5542bfcd8bd9489a5784e54440a6abdd1c48e642e5197b05ddab65b2cd0c",
+    "deploy/tests/test_issue154_recovery_inspection_fi_contract.py": "f3aaf93dcfb6d11e57868c0d461b4ca6331917b50ea377f889ca7e962b317211",
+    "deploy/tests/test_issue154_recovery_inspection_namespace_projection_audit.py": "1cdb6485439c765ba3c67cc9767b355f67a691c859d8beda502c2cf9eea57d28",
+    "deploy/tests/test_issue154_recovery_inspection_projection_audit.py": "bf73344dccc8fdb8ebf88db842e012d4e9811253f55fe1833b97ffb68ec87c3e"
+  },
+  "originalFixtureCount": 65,
+  "originalFixtureMismatchCount": 0,
+  "originalFixtureBaseline": "/workspace/checkpoints/review-release-20261028/issue154-recovery-inspection-before.json",
+  "baseline": {
+    "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+    "exitCode": 0,
+    "testsRun": 41,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/baseline-green.log",
+    "rawLogSha256": "e4787d569384473f4c33fff7b5b9e9fc7fcee9fed625070402a530933ea5416d"
+  },
+  "faultInjections": [
+    {
+      "id": "F01-unreleased-owner-ignored",
+      "invariant": "Active owners block every terminal or unfinished operation",
+      "mutantSourceSha256": "d7b54f6dae914b109f1679ed62ce0c866c52dc5adda546ac56e52752059e6a0f",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F01-unreleased-owner-ignored.patch",
+      "mutationPatchSha256": "644975311726bf4c0cc3d80ef751436ac8f6b2fe6eddacd4daa55c3740fca97b",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 3,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_unreleased_owner_blocks_even_terminal_not_attempted_or_applied"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F01-unreleased-owner-ignored.log",
+        "rawLogSha256": "f921729c8c2268500338ac89ff5a8211a259bca16bafa1c4f54af81fd0902e2f"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F01-unreleased-owner-ignored-restored.log",
+        "rawLogSha256": "4eee48a591ac39d174d33878561da6483025f2d314af62a440eb0cf105a2aed7"
+      }
+    },
+    {
+      "id": "F02-unknown-without-command-permitted",
+      "invariant": "UNKNOWN without a command cannot become a safe prior state",
+      "mutantSourceSha256": "b9e807897db4f658397cb3958d5d168492cf305c5ef91478f231ae860b930f5c",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F02-unknown-without-command-permitted.patch",
+      "mutationPatchSha256": "9d38ebbaffb4cf2172ef9efff40bbe913651d0e778023001dc91609ba0a15521",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 3,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_unknown_intent_submitted_or_nonterminal_journal_never_allows_resume"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F02-unknown-without-command-permitted.log",
+        "rawLogSha256": "b0f9bd84e3810727d6b01b4516c28c3a33a0a7587763c9cbfce76d5ee9217d72"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F02-unknown-without-command-permitted-restored.log",
+        "rawLogSha256": "c875b7fde864f3fdba28081c9b54da83b2673422df85464edea265774beae976"
+      }
+    },
+    {
+      "id": "F03-canonical-identity-hashes-removed",
+      "invariant": "Matching owner and journal still require the canonical full identity hash",
+      "mutantSourceSha256": "1d51fc12f91a609b570d633d420cac2729838477758cf2d7bb1094e2f50b4d46",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F03-canonical-identity-hashes-removed.patch",
+      "mutationPatchSha256": "3529c1940c4aab64abe1ed84f611f71cc48c1c2f06c70133d75abd069ceb8615",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_owner_and_journal_agreeing_on_the_same_wrong_operation_hash_still_stop"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F03-canonical-identity-hashes-removed.log",
+        "rawLogSha256": "b5180dda47318a8351747e893edcf015df6f85328460a9c77bab476366a4deb6"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F03-canonical-identity-hashes-removed-restored.log",
+        "rawLogSha256": "c0a272cee0476ddc564bb859ab50ed661ea4ee625ceb182440839bc698f578f5"
+      }
+    },
+    {
+      "id": "F04-explicit-five-field-binding-removed",
+      "invariant": "Explicit inspection binds the original five candidate fields",
+      "mutantSourceSha256": "64e9ee0000f8433471378a52919537e72de76f197b98a6be8b647f50c1bed74d",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F04-explicit-five-field-binding-removed.patch",
+      "mutationPatchSha256": "ab064402c9f02854ac4dbe351021240b3fb269c3203087c9561e90c8cb9b6901",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_explicit_inspection_binds_five_candidate_fields_but_not_new_workflow_run"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F04-explicit-five-field-binding-removed.log",
+        "rawLogSha256": "ab292767a52b6765a721840f59d56e1be14bddbffbbdb5281ea266409c486c63"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F04-explicit-five-field-binding-removed-restored.log",
+        "rawLogSha256": "999c52a2e4b4a93b0dc75f66c6de83f801c626495135d98c3e739ce836d9ff06"
+      }
+    },
+    {
+      "id": "F05-final-owner-read-removed",
+      "invariant": "A second owner observation is mandatory",
+      "mutantSourceSha256": "f0c643c47b86b7c4e0bd1be10e3d29d75661e2b16870f9693dd467e51bfbd74b",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F05-final-owner-read-removed.patch",
+      "mutationPatchSha256": "bf13552e2cb9d2069aaaba5e17c1bd834f952c052a44d3a3d8d449720b614e52",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 6,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_owner_etag_change_with_unchanged_valid_body_still_stops",
+          "test_torn_owner_release_identity_or_disappearance_cannot_pass",
+          "test_torn_owner_snapshot_blocks_even_if_only_valid_holder_changes",
+          "test_valid_holder_change_with_unchanged_etag_still_stops"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F05-final-owner-read-removed.log",
+        "rawLogSha256": "930d8cd749326fba9a626636c31bdcab1470f3bf5d75d2fa0b71f57c15b8d3bd"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F05-final-owner-read-removed-restored.log",
+        "rawLogSha256": "1d4b630f24798b97228d592e6fbde1564c5a62f178f61b72b66aff8bd6efbeb2"
+      }
+    },
+    {
+      "id": "F06-holder-comparison-removed",
+      "invariant": "A changed valid holder is unsafe even with the same ETag",
+      "mutantSourceSha256": "d17b9347f3ff7b8a12322828c1f982a5f829aaac9b45bd52e427d65fbf8d1966",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F06-holder-comparison-removed.patch",
+      "mutationPatchSha256": "acc379e68be51214ad04721d7b74247cde9339abc697aadbb8f5aab629370600",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_valid_holder_change_with_unchanged_etag_still_stops"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F06-holder-comparison-removed.log",
+        "rawLogSha256": "a9a360d113348a52bbc9a825b3c8b804629ef6c3e3cbf80a4d0df2cad7c0254e"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F06-holder-comparison-removed-restored.log",
+        "rawLogSha256": "4eee48a591ac39d174d33878561da6483025f2d314af62a440eb0cf105a2aed7"
+      }
+    },
+    {
+      "id": "F07-etag-comparison-removed",
+      "invariant": "A changed ETag is unsafe even with the same owner body",
+      "mutantSourceSha256": "a5afcc6fd76b0481bf306d7123c46593d580db845281252c8e3efc089d95524a",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F07-etag-comparison-removed.patch",
+      "mutationPatchSha256": "10994ccdd7791f881672a36bd35d5266e61b76ff285d21d22d64f8c966682681",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_owner_etag_change_with_unchanged_valid_body_still_stops"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F07-etag-comparison-removed.log",
+        "rawLogSha256": "2583806610eb39e98ccb7b246628c8e648a2d9652727c574ac2cd38dc780f276"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F07-etag-comparison-removed-restored.log",
+        "rawLogSha256": "4eee48a591ac39d174d33878561da6483025f2d314af62a440eb0cf105a2aed7"
+      }
+    },
+    {
+      "id": "F08-applied-host-binding-removed",
+      "invariant": "Prior APPLIED requires full already-observed host identity binding",
+      "mutantSourceSha256": "7c6fdc5e5d17dea3956344ca32b1ee5a808c5d1f42c095626694cd69c8c18475",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F08-applied-host-binding-removed.patch",
+      "mutationPatchSha256": "ea78fa177c4660a6c6cf0ac6f5eb67218fd0bf679575772898de2bd6a692f4f2",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 11,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_applied_projection_with_no_precollected_facts_stops_without_new_ssm",
+          "test_applied_terminal_requires_full_current_host_binding_without_new_probe"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F08-applied-host-binding-removed.log",
+        "rawLogSha256": "0693ab8a108b40f2b04dd95627de75f72d5842328c8f58dbfbc0882d46c7d53b"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F08-applied-host-binding-removed-restored.log",
+        "rawLogSha256": "999c52a2e4b4a93b0dc75f66c6de83f801c626495135d98c3e739ce836d9ff06"
+      }
+    },
+    {
+      "id": "F09-orphan-namespace-permitted",
+      "invariant": "Only a proven empty namespace is fresh",
+      "mutantSourceSha256": "26402c71462290ddc9b4e3e792e51ff935d8ab8f814bb095e2b5295c9467b988",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F09-orphan-namespace-permitted.patch",
+      "mutationPatchSha256": "ee7c57887abaaa29c5c276eba01da1f156dbf340cf7b29750d03778625dcd49e",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 5,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_duplicate_malformed_oversized_or_non_utf8_json_is_never_diagnostic_data",
+          "test_existing_orphan_journal_is_unavailable_rather_than_falsely_missing",
+          "test_orphan_journal_send_claim_or_unrecognized_namespace_object_blocks"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F09-orphan-namespace-permitted.log",
+        "rawLogSha256": "f47e621fec01357f6519ce29c132c5b04ab413e3c70216dc9b55be6e0cac2aa3"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F09-orphan-namespace-permitted-restored.log",
+        "rawLogSha256": "3d9fb830f9cf0b31271caaad69fa1e7ecf8eef75a3f0c632ea403aaa4ef5b7aa"
+      }
+    },
+    {
+      "id": "F10-owner-read-failure-becomes-fresh",
+      "invariant": "Read failure must never grant fresh ownership",
+      "mutantSourceSha256": "a15a9c46621c7c446cf0a80e059ac5e5a10161fdd7df8ac0b1722b200f8142da",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F10-owner-read-failure-becomes-fresh.patch",
+      "mutationPatchSha256": "89b1fdda99d9318822da4485a1b56c5ff770a2258116a9cbaabe0de092cb52d6",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 20,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_denied_owner_read_does_not_claim_unread_existing_journal_is_missing",
+          "test_duplicate_malformed_oversized_or_non_utf8_json_is_never_diagnostic_data",
+          "test_malformed_owner_does_not_claim_unread_existing_journal_is_missing",
+          "test_missing_journal_or_read_denial_is_not_safe_or_reported_as_empty",
+          "test_namespace_denial_truncation_or_malformed_listing_is_not_fresh",
+          "test_owner_and_journal_agreeing_on_the_same_wrong_operation_hash_still_stop",
+          "test_owner_and_journal_canonical_identity_protocol_and_schema_are_required"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F10-owner-read-failure-becomes-fresh.log",
+        "rawLogSha256": "0e9ae160fa498c2ae04eefd3870fd338a1381b98b844b62ef67eec3909e0c334"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F10-owner-read-failure-becomes-fresh-restored.log",
+        "rawLogSha256": "3d9fb830f9cf0b31271caaad69fa1e7ecf8eef75a3f0c632ea403aaa4ef5b7aa"
+      }
+    },
+    {
+      "id": "F11-bounded-s3-range-removed",
+      "invariant": "Untrusted JSON must be bounded before S3 download",
+      "mutantSourceSha256": "b705210e73c2d8ed74b2b990d1eeaad17737655d9e9b60d783c58204986a3cfa",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F11-bounded-s3-range-removed.patch",
+      "mutationPatchSha256": "18fa164d25767f1867247a405e585b06c972935e357f340d302fc20edca3d179",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_actual_s3_journal_download_requests_a_bounded_range"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F11-bounded-s3-range-removed.log",
+        "rawLogSha256": "27373e5fb997e8fca8de3f12a12fe13f50fa00e76c72bffcabe7f61f34d836d4"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F11-bounded-s3-range-removed-restored.log",
+        "rawLogSha256": "0332dbf3a5b0f36903a22218292adbe6c809103268ca31240b9cfce48ffda53a"
+      }
+    },
+    {
+      "id": "F12-content-length-validation-removed",
+      "invariant": "Content length must match the bounded local bytes",
+      "mutantSourceSha256": "31ca76e60607d803c2cc34c57bad2b9c74bb552a3adaf52ab9347f94be83e772",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F12-content-length-validation-removed.patch",
+      "mutationPatchSha256": "115ba587c064134a119dde59fa0e279d6519f6284977697554675b17799f75f4",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_s3_content_length_and_range_metadata_cannot_hide_oversized_or_torn_body"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F12-content-length-validation-removed.log",
+        "rawLogSha256": "4c9d95ef2946e40815e915132091bc52613578e7a7cd2a931ce09ccf45d58c76"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F12-content-length-validation-removed-restored.log",
+        "rawLogSha256": "18f79a7c5d6c12805e23405ff1b458fc58d07af068dfce698af7788ead0c9d91"
+      }
+    },
+    {
+      "id": "F13-content-range-validation-removed",
+      "invariant": "Range metadata must reject oversized or torn S3 objects",
+      "mutantSourceSha256": "777bea0ebe28168875ff52b5e73c3c39bda706dc181085b97d58ba93363518c1",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F13-content-range-validation-removed.patch",
+      "mutationPatchSha256": "6505c2157ad7784c4b629b152915e01316e1fab4d309841e99cf65905d5311dd",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 5,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_s3_content_length_and_range_metadata_cannot_hide_oversized_or_torn_body"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F13-content-range-validation-removed.log",
+        "rawLogSha256": "1aadd62ed44db6a5afc9d1f50da223ac83cc571a097eb9ee0a8f093437e8a332"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F13-content-range-validation-removed-restored.log",
+        "rawLogSha256": "aca11f4bebae6a9d6a634fbafbb8274c923d2e9e2738079ab1c35f17f1c13725"
+      }
+    },
+    {
+      "id": "F14-raw-holder-projected",
+      "invariant": "Raw ownership holder must never appear in a projection",
+      "mutantSourceSha256": "d1bf3b221740ff2ef8c19dab773d7945f76e2bdf5650c61c9958542d9ffe2598",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F14-raw-holder-projected.patch",
+      "mutationPatchSha256": "529cc3cf3f85171f32d6eeba1f5ccc61fbeb64cc7292d73366892a1be27d69dd",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 45,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_applied_nonterminal_or_commandless_records_never_pass",
+          "test_applied_projection_with_no_precollected_facts_stops_without_new_ssm",
+          "test_applied_terminal_requires_full_current_host_binding_without_new_probe",
+          "test_duplicate_malformed_oversized_or_non_utf8_json_is_never_diagnostic_data",
+          "test_explicit_inspection_binds_five_candidate_fields_but_not_new_workflow_run",
+          "test_inspection_uses_only_fixed_bucket_and_instance_namespace",
+          "test_missing_journal_or_read_denial_is_not_safe_or_reported_as_empty",
+          "test_namespace_guard_uses_prior_original_identity_not_new_candidate_identity",
+          "test_not_attempted_terminal_requires_null_command_and_restored_exact_rules",
+          "test_owner_and_journal_canonical_identity_protocol_and_schema_are_required",
+          "test_reconcile_pipeline_adds_separate_projection_without_changing_v1_fields",
+          "test_released_terminal_failed_transition_and_untouched_automatic_are_safe",
+          "test_rule_target_binding_failure_is_not_reported_as_safe_restoration",
+          "test_unknown_intent_submitted_or_nonterminal_journal_never_allows_resume",
+          "test_unknown_without_command_exposes_only_whitelisted_metadata_and_stops",
+          "test_unreleased_owner_blocks_even_terminal_not_attempted_or_applied"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F14-raw-holder-projected.log",
+        "rawLogSha256": "ca64ffce311bb1bf2bd5afcab627b3eed0352c21dbc9e5c9462d634c6e764da5"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F14-raw-holder-projected-restored.log",
+        "rawLogSha256": "24d2f8c4b217aa74368ffdcf58baf7769f09479440ec361486849c9956017e09"
+      }
+    },
+    {
+      "id": "F15-raw-exception-text-printed",
+      "invariant": "Provider exception text and synthetic secrets must never be printed",
+      "mutantSourceSha256": "216fc2c3e01237582706fe5ff276ec3c32b99cc48d900001f1b4c966232c2933",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F15-raw-exception-text-printed.patch",
+      "mutationPatchSha256": "0ca0e5ccfd9f164bca1bc2f8133a3456534db36cfe4ff8e4fa9a9bc83f41904f",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 3,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_denied_owner_read_does_not_claim_unread_existing_journal_is_missing",
+          "test_missing_journal_or_read_denial_is_not_safe_or_reported_as_empty"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F15-raw-exception-text-printed.log",
+        "rawLogSha256": "ceb5363b0facc7bc68c1215d53711af3708d1d9dcee5955bdb60f420b566ed16"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F15-raw-exception-text-printed-restored.log",
+        "rawLogSha256": "e48a9941c53315838030de83fbbc2a3cedf5987b70618a5b098fa7a3439ba99f"
+      }
+    },
+    {
+      "id": "F16-plan-safety-guard-removed",
+      "invariant": "Plan must fence prior state before provider/gate/output paths",
+      "mutantSourceSha256": "c9b85e2a89321c57e5610c181e44c01bf6f26b0269bd179007720829ea0e916e",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F16-plan-safety-guard-removed.patch",
+      "mutationPatchSha256": "3b552ab9beb0df0f8b45754c290a57b0681661e5d24d580070773d2b35491454",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_plan_fences_old_unfinished_owner_before_provider_gate_or_outputs"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F16-plan-safety-guard-removed.log",
+        "rawLogSha256": "4845b4c33f0575a641baa8ed05eb9f5ee69405d038d9d805130336f458544b92"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F16-plan-safety-guard-removed-restored.log",
+        "rawLogSha256": "64dd268cc5fef2a58ac4af8e292215c236c0049efd8042e4a7e038b1dc7a6e4e"
+      }
+    },
+    {
+      "id": "F17-executor-safety-guard-removed",
+      "invariant": "Executor must recheck prior state before claim or mutation",
+      "mutantSourceSha256": "47c0bfdf2d4602d07ea99d7c199135d48a1c37ac232b759999ab8b4e25d30803",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F17-executor-safety-guard-removed.patch",
+      "mutationPatchSha256": "88c297b9871aeafd63093f9c2814794f3eba4871d9423e29fdcde9eeb36e2b47",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_executor_does_not_trust_old_safe_plan_when_owner_appears_before_execute",
+          "test_executor_preserves_same_operation_unknown_without_reentering_claim_or_send",
+          "test_executor_rechecks_after_plan_and_blocks_new_candidate_before_any_claim"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F17-executor-safety-guard-removed.log",
+        "rawLogSha256": "711864f46fb313fc7536cf64e1f280bb032d301623aee0aa749c9ee8c830b2a4"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F17-executor-safety-guard-removed-restored.log",
+        "rawLogSha256": "5bfa10f622c6d27b638d272bc653154fb1845fb7005887687508ba4779a2bfa8"
+      }
+    },
+    {
+      "id": "F18-same-operation-unknown-downgraded",
+      "invariant": "A previously uncertain same operation cannot be relabeled not attempted",
+      "mutantSourceSha256": "3263040106ab9ce05d1672136c0076ebbd9c3e93a679ce70a70bc1523ea93717",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F18-same-operation-unknown-downgraded.patch",
+      "mutationPatchSha256": "1386ed10be2d73c327059a7d155fcfa6b421b561b6b5a2767dc032eb50ffe187",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 1,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_executor_preserves_same_operation_unknown_without_reentering_claim_or_send"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F18-same-operation-unknown-downgraded.log",
+        "rawLogSha256": "3fdcb14004a1d006d6ed500e4fcba97a90f8c921757a3f7c086d9b7237681035"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F18-same-operation-unknown-downgraded-restored.log",
+        "rawLogSha256": "1d4b630f24798b97228d592e6fbde1564c5a62f178f61b72b66aff8bd6efbeb2"
+      }
+    },
+    {
+      "id": "F19-reconciliation-v1-schema-expanded",
+      "invariant": "The original reconciliation-v1 wire schema stays unchanged",
+      "mutantSourceSha256": "7a3ebcc011c34102b7d2fb98669c8086dd5770cbf301978b6db2a36ac960f3fe",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F19-reconciliation-v1-schema-expanded.patch",
+      "mutationPatchSha256": "d9580f81d57db875cd03ba39d73c58b222b989339aa671734751eba96141177c",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 2,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_reconcile_pipeline_adds_separate_projection_without_changing_v1_fields",
+          "test_reconciliation_v1_return_fields_and_conditional_known_command_get_are_unchanged"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F19-reconciliation-v1-schema-expanded.log",
+        "rawLogSha256": "be4bbcad335dd784329ed57f3fe044555e458497687d566499d189e6c1690a21"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F19-reconciliation-v1-schema-expanded-restored.log",
+        "rawLogSha256": "df0cc4491ffd87858feb5b7b0f6741b3130998e80211c934cc064dc2fd3b71b3"
+      }
+    },
+    {
+      "id": "F20-namespace-key-count-validation-removed",
+      "invariant": "Contradictory or mistyped namespace counts cannot prove fresh installation",
+      "mutantSourceSha256": "d1dab481e1ce5659521646ad261eed5ef3f3dcf2f31a3382ce47a2d6ba111d9b",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F20-namespace-key-count-validation-removed.patch",
+      "mutationPatchSha256": "370a604559b8595106c661a83b5467fb3e6ef7da0591c4976019e0486d31c146",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_positive_or_mistyped_key_count_cannot_be_empty_with_omitted_or_empty_contents"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F20-namespace-key-count-validation-removed.log",
+        "rawLogSha256": "41382a97e2ad78101ad04746454767ac80313ae6d2ad368d4d5a03a3f650172b"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F20-namespace-key-count-validation-removed-restored.log",
+        "rawLogSha256": "e4787d569384473f4c33fff7b5b9e9fc7fcee9fed625070402a530933ea5416d"
+      }
+    },
+    {
+      "id": "F21-unread-journal-defaults-to-missing",
+      "invariant": "An unread journal is unavailable until absence is actually proven",
+      "mutantSourceSha256": "771ba33d89e1a75cc204a4b38f14bd6d3f5b2282e0e83467af455d95f673fbfb",
+      "mutationPatch": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F21-unread-journal-defaults-to-missing.patch",
+      "mutationPatchSha256": "e7e6fabc2c14671066a5213b35fbe2b4f0b3678b75d263c21d04b4b7a4a118ab",
+      "mutation": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 1,
+        "testsRun": 41,
+        "failureCount": 4,
+        "errorCount": 0,
+        "failingMethods": [
+          "test_denied_owner_read_does_not_claim_unread_existing_journal_is_missing",
+          "test_existing_orphan_journal_is_unavailable_rather_than_falsely_missing",
+          "test_malformed_owner_does_not_claim_unread_existing_journal_is_missing",
+          "test_namespace_read_denial_does_not_prove_that_a_journal_is_missing"
+        ],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F21-unread-journal-defaults-to-missing.log",
+        "rawLogSha256": "d24fdd33532f36d62f6f43c8c105dd113497cf6ca01088aed4088d31337820db"
+      },
+      "restored": {
+        "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+        "exitCode": 0,
+        "testsRun": 41,
+        "failureCount": 0,
+        "errorCount": 0,
+        "failingMethods": [],
+        "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/F21-unread-journal-defaults-to-missing-restored.log",
+        "rawLogSha256": "4eee48a591ac39d174d33878561da6483025f2d314af62a440eb0cf105a2aed7"
+      }
+    }
+  ],
+  "finalRestored": {
+    "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection*.py -v",
+    "exitCode": 0,
+    "testsRun": 41,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/final-restored-green.log",
+    "rawLogSha256": "3d9fb830f9cf0b31271caaad69fa1e7ecf8eef75a3f0c632ea403aaa4ef5b7aa"
+  },
+  "originalRegressionSuites": [
+    {
+      "command": "python -m unittest discover -s deploy/tests -p test_issue154_reconcile.py -v",
+      "exitCode": 0,
+      "testsRun": 17,
+      "failureCount": 0,
+      "errorCount": 0,
+      "failingMethods": [],
+      "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/test_issue154_reconcile-original.log",
+      "rawLogSha256": "1010ae1d9c03f19f0d9edf7cbe38cc060f3a8b9b6fe85f3b3b52e78002db8059"
+    },
+    {
+      "command": "python -m unittest discover -s deploy/tests -p test_issue154_adapter.py -v",
+      "exitCode": 0,
+      "testsRun": 26,
+      "failureCount": 0,
+      "errorCount": 0,
+      "failingMethods": [],
+      "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/test_issue154_adapter-original.log",
+      "rawLogSha256": "47eeb11b5947a39753864d8e09819da7f7469fb113c5e7137e877f38df52bcbe"
+    },
+    {
+      "command": "python -m unittest discover -s deploy/tests -p test_issue154_controller_audit.py -v",
+      "exitCode": 0,
+      "testsRun": 8,
+      "failureCount": 0,
+      "errorCount": 0,
+      "failingMethods": [],
+      "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/test_issue154_controller_audit-original.log",
+      "rawLogSha256": "bd90da94cdb5d4dd4d062a00fd1ad86cd4a16ff302a07e736d4a7df3d42bf776"
+    }
+  ],
+  "originalNodeOracles": {
+    "command": "JAVA_HOME=/workspace/.task-cache/jdk17 PATH=/workspace/.task-cache/jdk17/bin:$PATH node --test --test-reporter=tap .github/scripts/approved-release-pipeline.test.cjs .github/scripts/production-preflight-contract.test.cjs",
+    "exitCode": 0,
+    "testsRun": 29,
+    "failureCount": 0,
+    "errorCount": 0,
+    "failingMethods": [],
+    "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-fi/original-node-green.log",
+    "rawLogSha256": "c7e645452713b6f1132b7e1101485af72e050244691a4f2a9ab03ec0c0c935bd"
+  },
+  "originalReconcileV1FunctionByteUnchanged": true,
+  "activeSourceAndTestsUnchangedDuringAudit": true,
+  "redReceipts": [
+    ".tdd/red/issue154-recovery-inspection.json",
+    ".tdd/red/issue154-recovery-inspection-audit.json",
+    ".tdd/red/issue154-recovery-inspection-projection-audit.json",
+    ".tdd/red/issue154-recovery-inspection-namespace-projection-audit.json"
+  ],
+  "supplementalFICases": "test_issue154_recovery_inspection_fi_contract.py is post-implementation coverage. Its baseline is GREEN; mutated failures are FI evidence, not invented chronological production RED.",
+  "harness": ".codex/tdd-evidence/run-issue154-recovery-inspection-fi.py",
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "resolvedFindings": [
+    "Contradictory namespace KeyCount could prove a false fresh installation; separate real RED captured before fix.",
+    "Unread journals were incorrectly labeled MISSING after owner/namespace failure; separate real REDs captured before fixes."
+  ],
+  "withdrawnCandidate": "Suspected automatic APPLIED/UNTOUCHED incompatibility withdrawn after actual original run_automatic produced RESTORED and the next guard was SAFE_TERMINAL. Sanitized actual-core replay preserved locally.",
+  "limitations": "Local safety fence and bounded diagnostics only; no live OIDC inspection, runtime/DB proof, remote CI, main merge or deployment demonstrated by this audit.",
+  "harnessSha256": "e84b0522b7fbfe5290380c04b416469912adaa8ae6dec3d94d807a4683f434d8"
+}

@@ -1,0 +1,85 @@
+{
+  "workItem": "issue154-recovery-inspection",
+  "sourceRevision": "bccf36e405536c689f03b33ff5768030bb058d73",
+  "recordedAt": "2026-10-29T03:20:00.457837+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_recovery_inspection.py",
+      "sha256": "f06ff6dd4497d90bd32d69d88586279cf74cfa5a9201a9b3200752b97bab1a1e"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040"
+    },
+    {
+      "path": "deploy/tests/test_issue154_reconcile.py",
+      "sha256": "07e7407d6b3f51418a9cabdf51f97602a14650c4058823b263344e483a4b1b6a"
+    },
+    {
+      "path": "deploy/tests/test_issue154_adapter.py",
+      "sha256": "8f639dfbc41b12b3833ac08881c251c3b68698438ba950619b168485adc53087"
+    },
+    {
+      "path": "deploy/tests/test_issue154_controller_audit.py",
+      "sha256": "6a7c81a40113a36e08e4201e8eb4858003615fe9ed5d9b4652910a5259719f96"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1"
+    },
+    {
+      "path": ".github/scripts/production-preflight-contract.test.cjs",
+      "sha256": "98b21dd59fe062efdba727dc38901bc020ff19bacf30fa62c65009b710cabfe2"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_recovery_inspection.py -v > .codex/tdd-evidence/issue154-recovery-inspection-red.log 2>&1",
+  "testsRun": 32,
+  "failureCount": 86,
+  "errorCount": 0,
+  "failedTests": [
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_actual_s3_journal_download_requests_a_bounded_range.test_actual_s3_journal_download_requests_a_bounded_range",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_applied_nonterminal_or_commandless_records_never_pass.test_applied_nonterminal_or_commandless_records_never_pass",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_applied_projection_with_no_precollected_facts_stops_without_new_ssm.test_applied_projection_with_no_precollected_facts_stops_without_new_ssm",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_applied_terminal_requires_full_current_host_binding_without_new_probe.test_applied_terminal_requires_full_current_host_binding_without_new_probe",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_duplicate_malformed_oversized_or_non_utf8_json_is_never_diagnostic_data.test_duplicate_malformed_oversized_or_non_utf8_json_is_never_diagnostic_data",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_executor_does_not_trust_old_safe_plan_when_owner_appears_before_execute.test_executor_does_not_trust_old_safe_plan_when_owner_appears_before_execute",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_executor_preserves_same_operation_unknown_without_reentering_claim_or_send.test_executor_preserves_same_operation_unknown_without_reentering_claim_or_send",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_executor_rechecks_after_plan_and_blocks_new_candidate_before_any_claim.test_executor_rechecks_after_plan_and_blocks_new_candidate_before_any_claim",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_explicit_inspection_binds_five_candidate_fields_but_not_new_workflow_run.test_explicit_inspection_binds_five_candidate_fields_but_not_new_workflow_run",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_fresh_namespace_is_the_only_missing_owner_case_allowed.test_fresh_namespace_is_the_only_missing_owner_case_allowed",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_inspection_uses_only_fixed_bucket_and_instance_namespace.test_inspection_uses_only_fixed_bucket_and_instance_namespace",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_invalid_requested_operation_is_rejected_without_reflection_or_aws_reads.test_invalid_requested_operation_is_rejected_without_reflection_or_aws_reads",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_missing_journal_or_read_denial_is_not_safe_or_reported_as_empty.test_missing_journal_or_read_denial_is_not_safe_or_reported_as_empty",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_namespace_denial_truncation_or_malformed_listing_is_not_fresh.test_namespace_denial_truncation_or_malformed_listing_is_not_fresh",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_namespace_guard_uses_prior_original_identity_not_new_candidate_identity.test_namespace_guard_uses_prior_original_identity_not_new_candidate_identity",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_not_attempted_terminal_requires_null_command_and_restored_exact_rules.test_not_attempted_terminal_requires_null_command_and_restored_exact_rules",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_orphan_journal_send_claim_or_unrecognized_namespace_object_blocks.test_orphan_journal_send_claim_or_unrecognized_namespace_object_blocks",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_owner_and_journal_canonical_identity_protocol_and_schema_are_required.test_owner_and_journal_canonical_identity_protocol_and_schema_are_required",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_plan_fences_old_unfinished_owner_before_provider_gate_or_outputs.test_plan_fences_old_unfinished_owner_before_provider_gate_or_outputs",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_reconcile_pipeline_adds_separate_projection_without_changing_v1_fields.test_reconcile_pipeline_adds_separate_projection_without_changing_v1_fields",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_released_terminal_failed_transition_and_untouched_automatic_are_safe.test_released_terminal_failed_transition_and_untouched_automatic_are_safe",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_rule_target_binding_failure_is_not_reported_as_safe_restoration.test_rule_target_binding_failure_is_not_reported_as_safe_restoration",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_s3_content_length_and_range_metadata_cannot_hide_oversized_or_torn_body.test_s3_content_length_and_range_metadata_cannot_hide_oversized_or_torn_body",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_separate_inspection_emission_is_canonical_bounded_and_preserves_legacy_artifact.test_separate_inspection_emission_is_canonical_bounded_and_preserves_legacy_artifact",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_torn_owner_release_identity_or_disappearance_cannot_pass.test_torn_owner_release_identity_or_disappearance_cannot_pass",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_torn_owner_snapshot_blocks_even_if_only_valid_holder_changes.test_torn_owner_snapshot_blocks_even_if_only_valid_holder_changes",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_unknown_intent_submitted_or_nonterminal_journal_never_allows_resume.test_unknown_intent_submitted_or_nonterminal_journal_never_allows_resume",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_unknown_without_command_exposes_only_whitelisted_metadata_and_stops.test_unknown_without_command_exposes_only_whitelisted_metadata_and_stops",
+    "test_issue154_recovery_inspection.RecoveryInspectionTests.test_unreleased_owner_blocks_even_terminal_not_attempted_or_applied.test_unreleased_owner_blocks_even_terminal_not_attempted_or_applied"
+  ],
+  "expectedFailureCategory": "CONTRACT_ASSERTION: approved readonly inspection/guard/emitter absent; actual S3 reads unbounded and metadata not checked; plan/executor reach preexisting paths before prior-state fence; reconcile CLI omits separate projection",
+  "rawLog": ".codex/tdd-evidence/issue154-recovery-inspection-red.log",
+  "rawLogSha256": "9c104fdcb6513cc35146c5dbf03c7c855c6d8b17a51acd85c6aae6bbcb4e83fa",
+  "scope": "Synthetic AWS port only; no production/original-test/document edits, network/AWS/GitHub/security/operating actions by test designer",
+  "chronology": "Chronological RED against unmodified production at remote-develop base; new test hash frozen after valid canonical candidate fixture correction. Initial exploratory logs are not reused as final RED."
+}
