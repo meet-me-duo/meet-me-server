@@ -1,0 +1,64 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "cycle": "stage2-controller-owned-transport",
+  "sourceRevision": "284f8e2158c9536cbf71b519df46bee3b9d05ac5",
+  "recordedAt": "2026-10-29T01:10:58.976905+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_aws_control_transport.py",
+      "sha256": "985dc4c22dfdd855312f2f4f1464e316052156e7af6394d07b61ded5d0c643ed"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/tests/test_issue154_adapter.py",
+      "sha256": "8f639dfbc41b12b3833ac08881c251c3b68698438ba950619b168485adc53087"
+    },
+    {
+      "path": "deploy/tests/test_issue154_transition.py",
+      "sha256": "8bd5eb427ed8d3dd90f8dfb4304cbf3150243e4453583308ed07ebeb524d1459"
+    },
+    {
+      "path": ".github/scripts/approved-release-pipeline.test.cjs",
+      "sha256": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a27ecf28fdbc5582d0bdb61a21f9ac8a62edd897d5191bec2581cb3c6db90951"
+    },
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "ec3cb03a0d03fa5c0b7227888a77d0af9cb3718c6953ff3561396f0cd52ffff8"
+    },
+    {
+      "path": "deploy/pipeline/transition_orchestrator.py",
+      "sha256": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v > .codex/tdd-evidence/issue154-aws-control-transport/stage2-red-cli.log 2>&1",
+  "testsRun": 19,
+  "failureCount": 62,
+  "errorCount": 0,
+  "failedTests": [
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_both_exact_rules_pause_and_restore_through_real_transport_and_strict_readback.test_both_exact_rules_pause_and_restore_through_real_transport_and_strict_readback",
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted.test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted",
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_lost_ssm_send_reply_remains_unknown_with_rules_paused_and_no_second_send.test_lost_ssm_send_reply_remains_unknown_with_rules_paused_and_no_second_send",
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_successful_transition_sends_once_and_restores_both_rules_without_duplicate_writes.test_successful_transition_sends_once_and_restores_both_rules_without_duplicate_writes",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_control_failure_marker_preserves_only_safe_subprocess_reason.test_control_failure_marker_preserves_only_safe_subprocess_reason",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_controller_reads_delegate_unchanged_without_control_diagnostics.test_controller_reads_delegate_unchanged_without_control_diagnostics",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure.test_empty_write_response_cannot_mask_nonzero_timeout_or_os_failure",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_malformed_and_nonobject_write_bodies_still_fail_driver.test_malformed_and_nonobject_write_bodies_still_fail_driver",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_no_output_writes_reject_stderr_and_nonempty_json_objects.test_no_output_writes_reject_stderr_and_nonempty_json_objects",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_only_documented_no_output_event_writes_accept_empty_or_whitespace.test_only_documented_no_output_event_writes_accept_empty_or_whitespace"
+  ],
+  "expectedFailureCategory": "CONTRACT_ASSERTION: approved controller transport absent; real driver still rejects documented empty control replies; bounded controller diagnostics missing. Readonly preflight/legacy archive negative controls pass.",
+  "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/stage2-red-cli.log",
+  "rawLogSha256": "f9bee68f2ab3fc808d8d6b63ccfb8bcdd87feb80be7f900cc4afc79848b9c4cf",
+  "supersedes": ".tdd/history/issue154-aws-control-transport-stage1/supersession.json",
+  "scope": "Offline subprocess mocks only. Shared readonly preflight and original architecture oracles unchanged. No AWS, remote, security or environment writes.",
+  "chronology": "Fresh chronological RED after both stage1 production edits restored byte-exact HEAD. New stage2 test hash; stage1 evidence retained as superseded history, never reused as this RED."
+}

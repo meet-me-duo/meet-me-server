@@ -1,0 +1,53 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "sourceRevision": "284f8e2158c9536cbf71b519df46bee3b9d05ac5",
+  "recordedAt": "2026-10-29T01:00:21.831232+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_aws_control_transport.py",
+      "sha256": "ae280e3b4cf0558dc6b1b4a85273cfb3f3789ad855ea1654b5954a3fa2d18525"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "deploy/tests/test_issue154_adapter.py",
+      "sha256": "8f639dfbc41b12b3833ac08881c251c3b68698438ba950619b168485adc53087"
+    },
+    {
+      "path": "deploy/preflight/run-preflight.py",
+      "sha256": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040"
+    },
+    {
+      "path": "deploy/pipeline/run-approved-release.py",
+      "sha256": "a27ecf28fdbc5582d0bdb61a21f9ac8a62edd897d5191bec2581cb3c6db90951"
+    },
+    {
+      "path": "deploy/pipeline/release_pipeline.py",
+      "sha256": "ec3cb03a0d03fa5c0b7227888a77d0af9cb3718c6953ff3561396f0cd52ffff8"
+    },
+    {
+      "path": "deploy/pipeline/transition_orchestrator.py",
+      "sha256": "35baafa3da84e14abcd49a3ffbbbee28c59bc1ffc0957d7cf41ef5b14eca450f"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_aws_control_transport.py -v > .codex/tdd-evidence/issue154-aws-control-transport/red-cli.log 2>&1",
+  "testsRun": 16,
+  "failureCount": 51,
+  "errorCount": 0,
+  "failedTests": [
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_both_exact_rules_pause_and_restore_through_real_transport_and_strict_readback.test_both_exact_rules_pause_and_restore_through_real_transport_and_strict_readback",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_driver_failure_marker_preserves_only_safe_reason_for_exact_write_operations.test_driver_failure_marker_preserves_only_safe_reason_for_exact_write_operations",
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted.test_lost_pause_reply_is_read_back_restored_and_never_retried_or_submitted",
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_lost_ssm_send_reply_remains_unknown_with_rules_paused_and_no_second_send.test_lost_ssm_send_reply_remains_unknown_with_rules_paused_and_no_second_send",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_malformed_and_nonobject_write_bodies_still_fail_driver.test_malformed_and_nonobject_write_bodies_still_fail_driver",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_no_output_writes_reject_stderr_and_nonempty_json_objects.test_no_output_writes_reject_stderr_and_nonempty_json_objects",
+    "test_issue154_aws_control_transport.AwsControlTransportTests.test_only_documented_no_output_event_writes_accept_empty_or_whitespace.test_only_documented_no_output_event_writes_accept_empty_or_whitespace",
+    "test_issue154_aws_control_transport.AwsControlAdapterTransportTests.test_successful_transition_sends_once_and_restores_both_rules_without_duplicate_writes.test_successful_transition_sends_once_and_restores_both_rules_without_duplicate_writes"
+  ],
+  "expectedFailureCategory": "CONTRACT_ASSERTION: documented empty EventBridge write replies rejected; bounded driver marker and strict no-output body checks missing",
+  "rawLog": ".codex/tdd-evidence/issue154-aws-control-transport/red-cli.log",
+  "rawLogSha256": "41ea69e228b2d3849cb4c1812263f84ae01f762817041f048add70ba92d3a520",
+  "scope": "Offline mocked subprocess only; no AWS, network, workflow rerun, secret, environment or business-logic writes",
+  "chronology": "Chronological RED against unmodified production source at sourceRevision; original adapter tests unchanged",
+  "failureCountExplanation": "51 assertion failures include parameterized subtests; test methods run = 16, errors = 0"
+}

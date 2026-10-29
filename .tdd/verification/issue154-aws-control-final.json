@@ -1,0 +1,90 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "stage": "FINAL_STAGE2_VALIDATION",
+  "recordedAt": "2026-10-29T01:21:56.468972+00:00",
+  "baseLocalRevision": "284f8e2158c9536cbf71b519df46bee3b9d05ac5",
+  "baseMainRevision": "c152ba7014e801d47a80f5b8292b182319d2ce86",
+  "sourceAndOracleSha256": {
+    "deploy/pipeline/release_pipeline.py": "892272c3b8e3194a8de27dc2e290e06b8c92553afc620d7f2bb803ee290cb1f5",
+    "deploy/pipeline/run-approved-release.py": "de658dedd4dc335121b6ea1ed52e8e6b3db1c8db7eebb6fe416b616df5f89c11",
+    "deploy/preflight/run-preflight.py": "056917451c1ba05104277e9fa52f4af79b525825d1e2d3b7bbe75da083b6e040",
+    "deploy/tests/test_issue154_aws_control_transport.py": "985dc4c22dfdd855312f2f4f1464e316052156e7af6394d07b61ded5d0c643ed",
+    ".github/scripts/approved-release-pipeline.test.cjs": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1",
+    ".github/scripts/production-preflight-contract.test.cjs": "98b21dd59fe062efdba727dc38901bc020ff19bacf30fa62c65009b710cabfe2"
+  },
+  "deploymentPython": {
+    "tests": 330,
+    "passed": 330,
+    "failures": 0,
+    "errors": 0,
+    "seconds": 393.821,
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-stage2-all-python.log"
+  },
+  "workflowNode": {
+    "tests": 172,
+    "passed": 172,
+    "failures": 0,
+    "seconds": 22.053963961,
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-stage2-all-node.log"
+  },
+  "originalCommitGuard": {
+    "exit": 0,
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "rawLog": ".codex/tdd-evidence/issue154-aws-control-stage2-guard.log",
+    "scope": "unchangedKotlin/build/native-data; existing265suites/2241pass/4skip cached"
+  },
+  "independent": {
+    "newTests": 19,
+    "originalPython": 50,
+    "originalNode": 29,
+    "faultsDetected": 21,
+    "survivors": 0,
+    "setupErrors": 0,
+    "P1": [],
+    "P2": [],
+    "review": ".tdd/reviews/issue154-aws-control-transport-independent-review.json"
+  },
+  "stage1Superseded": {
+    "python": {
+      "passed": 327,
+      "failures": 0
+    },
+    "node": {
+      "passed": 171,
+      "failures": 1,
+      "cause": "Retained readonly wrapper boundary oracle caught controls in wrong module"
+    },
+    "resolution": "Originalpreflightrestoredbyteexact; realcontroltransportanddiagnosticonlyexistingapprovedcontrollermodule; originaloraclesunchanged",
+    "history": ".tdd/history/issue154-aws-control-transport-stage1/"
+  },
+  "operatingEvidence": {
+    "workflowRun": 40795593214,
+    "attempt": 1,
+    "realProtectedApproval": "confirmedGitHubreviewerrecord",
+    "outcome": "FAILED_PRECONDITION",
+    "deploymentState": "NOT_ATTEMPTED",
+    "rulesRestored": true,
+    "pendingCommands": 0,
+    "finalOutcome": "RECOVERY_REQUIRED",
+    "rerunIssued": false,
+    "publicAvailabilityAfterFailure": "PASS existinghealthz/nativecandidate-shape only, notsource/runtimeattestation"
+  },
+  "failureCorrelation": "Confirmed code contract defect and local reproduction; exact realcall/journal/lock correlation still waiting authenticated readonlymetadata",
+  "documentation": [
+    "https://docs.aws.amazon.com/cli/latest/reference/events/disable-rule.html",
+    "https://docs.aws.amazon.com/cli/latest/reference/events/enable-rule.html"
+  ],
+  "policyPreservation": [
+    "Exactly2nooutputcontrols; metadatareadsfailonempty",
+    "Sharedreadonlypreflightandoriginaloraclesbyteexact",
+    "Exactrule/targetbinding,approval,ownership,readbackandUNKNOWN/no-duplicatepreserved",
+    "Historicalarchivewithoutoptionalcontrollerkeepsoriginalreader",
+    "Noinput-analysis-resultlogic,prodKotlin,SQL,key,flag,IAMorenvchanges"
+  ],
+  "rollout": "NOT_RETRIED; PR/CIpreparationallowed, actualnewruntimeoperationwaitspriorended+rules/lockreadverification",
+  "CloudDirectAWSCalls": 0
+}

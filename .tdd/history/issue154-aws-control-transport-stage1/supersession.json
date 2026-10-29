@@ -1,0 +1,48 @@
+{
+  "workItem": "issue154-aws-control-transport",
+  "recordedAt": "2026-10-29T01:09:02.624123+00:00",
+  "status": "SUPERSEDED_ARCHITECTURAL_BOUNDARY_VIOLATION",
+  "reason": "Full original Node regression .github/scripts/approved-release-pipeline.test.cjs:212-231 forbids EventBridge control operations in the existing publication/legacy wrapper/host boundary. Stage1 shared readonly-preflight write normalization and wrapper operation-specific diagnostics violate that retained architecture oracle. Stage1 focused GREEN/FI and no-P1/P2 statement are insufficient and withdrawn as final approval. Original tests/oracles remain unchanged.",
+  "newBoundary": "Existing authorized release_pipeline.py owns EventBridge control transport and bounded diagnostics. The driver delegates generically only when this optional controller exists. Shared readonly preflight and legacy archive behavior remain unchanged.",
+  "chronology": "Stage1 exact test, RED, FI, review and implementation bytes preserved unchanged. Stage2 requires a fresh test hash and chronological RED after production restoration; no historical evidence is rewritten as stage2 RED.",
+  "archivedFiles": [
+    {
+      "originalPath": "deploy/tests/test_issue154_aws_control_transport.py",
+      "archivedPath": ".tdd/history/issue154-aws-control-transport-stage1/deploy/tests/test_issue154_aws_control_transport.py",
+      "sha256": "ae280e3b4cf0558dc6b1b4a85273cfb3f3789ad855ea1654b5954a3fa2d18525"
+    },
+    {
+      "originalPath": ".tdd/red/issue154-aws-control-transport.json",
+      "archivedPath": ".tdd/history/issue154-aws-control-transport-stage1/.tdd/red/issue154-aws-control-transport.json",
+      "sha256": "8ba83958262ec1a5ef13cf80db8e2d47683b6e726b48f751ce8a8012021edccb"
+    },
+    {
+      "originalPath": ".tdd/reviews/issue154-aws-control-transport-independent-review.json",
+      "archivedPath": ".tdd/history/issue154-aws-control-transport-stage1/.tdd/reviews/issue154-aws-control-transport-independent-review.json",
+      "sha256": "c08f1bf31a9d5185827ef9429988164f1449f8533e2c8b2974ef5b6a58b1de36"
+    },
+    {
+      "originalPath": ".tdd/verification/issue154-aws-control-transport-independent-fi.json",
+      "archivedPath": ".tdd/history/issue154-aws-control-transport-stage1/.tdd/verification/issue154-aws-control-transport-independent-fi.json",
+      "sha256": "3e54972474506bf5bef937872dd2dfe0fcbc864175dda686c0710d0e3fda4664"
+    },
+    {
+      "originalPath": "deploy/preflight/run-preflight.py",
+      "archivedPath": ".tdd/history/issue154-aws-control-transport-stage1/deploy/preflight/run-preflight.py",
+      "sha256": "2cb84e56986ce06435dbb7c9ad05ae0b8ee1f17cada78421a4eb0637004acc44"
+    },
+    {
+      "originalPath": "deploy/pipeline/run-approved-release.py",
+      "archivedPath": ".tdd/history/issue154-aws-control-transport-stage1/deploy/pipeline/run-approved-release.py",
+      "sha256": "7117c94db9878291fd467d9f4ff39af6bee9bcd0e2c152b9ff5e29da791a7094"
+    }
+  ],
+  "localLogs": ".codex/tdd-evidence/issue154-aws-control-transport",
+  "noRemoteAction": true,
+  "retainedArchitectureOracle": {
+    "path": ".github/scripts/approved-release-pipeline.test.cjs",
+    "sha256": "7e3eb67c10912ee877c2332ce44b169d9545437eb2b0e9e0c52aef614885cab1",
+    "lines": "212-231",
+    "unchangedFromHEAD": true
+  }
+}
