@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
+import org.springframework.web.cors.CorsUtils
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingResponseWrapper
 import java.time.Clock
@@ -39,6 +40,11 @@ class OperatorNoStoreFilter(
         response.setHeader("Cache-Control", "no-store")
         response.setHeader("Pragma", "no-cache")
         response.setHeader("Referrer-Policy", "no-referrer")
+        // MVC validates transport preflight; no protected query or business audit is involved.
+        if (CorsUtils.isPreFlightRequest(request)) {
+            filterChain.doFilter(request, response)
+            return
+        }
         val buffered = ContentCachingResponseWrapper(response)
         try {
             filterChain.doFilter(request, buffered)
