@@ -1,0 +1,32 @@
+{
+  "workItem": "operator-cors-preflight",
+  "sourceRevision": "2fac654e4d308e04cdfdfd58b29dc9049dd7d23f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorCorsPreflightContractTest.kt",
+      "sha256": "52f96262ef86d0b5daeff035820bc90a1efabffde38e0fb86d27544a3215771f"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "ktlintCheck",
+    "test",
+    "--tests",
+    "*OperatorCorsPreflightContractTest",
+    "--tests",
+    "*OperatorNoStoreFilterTest"
+  ],
+  "failedTests": [
+    "OC01 allowed browser preflight succeeds without identity lookup query or business audit()",
+    "OC02 preflight is independent of unavailable identity and durable audit infrastructure()",
+    "OC03 unapproved origin is rejected by real MVC CORS without business access()",
+    "OC05 unapproved requested header is rejected by real MVC CORS without business access()",
+    "OC04 unapproved requested method is rejected by real MVC CORS without business access()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-30T00:24:35.454904Z"
+}

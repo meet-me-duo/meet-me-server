@@ -1,0 +1,97 @@
+{
+  "workItem": "operator-cors-preflight",
+  "recordedAt": "2026-10-30T00:28:18.660140+00:00",
+  "reviewer": "operations_preflight_tests",
+  "reviewResult": "PASS",
+  "findings": [],
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorNoStoreFilter.kt",
+      "sha256": "d0256163bd748b09a76327ce71532795db5c230be1ccb7bfa7b9d982e22dbc7a"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorCorsPreflightContractTest.kt",
+      "sha256": "52f96262ef86d0b5daeff035820bc90a1efabffde38e0fb86d27544a3215771f"
+    }
+  ],
+  "mutants": [
+    {
+      "id": "FI2_all_options_exempt",
+      "detected": true,
+      "tests": 16,
+      "errors": 0,
+      "failedTests": [
+        "OC06 bare and incomplete OPTIONS cannot bypass protected response audit()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError"
+      ]
+    },
+    {
+      "id": "FI3_header_only_exempt",
+      "detected": true,
+      "tests": 16,
+      "errors": 0,
+      "failedTests": [
+        "OC11 GET preflight header spoof cannot release unaudited downstream output()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError"
+      ]
+    },
+    {
+      "id": "FI4_skip_cors_validation",
+      "detected": true,
+      "tests": 16,
+      "errors": 0,
+      "failedTests": [
+        "OC01 allowed browser preflight succeeds without identity lookup query or business audit()",
+        "OC02 preflight is independent of unavailable identity and durable audit infrastructure()",
+        "OC03 unapproved origin is rejected by real MVC CORS without business access()",
+        "OC05 unapproved requested header is rejected by real MVC CORS without business access()",
+        "OC04 unapproved requested method is rejected by real MVC CORS without business access()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError"
+      ]
+    },
+    {
+      "id": "FI6_preflight_before_privacy",
+      "detected": true,
+      "tests": 16,
+      "errors": 0,
+      "failedTests": [
+        "OC01 allowed browser preflight succeeds without identity lookup query or business audit()",
+        "OC02 preflight is independent of unavailable identity and durable audit infrastructure()",
+        "OC03 unapproved origin is rejected by real MVC CORS without business access()",
+        "OC05 unapproved requested header is rejected by real MVC CORS without business access()",
+        "OC04 unapproved requested method is rejected by real MVC CORS without business access()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError"
+      ]
+    },
+    {
+      "id": "FI7_allow_audit_failure",
+      "detected": true,
+      "tests": 16,
+      "errors": 0,
+      "failedTests": [
+        "OC10 actual allowed GET fails closed without protected data when audit fails()"
+      ],
+      "failureTypes": [
+        "org.opentest4j.AssertionFailedError"
+      ]
+    }
+  ],
+  "sourceRestoredExactly": true,
+  "testsUnchanged": true,
+  "restoredGreen": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0
+  },
+  "scope": "Synthetic local MVC requests only; no operating invocation, credentials or account changes. New suite uses verified identity port fixtures; full Bearer and PostgreSQL tests are separately run by the complete quality gate."
+}
