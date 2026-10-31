@@ -1,3 +1,14 @@
+## 2026-10-31 현재 작업 — Issue #178 CI 작업 분리
+
+- [x] `[USER]` CI-only Issue 생성, 수정·검증·커밋·push·develop PR·병합 및 정확 merge SHA CI 확인을 승인했다. main·운영·V2 flag·보안/권한/자격증명 확대·유료 모델/지도 요청은 이번 범위에 포함하지 않는다.
+- [x] `[AGENT]` [Issue #178](https://github.com/meet-me-duo/meet-me-server/issues/178)을 생성하고 깨끗한 최신 develop `8b36fd5415bc4773e91f29fedc5ddf257ef6b12d`에서 `fix/issue-178-ci-parallel-checks`를 만들었다. 기존 분석 작업 공간은 보존한다.
+- [x] `[AGENT]` 독립 계약 테스트 RED(2 PASS/4 FAIL) 후 Gradle·배포 계약·ARM64를 분리했다. 기존18명령·16계약 단계·각job 내 순서·기존30분 제한·readonly 권한·CI trigger/전체 성공 게시 gate를 유지하고 구조 검사1개만 추가했다.
+- [x] `[AGENT]` 집중31 PASS/0 FAIL/0 SKIP, 독립27개 mutant 탐지·원본해시 유지·P1/P2 없음 확인. 기존 명령/검사를 줄이거나 실패 무시로 통과시키지 않는다.
+- [x] `[AGENT]` 원본 TDD guard의 ktlintCheck·assemble·test EXIT0, 2,658 PASS/기존SKIP17/FAIL0/ERROR0·source679개 전후 동일을 확인했다. 별도 감시 wrapper의 차단 시도12건/EXIT1은 원본 검사 결과와 구분해 검증 문서에 기록했다. 공개 변경은 CI/테스트/문서8개이며 비밀·원본 로그를 제외한다.
+- [ ] `[AGENT]` CI-only feature commit/push·develop PR·최종feature SHA CI·병합·정확merge SHA CI 종료를 확인한다. Commit/PR: 동일 커밋 예정 / 게시 후 확인.
+
+현재 단계: 로컬 계약·원본 전체 가드 검증 완료, feature 게시 준비. 원격 새 CI의 runner별 독립 실행·실제 소요 시간은 아직 미확인이다. [검증 기록](docs/verification/issue-178-ci-job-boundaries.md)을 따른다. 아래 기록은 각 당시의 범위/상태이며 현재 새 권한으로 해석하지 않는다.
+
 ## 2026-10-31 현재 작업 — Issue #176 게시 준비
 
 - [x] `[USER]` 서버·웹 새 Issue 각1개 → 별도 작업 공간의 준비 수정·무료 최종 검사 → 지정 피처 push → develop 대상 Draft PR 각1개 → 최종 SHA 일반 CI 확인 범위를 승인했다. 병합·배포·운영 DB·추가 유료 모델/지도 요청·보안/자격증명 변경은 제외한다.

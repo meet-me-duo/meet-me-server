@@ -1,0 +1,23 @@
+{
+  "workItem": "issue-178-ci-job-boundaries",
+  "sourceRevision": "8b36fd5415bc4773e91f29fedc5ddf257ef6b12d",
+  "testFiles": [
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "cc0f968a32d03cde3789e694ce04418fbcab3fa5188c165df9965b55f7d81232"
+    },
+    {
+      "path": ".github/scripts/fixtures/ci-original-checks.json",
+      "sha256": "8129fbf885d29863a33b27e746ae37482ae1f8d8448275e3853ceec1b6126eff"
+    }
+  ],
+  "command": "node --test .github/scripts/ci-job-boundaries.test.cjs",
+  "failedTests": [
+    "Issue178 keeps CI identity, triggers, concurrency, read authority and exactly three jobs",
+    "Issue178 Quality Gate retains Java17, the exact Gradle command and its 30 minute boundary",
+    "Issue178 Deployment Contracts runs its own setup then the new boundary check and all 16 original checks",
+    "Issue178 executes each original command exactly once with only one new command"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-31T10:49:26.193Z"
+}

@@ -473,3 +473,10 @@ Windows PowerShell에서는 다음 명령을 사용합니다.
 develop `d5fce878`의 README 전체318행을 기준으로 정리했다. PR138에 추가한 비용 절만 제거한 것이 아니며, 오래된 로그인 없는 HOST/소셜 로그인 Post-MVP 목록과 단일 Gemini 시스템도·운영/검증 상세를 옮겼다. 통합 흐름의 활성화 상태는 main 준비 문서로 구분한다.
 
 현재 AuthController의 Google/Kakao 경로, AmbiguityClassifierConfiguration의 관리형 Jev 바인딩, PrecheckProviderConfiguration의 Luna/TwoStage 구성, CoordinationWorker의 Outbox lease, DeterministicCandidateMatcher의 후보/인원 범위와 build.gradle.kts·compose.yml·application-local.yml을 대조했다. 최종 README는74행이며 Plan C의 최대2명 제외/최소2명과 JDK17 toolchain도 명확히 했다. 비용·검증 기록은 소개문으로 되돌리지 않는다. source·정책·승인 SVG는 변경하지 않으며 병합 후 정확 develop README/이미지 지문과 CI는 PR136 및 전달 receipt로 검증한다.
+
+
+## 2026-10-31 Issue178 CI 작업 분리
+
+서버 PR177의 develop merge CI가 두 번 전체 job30분 제한으로 취소돼, 같은 job을 더 반복하지 않고 CI-only Issue178에서 검사를 분리한다. 앱/DB/입력 판정·provider timeout/retry·권한·운영 설정은 변경하지 않는다. 기존18명령과16배포 계약 단계/각job 순서, Quality Gate·ARM64 및기존30분제한·전체 main CI 성공 게시 gate를 유지하고 독립 Deployment Contracts job과 구조 검사1개만 추가했다.
+
+독립 RED2PASS/4FAIL→GREEN6PASS, 기존 source 계약25개와 함께31PASS, 결함주입27/27 탐지 및 원본해시 동일을 확인했다. 원본 TDD guard EXIT0(2,658PASS/기존SKIP17/FAIL0/ERROR0), source679개 불변과 skip 이름 보존을 확인했다. 별도 감시 wrapper는 Gradle daemon의 차단 시도12건으로 EXIT1이며 원본 검사 결과와 분리 기록했다. 목적지 미기록으로 시도 원인은 미확인이고 실제 모델·지도 요청은 없다. 원격feature/merge SHA CI는 아직 미완료이며 실제 결과만 후속으로 기록한다. 넓은 Issue107과 보류 PR158을 이 CI 수리 완료로 닫지 않는다. 상세는 [Issue178 검증 기록](verification/issue-178-ci-job-boundaries.md), 현재 진행은 [Implementation Plan](../implementation_plan.md)이다.
