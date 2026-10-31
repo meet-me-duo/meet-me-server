@@ -1,0 +1,171 @@
+{
+  "workItem": "issue-178-ci-job-boundaries",
+  "sourceRevision": "8b36fd5415bc4773e91f29fedc5ddf257ef6b12d",
+  "reviewRole": "independent-test-design-and-implementation-review",
+  "publicBaselineSha256": "e8e3cf5abf08a93972c710a5697edaf60bbf8d7cfd43f4c41355381978e3701f",
+  "workflowSha256": "c274a1535b75e28c3cc234dd45d7aef9845b2d3980aaf3c5550c9fc72c5231d0",
+  "testFiles": [
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "cc0f968a32d03cde3789e694ce04418fbcab3fa5188c165df9965b55f7d81232"
+    },
+    {
+      "path": ".github/scripts/fixtures/ci-original-checks.json",
+      "sha256": "8129fbf885d29863a33b27e746ae37482ae1f8d8448275e3853ceec1b6126eff"
+    }
+  ],
+  "greenControl": {
+    "tests": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "originalCommands": 18,
+  "deploymentContractSteps": 16,
+  "addedCommands": 1,
+  "openP1": [],
+  "openP2": [],
+  "mutations": [
+    {
+      "name": "omit-nginx",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "omit-v22",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "duplicate-nginx",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "reorder-contracts",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "omit-multiline-python",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "omit-independent-java",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "change-gradle-command",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "step-continue-on-error",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "job-continue-on-error",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "contracts-timeout-increase",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "quality-timeout-increase",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "image-timeout-increase",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "contracts-conditional-skip",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "quality-conditional-skip",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "image-conditional-skip",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "step-conditional-skip",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "serialized-needs",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "job-oidc-authority",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "production-environment",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "root-authority-increase",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "added-credential-action",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "masked-nginx-failure",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "image-publication-enabled",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "weaken-main-ci-publication-gate",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "weaken-complete-ci-publication-trigger",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "omit-boundary-check",
+      "detected": true,
+      "restored": true
+    },
+    {
+      "name": "boundary-check-continue-on-error",
+      "detected": true,
+      "restored": true
+    }
+  ],
+  "limitations": [
+    "Source contract verification does not prove GitHub runner scheduling or end-to-end remote CI success; exact commit CI must still complete",
+    "The deliberate exact block source comparisons reject harmless formatting changes and require reviewed baseline maintenance for future approved workflow changes",
+    "Mutation proof checks the frozen contract suite; it does not execute Docker, AWS, production, model or external API actions",
+    "Existing underlying deployment test behavior and pre-existing CI infrastructure risks are unchanged by this job split"
+  ],
+  "recordedAt": "2026-10-31T10:52:04.597Z"
+}

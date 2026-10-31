@@ -38,6 +38,25 @@ jobs:
       - name: Run quality gate
         run: ./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g ktlintCheck assemble test
 
+  deployment-contracts:
+    name: Deployment Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Verify CI job boundaries
+        run: node --test .github/scripts/ci-job-boundaries.test.cjs
+
       - name: Verify production deployment policy
         run: node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs
 
