@@ -20,6 +20,7 @@ import com.meetme.server.shared.application.port.output.AiCallObservation
 import com.meetme.server.shared.application.port.output.AiCallOutcome
 import com.meetme.server.shared.application.port.output.AiCallPurpose
 import com.meetme.server.shared.application.port.output.AiCallStage
+import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
 import java.security.MessageDigest
 import java.time.Duration
 import java.util.function.LongSupplier
@@ -47,7 +48,7 @@ class TwoStagePreSubmissionCheckProvider(
             return Duration.ofNanos(nanos)
         }
 
-        val source = fingerprint(request.rawText)
+        val source = AiDispatchFingerprints.personalSource(request.rawText, request.evidence)
         val context =
             fingerprint(
                 request.referenceAt.toString(),
@@ -111,6 +112,7 @@ class TwoStagePreSubmissionCheckProvider(
                                 request.searchStartDate,
                                 request.searchEndDate,
                                 it,
+                                evidence = request.evidence,
                             ),
                         ).also {
                             classified = it
@@ -129,7 +131,7 @@ class TwoStagePreSubmissionCheckProvider(
                     )
                 },
             )
-        if (first.assessment == AmbiguityAssessment.CLEAR) {
+        if (decision(request, first) == AmbiguityAssessment.CLEAR) {
             return PrecheckProviderResult(
                 PrecheckVerdict.CLEAR,
                 inputTokens = first.inputTokens,
@@ -139,6 +141,7 @@ class TwoStagePreSubmissionCheckProvider(
                 model = first.model,
             )
         }
+        unresolvedAfterAnswer(request, first)?.let { return it }
         val secondReservation = reserve(AiCallStage.GENERATION)
         var generated: PrecheckProviderResult? = null
         return invoke(
@@ -186,11 +189,12 @@ class TwoStagePreSubmissionCheckProvider(
                         request.searchEndDate,
                         remaining(),
                         dispatchContext = context,
+                        evidence = request.evidence,
                     ),
                 )
             validate(first)
             remaining()
-            if (first.assessment ==
+            if (decision(request, first) ==
                 AmbiguityAssessment.CLEAR
             ) {
                 return PrecheckProviderResult(
@@ -200,11 +204,40 @@ class TwoStagePreSubmissionCheckProvider(
                     model = first.model,
                 )
             }
+            unresolvedAfterAnswer(request, first)?.let { return it }
             return generator.check(request.copy(timeout = remaining(), dispatchContext = context)).also { remaining() }
         } catch (exception: Exception) {
             fail(failureCode(exception))
         }
     }
+
+    private fun unresolvedAfterAnswer(
+        request: PrecheckProviderRequest,
+        result: AmbiguityClassificationResult,
+    ): PrecheckProviderResult? {
+        if (request.evidence?.supplement == null) {
+            return null
+        }
+        return PrecheckProviderResult(
+            PrecheckVerdict.UNRESOLVED,
+            inputTokens = result.inputTokens,
+            provider = result.provider,
+            model = result.model,
+            unresolvedReason =
+                when {
+                    decision(request, result) == AmbiguityAssessment.NEEDS_REVIEW -> "AFTER_ANSWER_REVIEW"
+                    result.reason == AmbiguityClassificationReason.LOW_CONFIDENCE -> "CLASSIFIER_LOW_CONFIDENCE"
+                    result.reason == AmbiguityClassificationReason.MODEL_UNCERTAIN -> "CLASSIFIER_MODEL_UNCERTAIN"
+                    else -> fail("INVALID_RESPONSE")
+                },
+        )
+    }
+
+    /** Semantic evidence wins only in V2; V1 retains its normalized confidence policy. */
+    private fun decision(
+        request: PrecheckProviderRequest,
+        result: AmbiguityClassificationResult,
+    ): AmbiguityAssessment = if (request.evidence != null) result.semanticAssessment ?: result.assessment else result.assessment
 
     private fun <T> invoke(
         reservation: AiCallBudgetReservation,

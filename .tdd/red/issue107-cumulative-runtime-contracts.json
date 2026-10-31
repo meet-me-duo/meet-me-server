@@ -1,0 +1,44 @@
+{
+  "workItem": "issue107-cumulative-runtime-contracts",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeExperimentDriverContractTest.kt",
+      "sha256": "0804f93e50af0ea2684d8277f5e146d75f20c9c930fa66ca8350693f0af527ec"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeClassifierCountingContractTest.kt",
+      "sha256": "3514771688c622b59ac1fc4015ed4e13b0a03b0d1a3aada2a8b61868b3e1ffe0"
+    }
+  ],
+  "command": [
+    "local-only-evidence/analysis-gradle",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*CumulativeClassifierCountingContractTest",
+    "--tests",
+    "*CumulativeExperimentDriverContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.experiment.CumulativeExperimentDriverContractTest.one known transient failure permits a fresh second diagnostic then one E2E()",
+    "com.meetme.server.experiment.CumulativeExperimentDriverContractTest.completed first connectivity permits exactly one E2E and excludes raw stage evidence()",
+    "com.meetme.server.experiment.CumulativeExperimentDriverContractTest.known nonretryable refusal stops after the first diagnostic without E2E()",
+    "com.meetme.server.experiment.CumulativeExperimentDriverContractTest.second diagnostic failure stops even when its normalized code differs from the first()",
+    "com.meetme.server.experiment.CumulativeExperimentDriverContractTest.unknown exception or counter persistence failure still records exactly one safe stopped result()",
+    "com.meetme.server.experiment.CumulativeClassifierCountingContractTest.returned REFUSED counts once and an outer router exception does not invent a generator failure()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR: real driver TODO and returned classifier refusal not counted/correlated",
+  "recordedAt": "2026-10-29T16:06:33.498931+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-cumulative-runtime-contracts.log",
+  "totals": {
+    "tests": 8,
+    "failures": 6,
+    "errors": 0,
+    "skipped": 0
+  },
+  "controlsPassed": 2,
+  "providerCalls": 0,
+  "excluded": "telemetry-runtime-contracts-red.log stopped on style before tests; no behavioral RED",
+  "environmentIsolation": "run-telemetry-guard.py isolated_environment(): removes three model keys and all MEETME_*; isolated JDK17/Gradle home and session proxy/CA"
+}

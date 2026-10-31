@@ -1,0 +1,197 @@
+{
+  "recordedAt": "2026-10-30T14:34:05.159377+00:00",
+  "sourceFingerprint": "28e36183bb01d77adaa1a3fb0aa60f141aa3f2978ad43bbb8e1d2d82dc7907f0",
+  "sourceFiles": 660,
+  "sourceUnchanged": true,
+  "productionUnchangedSincePreviousWholeRuns": true,
+  "originalArtifactsUnchanged": true,
+  "priorConsumedClaimsUnchanged": true,
+  "guardConfigurationUnchanged": true,
+  "totals": {
+    "tests": 2610,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 17
+  },
+  "passed": 2593,
+  "failedTests": [],
+  "skippedTests": [
+    {
+      "suite": "com.meetme.server.experiment.FinalLunaSixtyPrepareTest",
+      "name": "frozen original and supplement generate the unchanged final contract offline()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.StandaloneGeminiOncePaidTest",
+      "name": "new approved single use plan sends at most one tiny Gemini request and stops()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.PilotTenPaidTest",
+      "name": "new approval permits only the frozen development pilot and stops without a second run()"
+    },
+    {
+      "suite": "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+      "name": "verify correction public schemas then export actual native OpenAPI JSON()"
+    },
+    {
+      "suite": "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+      "name": "export actual generated OpenAPI JSON after Issue 83 GREEN()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.P2PersonalOncePaidTest",
+      "name": "explicit approved counterfactual sends at most one current personal Luna request()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.PrimaryGeminiTechnicalSmokeTest",
+      "name": "explicit approved primary-only smoke uses real closure source fence and at most one primary identity()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.LunaFallbackOncePaidTest",
+      "name": "synthetic Gemini 503 switches to one original Luna adapter and validates stored results and host APIs()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.P2PersonalOnceValidationTest",
+      "name": "frozen paid manifest validates without consuming approval or issuing HTTP()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.FinalLunaSixtyPaidTest",
+      "name": "fresh approval sends one frozen logical final request with a standalone sixty second deadline()"
+    },
+    {
+      "suite": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+      "name": "capture actual native schema for debugging explicitly marked unvalidated()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.BlindFlowPaidTest",
+      "name": "approved fixed pilot and conditionally opened sealed flow()"
+    },
+    {
+      "suite": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+      "name": "bounded live Gemini semantic probe()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.FinalLunaSixtyPreflightTest",
+      "name": "fixed source and payload validate offline without claiming approval()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.P2PersonalOnceContractTest",
+      "name": "current V2 p2 payload and original adapter use one bounded request with no replay()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.ExperimentalLiveHttpEvaluationTest",
+      "name": "explicitly approved blind payload traverses actual HTTP workers and providers once()"
+    },
+    {
+      "suite": "com.meetme.server.experiment.CumulativeProviderEvaluationTest",
+      "name": "one capped actual-provider experiment preserves a safe final report on every outcome()"
+    }
+  ],
+  "regressionPairInFull": [
+    {
+      "name": "com.meetme.server.experiment.BlindFlowHttpContractTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-30T14:21:20.635Z",
+      "time": "9.817"
+    },
+    {
+      "name": "com.meetme.server.experiment.LunaFallbackOnceApplicationContractTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "timestamp": "2026-10-30T14:22:33.180Z",
+      "time": "40.523"
+    }
+  ],
+  "testWorkerGuardActivation": {
+    "120806": true
+  },
+  "execution": {
+    "startedAt": "2026-10-30T14:15:28.392295+00:00",
+    "finishedAt": "2026-10-30T14:33:09.868303+00:00",
+    "exitCode": 0,
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "providerKeysAndLiveFlagsUnset": true,
+    "nonloopbackTcpDenied": true,
+    "guardActivatedPids": [
+      120677,
+      120679,
+      120683,
+      120684,
+      120685,
+      120686,
+      120687,
+      120688,
+      120689,
+      120690,
+      120691,
+      120692,
+      120693,
+      120694,
+      120695,
+      120696,
+      120721,
+      120778,
+      120806,
+      120847,
+      127776,
+      128202,
+      128437,
+      128677,
+      132493,
+      132495,
+      132497,
+      134600,
+      134602,
+      134603,
+      134604,
+      134605
+    ],
+    "deniedConnects": 0,
+    "log": "local-only-evidence/final-full.log"
+  },
+  "actualProviderRequests": 0,
+  "newPolicyImplemented": false,
+  "published": false,
+  "merged": false,
+  "deployed": false,
+  "skippedSetUnchangedFromPreviousWholeRun": true,
+  "placeReplay": {
+    "path": "local-only-evidence/replay-results.json",
+    "completed": true,
+    "actualProviderRequests": 0,
+    "cases": [
+      {
+        "case": "original-in-person",
+        "publicStatus": "NO_MATCH",
+        "candidateQuality": "PARTIAL",
+        "unappliedCount": 2,
+        "recommendationCount": 0,
+        "confirmedPublicStatus": null,
+        "selectionRows": 0
+      },
+      {
+        "case": "either-mode-counterfactual",
+        "publicStatus": "READY_WITH_WARNINGS",
+        "candidateQuality": "PARTIAL",
+        "unappliedCount": 2,
+        "recommendationCount": 3,
+        "confirmedPublicStatus": "CONFIRMED",
+        "selectionRows": 1
+      }
+    ]
+  },
+  "workItem": "issue107-free-luna-context-regression-closure",
+  "previousScopedEvidence": "local-only-evidence/final-verification.json",
+  "lastWholeSuiteGreen": true
+}

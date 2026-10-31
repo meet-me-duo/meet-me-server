@@ -1,0 +1,23 @@
+{
+  "workItem": "issue107-primary-last-boundaries",
+  "sourceRevision": "c9453a35582ca6503c956ab4e8aff8d73b175ef3",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeFailureEvidenceContractTest.kt",
+      "sha256": "98ce584b7c8ed73baf55bc4fe1f6d11ef0a3c05d12755d19aed91db8a4148f44"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeApplicationContractTest.kt",
+      "sha256": "684af708067154ef4e6a6abf49cb3e85b69965cdf8d082632973880029af6bce"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *PrimaryGeminiSmokeFailureEvidenceContractTest --tests *PrimaryGeminiSmokeApplicationContractTest",
+  "log": "local-only-evidence/followup-last-smoke-boundaries-red.log",
+  "tests": 8,
+  "failures": 8,
+  "errors": 0,
+  "skips": 0,
+  "failureCategory": "TODO skeleton or wrong expected exception; actual Spring context loaded successfully",
+  "scope": "finally-safe report, immediate poll stop, approved-output and one-shot manifest",
+  "providerCalls": 0
+}

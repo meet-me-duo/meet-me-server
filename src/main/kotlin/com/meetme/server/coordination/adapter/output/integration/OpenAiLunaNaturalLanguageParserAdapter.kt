@@ -94,6 +94,12 @@ class OpenAiLunaNaturalLanguageParserAdapter
             var physical: GatedAiHttpExchange? = null
             var physicalUsage = AiBudgetUsage()
             var completed = false
+            var primaryFailure: NaturalLanguageParserException? = null
+
+            fun propagate(failure: NaturalLanguageParserException): Nothing {
+                primaryFailure = failure
+                throw failure
+            }
             try {
                 val body =
                     objectMapper.writeValueAsString(
@@ -206,19 +212,19 @@ class OpenAiLunaNaturalLanguageParserAdapter
                 )
             } catch (_: AiHttpDispatchException) {
                 pending?.cancel()
-                throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                propagate(NaturalLanguageParserException(ParserFailureKind.CONFIGURATION))
             } catch (exception: AiHttpProviderStatusException) {
                 pending?.cancel()
-                throw httpFailure(exception.status, exception.retryAfterMillis?.div(1000)?.toString(), exception.responseBytes)
+                propagate(httpFailure(exception.status, exception.retryAfterMillis?.div(1000)?.toString(), exception.responseBytes))
             } catch (exception: NaturalLanguageParserException) {
                 pending?.cancel()
-                throw exception
+                propagate(exception)
             } catch (exception: IOException) {
                 pending?.cancel()
-                throw NaturalLanguageParserException(ProviderFailureClassifier.classify(exception), cause = exception)
+                propagate(NaturalLanguageParserException(ProviderFailureClassifier.classify(exception), cause = exception))
             } catch (exception: RuntimeException) {
                 pending?.cancel()
-                throw NaturalLanguageParserException(ProviderFailureClassifier.classify(exception), cause = exception)
+                propagate(NaturalLanguageParserException(ProviderFailureClassifier.classify(exception), cause = exception))
             } finally {
                 try {
                     physical?.observe(
@@ -226,10 +232,10 @@ class OpenAiLunaNaturalLanguageParserAdapter
                         if (completed) AiBudgetOutcome.SUCCEEDED else AiBudgetOutcome.FAILED,
                         physicalUsage,
                     )
-                } catch (
-                    _: AiHttpDispatchException,
-                ) {
-                    throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                } catch (observationFailure: AiHttpDispatchException) {
+                    val failure = primaryFailure
+                    if (failure == null) throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                    failure.addSuppressed(observationFailure)
                 }
             }
         }

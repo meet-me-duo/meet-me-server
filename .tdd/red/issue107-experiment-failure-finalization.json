@@ -1,0 +1,33 @@
+{
+  "workItem": "issue107-experiment-failure-finalization",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentPendingFailurePhaseContractTest.kt",
+      "sha256": "4e03991bbed4ee077997f2b9e097004a8893788fbfdebceb3ccc181e6dfcd40b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentFailureCorrelationContractTest.kt",
+      "sha256": "beea2d5974c688ca8033f6664710ed282876763dcd3380b7ea515ca6f5aed924"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *ExperimentPendingFailurePhaseContractTest --tests *ExperimentFailureCorrelationContractTest",
+  "failedTests": [
+    "com.meetme.server.experiment.ExperimentPendingFailurePhaseContractTest.settled wire failure without typed finalization cannot open another diagnostic phase()",
+    "com.meetme.server.experiment.ExperimentFailureCorrelationContractTest.[1] mismatch = \"operation\"",
+    "com.meetme.server.experiment.ExperimentFailureCorrelationContractTest.[2] mismatch = \"attempt\"",
+    "com.meetme.server.experiment.ExperimentFailureCorrelationContractTest.[3] mismatch = \"ordinal\"",
+    "com.meetme.server.experiment.ExperimentFailureCorrelationContractTest.[4] mismatch = \"ambiguous\"",
+    "com.meetme.server.experiment.ExperimentFailureCorrelationContractTest.overall router failure finalizes only the failed generation and preserves successful Jev classification()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR: pending-failure phase entry and exact typed producer correlation",
+  "recordedAt": "2026-10-29T15:47:13.003160+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-experiment-failure-finalization.log",
+  "totals": {
+    "tests": 6,
+    "failures": 6,
+    "errors": 0,
+    "skipped": 0
+  },
+  "providerCalls": 0
+}

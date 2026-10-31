@@ -1,6 +1,7 @@
 package com.meetme.server.coordination.application.port.output
 
 import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
+import com.meetme.server.shared.domain.InputEvidence
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import java.time.Duration
 import java.time.LocalDate
@@ -12,6 +13,7 @@ data class NaturalLanguageInput(
     val rawText: String,
     val locale: Locale,
     val referenceDate: LocalDate,
+    val evidence: InputEvidence? = null,
 )
 
 data class NaturalLanguageBatchRequest(

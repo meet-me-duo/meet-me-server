@@ -1,5 +1,6 @@
 package com.meetme.server.submission.domain
 
+import com.meetme.server.shared.domain.InputEvidence
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.SubmissionId
@@ -26,6 +27,7 @@ data class SubmissionVersion(
     val manualAvailability: List<ManualAvailability>,
     val locale: Locale,
     val createdAt: Instant,
+    val evidence: InputEvidence? = null,
 )
 
 data class Submission private constructor(
@@ -44,12 +46,13 @@ data class Submission private constructor(
             manualAvailability: List<ManualAvailability>,
             locale: Locale,
             at: Instant,
+            evidence: InputEvidence? = null,
         ): Submission =
             Submission(
                 id = id,
                 roomId = roomId,
                 participantId = participantId,
-                latest = createVersion(versionId, 1, rawText, manualAvailability, locale, at),
+                latest = createVersion(versionId, 1, rawText, manualAvailability, locale, at, evidence),
             )
 
         fun restore(
@@ -66,6 +69,7 @@ data class Submission private constructor(
             manualAvailability: List<ManualAvailability>,
             locale: Locale,
             at: Instant,
+            evidence: InputEvidence? = null,
         ): SubmissionVersion {
             val hasText = !rawText?.let(SubmissionRules::trimRawText).isNullOrEmpty()
             require(hasText || manualAvailability.isNotEmpty()) { "Submission input is required" }
@@ -73,7 +77,8 @@ data class Submission private constructor(
                 require(rawText.codePointCount(0, rawText.length) <= 500) { "Natural language input must not exceed 500 code points" }
             }
             require(locale.toLanguageTag().isNotBlank()) { "Locale must not be blank" }
-            return SubmissionVersion(id, revision, rawText, manualAvailability.toList(), locale, at)
+            if (evidence != null) evidence.validateAgainst(requireNotNull(rawText) { "Evidence requires original natural language input" })
+            return SubmissionVersion(id, revision, rawText, manualAvailability.toList(), locale, at, evidence)
         }
     }
 
@@ -83,6 +88,7 @@ data class Submission private constructor(
         manualAvailability: List<ManualAvailability>,
         locale: Locale,
         at: Instant,
+        evidence: InputEvidence? = null,
     ): Submission =
         copy(
             latest =
@@ -93,6 +99,7 @@ data class Submission private constructor(
                     manualAvailability = manualAvailability,
                     locale = locale,
                     at = at,
+                    evidence = evidence,
                 ),
         )
 }

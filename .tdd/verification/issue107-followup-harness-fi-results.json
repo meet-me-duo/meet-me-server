@@ -1,0 +1,107 @@
+{
+  "files": {
+    "src/test/kotlin/com/meetme/server/experiment/ExperimentalLiveHttpEvaluationTest.kt": "5a4d2acf9f1296add57b0f6b2ae59b16851b7e538238732a7b1c2de351ebdd0d",
+    "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationSafety.kt": "c46c44cbfb7dd378e0ee16e6ca22c98d726089d9f77459f11c06f9eaae2ad6a7"
+  },
+  "testSha256": "2a5155461aaeb63c172a331d4141b1467481b19ab4c4eeccc6785beaf0aefd9e",
+  "baseline": {
+    "exitCode": 0,
+    "log": "local-only-evidence/followup-harness-baseline-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": []
+      }
+    ]
+  },
+  "injections": [
+    {
+      "exitCode": 1,
+      "log": "local-only-evidence/followup-harness-actual-factory-safety-bypass-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+          "tests": 8,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "actual fixture authorization stops new SDK admission after the first shared server failure()"
+          ]
+        },
+        {
+          "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": []
+        }
+      ],
+      "expectedCaseDetected": true,
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "log": "local-only-evidence/followup-harness-whole-action-monitor-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+          "tests": 8,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "driver action does not hold the safety monitor needed by its worker()"
+          ]
+        },
+        {
+          "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": []
+        }
+      ],
+      "expectedCaseDetected": true,
+      "exactRestore": true
+    }
+  ],
+  "restored": {
+    "exitCode": 0,
+    "log": "local-only-evidence/followup-harness-restored-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": []
+      }
+    ]
+  },
+  "exactRestore": true,
+  "providerCalls": 0
+}

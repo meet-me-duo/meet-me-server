@@ -1,0 +1,34 @@
+{
+  "workItem": "issue107-evidence-current-original-rewrite",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/ExperimentalInputEvidencePostgresTest.kt",
+      "sha256": "c5329b9dbb366818b459dec985c9c6d5f54a592c2fb06be0ca5f0c846893516e"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*ExperimentalInputEvidencePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-QUESTION new revisions do not reset the room participant question budget()",
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-REVISION concurrent different answers allow one transition and preserve one original()",
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-RECEIPT unresolved answer is received for final analysis but is never CLEAR()",
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-IDEMPOTENCY same answer key is replayed without an extra revision or recheck()",
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-FREEZE closure freezes original answer and unresolved status as one version()",
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-QUESTION text-only question accepts a scoped direct answer without rewriting original()",
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-ORIGINAL choice keeps original and stores the targeted supplement durably()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:53:35.142010Z"
+}

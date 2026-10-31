@@ -1,0 +1,45 @@
+{
+  "workItem": "issue107-evidence-current-source-evidence-binding",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/EvidenceExecutionFencePostgresTest.kt",
+      "sha256": "d647f1f9addf5abd8e7664606977dd2147ee1824ea7a16c7b1d019904f5f791a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/application/port/output/EvidenceDispatchFingerprintTest.kt",
+      "sha256": "11dbdc65ddff3cf2d39061bedcfb6f86664aeaf29f160a817992e3b479d9f4ec"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/domain/InputEvidenceContractTest.kt",
+      "sha256": "fe583f0f7e426b90820f835b14661049a443d562e6f6cde0d1d6651b26abf639"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*InputEvidenceContractTest",
+    "--tests",
+    "*EvidenceDispatchFingerprintTest",
+    "--tests",
+    "*EvidenceExecutionFencePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.domain.InputEvidenceContractTest.EX-EVIDENCE-FENCE canonical source changes when the answer or source scope changes()",
+    "com.meetme.server.shared.domain.InputEvidenceContractTest.EX-EVIDENCE-FENCE adjacent text fields cannot collide by moving a delimiter()",
+    "com.meetme.server.shared.application.port.output.EvidenceDispatchFingerprintTest.final frozen source includes version evidence independently from raw text and cohort order()",
+    "com.meetme.server.shared.application.port.output.EvidenceDispatchFingerprintTest.personal dispatch rejects evidence omission and any changed finalized answer()",
+    "com.meetme.server.shared.adapter.output.persistence.EvidenceExecutionFencePostgresTest.EX-EVIDENCE-FENCE final dispatch binds frozen version evidence instead of pending candidate()",
+    "com.meetme.server.shared.adapter.output.persistence.EvidenceExecutionFencePostgresTest.EX-EVIDENCE-FENCE personal dispatch binds the persisted scoped answer()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:52:41.614928Z"
+}

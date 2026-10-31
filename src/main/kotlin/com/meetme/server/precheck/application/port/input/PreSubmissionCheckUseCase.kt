@@ -2,6 +2,7 @@ package com.meetme.server.precheck.application.port.input
 
 import com.meetme.server.precheck.domain.PrecheckQuestion
 import com.meetme.server.precheck.domain.PrecheckStatus
+import com.meetme.server.shared.domain.InputEvidence
 import java.time.Instant
 import java.util.Locale
 import java.util.UUID
@@ -32,6 +33,7 @@ data class PrecheckTextView(
     val rawText: String,
     val createdAt: Instant,
     val referenceAt: Instant,
+    val evidence: InputEvidence? = null,
 )
 
 data class PrecheckView(
@@ -62,6 +64,7 @@ data class PrecheckAcceptedView(
     val createdAt: Instant,
     val referenceAt: Instant,
     val confirmationSource: String,
+    val evidence: InputEvidence? = null,
 )
 
 data class PrecheckSnapshot(

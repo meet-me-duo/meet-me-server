@@ -93,6 +93,22 @@ class CandidateScenarioMatrixTest {
             assertEquals(scenario.ranges, candidate.timeRanges.map { "${it.startInclusive}/${it.endExclusive}" })
             assertEquals(scenario.attendance ?: scenario.texts.size, candidate.participantIds.size)
             assertEquals(if (candidate.meetingMode == MeetingMode.IN_PERSON) scenario.place else null, candidate.place?.displayName)
+            val expectedPending =
+                if (candidate.meetingMode == MeetingMode.REMOTE) {
+                    emptyList()
+                } else {
+                    fixture.submissions
+                        .filter { submission ->
+                            submission.participantId in candidate.participantIds &&
+                                fixture.structured
+                                    .single {
+                                        it.submissionVersionId == submission.latest.id
+                                    }.conditions
+                                    .any { it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace }
+                        }.map { it.participantId }
+                        .sortedBy { it.value.toString() }
+                }
+            assertEquals(expectedPending, candidate.unverifiedPlaceParticipantIds)
             candidate.participantIds.forEach { participant ->
                 val index = fixture.submissions.indexOfFirst { it.participantId == participant }
                 assertEquals(candidate.timeRanges, TimeRangeMatcher.intersect(candidate.timeRanges, availability[index]))
@@ -331,8 +347,9 @@ class CandidateScenarioMatrixTest {
                     offline,
                     listOf("9월 21일 19~21시 가능", "9월 21일 19~21시 강남역"),
                     listOf(listOf(evening), one),
-                    emptyList(),
-                    emptyList(),
+                    listOf("A"),
+                    oneRange,
+                    place = "강남역 일대",
                 ),
                 Scenario(
                     "two-multiple-common-stations",
@@ -391,8 +408,9 @@ class CandidateScenarioMatrixTest {
                         ),
                         one,
                     ),
-                    listOf("B"),
+                    listOf("A", "B"),
                     oneRange,
+                    place = "강남역 일대",
                     quality = CandidateQuality.PARTIAL,
                 ),
                 Scenario(
@@ -409,8 +427,10 @@ class CandidateScenarioMatrixTest {
                         ),
                         one,
                     ),
-                    listOf("B"),
+                    listOf("A", "B"),
                     oneRange,
+                    place = "강남역 일대",
+                    quality = CandidateQuality.PARTIAL,
                 ),
                 Scenario(
                     "two-only-exclusions",

@@ -1,0 +1,68 @@
+{
+  "workItem": "issue107-v2-label-routing",
+  "sourceRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/V2LabelRoutingContractTest.kt",
+      "sha256": "414e19f18e2dc1ff6850284b0677efdf97c99e2ff69084e71986f33d113f73b1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidencePrecheckContractTest.kt",
+      "sha256": "c0606202a7c1559ee103061d5887def5f5556c1e3b30cf47b08ba330ae51f249"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidenceUnresolvedReasonContractTest.kt",
+      "sha256": "b605a0f83612bfe2779023cda2ea73843a148a372dc9164aa03a0ce60c6818fb"
+    }
+  ],
+  "command": [
+    "local-only-evidence/analysis-gradle",
+    "-I",
+    "local-only-evidence/live-eval.init.gradle",
+    "test",
+    "--tests",
+    "*V2LabelRoutingContractTest",
+    "--tests",
+    "*EvidencePrecheckContractTest",
+    "--tests",
+    "*EvidenceUnresolvedReasonContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[1] label = \"CLEAR\", expectedVerdict = \"CLEAR\", expectedGenerations = \"0\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[2] label = \"NEEDS_REVIEW\", expectedVerdict = \"CLEAR\", expectedGenerations = \"1\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[3] label = \"INDETERMINATE\", expectedVerdict = \"CLEAR\", expectedGenerations = \"1\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.after-answer raw review remains unresolved even if legacy normalization changed the assessment()",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[3] label = \"INDETERMINATE\", answered = \"false\", legacyNormalized = \"false\", expectedGenerations = \"1\", expectedVerdict = \"NEEDS_CHOICE\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[7] label = \"CLEAR\", answered = \"false\", legacyNormalized = \"true\", expectedGenerations = \"0\", expectedVerdict = \"CLEAR\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[8] label = \"NEEDS_REVIEW\", answered = \"false\", legacyNormalized = \"true\", expectedGenerations = \"1\", expectedVerdict = \"NEEDS_CHOICE\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[9] label = \"INDETERMINATE\", answered = \"false\", legacyNormalized = \"true\", expectedGenerations = \"1\", expectedVerdict = \"NEEDS_CHOICE\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[10] label = \"NEEDS_REVIEW\", answered = \"true\", legacyNormalized = \"true\", expectedGenerations = \"0\", expectedVerdict = \"UNRESOLVED\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[4] label = \"INDETERMINATE\", generatedVerdict = \"CLEAR\", expectedGenerations = \"1\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[5] label = \"INDETERMINATE\", generatedVerdict = \"NEEDS_CHOICE\", expectedGenerations = \"1\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[1] label = \"CLEAR\", confidence = \"0.0\", maximum = \"0.3333333333333333\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[2] label = \"CLEAR\", confidence = \"0.1\", maximum = \"0.4\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[5] label = \"NEEDS_REVIEW\", confidence = \"0.0\", maximum = \"0.3333333333333333\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[6] label = \"NEEDS_REVIEW\", confidence = \"0.1\", maximum = \"0.4\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[9] label = \"INDETERMINATE\", confidence = \"0.0\", maximum = \"0.3333333333333333\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[10] label = \"INDETERMINATE\", confidence = \"0.1\", maximum = \"0.4\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[3] label = \"INDETERMINATE\", code = \"TIMEOUT\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[4] label = \"INDETERMINATE\", code = \"INVALID_RESPONSE\"",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[1] label = CLEAR",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[2] label = NEEDS_REVIEW",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest.[3] label = INDETERMINATE",
+    "com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest.EX-LABEL V2 clear semantic evidence is not overridden by legacy confidence normalization()",
+    "com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-LABEL initial low confidence receives Luna verification instead of a silent unresolved receipt()"
+  ],
+  "expectedFailureCategory": "APPROVED_V2_LABEL_POLICY: old confidence normalization and initial abstention skip conflict with label-first routing; V1 and malformed/technical failure contracts remain passing",
+  "recordedAt": "2026-10-30T08:39:25.790969+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-v2-label-routing.log",
+  "totals": {
+    "tests": 72,
+    "failures": 24,
+    "errors": 0,
+    "skipped": 0
+  },
+  "providerCalls": 0,
+  "oracle": "User approval synthetic-authorization-cffef69a5db86b9e; independent synthetic invariants, no pilot or sealed gold",
+  "sourceRestorationEvidence": "local-only-evidence/expanded-red-source-restoration.json"
+}

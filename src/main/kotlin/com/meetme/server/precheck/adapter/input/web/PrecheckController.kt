@@ -7,6 +7,8 @@ import com.meetme.server.precheck.application.port.input.PrecheckAcceptedView
 import com.meetme.server.precheck.application.port.input.PrecheckMutationCommand
 import com.meetme.server.precheck.application.port.input.PrecheckSnapshot
 import com.meetme.server.precheck.application.port.input.PrecheckTextView
+import com.meetme.server.shared.domain.InputEvidence
+import com.meetme.server.shared.domain.InputSupplement
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -56,7 +58,7 @@ data class PrecheckMutationRequest(
     @field:JsonProperty("question_id") @field:Schema(description = "답변할 질문 UUID", nullable = true) val questionId: UUID? = null,
     @field:JsonProperty("choice_id") @field:Schema(description = "명시 선택 ID", nullable = true) val choiceId: String? = null,
     @field:JsonProperty("direct_text")
-    @field:Schema(description = "직접 수정한 전체 원문", nullable = true, type = "string", implementation = String::class)
+    @field:Schema(description = "V1 전체 수정 원문, V2 질문 대상에 대한 보완 답변", nullable = true, type = "string", implementation = String::class)
     val directText: JsonNode? = null,
 )
 
@@ -210,7 +212,7 @@ data class PrecheckResponse(
     @field:Schema(description = "현재 방 상태") val room: PrecheckRoomResponse,
     @field:JsonProperty(
         "submission_complete",
-    ) @field:Schema(description = "현재 candidate가 CLEAR로 수용됨. 이전 완료본만 있으면 false") val submissionComplete: Boolean,
+    ) @field:Schema(description = "현재 candidate 접수 완료. V2 RECEIVED는 해석 미확정이며 CLEAR와 구분") val submissionComplete: Boolean,
     @field:JsonProperty("applied_to_result") @field:Schema(description = "마감된 활성 batch가 accepted를 포함함. 매칭 성공 보장은 아님") val appliedToResult:
         Boolean,
     @field:JsonProperty(
@@ -236,12 +238,14 @@ data class PrecheckAcceptedResponse(
         "confirmation_source",
     ) @field:Schema(
         description = "실제 version 연결로 판정한 수용 경로",
-        allowableValues = ["PRECHECK", "LEGACY_CORRECTION"],
+        allowableValues = ["PRECHECK", "PRECHECK_UNRESOLVED", "UNVERIFIED_CORRECTION", "LEGACY_CORRECTION"],
         requiredMode = Schema.RequiredMode.REQUIRED,
     ) val confirmationSource: String,
+    @field:Schema(description = "V2 원문·최종 보완 근거. V1은 null", nullable = true) val evidence: InputEvidenceResponse? = null,
 )
 
-private fun PrecheckAcceptedView.wire() = PrecheckAcceptedResponse(revision, rawText, createdAt, referenceAt, confirmationSource)
+private fun PrecheckAcceptedView.wire() =
+    PrecheckAcceptedResponse(revision, rawText, createdAt, referenceAt, confirmationSource, evidence?.wire())
 
 @Schema(description = "저장 원문과 의미 기준 시각", requiredProperties = ["revision", "raw_text", "created_at", "interpretation_reference_at"])
 data class PrecheckTextResponse(
@@ -250,12 +254,14 @@ data class PrecheckTextResponse(
     @field:JsonProperty("created_at") @field:Schema(description = "실제 저장 시각") val createdAt: java.time.Instant,
     @field:JsonProperty("interpretation_reference_at") @field:Schema(description = "A/B 선택은 source 기준 시각을 상속") val referenceAt:
         java.time.Instant,
+    @field:Schema(description = "V2 원문과 보완 답변을 별도로 보존한 근거", nullable = true) val evidence: InputEvidenceResponse? = null,
 )
 
 @Schema(description = "비동기 검사 상태", requiredProperties = ["id", "status", "version", "question", "retry_allowed", "failure_code"])
 data class PrecheckStateResponse(
     @field:Schema(description = "검사 UUID") val id: UUID,
-    @field:Schema(description = "검사 상태. CLEAR만 현재 원문의 제출 완료") val status: com.meetme.server.precheck.domain.PrecheckStatus,
+    @field:Schema(description = "CLEAR 해석 확정, RECEIVED 접수·해석 미확정, UNRESOLVED 새 버전 미접수") val status:
+        com.meetme.server.precheck.domain.PrecheckStatus,
     @field:Schema(description = "명령 CAS에 필요한 단조 증가 검사 버전") val version: Long,
     @field:Schema(description = "본인 선택 질문", nullable = true) val question: PrecheckQuestionResponse?,
     @field:JsonProperty("retry_allowed") @field:Schema(description = "현재 명시 재시도가 허용되는지") val retryAllowed: Boolean,
@@ -268,6 +274,8 @@ data class PrecheckQuestionResponse(
     @field:Schema(description = "질문 본문, 최대 160 코드포인트") val text: String,
     @field:JsonProperty("source_excerpt") @field:Schema(description = "원문에 실제 존재하는 모호 구절") val sourceExcerpt: String,
     @field:Schema(description = "명시 확정 가능한 두 전체 수정안") val options: List<PrecheckOptionResponse>,
+    @field:JsonProperty("answer_mode") @field:Schema(description = "A/B+직접 답변 또는 직접 답변만", allowableValues = ["CHOICE_OR_TEXT", "TEXT_ONLY"])
+    val answerMode: String = "CHOICE_OR_TEXT",
 )
 
 @Schema(description = "참여자가 확인 후 선택하는 전체 원문 제안", requiredProperties = ["id", "text", "proposed_text"])
@@ -293,7 +301,55 @@ data class PrecheckOutcomeResponse(
     @field:Schema(description = "최초 명령 당시 검사 상태") val status: com.meetme.server.precheck.domain.PrecheckStatus,
 )
 
-private fun PrecheckTextView.wire() = PrecheckTextResponse(revision, rawText, createdAt, referenceAt)
+private fun PrecheckTextView.wire() = PrecheckTextResponse(revision, rawText, createdAt, referenceAt, evidence?.wire())
+
+@Schema(
+    description = "원문 기준과 하나의 확정 보완 답변을 보존한 V2 근거",
+    requiredProperties = ["original_revision", "reference_at", "supplement", "interpretation", "unresolved_reason", "protocol"],
+)
+data class InputEvidenceResponse(
+    @field:JsonProperty("original_revision") val originalRevision: Int,
+    @field:JsonProperty("reference_at") val referenceAt: java.time.Instant,
+    @field:Schema(nullable = true) val supplement: InputSupplementResponse?,
+    val interpretation: com.meetme.server.shared.domain.InputInterpretation,
+    @field:JsonProperty("unresolved_reason") @field:Schema(nullable = true) val unresolvedReason: String?,
+    val protocol: String,
+)
+
+@Schema(
+    description = "원문을 바꾸지 않는 하나의 질문 대상과 명시 답변",
+    requiredProperties = [
+        "question_id", "source_revision", "source_excerpt", "source_start_code_point", "prompt",
+        "answer_text", "choice_id", "answered_at", "reference_at",
+    ],
+)
+data class InputSupplementResponse(
+    @field:JsonProperty("question_id") val questionId: UUID,
+    @field:JsonProperty("source_revision") val sourceRevision: Int,
+    @field:JsonProperty("source_excerpt") val sourceExcerpt: String,
+    @field:JsonProperty("source_start_code_point") val sourceStartCodePoint: Int,
+    val prompt: String,
+    @field:JsonProperty("answer_text") val answerText: String,
+    @field:JsonProperty("choice_id") @field:Schema(nullable = true) val choiceId: String?,
+    @field:JsonProperty("answered_at") val answeredAt: java.time.Instant,
+    @field:JsonProperty("reference_at") val referenceAt: java.time.Instant,
+)
+
+private fun InputEvidence.wire() =
+    InputEvidenceResponse(originalRevision, referenceAt, supplement?.wire(), interpretation, unresolvedReason, protocol)
+
+private fun InputSupplement.wire() =
+    InputSupplementResponse(
+        questionId,
+        sourceRevision,
+        sourceExcerpt,
+        sourceStartCodePoint,
+        prompt,
+        answerText,
+        choiceId,
+        answeredAt,
+        referenceAt,
+    )
 
 private fun PrecheckSnapshot.wire() =
     PrecheckResponse(
@@ -310,6 +366,7 @@ private fun PrecheckSnapshot.wire() =
                         q.prompt,
                         q.sourceExcerpt,
                         q.choices.map { PrecheckOptionResponse(it.id, it.label, it.proposedText) },
+                        if (q.choices.isEmpty()) "TEXT_ONLY" else "CHOICE_OR_TEXT",
                     )
                 },
                 c.retryAllowed,

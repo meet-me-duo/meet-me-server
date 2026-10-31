@@ -1,0 +1,88 @@
+{
+  "workItem": "issue176-v22-ddl-budget",
+  "recordedAt": "2026-10-31T07:20:09.529022+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/V22PlaceMigrationBudgetPostgresTest.kt",
+      "sha256": "be7569de6c599ea055da4462a18fa0a761aba949607e5dcff8f9e7a516599c32"
+    }
+  ],
+  "migrationFile": {
+    "path": "src/main/resources/db/migration/V22__preserve_unverified_candidate_place.sql",
+    "beforeSha256": "c7ee6aff1a9d33abf95427b4ecf0a58c13053f5bd2bc80938b82574a1ac5d155",
+    "greenSha256": "2e2aa1711a33676ea41801b64f93c0ed2d946105797724a288399097ffc6fcd6"
+  },
+  "counts": {
+    "tests": 3,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cases": [
+    {
+      "name": "V22B02 lock timeout rolls back earlier DDL and history then retry preserves old values()",
+      "seconds": "6.807",
+      "passed": true
+    },
+    {
+      "name": "V22B03 explicit cancellation rolls back earlier DDL and history then retry preserves old values()",
+      "seconds": "1.362",
+      "passed": true
+    },
+    {
+      "name": "V22B01 actual table DDL has finite budgets without leaking them to pooled sessions()",
+      "seconds": "1.04",
+      "passed": true
+    }
+  ],
+  "roleSeparation": {
+    "testDesign": "Independent test designer",
+    "productionSql": "Separate implementation owner",
+    "expectationsWeakened": false,
+    "testSourceUnchangedFromRed": true
+  },
+  "implementationDiff": "Only a comment and transaction-local lock5s/statement30s budgets are inserted; existing V22 DDL semantics remain byte-identical",
+  "negativeControl": {
+    "source": "Original pre-fix SQL without either deadline setting",
+    "caughtBy": [
+      "V22B01",
+      "V22B02"
+    ],
+    "observedFailures": 2,
+    "passingCancellationControl": "V22B03",
+    "repeatedPostGreenMutation": false
+  },
+  "independentReview": {
+    "blockedFutureCannotFalsePass": "Watchdog sets exceededBudget; finally releases blocker and joins actual completion; exceededBudget assertion always rejects an unbounded success",
+    "cancellationCannotFalsePass": "Select actual waiting migration PID; pg_cancel_backend true; completed result must carry PostgreSQL57014; compare every prior target column/check/function/trigger and history before retry",
+    "remainingLimitations": [
+      "Statement30s is observed in actual DDL, not exercised by a30s sleeping query",
+      "Seeded historical business values cover account/room/participant; relation-row compatibility is verified by separate existing persistence/migration tests",
+      "No production-scale lock/load, operating deployment or old-image rollback test"
+    ]
+  },
+  "execution": {
+    "combinedInvocationAlsoRuns": "Recommendation OpenAPI export, separately reported",
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "test",
+      "--tests",
+      "*V22PlaceMigrationBudgetPostgresTest",
+      "--tests",
+      "*RecommendationOpenApiExportPostgresTest"
+    ],
+    "exitCode": 0,
+    "providerKeysAndLiveFlagsUnset": true,
+    "nonloopbackGuardEnabled": true,
+    "deniedConnects": 0
+  },
+  "actualProviderRequests": 0,
+  "mapRequests": 0,
+  "operatingDbChanges": 0
+}

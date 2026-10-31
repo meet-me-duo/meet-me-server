@@ -1,10 +1,12 @@
 package com.meetme.server.precheck.adapter.output.provider
 
+import com.meetme.server.precheck.adapter.output.classification.TemporalClarificationRubric
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
 import com.meetme.server.precheck.domain.PrecheckChoice
+import com.meetme.server.shared.adapter.output.aihttp.toProviderEvidence
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
@@ -28,7 +30,7 @@ internal class PrecheckProviderContract(
                 "service_tier" to "default",
                 "reasoning" to mapOf("effort" to "low"),
                 "max_output_tokens" to 2048,
-                "instructions" to INSTRUCTIONS,
+                "instructions" to instructions(request),
                 "input" to
                     mapper.writeValueAsString(
                         mapOf(
@@ -39,16 +41,16 @@ internal class PrecheckProviderContract(
                             "locale" to request.locale,
                             "search_start_date" to request.searchStartDate.toString(),
                             "search_end_date" to request.searchEndDate.toString(),
-                        ),
+                        ).let { if (request.evidence == null) it else it + ("evidence" to request.evidence.toProviderEvidence()) },
                     ),
                 "text" to
                     mapOf(
                         "format" to
                             mapOf(
                                 "type" to "json_schema",
-                                "name" to "meet_me_personal_check_v1",
+                                "name" to if (request.evidence == null) "meet_me_personal_check_v1" else "meet_me_personal_check_v2",
                                 "strict" to true,
-                                "schema" to (RESPONSE_SCHEMA + ("required" to PAYLOAD_KEYS.toList())),
+                                "schema" to (schema(request) + ("required" to PAYLOAD_KEYS.toList())),
                             ),
                     ),
             ),
@@ -156,10 +158,10 @@ internal class PrecheckProviderContract(
                 "locale" to request.locale,
                 "search_start_date" to request.searchStartDate.toString(),
                 "search_end_date" to request.searchEndDate.toString(),
-            )
+            ).let { if (request.evidence == null) it else it + ("evidence" to request.evidence.toProviderEvidence()) }
         return mapper.writeValueAsBytes(
             mapOf(
-                "systemInstruction" to mapOf("parts" to listOf(mapOf("text" to INSTRUCTIONS))),
+                "systemInstruction" to mapOf("parts" to listOf(mapOf("text" to instructions(request)))),
                 "contents" to listOf(mapOf("role" to "user", "parts" to listOf(mapOf("text" to mapper.writeValueAsString(input))))),
                 "generationConfig" to
                     mapOf(
@@ -167,7 +169,7 @@ internal class PrecheckProviderContract(
                         "maxOutputTokens" to 2048,
                         "thinkingConfig" to if (runtime) mapOf("thinkingLevel" to "LOW") else mapOf("thinkingBudget" to 0),
                         "responseMimeType" to "application/json",
-                        "responseJsonSchema" to RESPONSE_SCHEMA,
+                        "responseJsonSchema" to schema(request),
                     ),
             ),
         )
@@ -243,7 +245,9 @@ internal class PrecheckProviderContract(
             validateThoughtSignature(part.path("thoughtSignature"))
             val payload: JsonNode = reader.readValue(text(part.path("text")))
             if (!payload.isObject || !payload.propertyNames().all { it in PAYLOAD_KEYS }) invalid()
+            if (request.evidence != null && payload.propertyNames().toSet() != PAYLOAD_KEYS) invalid()
             val verdict = PrecheckVerdict.valueOf(text(payload.path("verdict")))
+            if (verdict == PrecheckVerdict.UNRESOLVED || (request.evidence != null && verdict == PrecheckVerdict.NEEDS_EDIT)) invalid()
             var prompt: String? = null
             var sourceExcerpt: String? = null
             val choices: List<PrecheckChoice> =
@@ -251,8 +255,13 @@ internal class PrecheckProviderContract(
                     prompt = boundedText(payload.path("prompt"), 160)
                     sourceExcerpt = boundedText(payload.path("sourceExcerpt"), 200)
                     if (!request.rawText.contains(sourceExcerpt)) invalid()
+                    if (request.evidence != null &&
+                        request.rawText.indexOf(sourceExcerpt) != request.rawText.lastIndexOf(sourceExcerpt)
+                    ) {
+                        invalid()
+                    }
                     val rawChoices = payload.path("choices")
-                    if (!rawChoices.isArray || rawChoices.size() != 2) invalid()
+                    if (!rawChoices.isArray || (rawChoices.size() != 2 && !(request.evidence != null && rawChoices.isEmpty))) invalid()
                     rawChoices
                         .values()
                         .map { choice ->
@@ -263,9 +272,12 @@ internal class PrecheckProviderContract(
                                 boundedText(choice.path("proposedText"), 500),
                             )
                         }.also { values ->
-                            if (values.map { it.id }.toSet() != setOf("A", "B") ||
-                                values.map { it.proposedText }.toSet().size != 2 ||
-                                values.any { it.proposedText == request.rawText }
+                            if ((values.isNotEmpty() || request.evidence == null) &&
+                                (
+                                    values.map { it.id }.toSet() != setOf("A", "B") ||
+                                        values.map { it.proposedText }.toSet().size != 2 ||
+                                        values.any { it.proposedText == request.rawText }
+                                )
                             ) {
                                 invalid()
                             }
@@ -293,6 +305,24 @@ internal class PrecheckProviderContract(
             throw exception
         } catch (_: RuntimeException) {
             invalid()
+        }
+
+    private fun instructions(request: PrecheckProviderRequest): String =
+        if (request.evidence == null) INSTRUCTIONS else TemporalClarificationRubric.instructions + "\n" + V2_GENERATION_INSTRUCTIONS
+
+    private fun schema(request: PrecheckProviderRequest): Map<String, Any> =
+        if (request.evidence == null) {
+            RESPONSE_SCHEMA
+        } else {
+            RESPONSE_SCHEMA +
+                mapOf(
+                    "required" to PAYLOAD_KEYS.toList(),
+                    "properties" to
+                        (
+                            RESPONSE_SCHEMA.getValue("properties") as Map<*, *> +
+                                ("verdict" to mapOf("type" to "string", "enum" to listOf("CLEAR", "NEEDS_CHOICE")))
+                        ),
+                )
         }
 
     /** Validate optional transport bytes, then discard them without entering the domain result. */
@@ -324,6 +354,12 @@ internal class PrecheckProviderContract(
     private fun invalid(): Nothing = throw PrecheckProviderException("INVALID_RESPONSE")
 
     companion object {
+        private val V2_GENERATION_INSTRUCTIONS =
+            """
+            Generate at most one specific temporal clarification, or return CLEAR if clarification is unnecessary. Return all four required fields. For CLEAR use prompt=null, sourceExcerpt=null, choices=[]. Never return generic NEEDS_EDIT.
+            For NEEDS_CHOICE copy an exact unique original sourceExcerpt of 1..200 Unicode codepoints and ask one concrete question of 1..160. If two safe grounded interpretations exist, offer exactly A/B with labels of 1..160 and proposedText of 1..500. Each proposedText is ONLY a scoped answer to this question, not a rewritten complete original. It must preserve all unrelated original conditions through the evidence contract. Do not offer a both/neither option.
+            If safe A/B answers would invent a personal fact or permission, still ask the specific question but return choices=[] so the participant can type an answer. Use absolute dates in offered answers where required by the original reference anchor. A supplement already present cannot trigger a second question: return CLEAR only if resolved; unresolved follow-up is retained by the caller for final interpretation.
+            """.trimIndent()
         private val PAYLOAD_KEYS = setOf("verdict", "prompt", "sourceExcerpt", "choices")
         private val INSTRUCTIONS =
             """

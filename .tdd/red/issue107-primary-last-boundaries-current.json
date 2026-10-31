@@ -1,0 +1,78 @@
+{
+  "workItem": "issue107-primary-last-boundaries-current-bytes",
+  "initialRedRecord": ".tdd/red/issue107-primary-last-boundaries.json",
+  "note": "Initial 8-case TODO RED hashes retained unchanged; later explicit file-existence assertions strengthen the oracles. The current hashes below were executed in these intentional-fault assertion RED runs.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeApplicationContractTest.kt",
+      "sha256": "02cab2a00118b3a8f18c792966618dc646b008005abe9c202ddd523355ac8c87"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeFailureEvidenceContractTest.kt",
+      "sha256": "4415080b49dc9d9f2fe7a8d8c163534b7d41161f7d005034a1e351eb1227b747"
+    }
+  ],
+  "runs": [
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-omit-finally-report-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 4,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "successful flow writes one safe completed result without copying raw flow payloads()",
+            "flow failure always leaves one safe report and propagates the exact primary exception()",
+            "snapshot failure still leaves a report and cannot replace a stopped flow()",
+            "a failed first flow permanently consumes its approved manifest claim()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeApplicationContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-actual-http-poll-safety-bypass-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "diagnostic context freezes received HTTP evidence using original authority and zero provider calls()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    }
+  ],
+  "expectedFailureCategory": "INTENTIONAL_FAULT_ASSERTION_RED",
+  "allSourceRestoresExact": true,
+  "providerCalls": 0
+}

@@ -1,0 +1,222 @@
+{
+  "files": {
+    "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeDiagnostic.kt": "41ee6a75d8535bc60b36520be52eb9449df57f69fc784b30670f894b56bae135",
+    "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiTechnicalSmokeTest.kt": "e38fa1bab4fddf27ebd4e11ac1e8ad6ae2dccebfd17d5d5e844fb9a66fa23a3d"
+  },
+  "testSha256": {
+    "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeFailureEvidenceContractTest.kt": "4415080b49dc9d9f2fe7a8d8c163534b7d41161f7d005034a1e351eb1227b747",
+    "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeApplicationContractTest.kt": "02cab2a00118b3a8f18c792966618dc646b008005abe9c202ddd523355ac8c87"
+  },
+  "injections": [
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-omit-finally-report-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 4,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "successful flow writes one safe completed result without copying raw flow payloads()",
+            "flow failure always leaves one safe report and propagates the exact primary exception()",
+            "snapshot failure still leaves a report and cannot replace a stopped flow()",
+            "a failed first flow permanently consumes its approved manifest claim()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeApplicationContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-actual-http-poll-safety-bypass-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "diagnostic context freezes received HTTP evidence using original authority and zero provider calls()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-omit-output-binding-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "output mismatch rejects the actual claim before any flow can start()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-permit-manifest-reuse-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "a failed first flow permanently consumes its approved manifest claim()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    }
+  ],
+  "restored": {
+    "exitCode": 0,
+    "command": [
+      "local-only-evidence/analysis-gradle",
+      "test",
+      "--tests",
+      "*GeminiObservationFailureContractTest",
+      "--tests",
+      "*GeminiExpiredObservationContractTest",
+      "--tests",
+      "*LiveEvaluationSafetyContractTest",
+      "--tests",
+      "*LiveEvaluationAdmissionContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeApplicationContractTest",
+      "--tests",
+      "*LiveEvaluationCompletionBoundaryContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+    ],
+    "log": "local-only-evidence/followup-last-final-81-restored-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiObservationFailureContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiExpiredObservationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationCompletionBoundaryContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      }
+    ]
+  },
+  "exactRestore": true,
+  "providerCalls": 0
+}

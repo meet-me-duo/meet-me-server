@@ -199,7 +199,7 @@ data class RoomResponse(
     @field:Schema(description = "본인 보완 질문 API 지원 표지. 권한은 별도 검증", allowableValues = ["owner-clarification-v1"])
     val clarificationProtocol: String = "owner-clarification-v1",
     @field:JsonProperty("submission_protocol")
-    @field:Schema(description = "방 생성 시 고정된 제출 확인 흐름", allowableValues = ["LEGACY", "PRE_SUBMIT_V1"])
+    @field:Schema(description = "방 생성 시 고정된 제출 확인 흐름", allowableValues = ["LEGACY", "PRE_SUBMIT_V1", "PRE_SUBMIT_V2"])
     val submissionProtocol: String = "LEGACY",
 ) {
     @field:JsonProperty("review_prompt_supported")

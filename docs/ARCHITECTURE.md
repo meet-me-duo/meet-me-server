@@ -17,6 +17,12 @@ Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 
 
 계정·소유권은 ADR-051과 위 계약을 기준으로 하며 아래 익명 제출 MVP 구조보다 우선한다. 외부 설정은 [운영 안내](USER_INTERVENTION.md)를 따른다.
 
+## 격리 실험: 장소 미검증 시간 후보 (ADR-066)
+
+새 분석의 application 매핑은 장소 제한 없음·미검증·기존 미해석 상태를 분리한다. Domain은 명시된 AREA/지역 제약의 교집합을 계속 검사하고, 미검증 참여자는 원래 시간 교집합 안의 잠정 대면 후보에만 포함한다. 순위와 최대3개 시간안 선택, 최소2명 및 방 방식은 유지한다. 미확인 참여자의 내부 식별자는 후보/variant와 함께 보존하고, V22는 기존 참여자 관계 테이블에 `place_unverified`만 추가한다. 선택은 그 불변 variant를 참조하므로 확정 후에도 검증 완료로 바뀌지 않는다. 기존 행은 false 기본값으로 과거 판정을 보존하며 재계산하지 않는다.
+
+HTTP는 `attendance_confirmed`와 variant의 `summary`를 추가한다. false는 참석 인원이 시간 조건 기준임을 나타낸다. 공개 설명은 시간과 일반적인 미검증 사유만 제공하고 타인의 원문·개별 제한은 기존 소유권 경계를 유지한다. UI는 기존 후보 설명·참석 문구를 사용하며 새 배지/경고 영역을 추가하지 않는다. 지도/API/도보 환산/운영 timeout은 변경하지 않는다. 실제 도보 충족과 실제 모델 정확성은 검증 범위 밖이다.
+
 ## 1. 목적과 범위
 
 이 문서는 `meet-me-server`의 기술적 구조, 컴포넌트 책임, 의존성 방향과 외부 시스템 경계를 정의한다. 이 저장소는 백엔드만 포함하며 프론트엔드는 별도 저장소에서 개발한다.
@@ -246,6 +252,10 @@ Calendar 어댑터는 Google API DTO와 토큰을 내부 도메인에 노출하�
 14. 후보 조회 시 구조화 결과를 입력으로 손실 없는 요약 형태를 선택하고 MessageSource 템플릿 기반 자연어 요약을 생성한 뒤 결과 및 주최자 전용 미반영 입력을 주최자에게 제공한다.
 
 제출 MVP는 Kakao Local을 포함한 지도 API를 호출하지 않는다. Gemini는 방 전체의 명시 장소를 비교하여 인접 역 또는 대략 2km 이내의 실용적인 만남 근방에 같은 `AREA_n` 키를 부여하고, 서로 멀면 다른 키를 부여한다. 참여자 내부 키 집합은 대안이고, 대면 후보는 참여자 사이 키 교집합이 있을 때만 생성한다. 기존 Kakao 단계에서 `ANALYSIS_DELAYED`가 된 실행은 V7 migration으로 재개 단계를 `STRUCTURING`으로 바꿔 새 Gemini 계약으로 다시 처리한다.
+
+이동 제약의 미지원 진단은 보존된 `StructuredCondition.TravelConstraint`에서 도출한다. `PlaceConstraintDiagnostics`는 새 매칭 실행의 `PARTIAL`, 주최자 전용 사유 `UNSUPPORTED_TRAVEL_CONSTRAINT`/`PLACE`, 일부 조건이 미반영된 제출 ID의 중복 없는 집계에 같은 기준을 적용한다. 거절 코드와 기존 장소 실패 사유의 우선순위, 유효 시간, 필수 장소와 선호의 구분은 유지한다. 지도 실패 snapshot으로 위장하거나 표현을 재작성하지 않으며 DB migration과 공급자 schema 변경은 없다. `applied_submissions`는 완전 반영 제출 수이므로 일부 장소 조건이 미반영돼도 해당 참여자의 유효 시간은 온라인 추천에 기여할 수 있다.
+
+기존 완료·확정 결과 불변 계약을 위해 조회에서 추가하는 이동 진단은 저장된 품질이 `PARTIAL`인 분석에만 적용한다. 과거 `COMPLETE` 결과의 품질·집계·후보·선택은 변경하지 않으며, 이 수정이 과거 결과의 장소 문제까지 소급 해결한다고 주장하지 않는다. 특정 가능한 기준점의 이동 제한을 어떤 후보까지 허용할지는 별도 결정 대상이다. 현재 `AREA_n`은 대표 지역 호환성이고 실제 도보 시간 충족의 증거가 아니다.
 
 Plan A, B, C는 종류별 최대 한 후보로 저장하고 카드 안에 모든 유효 실제 시간 구간을 둔다. Plan C는 전원 시간 교집합이 없을 때만 최소 2명을 유지하며 `N-1`, `N-2` 순으로 탐색한다. 동률은 공통 가능 총시간, 가장 이른 시작, 정렬된 내부 참여자 식별자 순으로 해소한다. 정상 계산 후 후보가 없으면 작업은 빈 후보 집합으로 `COMPLETED`되고 공개 상태는 `NO_MATCH`다.
 
@@ -491,6 +501,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - 내부 지표는 프로세스 내 비영속 집계이며, 실행 중 프로세스가 중단되면 종결 관찰이 누락될 수 있으므로 영속 실행 이력이나 공급자 청구 원장으로 사용하지 않는다.
 - 새 `outcome`은 `GeminiBatchProcessor`의 로컬 구조화 처리 경로의 종결이다. `COMPLETED`는 해당 경로의 정상 종결이며 후보 게시 성공이나 방의 READY/COMPLETE 상태를 보증하지 않는다. `ANALYSIS_DELAYED`도 현재 방 상태를 재조회한 값은 아니다. 최종 매칭 결과는 별도 matching 지표와 영속 상태로 확인한다. `elapsed`에는 동기 후속 matching 처리 시간도 포함된다.
 - 지표 및 Loki label에는 `roomId`, `userId`, `batchId`, 원문, 요청 파라미터처럼 cardinality가 높거나 민감한 값을 사용하지 않는다. 진단에 필요한 상관관계 ID와 이벤트·배치 참조는 접근 통제된 로그 본문에만 넣고 원본 자연어·Calendar 일정·좌표·OAuth 토큰·외부 API 자격 증명은 기록하지 않는다.
+- 격리 실험의 timeout/cancel 진단은 선택적 `ParserTransportDiagnosticPort`로 기존 전송 관측과 분리한다. 기본 bean은 없고, 기간·순서·고정 enum만 메모리 sidecar에 남긴다. 기존 transport DTO/DB와 시간 제한·권한·판정 계약은 유지하며, recorder 실패는 결과를 바꾸지 않는다. shared HTTP gate의 선택적 실험 hook은 원래 source/권한 검사를 유지한 채 원문 없는 operation/opaque ID만 전달하며 기본값은 no-op이다. SDK 시작 관측은 dispatch 권한의 증거가 아니며, 실제 헤더 송신은 기존 network 검사를 거친다. 실제 적용 상태와 불완전 관측·원인 단정의 한계는 [격리 진단 검증 기록](verification/experimental-timeout-cancel-telemetry.md)에 구분한다.
 - Post-MVP에도 Grafana·Loki·Prometheus를 자체 운영하지 않고 Grafana Cloud의 관리형 저장·조회·알림을 사용한다. Alloy 배치는 운영 컴퓨팅 선택 후 확정한다.
 - MVP에서는 분산 tracing 저장소를 도입하지 않는다. 서비스 분리나 비동기 경로의 추적 필요성이 확인되면 OpenTelemetry와 Grafana Cloud Traces 도입을 별도 결정한다.
 - 미반영 원문 열람은 주최자 전용 접근 제어와 감사 가능한 조회 경계를 갖는다.
@@ -701,3 +712,12 @@ OAuth 필수 release의 공식 renderer는 선택적 `operations-enabled` 설정
 `OperatorAccessPolicy`는 기존 활성화·accountId 허용 목록 판정을 공유하며 운영 조회 서비스와 계정 HTTP 응답이 같은 조건을 사용한다. `AccountResponse.capabilities.canViewOperations`는 me와 refresh 응답에 동일하게 포함되고 refresh에서는 회전된 세션의 principal을 기준으로 계산한다. 실제 조회의 인증·인가·감사·no-store는 유지하며 메뉴 capability로 보호 경계를 대체하지 않는다.
 
 renderer는 승인된 두 계정을 위해 엄격한 SecureString의 쉼표 구분 UUID 1~2개를 전달하고 기존 한 계정과 OFF 환경에 호환된다. 비정상 목록은 원자 교체 전에 거부한다. account_users/participants 스키마와 JWT에는 변경이 없고 HOST/MEMBER는 계속 방별 권한이다.
+
+### 원문·보완 근거를 보존하는 격리 V2 실험 (ADR-064)
+
+기본 OFF인 meetme.precheck.evidence-enabled를 켠 인스턴스의 새 방만 PRE_SUBMIT_V2를 기록한다. V21의 candidate/version input_evidence JSONB는 하나의 원문 기준과 하나의 대상 답변, 해석 상태를 보존한다. CLEAR와 미확정 RECEIVED 모두 submission version을 만들며 기존 마감은 그 ID를 동결한다. 개인/최종 source fencing은 동일 근거를 포함하고 최종 전송 검증은 동결 version을 읽는다. 최종 자연어 adapter는 전체 원문·근거를 기존 조건 schema로 구조화하고 기존 서버 matching/recommendation이 후보를 계산한다. 새 V2 주최자 진단만 최종 원문·답변을 반환하고 기존 V1 비공개 계약은 보존한다. 실험 가정과 운영 전 결정·롤백은 [V2 실험 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다.
+
+
+### 격리 V2의 라벨 중심 개인 재확인 (ADR-065)
+
+V2 evidence가 있는 Jev 요청은 유효한 Choice 의미 라벨을 보존하고 confidence/확률은 관측 데이터로 유지한다. V1의 confidence 정규화와 동작 기준값은 기존대로다. V2 TwoStage는 semanticAssessment가 있으면 이를 읽고 없으면 assessment를 사용한다. 첫 CLEAR는 확정 종료, NEEDS_REVIEW/INDETERMINATE는 같은15초 잔여 안에서 원본 Luna 생성기로 재확인한다. supplement가 이미 있으면 추가 생성 없이 CLEAR 또는 미확정 접수한다. wire 유효성·기술 실패·source fencing·CAS·마감 불변 version은 유지한다. 공개 API·DB migration·생성 prompt/schema·후보 계산·웹 디자인 변경은 없다. 상세 상태와 별도 실모델 검증 한계는 [V2 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다.

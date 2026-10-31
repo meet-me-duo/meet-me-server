@@ -187,6 +187,8 @@ class RecommendationController(
                             variant.partialAttendance,
                             variant.place?.let(CandidatePlaceResponse::from),
                             variant.excludedParticipantNames,
+                            variant.attendanceConfirmed,
+                            variant.summary,
                         )
                     },
                     option.summary,

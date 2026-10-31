@@ -1,0 +1,33 @@
+{
+  "workItem": "issue107-cumulative-precheck-snapshot",
+  "sourceRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativePrecheckSnapshotPostgresTest.kt",
+      "sha256": "c2995c6389f0c5a14b8e96dd5e24fc940247aa0c3671a4ce988d150a55a5c255"
+    }
+  ],
+  "command": [
+    "local-only-evidence/analysis-gradle",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*CumulativePrecheckSnapshotPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.experiment.CumulativePrecheckSnapshotPostgresTest.snapshot of a present empty execution table is a known empty result()",
+    "com.meetme.server.experiment.CumulativePrecheckSnapshotPostgresTest.snapshot retains composite identity failure facts and nullable usage across generations()"
+  ],
+  "expectedFailureCategory": "INVALID_SCHEMA_COLUMN: V16 precheck_executions primary key is (check_id,generation); unchanged reporter SELECT id fails with PostgreSQL undefined column",
+  "recordedAt": "2026-10-29T16:51:04.119972+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-cumulative-precheck-snapshot.log",
+  "totals": {
+    "tests": 2,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0
+  },
+  "providerCalls": 0,
+  "environmentIsolation": "All MEETME_* and GEMINI_API_KEY/OPENAI_API_KEY/TYPESAFE_API_KEY removed; analysis-gradle forces managed local Docker socket; fresh PostgreSQL18 database only; Flyway V1..V21; no Spring/evaluation settings/app/model execution",
+  "oracle": "V16 DDL composite identity; preserves two generations, provider/model/failure/nullable usage/finished_at; existing empty table returns known empty"
+}

@@ -1,29 +1,53 @@
 package com.meetme.server.coordination.adapter.input.web
 
+import com.meetme.server.coordination.adapter.output.persistence.HistoricalCoordinationRunRepository
+import com.meetme.server.coordination.adapter.output.persistence.HistoricalRecommendationRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.shared.domain.CoordinationRunId
+import com.meetme.server.submission.adapter.output.persistence.HistoricalSubmissionRepository
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
+import com.meetme.server.submission.application.port.output.SubmissionRepository
 import com.meetme.server.submission.domain.StructuredCondition
 import com.meetme.server.submission.domain.StructuredSubmissionResult
 import com.meetme.server.submission.domain.TimePolarity
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
+import org.komapper.jdbc.JdbcDatabase
+import org.postgresql.util.PSQLException
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
+import org.springframework.context.annotation.Primary
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.http.MediaType
+import org.springframework.jdbc.core.ConnectionCallback
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.postgresql.PostgreSQLContainer
+import java.sql.Timestamp
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 /** FR-011 / ADR-060: upgrading the attendee floor preserves historical selected and legacy data. */
+@Import(RecommendationPartialConfirmationMigrationPostgresTest.HistoricalStoragePhase::class)
 class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPostgresFixture() {
+    @Autowired private lateinit var historicalSubmissions: HistoricalSubmissionRepository
+
+    @Autowired private lateinit var historicalRuns: HistoricalCoordinationRunRepository
+
+    @Autowired private lateinit var historicalRecommendations: HistoricalRecommendationRepository
+
     @Autowired private lateinit var partialStructured: StructuredSubmissionRepository
 
     @Autowired private lateinit var partialRuns: CoordinationRunRepository
@@ -55,12 +79,32 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         val pendingOption = items(pendingRecommendations, "options").single()
         assertEquals(2, (items(pendingOption, "variants").single().getValue("attendance_count") as Number).toInt())
         val before = snapshot()
+        // Fixture preparation uses the explicit pre-V21 store, never a current-reader schema fallback.
+        val oldFloor = assertFailsWith<DataIntegrityViolationException> { verifyPendingSelection(pending, pendingOption) }
+        assertEquals("23514", (oldFloor.mostSpecificCause as PSQLException).sqlState)
+        assertEquals(before, snapshot(), "The rejected historical probe must leave every business row unchanged")
 
         val upgrade = flyway("18")
         upgrade.migrate()
         assertEquals("18", currentVersion())
         upgrade.validate()
         assertEquals(before, snapshot(), "Migration must not recalculate published variants or rewrite historical business rows")
+        verifyPendingSelection(pending, pendingOption)
+        assertEquals(before, snapshot(), "The successful V18 guard probe is rolled back without creating a selection")
+
+        // Current production readers require V22; only use them after the historical V18 proof is complete.
+        val current = flyway()
+        current.migrate()
+        current.validate()
+        assertEquals("22", currentVersion())
+        historicalSubmissions.useCurrentSchema()
+        historicalRecommendations.useCurrentSchema()
+        historicalRuns.useCurrentSchema()
+        assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM candidate_participants WHERE place_unverified", Int::class.java))
+        assertEquals(
+            0,
+            jdbc.queryForObject("SELECT count(*) FROM recommendation_variant_participants WHERE place_unverified", Int::class.java),
+        )
         assertEquals(historicalResult, result(historical.member))
         assertEquals(legacyResult, result(legacy.member))
         assertEquals(pendingRecommendations, recommendations(pending.host))
@@ -85,6 +129,70 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         )
         assertEquals(2, jdbc.queryForObject("SELECT count(*) FROM recommendation_selections", Int::class.java))
         assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM final_confirmations", Int::class.java))
+    }
+
+    private fun verifyPendingSelection(
+        pending: CompletedCorrectionFixture,
+        option: Map<String, Any?>,
+    ) {
+        val variant = items(option, "variants").single()
+        val window = child(option, "time_range")
+        jdbc.execute(
+            ConnectionCallback<Unit> { connection ->
+                val autoCommit = connection.autoCommit
+                connection.autoCommit = false
+                try {
+                    connection
+                        .prepareStatement(
+                            "INSERT INTO recommendation_selections(" +
+                                "coordination_run_id,room_id,option_id,variant_id,start_at,end_at,confirmed_at) " +
+                                "SELECT ?,?,?,?,?,?,b.fixed_at FROM submission_batches b " +
+                                "JOIN coordination_runs r ON r.batch_id=b.id WHERE r.id=?",
+                        ).use { statement ->
+                            statement.setObject(1, pending.sourceRun)
+                            statement.setObject(2, pending.roomId)
+                            statement.setObject(3, UUID.fromString(option.getValue("option_id").toString()))
+                            statement.setObject(4, UUID.fromString(variant.getValue("variant_id").toString()))
+                            statement.setTimestamp(5, Timestamp.from(Instant.parse(window.getValue("start_at").toString())))
+                            statement.setTimestamp(6, Timestamp.from(Instant.parse(window.getValue("end_at").toString())))
+                            statement.setObject(7, pending.sourceRun)
+                            assertEquals(
+                                1,
+                                statement.executeUpdate(),
+                                "The same two-of-five selection must pass the V18 database guard",
+                            )
+                        }
+                    connection.createStatement().use { it.execute("SET CONSTRAINTS ALL IMMEDIATE") }
+                } finally {
+                    connection.rollback()
+                    connection.autoCommit = autoCommit
+                }
+            },
+        )
+    }
+
+    @TestConfiguration(proxyBeanMethods = false)
+    class HistoricalStoragePhase {
+        @Bean @Primary
+        fun historicalRecommendationRepository(
+            jdbc: JdbcTemplate,
+            @Qualifier("jdbcRecommendationRepository") current: RecommendationRepository,
+        ): HistoricalRecommendationRepository = HistoricalRecommendationRepository(jdbc, current)
+
+        @Bean @Primary
+        fun historicalCoordinationRunRepository(
+            database: JdbcDatabase,
+            jdbc: JdbcTemplate,
+            recommendations: HistoricalRecommendationRepository,
+            @Qualifier("komapperCoordinationRunRepository") current: CoordinationRunRepository,
+        ): HistoricalCoordinationRunRepository = HistoricalCoordinationRunRepository(database, jdbc, recommendations, current)
+
+        @Bean @Primary
+        fun historicalSubmissionRepository(
+            database: JdbcDatabase,
+            jdbc: JdbcTemplate,
+            @Qualifier("komapperSubmissionRepository") current: SubmissionRepository,
+        ): HistoricalSubmissionRepository = HistoricalSubmissionRepository(database, jdbc, current)
     }
 
     private fun snapshot(): Map<String, List<String>> =

@@ -1,0 +1,157 @@
+{
+  "workItem": "issue107-conditional-place-candidates",
+  "reviewedAt": "2026-10-31T03:09:50.169503+00:00",
+  "role": "independent test designer and implementation reviewer /root/conditional_place_spec",
+  "result": "PASS",
+  "p1": 0,
+  "p2": 0,
+  "sourceFingerprint": "f7599a1ac881c2bc8a0b43e86a456324c38913381ad5fd5074203e6d78db57a6",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/ConditionalPlaceCandidateContractTest.kt",
+      "sha256": "87f11d1a93e8543a4e86f3cc24fe5dcfdc5ce784b23944660cdac5d143ead889"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ConditionalPlacePersistenceContractTest.kt",
+      "sha256": "4ead3c46803ed89b8c80ce3e56c3344413500585a000c95fd62bcbf43e057674"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/UnappliedTravelConstraintContractTest.kt",
+      "sha256": "6f0f0b7868e7303b07194335147ae0af90b60128f939f50d646f929dc02bb64e"
+    }
+  ],
+  "focused": {
+    "passed": 57,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "resolvedFindings": [
+    "multiple shared AREA variants preserved",
+    "single known geo region plus wildcard included"
+  ],
+  "mutations": [
+    {
+      "mutation": "fi-drop-pending",
+      "tests": 16,
+      "failures": [
+        {
+          "test": "CP14 fifty simultaneous uncertain origins retain one maximal option with bounded work()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001), ParticipantId(value=00000000-0000-0000-0000-00000000"
+        },
+        {
+          "test": "CP10 either mode retains both permitted modes and only in person attendance stays conditional()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP11 known area conflict retains a compatible pair and never invents a full attendance group()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP16 every shared known area remains a separate variant beside unverified travel()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP01 shared hard area and unverified travel retain an in person time candidate without confirming attendance()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP12 unknown origin does not erase the known areas conflict when constructing partial groups()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000003)]> but was: <[]>"
+        },
+        {
+          "test": "CP07 known alternatives still intersect before marking travel as unverified()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP15 one known geographic region remains binding beside an uncertain origin()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000002)]> but was: <[]>"
+        },
+        {
+          "test": "CP02 unknown personal origin and unrestricted peer preserve time without inventing a place()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-known-conflict",
+      "tests": 16,
+      "failures": [
+        {
+          "test": "CP11 known area conflict retains a compatible pair and never invents a full attendance group()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001), ParticipantId(value=00000000-0000-0000-0000-00000000"
+        },
+        {
+          "test": "CP03 disjoint known hard areas remain incompatible even if both travel restrictions are unverified()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[]> but was: <[DeterministicCandidate(planType=A, meetingMode=IN_PERSON, participantIds=[ParticipantId(value=000"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-read-pending",
+      "tests": 5,
+      "failures": [
+        {
+          "test": "CPP02 selecting and rereading a time leaves actual in person attendance unverified()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <false> but was: <true>"
+        },
+        {
+          "test": "CPP03 a time only in person proposal persists without inventing a venue or switching online()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <false> but was: <true>"
+        },
+        {
+          "test": "CPP04 old SQL writers cannot clear uncertainty after confirmation in either stored projection()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <false> but was: <true>"
+        },
+        {
+          "test": "CPP01 unverified participants round trip in legacy and recommendation projections without changing frozen restrictions()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=42317336-cc48-44c3-be2e-7efad8db04be)]> but was: <[]>"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-remote-bit",
+      "tests": 5,
+      "failures": [
+        {
+          "test": "CPP05 database rejects offline uncertainty attached to a newly inserted remote participant()",
+          "message": "org.opentest4j.AssertionFailedError: Expected an exception of class org.springframework.dao.DataAccessException to be thrown, but was completed successfully wit"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-update-bit",
+      "tests": 5,
+      "failures": [
+        {
+          "test": "CPP04 old SQL writers cannot clear uncertainty after confirmation in either stored projection()",
+          "message": "org.opentest4j.AssertionFailedError: Expected an exception of class org.springframework.dao.DataAccessException to be thrown, but was completed successfully wit"
+        }
+      ]
+    }
+  ],
+  "scope": [
+    "known constraints/time intersections remain binding",
+    "no-place vs unverified vs legacy distinction",
+    "privacy safe candidate and saved summaries",
+    "pending state persistence/confirmation/immutability",
+    "no new badges/automatic remote conversion"
+  ],
+  "limits": [
+    "real provider semantic extraction",
+    "actual walking/travel feasibility",
+    "source-mode SQL tampering/delete-reinsert existing DB writer trust boundary",
+    "libcconnect guard not OS-wide DNS/syscall/daemon isolation"
+  ],
+  "sourceFiles": 666,
+  "finalWhole": {
+    "passed": 2614,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 17
+  },
+  "historicalFocusedPassed": 14,
+  "firstFullFixesTestOnly": true,
+  "wholeEvidence": "local-only-evidence/final-result.json",
+  "independentFinalAudit": "Actual final XML, skips, source666, protected19/artifacts4, workerguard, historical14 and saved response proof independently checked by /root/conditional_place_spec"
+}

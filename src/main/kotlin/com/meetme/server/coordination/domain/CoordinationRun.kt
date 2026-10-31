@@ -47,7 +47,14 @@ data class MeetingCandidate(
     val participantIds: List<ParticipantId> = emptyList(),
     val totalParticipants: Int = participantIds.size,
     val place: CandidatePlace? = null,
-)
+    val unverifiedPlaceParticipantIds: List<ParticipantId> = emptyList(),
+) {
+    init {
+        require(unverifiedPlaceParticipantIds.distinct() == unverifiedPlaceParticipantIds)
+        require(participantIds.containsAll(unverifiedPlaceParticipantIds))
+        require(meetingMode == MeetingMode.IN_PERSON || unverifiedPlaceParticipantIds.isEmpty())
+    }
+}
 
 data class CandidatePlace(
     val displayName: String,

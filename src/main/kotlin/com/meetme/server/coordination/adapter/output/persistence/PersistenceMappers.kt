@@ -43,7 +43,13 @@ object PersistenceMappers {
         val candidateParticipants =
             domain.candidates.flatMap { candidate ->
                 candidate.participantIds.map {
-                    CandidateParticipantRecord(candidate.id.value, it.value, domain.id.value, domain.roomId.value)
+                    CandidateParticipantRecord(
+                        candidate.id.value,
+                        it.value,
+                        domain.id.value,
+                        domain.roomId.value,
+                        it in candidate.unverifiedPlaceParticipantIds,
+                    )
                 }
             }
         val ranges =
@@ -99,6 +105,11 @@ object PersistenceMappers {
                     participantIds =
                         records.candidateParticipants
                             .filter { it.candidateId == candidate.id }
+                            .map { ParticipantId(it.participantId) }
+                            .sortedBy { it.value.toString() },
+                    unverifiedPlaceParticipantIds =
+                        records.candidateParticipants
+                            .filter { it.candidateId == candidate.id && it.placeUnverified }
                             .map { ParticipantId(it.participantId) }
                             .sortedBy { it.value.toString() },
                     totalParticipants = candidate.totalParticipants,

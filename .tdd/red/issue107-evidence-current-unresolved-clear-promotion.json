@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-evidence-current-unresolved-clear-promotion",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/ExperimentalInputEvidencePostgresTest.kt",
+      "sha256": "c5329b9dbb366818b459dec985c9c6d5f54a592c2fb06be0ca5f0c846893516e"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*ExperimentalInputEvidencePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-RECEIPT unresolved answer is received for final analysis but is never CLEAR()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:54:32.239578Z"
+}

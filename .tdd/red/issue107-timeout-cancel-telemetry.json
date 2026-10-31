@@ -1,0 +1,33 @@
+{
+  "workItem": "issue107-timeout-cancel-telemetry",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportDiagnosticContractTest.kt",
+      "sha256": "56e4cfe466e3cf058ab0a824ec0132b51d7d69d303fa762be0b3fc70641c2856"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *ParserTransportDiagnosticContractTest",
+  "failedTests": [
+    "normal recorder failure does not erase independent diagnostic evidence()",
+    "diagnostic recorder failure preserves normal observation and finish remains once only()",
+    "real SDK loopback failure keeps one call and records requested budget without provider content()",
+    "optional diagnostics work without a normal recorder but never invent a missing context()",
+    "unavailable timeout or cancellation metadata cannot escape or disclose its exception()",
+    "actual Gemini adapter opt in records a known zero without changing missing key classification()",
+    "unknown exception names and lexical reset hints never become observed reset facts()",
+    "client call overflow leaves legacy unknown and marks the sidecar truncated()",
+    "an unsettled call remains explicit and never fabricates a complete normal snapshot()",
+    "timeouts and cancel header failure order are facts without a causal origin claim()",
+    "typed HTTP2 CANCEL is only a reset code and not evidence of remote cancellation()",
+    "zero timeout unset deadline and expired deadline stay distinct()",
+    "event and cause overflow is bounded explicitly without losing settled state()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR: opt-in TODOs or adapter omitted diagnostic recorder",
+  "recordedAt": "2026-10-29T14:29:04.548646+00:00",
+  "tests": 14,
+  "failures": 13,
+  "controlsPassed": 1,
+  "localLog": ".codex/tdd-evidence/issue107-timeout-cancel-telemetry.log",
+  "providerCalls": 0
+}

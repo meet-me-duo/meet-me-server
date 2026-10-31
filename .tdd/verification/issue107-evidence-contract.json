@@ -1,0 +1,301 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue107-evidence-contract",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "boundary": "Immutable original and scoped answer, receipt/interpretation separation, frozen dispatch evidence, host authorization and diagnostic isolation",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/InputEvidence.kt",
+      "sha256": "4e334d018b25705125c55bdfd9c9ab25c6ae8e3f6710b1cb15ead6b73a4ec8f4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt",
+      "sha256": "bf49d7e28d430ef47400a58a20cb2ef4a5b3ec976faa2128dfa066324754c539"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "e2d6a0cdcd2646bf7a5a1c7cbac8aa8d182b8db3c2d523c4485f744fba18ff91"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingResultService.kt",
+      "sha256": "9bd429b7732bb837742d364af7ba61dc43d2cf94e8c0e0737f02d27368e78fd7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "ea6a31e357f6cf551a2b2025acdfbdfbe5a7b2adb20e1a632d2de9c3768f9157"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt",
+      "sha256": "2c6e097c4cd75c727d8bb77b9cbecf8236bb5739b1cc6c82c998eed721ddf3e0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/NaturalLanguageProviderContract.kt",
+      "sha256": "d6d2d0d0a0b689e864134c35a393c109f27baefa0a35b21573e4e3008eeaaa6f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/SubmissionPersistenceAdapters.kt",
+      "sha256": "70ede134e59e5ae79d53e195c55f55ada096075dc4b168d4a4e904fa8a8710ac"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/EvidenceDiagnosticScopePriorityPostgresTest.kt",
+      "sha256": "d0e9f34ede95384f2515ad7e7b0a8b0c97b90c30875ecea10227bacadd9a0514"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/EvidenceHostDiagnosticsPostgresTest.kt",
+      "sha256": "6c5c1ea1c7e4fd33d991a6af7d7815ac624c61b32ad1b07e9579b697828ec15d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/EvidenceFinalContractTest.kt",
+      "sha256": "df2bbb56b41291288c4ce5a8e67862800bc8a7038bb6efc8dc0a11bfb24a2c5e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/EvidenceFinalPromptPolicyTest.kt",
+      "sha256": "b33efcc9058c029132e1e29be745ca6ee1aafd414109a4724ec1e69e0fadf4be"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/EvidenceUnexpectedClarificationContractTest.kt",
+      "sha256": "a223fe45f31807bc87f59f66847d18793267636d11e028b967373a57dd06c694"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidencePrecheckContractTest.kt",
+      "sha256": "4b092c578d3a1a16d8cfc8319aa792bc832730476c838a12443a8f5ded149ace"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidenceUnresolvedReasonContractTest.kt",
+      "sha256": "0e5e615a2046619eab11b03c4d284523c1601a7cf28fc584cefc6c9bbfceeb9b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/EvidenceExecutionFencePostgresTest.kt",
+      "sha256": "d647f1f9addf5abd8e7664606977dd2147ee1824ea7a16c7b1d019904f5f791a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/EvidencePersistencePostgresTest.kt",
+      "sha256": "e1b1c3a28ace101f300e8993fe2b11437760d834864af0132b0c9ca134036f93"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/application/port/output/EvidenceDispatchFingerprintTest.kt",
+      "sha256": "11dbdc65ddff3cf2d39061bedcfb6f86664aeaf29f160a817992e3b479d9f4ec"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/domain/InputEvidenceContractTest.kt",
+      "sha256": "fe583f0f7e426b90820f835b14661049a443d562e6f6cde0d1d6651b26abf639"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/EvidencePostCloseRevisionPostgresTest.kt",
+      "sha256": "d68df36ebaf88133b12de174b391da98003ea61a3a840db044a3309aca77ba73"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/ExperimentalInputEvidencePostgresTest.kt",
+      "sha256": "c5329b9dbb366818b459dec985c9c6d5f54a592c2fb06be0ca5f0c846893516e"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "source-evidence-binding",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*InputEvidenceContractTest",
+        "--tests",
+        "*EvidenceDispatchFingerprintTest",
+        "--tests",
+        "*EvidenceExecutionFencePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.domain.InputEvidenceContractTest.EX-EVIDENCE-FENCE canonical source changes when the answer or source scope changes(); com.meetme.server.shared.domain.InputEvidenceContractTest.EX-EVIDENCE-FENCE adjacent text fields cannot collide by moving a delimiter(); com.meetme.server.shared.application.port.output.EvidenceDispatchFingerprintTest.final frozen source includes version evidence independently from raw text and cohort order(); com.meetme.server.shared.application.port.output.EvidenceDispatchFingerprintTest.personal dispatch rejects evidence omission and any changed finalized answer(); com.meetme.server.shared.adapter.output.persistence.EvidenceExecutionFencePostgresTest.EX-EVIDENCE-FENCE final dispatch binds frozen version evidence instead of pending candidate(); com.meetme.server.shared.adapter.output.persistence.EvidenceExecutionFencePostgresTest.EX-EVIDENCE-FENCE personal dispatch binds the persisted scoped answer()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "original-rewrite",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*ExperimentalInputEvidencePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-QUESTION new revisions do not reset the room participant question budget(); com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-REVISION concurrent different answers allow one transition and preserve one original(); com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-RECEIPT unresolved answer is received for final analysis but is never CLEAR(); com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-IDEMPOTENCY same answer key is replayed without an extra revision or recheck(); com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-FREEZE closure freezes original answer and unresolved status as one version(); com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-QUESTION text-only question accepts a scoped direct answer without rewriting original(); com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-ORIGINAL choice keeps original and stores the targeted supplement durably()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "unresolved-clear-promotion",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*ExperimentalInputEvidencePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest.EX-RECEIPT unresolved answer is received for final analysis but is never CLEAR()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "host-authorization-bypass",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidenceHostDiagnosticsPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.EvidenceHostDiagnosticsPostgresTest.EX-PRIVACY V2 host sees final unresolved input and answer without the private question(); com.meetme.server.coordination.adapter.input.web.EvidenceHostDiagnosticsPostgresTest.EX-FINAL V2 missing interpretation yields an isolated host diagnostic with frozen answer()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "post-close-evidence-drop",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidencePostCloseRevisionPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.input.web.EvidencePostCloseRevisionPostgresTest.EX-CORRECTION post-close raw revision receives new unresolved evidence without carrying an old answer()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "classifier-clear-promotion",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidencePrecheckContractTest",
+        "--tests",
+        "*EvidenceUnresolvedReasonContractTest"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest.EX-ONE-QUESTION answer recheck carries same original and never generates another question(); com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest.EX-ABSTAIN low confidence preserves unresolved without calling Luna or claiming clear(); com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-REASON classifier low confidence remains distinct from semantic uncertainty(); com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-REASON review after one answer is unresolved without a second generation(); com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-REASON model uncertainty retains its own normalized reason()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "final-provider-evidence-drop",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidenceFinalContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.EvidenceFinalContractTest.EX-FINAL final provider receives frozen original scoped answer and unresolved state without replacement()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "legacy-final-question-policy",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidenceFinalPromptPolicyTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.EvidenceFinalPromptPolicyTest.EX-FINAL V2 instructions contain no legacy question or whole-original replacement policy()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "second-final-question-guard",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidenceUnexpectedClarificationContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.EvidenceUnexpectedClarificationContractTest.EX-FINAL a second question cannot be silently discarded while applying its guessed conditions()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "diagnostic-scope-priority",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidenceDiagnosticScopePriorityPostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.EvidenceDiagnosticScopePriorityPostgresTest.EX-DIAGNOSTIC selected input failure is not relabeled as a secondary place failure()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "frozen-evidence-read-drop",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidencePersistencePostgresTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.adapter.output.persistence.EvidencePersistencePostgresTest.frozen older version retains original answer unresolved status and anchors after later edit()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-29T09:01:35.654067Z"
+}

@@ -1,0 +1,30 @@
+{
+  "workItem": "issue107-evidence-reference-precision",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/EvidenceReferencePrecisionPostgresTest.kt",
+      "sha256": "af7d693a9fac50dbeee57a7e380750ce57f99283d91df41121ac77a9a79d205e"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidenceReferencePrecisionPostgresTest"
+  ],
+  "failedTests": [
+    "EX-PRECISION direct answer timestamps use the same persisted microsecond precision()",
+    "EX-PRECISION post-close revision preserves the pre-midnight reference at microsecond precision()",
+    "EX-PRECISION original reference survives PostgreSQL microseconds without crossing KST midnight()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T09:07:26.072242Z"
+}

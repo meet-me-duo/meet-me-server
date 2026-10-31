@@ -6,6 +6,7 @@ import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
 import com.meetme.server.shared.application.port.output.AiDispatchInputSnapshot
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
+import com.meetme.server.shared.domain.InputEvidence
 import java.net.URI
 import java.time.Instant
 import java.time.LocalDate
@@ -19,10 +20,11 @@ internal fun validatePersonalDispatch(
     locale: String,
     start: LocalDate,
     end: LocalDate,
+    evidence: InputEvidence? = null,
 ) {
     val execution = context?.execution ?: denyDispatch()
     if (execution.kind != AiBudgetExecutionKind.PRECHECK ||
-        execution.sourceFingerprint != AiDispatchFingerprints.personalSource(raw) ||
+        execution.sourceFingerprint != AiDispatchFingerprints.personalSource(raw, evidence) ||
         execution.contextFingerprint != AiDispatchFingerprints.personalContext(referenceAt, zone, locale, start, end)
     ) {
         denyDispatch()
@@ -31,7 +33,10 @@ internal fun validatePersonalDispatch(
 
 internal fun validateFinalDispatch(request: NaturalLanguageBatchRequest) {
     val execution = request.dispatchContext?.execution ?: denyDispatch()
-    val inputs = request.inputs.map { AiDispatchInputSnapshot(it.inputRef, it.rawText, it.locale.toLanguageTag(), it.referenceDate) }
+    val inputs =
+        request.inputs.map {
+            AiDispatchInputSnapshot(it.inputRef, it.rawText, it.locale.toLanguageTag(), it.referenceDate, it.evidence)
+        }
     if (execution.kind != AiBudgetExecutionKind.FINAL_ANALYSIS ||
         execution.sourceFingerprint != AiDispatchFingerprints.batchSource(inputs) ||
         execution.contextFingerprint !=

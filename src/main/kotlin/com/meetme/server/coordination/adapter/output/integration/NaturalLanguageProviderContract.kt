@@ -3,6 +3,7 @@ package com.meetme.server.coordination.adapter.output.integration
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchRequest
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
+import com.meetme.server.shared.adapter.output.aihttp.toProviderEvidence
 import com.meetme.server.shared.domain.SubmissionVersionId
 import com.meetme.server.submission.domain.ClarificationProposal
 import com.meetme.server.submission.domain.ConditionalTimeActivation
@@ -70,9 +71,10 @@ internal class NaturalLanguageProviderContract(
                     result["conditions"] as? List<Map<String, Any?>>
                         ?: throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
                 if (rawConditions.size > 32) throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
+                val unresolvedClarification = requestByRef.getValue(ref).evidence != null && result["clarification"] != null
                 var conditionRejected = false
                 var rejectedHardTime = false
-                val conditions =
+                val parsedConditions =
                     rawConditions.mapNotNull {
                         try {
                             parseCondition(it, requireNotNull(schemaVersion))
@@ -90,6 +92,8 @@ internal class NaturalLanguageProviderContract(
                             null
                         }
                     }
+                // A second question is unresolved evidence, never authority to apply guessed availability.
+                val conditions = if (unresolvedClarification) emptyList() else parsedConditions
                 val rawFallbackCount = rawConditions.count { it["type"] == CONDITIONAL_FALLBACK_TYPE }
                 val conditionalRejected =
                     rawFallbackCount > 0 &&
@@ -100,10 +104,12 @@ internal class NaturalLanguageProviderContract(
                         )
                 val rejectionCode =
                     when {
+                        unresolvedClarification -> "AMBIGUOUS_INPUT"
                         conditionalRejected -> "UNSUPPORTED_CONDITIONAL_CONSTRAINT"
                         rejectedHardTime -> "AMBIGUOUS_TIME_CONSTRAINT"
                         suppliedRejection != null -> suppliedRejection as String
                         conditionRejected -> "CONDITION_VALIDATION_FAILED"
+                        conditions.isEmpty() && requestByRef.getValue(ref).evidence != null -> "AMBIGUOUS_INPUT"
                         else -> null
                     }
                 conditions.forEach { condition ->
@@ -119,7 +125,7 @@ internal class NaturalLanguageProviderContract(
                 }
                 val versionId = SubmissionVersionId(UUID.fromString(ref))
                 val clarification =
-                    result["clarification"]?.let {
+                    result["clarification"]?.takeIf { requestByRef.getValue(ref).evidence == null }?.let {
                         if (rejectionCode !in setOf("AMBIGUOUS_TIME_CONSTRAINT", "AMBIGUOUS_INPUT") || rawConditions.isNotEmpty()) invalid()
                         parseClarification(it, requestByRef.getValue(ref).rawText)
                     }
@@ -334,19 +340,23 @@ internal class NaturalLanguageProviderContract(
             appendLine("For 평일19–21가능, 목요일20시이후선호, keep weekday AVAILABLE19–21 and Thursday PREFERRED_TIME_WINDOW20–21.")
             appendLine("Soft preferences do not remove feasible alternatives and must not become hard availability constraints.")
             appendLine("Do not invent time bounds for vague or ambiguous time restrictions.")
-            appendLine(
-                "Only material ambiguity affecting candidate results may carry a clarification; clear or unambiguous inputs use null.",
-            )
-            appendLine("Return at most one concise clarification with an exact original excerpt, question, option_a and option_b.")
-            appendLine(
-                "Each option is a complete replacement input: preserve every other constraint, negation, exclusion and soft preference.",
-            )
-            appendLine("Resolve relative dates using the input reference_date and write absolute dates in both replacement options.")
-            appendLine("If two safe complete interpretations cannot express the ambiguity, use null instead of invented alternatives.")
-            appendLine(
-                "A clarification requires empty conditions and AMBIGUOUS_TIME_CONSTRAINT or AMBIGUOUS_INPUT; never assume availability.",
-            )
-            appendLine("Question <=160, excerpt <=200 and each complete replacement <=500 Unicode code points; options must be distinct.")
+            if (request.inputs.none { it.evidence != null }) {
+                appendLine(
+                    "Only material ambiguity affecting candidate results may carry a clarification; clear or unambiguous inputs use null.",
+                )
+                appendLine("Return at most one concise clarification with an exact original excerpt, question, option_a and option_b.")
+                appendLine(
+                    "Each option is a complete replacement input: preserve every other constraint, negation, exclusion and soft preference.",
+                )
+                appendLine("Resolve relative dates using the input reference_date and write absolute dates in both replacement options.")
+                appendLine("If two safe complete interpretations cannot express the ambiguity, use null instead of invented alternatives.")
+                appendLine(
+                    "A clarification requires empty conditions and AMBIGUOUS_TIME_CONSTRAINT or AMBIGUOUS_INPUT; never assume availability.",
+                )
+                appendLine(
+                    "Question <=160, excerpt <=200 and each complete replacement <=500 Unicode code points; options must be distinct.",
+                )
+            }
             appendLine(
                 "Resolve relative dates separately from each input's immutable room-local reference_date, never from today or search start.",
             )
@@ -360,14 +370,29 @@ internal class NaturalLanguageProviderContract(
             appendLine(
                 "Interpret unmarked hours from the complete availability context; explicit morning or 24-hour notation takes precedence.",
             )
-            appendLine("Examples of ordinary evening availability: weekday 6–9 becomes 18–21 and weekday 7–10 becomes 19–22.")
-            appendLine("An ordinary afternoon weekend 1–6 becomes 13–18; weekend 2–7 becomes 14–19.")
-            appendLine("A morning parent 06–09 and a compatible 8-start child stay 06–09 and 08–09, never 18–21 or 20–21.")
+            if (request.inputs.any { it.evidence != null }) {
+                appendLine(
+                    "V2 time rules: 오전 is the full continuous interval 00:00–12:00; 오후 is 12:00–24:00 unless narrower explicit conditions exist.",
+                )
+                appendLine(
+                    "A weekday without a date recurs throughout the search range; 19시 이후 ends at same-day 24:00. 22시~새벽2시 crosses midnight until next-day 02:00.",
+                )
+                appendLine(
+                    "Never round or quantize boundaries. 아침, 저녁 and 밤 have no fixed default; resolve from explicit participant context or preserve uncertainty.",
+                )
+                appendLine("Do not assume weekday unmarked numbers are evening hours or infer personal work/class/meal/sleep/travel times.")
+            } else {
+                appendLine("Examples of ordinary evening availability: weekday 6–9 becomes 18–21 and weekday 7–10 becomes 19–22.")
+                appendLine("An ordinary afternoon weekend 1–6 becomes 13–18; weekend 2–7 becomes 14–19.")
+                appendLine("A morning parent 06–09 and a compatible 8-start child stay 06–09 and 08–09, never 18–21 or 20–21.")
+            }
             appendLine(
                 "The matcher unions AVAILABLE windows, then subtracts UNAVAILABLE windows; another AVAILABLE cannot narrow the union.",
             )
-            appendLine("For 평일 7–9 plus 이번주 목요일 8시부터, keep recurring weekday 19–21 and add date-specific UNAVAILABLE 19–20.")
-            appendLine("That Thursday remains 20–21; other weekdays and next week's Thursday must not be narrowed.")
+            if (request.inputs.none { it.evidence != null }) {
+                appendLine("For 평일 7–9 plus 이번주 목요일 8시부터, keep recurring weekday 19–21 and add date-specific UNAVAILABLE 19–20.")
+                appendLine("That Thursday remains 20–21; other weekdays and next week's Thursday must not be narrowed.")
+            }
             appendLine("For any other inherited start, subtract the dated parent-start-to-child-start prefix, keeping the parent end.")
             appendLine(
                 "Conflicting parents, explicit period conflicts or ambiguous overnight inheritance remain AMBIGUOUS_TIME_CONSTRAINT.",
@@ -400,9 +425,40 @@ internal class NaturalLanguageProviderContract(
             appendLine("Split overnight windows crossing midnight into the first day ending at 24:00 and the next day starting at 00:00.")
             appendLine("Room time zone: ${request.timeZone.id}")
             appendLine("Search range: ${request.searchStartDate} until ${request.searchEndDate} (exclusive)")
+            if (request.inputs.any { it.evidence != null }) {
+                appendLine(
+                    "V2 evidence: raw_text is immutable. A supplement answers only its exact source_revision/source_start_code_point/source_excerpt question; combine it with every unrelated original condition. Never treat answer_text as a full replacement.",
+                )
+                appendLine(
+                    "Original relative dates use evidence.reference_at; supplemental relative dates use supplement.reference_at. Neither changes the other anchor. interpretation and unresolved_reason are prior observations, not permission to assume meaning.",
+                )
+                appendLine(
+                    "The final batch context may resolve explicit references, shared dates or place names, but another participant's availability cannot establish this person's missing private fact or intended time. Never infer that their work ends when somebody else is free.",
+                )
+                appendLine(
+                    "Do not ask another clarification in V2: set clarification=null. If required time meaning remains unresolved, return empty conditions and AMBIGUOUS_TIME_CONSTRAINT or AMBIGUOUS_INPUT for that input only. Preserve valid other participants; never invent availability to avoid an exclusion.",
+                )
+                appendLine(
+                    "Place-only uncertainty preserves valid time conditions alongside TRAVEL_CONSTRAINT or UNRESOLVED_PLACE; it must not invalidate the time solely because a place is unknown. Coupled hard time/place alternatives remain unsupported rather than becoming a Cartesian product.",
+                )
+            }
             appendLine("Inputs:")
             request.inputs.forEach {
-                appendLine("reference_date=${it.referenceDate}\t${it.inputRef}\t${it.locale.toLanguageTag()}\t${it.rawText}")
+                if (it.evidence == null) {
+                    appendLine("reference_date=${it.referenceDate}\t${it.inputRef}\t${it.locale.toLanguageTag()}\t${it.rawText}")
+                } else {
+                    appendLine(
+                        objectMapper.writeValueAsString(
+                            mapOf(
+                                "input_ref" to it.inputRef,
+                                "raw_text" to it.rawText,
+                                "locale" to it.locale.toLanguageTag(),
+                                "reference_date" to it.referenceDate.toString(),
+                                "evidence" to it.evidence.toProviderEvidence(),
+                            ),
+                        ),
+                    )
+                }
             }
         }
 

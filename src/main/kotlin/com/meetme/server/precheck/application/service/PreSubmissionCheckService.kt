@@ -32,6 +32,9 @@ import com.meetme.server.precheck.domain.PrecheckCandidate
 import com.meetme.server.precheck.domain.PrecheckExecution
 import com.meetme.server.precheck.domain.PrecheckStatus
 import com.meetme.server.shared.application.port.output.IdGenerator
+import com.meetme.server.shared.domain.InputEvidence
+import com.meetme.server.shared.domain.InputInterpretation
+import com.meetme.server.shared.domain.InputSupplement
 import com.meetme.server.submission.application.port.input.SubmissionErrorCode
 import com.meetme.server.submission.application.port.input.SubmissionException
 import com.meetme.server.submission.application.port.output.GuestSubmissionWriteGuard
@@ -43,6 +46,7 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.Clock
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.Locale
 import java.util.UUID
 
@@ -99,6 +103,9 @@ class PreSubmissionCheckService(
         if (current.status !in setOf(PrecheckStatus.NEEDS_CHOICE, PrecheckStatus.NEEDS_EDIT)) conflict()
         val direct = command.directText
         val question = current.question
+        val evidence = current.candidate.evidence
+        if (evidence != null) require(command.questionId != null) { "Question ID is required" }
+        if (evidence != null && (question == null || question.id != command.questionId || evidence.supplement != null)) conflict()
         val choice =
             if (direct != null) {
                 require(command.choiceId == null) { "Choose one answer method" }
@@ -107,7 +114,28 @@ class PreSubmissionCheckService(
                 if (question == null || question.id != command.questionId) conflict()
                 question.choices.singleOrNull { it.id == command.choiceId } ?: conflict()
             }
-        val text = normalize(direct ?: requireNotNull(choice).proposedText)
+        val answerText = normalize(direct ?: requireNotNull(choice).proposedText)
+        val now = clock.instant()
+        val answeredAt = if (evidence != null) now.truncatedTo(ChronoUnit.MICROS) else now
+        val answeredEvidence =
+            evidence?.copy(
+                supplement =
+                    InputSupplement(
+                        requireNotNull(question).id,
+                        evidence.originalRevision,
+                        question.sourceExcerpt,
+                        question.sourceStartCodePoint ?: conflict(),
+                        question.prompt,
+                        answerText,
+                        choice?.id,
+                        answeredAt,
+                        if (choice != null) evidence.referenceAt else answeredAt,
+                    ),
+                interpretation = InputInterpretation.PENDING,
+                unresolvedReason = null,
+            )
+        val text = if (evidence != null) current.candidate.rawText else answerText
+        answeredEvidence?.validateAgainst(text)
         val next =
             saveCandidate(
                 room,
@@ -116,10 +144,11 @@ class PreSubmissionCheckService(
                 text,
                 current.candidate.locale,
                 current,
-                referenceAt = if (choice != null) current.candidate.referenceAt else null,
+                referenceAt = if (evidence != null || choice != null) current.candidate.referenceAt else null,
                 sourceQuestionId = question?.id,
                 choiceId = choice?.id,
                 derived = true,
+                evidence = answeredEvidence,
             )
         return record(room, participant, "ANSWER", command.requestId, fingerprint, next)
     }
@@ -165,7 +194,13 @@ class PreSubmissionCheckService(
         requireOpen(room)
         val current = expected(participant, command)
         if (current.status in
-            setOf(PrecheckStatus.CLEAR, PrecheckStatus.CANCELLED, PrecheckStatus.SUPERSEDED, PrecheckStatus.CLOSED_BEFORE_COMPLETION)
+            setOf(
+                PrecheckStatus.CLEAR,
+                PrecheckStatus.RECEIVED,
+                PrecheckStatus.CANCELLED,
+                PrecheckStatus.SUPERSEDED,
+                PrecheckStatus.CLOSED_BEFORE_COMPLETION,
+            )
         ) {
             conflict()
         }
@@ -222,10 +257,12 @@ class PreSubmissionCheckService(
         sourceQuestionId: UUID? = null,
         choiceId: String? = null,
         derived: Boolean = false,
+        evidence: InputEvidence? = null,
     ): PrecheckExecution {
         val revision = previous?.candidate?.revision ?: 0
         if (revision == Int.MAX_VALUE) conflict()
-        if (repository.latestCandidateTextLength(room.id.value, participant.id.value) + text.codePointCount(0, text.length) >
+        if (repository.latestCandidateTextLength(room.id.value, participant.id.value) +
+            (evidence?.textCodePoints(text) ?: text.codePointCount(0, text.length)) >
             SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS
         ) {
             throw SubmissionException(
@@ -246,6 +283,12 @@ class PreSubmissionCheckService(
             )
         }
         val now = clock.instant()
+        val evidenceProtocol = repository.protocol(room.id.value) == "PRE_SUBMIT_V2"
+        // Bind JSON evidence and PostgreSQL timestamps to one precision without rounding across a date boundary.
+        val recordedAt =
+            if (evidenceProtocol) (evidence?.supplement?.answeredAt ?: now).truncatedTo(ChronoUnit.MICROS) else now
+        val interpretationReferenceAt =
+            if (evidenceProtocol) (referenceAt ?: recordedAt).truncatedTo(ChronoUnit.MICROS) else referenceAt ?: now
         val exhausted = repository.callCount(room.id.value, participant.id.value) >= MAX_CALLS
         val full = repository.queueSize() >= MAX_QUEUE
         val candidate =
@@ -256,13 +299,20 @@ class PreSubmissionCheckService(
                 revision + 1,
                 text,
                 locale,
-                now,
-                referenceAt ?: now,
+                recordedAt,
+                interpretationReferenceAt,
                 bindings.capture(participant, credential),
                 if (derived) previous?.candidate?.id else null,
                 sourceQuestionId,
                 choiceId,
+                evidence =
+                    evidence ?: if (evidenceProtocol) {
+                        InputEvidence(revision + 1, interpretationReferenceAt)
+                    } else {
+                        null
+                    },
             )
+        candidate.evidence?.validateAgainst(text)
         val check =
             PrecheckExecution(
                 ids.next(),
@@ -363,21 +413,26 @@ class PreSubmissionCheckService(
                 }?.batch
                 ?.submissionVersionIds
         return PrecheckSnapshot(
-            check?.candidate?.let { PrecheckTextView(it.revision, it.rawText, it.createdAt, it.referenceAt) },
+            check?.candidate?.let { PrecheckTextView(it.revision, it.rawText, it.createdAt, it.referenceAt, it.evidence) },
             accepted?.latest?.takeIf { it.rawText != null }?.let {
                 val anchor = repository.anchor(it.id.value)
                 PrecheckAcceptedView(
                     it.revision,
                     requireNotNull(it.rawText),
                     it.createdAt,
-                    anchor ?: it.createdAt,
-                    if (anchor !=
+                    it.evidence?.referenceAt ?: anchor ?: it.createdAt,
+                    if (it.evidence?.unresolvedReason == "POST_CLOSE_REVISION") {
+                        "UNVERIFIED_CORRECTION"
+                    } else if (it.evidence?.interpretation == InputInterpretation.UNRESOLVED) {
+                        "PRECHECK_UNRESOLVED"
+                    } else if (anchor !=
                         null
                     ) {
                         "PRECHECK"
                     } else {
                         "LEGACY_CORRECTION"
                     },
+                    it.evidence,
                 )
             },
             check?.let {
@@ -395,7 +450,9 @@ class PreSubmissionCheckService(
                 )
             },
             PrecheckRoomView(room.collectionStatus.name, room.version, room.closurePolicy.deadline),
-            check?.status == PrecheckStatus.CLEAR && accepted != null && check.candidate.acceptedVersionId == accepted.latest.id.value,
+            check?.status in setOf(PrecheckStatus.CLEAR, PrecheckStatus.RECEIVED) &&
+                accepted != null &&
+                check?.candidate?.acceptedVersionId == accepted.latest.id.value,
             room.collectionStatus == CollectionStatus.CLOSED && accepted?.let { it.latest.id in frozen.orEmpty() } == true,
             outcome,
         )
@@ -411,7 +468,7 @@ class PreSubmissionCheckService(
     }
 
     private fun requireProtocol(room: MeetingRoom) {
-        if (repository.protocol(room.id.value) != "PRE_SUBMIT_V1") conflict()
+        if (repository.protocol(room.id.value) !in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2")) conflict()
     }
 
     private fun requireOpen(room: MeetingRoom) {

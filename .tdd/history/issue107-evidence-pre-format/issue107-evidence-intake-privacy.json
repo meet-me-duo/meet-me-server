@@ -1,0 +1,55 @@
+{
+  "workItem": "issue107-evidence-intake-privacy",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/ExperimentalInputEvidencePostgresTest.kt",
+      "sha256": "265b46b05e58eec16334e20b12327f0fbb302d72d9b7b835c8b70a1f51b81e14"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/EvidenceHostDiagnosticsPostgresTest.kt",
+      "sha256": "56484d069e94774268a1c778ae6b8eb2f6e65d6d14114a5c6e56d485b4f52fd0"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidencePersistencePostgresTest",
+    "--tests",
+    "*EvidenceHostDiagnosticsPostgresTest",
+    "--tests",
+    "*InputEvidenceContractTest",
+    "--tests",
+    "*ExperimentalInputEvidencePostgresTest",
+    "--tests",
+    "*EvidencePrecheckContractTest",
+    "--tests",
+    "*EvidenceFinalContractTest",
+    "--tests",
+    "*EvidenceDispatchFingerprintTest",
+    "--tests",
+    "*EvidenceExecutionFencePostgresTest"
+  ],
+  "failedTests": [
+    "EX-PRIVACY V2 host sees final unresolved input and answer without the private question()",
+    "EX-FINAL V2 missing interpretation yields an isolated host diagnostic with frozen answer()",
+    "EX-QUESTION cancellation cannot mint a second room question()",
+    "EX-QUESTION new revisions do not reset the room participant question budget()",
+    "EX-REVISION concurrent different answers allow one transition and preserve one original()",
+    "EX-RECEIPT unresolved answer is received for final analysis but is never CLEAR()",
+    "EX-FREEZE closure freezes original answer and unresolved status as one version()",
+    "EX-QUESTION text-only question accepts a scoped direct answer without rewriting original()",
+    "EX-QUESTION direct answer requires the actual question identity()",
+    "EX-ORIGINAL choice keeps original and stores the targeted supplement durably()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:37:41.546072Z"
+}

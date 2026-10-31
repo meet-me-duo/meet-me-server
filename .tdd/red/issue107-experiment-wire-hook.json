@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-experiment-wire-hook",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/ExperimentWireHookContractTest.kt",
+      "sha256": "ad13e4714ee3636414b64a399d96745476aa1a9665413d8f3f51231546562575"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *ExperimentWireHookContractTest",
+  "failedTests": [
+    "actual gate composes durable reservation hook and existing diagnostic listener()",
+    "opaque admission hashes bind every immutable execution and physical spec field without exporting them()",
+    "all twenty nine public original listener callbacks are forwarded once()",
+    "fresh SDK Call identity is distinct even when the second call reuses one prepared attempt()",
+    "[1] reason = \"source\"",
+    "[2] reason = \"deadline\"",
+    "hook refusal after valid original authority prevents actual request headers()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR: optional hook or opaque identity TODO",
+  "recordedAt": "2026-10-29T15:08:24.183677+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-experiment-wire-hook.log",
+  "tests": 9,
+  "failures": 7,
+  "controlsPassed": 2,
+  "providerCalls": 0,
+  "excludedNonRed": "telemetry-wire-hook-red.log initially failed to compile due deadlineNanos field-name mismatch; no behavioral tests ran"
+}

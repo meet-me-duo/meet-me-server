@@ -101,6 +101,7 @@ class LunaPreSubmissionCheckProvider private constructor(
                     request.locale,
                     request.searchStartDate,
                     request.searchEndDate,
+                    request.evidence,
                 )
                 val execution = request.dispatchContext!!.execution
                 if (execution.executionId != request.checkId ||

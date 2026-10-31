@@ -1,0 +1,35 @@
+{
+  "workItem": "issue107-place-diagnostics",
+  "sourceRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/UnappliedTravelConstraintContractTest.kt",
+      "sha256": "e7a03910e3becae7f80955c9e1ec198ddfa00f4a6c140a818ce65839e1ef6121"
+    }
+  ],
+  "command": [
+    "python",
+    "local-only-evidence/refresh-red.py"
+  ],
+  "failedTests": [
+    "the same explicit origin with different walking limits does not merge the participants restrictions()",
+    "either retains online time without treating an unknown personal origin as verified()",
+    "remote retains independent available alternatives and unavailable subtraction with a place diagnostic()",
+    "multiple travel conditions count one partially unapplied participant while keeping all valid online attendees()",
+    "only the host can read unsupported travel raw text and public candidate fields remain private()",
+    "an explicit origin and multiple walking limits remain intact without inventing in person feasibility()",
+    "in person cannot create a two participant candidate with an unverified travel restriction()"
+  ],
+  "expectedFailureCategory": "Unsupported travel conditions missing PARTIAL and host diagnostics; independent normal/conflicting-area controls pass",
+  "recordedAt": "2026-10-30T12:52:50.672561+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-place-diagnostics.log",
+  "totals": {
+    "tests": 13,
+    "failures": 7,
+    "errors": 0,
+    "skipped": 0
+  },
+  "providerCalls": 0,
+  "oracle": "ADR013/043/048 and user approval synthetic-authorization-e22ae1044c3a6abc; independent synthetic contracts, no sealed scenario",
+  "sourceRestorationEvidence": "local-only-evidence/formatted-red-evidence.json"
+}

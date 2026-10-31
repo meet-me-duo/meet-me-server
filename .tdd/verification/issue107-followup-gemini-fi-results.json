@@ -1,0 +1,47 @@
+{
+  "fault": "original c945 adapter replaces current minimal fix",
+  "adapterFixedSha256": "d7f0bbac06c1425c4c7440c4bace828cc7e51e3f63db7569d7cc63b094cc01e4",
+  "adapterMutantSha256": "d1d510762edfba42ccef15f9fef8c78a10df05d7fd1a42119326d99f3443c1ae",
+  "exactRestore": true,
+  "red": {
+    "exitCode": 1,
+    "log": "local-only-evidence/followup-gemini-original-c945-red.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiExpiredObservationContractTest",
+        "tests": 1,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiObservationFailureContractTest",
+        "tests": 7,
+        "failures": 4,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "restored": {
+    "exitCode": 0,
+    "log": "local-only-evidence/followup-gemini-restored-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiExpiredObservationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiObservationFailureContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "providerCalls": 0
+}

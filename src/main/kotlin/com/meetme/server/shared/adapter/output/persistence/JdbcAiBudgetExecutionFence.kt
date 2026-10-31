@@ -13,11 +13,14 @@ import com.meetme.server.shared.application.port.output.AiDispatchInputSnapshot
 import com.meetme.server.shared.application.port.output.AiPhysicalOperation
 import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
 import com.meetme.server.shared.application.port.output.AiRuntimeDispatchProfiles
+import com.meetme.server.shared.domain.InputEvidence
+import com.meetme.server.shared.domain.InputInterpretation
 import com.meetme.server.shared.domain.ParticipantId
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
+import tools.jackson.databind.ObjectMapper
 import java.sql.Timestamp
 import java.time.Clock
 import java.time.Instant
@@ -41,6 +44,7 @@ class JdbcAiBudgetExecutionFence(
     private val coverage: AiBudgetCoverageEpochQueryPort,
     private val participants: ParticipantRepository,
     private val bindings: PrecheckOwnershipBindingPort,
+    private val mapper: ObjectMapper,
 ) : AiBudgetExecutionFencePort,
     AiRuntimeDispatchGuardPort {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -87,7 +91,8 @@ class JdbcAiBudgetExecutionFence(
         at: Instant,
     ): CurrentDispatchExecution? {
         val execution = request.execution
-        if (room["submission_protocol"] != "PRE_SUBMIT_V1" || room["collection_status"] != "COLLECTING") return null
+        val protocol = room["submission_protocol"]
+        if (protocol !in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2") || room["collection_status"] != "COLLECTING") return null
         if (request.calls.isEmpty() ||
             request.calls.size > 2 ||
             request.calls
@@ -107,6 +112,7 @@ class JdbcAiBudgetExecutionFence(
             one(
                 """
                 SELECT k.*,c.room_id,c.participant_id,c.revision,c.raw_text,c.locale,c.interpretation_reference_at,c.owner_binding,
+                    c.input_evidence::text input_evidence_json,
                     e.queued_at execution_queued_at,e.deadline_at execution_deadline_at,e.started_at execution_started_at,
                     e.finished_at execution_finished_at,e.owner_token execution_owner_token
                 FROM precheck_checks k JOIN precheck_candidates c ON c.id=k.candidate_id
@@ -141,7 +147,10 @@ class JdbcAiBudgetExecutionFence(
         if (!bindings.isActive(participant, binding, now)) return null
         val zone = ZoneId.of(room["time_zone_id"] as String)
         val raw = row["raw_text"] as String
-        if (execution.sourceFingerprint != AiDispatchFingerprints.personalSource(raw) ||
+        val evidence = runCatching { readEvidence(row, raw) }.getOrElse { return null }
+        if ((protocol == "PRE_SUBMIT_V2") != (evidence != null)) return null
+        if (evidence != null && evidence.referenceAt != row.instant("interpretation_reference_at")) return null
+        if (execution.sourceFingerprint != AiDispatchFingerprints.personalSource(raw, evidence) ||
             execution.contextFingerprint !=
             AiDispatchFingerprints.personalContext(
                 row.instant("interpretation_reference_at") ?: return null,
@@ -266,7 +275,9 @@ class JdbcAiBudgetExecutionFence(
             return null
         }
         val batchId = run.uuid("batch_id") ?: return null
-        val inputs = readInputs(batchId, execution.roomId, ZoneId.of(room["time_zone_id"] as String)) ?: return null
+        val inputs =
+            readInputs(batchId, execution.roomId, ZoneId.of(room["time_zone_id"] as String), room["submission_protocol"] as String)
+                ?: return null
         if (execution.sourceFingerprint != AiDispatchFingerprints.batchSource(inputs) ||
             execution.contextFingerprint !=
             AiDispatchFingerprints.batchContext(
@@ -292,11 +303,12 @@ class JdbcAiBudgetExecutionFence(
         batchId: UUID,
         roomId: UUID,
         zone: ZoneId,
+        protocol: String,
     ): List<AiDispatchInputSnapshot>? {
         val rows: List<FenceRow> =
             jdbc.queryForList(
                 """
-                SELECT v.id version_id,v.raw_text,v.locale,v.created_at,h.room_id,h.participant_id,
+                SELECT v.id version_id,v.raw_text,v.locale,v.created_at,v.input_evidence::text input_evidence_json,h.room_id,h.participant_id,
                     c.id anchor_candidate_id,c.room_id anchor_room_id,c.participant_id anchor_participant_id,c.interpretation_reference_at
                 FROM submission_batch_items b JOIN submission_versions v ON v.id=b.submission_version_id
                 JOIN submission_heads h ON h.id=v.submission_id
@@ -320,17 +332,29 @@ class JdbcAiBudgetExecutionFence(
                 return null
             }
             val raw = row["raw_text"] as? String ?: continue
-            val anchor = row.instant("interpretation_reference_at") ?: row.instant("created_at") ?: return null
+            val evidence = runCatching { readEvidence(row, raw) }.getOrElse { return null }
+            if ((protocol == "PRE_SUBMIT_V2") != (evidence != null)) return null
+            if (evidence?.interpretation == InputInterpretation.PENDING) return null
+            val anchor = evidence?.referenceAt ?: row.instant("interpretation_reference_at") ?: row.instant("created_at") ?: return null
             inputs +=
                 AiDispatchInputSnapshot(
                     row.uuid("version_id")!!.toString(),
                     raw,
                     Locale.forLanguageTag(row["locale"] as String).toLanguageTag(),
                     anchor.atZone(zone).toLocalDate(),
+                    evidence,
                 )
         }
         return inputs.takeIf { it.isNotEmpty() }
     }
+
+    private fun readEvidence(
+        row: FenceRow,
+        rawText: String,
+    ): InputEvidence? =
+        (row["input_evidence_json"] as? String)?.let {
+            mapper.readValue(it, InputEvidence::class.java).also { evidence -> evidence.validateAgainst(rawText) }
+        }
 
     private fun one(
         sql: String,

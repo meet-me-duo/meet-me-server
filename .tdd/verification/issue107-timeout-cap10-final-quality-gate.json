@@ -1,0 +1,61 @@
+{
+  "workItem": "issue107-timeout-cap10-final-quality-gate",
+  "sourceBase": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "branch": "fix/issue-107-gemini-failure-taxonomy",
+  "originalGuard": {
+    "recordedAt": "2026-10-29T16:23:27.809661+00:00",
+    "exitCode": 0,
+    "elapsedSeconds": 814.966,
+    "originalGuardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+    "originalGuardUnmodified": true,
+    "modelKeysAndLiveFlagsUnset": true,
+    "testXmlDigestBefore": "43eac87f150d3cea3e1e027d782f0ab5f93614888da4e255999a1a65b412ce44",
+    "testXmlDigestAfter": "13ddf3a49d7c31537c64a6a73dd23654959efe31b5367cfd9df695b798c7f7b4",
+    "log": "local-only-evidence/telemetry-original-guard.log"
+  },
+  "testResults": {
+    "suites": 304,
+    "tests": 2458,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 7,
+    "passed": 2451,
+    "conditionalSkips": [
+      {
+        "suite": "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+        "skipped": 1
+      },
+      {
+        "suite": "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+        "skipped": 1
+      },
+      {
+        "suite": "com.meetme.server.experiment.PrimaryGeminiTechnicalSmokeTest",
+        "skipped": 1
+      },
+      {
+        "suite": "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+        "skipped": 1
+      },
+      {
+        "suite": "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+        "skipped": 1
+      },
+      {
+        "suite": "com.meetme.server.experiment.ExperimentalLiveHttpEvaluationTest",
+        "skipped": 1
+      },
+      {
+        "suite": "com.meetme.server.experiment.CumulativeProviderEvaluationTest",
+        "skipped": 1
+      }
+    ]
+  },
+  "fullSuiteActuallyReexecuted": true,
+  "allThreeModelKeysAndAllMeetmeExperimentFlagsUnset": true,
+  "independentFocusedTests": 129,
+  "independentFaultInjectionsDetectedAndRestored": 9,
+  "additionalPaidCalls": 0,
+  "holdoutOpened": false,
+  "localCommit": "동일 커밋 예정"
+}

@@ -74,6 +74,7 @@ data class CandidateParticipantRecord(
     val participantId: UUID,
     val coordinationRunId: UUID,
     val roomId: UUID,
+    val placeUnverified: Boolean = false,
 )
 
 @KomapperEntityDef(CandidateParticipantRecord::class)

@@ -1,0 +1,98 @@
+{
+  "fault": "permit incomplete application analysis at room boundary",
+  "safetySha256": "559d4cb59590a5590f1790a845c44bfb783766cf60b60b4c25e8e49530daeacc",
+  "red": {
+    "exitCode": 1,
+    "command": [
+      "local-only-evidence/analysis-gradle",
+      "test",
+      "--tests",
+      "*LiveEvaluationCompletionBoundaryContractTest"
+    ],
+    "log": "local-only-evidence/followup-completion-permit-incomplete-red.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationCompletionBoundaryContractTest",
+        "tests": 6,
+        "failures": 2,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "restored": {
+    "exitCode": 0,
+    "command": [
+      "local-only-evidence/analysis-gradle",
+      "test",
+      "--tests",
+      "*GeminiObservationFailureContractTest",
+      "--tests",
+      "*GeminiExpiredObservationContractTest",
+      "--tests",
+      "*LiveEvaluationSafetyContractTest",
+      "--tests",
+      "*LiveEvaluationAdmissionContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeApplicationContractTest",
+      "--tests",
+      "*LiveEvaluationCompletionBoundaryContractTest"
+    ],
+    "log": "local-only-evidence/followup-completion-final-restored-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiObservationFailureContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiExpiredObservationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationCompletionBoundaryContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "exactRestore": true,
+  "providerCalls": 0
+}

@@ -1,5 +1,6 @@
 package com.meetme.server.precheck.domain
 
+import com.meetme.server.shared.domain.InputEvidence
 import java.time.Instant
 import java.util.UUID
 
@@ -9,6 +10,8 @@ enum class PrecheckStatus {
     NEEDS_CHOICE,
     NEEDS_EDIT,
     CLEAR,
+    RECEIVED,
+    UNRESOLVED,
     FAILED,
     FAILED_QUEUE,
     TIMED_OUT,
@@ -29,6 +32,7 @@ data class PrecheckQuestion(
     val prompt: String,
     val sourceExcerpt: String,
     val choices: List<PrecheckChoice>,
+    val sourceStartCodePoint: Int? = null,
 )
 
 data class PrecheckCandidate(
@@ -45,6 +49,7 @@ data class PrecheckCandidate(
     val sourceQuestionId: UUID? = null,
     val selectedChoiceId: String? = null,
     val acceptedVersionId: UUID? = null,
+    val evidence: InputEvidence? = null,
 )
 
 data class PrecheckExecution(

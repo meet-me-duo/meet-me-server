@@ -1,0 +1,16 @@
+{
+  "workItem": "issue107-completion-boundary",
+  "sourceRevision": "c9453a35582ca6503c956ab4e8aff8d73b175ef3",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationCompletionBoundaryContractTest.kt",
+      "sha256": "e570b255d0e6bd79021647cd223a588e5c34397d55d63a9fa5b24755d9aea676"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *LiveEvaluationCompletionBoundaryContractTest",
+  "log": "local-only-evidence/followup-completion-boundary-red.log",
+  "tests": 6,
+  "failures": 6,
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "providerCalls": 0
+}

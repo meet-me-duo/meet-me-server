@@ -10,7 +10,7 @@ const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const script19 = 'V19__add_confirmed_result_reviews.sql';
 const scripts = [...f.scripts, script18, script19];
 assert.equal(scripts.length, 19);
-const currentScripts = [...scripts, 'V20__add_account_room_history_index.sql'];
+const currentScripts = [...scripts, 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql'];
 const historicalGuard18 = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
@@ -130,10 +130,10 @@ test('V19R01 current publisher retains V19 in the exact latest inventory with in
   assert.deepEqual(fs.readdirSync(directory).sort(), [...currentScripts].sort());
   const value = fixture(); try {
     const built = f.publish(value);
-    assert.equal(built.ok, true, 'The complete current publication including V19 and V20 is supported');
+    assert.equal(built.ok, true, 'The complete current candidate publication through V22 is supported');
     assert.deepEqual(built.result.migrations, currentScripts.map((script, index) => ({ version: String(index + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value, 20))));
+    assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value, 22))));
     assert.equal(built.result.guardFingerprint, hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     const actual = f.python('build_manifest', [root, value.archive, f.environment], 'publish_manifest.py');
@@ -144,7 +144,7 @@ test('V19R01 current publisher retains V19 in the exact latest inventory with in
 });
 
 test('V19R02 current publication refuses every omission old complete V19 unknown additions and malformed V19 names or file kinds', () => {
-  for (const fault of [...range(20).map(n => `missing-${n}`), 'duplicate19', 'wrong19', 'leadingZero19', 'unknown20', 'extra', 'directory19', 'symlink19']) {
+  for (const fault of [...range(22).map(n => `missing-${n}`), 'duplicate19', 'wrong19', 'leadingZero19', 'unknown20', 'extra', 'directory19', 'symlink19']) {
     const value = fixture(); try {
       const latest = path.join(value.migrations, script19);
       if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, currentScripts[Number(fault.slice(8)) - 1]));

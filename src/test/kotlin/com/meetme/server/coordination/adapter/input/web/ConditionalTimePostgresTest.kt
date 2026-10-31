@@ -6,7 +6,10 @@ import com.meetme.server.coordination.application.service.MatchingProcessingPers
 import com.meetme.server.coordination.application.service.MatchingProcessor
 import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationStatus
+import com.meetme.server.coordination.domain.matching.PlanType
+import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.CoordinationRunId
+import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.domain.ConditionalTimeActivation
 import com.meetme.server.submission.domain.StructuredCondition
@@ -24,6 +27,7 @@ import org.testcontainers.postgresql.PostgreSQLContainer
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -80,9 +84,41 @@ class ConditionalTimePostgresTest : RecommendationPostgresFixture() {
                 listOf(utc(10, "11:00", "11:05"), utc(10, "11:10", "11:20"))
             }
         assertEquals(CandidateQuality.COMPLETE, completed.quality)
-        assertEquals(expected, completed.candidates.single().timeRanges)
+        val expectedParticipants =
+            jdbc
+                .queryForList(
+                    "SELECT h.participant_id FROM submission_batch_items i " +
+                        "JOIN submission_versions v ON v.id=i.submission_version_id " +
+                        "JOIN submission_heads h ON h.id=v.submission_id WHERE i.batch_id=? ORDER BY h.participant_id::text",
+                    UUID::class.java,
+                    run.batch.id.value,
+                ).map { ParticipantId(requireNotNull(it)) }
+        assertEquals(2, expectedParticipants.size)
+        assertEquals(listOf(PlanType.A, PlanType.B), completed.candidates.map { it.planType })
+        assertEquals(listOf(MeetingMode.IN_PERSON, MeetingMode.REMOTE), completed.candidates.map { it.meetingMode })
+        completed.candidates.forEach { candidate ->
+            assertEquals(expected, candidate.timeRanges)
+            assertEquals(expectedParticipants, candidate.participantIds)
+            assertEquals(emptyList(), candidate.unverifiedPlaceParticipantIds)
+            assertEquals(null, candidate.place)
+        }
         val modern = requireNotNull(storedRecommendations.find(fixture.sourceRun))
         assertEquals(expected, modern.options.map { it.option.window })
+        modern.options.forEach { option ->
+            assertEquals(
+                setOf(MeetingMode.IN_PERSON, MeetingMode.REMOTE),
+                option.option.variants
+                    .map { it.meetingMode }
+                    .toSet(),
+            )
+            assertEquals(2, option.option.variants.size)
+            option.option.variants.forEach { variant ->
+                assertEquals(expectedParticipants, variant.participantIds)
+                assertEquals(emptyList(), variant.unverifiedPlaceParticipantIds)
+                assertEquals(null, variant.representativeArea)
+                assertEquals(null, variant.representativePlace)
+            }
+        }
         assertTrue(modern.options.all { option -> option.option.variants.all { it.preferenceCount == if (primaryMatches) 1 else 0 } })
         assertFalse(structuredResults.findByBatch(run.batch.id).any { it.rejectionCode != null })
         assertTrue(structuredResults.findByBatch(run.batch.id).flatMap { it.conditions }.any { it == fallback })
