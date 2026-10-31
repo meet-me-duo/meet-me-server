@@ -1,5 +1,6 @@
 package com.meetme.server.shared.application.port.output
 
+import com.meetme.server.shared.domain.InputEvidence
 import java.security.MessageDigest
 import java.time.Instant
 import java.time.LocalDate
@@ -11,11 +12,15 @@ data class AiDispatchInputSnapshot(
     val rawText: String,
     val locale: String,
     val referenceDate: LocalDate,
+    val evidence: InputEvidence? = null,
 )
 
 /** Canonical SHA-256 of length-prefixed UTF-8 components; no source text is retained. */
 object AiDispatchFingerprints {
-    fun personalSource(rawText: String): String = framed(listOf(rawText))
+    fun personalSource(
+        rawText: String,
+        evidence: InputEvidence? = null,
+    ): String = if (evidence == null) framed(listOf(rawText)) else framed(listOf("personal-source-v2", rawText, evidence.canonical()))
 
     fun personalContext(
         referenceAt: Instant,
@@ -27,7 +32,25 @@ object AiDispatchFingerprints {
 
     fun batchSource(inputs: List<AiDispatchInputSnapshot>): String =
         framed(
-            listOf("final-source-v1") + inputs.flatMap { listOf(it.inputRef, it.rawText) },
+            if (inputs.none { it.evidence != null }) {
+                listOf("final-source-v1") + inputs.flatMap { listOf(it.inputRef, it.rawText) }
+            } else {
+                listOf("final-source-v2") +
+                    inputs.flatMap {
+                        listOf(
+                            it.inputRef,
+                            it.rawText,
+                            if (it.evidence ==
+                                null
+                            ) {
+                                "legacy"
+                            } else {
+                                "evidence"
+                            },
+                            it.evidence?.canonical().orEmpty(),
+                        )
+                    }
+            },
         )
 
     fun batchContext(

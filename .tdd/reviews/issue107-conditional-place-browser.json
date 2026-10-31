@@ -1,0 +1,21 @@
+{
+  "workItem": "issue107-conditional-place-browser",
+  "reviewedAt": "2026-10-31T03:36:42.674633+00:00",
+  "reviewer": "/root/conditional_place_spec",
+  "result": "PASS",
+  "p1": 0,
+  "p2": 0,
+  "sourceChanged": false,
+  "sourceFingerprint": "f7599a1ac881c2bc8a0b43e86a456324c38913381ad5fd5074203e6d78db57a6",
+  "checks": 6,
+  "cases": 4,
+  "providerRequests": 0,
+  "evidence": "local-only-evidence/final-result.json",
+  "limits": [
+    "Synthetic auth refresh bootstrap; not OAuth/refresh integration validation",
+    "Mobile viewport/touch emulation, not physical device",
+    "Known conflict parser doubles, not real model/geography validation",
+    "Only local HTTP same-origin proxy; not production deployment/CORS/TLS proof",
+    "Native main/test source unchanged; documentation/evidence updates only"
+  ]
+}

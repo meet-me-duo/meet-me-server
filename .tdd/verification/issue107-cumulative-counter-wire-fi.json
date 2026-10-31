@@ -1,0 +1,100 @@
+{
+  "baseCommit": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "independentActor": "root",
+  "mutants": [
+    {
+      "mutant": "cap-ceiling-expanded",
+      "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+      "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+      "mutatedSha256": "a14ee59984371d73a16df0323d4b39b889c0d882a1e69f75e231960725bd07ab",
+      "exitCode": 1,
+      "tests": 23,
+      "failures": 1,
+      "errors": 0,
+      "detectedBy": [
+        "a requested cap above ten cannot expand the authorized physical limit()"
+      ]
+    },
+    {
+      "mutant": "second-error-stop-delayed",
+      "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+      "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+      "mutatedSha256": "3df055a36fe4966211e34f974508935c7bd814690621a06034f2320b0151d18c",
+      "exitCode": 1,
+      "tests": 23,
+      "failures": 1,
+      "errors": 0,
+      "detectedBy": [
+        "two distinct physical calls with the same normalized code stop regardless of provider stage()"
+      ]
+    },
+    {
+      "mutant": "source-binding-ignored",
+      "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+      "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+      "mutatedSha256": "e02b4aa97f848c36074e1fd469a2510ae1187145d6c921dc735319a6dc682a13",
+      "exitCode": 1,
+      "tests": 23,
+      "failures": 1,
+      "errors": 0,
+      "detectedBy": [
+        "reopen cannot reset missing corrupted or mismatched initialized state()"
+      ]
+    },
+    {
+      "mutant": "unknown-error-normalized-as-network",
+      "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+      "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+      "mutatedSha256": "f2a28acf782c3fe2d468baeed27fa4da7d76c0e997d284767676d397819f59f7",
+      "exitCode": 1,
+      "tests": 23,
+      "failures": 2,
+      "errors": 0,
+      "detectedBy": [
+        "unknown failure and unavailable observation fail closed without storing raw code()",
+        "fixed normalization supports typed names and aliases while unknown stays unknown()"
+      ]
+    },
+    {
+      "mutant": "pre-header-veto-omitted",
+      "source": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpExperimentWireHook.kt",
+      "sourceBaselineSha256": "2bbc46b7887e1fa636bfd76cd4de541f2f704a305ca9ee1ed1d963e73166f1ee",
+      "mutatedSha256": "71e27d704a3a63133324d5518bfa2883aaa7cbc06b88a92a4dd3d0961bcef836",
+      "exitCode": 1,
+      "tests": 9,
+      "failures": 3,
+      "errors": 0,
+      "detectedBy": [
+        "actual gate composes durable reservation hook and existing diagnostic listener()",
+        "fresh SDK Call identity is distinct even when the second call reuses one prepared attempt()",
+        "hook refusal after valid original authority prevents actual request headers()"
+      ]
+    }
+  ],
+  "allExactRestored": true,
+  "finalSourceSha256": {
+    "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpExperimentWireHook.kt": "2bbc46b7887e1fa636bfd76cd4de541f2f704a305ca9ee1ed1d963e73166f1ee"
+  },
+  "restoredGreen": {
+    "tests": 73,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "greenExitCode": 0,
+  "selectedClasses": [
+    "ExperimentCallLedgerContractTest",
+    "ExperimentCurrentRoomExecutionsContractTest",
+    "ExperimentFailureCorrelationContractTest",
+    "ExperimentLedgerConcurrencyContractTest",
+    "ExperimentPendingFailurePhaseContractTest",
+    "ExperimentWireHookContractTest",
+    "ParserTransportDiagnosticContractTest",
+    "ParserDiagnosticOverflowCompatibilityTest",
+    "ParserTransportObservationSessionTest",
+    "GeminiObservationFailureContractTest",
+    "GeminiExpiredObservationContractTest"
+  ],
+  "realProviderCalls": 0
+}

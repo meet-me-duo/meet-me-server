@@ -73,14 +73,21 @@ class JdbcRecommendationRepository(
             .asSequence()
             .flatMap { (option, id, variant) ->
                 variant.participantIds.asSequence().map { participant ->
-                    arrayOf<Any?>(id, option.id, analysis.analysisId, analysis.roomId, participant.value)
+                    arrayOf<Any?>(
+                        id,
+                        option.id,
+                        analysis.analysisId,
+                        analysis.roomId,
+                        participant.value,
+                        participant in variant.unverifiedPlaceParticipantIds,
+                    )
                 }
             }.chunked(500)
             .forEach { arguments ->
                 jdbc.batchUpdate(
                     "INSERT INTO recommendation_variant_participants(" +
-                        "variant_id, option_id, coordination_run_id, room_id, participant_id) " +
-                        "VALUES (?, ?, ?, ?, ?)",
+                        "variant_id, option_id, coordination_run_id, room_id, participant_id, place_unverified) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)",
                     arguments,
                 )
             }
@@ -156,14 +163,17 @@ class JdbcRecommendationRepository(
         val participants =
             jdbc
                 .query(
-                    "SELECT variant_id, participant_id FROM recommendation_variant_participants " +
+                    "SELECT variant_id, participant_id, place_unverified FROM recommendation_variant_participants " +
                         "WHERE " + selectedFilter + " ORDER BY participant_id::text",
                     { rs, _ ->
-                        rs.getObject("variant_id", UUID::class.java) to
-                            ParticipantId(rs.getObject("participant_id", UUID::class.java))
+                        Triple(
+                            rs.getObject("variant_id", UUID::class.java),
+                            ParticipantId(rs.getObject("participant_id", UUID::class.java)),
+                            rs.getBoolean("place_unverified"),
+                        )
                     },
                     *selectedParameters,
-                ).groupBy({ it.first }, { it.second })
+                ).groupBy { it.first }
         val variants =
             jdbc
                 .query(
@@ -178,10 +188,11 @@ class JdbcRecommendationRepository(
                             id,
                             RecommendationVariant(
                                 MeetingMode.valueOf(rs.getString("meeting_mode")),
-                                participants[id].orEmpty(),
+                                participants[id].orEmpty().map { it.second },
                                 area,
                                 coordinate,
                                 rs.getInt("preference_count"),
+                                participants[id].orEmpty().filter { it.third }.map { it.second },
                             ),
                         )
                     },

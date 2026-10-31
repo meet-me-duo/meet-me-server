@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-evidence-current-second-final-question-guard",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/EvidenceUnexpectedClarificationContractTest.kt",
+      "sha256": "a223fe45f31807bc87f59f66847d18793267636d11e028b967373a57dd06c694"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidenceUnexpectedClarificationContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.EvidenceUnexpectedClarificationContractTest.EX-FINAL a second question cannot be silently discarded while applying its guessed conditions()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:58:02.620581Z"
+}

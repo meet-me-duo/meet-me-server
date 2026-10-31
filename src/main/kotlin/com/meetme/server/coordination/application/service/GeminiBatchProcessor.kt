@@ -94,9 +94,12 @@ class GeminiBatchProcessor(
                             .toString(),
                         it,
                         submission.latest.locale,
-                        (prechecks?.anchor(submission.latest.id.value) ?: submission.latest.createdAt)
-                            .atZone(room.timeZone.value)
+                        (
+                            submission.latest.evidence?.referenceAt ?: prechecks?.anchor(submission.latest.id.value)
+                                ?: submission.latest.createdAt
+                        ).atZone(room.timeZone.value)
                             .toLocalDate(),
+                        submission.latest.evidence,
                     )
                 }
             }
@@ -214,6 +217,7 @@ class GeminiBatchProcessor(
                                     it.rawText,
                                     it.locale.toLanguageTag(),
                                     it.referenceDate,
+                                    it.evidence,
                                 )
                             }
                         AiProviderDispatchContext(

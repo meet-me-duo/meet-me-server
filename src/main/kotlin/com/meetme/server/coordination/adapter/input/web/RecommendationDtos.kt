@@ -21,7 +21,11 @@ data class RecommendationVariantResponse(
     @field:Schema(description = "대면 또는 온라인 방식", requiredMode = Schema.RequiredMode.REQUIRED)
     val meetingMode: RecommendationMeetingMode,
     @field:JsonProperty("attendance_count")
-    @field:Schema(description = "참석 인원", requiredMode = Schema.RequiredMode.REQUIRED, minimum = "2")
+    @field:Schema(
+        description = "시간 조건이 맞는 인원; attendance_confirmed=false이면 실제 대면 참석은 미확정",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        minimum = "2",
+    )
     val attendanceCount: Int,
     @field:JsonProperty("total_participants")
     @field:Schema(description = "고정 배치 전체 인원", requiredMode = Schema.RequiredMode.REQUIRED, minimum = "2")
@@ -35,6 +39,11 @@ data class RecommendationVariantResponse(
     @field:JsonProperty("excluded_participant_names")
     @field:Schema(description = "고정 분석 배치에서 이 조합에 참석하지 않는 참여자의 공개 이름; 전원 참석은 빈 배열", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     val excludedParticipantNames: List<String> = emptyList(),
+    @field:JsonProperty("attendance_confirmed")
+    @field:Schema(description = "false이면 시간만 일치하고 장소·이동 충족 및 실제 참석은 미확정; 주최자 확정 후에도 유지", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    val attendanceConfirmed: Boolean = true,
+    @field:Schema(description = "확인된 시간과 미확인 장소·이동 조건을 함께 설명; 타인의 원문은 비공개", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    val summary: String = "",
 )
 
 @Schema(description = "실제로 가능한 하나의 연속 시간안")

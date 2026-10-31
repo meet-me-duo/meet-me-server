@@ -107,16 +107,55 @@ class MatchingResultService(
                 .findByBatch(run.batch.id)
                 .filter { it.status != NormalizedPlaceStatus.RESOLVED }
                 .groupBy { it.submissionVersionId }
+        val evidenceProtocol = prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V2"
         return submissions.mapNotNull { submission ->
-            val result = structured[submission.latest.id] ?: return@mapNotNull null
-            val reason = result.rejectionCode ?: placeFailures[submission.latest.id]?.firstOrNull()?.status?.name ?: return@mapNotNull null
-            if (reason in ClarificationService.AMBIGUITY_REASONS && submission.participantId != viewer.id) return@mapNotNull null
+            val result = structured[submission.latest.id]
+            val travelReason =
+                if (run.quality == CandidateQuality.PARTIAL) {
+                    PlaceConstraintDiagnostics.unappliedReason(result?.conditions.orEmpty())
+                } else {
+                    null
+                }
+            val reason =
+                result?.rejectionCode ?: placeFailures[submission.latest.id]?.firstOrNull()?.status?.name
+                    ?: travelReason
+                    ?: if (result == null && evidenceProtocol) "STRUCTURED_RESULT_MISSING" else return@mapNotNull null
+            if (!evidenceProtocol &&
+                reason in ClarificationService.AMBIGUITY_REASONS &&
+                submission.participantId != viewer.id
+            ) {
+                return@mapNotNull null
+            }
             val rawText =
                 submission.latest.rawText.takeUnless {
                     prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1" && submission.participantId != viewer.id
                 }
             val owner = participantRepository.findById(submission.participantId) ?: return@mapNotNull null
-            UnappliedInputView(owner.displayName.value, rawText?.toPlainText(), reason)
+            UnappliedInputView(
+                owner.displayName.value,
+                rawText?.toPlainText(),
+                reason,
+                if (evidenceProtocol) {
+                    submission.latest.evidence
+                        ?.supplement
+                        ?.answerText
+                        ?.toPlainText()
+                } else {
+                    null
+                },
+                if (reason == PlaceConstraintDiagnostics.UNSUPPORTED_TRAVEL_CONSTRAINT) {
+                    "PLACE"
+                } else if (evidenceProtocol) {
+                    when {
+                        reason == "AMBIGUOUS_TIME_CONSTRAINT" -> "TIME"
+                        result?.rejectionCode != null || result == null -> "INPUT"
+                        placeFailures.containsKey(submission.latest.id) -> "PLACE"
+                        else -> "INPUT"
+                    }
+                } else {
+                    null
+                },
+            )
         }
     }
 
@@ -342,6 +381,13 @@ class MatchingResultService(
                                     )
                                 },
                             frozenCohort.filterNot { it in variant.participantIds }.map(publicNames::getValue),
+                            variant.unverifiedPlaceParticipantIds.isEmpty(),
+                            conditionalSummary(
+                                renderWindow(option.option.window, room, locale),
+                                variant.participantIds.size,
+                                variant.unverifiedPlaceParticipantIds.isNotEmpty(),
+                                locale,
+                            ),
                         )
                     },
                     renderWindow(option.option.window, room, locale),
@@ -381,7 +427,13 @@ class MatchingResultService(
                 listOf(selection.selectedWindow),
                 variant.representativeArea?.let { CandidatePlaceView(it.displayName, null, null) }
                     ?: variant.representativePlace?.let { CandidatePlaceView("공통 가능 지역", it.latitude.toDouble(), it.longitude.toDouble()) },
-                renderWindow(selection.selectedWindow, room, locale),
+                conditionalSummary(
+                    renderWindow(selection.selectedWindow, room, locale),
+                    variant.participantIds.size,
+                    variant.unverifiedPlaceParticipantIds.isNotEmpty(),
+                    locale,
+                ),
+                variant.unverifiedPlaceParticipantIds.isEmpty(),
             )
         return ConfirmedResultView(candidate, selection.confirmedAt, selection)
     }
@@ -424,7 +476,12 @@ class MatchingResultService(
         locale: Locale,
     ): CandidateListView {
         val structured = structuredSubmissionRepository.findByBatch(run.batch.id)
-        val rejectedIds = structured.filter { it.rejectionCode != null }.mapTo(mutableSetOf()) { it.submissionVersionId }
+        val rejectedIds =
+            structured
+                .filter {
+                    it.rejectionCode != null ||
+                        (run.quality == CandidateQuality.PARTIAL && PlaceConstraintDiagnostics.unappliedReason(it.conditions) != null)
+                }.mapTo(mutableSetOf()) { it.submissionVersionId }
         normalizedPlaceRepository
             .findByBatch(run.batch.id)
             .filter { it.status != NormalizedPlaceStatus.RESOLVED }
@@ -461,25 +518,38 @@ class MatchingResultService(
                         it.coordinate?.longitude?.toDouble(),
                     )
                 },
+            attendanceConfirmed = unverifiedPlaceParticipantIds.isEmpty(),
             summary =
-                messageSource.getMessage(
-                    "candidate.summary.explicit",
-                    arrayOf(
-                        CandidateSummaryRenderer
-                            .render(
-                                CandidateSummaryRequest(
-                                    occurrences = timeRanges,
-                                    searchStartDate = room.searchRange.startInclusive,
-                                    searchEndDate = room.searchRange.endExclusive,
-                                    timeZone = room.timeZone.value,
-                                    locale = locale,
-                                    recurringPattern = inferredPattern(room),
-                                ),
-                            ).text,
+                conditionalSummary(
+                    messageSource.getMessage(
+                        "candidate.summary.explicit",
+                        arrayOf(
+                            CandidateSummaryRenderer
+                                .render(
+                                    CandidateSummaryRequest(
+                                        occurrences = timeRanges,
+                                        searchStartDate = room.searchRange.startInclusive,
+                                        searchEndDate = room.searchRange.endExclusive,
+                                        timeZone = room.timeZone.value,
+                                        locale = locale,
+                                        recurringPattern = inferredPattern(room),
+                                    ),
+                                ).text,
+                        ),
+                        locale,
                     ),
+                    participantIds.size,
+                    unverifiedPlaceParticipantIds.isNotEmpty(),
                     locale,
                 ),
         )
+
+    private fun conditionalSummary(
+        time: String,
+        count: Int,
+        pending: Boolean,
+        locale: Locale,
+    ): String = if (pending) messageSource.getMessage("candidate.summary.unverified_place", arrayOf<Any>(time, count), locale) else time
 
     private fun MeetingCandidate.inferredPattern(room: MeetingRoom): RecurringCandidatePattern? {
         val localRanges =

@@ -1,0 +1,45 @@
+{
+  "workItem": "issue107-place-diagnostics",
+  "reviewedAt": "2026-10-30T13:47:54.304510+00:00",
+  "role": "independent test designer and implementation reviewer",
+  "result": "PASS_WITH_SCOPE_LIMITS",
+  "p1": 0,
+  "p2": 0,
+  "actualProviderCalls": 0,
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/UnappliedTravelConstraintContractTest.kt",
+      "sha256": "e7a03910e3becae7f80955c9e1ec198ddfa00f4a6c140a818ce65839e1ef6121"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/InfrastructureEndpointSnapshotContractTest.kt",
+      "sha256": "556cec2add88fcc767dbc61760f2eb4f6db7568804245a6f75fea2f914742d42"
+    }
+  ],
+  "evidence": "local-only-evidence/fault-injection-results.json",
+  "scope": [
+    "unsupported versus conflict not conflated",
+    "time and original structured conditions preserved",
+    "PARTIAL reason and deduplicated counts agree",
+    "host authorization and V1/V2 disclosure preserved",
+    "historical COMPLETE immutable",
+    "no geographic string exceptions",
+    "test infrastructure captures immutable connection values per registration",
+    "independent endpoint stop/restart contract"
+  ],
+  "notYetVerified": [
+    "single final whole-suite green run after last helper change",
+    "exact cause of full-prefix mock fallback incomplete flow",
+    "live provider semantic accuracy",
+    "walking time or real-store feasibility"
+  ],
+  "finalScopedTests": {
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "ktlintCheck": true,
+    "assemble": true
+  },
+  "lastWholeSuiteGreen": false
+}

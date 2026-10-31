@@ -1,0 +1,335 @@
+{
+  "workItem": "issue107-v2-label-routing",
+  "recordedAt": "2026-10-30T08:42:08.847810+00:00",
+  "baseRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a",
+  "totals": {
+    "tests": 507,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suiteCount": 41,
+  "suites": [
+    {
+      "name": "com.meetme.server.coordination.adapter.output.integration.EvidenceUnexpectedClarificationContractTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.input.web.EvidenceDiagnosticScopePriorityPostgresTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.input.web.EvidenceHostDiagnosticsPostgresTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.input.web.Issue131ManagedRuntimeRoomPostgresTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.input.web.LunaPrecheckQuestionPostgresTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.output.integration.EvidenceFinalContractTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.coordination.adapter.output.integration.EvidenceFinalPromptPolicyTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.experiment.CumulativePrecheckSnapshotPostgresTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.experiment.ExperimentFailureCorrelationContractTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.classification.JevAmbiguityClassificationTransportTest",
+      "tests": 100,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.classification.JevClockClassificationPortsTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderRetryAfterContractTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderTransportContractTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.PrecheckProviderUnicodeContractTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeBindingContractTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.PrecheckRuntimeInputGateTransportTest",
+      "tests": 54,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.PrecheckThoughtSignatureTransportTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckBudgetTest",
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckCompositionTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckDeadlineTest",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckRoutingTest",
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckTerminalUsageWorkerTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest",
+      "tests": 63,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.aihttp.Issue123TwoStagePhysicalDispatchTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.aihttp.JevManagedDispatchContractTest",
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.aihttp.LunaPrecheckManagedDispatchContractTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.persistence.EvidenceExecutionFencePostgresTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.adapter.output.persistence.EvidencePersistencePostgresTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.application.port.output.EvidenceDispatchFingerprintTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.shared.domain.InputEvidenceContractTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.EvidencePostCloseRevisionPostgresTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.EvidenceReferencePrecisionPostgresTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.ExperimentalInputEvidencePostgresTest",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.PrecheckAdmissionFreshnessPostgresTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.PrecheckCorrectionCompatibilityPostgresTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.PrecheckDefensiveBoundaryPostgresTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.PrecheckInputShapeHttpPostgresTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "name": "com.meetme.server.submission.adapter.input.web.PrecheckRateLimitRoutingContractTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "ktlintCheck": "PASS",
+  "assemble": "PASS",
+  "gradleExit": 0,
+  "actualProviderCalls": 0,
+  "allProjectTests": false,
+  "faultInjection": {
+    "mutants": 3,
+    "detected": 3,
+    "countsPerRun": 53,
+    "failureCounts": [
+      8,
+      5,
+      3
+    ],
+    "testVersion": "before physical positive10 cases added; original diffs/XML retained"
+  },
+  "red": {
+    "tests": 72,
+    "failures": 24,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scope": "isolated PRE_SUBMIT_V2 only; V1 preserved",
+  "productionFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/JevAmbiguityClassifier.kt",
+      "sha256": "4f3f4fedab82ad5f287851bf0f43a9269be0c836aa75f8dbb1da1cf3cf82be47"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt",
+      "sha256": "551929d34d9bf7cef2b7cf65fb86510640e5aeda3f00926b8c2de7fa5ec19659"
+    }
+  ],
+  "independentReview": "PASS: label_routing_tests role, no P1/P2, includes managed physical10 and ADR065 contract review"
+}

@@ -1,0 +1,32 @@
+{
+  "sourceBase": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "stableContracts": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/ParserTransportObservationPort.kt",
+      "sha256": "0166d4fc27066cc5e01595a13a822db528d07a7ae0b2a450baef98ac5bd8d583",
+      "unchangedFromSourceBase": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcParserTransportObservationAdapter.kt",
+      "sha256": "82f00f2a3dc9275f78baf2b2ab3b666b9862485d82966cb68fcb3b703946adf9",
+      "unchangedFromSourceBase": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/AsyncParserTransportObservationAdapter.kt",
+      "sha256": "c1eae680f2951e4348b437fe5ece09f86d19dc9911a90e5fcb69c170c6f192f2",
+      "unchangedFromSourceBase": true
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/ParserTransportStore.kt",
+      "sha256": "fccc32a59c30a1da6e47947392178adf2d64d23652b6cae259d2a5a7a4655a2e",
+      "unchangedFromSourceBase": true
+    },
+    {
+      "path": "src/main/resources/db/migration/V15__add_parser_transport_observations.sql",
+      "sha256": "fcbcd040cb232ca400cbfb24b944f8289428032daf6ce386c35dbc119f9b9f98",
+      "unchangedFromSourceBase": true
+    }
+  ],
+  "databaseMigrationAdded": false,
+  "additionalPaidCalls": 0
+}

@@ -1,0 +1,13 @@
+{
+  "scope": "primary-only approved output and one-shot plan identifier",
+  "testPath": "local-only-evidence/test_primary_smoke_plan.py",
+  "testSha256": "7840fcf2b4612a800f8dfb79d4d26460c2e92aca8fedccc65eb46ea10d7f681c",
+  "plannerPath": "local-only-evidence/run-primary-smoke.py",
+  "plannerSha256": "c8bb1eaa8735e84dea43e08d86ed06c8b054e01e52e68d56126e6fd3e8f9d542",
+  "redLog": "local-only-evidence/primary-plan-red-2.log",
+  "redMethods": 2,
+  "redAssertionFailures": 2,
+  "greenLog": "local-only-evidence/primary-plan-final-green.log",
+  "greenMethods": 2,
+  "gradleOrProviderCalls": 0
+}

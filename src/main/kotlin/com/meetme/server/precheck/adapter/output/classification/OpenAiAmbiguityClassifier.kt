@@ -89,6 +89,7 @@ class OpenAiAmbiguityClassifier(
                     request.locale,
                     request.searchStartDate,
                     request.searchEndDate,
+                    request.evidence,
                 )
                 val prepared =
                     PreparedAiHttpRequest.freeze(

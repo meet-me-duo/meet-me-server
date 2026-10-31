@@ -1,0 +1,40 @@
+{
+  "workItem": "issue107-followup-technical-preservation-and-harness",
+  "sourceRevision": "c9453a35582ca6503c956ab4e8aff8d73b175ef3",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiObservationFailureContractTest.kt",
+      "sha256": "5ce9d0f9860e055b347b6dfd0a67871578dfdc6a204f29280b451a84057f4a2a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiExpiredObservationContractTest.kt",
+      "sha256": "b4a155b555c5f86349064038659ed18acb4aaa6842be33b8832687c64f4983ca"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationAdmissionContractTest.kt",
+      "sha256": "2a5155461aaeb63c172a331d4141b1467481b19ab4c4eeccc6785beaf0aefd9e"
+    }
+  ],
+  "runs": [
+    {
+      "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL local-only-evidence/analysis-gradle test --tests *LiveEvaluationAdmissionContractTest",
+      "log": "local-only-evidence/followup-admission-red-2.log",
+      "tests": 8,
+      "assertionOrTODOFailures": 6,
+      "controlsPassed": 2
+    },
+    {
+      "command": "same env; adapter-only git-show c945 reversal; analysis-gradle test --tests *GeminiObservationFailureContractTest --tests *GeminiExpiredObservationContractTest",
+      "log": "local-only-evidence/followup-gemini-original-c945-red.log",
+      "tests": 8,
+      "assertionFailures": 5,
+      "controlsPassed": 3
+    }
+  ],
+  "distinctions": [
+    "Gemini first7 original RED:4fail/3controls; added real-expiry1 was verified later with adapter reversal, not initialRED",
+    "followup-admission-red.log failed formatting beforetests and is not behavioralRED",
+    "Python initial main-bypass FI fixture error superseded by corrected CLI fixture and meaningful assertion FI"
+  ],
+  "providerCalls": 0
+}

@@ -1,0 +1,29 @@
+{
+  "workItem": "issue107-luna-primary-failure-preservation",
+  "sourceRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a + preserved V2 dirty tree",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/LunaExpiredObservationContractTest.kt",
+      "sha256": "d5e9a941b131ca1a65b99879783b4f4814586e87e8481d46829d2d4935a3f175"
+    }
+  ],
+  "recordedAt": "2026-10-31T04:26:27.655121+00:00",
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--console=plain",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*LunaExpiredObservationContractTest"
+  ],
+  "failedTests": [
+    "observation at exact dispatch deadline preserves the primary timeout and cause()",
+    "observation at exact dispatch deadline preserves the primary network failure and cause()",
+    "expired observation preserves a transient provider status and its retry after()"
+  ],
+  "expectedFailureCategory": "Compiled adapter contract RED: secondary expired observation replaced TIMEOUT, NETWORK and SERVER with CONFIGURATION; two success controls pass",
+  "localLog": ".codex/tdd-evidence/issue107-luna-primary-failure-preservation.log",
+  "providerCalls": 0
+}

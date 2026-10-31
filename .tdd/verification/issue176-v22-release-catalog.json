@@ -1,0 +1,98 @@
+{
+  "workItem": "issue176-v22-release-catalog",
+  "recordedAt": "2026-10-31T07:16:33.020793+00:00",
+  "sourceRevision": "c551e3dc07ef6351d90bc65671a2e182d697564f",
+  "red": {
+    "tests": 2,
+    "failures": 2,
+    "reason": "Exact V22 catalog and V21-to-V22 transition absent before production changes"
+  },
+  "green": {
+    "newV22Suite": {
+      "tests": 6,
+      "passed": 6
+    },
+    "allCatalogSuites": {
+      "tests": 132,
+      "passed": 132,
+      "includesNewV22Suite": true,
+      "failures": 0,
+      "skipped": 0
+    },
+    "approvedReleasePipeline": {
+      "tests": 8,
+      "passed": 8,
+      "failures": 0,
+      "skipped": 0
+    }
+  },
+  "intentionalFaults": [
+    {
+      "mutant": "publisher",
+      "test": "V22C01",
+      "exitCode": 1,
+      "detected": true
+    },
+    {
+      "mutant": "approval-reader",
+      "test": "V22C02",
+      "exitCode": 1,
+      "detected": true
+    },
+    {
+      "mutant": "host-reader",
+      "test": "V22C02",
+      "exitCode": 1,
+      "detected": true
+    }
+  ],
+  "providerCalls": 0,
+  "operatingMutations": 0,
+  "historicalContract": "Historical complete/sparse catalogs and V18-V21 reader/transition/package expectations remain; current publication inventory extended to exactly V22",
+  "files": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "b94cac52b7739747432a1efca8e4205ede222b523a19f56f36a13963d7662376"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "cb8aa64c9538a5cce3da5aa8901a8bc85a35bd8436c6052a7330f94a632fdf11"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "c12bd5e3a9f42acf88613a08158b98263ef674cf509aaa8afecfddc223062739"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "c51e9cab41cfbf7e695778834c747f30b475b8be8bdba950beeecc657e2a0a71"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "f520278a7cbc2f535afc9d4cc2c30b4a95f08c978eca23e7a8eaab16bc693c28"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "4264c0f1a27d3bdb5a93a3b888caa3c9ef7a11532d9c0a6c5c9d3fc7b0bd3f89"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "22005f2bdeda4289db5e8df3b68c7a492352a05a88ede84bc068b509852d565a"
+    },
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "0513243b03c72f867c5300a63d9757400d08f687185c661fd45f51afc937cf3a"
+    },
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "d670f49e96d2c4d8be91f1b747c516e463b5e7ee936d6be3bb1e5a0f4ee23e93"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "e8e3cf5abf08a93972c710a5697edaf60bbf8d7cfd43f4c41355381978e3701f"
+    }
+  ],
+  "migrationAtVerification": {
+    "path": "src/main/resources/db/migration/V22__preserve_unverified_candidate_place.sql",
+    "sha256": "c7ee6aff1a9d33abf95427b4ecf0a58c13053f5bd2bc80938b82574a1ac5d155"
+  }
+}

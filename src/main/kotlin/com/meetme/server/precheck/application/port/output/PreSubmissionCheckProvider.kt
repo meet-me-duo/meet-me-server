@@ -2,6 +2,7 @@ package com.meetme.server.precheck.application.port.output
 
 import com.meetme.server.precheck.domain.PrecheckChoice
 import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
+import com.meetme.server.shared.domain.InputEvidence
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -21,9 +22,10 @@ data class PrecheckProviderRequest(
     val roomId: UUID? = null,
     val executionGeneration: Int? = null,
     val dispatchContext: AiProviderDispatchContext? = null,
+    val evidence: InputEvidence? = null,
 )
 
-enum class PrecheckVerdict { CLEAR, NEEDS_CHOICE, NEEDS_EDIT }
+enum class PrecheckVerdict { CLEAR, NEEDS_CHOICE, NEEDS_EDIT, UNRESOLVED }
 
 data class PrecheckProviderResult(
     val verdict: PrecheckVerdict,
@@ -35,6 +37,7 @@ data class PrecheckProviderResult(
     val responseBytes: Int? = null,
     val provider: String? = null,
     val model: String? = null,
+    val unresolvedReason: String? = null,
 )
 
 fun interface PreSubmissionCheckProvider {

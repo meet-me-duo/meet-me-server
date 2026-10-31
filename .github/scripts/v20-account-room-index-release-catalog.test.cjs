@@ -11,6 +11,7 @@ const script19 = 'V19__add_confirmed_result_reviews.sql';
 const script20 = 'V20__add_account_room_history_index.sql';
 const scripts = [...f.scripts, script18, script19, script20];
 assert.equal(scripts.length, 20);
+const currentScripts = [...scripts, 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql'];
 
 function release(version = 20) {
   const result = f.manifest();
@@ -28,8 +29,8 @@ function fixture() {
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
   return value;
 }
-function schema(value, version = 20) {
-  return scripts.slice(0, version).map((script, i) => ({ version: String(i + 1), script,
+function schema(value, version = 22) {
+  return currentScripts.slice(0, version).map((script, i) => ({ version: String(i + 1), script,
     sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
 }
 function packageRelease(value, version = 20, omitted = '') {
@@ -63,11 +64,11 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V20R01 actual publisher accepts exactly V1 through V20 and independently binds CRC SQL SHA and guard SHA', () => {
-  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...scripts].sort());
+test('V20R01 actual candidate publisher retains V20 in exact V22 and independently binds CRC SQL SHA and guard SHA', () => {
+  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V20 publication must be supported');
-    assert.deepEqual(built.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V22 candidate publication must be supported');
+    assert.deepEqual(built.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value))));
     assert.equal(built.result.guardFingerprint, hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
@@ -79,11 +80,11 @@ test('V20R01 actual publisher accepts exactly V1 through V20 and independently b
   } finally { value.remove(); }
 });
 
-test('V20R02 current publication rejects any missing version old19 unknown21 and malformed V20 file identity', () => {
-  for (const fault of [...range(20).map(n => `missing-${n}`), 'duplicate20', 'wrong20', 'leadingZero20', 'unknown21', 'extra', 'directory20', 'symlink20']) {
+test('V20R02 current publication rejects any missing version and malformed V20 or unknown V21 identity', () => {
+  for (const fault of [...range(22).map(n => `missing-${n}`), 'duplicate20', 'wrong20', 'leadingZero20', 'unknown21', 'extra', 'directory20', 'symlink20']) {
     const value = fixture(); try {
       const latest = path.join(value.migrations, script20);
-      if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, scripts[Number(fault.slice(8)) - 1]));
+      if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, currentScripts[Number(fault.slice(8)) - 1]));
       if (fault === 'duplicate20') fs.copyFileSync(latest, path.join(value.migrations, 'V20__duplicate.sql'));
       if (fault === 'wrong20') fs.renameSync(latest, path.join(value.migrations, 'V20__unapproved.sql'));
       if (fault === 'leadingZero20') fs.renameSync(latest, path.join(value.migrations, 'V020__add_account_room_history_index.sql'));

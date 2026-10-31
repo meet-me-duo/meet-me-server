@@ -73,6 +73,7 @@ class JevAmbiguityClassifier(
                 (
                     dispatchGate?.properties?.enabled != true ||
                         options.minimumConfidence?.let { !it.isFinite() || it !in 0.0..1.0 } == true ||
+                        request.evidence == null &&
                         options.requireMinimumConfidence &&
                         options.minimumConfidence == null
                 )
@@ -95,6 +96,7 @@ class JevAmbiguityClassifier(
                     request.locale,
                     request.searchStartDate,
                     request.searchEndDate,
+                    request.evidence,
                 )
                 val gate = requireNotNull(dispatchGate)
                 val prepared =
@@ -144,8 +146,10 @@ class JevAmbiguityClassifier(
                 }
             observedUsage = contract.usageSnapshot(responseBytes)
             val semantic = contract.parse(responseBytes)
+            // V2 routes the validated Choice label; the existing confidence action policy belongs to V1.
             val result =
                 if (managed &&
+                    request.evidence == null &&
                     (
                         options.minimumConfidence == null ||
                             requireNotNull(semantic.confidence) < options.minimumConfidence ||

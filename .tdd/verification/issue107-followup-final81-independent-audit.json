@@ -1,0 +1,367 @@
+{
+  "workItem": "issue107-followup-final81-independent-audit",
+  "sourceRevisionAtStart": "c9453a35582ca6503c956ab4e8aff8d73b175ef3",
+  "files": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d7f0bbac06c1425c4c7440c4bace828cc7e51e3f63db7569d7cc63b094cc01e4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiExpiredObservationContractTest.kt",
+      "sha256": "b4a155b555c5f86349064038659ed18acb4aaa6842be33b8832687c64f4983ca"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiObservationFailureContractTest.kt",
+      "sha256": "5ce9d0f9860e055b347b6dfd0a67871578dfdc6a204f29280b451a84057f4a2a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentalLiveHttpEvaluationTest.kt",
+      "sha256": "c4f597ef5092278e33f22b0b46f2cf3eef48bf91fca4fb5ec38aeae7e8c0dd4a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationAdmissionContractTest.kt",
+      "sha256": "2a5155461aaeb63c172a331d4141b1467481b19ab4c4eeccc6785beaf0aefd9e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationCompletionBoundaryContractTest.kt",
+      "sha256": "e570b255d0e6bd79021647cd223a588e5c34397d55d63a9fa5b24755d9aea676"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationSafety.kt",
+      "sha256": "559d4cb59590a5590f1790a845c44bfb783766cf60b60b4c25e8e49530daeacc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationSafetyContractTest.kt",
+      "sha256": "9449d93ee859a82823b97a4be87df7de38740c1af7522b6e2fad56749216df1a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeApplicationContractTest.kt",
+      "sha256": "02cab2a00118b3a8f18c792966618dc646b008005abe9c202ddd523355ac8c87"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeContractTest.kt",
+      "sha256": "ba3a1026e0dc6c2d4b02087108d3df0834cd86ca32c7960d5cd648fa7bc41f4c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeDiagnostic.kt",
+      "sha256": "41ee6a75d8535bc60b36520be52eb9449df57f69fc784b30670f894b56bae135"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeFailureEvidenceContractTest.kt",
+      "sha256": "4415080b49dc9d9f2fe7a8d8c163534b7d41161f7d005034a1e351eb1227b747"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeFixtures.kt",
+      "sha256": "38dce34893b872bb7fb7fc60218665c95fae37fba3ad04d285230fa63673f324"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiTechnicalSmokeTest.kt",
+      "sha256": "e38fa1bab4fddf27ebd4e11ac1e8ad6ae2dccebfd17d5d5e844fb9a66fa23a3d"
+    }
+  ],
+  "offlineFiles": [
+    {
+      "path": "local-only-evidence/run-live-eval-followup.py",
+      "sha256": "0b832cbc84e2431b2ddaa4a56199625e90d3f1ae7c2ecff1968644ce2cc02960"
+    },
+    {
+      "path": "local-only-evidence/run-primary-smoke.py",
+      "sha256": "c8bb1eaa8735e84dea43e08d86ed06c8b054e01e52e68d56126e6fd3e8f9d542"
+    },
+    {
+      "path": "local-only-evidence/test_live_eval_outcome.py",
+      "sha256": "ae0fca31c29dcac8feba57209ba1ba73567240510f7d0a5f612dd0ccac086cad"
+    },
+    {
+      "path": "local-only-evidence/test_live_eval_prerequisite.py",
+      "sha256": "3563786bd3809fbaf344403285acabf06957ba36864f188e29c92edba387b0b7"
+    },
+    {
+      "path": "local-only-evidence/test_primary_smoke_plan.py",
+      "sha256": "7840fcf2b4612a800f8dfb79d4d26460c2e92aca8fedccc65eb46ea10d7f681c"
+    }
+  ],
+  "historicalCheckpoint": {
+    "independentKotlinCases": 74,
+    "distinctFI": 12,
+    "metadata": ".tdd/verification/issue107-followup-final-independent-audit.json"
+  },
+  "lastBoundaryInitialRed": {
+    "cases": 8,
+    "failures": 8,
+    "log": "local-only-evidence/followup-last-smoke-boundaries-red.log"
+  },
+  "lastBoundaryFI": [
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-omit-finally-report-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 4,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "successful flow writes one safe completed result without copying raw flow payloads()",
+            "flow failure always leaves one safe report and propagates the exact primary exception()",
+            "snapshot failure still leaves a report and cannot replace a stopped flow()",
+            "a failed first flow permanently consumes its approved manifest claim()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError",
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeApplicationContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-actual-http-poll-safety-bypass-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "diagnostic context freezes received HTTP evidence using original authority and zero provider calls()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-omit-output-binding-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "output mismatch rejects the actual claim before any flow can start()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "command": [
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+      ],
+      "log": "local-only-evidence/followup-last-permit-manifest-reuse-red.log",
+      "suites": [
+        {
+          "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+          "tests": 7,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "failedCases": [
+            "a failed first flow permanently consumes its approved manifest claim()"
+          ],
+          "failureTypes": [
+            "org.opentest4j.AssertionFailedError"
+          ]
+        }
+      ],
+      "exactRestore": true
+    }
+  ],
+  "lastBoundaryExactRestore": true,
+  "finalIndependentKotlin": {
+    "exitCode": 0,
+    "command": [
+      "local-only-evidence/analysis-gradle",
+      "test",
+      "--tests",
+      "*GeminiObservationFailureContractTest",
+      "--tests",
+      "*GeminiExpiredObservationContractTest",
+      "--tests",
+      "*LiveEvaluationSafetyContractTest",
+      "--tests",
+      "*LiveEvaluationAdmissionContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeApplicationContractTest",
+      "--tests",
+      "*LiveEvaluationCompletionBoundaryContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeFailureEvidenceContractTest"
+    ],
+    "log": "local-only-evidence/followup-last-final-81-restored-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiObservationFailureContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiExpiredObservationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationCompletionBoundaryContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeFailureEvidenceContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "failedCases": [],
+        "failureTypes": []
+      }
+    ]
+  },
+  "offlinePythonMethods": 14,
+  "offlinePythonGreenLogs": [
+    "local-only-evidence/prerequisite-outcome-final-restored-green.log",
+    "local-only-evidence/primary-plan-final-green.log"
+  ],
+  "finalCrossProcessFIRefresh": {
+    "runnerSha256": "0b832cbc84e2431b2ddaa4a56199625e90d3f1ae7c2ecff1968644ce2cc02960",
+    "testSha256": {
+      "test_live_eval_prerequisite.py": "3563786bd3809fbaf344403285acabf06957ba36864f188e29c92edba387b0b7",
+      "test_live_eval_outcome.py": "ae0fca31c29dcac8feba57209ba1ba73567240510f7d0a5f612dd0ccac086cad"
+    },
+    "injections": [
+      {
+        "fault": "main-prerequisite-bypass",
+        "exitCode": 1,
+        "assertionDetected": true,
+        "exactRestore": true
+      },
+      {
+        "fault": "ignore-process-failure",
+        "exitCode": 1,
+        "assertionDetected": true,
+        "exactRestore": true
+      },
+      {
+        "fault": "ignore-incomplete-analysis",
+        "exitCode": 1,
+        "assertionDetected": true,
+        "exactRestore": true
+      },
+      {
+        "fault": "ignore-evaluation-failure",
+        "exitCode": 1,
+        "assertionDetected": true,
+        "exactRestore": true
+      },
+      {
+        "fault": "main-raw-gradle-exit",
+        "exitCode": 1,
+        "assertionDetected": true,
+        "exactRestore": true
+      }
+    ],
+    "restoredExitCode": 0,
+    "exactRestore": true,
+    "providerCalls": 0
+  },
+  "totalDistinctFollowupFI": 16,
+  "faultCountExplanation": "12 original distinct follow-up faults plus4 last-boundary faults; repeated cross-process5 refresh is not counted again.",
+  "historicalWholeGateBeforeLastPatch": {
+    "suites": 292,
+    "cases": 2386,
+    "passed": 2380,
+    "skipped": 6,
+    "failures": 0,
+    "errors": 0,
+    "status": "baseline1, before the last diagnostic boundary patch"
+  },
+  "finalWholeGate": "source and Gradle slot handed to model_contracts for unchanged original guard/full gate; result pending at this checkpoint",
+  "providerCalls": 0,
+  "holdoutOrGoldRead": false,
+  "sourceTestRunnerFreeze": true
+}

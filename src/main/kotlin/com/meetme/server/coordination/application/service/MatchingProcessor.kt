@@ -14,6 +14,7 @@ import com.meetme.server.coordination.domain.MeetingCandidate
 import com.meetme.server.coordination.domain.StoredRecommendationOption
 import com.meetme.server.coordination.domain.matching.CompatiblePlaceArea
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
+import com.meetme.server.coordination.domain.matching.OfflinePlaceAssessment
 import com.meetme.server.coordination.domain.matching.ParticipantAllowedArea
 import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
 import com.meetme.server.coordination.domain.matching.ParticipantPreferences
@@ -103,6 +104,7 @@ class MatchingProcessor(
             submissions.map { submission ->
                 val result = structured[submission.latest.id]
                 val conditions = result?.conditions.orEmpty()
+                if (PlaceConstraintDiagnostics.unappliedReason(conditions) != null) hasUnappliedInput = true
                 val naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>()
                 val failedWithoutAvailability =
                     result == null || (result.rejectionCode != null && naturalWindows.none { it.polarity == TimePolarity.AVAILABLE })
@@ -131,10 +133,6 @@ class MatchingProcessor(
                     hasUnappliedInput = true
                     snapshots += unresolved
                 }
-                val preventsOffline =
-                    conditions.any {
-                        it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace
-                    }
                 ParticipantMatchInput(
                     participantId = submission.participantId,
                     availableTimes =
@@ -153,7 +151,16 @@ class MatchingProcessor(
                                 zone = room.timeZone,
                             )
                         },
-                    offlineArea = if (!preventsOffline && areas.isNotEmpty()) ParticipantAllowedArea(areas) else null,
+                    offlineArea = if (areas.isNotEmpty()) ParticipantAllowedArea(areas) else null,
+                    offlinePlaceAssessment =
+                        when {
+                            result == null || submission.latest.rawText == null -> OfflinePlaceAssessment.LEGACY_REQUIRED
+                            result.rejectionCode != null ||
+                                conditions.any {
+                                    it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace
+                                } -> OfflinePlaceAssessment.UNVERIFIED
+                            else -> OfflinePlaceAssessment.UNRESTRICTED
+                        },
                     explicitPreferences =
                         ParticipantPreferences(
                             timeRanges =
@@ -261,6 +268,7 @@ class MatchingProcessor(
                     meetingMode = candidate.meetingMode,
                     participantIds = candidate.participantIds,
                     totalParticipants = total,
+                    unverifiedPlaceParticipantIds = candidate.unverifiedPlaceParticipantIds,
                     place =
                         candidate.representativeArea?.let {
                             CandidatePlace(displayName = it.displayName)

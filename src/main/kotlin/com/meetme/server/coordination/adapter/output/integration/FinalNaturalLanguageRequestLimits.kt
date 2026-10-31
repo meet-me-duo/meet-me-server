@@ -29,7 +29,14 @@ internal fun validateFinalNaturalLanguageRequest(request: NaturalLanguageBatchRe
         }
         val count = raw.codePointCount(0, raw.length)
         if (count > SubmissionRules.MAX_RAW_TEXT_CODE_POINTS) invalidFinalRequest()
-        total += count
+        if (input.evidence != null) {
+            try {
+                input.evidence.validateAgainst(raw)
+            } catch (_: IllegalArgumentException) {
+                invalidFinalRequest()
+            }
+        }
+        total += input.evidence?.textCodePoints(raw) ?: count
         if (total > SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS) invalidFinalRequest()
     }
 }

@@ -1,0 +1,24 @@
+{
+  "workItem": "issue176-v22-release-catalog",
+  "sourceRevision": "c551e3dc07ef6351d90bc65671a2e182d697564f",
+  "testFiles": [
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "d670f49e96d2c4d8be91f1b747c516e463b5e7ee936d6be3bb1e5a0f4ee23e93"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "--test-name-pattern=V22C02|V22C05",
+    ".github/scripts/v22-conditional-place-release-catalog.test.cjs"
+  ],
+  "failedTests": [
+    "V22C02 exact V22 metadata",
+    "V22C05 V21 to V22 transition"
+  ],
+  "expectedFailureCategory": "V22 absent from reviewed publication/approval catalogs; actual V22 acceptance and V21-to-V22 transition fail while complete earlier catalogs pass",
+  "recordedAt": "2026-10-31T07:14:58.566449+00:00",
+  "providerCalls": 0,
+  "localLog": ".codex/tdd-evidence/issue176-v22-release-catalog.log"
+}

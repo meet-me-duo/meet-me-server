@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-evidence-current-diagnostic-scope-priority",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/EvidenceDiagnosticScopePriorityPostgresTest.kt",
+      "sha256": "d0e9f34ede95384f2515ad7e7b0a8b0c97b90c30875ecea10227bacadd9a0514"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidenceDiagnosticScopePriorityPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.EvidenceDiagnosticScopePriorityPostgresTest.EX-DIAGNOSTIC selected input failure is not relabeled as a secondary place failure()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:59:37.375654Z"
+}

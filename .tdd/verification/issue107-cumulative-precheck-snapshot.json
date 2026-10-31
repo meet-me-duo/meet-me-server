@@ -1,0 +1,25 @@
+{
+  "workItem": "issue107-cumulative-precheck-snapshot",
+  "recordedAt": "2026-10-29T16:52:13.186786+00:00",
+  "result": "PASS",
+  "command": [
+    "local-only-evidence/analysis-gradle",
+    "ktlintCheck",
+    "test",
+    "--tests",
+    "*CumulativePrecheckSnapshotPostgresTest"
+  ],
+  "totals": {
+    "tests": 2,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "testPath": "src/test/kotlin/com/meetme/server/experiment/CumulativePrecheckSnapshotPostgresTest.kt",
+  "testSha256": "c2995c6389f0c5a14b8e96dd5e24fc940247aa0c3671a4ce988d150a55a5c255",
+  "testBytesUnchangedSinceRed": true,
+  "sqlReview": "SELECT check_id,generation matches V16 composite PK; existing provider/model/failure_code/input_tokens/output_tokens/response_bytes/finished_at projection unchanged; actual collector consumes same constant",
+  "localLog": ".codex/tdd-evidence/issue107-cumulative-precheck-snapshot-green.log",
+  "originalEvidence": "Original b4 artifacts unchanged; destroyed original database is not reconstructed; its missing counts remain unknown",
+  "scope": "Fresh local PostgreSQL18 migrated through21; no Spring, evaluation app, provider calls, commit, or full guard"
+}

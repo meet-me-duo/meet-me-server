@@ -1,0 +1,51 @@
+{
+  "workItem": "issue107-input-evidence-domain",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/domain/InputEvidenceContractTest.kt",
+      "sha256": "fe583f0f7e426b90820f835b14661049a443d562e6f6cde0d1d6651b26abf639"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "clean",
+    "test",
+    "--tests",
+    "*InputEvidenceContractTest",
+    "--tests",
+    "*ExperimentalInputEvidencePostgresTest",
+    "--tests",
+    "*EvidencePrecheckContractTest",
+    "--tests",
+    "*EvidenceFinalContractTest",
+    "--tests",
+    "*EvidenceDispatchFingerprintTest"
+  ],
+  "failedTests": [
+    "EX-SOURCE UTF16 offset cannot substitute for a codepoint coordinate()",
+    "EX-SOURCE a guessed source excerpt cannot be accepted as original evidence()",
+    "EX-ORIGINAL direct answer records its answer-time reference without replacing original reference()",
+    "EX-ORIGINAL an answer cannot move the original relative-date reference()",
+    "EX-EVIDENCE-FENCE canonical source changes when the answer or source scope changes()",
+    "EX-ORIGINAL Unicode source coordinates are codepoints and the original is preserved()",
+    "EX-RECEIPT no answer is a valid pending original and not an invented answer()",
+    "EX-RECEIPT unresolved status carries a bounded reason while other states carry none()",
+    "EX-SOURCE negative or past-end source positions fail without repairing the source()",
+    "EX-EVIDENCE-LIMIT counts original and answer Unicode codepoints exactly once()",
+    "EX-SOURCE repeated excerpts are scoped to the recorded occurrence()",
+    "EX-EVIDENCE-LIMIT combined original and answer retain the existing 500 codepoint cap()",
+    "EX-EVIDENCE-FENCE adjacent text fields cannot collide by moving a delimiter()",
+    "EX-ORIGINAL original revision must be positive()",
+    "EX-REVISION an answer cannot attach to a different original revision()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:39:08.917289Z"
+}

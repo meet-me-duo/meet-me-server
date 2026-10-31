@@ -71,6 +71,7 @@ class AccountRoomHistoryIndexBudgetPostgresTest {
                 Flyway
                     .configure()
                     .dataSource(pool)
+                    .target("20")
                     .load()
                     .migrate()
                     .migrationsExecuted,
@@ -181,9 +182,10 @@ class AccountRoomHistoryIndexBudgetPostgresTest {
             }
         }
 
-    private fun flyway(target: String? = null): Flyway {
+    // This historical safety oracle measures V20 itself, independently of later DDL.
+    private fun flyway(target: String = "20"): Flyway {
         val config = Flyway.configure().dataSource(postgres.jdbcUrl, postgres.username, postgres.password)
-        if (target != null) config.target(target)
+        config.target(target)
         return config.load()
     }
 

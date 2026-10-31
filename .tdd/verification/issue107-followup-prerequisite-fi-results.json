@@ -1,0 +1,27 @@
+{
+  "runnerSha256": "1dd1dff6e460062593ee2cf519db8ca6104b039b0cbd0ecb074efb88a18c3fb6",
+  "testSha256": "a765826729f1375958c493a84790145c5b9e49a30fc595c6a31ea65a62f734bf",
+  "injections": [
+    {
+      "fault": "main-prerequisite-bypass",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    },
+    {
+      "fault": "ignore-process-failure",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    },
+    {
+      "fault": "ignore-incomplete-analysis",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    }
+  ],
+  "restoredExitCode": 0,
+  "exactRestore": true,
+  "providerCalls": 0
+}

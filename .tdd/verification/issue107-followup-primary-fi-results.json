@@ -1,0 +1,34 @@
+{
+  "fixtureSha256": "38dce34893b872bb7fb7fc60218665c95fae37fba3ad04d285230fa63673f324",
+  "testSha256": "ba3a1026e0dc6c2d4b02087108d3df0834cd86ca32c7960d5cd648fa7bc41f4c",
+  "injections": [
+    {
+      "exitCode": 1,
+      "log": "local-only-evidence/followup-primary-permit-nonprimary-red.log",
+      "tests": 15,
+      "failures": 4,
+      "errors": 0,
+      "skipped": 0,
+      "exactRestore": true
+    },
+    {
+      "exitCode": 1,
+      "log": "local-only-evidence/followup-primary-remove-one-call-cap-red.log",
+      "tests": 15,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0,
+      "exactRestore": true
+    }
+  ],
+  "restored": {
+    "exitCode": 0,
+    "log": "local-only-evidence/followup-primary-restored-green.log",
+    "tests": 15,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "exactRestore": true,
+  "providerCalls": 0
+}

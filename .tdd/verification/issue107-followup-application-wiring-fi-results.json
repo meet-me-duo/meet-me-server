@@ -1,0 +1,27 @@
+{
+  "fault": "actual Spring @Primary bean returns raw Jdbc authority instead of diagnostic wrapper",
+  "fixtureSha256": "38dce34893b872bb7fb7fc60218665c95fae37fba3ad04d285230fa63673f324",
+  "testSha256": "aa592f9eb78ef58aa0b7c37f6328ac0e809f5bc29acadea8375071052c99d4b9",
+  "red": {
+    "exitCode": 1,
+    "log": "local-only-evidence/followup-application-wiring-raw-jdbc-bean-red.log",
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "failureTypes": [
+      "org.opentest4j.AssertionFailedError"
+    ]
+  },
+  "restored": {
+    "exitCode": 0,
+    "log": "local-only-evidence/followup-application-wiring-restored-green.log",
+    "tests": 1,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "failureTypes": []
+  },
+  "exactRestore": true,
+  "providerCalls": 0
+}

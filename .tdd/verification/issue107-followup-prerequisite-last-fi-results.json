@@ -1,0 +1,42 @@
+{
+  "runnerSha256": "0b832cbc84e2431b2ddaa4a56199625e90d3f1ae7c2ecff1968644ce2cc02960",
+  "testSha256": {
+    "test_live_eval_prerequisite.py": "3563786bd3809fbaf344403285acabf06957ba36864f188e29c92edba387b0b7",
+    "test_live_eval_outcome.py": "ae0fca31c29dcac8feba57209ba1ba73567240510f7d0a5f612dd0ccac086cad"
+  },
+  "injections": [
+    {
+      "fault": "main-prerequisite-bypass",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    },
+    {
+      "fault": "ignore-process-failure",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    },
+    {
+      "fault": "ignore-incomplete-analysis",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    },
+    {
+      "fault": "ignore-evaluation-failure",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    },
+    {
+      "fault": "main-raw-gradle-exit",
+      "exitCode": 1,
+      "assertionDetected": true,
+      "exactRestore": true
+    }
+  ],
+  "restoredExitCode": 0,
+  "exactRestore": true,
+  "providerCalls": 0
+}

@@ -17,12 +17,19 @@ enum class MatchOutcome {
     NO_MATCH,
 }
 
+enum class OfflinePlaceAssessment {
+    LEGACY_REQUIRED,
+    UNRESTRICTED,
+    UNVERIFIED,
+}
+
 data class ParticipantMatchInput(
     val participantId: ParticipantId,
     val availableTimes: List<InstantTimeRange>,
     val offlineRegion: ParticipantAllowedRegion? = null,
     val offlineArea: ParticipantAllowedArea? = null,
     val explicitPreferences: ParticipantPreferences = ParticipantPreferences(),
+    val offlinePlaceAssessment: OfflinePlaceAssessment = OfflinePlaceAssessment.LEGACY_REQUIRED,
 )
 
 data class ParticipantPreferences(
@@ -59,6 +66,7 @@ data class DeterministicCandidate(
     val timeRanges: List<InstantTimeRange>,
     val representativePlace: GeoCoordinate?,
     val representativeArea: CompatiblePlaceArea? = null,
+    val unverifiedPlaceParticipantIds: List<ParticipantId> = emptyList(),
 )
 
 data class CandidateGenerationResult(
@@ -135,35 +143,9 @@ object DeterministicCandidateMatcher {
         participants: List<ParticipantMatchInput>,
         times: List<InstantTimeRange>,
     ): DeterministicCandidate? {
-        val areas = participants.map { it.offlineArea }
-        if (areas.all { it != null }) {
-            val commonKeys =
-                areas
-                    .filterNotNull()
-                    .map { area -> area.alternatives.mapTo(mutableSetOf()) { it.key } }
-                    .reduce { common, keys -> common.apply { retainAll(keys) } }
-            val selectedKey = commonKeys.sorted().firstOrNull() ?: return null
-            val displayName =
-                areas
-                    .filterNotNull()
-                    .flatMap { it.alternatives }
-                    .filter { it.key == selectedKey }
-                    .map { it.displayName }
-                    .sorted()
-                    .first()
-            return candidate(
-                planType,
-                MeetingMode.IN_PERSON,
-                participants,
-                times,
-                place = null,
-                area = CompatiblePlaceArea(selectedKey, displayName),
-            )
-        }
-
-        val regions = participants.map { it.offlineRegion ?: return null }
-        val place = GeoMatcher.representativePoint(regions) ?: return null
-        return candidate(planType, MeetingMode.IN_PERSON, participants, times, place)
+        val resolution = OfflinePlacePolicy.resolve(participants) ?: return null
+        return candidate(planType, MeetingMode.IN_PERSON, participants, times, resolution.coordinate, resolution.area)
+            .copy(unverifiedPlaceParticipantIds = resolution.unverifiedParticipantIds)
     }
 
     private fun remoteCandidate(

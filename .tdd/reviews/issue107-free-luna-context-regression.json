@@ -1,0 +1,24 @@
+{
+  "workItem": "issue107-free-luna-context-regression-closure",
+  "reviewedAt": "2026-10-30T14:36:12.322669+00:00",
+  "role": "independent test designer and implementation reviewer",
+  "result": "PASS",
+  "p1": 0,
+  "p2": 0,
+  "evidence": "local-only-evidence/final-result.json",
+  "sourceFingerprint": "28e36183bb01d77adaa1a3fb0aa60f141aa3f2978ad43bbb8e1d2d82dc7907f0",
+  "scope": [
+    "free whole-context state ownership",
+    "paid singleton/claim/strict limits preserved",
+    "original test assertions and timeouts preserved",
+    "before/after same-JVM causal pair",
+    "single final whole regression XML independently summed",
+    "guarded actual test-worker PID audit"
+  ],
+  "limits": [
+    "real model semantic/geographic accuracy",
+    "actual walking constraints",
+    "DNS/direct syscall/external daemon isolation not proven",
+    "no publish/merge/deploy"
+  ]
+}

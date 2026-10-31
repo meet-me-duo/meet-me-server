@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Existing V8 rows survive exact V1..V20 integration without automatic linking or reanalysis. */
+/** Existing V8 rows survive exact V1..V22 integration without automatic linking or reanalysis. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,17 +18,17 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly twenty versions and validates both independent legacy schemas`() {
-        assertEquals(20, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly twenty-two versions and validates both independent legacy schemas`() {
+        assertEquals(22, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "20",
+            "22",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("20", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("22", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
@@ -54,10 +54,15 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(12, flyway().migrate().migrationsExecuted)
+        assertEquals(14, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
+        assertEquals(
+            "0",
+            scalar("SELECT count(*)::text FROM submission_versions WHERE input_evidence IS NOT NULL"),
+            "V21 must not invent interpretation evidence for any legacy submission version",
+        )
         assertEquals("0", scalar("SELECT count(*)::text FROM participants WHERE user_id IS NOT NULL"))
         assertEquals("3", scalar("SELECT count(*)::text FROM meeting_rooms WHERE submission_protocol='LEGACY'"))
         for (table in listOf("precheck_candidates", "precheck_checks", "precheck_executions", "precheck_operations")) {
@@ -238,6 +243,8 @@ class IntegratedLegacyUpgradePostgresTest {
                     "to_jsonb(t) - 'user_id'"
                 } else if (table == "meeting_rooms") {
                     "to_jsonb(t) - 'submission_protocol'"
+                } else if (table == "submission_versions") {
+                    "to_jsonb(t) - 'input_evidence'"
                 } else {
                     "to_jsonb(t)"
                 }

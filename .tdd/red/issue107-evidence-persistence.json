@@ -1,0 +1,43 @@
+{
+  "workItem": "issue107-evidence-persistence",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/EvidencePersistencePostgresTest.kt",
+      "sha256": "99303e311600ed2a1b54e1c2041968826c404a85c138d4d6e59e6eb4e8ba8302"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidencePersistencePostgresTest",
+    "--tests",
+    "*EvidenceHostDiagnosticsPostgresTest",
+    "--tests",
+    "*InputEvidenceContractTest",
+    "--tests",
+    "*ExperimentalInputEvidencePostgresTest",
+    "--tests",
+    "*EvidencePrecheckContractTest",
+    "--tests",
+    "*EvidenceFinalContractTest",
+    "--tests",
+    "*EvidenceDispatchFingerprintTest",
+    "--tests",
+    "*EvidenceExecutionFencePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.EvidencePersistencePostgresTest.candidate roundtrip and room text admission include the finalized scoped answer()",
+    "com.meetme.server.shared.adapter.output.persistence.EvidencePersistencePostgresTest.frozen older version retains original answer unresolved status and anchors after later edit()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:31:46.380455+00:00"
+}

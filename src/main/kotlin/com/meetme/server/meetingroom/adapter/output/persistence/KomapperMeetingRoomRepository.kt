@@ -9,6 +9,7 @@ import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.firstOrNull
 import org.komapper.jdbc.JdbcDatabase
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.time.ZoneOffset
@@ -18,9 +19,11 @@ import java.util.UUID
 class KomapperMeetingRoomRepository(
     private val database: JdbcDatabase,
     private val jdbcTemplate: JdbcTemplate,
+    @param:Value("\${meetme.precheck.evidence-enabled:false}") private val evidenceEnabled: Boolean = false,
 ) : MeetingRoomRepository {
     override fun insert(room: MeetingRoom) {
         database.runQuery { QueryDsl.insert(Meta.meetingRoomRecord).single(PersistenceMappers.toRecord(room)) }
+        enableEvidence(room)
     }
 
     override fun insertIfInviteAvailable(room: MeetingRoom): Boolean {
@@ -53,8 +56,17 @@ class KomapperMeetingRoomRepository(
                 record.createdAt,
                 record.version,
             ) == 1
-        if (inserted) NewRoomInsertTransactionReceipts.recordSuccessfulInsert(room.id.value)
+        if (inserted) {
+            enableEvidence(room)
+            NewRoomInsertTransactionReceipts.recordSuccessfulInsert(room.id.value)
+        }
         return inserted
+    }
+
+    private fun enableEvidence(room: MeetingRoom) {
+        if (evidenceEnabled) {
+            check(jdbcTemplate.update("UPDATE meeting_rooms SET submission_protocol='PRE_SUBMIT_V2' WHERE id=?", room.id.value) == 1)
+        }
     }
 
     override fun update(room: MeetingRoom) {

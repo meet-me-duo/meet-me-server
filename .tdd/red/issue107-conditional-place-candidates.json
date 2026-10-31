@@ -1,0 +1,55 @@
+{
+  "workItem": "issue107-conditional-place-candidates",
+  "sourceRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a + preserved V2 dirty tree",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/ConditionalPlaceCandidateContractTest.kt",
+      "sha256": "87f11d1a93e8543a4e86f3cc24fe5dcfdc5ce784b23944660cdac5d143ead889"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/ConditionalPlacePersistenceContractTest.kt",
+      "sha256": "4ead3c46803ed89b8c80ce3e56c3344413500585a000c95fd62bcbf43e057674"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/UnappliedTravelConstraintContractTest.kt",
+      "sha256": "6f0f0b7868e7303b07194335147ae0af90b60128f939f50d646f929dc02bb64e"
+    }
+  ],
+  "recordedAt": "2026-10-31T02:37:56.579910+00:00",
+  "command": [
+    "python",
+    "local-only-evidence/run.py",
+    "core-red",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*ConditionalPlaceCandidateContractTest",
+    "--tests",
+    "*UnappliedTravelConstraintContractTest"
+  ],
+  "failedTests": [
+    "conditional time proposals formerly absent",
+    "newly approved in-person retention formerly blocked",
+    "multiple known area variants lost",
+    "single geographic region plus uncertain peer lost",
+    "published candidate verification flag mutable"
+  ],
+  "expectedFailureCategory": "Policy RED distinguished from fixture errors; final test fingerprints also exercised in compiled intentional fault injections",
+  "localLog": ".codex/tdd-evidence/issue107-conditional-place-candidates.log",
+  "initialRed": {
+    "tests": 27,
+    "failures": 13
+  },
+  "additionalRed": {
+    "CP15": "missing geo+wildcard proposal",
+    "CP16": "lost common area alternative",
+    "CPP04": "candidate bit modification accepted"
+  },
+  "invalidEvidenceNotCounted": [
+    "persistence-red test compilation typing error",
+    "persistence-red2 CPP05 rank99 fixture error",
+    "core-green2 missing StaticMessageSource fixture message"
+  ],
+  "faultEvidence": "local-only-evidence/fault-details.json",
+  "providerCalls": 0
+}

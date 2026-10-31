@@ -1,0 +1,43 @@
+{
+  "$schema": "../schema/fault-injection-evidence.schema.json",
+  "workItem": "issue107-evidence-precision",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "boundary": "Shared microsecond persistence precision for immutable original, scoped answer and post-close revision; exact provider source authorization and KST midnight preservation",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckService.kt",
+      "sha256": "c9eaca6067702d7d6d044cb79416765fdabd7b61e8ad3dc1dfc15d4290907782"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/application/service/SubmissionService.kt",
+      "sha256": "6cc5d1fc84891be7098ddbf4d08fb4fda0caefe243eda263d6183c19e5b61422"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/EvidenceReferencePrecisionPostgresTest.kt",
+      "sha256": "8298709c60425680b59ab5fad856c30679d19c1b90e5ec9c2005f733a8b74eee"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Removed persisted-metadata microsecond normalization in both V2 creation/answer and post-close boundaries",
+      "command": [
+        "env",
+        "-u",
+        "GEMINI_API_KEY",
+        "-u",
+        "OPENAI_API_KEY",
+        "-u",
+        "TYPESAFE_API_KEY",
+        "local-only-evidence/analysis-gradle",
+        "test",
+        "--tests",
+        "*EvidenceReferencePrecisionPostgresTest"
+      ],
+      "detectedBy": "EX-PRECISION direct answer timestamps use the same persisted microsecond precision(); EX-PRECISION post-close revision preserves the pre-midnight reference at microsecond precision(); EX-PRECISION original reference survives PostgreSQL microseconds without crossing KST midnight()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-10-29T09:15:48.904501Z"
+}

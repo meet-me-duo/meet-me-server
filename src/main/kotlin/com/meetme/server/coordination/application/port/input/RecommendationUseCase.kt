@@ -15,6 +15,8 @@ data class RecommendationVariantView(
     val partialAttendance: Boolean,
     val place: CandidatePlaceView?,
     val excludedParticipantNames: List<String> = emptyList(),
+    val attendanceConfirmed: Boolean = true,
+    val summary: String = "",
 )
 
 data class RecommendationOptionView(

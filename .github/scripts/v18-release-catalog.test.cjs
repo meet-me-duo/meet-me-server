@@ -6,8 +6,8 @@ const { fs, path, root, range, hash, canonical, clone, crc } = f;
 // Public additive contract; historical fixtures intentionally retain their V17 defaults.
 const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const scripts = [...f.scripts, script18];
-// V17/V18 reader/transition/package cases below remain historical. Only current publication advanced to approved V19.
-const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql'];
+// V17/V18 reader/transition/package cases below remain historical. Only current publication advances to the approved V22 inventory.
+const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql'];
 function release(version = 18) {
   const value = f.manifest(range(Math.min(version, 17)));
   if (version === 18) value.migrations.push({ version: '18', script: script18, checksum: 18 * 37 });
@@ -49,7 +49,7 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V18C01 current publisher advances to exact approved V19 while V18 reader fixtures remain frozen', () => {
+test('V18C01 current publisher advances to exact approved V22 while V18 reader fixtures remain frozen', () => {
   assert.deepEqual(f.currentScripts, latestScripts);
   const value = f.currentFixture(); try {
     const result = f.publish(value); assert.equal(result.ok, true);

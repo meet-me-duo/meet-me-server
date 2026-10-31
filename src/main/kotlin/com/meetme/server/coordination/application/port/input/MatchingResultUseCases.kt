@@ -24,6 +24,7 @@ data class CandidateView(
     val timeRanges: List<InstantTimeRange>,
     val place: CandidatePlaceView?,
     val summary: String,
+    val attendanceConfirmed: Boolean = true,
 )
 
 data class CandidateListView(
@@ -40,6 +41,8 @@ data class UnappliedInputView(
     val participantDisplayName: String,
     val rawText: String?,
     val reason: String,
+    val finalizedAnswer: String? = null,
+    val failureScope: String? = null,
 )
 
 data class ConfirmedResultView(

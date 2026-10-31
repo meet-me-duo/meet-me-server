@@ -25,6 +25,7 @@ import com.meetme.server.submission.domain.SubmissionRules
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
+import java.time.temporal.ChronoUnit
 
 @Service
 class SubmissionService(
@@ -48,7 +49,7 @@ class SubmissionService(
         val room = findRoom(command.inviteCode, lock = true)
         val participant = requireParticipant(room.id, command.rawCredential, OwnershipOperation.REPLACE_OWN)
         if (room.collectionStatus == CollectionStatus.COLLECTING &&
-            prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1"
+            prechecks?.protocol(room.id.value) in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2")
         ) {
             revisionConflict()
         }
@@ -101,7 +102,11 @@ class SubmissionService(
             submissionRepository
                 .findLatestByRoom(room.id)
                 .filter { it.participantId != participant.id }
-                .sumOf { it.latest.rawText?.codePointCount(0, it.latest.rawText.length) ?: 0 }
+                .sumOf {
+                    it.latest.rawText?.let { raw ->
+                        it.latest.evidence?.textCodePoints(raw) ?: raw.codePointCount(0, raw.length)
+                    } ?: 0
+                }
         val newLength = rawText.codePointCount(0, rawText.length)
         if (otherTextLength + newLength > SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS) {
             throw SubmissionException(
@@ -109,8 +114,27 @@ class SubmissionService(
                 mapOf("maximum" to SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS),
             )
         }
+        val evidenceProtocol = prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V2"
+        val recordedAt = if (evidenceProtocol) now.truncatedTo(ChronoUnit.MICROS) else now
         val submission =
-            existing?.revise(SubmissionVersionId(idGenerator.next()), rawText, emptyList(), command.locale, now)
+            existing?.revise(
+                SubmissionVersionId(idGenerator.next()),
+                rawText,
+                emptyList(),
+                command.locale,
+                recordedAt,
+                evidence =
+                    if (evidenceProtocol) {
+                        com.meetme.server.shared.domain.InputEvidence(
+                            existing.latest.revision + 1,
+                            recordedAt,
+                            interpretation = com.meetme.server.shared.domain.InputInterpretation.UNRESOLVED,
+                            unresolvedReason = "POST_CLOSE_REVISION",
+                        )
+                    } else {
+                        null
+                    },
+            )
                 ?: Submission.start(
                     SubmissionId(idGenerator.next()),
                     room.id,
@@ -119,7 +143,7 @@ class SubmissionService(
                     rawText,
                     emptyList(),
                     command.locale,
-                    now,
+                    recordedAt,
                 )
         submissionRepository.save(submission)
         val submitted = submissionRepository.countSubmittedParticipants(room.id)

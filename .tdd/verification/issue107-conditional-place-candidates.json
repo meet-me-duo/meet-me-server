@@ -1,0 +1,328 @@
+{
+  "recordedAt": "2026-10-31T03:08:39.571331+00:00",
+  "sourceFingerprint": "f7599a1ac881c2bc8a0b43e86a456324c38913381ad5fd5074203e6d78db57a6",
+  "sourceFiles": 666,
+  "sourceUnchanged": true,
+  "productionUnchangedAfterFirstFull": true,
+  "protectedFiles": 19,
+  "protectedUnchanged": true,
+  "originalArtifactsUnchanged": true,
+  "totals": {
+    "tests": 2631,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 17
+  },
+  "passed": 2614,
+  "failedTests": [],
+  "skippedTests": [
+    [
+      "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest",
+      "capture actual native schema for debugging explicitly marked unvalidated()"
+    ],
+    [
+      "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest",
+      "verify correction public schemas then export actual native OpenAPI JSON()"
+    ],
+    [
+      "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest",
+      "bounded live Gemini semantic probe()"
+    ],
+    [
+      "com.meetme.server.experiment.BlindFlowPaidTest",
+      "approved fixed pilot and conditionally opened sealed flow()"
+    ],
+    [
+      "com.meetme.server.experiment.CumulativeProviderEvaluationTest",
+      "one capped actual-provider experiment preserves a safe final report on every outcome()"
+    ],
+    [
+      "com.meetme.server.experiment.ExperimentalLiveHttpEvaluationTest",
+      "explicitly approved blind payload traverses actual HTTP workers and providers once()"
+    ],
+    [
+      "com.meetme.server.experiment.FinalLunaSixtyPaidTest",
+      "fresh approval sends one frozen logical final request with a standalone sixty second deadline()"
+    ],
+    [
+      "com.meetme.server.experiment.FinalLunaSixtyPreflightTest",
+      "fixed source and payload validate offline without claiming approval()"
+    ],
+    [
+      "com.meetme.server.experiment.FinalLunaSixtyPrepareTest",
+      "frozen original and supplement generate the unchanged final contract offline()"
+    ],
+    [
+      "com.meetme.server.experiment.LunaFallbackOncePaidTest",
+      "synthetic Gemini 503 switches to one original Luna adapter and validates stored results and host APIs()"
+    ],
+    [
+      "com.meetme.server.experiment.P2PersonalOnceContractTest",
+      "current V2 p2 payload and original adapter use one bounded request with no replay()"
+    ],
+    [
+      "com.meetme.server.experiment.P2PersonalOncePaidTest",
+      "explicit approved counterfactual sends at most one current personal Luna request()"
+    ],
+    [
+      "com.meetme.server.experiment.P2PersonalOnceValidationTest",
+      "frozen paid manifest validates without consuming approval or issuing HTTP()"
+    ],
+    [
+      "com.meetme.server.experiment.PilotTenPaidTest",
+      "new approval permits only the frozen development pilot and stops without a second run()"
+    ],
+    [
+      "com.meetme.server.experiment.PrimaryGeminiTechnicalSmokeTest",
+      "explicit approved primary-only smoke uses real closure source fence and at most one primary identity()"
+    ],
+    [
+      "com.meetme.server.experiment.StandaloneGeminiOncePaidTest",
+      "new approved single use plan sends at most one tiny Gemini request and stops()"
+    ],
+    [
+      "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest",
+      "export actual generated OpenAPI JSON after Issue 83 GREEN()"
+    ]
+  ],
+  "skippedSetUnchanged": true,
+  "execution": {
+    "startedAt": "2026-10-31T02:52:44.338097+00:00",
+    "finishedAt": "2026-10-31T03:08:36.773687+00:00",
+    "exitCode": 0,
+    "command": [
+      "./gradlew",
+      "--offline",
+      "--no-daemon",
+      "--console=plain",
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "providerKeysAndLiveFlagsUnset": true,
+    "nonloopbackTcpDenied": true,
+    "guardActivatedPids": [
+      42206,
+      42208,
+      42212,
+      42213,
+      42214,
+      42215,
+      42216,
+      42217,
+      42218,
+      42219,
+      42220,
+      42221,
+      42222,
+      42223,
+      42224,
+      42225,
+      42250,
+      42308,
+      42339,
+      42378,
+      42424,
+      42466,
+      49623,
+      50059,
+      50293,
+      50529,
+      54350,
+      54353,
+      54355,
+      56461,
+      56466,
+      56467,
+      56468,
+      56469
+    ],
+    "deniedConnects": 0,
+    "log": "local-only-evidence/final-full2.log"
+  },
+  "testWorkerGuard": {
+    "observedWorkers": [
+      42424
+    ],
+    "workersGuardActivated": true,
+    "deniedConnects": 0,
+    "scanner": "exact main argv token plus quoted executor label normalized; initial broad/strict scans retained"
+  },
+  "actualExternalModelAndMapRequests": 0,
+  "actualExternalApiRequests": 0,
+  "paidRequests": 0,
+  "holdoutOpened": false,
+  "published": false,
+  "merged": false,
+  "deployed": false,
+  "web": {
+    "wholePassed": 805,
+    "laterFocusedPassed": 36,
+    "distinctPassed": 807,
+    "typecheck": true,
+    "lint": true,
+    "apiGenerateCheck": true,
+    "build": true
+  },
+  "focusedPlacePassed": 57,
+  "historicalFocusedPassed": 14,
+  "firstWhole": {
+    "totals": {
+      "tests": 2631,
+      "failures": 7,
+      "errors": 0,
+      "skipped": 17
+    },
+    "failures": [
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.ConditionalTimePostgresTest",
+        "test": "primary match keeps fallback closed after JSON restore in legacy and modern publications()",
+        "message": "java.lang.IllegalArgumentException: List has more than one element."
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.ConditionalTimePostgresTest",
+        "test": "fallback opens after JSON restore with exclusions and no artificial minimum duration()",
+        "message": "java.lang.IllegalArgumentException: List has more than one element."
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest",
+        "test": "Flyway 최초 마이그레이션을 적용하고 검증한다()",
+        "message": "org.opentest4j.AssertionFailedError: expected: <21> but was: <22>"
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest",
+        "test": "V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()",
+        "message": "org.opentest4j.AssertionFailedError: expected: <13> but was: <14>"
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest",
+        "test": "blank PostgreSQL migrates exactly twenty-one versions and validates both independent legacy schemas()",
+        "message": "org.opentest4j.AssertionFailedError: expected: <21> but was: <22>"
+      },
+      {
+        "class": "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+        "test": "운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+        "message": "org.opentest4j.AssertionFailedError: expected: <21> but was: <22>"
+      },
+      {
+        "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest",
+        "test": "PC06 V17 to V18 preserves previous confirmations and permits pending two of five selection()",
+        "message": "org.komapper.jdbc.JdbcException: org.postgresql.util.PSQLException: ERROR: column \"place_unverified\" of relation \"candidate_participants\" does not exist\n  Position: 97"
+      }
+    ],
+    "expectedSourceFrozen": true,
+    "passed": 2607
+  },
+  "faults": [
+    {
+      "mutation": "fi-drop-pending",
+      "tests": 16,
+      "failures": [
+        {
+          "test": "CP14 fifty simultaneous uncertain origins retain one maximal option with bounded work()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001), ParticipantId(value=00000000-0000-0000-0000-00000000"
+        },
+        {
+          "test": "CP10 either mode retains both permitted modes and only in person attendance stays conditional()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP11 known area conflict retains a compatible pair and never invents a full attendance group()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP16 every shared known area remains a separate variant beside unverified travel()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP01 shared hard area and unverified travel retain an in person time candidate without confirming attendance()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP12 unknown origin does not erase the known areas conflict when constructing partial groups()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000003)]> but was: <[]>"
+        },
+        {
+          "test": "CP07 known alternatives still intersect before marking travel as unverified()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        },
+        {
+          "test": "CP15 one known geographic region remains binding beside an uncertain origin()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000002)]> but was: <[]>"
+        },
+        {
+          "test": "CP02 unknown personal origin and unrestricted peer preserve time without inventing a place()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001)]> but was: <[]>"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-known-conflict",
+      "tests": 16,
+      "failures": [
+        {
+          "test": "CP11 known area conflict retains a compatible pair and never invents a full attendance group()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=00000000-0000-0000-0000-000000000001), ParticipantId(value=00000000-0000-0000-0000-00000000"
+        },
+        {
+          "test": "CP03 disjoint known hard areas remain incompatible even if both travel restrictions are unverified()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[]> but was: <[DeterministicCandidate(planType=A, meetingMode=IN_PERSON, participantIds=[ParticipantId(value=000"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-read-pending",
+      "tests": 5,
+      "failures": [
+        {
+          "test": "CPP02 selecting and rereading a time leaves actual in person attendance unverified()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <false> but was: <true>"
+        },
+        {
+          "test": "CPP03 a time only in person proposal persists without inventing a venue or switching online()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <false> but was: <true>"
+        },
+        {
+          "test": "CPP04 old SQL writers cannot clear uncertainty after confirmation in either stored projection()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <false> but was: <true>"
+        },
+        {
+          "test": "CPP01 unverified participants round trip in legacy and recommendation projections without changing frozen restrictions()",
+          "message": "org.opentest4j.AssertionFailedError: expected: <[ParticipantId(value=42317336-cc48-44c3-be2e-7efad8db04be)]> but was: <[]>"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-remote-bit",
+      "tests": 5,
+      "failures": [
+        {
+          "test": "CPP05 database rejects offline uncertainty attached to a newly inserted remote participant()",
+          "message": "org.opentest4j.AssertionFailedError: Expected an exception of class org.springframework.dao.DataAccessException to be thrown, but was completed successfully wit"
+        }
+      ]
+    },
+    {
+      "mutation": "fi-update-bit",
+      "tests": 5,
+      "failures": [
+        {
+          "test": "CPP04 old SQL writers cannot clear uncertainty after confirmation in either stored projection()",
+          "message": "org.opentest4j.AssertionFailedError: Expected an exception of class org.springframework.dao.DataAccessException to be thrown, but was completed successfully wit"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "No realtime provider/model semantic validation",
+    "Actual travel/place feasibility unverified",
+    "Web mocked API flow separate from server HTTP/Postgres saved-response replay",
+    "libcconnect guard not OS-wide DNS/syscall/external-daemon isolation",
+    "V22 local test DB only; no production rollout"
+  ],
+  "workItem": "issue107-conditional-place-candidates",
+  "evidence": "local-only-evidence/final-result.json",
+  "localReport": "docs/verification/experimental-conditional-place-candidates-result.md",
+  "replayProof": "local-only-evidence/replay-confirmation-proof.json",
+  "historicalCompatibility": "V17/V18 true old columns and original23514/rollback/snapshots; afterV22 defaultpendingfalse/oldHTTPunchanged; APItrue is historical display compatibility not new verification"
+}

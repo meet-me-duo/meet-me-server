@@ -14,6 +14,7 @@ import com.meetme.server.precheck.domain.PrecheckExecution
 import com.meetme.server.precheck.domain.PrecheckQuestion
 import com.meetme.server.precheck.domain.PrecheckStatus
 import com.meetme.server.shared.application.port.output.IdGenerator
+import com.meetme.server.shared.domain.InputInterpretation
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.SubmissionId
@@ -158,19 +159,53 @@ class PrecheckProcessingService(
             failureCode != null || result == null ->
                 status =
                     if (failureCode == "TIMEOUT") PrecheckStatus.TIMED_OUT else PrecheckStatus.FAILED
-            result.verdict == PrecheckVerdict.CLEAR -> {
+            current.candidate.evidence != null &&
+                current.candidate.evidence.supplement == null &&
+                result.verdict != PrecheckVerdict.CLEAR &&
+                repository.questionCount(room.id.value, current.candidate.participantId) >= 1 -> {
+                // Until revision/unanswered intake policy is approved, retain the previous received version.
+                status = PrecheckStatus.UNRESOLVED
+                code = "QUESTION_LIMIT_REACHED"
+            }
+            result.verdict == PrecheckVerdict.CLEAR ||
+                (
+                    current.candidate.evidence != null &&
+                        (
+                            current.candidate.evidence.supplement != null ||
+                                result.verdict in setOf(PrecheckVerdict.UNRESOLVED, PrecheckVerdict.NEEDS_EDIT)
+                        )
+                ) -> {
+                val confirmed = result.verdict == PrecheckVerdict.CLEAR
+                val source = current.candidate
+                val receivedEvidence =
+                    source.evidence?.copy(
+                        interpretation = if (confirmed) InputInterpretation.CONFIRMED else InputInterpretation.UNRESOLVED,
+                        unresolvedReason =
+                            if (confirmed) {
+                                null
+                            } else {
+                                result.unresolvedReason ?: if (source.evidence?.supplement != null) {
+                                    "AFTER_ONE_ANSWER_UNRESOLVED"
+                                } else {
+                                    "GENERATOR_UNRESOLVED"
+                                }
+                            },
+                    )
                 val others =
                     submissions
                         .findLatestByRoom(room.id)
                         .filter { it.participantId.value != current.candidate.participantId }
-                        .sumOf { it.latest.rawText?.codePointCount(0, it.latest.rawText.length) ?: 0 }
-                if (others + current.candidate.rawText.codePointCount(0, current.candidate.rawText.length) >
+                        .sumOf {
+                            it.latest.rawText?.let { raw ->
+                                it.latest.evidence?.textCodePoints(raw) ?: raw.codePointCount(0, raw.length)
+                            } ?: 0
+                        }
+                if (others + (receivedEvidence?.textCodePoints(source.rawText) ?: source.rawText.codePointCount(0, source.rawText.length)) >
                     SubmissionRules.MAX_BATCH_TEXT_CODE_POINTS
                 ) {
-                    status = PrecheckStatus.NEEDS_EDIT
+                    status = if (source.evidence != null) PrecheckStatus.UNRESOLVED else PrecheckStatus.NEEDS_EDIT
                     code = "SUBMISSION_BATCH_TEXT_LIMIT_EXCEEDED"
                 } else {
-                    val source = current.candidate
                     val prior = submissions.findByParticipant(ParticipantId(source.participantId))
                     val accepted =
                         prior?.revise(
@@ -179,6 +214,7 @@ class PrecheckProcessingService(
                             emptyList(),
                             Locale.forLanguageTag(source.locale),
                             source.createdAt,
+                            evidence = receivedEvidence,
                         )
                             ?: Submission.start(
                                 SubmissionId(ids.next()),
@@ -189,10 +225,11 @@ class PrecheckProcessingService(
                                 emptyList(),
                                 Locale.forLanguageTag(source.locale),
                                 source.createdAt,
+                                evidence = receivedEvidence,
                             )
                     submissions.save(accepted)
                     repository.bindAccepted(source.id, accepted.latest.id.value)
-                    status = PrecheckStatus.CLEAR
+                    status = if (confirmed) PrecheckStatus.CLEAR else PrecheckStatus.RECEIVED
                 }
             }
             result.verdict == PrecheckVerdict.NEEDS_EDIT -> status = PrecheckStatus.NEEDS_EDIT
@@ -207,12 +244,24 @@ class PrecheckProcessingService(
             }
             else -> {
                 status = PrecheckStatus.NEEDS_CHOICE
-                question = PrecheckQuestion(ids.next(), requireNotNull(result.prompt), requireNotNull(result.sourceExcerpt), result.choices)
+                val excerpt = requireNotNull(result.sourceExcerpt)
+                question =
+                    PrecheckQuestion(
+                        ids.next(),
+                        requireNotNull(result.prompt),
+                        excerpt,
+                        result.choices,
+                        if (current.candidate.evidence != null) {
+                            current.candidate.rawText.codePointCount(0, current.candidate.rawText.indexOf(excerpt))
+                        } else {
+                            null
+                        },
+                    )
             }
         }
-        if (status == PrecheckStatus.CLEAR) requirePublicationActive(room, current)
+        if (status in setOf(PrecheckStatus.CLEAR, PrecheckStatus.RECEIVED)) requirePublicationActive(room, current)
         repository.update(current.copy(status = status, version = current.version + 1, question = question, failureCode = code))
-        if (status == PrecheckStatus.CLEAR) {
+        if (status in setOf(PrecheckStatus.CLEAR, PrecheckStatus.RECEIVED)) {
             val count = submissions.countSubmittedParticipants(room.id)
             if (room.automaticClosureReason(clock.instant(), count) ==
                 ClosureReason.EXPECTED_PARTICIPANTS

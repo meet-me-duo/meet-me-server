@@ -5,6 +5,7 @@ import com.meetme.server.precheck.application.port.output.AmbiguityClassificatio
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationReason
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationRequest
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationResult
+import com.meetme.server.shared.adapter.output.aihttp.toProviderEvidence
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
@@ -33,7 +34,7 @@ internal class AmbiguityClassificationContract(
                 "locale" to request.locale,
                 "search_start_date" to request.searchStartDate.toString(),
                 "search_end_date" to request.searchEndDate.toString(),
-            )
+            ).let { if (request.evidence == null) it else it + ("evidence" to request.evidence.toProviderEvidence()) }
         return mapper.writeValueAsBytes(
             mapOf(
                 "model" to MODEL,
@@ -43,9 +44,24 @@ internal class AmbiguityClassificationContract(
                         mapOf(
                             "type" to "choice",
                             "name" to QUESTION,
-                            "instructions" to AmbiguityClassificationRubric.instructions,
+                            "instructions" to
+                                if (request.evidence ==
+                                    null
+                                ) {
+                                    AmbiguityClassificationRubric.instructions
+                                } else {
+                                    TemporalClarificationRubric.instructions
+                                },
                             "choices" to
-                                AmbiguityClassificationRubric.criteria.map { (value, description) ->
+                                (
+                                    if (request.evidence ==
+                                        null
+                                    ) {
+                                        AmbiguityClassificationRubric.criteria
+                                    } else {
+                                        TemporalClarificationRubric.criteria
+                                    }
+                                ).map { (value, description) ->
                                     mapOf("value" to value, "description" to description)
                                 },
                         ),
