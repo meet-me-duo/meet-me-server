@@ -1,0 +1,148 @@
+{
+  "workItem": "issue107-followup-final-independent-audit",
+  "sourceRevision": "c9453a35582ca6503c956ab4e8aff8d73b175ef3",
+  "files": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "d7f0bbac06c1425c4c7440c4bace828cc7e51e3f63db7569d7cc63b094cc01e4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiObservationFailureContractTest.kt",
+      "sha256": "5ce9d0f9860e055b347b6dfd0a67871578dfdc6a204f29280b451a84057f4a2a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiExpiredObservationContractTest.kt",
+      "sha256": "b4a155b555c5f86349064038659ed18acb4aaa6842be33b8832687c64f4983ca"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationSafety.kt",
+      "sha256": "559d4cb59590a5590f1790a845c44bfb783766cf60b60b4c25e8e49530daeacc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationSafetyContractTest.kt",
+      "sha256": "9449d93ee859a82823b97a4be87df7de38740c1af7522b6e2fad56749216df1a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationAdmissionContractTest.kt",
+      "sha256": "2a5155461aaeb63c172a331d4141b1467481b19ab4c4eeccc6785beaf0aefd9e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationCompletionBoundaryContractTest.kt",
+      "sha256": "e570b255d0e6bd79021647cd223a588e5c34397d55d63a9fa5b24755d9aea676"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeContractTest.kt",
+      "sha256": "ba3a1026e0dc6c2d4b02087108d3df0834cd86ca32c7960d5cd648fa7bc41f4c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeApplicationContractTest.kt",
+      "sha256": "aa592f9eb78ef58aa0b7c37f6328ac0e809f5bc29acadea8375071052c99d4b9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeFixtures.kt",
+      "sha256": "38dce34893b872bb7fb7fc60218665c95fae37fba3ad04d285230fa63673f324"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiTechnicalSmokeTest.kt",
+      "sha256": "695e3ad84ede38caaf1dfdb0170d6061e356904d43ce84b93d498aa1d38f16d6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentalLiveHttpEvaluationTest.kt",
+      "sha256": "c4f597ef5092278e33f22b0b46f2cf3eef48bf91fca4fb5ec38aeae7e8c0dd4a"
+    }
+  ],
+  "finalIndependentKotlin": {
+    "exitCode": 0,
+    "command": [
+      "local-only-evidence/analysis-gradle",
+      "test",
+      "--tests",
+      "*GeminiObservationFailureContractTest",
+      "--tests",
+      "*GeminiExpiredObservationContractTest",
+      "--tests",
+      "*LiveEvaluationSafetyContractTest",
+      "--tests",
+      "*LiveEvaluationAdmissionContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeContractTest",
+      "--tests",
+      "*PrimaryGeminiSmokeApplicationContractTest",
+      "--tests",
+      "*LiveEvaluationCompletionBoundaryContractTest"
+    ],
+    "log": "local-only-evidence/followup-completion-final-restored-green.log",
+    "suites": [
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiObservationFailureContractTest",
+        "tests": 7,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.coordination.adapter.output.integration.GeminiExpiredObservationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationSafetyContractTest",
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeContractTest",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.PrimaryGeminiSmokeApplicationContractTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.meetme.server.experiment.LiveEvaluationCompletionBoundaryContractTest",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "offlinePythonMethods": 12,
+  "offlinePythonRestoredExitCode": 0,
+  "distinctFaults": 12,
+  "faultGroups": {
+    "geminiAdapterReversal": 1,
+    "strictActualAdmissionAndMonitor": 2,
+    "primaryOnlyRestrictionAndCap": 2,
+    "actualSpringBeanBinding": 1,
+    "completionBoundary": 1,
+    "crossProcessPrerequisiteAndEvaluationExit": 5
+  },
+  "allSnapshotRestoresExact": true,
+  "providerCalls": 0,
+  "holdoutOrGoldRead": false,
+  "overallQualityGate": "delegated to model_contracts, running at handoff; not claimed complete here",
+  "notes": [
+    "Historical snapshots and hashes are preserved per FI manifest; final hashes above include later completion-boundary additions.",
+    "App context lifecycle warnings were observed during shutdown; all74 tests passed, no cleanup edit made after freeze.",
+    "Original c945 null-status failures remain undiagnosed.",
+    "Formatting-only failed invocations are not behavioral RED."
+  ]
+}

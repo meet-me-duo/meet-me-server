@@ -5,6 +5,7 @@ import com.meetme.server.precheck.application.port.output.AmbiguityClassificatio
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationReason
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationRequest
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationResult
+import com.meetme.server.shared.adapter.output.aihttp.toProviderEvidence
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
@@ -64,14 +65,28 @@ internal class JevAmbiguityClassificationContract(
                         "locale" to request.locale,
                         "search_start_date" to request.searchStartDate.toString(),
                         "search_end_date" to request.searchEndDate.toString(),
-                    ),
+                    ).let { if (request.evidence == null) it else it + ("evidence" to request.evidence.toProviderEvidence()) },
                 "questions" to
                     mapOf(
                         QUESTION to
                             mapOf(
                                 "type" to "choice",
-                                "instructions" to AmbiguityClassificationRubric.instructions,
-                                "criteria" to AmbiguityClassificationRubric.criteria,
+                                "instructions" to
+                                    if (request.evidence ==
+                                        null
+                                    ) {
+                                        AmbiguityClassificationRubric.instructions
+                                    } else {
+                                        TemporalClarificationRubric.instructions
+                                    },
+                                "criteria" to
+                                    if (request.evidence ==
+                                        null
+                                    ) {
+                                        AmbiguityClassificationRubric.criteria
+                                    } else {
+                                        TemporalClarificationRubric.criteria
+                                    },
                             ),
                     ),
             ),

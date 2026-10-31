@@ -44,9 +44,9 @@ class GuestReaccessWriteGuard(
                 .grant(roomId, session.id, true)
                 ?.takeIf { clock.instant() < it.expiresAt && it.participantId == participantId && it.level == GuestProofLevel.REPLACE_ONLY }
                 ?: fail(RoomLifecycleErrorCode.GUEST_PROOF_INSUFFICIENT)
-        if (prechecks?.protocol(roomId.value) == "PRE_SUBMIT_V1") {
+        if (prechecks?.protocol(roomId.value) in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2")) {
             if (grant.expectedCandidateRevision !=
-                (prechecks.current(participantId.value)?.candidate?.revision ?: 0)
+                (prechecks?.current(participantId.value)?.candidate?.revision ?: 0)
             ) {
                 fail(RoomLifecycleErrorCode.REVISION_CONFLICT)
             }

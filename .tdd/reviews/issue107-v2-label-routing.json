@@ -1,0 +1,32 @@
+{
+  "workItem": "issue107-v2-label-routing",
+  "reviewedAt": "2026-10-30T08:43:15.072192+00:00",
+  "role": "independent test designer and implementation reviewer",
+  "result": "PASS",
+  "p1": 0,
+  "p2": 0,
+  "actualProviderCalls": 0,
+  "evidence": "local-only-evidence/results.json",
+  "scope": [
+    "V2 label-first only",
+    "V1 preserved",
+    "wire errors not CLEAR",
+    "post-answer no generation",
+    "metadata preserved",
+    "managed physical10"
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/V2LabelRoutingContractTest.kt",
+      "sha256": "414e19f18e2dc1ff6850284b0677efdf97c99e2ff69084e71986f33d113f73b1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidencePrecheckContractTest.kt",
+      "sha256": "c0606202a7c1559ee103061d5887def5f5556c1e3b30cf47b08ba330ae51f249"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidenceUnresolvedReasonContractTest.kt",
+      "sha256": "b605a0f83612bfe2779023cda2ea73843a148a372dc9164aa03a0ce60c6818fb"
+    }
+  ]
+}

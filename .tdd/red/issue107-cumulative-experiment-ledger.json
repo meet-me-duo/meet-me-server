@@ -1,0 +1,41 @@
+{
+  "workItem": "issue107-cumulative-experiment-ledger",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedgerContractTest.kt",
+      "sha256": "b2e041824d4af0c38e50ce2f1d561657e552fd2da4d7ffcdb93a8f4b79491e35"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *ExperimentCallLedgerContractTest",
+  "expectedFailureCategory": "MISSING_BEHAVIOR: TODO/stub",
+  "failedTests": [
+    "ExperimentCallLedgerContractTest > repeated observations and parser notification for one UUID are one failure()",
+    "ExperimentCallLedgerContractTest > two distinct physical calls with the same normalized code stop regardless of provider stage()",
+    "ExperimentCallLedgerContractTest > a requested cap above ten cannot expand the authorized physical limit()",
+    "ExperimentCallLedgerContractTest > observer unavailability is a durable sticky stop()",
+    "ExperimentCallLedgerContractTest > a first failed connectivity attempt never grants an E2E room()",
+    "ExperimentCallLedgerContractTest > known HTTP 503 never becomes NETWORK merely because the transport used IOException()",
+    "ExperimentCallLedgerContractTest > started headers without emission completion stay UNKNOWN and prevent the next transmission()",
+    "ExperimentCallLedgerContractTest > source authority refusal or exception is first and never creates a reservation()",
+    "ExperimentCallLedgerContractTest > unknown failure and unavailable observation fail closed without storing raw code()",
+    "ExperimentCallLedgerContractTest > counter persistence failure immediately prevents the first physical callback()",
+    "ExperimentCallLedgerContractTest > reopen cannot reset missing corrupted or mismatched initialized state()",
+    "ExperimentCallLedgerContractTest > fixed normalization supports typed names and aliases while unknown stays unknown()",
+    "ExperimentCallLedgerContractTest > the second failed diagnostic ends connectivity even when its technical code differs()",
+    "ExperimentCallLedgerContractTest > contradictory same rank typed codes are unknown rather than two failures or a chosen winner()",
+    "ExperimentCallLedgerContractTest > different SDK call cannot reuse the consumed reservation of the same attempt()",
+    "ExperimentCallLedgerContractTest > cap ten survives reopening and separates conservative reservations from emitted headers()",
+    "ExperimentCallLedgerContractTest > successful fresh second diagnostic allows only one E2E room and survives reopen()",
+    "ExperimentCallLedgerContractTest > positive counter reservation follows the exact original source grant()",
+    "ExperimentCallLedgerContractTest > opening a second phase never revives a stale previous room worker()",
+    "ExperimentCallLedgerContractTest > phase transition with an unfinished SDK call cannot open a second diagnostic()",
+    "ExperimentCallLedgerContractTest > typed parser evidence replaces generic network evidence for the same physical call(ExperimentTechnicalCode) > [1] typed = SERVER",
+    "ExperimentCallLedgerContractTest > typed parser evidence replaces generic network evidence for the same physical call(ExperimentTechnicalCode) > [2] typed = TIMEOUT",
+    "ExperimentCallLedgerContractTest > count and generation group cannot partially consume the last reservation()"
+  ],
+  "tests": 23,
+  "recordedAt": "2026-10-29T14:57:30.425976+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-cumulative-experiment-ledger.log",
+  "providerCalls": 0
+}

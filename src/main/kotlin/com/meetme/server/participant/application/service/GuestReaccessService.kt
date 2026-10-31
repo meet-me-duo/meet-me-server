@@ -132,14 +132,12 @@ class GuestReaccessService(
                 grantedLevel,
                 submissions.findByParticipant(target.id)?.latest?.revision ?: 0,
                 session.expiresAt,
-                if (prechecks?.protocol(room.id.value) ==
-                    "PRE_SUBMIT_V1"
-                ) {
-                    prechecks.current(target.id.value)?.candidate?.revision ?: 0
+                if (prechecks?.protocol(room.id.value) in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2")) {
+                    prechecks?.current(target.id.value)?.candidate?.revision ?: 0
                 } else {
                     null
                 },
-                if (prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1") ids.next() else null,
+                if (prechecks?.protocol(room.id.value) in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2")) ids.next() else null,
             ),
             now,
         )
@@ -164,7 +162,7 @@ class GuestReaccessService(
         if (room.collectionStatus != CollectionStatus.COLLECTING || room.closurePolicy.deadline?.let { clock.instant() >= it } == true) {
             fail(RoomLifecycleErrorCode.ROOM_CLOSED)
         }
-        if (prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V1") {
+        if (prechecks?.protocol(room.id.value) in setOf("PRE_SUBMIT_V1", "PRE_SUBMIT_V2")) {
             requireNotNull(blindPrechecks).saveBlind(inviteCode, participantId, rawText, rawCredential, locale)
         } else {
             saveSubmission.save(SaveSubmissionCommand(inviteCode, rawCredential, rawText, locale, blindReplacement = true))

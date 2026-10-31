@@ -1,0 +1,22 @@
+{
+  "workItem": "issue107-v21-release-catalog",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "88b8237a7d952c50dc3d0abaef1bd0cec6423c99bd49ef6b91d037a7660457cb"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/v21-input-evidence-release-catalog.test.cjs"
+  ],
+  "failedTests": [
+    "V21C01 current publication binds all twenty-one real SQL files and exact independent checksums",
+    "V21C02 current publisher rejects every missing reviewed version and unknown twenty-two",
+    "V21C03 exact V21 and historical V20 metadata remain independently readable"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:26:37.246666+00:00"
+}

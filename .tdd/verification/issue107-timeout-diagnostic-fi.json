@@ -1,0 +1,66 @@
+{
+  "baseCommit": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "independentActor": "root",
+  "mutants": [
+    {
+      "mutant": "cancel-event-omitted",
+      "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+      "mutatedSha256": "edc9a3da5107503e4de239af3552ea5857b878e48ccbe4d3b99f33b2fe623601",
+      "exitCode": 1,
+      "tests": 14,
+      "failures": 1,
+      "errors": 0,
+      "detectedBy": [
+        "timeouts and cancel header failure order are facts without a causal origin claim()"
+      ]
+    },
+    {
+      "mutant": "applied-timeout-erased",
+      "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+      "mutatedSha256": "b306c8142a6757a6fedd03d4459d880fb313d1c8c6c019e68e1919b3c54fa9a0",
+      "exitCode": 1,
+      "tests": 14,
+      "failures": 3,
+      "errors": 0,
+      "detectedBy": [
+        "real SDK loopback failure keeps one call and records requested budget without provider content()",
+        "timeouts and cancel header failure order are facts without a causal origin claim()",
+        "zero timeout unset deadline and expired deadline stay distinct()"
+      ]
+    },
+    {
+      "mutant": "typed-reset-cause-erased",
+      "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+      "mutatedSha256": "7a6f6fec06a25a5aa7d664f9921b9563713cce5cf4b1284f3faf8e18a4461a63",
+      "exitCode": 1,
+      "tests": 14,
+      "failures": 1,
+      "errors": 0,
+      "detectedBy": [
+        "typed HTTP2 CANCEL is only a reset code and not evidence of remote cancellation()"
+      ]
+    },
+    {
+      "mutant": "diagnostic-recorder-escapes",
+      "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+      "mutatedSha256": "2263aed7611882f2367d28acc382e857adb4520b11ba8d04bf9f86367e5f29d1",
+      "exitCode": 1,
+      "tests": 14,
+      "failures": 1,
+      "errors": 0,
+      "detectedBy": [
+        "diagnostic recorder failure preserves normal observation and finish remains once only()"
+      ]
+    }
+  ],
+  "allExactRestored": true,
+  "finalSourceSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+  "restoredGreen": {
+    "tests": 33,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "greenExitCode": 0,
+  "realProviderCalls": 0
+}

@@ -68,6 +68,9 @@ data class CandidateResponse(
     val place: CandidatePlaceResponse?,
     @field:Schema(description = "요청 locale로 생성한 후보 요약")
     val summary: String,
+    @field:JsonProperty("attendance_confirmed")
+    @field:Schema(description = "false이면 시간만 일치하고 장소·이동 및 실제 대면 참석은 미확정; 확정 저장 뒤에도 유지", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    val attendanceConfirmed: Boolean = true,
 ) {
     companion object {
         fun from(view: CandidateView) =
@@ -81,6 +84,7 @@ data class CandidateResponse(
                 view.timeRanges.map { CandidateTimeRangeResponse(it.startInclusive, it.endExclusive) },
                 view.place?.let(CandidatePlaceResponse::from),
                 view.summary,
+                view.attendanceConfirmed,
             )
     }
 }
@@ -128,11 +132,18 @@ data class UnappliedInputResponse(
     @field:JsonProperty("raw_text")
     @field:Schema(description = "후보에 반영되지 않은 원문. 구 슬롯 전용 입력은 null", nullable = true)
     val rawText: String?,
-    @field:Schema(description = "언어 중립 미반영 사유 코드")
+    @field:Schema(description = "언어 중립 미반영 사유 코드. UNSUPPORTED_TRAVEL_CONSTRAINT는 이동 제약을 계산하지 못했으며 실제 충돌 판정이 아님")
     val reason: String,
+    @field:JsonProperty("finalized_answer")
+    @field:Schema(description = "V2 최종 접수본에 포함된 보완 답변만 공개, 중간 질문은 제외", nullable = true)
+    val finalizedAnswer: String? = null,
+    @field:JsonProperty("failure_scope")
+    @field:Schema(description = "시간·장소·입력 해석 실패 범위", nullable = true, allowableValues = ["TIME", "PLACE", "INPUT"])
+    val failureScope: String? = null,
 ) {
     companion object {
-        fun from(view: UnappliedInputView) = UnappliedInputResponse(view.participantDisplayName, view.rawText, view.reason)
+        fun from(view: UnappliedInputView) =
+            UnappliedInputResponse(view.participantDisplayName, view.rawText, view.reason, view.finalizedAnswer, view.failureScope)
     }
 }
 

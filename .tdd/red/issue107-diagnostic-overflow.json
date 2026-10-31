@@ -1,0 +1,20 @@
+{
+  "workItem": "issue107-diagnostic-overflow",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserDiagnosticOverflowCompatibilityTest.kt",
+      "sha256": "9e13bdb09229adf3b356ed39bc451b4ea08cc39c8bc642c5222a6b5d110a140e"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *ParserDiagnosticOverflowCompatibilityTest",
+  "expectedFailureCategory": "REGRESSION: diagnostic arithmetic changed original bounded request to ArithmeticException",
+  "failedTests": [
+    "ParserDiagnosticOverflowCompatibilityTest > huge requested duration retains the bounded server failure with diagnostics optional(boolean) > [1] enabled = false",
+    "ParserDiagnosticOverflowCompatibilityTest > huge requested duration retains the bounded server failure with diagnostics optional(boolean) > [2] enabled = true"
+  ],
+  "tests": 2,
+  "recordedAt": "2026-10-29T14:57:30.425432+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-diagnostic-overflow.log",
+  "providerCalls": 0
+}

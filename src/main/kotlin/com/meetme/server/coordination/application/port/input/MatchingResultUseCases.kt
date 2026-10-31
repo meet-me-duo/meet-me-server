@@ -24,6 +24,7 @@ data class CandidateView(
     val timeRanges: List<InstantTimeRange>,
     val place: CandidatePlaceView?,
     val summary: String,
+    val attendanceConfirmed: Boolean = true,
 )
 
 data class CandidateListView(
@@ -40,6 +41,8 @@ data class UnappliedInputView(
     val participantDisplayName: String,
     val rawText: String?,
     val reason: String,
+    val finalizedAnswer: String? = null,
+    val failureScope: String? = null,
 )
 
 data class ConfirmedResultView(
@@ -53,6 +56,7 @@ interface GetCandidatesUseCase {
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): CandidateListView
 }
 
@@ -69,6 +73,7 @@ interface ConfirmCandidateUseCase {
         candidateId: UUID,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): ConfirmedResultView
 }
 
@@ -77,6 +82,7 @@ interface GetConfirmedResultUseCase {
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): ConfirmedResultView
 }
 
@@ -92,6 +98,7 @@ enum class MatchingResultErrorCode {
     CANDIDATE_ALREADY_CONFIRMED,
     RECOMMENDATION_SELECTION_REQUIRED,
     STALE_ANALYSIS,
+    CLIENT_UPDATE_REQUIRED,
 }
 
 class MatchingResultException(

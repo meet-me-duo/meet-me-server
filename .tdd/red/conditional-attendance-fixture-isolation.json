@@ -1,0 +1,16 @@
+{
+  "workItem": "conditional-attendance-fixture-isolation",
+  "sourceRevision": "6d67c8107832e51102059fa4d410150197dd1fa6",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/NaturalLanguageFixtureRequestIsolationTest.kt",
+      "sha256": "2660c6c486e3fca1b6e110ef6ebf95280d0d10196c61fa32027a163cb0e6be54"
+    }
+  ],
+  "command": "./gradlew --offline --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g ktlintTestSourceSetCheck test --tests com.meetme.server.coordination.application.service.NaturalLanguageFixtureRequestIsolationTest --continue",
+  "failedTests": [
+    "NFI01 a borrowed host request cannot override the new fixture member viewer()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-31T13:33:55.883325+00:00"
+}

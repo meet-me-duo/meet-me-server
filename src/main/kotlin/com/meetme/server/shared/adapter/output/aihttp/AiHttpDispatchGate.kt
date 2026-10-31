@@ -123,6 +123,12 @@ class AiHttpDispatchGate(
     private val runtimeGuard: AiRuntimeDispatchGuardPort? = null,
     val enforceBudget: Boolean = properties.enabled,
 ) {
+    private val experimentWireHook = AtomicReference<AiHttpExperimentWireHook>()
+
+    internal fun installExperimentWireHook(hook: AiHttpExperimentWireHook) {
+        check(experimentWireHook.compareAndSet(null, hook)) { "Experiment hook already installed" }
+    }
+
     fun prepareGroup(
         context: AiProviderDispatchContext?,
         calls: List<PreparedAiHttpRequest>,
@@ -166,7 +172,7 @@ class AiHttpDispatchGate(
         if (!properties.enabled) return GatedAiHttpExchange(baseClient) { _, _, _, _ -> true }
         if (!group.selected.add(operation)) denyDispatch()
         val prepared = group.calls.singleOrNull { it.operation == operation } ?: denyDispatch()
-        return transport(baseClient, group.context ?: denyDispatch(), prepared.profile) { request ->
+        return transport(baseClient, group.context ?: denyDispatch(), operation, prepared.profile) { request ->
             val captured = snapshot(request, prepared.profile)
             if (!captured.contentEquals(prepared.copyBody())) denyDispatch()
             group to prepared
@@ -182,7 +188,7 @@ class AiHttpDispatchGate(
         if (!properties.enabled) return GatedAiHttpExchange(baseClient) { _, _, _, _ -> true }
         val current = context ?: denyDispatch()
         remaining(current)
-        return transport(baseClient, current, profile) { request ->
+        return transport(baseClient, current, operation, profile) { request ->
             val captured = snapshot(request, profile)
             val prepared = PreparedAiHttpRequest.freeze(operation, current.providerOrdinal, current.finalAttemptId, profile, captured)
             prepareGroup(current, listOf(prepared)) to prepared
@@ -192,6 +198,7 @@ class AiHttpDispatchGate(
     private fun transport(
         base: OkHttpClient,
         context: AiProviderDispatchContext,
+        operation: AiPhysicalOperation,
         profile: AiPhysicalWireProfile,
         prepare: (Request) -> Pair<PreparedAiDispatchGroup, PreparedAiHttpRequest>,
     ): GatedAiHttpExchange {
@@ -201,9 +208,12 @@ class AiHttpDispatchGate(
         val permit = AtomicReference<AiBudgetDispatchPermit>()
         val authorityDeadline = AtomicReference<Instant>()
         val permitCutoff = AtomicReference<Long>()
+        val experiment =
+            experimentWireHook.get()?.let { AiHttpExperimentListenerFactory(base.eventListenerFactory, it, context, operation) }
         val client =
             base
                 .newBuilder()
+                .apply { if (experiment != null) eventListenerFactory(experiment) }
                 .retryOnConnectionFailure(false)
                 .followRedirects(false)
                 .followSslRedirects(false)
@@ -240,6 +250,13 @@ class AiHttpDispatchGate(
                             val cutoff = System.nanoTime() + allowed
                             if (!timeout.hasDeadline() || cutoff - timeout.deadlineNanoTime() < 0) timeout.deadlineNanoTime(cutoff)
                             expected.set(prepared)
+                            if (experiment != null) {
+                                val spec = prepared.spec()
+                                experiment.bind(
+                                    chain.call(),
+                                    AiHttpExperimentAdmissionIds.of(AiBudgetReserveRequest(context.execution, listOf(spec)), spec),
+                                )
+                            }
                             chain.proceed(
                                 chain
                                     .request()

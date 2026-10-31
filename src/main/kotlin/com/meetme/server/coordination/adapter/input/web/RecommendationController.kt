@@ -54,7 +54,7 @@ class RecommendationController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "분석 준비 전·수정 라운드 OPEN·STALE_ANALYSIS·다른 선택 확정 충돌",
+            description = "분석 준비 전·수정 라운드 OPEN·STALE_ANALYSIS·다른 선택 확정 충돌·CLIENT_UPDATE_REQUIRED",
             content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
         ),
     )
@@ -62,7 +62,13 @@ class RecommendationController(
         @PathVariable inviteCode: String,
         @CookieValue(name = GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
-    ): RecommendationListResponse = response(useCase.primary(inviteCode, credential, locale))
+        @Parameter(
+            description = "미확정 참석 의미 지원: conditional-v1만 지원 명시로 인정. 생략/기타 값은 해당 결과에 CLIENT_UPDATE_REQUIRED(409)",
+            schema = Schema(example = "conditional-v1"),
+        )
+        @RequestParam(name = "attendance_support", required = false) attendanceSupport: String?,
+    ): RecommendationListResponse =
+        response(useCase.primary(inviteCode, credential, locale, AttendanceClientSupport.supported(attendanceSupport)))
 
     @GetMapping("/recommendations/alternatives")
     @Operation(summary = "현재 분석의 다른 가능한 시간 전체 페이지 조회")
@@ -90,7 +96,7 @@ class RecommendationController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "분석 준비 전·수정 라운드 OPEN·STALE_ANALYSIS·다른 선택 확정 충돌",
+            description = "분석 준비 전·수정 라운드 OPEN·STALE_ANALYSIS·다른 선택 확정 충돌·CLIENT_UPDATE_REQUIRED",
             content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
         ),
     )
@@ -102,7 +108,23 @@ class RecommendationController(
         @RequestParam(defaultValue = "20") limit: Int,
         @CookieValue(name = GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
-    ): RecommendationListResponse = response(useCase.alternatives(inviteCode, analysisId, cursor, limit, credential, locale))
+        @Parameter(
+            description = "미확정 참석 의미 지원: conditional-v1만 지원 명시로 인정. 생략/기타 값은 해당 결과에 CLIENT_UPDATE_REQUIRED(409)",
+            schema = Schema(example = "conditional-v1"),
+        )
+        @RequestParam(name = "attendance_support", required = false) attendanceSupport: String?,
+    ): RecommendationListResponse =
+        response(
+            useCase.alternatives(
+                inviteCode,
+                analysisId,
+                cursor,
+                limit,
+                credential,
+                locale,
+                AttendanceClientSupport.supported(attendanceSupport),
+            ),
+        )
 
     @PostMapping("/recommendations/{optionId}/confirmation", consumes = [MediaType.APPLICATION_JSON_VALUE])
     @Operation(summary = "추천 창 안의 실제 모임 시작·종료 확정", description = "전체 선택 튜플만 멱등. legacy candidate 확정 URL과 별도")
@@ -130,7 +152,7 @@ class RecommendationController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "분석 준비 전·수정 라운드 OPEN·STALE_ANALYSIS·다른 선택 확정 충돌",
+            description = "분석 준비 전·수정 라운드 OPEN·STALE_ANALYSIS·다른 선택 확정 충돌·CLIENT_UPDATE_REQUIRED",
             content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
         ),
         ApiResponse(
@@ -150,6 +172,11 @@ class RecommendationController(
         @RequestBody body: RecommendationConfirmationRequest,
         @CookieValue(name = GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
+        @Parameter(
+            description = "미확정 참석 의미 지원: conditional-v1만 지원 명시로 인정. 생략/기타 값은 해당 결과에 CLIENT_UPDATE_REQUIRED(409)",
+            schema = Schema(example = "conditional-v1"),
+        )
+        @RequestParam(name = "attendance_support", required = false) attendanceSupport: String?,
     ): ConfirmedResultResponse =
         ConfirmedResultResponse.from(
             useCase.confirm(
@@ -162,6 +189,7 @@ class RecommendationController(
                     body.endAt,
                     credential,
                     locale,
+                    AttendanceClientSupport.supported(attendanceSupport),
                 ),
             ),
         )
@@ -187,6 +215,8 @@ class RecommendationController(
                             variant.partialAttendance,
                             variant.place?.let(CandidatePlaceResponse::from),
                             variant.excludedParticipantNames,
+                            variant.attendanceConfirmed,
+                            variant.summary,
                         )
                     },
                     option.summary,

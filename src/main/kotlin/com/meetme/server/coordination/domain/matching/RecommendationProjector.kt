@@ -15,7 +15,14 @@ data class RecommendationVariant(
     val representativeArea: CompatiblePlaceArea? = null,
     val representativePlace: GeoCoordinate? = null,
     val preferenceCount: Int = 0,
-)
+    val unverifiedPlaceParticipantIds: List<ParticipantId> = emptyList(),
+) {
+    init {
+        require(unverifiedPlaceParticipantIds.distinct() == unverifiedPlaceParticipantIds)
+        require(participantIds.containsAll(unverifiedPlaceParticipantIds))
+        require(meetingMode == MeetingMode.IN_PERSON || unverifiedPlaceParticipantIds.isEmpty())
+    }
+}
 
 data class RecommendationOption(
     val window: InstantTimeRange,
@@ -195,21 +202,15 @@ object RecommendationProjector {
         val result = mutableListOf<RecommendationVariant>()
         if (mode != MeetingMode.IN_PERSON) result += RecommendationVariant(MeetingMode.REMOTE, ids)
         if (mode != MeetingMode.REMOTE) {
-            val areas = subset.map { it.offlineArea }
-            if (areas.all { it != null }) {
-                val available = areas.filterNotNull().map { it.alternatives }
-                val keys = available.map { values -> values.map { it.key }.toSet() }.reduce { left, right -> left intersect right }
-                for (key in keys.sorted()) {
-                    val display = available.flatten().filter { it.key == key }.minOf { it.displayName }
-                    result += RecommendationVariant(MeetingMode.IN_PERSON, ids, CompatiblePlaceArea(key, display))
-                }
-            } else {
-                val regions = subset.mapNotNull { it.offlineRegion }
-                if (regions.size == subset.size) {
-                    GeoMatcher.representativePoint(regions)?.let {
-                        result += RecommendationVariant(MeetingMode.IN_PERSON, ids, representativePlace = it)
-                    }
-                }
+            OfflinePlacePolicy.resolveAll(subset).forEach { place ->
+                result +=
+                    RecommendationVariant(
+                        MeetingMode.IN_PERSON,
+                        ids,
+                        place.area,
+                        place.coordinate,
+                        unverifiedPlaceParticipantIds = place.unverifiedParticipantIds,
+                    )
             }
         }
         return result
@@ -231,6 +232,7 @@ object RecommendationProjector {
         val contexts = mutableListOf<List<ParticipantMatchInput>>()
         if (mode != MeetingMode.IN_PERSON) contexts += ordered
         if (mode != MeetingMode.REMOTE) {
+            if (ordered.any { OfflinePlacePolicy.wildcard(it) }) contexts += ordered.filter { OfflinePlacePolicy.wildcard(it) }
             val areas =
                 ordered
                     .flatMap { it.offlineArea?.alternatives.orEmpty() }
@@ -244,14 +246,19 @@ object RecommendationProjector {
                         participant.offlineArea
                             ?.alternatives
                             .orEmpty()
-                            .any { it.key == key }
+                            .any { it.key == key } ||
+                            OfflinePlacePolicy.wildcard(participant)
                     }
             }
             val located = ordered.filter { it.offlineRegion != null }
+            val wildcards = ordered.filter(OfflinePlacePolicy::wildcard)
+            if (wildcards.isNotEmpty()) {
+                for (participant in located) contexts += (listOf(participant) + wildcards).sortedBy { it.participantId.value.toString() }
+            }
             if (located.size >= 2) {
                 val regions = located.map { requireNotNull(it.offlineRegion) }
                 for (group in GeoMatcher.overlappingParticipantGroups(regions, checkCancellation)) {
-                    contexts += group.map { located[it] }
+                    contexts += ordered.filter { it in group.map { index -> located[index] } || OfflinePlacePolicy.wildcard(it) }
                 }
             }
         }

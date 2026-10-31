@@ -8,6 +8,7 @@ import com.meetme.server.precheck.domain.PrecheckCandidate
 import com.meetme.server.precheck.domain.PrecheckExecution
 import com.meetme.server.precheck.domain.PrecheckQuestion
 import com.meetme.server.precheck.domain.PrecheckStatus
+import com.meetme.server.shared.domain.InputEvidence
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import tools.jackson.databind.ObjectMapper
@@ -35,8 +36,8 @@ class JdbcPrecheckRepository(
     ) {
         jdbc.update(
             """INSERT INTO precheck_candidates(id,room_id,participant_id,revision,raw_text,locale,created_at,
-            interpretation_reference_at,owner_binding,source_candidate_id,source_question_id,selected_choice_id)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+            interpretation_reference_at,owner_binding,source_candidate_id,source_question_id,selected_choice_id,input_evidence)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,CAST(? AS jsonb))""",
             candidate.id,
             candidate.roomId,
             candidate.participantId,
@@ -49,6 +50,7 @@ class JdbcPrecheckRepository(
             candidate.sourceCandidateId,
             candidate.sourceQuestionId,
             candidate.selectedChoiceId,
+            candidate.evidence?.let(mapper::writeValueAsString),
         )
         jdbc.update(
             """INSERT INTO precheck_checks(id,candidate_id,status,version,generation,retry_count,deadline_at,failure_code)
@@ -137,7 +139,9 @@ class JdbcPrecheckRepository(
     ): Int =
         requireNotNull(
             jdbc.queryForObject(
-                "SELECT COALESCE(sum(length(raw_text)),0) FROM (SELECT DISTINCT ON(participant_id) participant_id,raw_text FROM precheck_candidates WHERE room_id=? AND participant_id<>? ORDER BY participant_id,revision DESC) c",
+                "SELECT COALESCE(sum(length(raw_text) + COALESCE(length(input_evidence->'supplement'->>'answerText'),0)),0) " +
+                    "FROM (SELECT DISTINCT ON(participant_id) participant_id,raw_text,input_evidence FROM precheck_candidates " +
+                    "WHERE room_id=? AND participant_id<>? ORDER BY participant_id,revision DESC) c",
                 Int::class.java,
                 roomId,
                 excludingParticipantId,
@@ -281,6 +285,11 @@ class JdbcPrecheckRepository(
                 rs.getObject("source_question_id", UUID::class.java),
                 rs.getString("selected_choice_id"),
                 rs.getObject("accepted_version_id", UUID::class.java),
+                rs.getString("input_evidence")?.let {
+                    mapper.readValue(it, InputEvidence::class.java).also { evidence ->
+                        evidence.validateAgainst(rs.getString("raw_text"))
+                    }
+                },
             )
         return PrecheckExecution(
             rs.getObject("id", UUID::class.java),
@@ -301,7 +310,7 @@ class JdbcPrecheckRepository(
         private const val SELECT =
             "SELECT k.*,c.id c_id,c.room_id,c.participant_id,c.revision,c.raw_text,c.locale,c.created_at," +
                 "c.interpretation_reference_at,c.owner_binding,c.source_candidate_id,c.source_question_id," +
-                "c.selected_choice_id,c.accepted_version_id FROM precheck_checks k " +
+                "c.selected_choice_id,c.accepted_version_id,c.input_evidence::text FROM precheck_checks k " +
                 "JOIN precheck_candidates c ON c.id=k.candidate_id"
     }
 }

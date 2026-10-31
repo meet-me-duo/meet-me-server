@@ -1,3 +1,88 @@
+## 2026-10-31 현재 작업 — 구 웹 탭의 미확정 참석 의미 호환 보강
+
+- [x] `[USER]` 구버전 탭에서도 미확정 참석을 확정처럼 표시·저장하지 않도록 로컬 구현·무료 최종 검사·독립 검토를 승인했다. 새 Issue/PR/push/병합/운영·V2 활성화·유료모델/지도·권한/자격증명 변경은 이번 단계에 포함하지 않는다.
+- [x] `[AGENT]` 검증된 develop 서버 `6d67c8107832e51102059fa4d410150197dd1fa6`·웹 `2fa24d3a1e4bbd83ac2c848fe6ee20ef7cac6067`에서 별도 로컬 작업 공간/`fix/conditional-attendance-client-compat`를 준비했다. 사용자의 로컬 우선 범위에 따라 공개 Issue 생성 선행은 게시 승인 전 수행하지 않는다. 원본 미커밋과 CI179 결과는 보존한다.
+- [x] `[AGENT]` 서버 독립 HTTP+실제PG 계약17개 RED(7PASS/10예상FAIL/오류·skip0)·테스트 해시 동결, 웹 계약15개 RED(7PASS/8FAIL)→GREEN15PASS를 확인했다.
+- [ ] `[AGENT]` 여섯 결과 경로의 `attendance_support=conditional-v1` 선언, 미지원 조건부 결과409 CLIENT_UPDATE_REQUIRED, write 전 검증·기존 auth/Origin/source/CAS 순서와 설명·false 보존 및 no-store를 검증한다.
+- [ ] `[AGENT]` 생성 OpenAPI·웹 계약을 동기화하고 현재/구 main 웹 소스의 브라우저 cache/열린탭·선택·재조회, 전체 무료 검사·독립 검토/결함 주입을 확인한다.
+- [ ] `[SHARED]` 구체 공개 diff·검사 결과를 정리해 다음 게시/rollout 범위를 별도 제시한다. 자동으로 main/운영을 바꾸지 않는다.
+
+현재 단계: 서버 구현 후 집중 GREEN 진행. protocol/DB CHECK/기존 migration·판정/timeout/retry는 유지한다. 코디네이터가 수동 운영 사전점검의 정제 자료를 별도 검증했다. 실제 runtime/schema·복구 메타데이터는 로컬 운영 기록에 보존하고 공개 코드 기록과 분리한다. 사전점검을 복원 시험/자동 dispatch 준비 완료로 확대하지 않는다. 상세는 새 호환 검증 기록에 남긴다. 아래는 각 당시 시점 기록이다.
+
+## 2026-10-31 현재 작업 — Issue #178 CI 작업 분리
+
+- [x] `[USER]` CI-only Issue 생성, 수정·검증·커밋·push·develop PR·병합 및 정확 merge SHA CI 확인을 승인했다. main·운영·V2 flag·보안/권한/자격증명 확대·유료 모델/지도 요청은 이번 범위에 포함하지 않는다.
+- [x] `[AGENT]` [Issue #178](https://github.com/meet-me-duo/meet-me-server/issues/178)을 생성하고 깨끗한 최신 develop `8b36fd5415bc4773e91f29fedc5ddf257ef6b12d`에서 `fix/issue-178-ci-parallel-checks`를 만들었다. 기존 분석 작업 공간은 보존한다.
+- [x] `[AGENT]` 독립 계약 테스트 RED(2 PASS/4 FAIL) 후 Gradle·배포 계약·ARM64를 분리했다. 기존18명령·16계약 단계·각job 내 순서·기존30분 제한·readonly 권한·CI trigger/전체 성공 게시 gate를 유지하고 구조 검사1개만 추가했다.
+- [x] `[AGENT]` 집중31 PASS/0 FAIL/0 SKIP, 독립27개 mutant 탐지·원본해시 유지·P1/P2 없음 확인. 기존 명령/검사를 줄이거나 실패 무시로 통과시키지 않는다.
+- [x] `[AGENT]` 원본 TDD guard의 ktlintCheck·assemble·test EXIT0, 2,658 PASS/기존SKIP17/FAIL0/ERROR0·source679개 전후 동일을 확인했다. 별도 감시 wrapper의 차단 시도12건/EXIT1은 원본 검사 결과와 구분해 검증 문서에 기록했다. 공개 변경은 CI/테스트/문서8개이며 비밀·원본 로그를 제외한다.
+- [ ] `[AGENT]` CI-only feature commit/push·develop PR·최종feature SHA CI·병합·정확merge SHA CI 종료를 확인한다. Commit/PR: 동일 커밋 예정 / 게시 후 확인.
+
+현재 단계: 로컬 계약·원본 전체 가드 검증 완료, feature 게시 준비. 원격 새 CI의 runner별 독립 실행·실제 소요 시간은 아직 미확인이다. [검증 기록](docs/verification/issue-178-ci-job-boundaries.md)을 따른다. 아래 기록은 각 당시의 범위/상태이며 현재 새 권한으로 해석하지 않는다.
+
+## 2026-10-31 현재 작업 — Issue #176 게시 준비
+
+- [x] `[USER]` 서버·웹 새 Issue 각1개 → 별도 작업 공간의 준비 수정·무료 최종 검사 → 지정 피처 push → develop 대상 Draft PR 각1개 → 최종 SHA 일반 CI 확인 범위를 승인했다. 병합·배포·운영 DB·추가 유료 모델/지도 요청·보안/자격증명 변경은 제외한다.
+- [x] `[AGENT]` 서버 [#176](https://github.com/meet-me-duo/meet-me-server/issues/176)과 웹 [#60](https://github.com/meet-me-duo/meet-me-web/issues/60)을 생성했다. 원본 체크아웃·기존 미커밋 작업을 보존하고 최신 develop 기반 새 피처에 이식했다. 기존 #107은 Refs이며 PR #158/웹 #51은 보류한다.
+- [x] `[AGENT]` 최신 운영자/CORS/runtime 및 웹 디자인·모바일을 유지하며 충돌을 해소하고 V22 catalog/reader 역사 호환·격리 DDL 잠금/취소/복구·기본/native E2E 분리를 마무리한다.
+- [x] `[AGENT]` 공개 파일 목록·원본 제외·source/test 증거 연계를 확인하고 최종 소스로 전체 무료 검사·독립 검토를 수행한다. 아래 과거 2,619 PASS/17 SKIP·웹807개는 새 통합 소스의 합격으로 재사용하지 않는다.
+- [ ] `[AGENT]` 검증 후 허용된 피처만 commit/push하고 Draft PR 및 해당 최종 SHA의 일반 CI 종료를 확인한다. 현재 Commit/PR: 동일 커밋 예정 / 새 PR 미생성.
+- [ ] `[USER/SHARED]` 실제 운영의 DB/reader·웹/서버 적용 순서·복귀·V2 활성화·남은 정책/실모델 품질은 별도 결정과 승인이 필요하다. 웹은 사용자 피처 확인 전 develop 병합하지 않는다.
+
+현재 단계: 원본 TDD guard 통과(최종 2,658 PASS/기존SKIP17/실패·오류0, source675개 전후 동일). 웹 Draft PR #61의 cb6903b CI는 성공했다. 서버 지정 feature commit/push·Draft PR 및 최종 SHA CI 확인을 진행한다. [공개 검증 요약](docs/verification/issue-176-publication-readiness.md)을 따른다. 아래 내용은 각 날짜 당시의 역사 기록이며 과거 미승인·진단 종료를 현재 권한이나 새 실행 성공으로 읽지 않는다.
+
+## 2026-10-31 최신저장Luna응답 로컬worker/DB/Chromium 통합 완료
+
+- [x] `[AGENT]` 기존브라우저는다른저장응답, 최신직접진단은도메인까지인공백을확인. 최신응답성공방1+합성기술실패방1만무료검증.
+- [x] `[AGENT]` 실제HTTP마감/Outbox/Redis/worker/PG/JDBCsource검사로각Gemini논리1(SERVER RetryAfter40초)→Luna논리1 연결. 원재시도정책유지, 실제공급자/지도0.
+- [x] `[AGENT]` Chromium2방/3묶음PASS: 후보내미확정설명·19~20전체3인선택/확정1/새로고침/DB미확인2명유지. 실패Delayed·frozen3/structured·추천·선택0/ACK확인.
+- [x] `[AGENT]` source910/protected28/web11·이전paidmanifest3307불변, 제품/테스트소스변경0. 서버/브라우저exit0·테스트인프라정리. [보고서](docs/verification/experimental-latest-luna-local-fallback-browser.md). 운영/timeout/보안·자격증명/게시·병합·배포변경0.
+
+## 2026-10-31 새명시승인 Luna직접1회 진단
+
+- [x] `[USER]` synthetic-authorization-d0ace57578a87106: 유료Luna최대1회/27초·재시도0·Gemini/지도/추가fallback0 승인. 이전실험잔여재사용아님.
+- [x] `[AGENT]` 새승인중복없음·최신소스/과거자료보존, 새합성V2 3입력/사전의도·실행manifest동결, 실제어댑터무료4전송사례통과.
+- [x] `[AGENT]` Luna1회HTTP200·adapter9.319초·wire9.198초·세입력해석수용. 저장응답무료재parse/mapper왕복/도메인19~20시·미확인2명/충돌반례PASS. 청구미확인. [결과](docs/verification/experimental-direct-luna-one-result.md). 추가요청0·운영/제품timeout·보안/자격증명·게시/병합/배포변경0.
+
+## 2026-10-31 Gemini 취소 원인 무료 후속 완료
+
+- [x] `[AGENT]` 최신15초/이전15초2회/SDK30·503/Luna27·60 성공의 endpoint·계층·SDK·잔여예산·sourceSHA 대조. HTTP503과TIMEOUT을구분.
+- [x] `[AGENT]` 기존H2 controls재사용·신규rawH2명시취소반례1회PASS. flag/CANCEL의불충분성확인, 전체SDKcause동일성은미증명.
+- [x] `[AGENT]` [원인표·검증·다음선택](docs/verification/experimental-gemini-cancellation-followup.md) 기록. 신규외부/유료/지도0·제품/timeout/보안변경0. 추가모델요청은새승인전금지, 이전잔여1폐기유지.
+
+## 2026-10-31 승인된 새2회 실모델 smoke 검증
+
+- [x] `[USER]` synthetic-authorization-22a0a84b3c783600: Gemini최대1회/15초 + Luna최대1회/27초, 총2회·재시도0·첫기술오류전체중단 승인.
+- [x] `[AGENT]` 이전실행중복없음·기존소스/원본증거보존, 실제adapter/SDK/gate 무료반례와 격리PG앱후처리/확정재조회 검증. 새합성3입력과의도·manifest동결.
+- [x] `[AGENT]` 실제Gemini1회15.22초TIMEOUT에서전체STOP. Luna0·잔여1폐기·재시도0. 토큰/HTTP상태/청구/의미결과미관측. 무료후처리와실모델미실행을구분해 [정제보고서](docs/verification/experimental-two-call-smoke-result.md)에기록. 지도/추가fallback/보안·운영timeout변경/게시·병합·배포0.
+
+## 2026-10-31 최종 분석 예산 무료 점검 (격리 작업)
+
+- [x] 승인 범위와 기존 장소 설명/브라우저 증거 보존, 전체 예산·queue·polling·소유권 경계 조사.
+- [x] 별도 검토자가 실제 gate 기반 Luna 관측 만료 계약 5개 작성. 원래 오류가 CONFIGURATION으로 바뀌는 3개 RED, 성공 제어 2개 PASS 확인.
+- [x] Luna 원래 오류 보존 최소 수정과 경계·fallback·중복/소유권 회귀, 결함 주입, 최종 품질 게이트.
+- [x] 예산표·독립 결과·유료 검증 한계 보고. timeout/모델/프롬프트/운영 설정 변경 및 외부 호출/게시/병합/배포 없음.
+
+현재 단계: 최종 무료 점검 완료. 독립 RED3실패/2통제PASS → 집중54PASS, 만료 성공 허용 결함1건 탐지·원복. 최종 ktlintCheck/assemble/test exit0·2619PASS/17동일SKIP·실패/오류0. source910·보호18 지문 동일. [예산표·결과](docs/verification/experimental-final-analysis-budget-audit.md). timeout·모델·운영 변경 및 외부 요청0; 추가 유료 smoke2회안은 제안만.
+
+## 장소 미검증 후보: 실제 브라우저 ↔ 로컬 서버 후속 (2026-10-31)
+
+- [x] `[AGENT]` 기존 소스·응답·패치와 서버2614PASS/17SKIP·웹807개를 보존하고 지원되는 Chromium/로컬 PG·Redis를 확인했다.
+- [x] `[AGENT]` 현재 빌드+새 웹 assets로 실제 Chromium4사례/6검증 묶음을 통과했다. 데스크톱/모바일 설명·선택·돌아가기·반복DOM활성화·확정·새로고침/실제GET/DB 일치, 알려진 시간/장소 충돌 제외를 확인했다.
+- [x] `[AGENT]` 제품·테스트 소스 변경0, 실제 모델·지도 요청0. 합성 auth refresh bootstrap만 대체했고 방·추천·확정·결과 API는 실제 서버다. 기존 공통 안내는 유지하고 새 장소 경고/배지는 없다.
+- [x] `[AGENT]` 스크린샷·명령·로그·DB 지문과 브라우저 배경 차단(proxy9/libc6)을 구분해 보고서에 보존했다. 독립 검토 P1/P2=0, 서버/브라우저 정상 종료, 불필요한 전체 재실행·Linear 수정·게시·병합·배포0.
+
+현재 단계: 승인된 로컬 브라우저 후속 검증 완료. [보고서](docs/verification/experimental-conditional-place-candidates-result.md), 자료 `local-only-evidence/conditional-place-browser-20261031`. 실모델/실제 이동/실물기기/OAuth/운영 검증은 이번 범위에 없다.
+
+## Issue #107 — 장소 미검증 시간 후보와 설명 (2026-10-31)
+
+- [x] `[AGENT]` 기존 격리 HEAD b4b3a8c / 웹 6e406ce와 전체 회귀 2593PASS/17SKIP를 확인하고 미커밋 소스·이전 패치·응답을 별도 baseline에 보존했다.
+- [x] `[AGENT]` 사용자 승인에 따라 시간 후보를 유지하고, 알려진 장소 충돌은 제외하며 미검증 장소·이동 조건은 후보 설명과 확정 결과에 함께 보존한다. 참석 확정과 시간 일치를 구분한다. 자동 비대면 전환·새 경고 영역·원문 공개 확대는 하지 않는다.
+- [x] `[AGENT]` 독립 테스트 RED→GREEN, 장소/시간 반례, 저장 응답 재생 및 외부 호출 차단 mock E2E, 확정 영속성·기존 회귀·최종 ktlint/assemble/test를 검증한다.
+- [x] `[AGENT]` 실제 검증과 미검증을 분리하여 보고한다. 외부 API/유료 호출/timeout 변경/게시/병합/배포 금지, holdout 봉인 유지.
+
+현재 단계: 로컬 구현 및 최종 무료 검증 완료(서버2614PASS/17SKIP, 실패·오류0; 웹 고유807개/최종집중36PASS, 타입·린트·API·빌드PASS). 이전 결과는 변경하지 않고 `local-only-evidence/conditional-place-20261031`에 새 증거를 기록한다.
+
 # meet-me-server Implementation Plan
 
 ## 운영자 조회 CORS 사전 요청 오류 복구 준비 (2026-10-30 UTC)
@@ -25,6 +110,119 @@
 - [ ] `[AGENT]` 전체 Kotlin 품질 검사와 순차 Node 회귀를 완료했으며 커밋·게시·PR/정확 CI를 진행한다. 관련 #110의 넓은 범위를 자동 종료하지 않도록 별도 설정 전달 이슈를 제안했으나 특정 공개 이슈 생성 승인 검토가 거절되어 이슈 생성과 종속 PR은 대기한다. 생성 재조회 결과 없음, 재시도0이다.
 - [ ] `[SHARED]` 보호 전환 전 PC 준비 상태를 조율하고 승인 계정 대응·안전한 parameter 입력·실제 세션 권한을 별도 검증한다. 현재 미실행이다.
 
+## Issue #107/#123 — 남은 전체 회귀 실패 원인 확인·최종 무료 검사 (2026-10-30)
+
+- [USER] 남은 전체 회귀1실패를 로그/코드·필요한 무료 재현으로 마무리하고 최종 전체를1회 실행한다. assertion 완화·timeout 증대·새 테스트 제외·운영 정책 확장·추가 유료 API·게시/병합/배포는 금지한다.
+- [x] `[AGENT]` BlindFlow HTTP와 fallback 검사의 전역 settings 공유가 primary2를 만들고 후행 strict==1에서 실패하는 원인을 확인했다. 이전 파싱 성공은 앞 검사 기록이며 현재 응답 DB 손실 근거가 아님을 정정했다.
+- [x] `[AGENT]` 기존 두 앱으로 실패를 집중 재현한 뒤 무료 settings 전체를 context Bean으로 분리했다. paid singleton/claim·once 제한은 그대로 유지하고 parser/guard/wire/증거의 객체를 통일했다. 두 앱·한도 계약5PASS·ktlint PASS를 확인했다.
+- [x] `[AGENT]` provider key/live mode 제거·offline·JDK 프로세스 비루프백 libc connect 차단을 준비하고 Socket/HTTP selftest 및 독립 검토를 마쳤다. DNS/직접 syscall/외부 daemon까지 차단한다고 주장하지 않는다.
+- [x] `[AGENT]` source660지문을 고정한 최종 전체1회 결과와 소스/원본/소비claim 보존을 회수한다. 단일 시작 기록으로 중복을 방지한다.
+- [x] `[AGENT]` 결과·실패와 미검증을 분리해 보고하고 종료한다.
+
+현재 단계: 최종 전체1회 **2610건 중2593PASS/0FAIL/0ERROR/기존17SKIP**, ktlint·assemble·Gradle exit0. 새 테스트 제외/기대값 완화/timeout 증대없음. 독립 검토 P1/P2=0, source660지문·생산소스·원본4·소비claim 불변, 실제test worker guard활성/외부connect시도0을 확인했다. [최종 후속 보고서](docs/verification/experimental-place-regression-closure-result.md). 실제모델/도보정책/봉인평가는별도이며, 추가 API·게시·병합·배포0으로 종료한다.
+
+## Issue #107/#123 — 장소 미지원 진단 보존과 무료 회귀 (2026-10-30)
+
+- [USER] `synthetic-authorization-e22ae1044c3a6abc`에 따라 격리 구현·무료 테스트를 진행한다. 특정 지명/문장 예외, 미검증 이동 제약의 충족 간주, 지도 도입·이동시간 환산은 금지한다. 외부 API/봉인 열람/원격 게시/병합/배포는 없다.
+- [x] `[AGENT]` TravelConstraint 미반영 사유를 원래 구조화 조건에서 도출해 보존 원문·보완 답변과 함께 주최자에게 제공하고 PARTIAL 및 중복 없는 집계를 일치시킨다. 유효 시간·기존 매칭 제한은 유지한다.
+- [x] `[AGENT]` 독립 테스트 설계에 따라 정상/상충 영역/미상 기준점/명시 기준점과 서로 다른 제한/REMOTE·EITHER·IN_PERSON/권한·거절 우선순위를 RED→GREEN 및 결함 주입으로 확인한다.
+- [x] `[AGENT]` 기존 저장 응답 재생을 새 결과로 분리하고 원본 아티팩트를 보존한다. 무료 회귀·빌드·API 계약을 검증해 성과와 미검증을 보고한다.
+- [x] `[AGENT]` 도보 제한 지원·미검증 후보·장소 필수 조건 없음의 상태 구분안을 제안했다. 새 지원 정책은 구현하지 않았다.
+- [ ] `[USER]` 후속 장소 지원 정책 선택. 최종 전체 녹색 실행은 후속 마무리에서 확인했으며, 실시간 모델/독립 봉인 평가는 별도다.
+
+현재 단계: 구현·무료 영향 검증·결과 보고 완료. 독립13계약·필수FI4종, 웹802개, 최종 무료앱/설정5개·ktlint/assemble PASS다. 단 마지막 단일 전체회귀는2609중2591PASS/1FAIL/17SKIP이며, 이후 helper 수정/집중5PASS와 구분한다. fallback 모의 파싱 후 미완료의 정확한 원인은 미확인이고 전체 녹색 실행·실모델 일반화는 미검증이다. 원본4/소비claim·최종source296지문을 보존했다. [결과 보고서](docs/verification/experimental-place-diagnostics-result.md). 외부API·게시·병합·배포0, 추가검사없이 보고 후 종료.
+
+## Issue #107/#123 — 남은 흐름 대조·무료 회귀·새 승인 계획 (2026-10-30)
+
+- [USER] 실제Luna1회성공을보존하고추가유료호출없이전체흐름의증거/미검증영역·최소blind/회귀실행계획과모델별물리요청상한을정리한다. 529는실관측/코드판단을구분하며병합·운영변경은없다.
+- [x] `[AGENT]` 실제Jev6응답(질문생성0), 실제Luna최종1회/명시입력3명성공, 질문/답변/미해결·host미반영진단·다양성의무료계약을구분했다. 추천은복제없이최대3이므로같은단일창1추천은정상이나3안다양성실모델검증은아니다. legacycandidate카드수와신규option수도구분한다.
+- [x] `[AGENT]` 기존관련11suites/84개를무료실행해84PASS·실패/오류/skip0을확인했다. 질문1회/답변CAS·동결, 원문보완최종계약, host진단·권한, 추천0~3/복제금지/다양성/확정,529현재매핑을검증한다. 새생산코드·분류/threshold/prompt변경0이다.
+- [x] `[AGENT]` 새pilot1+봉인1/각3명계획만작성했다. 실제Jev+개인Luna+합성Gem503→실제최종Luna의권장최소상한은Jev12/Luna개인generation6/최종2=총20이다. Luna가질문불필요를반환해도generation1회는소모하므로API호출G·게시질문Q·답변A를분리한다. G=Q=A=2인경우에만계획값12다. 개인Luna는실제1HTTP로countAPI를더하지않는다. 실제Gemini최종포함선택은Jev12/개인Luna6/Gemini8/최종Luna2=총28상한으로별도승인이필요하다. 현재어느안도실행/승인되지않았다.
+
+현재 단계: [증거 대조·최소 실행 계획](docs/verification/experimental-remaining-flow-verification-plan.md)과무료84PASS정리완료, 추가유료0/holdout열람·새입력생성0. 실제Jev→질문→답변→최종해석·제외진단·추천3안·확정의블라인드통합검증은미완료다. 기존승인/결과/claim은보존하며새유료승인전정지한다.
+
+## Issue #107/#123 — 합성503에서 실제 Luna로 단일 fallback 검증 (2026-10-30)
+
+- [USER] `synthetic-authorization-cfc3122fe73a6ef1` 승인으로 실제 Gemini0·합성입력·실제Luna최대1회/27초·재시도0을 검증한다. main/develop 병합·운영 반영·holdout/실사용자 데이터·추가 유료 호출은 없다.
+- [x] `[AGENT]` 원본 Spring HTTP/PG18/Redis8·Jdbc source fence·Luna adapter/프롬프트/schema/output32768을 유지한 fixture를 준비했다. 합성503의RetryAfter40초가 기존Gemini30초예산보다 커서 추가대기/재시도 없이Luna로 전환한다. 사전확인은CLEAR test double, Jev/질문호출0이며 블라인드 평가와 구분한다.
+- [x] `[AGENT]` 첫무료실패는fixture의managedflag불일치로시작전거절(전송0), 두번째는loopback endpoint의profile이원본fence와불일치해거절(전송0)이었다. 권한을우회하지않고free에서공식endpoint/source허가뒤application-interceptor합성응답을반환하도록수정했다. rooms snapshot의없는status열을collection_status로수정하고available필수·3명모두반영·선택ID/시간일치검증을강화했다. 원본실패자료를보존한다.
+- [x] `[AGENT]` 최종무료68PASS/실유료기본OFF1SKIP·ktlint PASS. frozen3/structured3/후보1·추천1/주최자CONFIRMED/선택ID·시간일치, 원본sourcechecks2를확인했다. free syntheticLuna응답1/실제wire0이며 네트워크실호출성공으로표시하지않는다. 별도guard가원본source거절·새identity·다른operation·중복header를차단한다.
+- [x] `[AGENT]` source/compiled2671파일·manifest656c057c를고정하고실제Luna1회HTTP200을확인했다. HTTP5.564초/adapter5.734초/입력~확정10.865초, caller26.995초/실제timeout26.834초이며재시도0이다. 원본source승인3/합성Luna응답0, strict3·frozenversionjoin3·거절0·후보/추천1·주최자CONFIRMED·선택ID/시간일치PASS다. 실제usage2879/355tokens,청구액null. Gradleexit0/JUnit1PASS이며실행전후2671해시동일·중복방지claim소비를독립확인했다.
+
+현재 단계: 승인된실제Luna1회와후속검증완료, 추가유료호출없이정지. [결과 보고서](docs/verification/experimental-luna-fallback-once-result.md), 실제자료 `local-only-evidence/luna-fallback-once-11ef9a92-0dc0-4094-ba1b-cacb5630e565`, 준비 `local-only-evidence/luna-fallback-preparation-20261030`. 생산main289·기존통계SQL/평가자료보존·병합/운영반영없음. 실제Jev/보완질문·블라인드전체흐름검증은이번범위에없으며미완료다.
+
+## Issue #107/#123 — 새 승인 합성 SDK 단일 진단 (2026-10-30)
+
+- [USER] `synthetic-authorization-ef53e85dfd95c050` 승인으로 별도 합성 Gemini SDK 요청 최대1·최대30초·재시도0·fallback0을 실행한다. 종료된 cap10 잔여를 재사용하지 않으며 결과 불확실시 재호출하지 않는다. 입력/출력을 최소화하고 생산15초·prompt·모델분기·운영/holdout은 변경하지 않는다.
+- [x] `[AGENT]` tiny 합성 prompt97B·schema170B·3필드·출력128·wire4096B·고정 gemini-3.8-flash/SDK1.72.0/LOW/candidate1을 테스트 전용으로 준비했다. 초기 길이 설명95B는 실행 전 실측97B로 정정했다. SDK 입력토큰 별도 hard limiter는 없으며 byte 제한과 실제 사용량을 구분한다. 이번 작은 payload는 이전 서비스 payload와 달라 timeout 확대 효과의 인과 비교로 사용하지 않는다.
+- [x] `[AGENT]` 로컬 실제 TLS/H2 SDK의30초 timeout·503/redirect 무재전송·body timeout·두번째 전송 거절·동시counter·승인 재사용 거절·strict response를 검증했다. 관련집중62PASS/기본OFF paid1SKIP·ktlint PASS다. 추가529 mock3행 포함 오류분류12PASS로 일반529가INVALID_REQUEST인 차이를 확인했고 생산분류를 수정하지 않았다.
+- [x] `[AGENT]` source/compiled2656개와 manifest243d5a9e를 고정하고 새 승인/실행claim으로 정확1회 실행했다. 2.411399794초 HTTP503/SERVER, 실제callTimeout29.950초이며 timeout발생이 아니다. admission/headersStart/headersEnd각1, retry/fallback/Jev/Luna0이다. 토큰·청구액은미관측null, JUnit1FAIL/Gradleexit1은정상응답미확인결과다. 실행전후2656해시와기존6증거동일을확인했다.
+- [x] `[AGENT]` 사용자 fallback 의도와 일반529→INVALID_REQUEST 차이·503/TIMEOUT의기존Luna예약을무료코드/모의테스트로대조했다. 현재매핑을확인했으며생산분류는바꾸지않았다. 다음합성Gemini503 test double+실제Luna최대1회후보는별도승인이필요한제안만이며추가실행0이다.
+
+현재 단계: 승인된 Gemini1회가503으로종료되어추가호출없이정지했다. 기존cap10승인은재사용하지않았고생산main289/통계SQL패치/holdout은보존했다. source/타이머·API오류를분리한 [결과 보고서](docs/verification/experimental-sdk-once30-result.md), 실제자료 `local-only-evidence/sdk-once30-d4e8dcfb-d812-4a73-b231-7a4fe37f5bbd`, 준비자료 `local-only-evidence/sdk-once30-preparation-20261030`. 실제전체모델/블라인드평가성공은미완료다.
+
+## Issue #107/#123 — 무료 로컬 HTTP/2 타이머 진단 재개 (2026-10-30)
+
+- [USER] 어드민 CORS 운영 반영 후 기존 격리 로직 작업을 재개한다. b4b3a8c 및 미커밋 통계 SQL 수정·기존 평가자료를 보존하고, 추가 유료 호출 없이 로컬 지연 응답으로 caller/adapter의 15초 제한과 취소 순서를 검증한다. 종료된 cap10 승인 원장은 재사용하지 않는다.
+- [x] `[AGENT]` 기존 HEAD/작업 트리·289개 main 파일 해시와 로컬 SQL 수정의 지문을 별도 baseline에 보존했다. main/develop 통합·운영 접근·holdout 열람은 없다.
+- [x] `[AGENT]` 독립 검토된 정상 H2·15초 cap·짧은 caller 제한·원격 CANCEL·시작 전/후 deadline 및 실제 gate 비교를 로컬 TLS/ALPN HTTP/2에서 검증했다. 신규6methods/7local requests, 관련 회귀 포함37PASS·ktlintCheck PASS다. 생산 timeout·prompt·정책은 변경하지 않았다.
+- [x] `[AGENT]` 로컬15초 timeout15.019s·짧은caller0.508s·원격CANCEL0.067s를 관측하고 late deadline setter가 watchdog을 재예약하지 않는 차이를 확인했다. gate는1.331s 늦은 정상 응답을 CONFIGURATION으로 거부했으나 실DB 권한 경합/전체 앱 성공 증거는 아니다. 기존 실호출2회의 로컬 timeout 양상과 일치하되 원격 지연의 최초 원인은 미확인이다.
+- [x] `[AGENT]` 첫 fixture shutdown1FAIL을 숨기지 않고 원본 XML/JSON을 보존한 뒤 정리 시간을 보완해 재검증했다. 신규30초 합성 SDK1회 후보는 제안만 하며 부모 확인 전 구현/실행하지 않는다. 전체모델 흐름/holdout 평가 성공은 아직 미완료다.
+
+현재 단계: 무료 로컬 진단 및 집중 회귀37개 완료, 독립 최종 증거 검토 P1/P2=0과 결과 전달. 이번 공급자 요청0, 기존 cap10 실행은 TIMEOUT2 중단 상태를 유지한다. main289개/기존실행증거6개·SQL패치 보존을 확인했고 커밋/전체가드/병합/운영 실행은 없다. [검증 기록](docs/verification/experimental-local-http2-timeout-diagnostic.md), 증거 경로 `local-only-evidence/local-http2-diagnostic-20261030`.
+
+## Issue #107/#123 — 수집 SQL 정정과 후속 진단 선택지 (2026-10-29)
+
+- [USER] 기존 b4b3a8c 실제 평가의 TIMEOUT2 중단을 유지하고 추가 유료 호출·평가 앱 재실행·운영 접근 없이 수집 SQL만 수정·로컬 검증한다. timeout 확대는 제안만 하며 실행하지 않는다.
+- [x] `[AGENT]` `precheck_executions.id` 대신 V16/V21의 복합 키 `check_id,generation`을 조회하도록 수정하고 실제 보고서와 회귀 검사가 같은 SQL 상수를 사용한다. 다른 조회 열·운영 코드·마이그레이션은 변경하지 않는다.
+- [x] `[AGENT]` 새 로컬 PostgreSQL18/Flyway21에서 독립2개 RED(실제 id열 없음)→동일 기대2개 GREEN 및 ktlintCheck를 확인했다. 실패/null 사용량·동일check의 두generation·빈 결과를 검증한다. 전체 가드/커밋은 이번 로컬 수정에서 재실행하지 않았다.
+- [x] `[AGENT]` 기존 평가의 PostgreSQL 컨테이너와 실제 연결된 익명 볼륨의 destroy 이벤트 및 현재 부재를 읽기 전용으로 확인했다. 원래 DB 통계는 복구하지 못해 미관측/null로 유지하고 새 테스트 데이터로 채우지 않는다. b4 원본 결과/manifest/archive는 보존한다.
+- [x] `[AGENT]` timeout30초/합성 Gemini1회 후보와 무료 점검을 코드 근거와 함께 별도 정정 보고서에 제안했다. 현행15초·분기·프롬프트·모델은 그대로이며 제안 구현/실행0이다.
+
+이번 후속의 공급자 요청0회. 기존 승인 실행은 Gemini2회/TIMEOUT2/전체중단 상태이며 재개하지 않는다. 정정/제안: `local-only-evidence/snapshot-sql-correction-b4b3a8c` (원본 보고서와 분리). 소스 수정은 로컬 작업 트리에 보존하며 병합·운영 반영은 없다.
+
+## Issue #107/#123 — 안전한 timeout/cancel 계측 후속 (2026-10-29)
+
+- [USER] 기존 `f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e`에서 격리 로컬 후속을 승인했다. 동작·15초 timeout·prompt·threshold·판정·기존 source fence를 변경하지 않고, 원문/body/header/키/예외 message 없는 안전한 기간·enum·이벤트 순서만 수집한다. 원본 c945/f75 실행·보고서·manifest·패키지·가드 XML은 보존한다.
+- [x] `[AGENT]` DB migration과 기존 transport DTO/영속 계약을 변경하지 않는 optional diagnostic port/session/Gemini 관측을 독립14개 RED→GREEN과 큰 기간 변환 회귀2개 RED→GREEN으로 구현했다. 기존 회귀17개를 포함한33개가 PASS다. recorder 미설정/실패가 기존 결과를 바꾸지 않고, null·미완료·overflow를 성공/완전 관측으로 위장하지 않음을 확인한다.
+- [x] `[SHARED]` 별도 하네스가 새 sidecar를 소비하고, 공통 physical API 누적 상한10·같은 기술 오류2회 중단을 원래 권한 검사와 함께 검증했다. 마지막 mock8개 RED/control과 기존 회귀를 합한129개 GREEN, 독립FI9종 탐지/매회정확복원을 확인했다. shared gate의 선택적 안전 메타데이터 hook은 timeout·권한·재시도 정책을 바꾸지 않는다.
+- [x] `[AGENT]` 독립FI9종 탐지/정확복원과129개 집중 GREEN 뒤 수정하지 않은 원본 guard가814.966초에 전체 검사를 재실행했다.304suites/2458개 중2451PASS·조건부7SKIP·실패/오류0이다. 비밀값 비노출 검사를 거쳐 로컬 후속 commit/source proof만 고정한다. Commit/PR: 동일 커밋 예정 / 원격 없음. push/병합/운영 변경은 하지 않는다.
+- [ ] `[SHARED]` 최종 소스 고정 및 부모 GO 이후에만 별도 실행 담당자가 새 승인 범위의 실제 평가를 수행한다. 이 구현 담당자의 실제 모델 호출은0이다. reset code/isCanceled만으로 로컬 취소 또는 원격 reset의 최초 원인을 단정하지 않는다.
+
+현재 진행: Session/Gemini·공통Gate·counter·기본OFF실행fixture/driver의 계획된 mock과 기존 회귀129개 GREEN을 확인했고 독립FI9종도 탐지/정확복원했다. 기존 관측/영속5개 파일은f75와 바이트 동일하다. source/test/runtime 고정 후 원본 commit guard의 전체 재실행2451PASS·조건부7SKIP·실패/오류0을 확인했다. 검증된 로컬 commit만 전달하며 추가 유료 호출은0이다. 최종 갱신:2026-10-29 UTC. source proof 및 새 실행 산출물은 `local-only-evidence/diagnostic-cap10-20261029` 아래 별도로 보존한다. 이전 f75의 완결 검증은 아래 이력으로 유지하며 이번 계측의 검증으로 전용하지 않는다.
+
+## Issue #107/#123 — Gemini 기술 실패 보존과 평가 중단 후속 (2026-10-29)
+
+- [USER] 추가 유료 호출0으로 원본 c945 실행·manifest·archive와 holdout 봉인을 보존하면서, 보존된 실패 분류 조사·mock 재현·최소 코드 수정과 평가 하네스 공통 중단을 보완하도록 승인했다. main/develop·원격 push·PR·병합·운영 실행은 금지한다.
+- [x] `[AGENT]` 원본 `feature/issue-107-evidence-precheck`의 c945를 보존하고, 깨끗한 c945에서 `fix/issue-107-gemini-failure-taxonomy`를 분기했다.
+- [x] `[AGENT]` c945 실제 개발 평가1회는 Jev HTTP200 6건·Gemini client Call 실패4건(503두건/null-status두건)·Luna0·최종 구조화0·두 모임 ANALYSIS_DELAYED였다. holdout은 미실행이다. 원래 SDK 예외가 보존되지 않아 null-status의 정확한 원인은 미확인으로 남긴다. 이번 후속의 추가 호출은0이다.
+- [x] `[AGENT]` Gemini 독립7개에서 typed primary 오류가 CONFIGURATION으로 덮이는 유효 RED4개/control3개를 확인한 뒤 adapter 하나에서 원래 분류를 보존했다. 성공 응답의 관측 거절과 진짜 사전 source/config 거절은 여전히 CONFIGURATION이다. shared gate·timeout·retry/fallback 정책·prompt·threshold는 변경하지 않았다.
+- [x] `[AGENT]` 첫 집중9suites/123개 PASS와 원본 역전 FI를 확인했다. 실제 gate deadline 만료1개는 최초 구현 후 추가 회귀/원본 역전으로 분리했다. 하네스 admission과 monitor의 통합 gap을 추가 독립 RED로 고정하고, 원본 실패·정확 복원과 회귀를 별도 기록한다.
+- [x] `[AGENT]` test-only 공통 중단·실제 admission 연결·동시성·cross-split 차단 및 primary-only 진단 fixture를 최종 독립8suites/81개 GREEN·후속16종 FI 탐지/매회exactrestore·Python14methods GREEN으로 확인했다. blank-key 실제 Spring/HTTP/PG/Redis 시험은 SDK0·Luna0이며 유료 실행이 아니다. primary-only 계획은 승인 false다.
+- [x] `[AGENT]` 최종81개 복구 GREEN 이후 수정하지 않은 원본 commit guard가784.334초에 전체 ktlintCheck/assemble/test를 실제 재실행해293suites/2393개 중2387PASS·조건부6SKIP·실패/오류0을 확인했다. 비밀값 비노출 검사를 거쳐 검증된 로컬 fix commit만 생성한다. Commit/PR: 동일 커밋 예정 / 원격 생성 없음.
+
+현재 진행: 첫 전체 ktlintCheck/assemble/test는292suites/2386개 중2380PASS·조건부6SKIP·실패/오류0으로 완료했다. 실행 중 별도 리뷰에서 발견한 진단 테스트의 예외시 보고서 보존/poll 경계를 독립 신규7개+실제앱1개 강화/추가FI4로 보완했다. 최종81개 복구 GREEN 뒤 수정하지 않은 원본 guard의 전체 재실행도2387PASS·조건부6SKIP·실패/오류0으로 완료했다. 검증된 로컬 fix commit만 기록하며 원격 push/PR/병합·운영 반영은 수행하지 않는다. 추가 유료 실행·실제 원인 확정·holdout 평가 성공을 주장하지 않는다. [기술 후속 기록](docs/verification/experimental-gemini-failure-preservation.md), [Jev 정책 감사](docs/verification/experimental-jev-routing-policy-audit.md)를 구분한다. 최종 전체 gate는 완료됐고 로컬 SHA는 Git 이력에서 확인한다. 최종 갱신:2026-10-29 UTC.
+
+
+## Issue #107/#123 — 원문·보완 근거를 보존하는 격리 로직 실험 (2026-10-29)
+
+아래는 c945 로컬 commit 전의 구현·검증 체크포인트다. 이 절의 실모델0 표시는 당시 상태이며, 이후 개발1회 결과와 현재 후속 작업은 위 절을 따른다.
+
+- [USER] 최신 검증 main `40aea5139525b9ed2cba34428f0072cc42e15820` 기반 별도 작업 트리에서 구현·단위·통합·실제 앱·유한한 실제 모델 평가 및 결과 보고까지 승인했다. main/develop 병합, 운영 배포·DB·방 사용, 키·권한 확대는 금지한다. 웹은 사용자 피처 브랜치 직접 확인과 후속 승인 전 develop에 병합하지 않는다. 시각 디자인 변경과 분리한다.
+- [x] `[AGENT]` 깨끗한 기준에서 `feature/issue-107-evidence-precheck`를 별도 생성했다. PR158/웹51은 병합하지 않았다. 기존 조사에서 전체 원본 블라인드40+개 자료를 확보하지 못했으며 이를 새 평가로 대체 검증했다고 주장하지 않는다.
+- [x] `[AGENT]` V1과 기존 개인정보 계약을 보존하고, 명시적 실험 설정으로 생성한 새 V2 방에서 원문·질문 대상·확정 답변·기준 시각을 불변 제출 버전에 보존한다. 접수와 해석 확정을 분리하고 최종 분석·source fence·마감 스냅샷이 같은 근거를 소비하도록 연결한다.
+- [x] `[AGENT]` 시간 보완 질문은 한 번만 게시한다. 안전한 A/B 또는 질문과 직접 답변만 지원한다. 답변 뒤 추가 질문 없이 미확정 입력도 최종 분석에 보낸다. Jev 신뢰도 유보와 기술 실패를 CLEAR로 위장하지 않는다. 서버 후보 계산·주최자 선택은 유지한다.
+- [x] `[AGENT]` 새 V2 방은 제출 전 고지한 범위의 최종 원문·답변과 미반영 사유를 주최자에게만 공개한다. 중간 질문·타 참여자의 개인 화면은 공개하지 않는다. 기존 V1 방에 소급 적용하지 않는다.
+- [x] `[AGENT]` 독립 테스트 설계·유효 RED→GREEN·DB/CAS/마감 경합·개인정보 경계·결함 주입·회귀를 확인한다. 블라인드 작성자는 구현/프롬프트/현재 결과를 보지 않고 개발2모임·봉인2모임의 의도·허용 답변·정답을 사전 고정한다. 구현자는 봉인 개별 정답을 열지 않는다.
+- [ ] `[AGENT]` 실제 앱의 작은 개발 smoke부터 순차 실행한다. 실행 전 호출 한도를 고정하고 물리 호출·사용량·단계별 실패를 기록한다. 성공할 때까지 재실행하지 않는다. 실제 모델 접근 실패는 mock 성공과 구분한다.
+
+**실험 가정·결정 대기:** 질문 한도는 방·참여자당 한 번으로 가정하며 수정/취소/재시도로 초기화하지 않는다. 질문 미응답·검사 중·기술 실패는 새 접수본으로 확정하지 않고 마지막 접수본을 마감에 사용하는 기존 규칙을 유지한다. 이 범위와 원문 수정 후 과거 답변 무효화, 직접 답변의 상대 시각 기준, 최종 미반영 원문·답변 공개 범위는 배포 전 사용자 확인이 필요하다. 아침/저녁/밤 경계를 임의 고정하지 않는다. 원문+답변 합계는 기존 개인500/방10000 코드포인트 한도를 유지한다.
+
+현재 진행(2026-10-29 UTC): 격리 구현과 독립 검증을 완료했다. 최종 `ktlintCheck assemble test`는 12분34초 SUCCESS, 284 suites/2311건 중2306 PASS·의도된 API export/debug3+live2 SKIP·실패/오류0이다. 원본 guard exit0(9.94초, 직전 전체 XML 지문 유지)을 확인했고 로컬 source commit을 생성한다. 실제 모델 호출은 아직0이며 실모델의 의미 정확도·효능·운영 적용을 완료로 표시하지 않는다.
+
+검증 기록: 원문·보완/권한·마감·동결/분기 경계 FI11개와 나노초→PostgreSQL 마이크로초 정밀도 FI1개를 탐지하고 매회 source exact restore를 확인했다. 복원53개 및 정밀도3개 GREEN, 최초 전체 gate의 역사 fixture/API 메타데이터6개 실패를 독립 검토 후 수정한 관련5suites/9개 GREEN, 최종 전체 gate PASS를 구분한다. 승인된 native API 추가만 반영한 오프라인 Node120/Python41도 통과했다. 근거는 [독립 최종 감사](docs/verification/experimental-input-evidence-aggregate-audit.md), [로컬 전체 검증](docs/verification/experimental-input-evidence-local.md)을 따른다.
+
+- [USER/AGENT] 재현 가능한 실행 SHA를 위해 검증된 서버 변경의 로컬 commit만 승인했다. 원격 push·PR·main/develop 병합·운영 실행은 금지한다. Commit/PR: 동일 커밋 예정 / 원격 게시 없음.
 
 ## Issue #161 — 계정 모임 조회의 DB 부하 최적화 (2026-10-29)
 
@@ -199,7 +397,7 @@
 - [x] [AGENT] 기존 웹02 집중157unit/22browser PASS·원본268불변. 새후보 전체627unit/425browser+기존skip1 PASS/retry0. 현재수정 source native14 PASS/실API154·APIrouteMock0·외부/실AI/OAuth0. Primary합성provider가TwoStage/금융graph우회함을명시
 - [x] [AGENT] 8범주 사전정답 기존개발60/holdout60불변·별도8쌍16/단계gold overlay 봉인. 독립DRAFT P2 4그룹 보정/재reviewPASS·원본보존, 최종manifest1d15a4e·136ID. 구조/PROTOCOL_ONLY·DRAFT/변조거절PASS/실모델0, rootblind유지
 - [x] [AGENT] 발견된 누락 최소 독립 TDD/FI·현재native/전체guard·상태기록·최종독립게시review LOCAL PASS/미해결P1P2없음. 기존PR126/31보존·새128/32 격리
-- 발견 P2: NEEDS_CHOICE 취소 뒤 persisted question이 snapshot에 남아 웹의 새 입력/직접 수정 진입을 막음. 서버#128/웹#32로 좁게 분리하고 clean develop/main ff-only 후 server18/web02를 상속한 `/workspace/issue128-cancel-question/{server,web}`를 준비했다. 기존 PR126/31 worktree는 그대로 보존한다.
+- 발견 P2: NEEDS_CHOICE 취소 뒤 persisted question이 snapshot에 남아 웹의 새 입력/직접 수정 진입을 막음. 서버#128/웹#32로 좁게 분리하고 clean develop/main ff-only 후 server18/web02를 상속한 `local-only-checkout`를 준비했다. 기존 PR126/31 worktree는 그대로 보존한다.
 - [x] [AGENT] 취소 후 server1조건·web1조건 최소수정: 서버7 RED1/통제6→7GREEN/FI2 assertion1·5탐지/각복구7PASS; 웹7 RED4/통제3→7GREEN·기존67포함74/FI4탐지·원복7. 기존기대값·DB질문이력·상한·500자·참여/마감·last CLEAR불변
 - [x] [AGENT] 현재 수정 source 실제HTTP/PG/browser native14 PASS, 실제OpenAPI36paths/61schemas JSON동일, source482/runtime1559/deps216/웹자산전후동일·포트/컨테이너정상종료. 준비경로오류는별도보존·정정후검증. classifier/금융graph 성공 주장0
 - [x] [AGENT] 서버 unchanged필수전체guard exit0/source558전후동일·새214suites/1717중1713PASS·기존4SKIP/실패·오류0·실AI/OAuth0
@@ -351,7 +549,7 @@
 - [x] `[AGENT]` 현재 `POST /api/rooms`가 HOST만 생성하고 제출은 별도 `PUT /submission`인 계약을 확인했다. 서버 API·제품 Kotlin·SQL·설정 변경은 필요하지 않다. 웹에서 생성 성공·선공유·나중에 입력·저장 실패 재시도 안내와 진행 중 중복 클릭 방어를 보완한다.
 - [x] `[AGENT]` 실제 격리 PostgreSQL 대상 32개 검증 통과(신규 9개 포함). 생성 직후 제출 0개, 같은 HOST 재방문·재참여·빈 원문 거부 후 재시도, 동일 원문 순차/동시 제출의 참여자·제출 head·version 각각 1개 수렴을 확인했다. 기존 비공개·주최자 권한·마감 경합 회귀를 함께 실행했다.
 - [x] `[AGENT]` HOST 미제출 시 수동/시간 마감의 제출 0·1·2명과 인원 목표 마감을 검증했다. 기존 계약은 역할이 아닌 고유 제출 수를 세며, 2명 미만은 `INSUFFICIENT_PARTICIPANTS`, 다른 참여자 2명 이상이면 HOST 원문 없이 분석 배치를 만든다. 서버가 `CLOSED`로 마감한 뒤 HOST의 최초 제출은 `ROOM_CLOSED`로 거부한다. 시간 회귀는 합성 DB의 deadline 경과 후 scheduler를 직접 호출하며 정확한 시각 경계의 pre-scan 거부를 입증하지 않는다. HOST 필수 제출이나 마감 연장 정책을 새로 만들지 않았다.
-- [x] `[AGENT]` 최종 `ktlintCheck assemble test` PASS(exit 0, 5m31s). 실제 전체 663개 중 659개 PASS/기존skip4/실패0/오류0이다. 첫 실행도 기능 실패0이었으나 새 테스트의 chain 줄바꿈 8개가 ktlint에서 거부돼 서식만 수정하고 전체 gate를 재실행했다. 테스트 입력·기대값은 유지했다. 웹 최종 API 정합·lint·typecheck·unit282·build PASS, 전체 mock browser375 PASS/기존skip1/실패0/flaky0. 검증 원본은 `/workspace/scratch/issue-22/`, source/test SHA와 최종 집계는 웹 `docs/verification/issue-22-local.json`에 기록했다.
+- [x] `[AGENT]` 최종 `ktlintCheck assemble test` PASS(exit 0, 5m31s). 실제 전체 663개 중 659개 PASS/기존skip4/실패0/오류0이다. 첫 실행도 기능 실패0이었으나 새 테스트의 chain 줄바꿈 8개가 ktlint에서 거부돼 서식만 수정하고 전체 gate를 재실행했다. 테스트 입력·기대값은 유지했다. 웹 최종 API 정합·lint·typecheck·unit282·build PASS, 전체 mock browser375 PASS/기존skip1/실패0/flaky0. 검증 원본은 `local-only-evidence/issue-22`, source/test SHA와 최종 집계는 웹 `docs/verification/issue-22-local.json`에 기록했다.
 - 범위 밖: 소셜 로그인·계정·아카이브·선택 암호·모호성 질문, commit/push/PR/merge/배포, 운영 흐름 검증·운영 데이터·보안 설정 변경. 관련 계정 이슈는 후속 연동이며 이 작업의 의존성으로 새로 지정하지 않는다. 이 기록은 운영 실행 근거가 아니다.
 
 ### 같은 날 독립 리뷰 후속
@@ -487,7 +685,7 @@
 
 - **클라우드 #91/#92·웹 #17 최신 상태 (2026-10-07):** 서버 Draft PR #94의 `06bc741`와 웹 Draft PR #18의 `3c403a2` 정확 SHA CI는 성공했다. 후속 최소 수정은 SSM 압축 해제 시 CI 실행자의 소유권과 넓은 권한을 복원하지 않도록 `umask 027`·`--no-same-owner`·`--no-same-permissions`를 적용하고 독립 정적 검사를 CI에 연결한다. 가드·Kotlin·SQL·기존 테스트는 변경하지 않는다. 실제 모델 원문 해석 9번째 호출은 HTTP200·10.1초로 기대한 5개 날짜 구간/COMPLETE/Plan B/요약과 일치했으나, 10번째 실제 HTTP·DB 배치는503으로 미완료이고 변형 문장은 미검증이다. 운영 설치·병합·배포는 진행하지 않았다.
 
-- **현재 작업 — Issue #91:** 독립 클라우드 환경의 `/workspace/meet-me-server-91`, `feature/91-language-time-context`에서 자연어 시간 문맥 상속과 상대 날짜 기준일을 개선한다. 기준은 2026-10-07 원격 확인 및 `develop` fast-forward pull을 마친 `848b9688451551781769799ff7d27485ea5a5445`다. 기존 서버·웹의 `work` checkout과 Windows 미커밋 원본은 보존한다. 아래 사용자요청2 기록은 기존 작업의 이력이다.
+- **현재 작업 — Issue #91:** 독립 클라우드 환경의 `local-only-checkout`, `feature/91-language-time-context`에서 자연어 시간 문맥 상속과 상대 날짜 기준일을 개선한다. 기준은 2026-10-07 원격 확인 및 `develop` fast-forward pull을 마친 `848b9688451551781769799ff7d27485ea5a5445`다. 기존 서버·웹의 `work` checkout과 Windows 미커밋 원본은 보존한다. 아래 사용자요청2 기록은 기존 작업의 이력이다.
 - **#91 확정 계약:** 상대 날짜는 고정 제출 버전의 `createdAt`을 방 시간대로 변환한 입력별 지역 날짜에 고정한다. 평일 19~21시·이번 주 목요일 20시부터·주말 14~19시 예시는 부모 종료 21시를 상속하고 해당 목요일의 19~20시를 제외한다. 명시적 오전·오후·불가·부정·충돌을 우선하며, 부모 없는 열린 경계는 임의로 완성하지 않는다. 공개 API·DB·matcher 계약을 유지하고 입력별 기준일과 prompt를 전달한다. 원문 전체를 안전하게 해석할 수 있는 제한된 시간 표현만 adapter 내부에서 문맥 처리하고, 공급자 schema/ref/조건 검증 실패를 복구 성공으로 숨기지 않는다.
 - **#91 검증 및 승인 범위:** 독립 테스트 설계, RED/GREEN, 원문 문맥 처리·합성 provider fixture와 실제 결정론적 매칭, 주 경계·서울 자정·재시도/재분석 기준일, 의도적 결함 주입, 독립 리뷰와 필수 guard를 실행한다. 합성 fixture는 유료 Gemini·운영 데이터 접근 없이 검증한다. 추가 사용자 요청에 따라 같은 모델·설정의 실제 평가도 필요하며, 기존 테스트 키와 평가 비용 상한 확인 전 호출하지 않는다. fixture 결과를 실제 모델 정확성으로 표시하지 않는다. Draft PR까지 준비하고 병합·운영 배포는 최종 승인 게이트를 유지한다. #92/웹 #17은 별도 텍스트 인계와 미확정 계약 검토 후 분리한다.
 
@@ -1501,7 +1699,7 @@
 - #91 최신 feature fast-forward와 #92 변경 재적용 뒤 PRD FR-008D는 LLM 중심 해석 계약을 유지하고 FR-008E 수정 라운드를 함께 보존했다. Worklog의 최신 #91 기록과 #92 기록을 모두 유지하여 충돌을 해결했다. ARCHITECTURE 자동 병합은 최신 provider SUCCESS/AMBIGUOUS 경계와 #92 round/viewer context 추가를 함께 확인했다. 평가 도구·source·test는 문서 소유자가 수정하지 않았다.
 - 잠금 해석 보완: coordination/run 상태 writer는 room→정확한 run을 잠근다. correction 제출 head-only 저장은 room lock 아래 immutable source를 조회하여 같은 coordination writer와 직렬화되며 run 상태를 변경하지 않는다. 같은 cohort의 원문 수정은 공개 room 상태를 바꾸지 않아 room state_version을 증가시키지 않으며 자기 입력의 revision과 viewer.context_id로 private cache 순서를 구분한다.
 
-- #91 통합 전후 실제 targeted boundary 집계는 각각 44개 GREEN이다(phase1 17 + NULL1 + viewer3 + additional9 + confirm2 + frozen5 + worker7). 추가 boundary는 23개이며 초기 대화의 24/45 집계를 정정한다. 실제 OpenAPI exporter 1개는 필수 요청 property required 목록 assertion에서 실패했으므로 native schema export 완료가 아니다. 독립 runtime 누락/null 거절 회귀를 먼저 고정한 뒤 field-local 검증과 required schema를 보완한다. 근거 요약은 root가 작성한 저장소 밖 `/workspace/scratch/meet-me-bootstrap/issue-92-all-boundaries-green.json`을 따른다.
+- #91 통합 전후 실제 targeted boundary 집계는 각각 44개 GREEN이다(phase1 17 + NULL1 + viewer3 + additional9 + confirm2 + frozen5 + worker7). 추가 boundary는 23개이며 초기 대화의 24/45 집계를 정정한다. 실제 OpenAPI exporter 1개는 필수 요청 property required 목록 assertion에서 실패했으므로 native schema export 완료가 아니다. 독립 runtime 누락/null 거절 회귀를 먼저 고정한 뒤 field-local 검증과 required schema를 보완한다. 근거 요약은 root가 작성한 저장소 밖 `local-only-evidence/issue-92-all-boundaries-green.json`을 따른다.
 
 - 독립 runtime 요청 검증은 omitted/null expected_generation 모두400이며 DB 변화가 없음을 확인했다. 런타임 타입 변경은 불필요하여 nonnull Long/UUID와 force_reparse=false를 유지하고 request 필수5·round response 필수3의 OpenAPI requiredMode만 명시했다. 독립 presence8/schema1 RED 이후 native export 재검증을 기다린다.
 - PR에서 검토 가능한 배포 준비안은 [docs/INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 추적했다. 실제 차단 명령과 quiesce/compatible roll-forward/기존 refresh 경로/구 캐시 안내/읽기 전용 smoke를 분리해 기록했으며 승인·구현·운영 실행 완료로 표시하지 않는다.
@@ -1586,7 +1784,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 의도적 결함11/11은 assertion 실패41개로 탐지했고 당시 동결247개 source/test의 정확 복구를 독립 확인했다. 후속 schema 검사 강화는 non-injected 테스트1개만 바꾸고 production 모두는 그대로이며 final247 지문은 verification/review에서 갱신해 검증했다. .tdd/red Issue99 10개와 fault verification1개 schema/currenthash PASS, supersession before/afterhash PASS, 독립 최종 코드/테스트/문서 리뷰 PASS·차단0이다.
 - 변경하지 않은 필수 guard exit0, ktlintCheck·assemble·109suite 전체631tests/실패0/오류0/skip4, hook self-tests12 PASS다. 배포 정적13·Compose fidelity·합성 credential refresh·V8guard37·동일 공개 config Nginx 임시 fixture PASS다. Nginx 원본 script는 정확 HEAD CI에서 확인하며 저장소 권한·운영 설정은 변경하지 않았다. 원시 로그/XML은 ignored .codex/tdd-evidence에만 보관한다.
 - 실제 /v3/api-docs native export의 전체 parsed JSON은 PR97 OpenAPI와 동일하다. 직렬화 byte/SHA는 다르며 .tdd/reviews/issue-99-openapi-contract.json에 두 지문을 기록했다. 공개 diverse-time-v1 옵션/확정/legacy API·입력 UI는 유지했다. 웹 PR20 정확 HEAD8e56fe0c37cef52e584ff569b97b46b60f28e517을 원격 확인했지만 backend/browser 공동 실행은 주장하지 않는다.
-- 이 구현 세션의 유료 호출0이다. 실제 통합 품질은 전담01a114c3-02d3-7011-ab8f-19706bdda089만 검증한다. 기존 유료19/50 및 Luna7/8은 새 통합 품질 PASS로 재사용하지 않는다. 전담자는 기존 평가 하네스의 v2 체크·legacy matcher 연결을 v3·추천 repository 경로로 조율해야 한다. 무료 integration은 typed fake parser, provider 검증은 loopback/shared validator이며 실제 모델 lexical 정확성은 별도다. 웹 담당01a114d2-c535-7787-adca-69742f5cd08d와 부모를 통해 연계한다.
+- 이 구현 세션의 유료 호출0이다. 실제 통합 품질은 전담internal-conversation-id-omitted만 검증한다. 기존 유료19/50 및 Luna7/8은 새 통합 품질 PASS로 재사용하지 않는다. 전담자는 기존 평가 하네스의 v2 체크·legacy matcher 연결을 v3·추천 repository 경로로 조율해야 한다. 무료 integration은 typed fake parser, provider 검증은 loopback/shared validator이며 실제 모델 lexical 정확성은 별도다. 웹 담당internal-conversation-id-omitted와 부모를 통해 연계한다.
 - Commit/PR: 동일 커밋 예정, develop 대상 Draft PR. 정확 HEAD CI는 게시 후 PR 본문에 확인 결과를 기록한다. 코드 검증 완료와 운영 준비를 구분하며 V8guard/digest/드레인 승인은 미해결이다. main/develop 병합·배포·운영 DB 적용·운영 보안/비밀정보 변경·자동화 중지는 실행하지 않았다.
 
 ## Issue #99 Worklog — 승인된 공급자 시간 배분 후속 (2026-10-07 UTC)
@@ -1717,3 +1915,93 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [ ] [AGENT] 실제 배포 전 immutable release 지문과 명시적 전환 preflight를 확인하고 승인된 리뷰만 운영에 반영한다. 실제 로그인·리뷰 제출은 인증된 계정 없이는 검증 완료로 표시하지 않는다.
 
 기존 구현 범위와 한계는 docs/verification/confirmed-result-review-cloud.md에 보존한다. 힌트 이후 전체 guard와 V19 카탈로그 독립 검증은 통과했다. 검증 요약과 독립 리뷰 도메인 소스의 각 첫 blob 게시가 공개 목적지·구체 승인 사유로 자동 검토에서 거절되어 둘 다 미실행·재시도0 상태다. 전체 공개 게시를 중단하고 구체 승인을 기다린다. commit/push/PR·main/develop 변경·운영 배포는 아직 실행하지 않았다. 원본 체크포인트 자료와 개발용 실행 도구는 릴리스 변경에서 제외했다.
+
+
+## 2026-10-30 승인된 최소 블라인드 통합 검증
+
+- 승인 synthetic-authorization-f19d2f59a82e7fd6: pilot1+봉인1, 각3명, Jev12/개인Luna6/최종Luna2 총20물리요청, 실제Gemini0. 합성503→원본Luna fallback.
+- 새 독립 시나리오 사전고정; 기존 holdout 미열람. 첫 실제 기술오류/관측불확실 시 전체 중단, pilot필수경로미실행 시 봉인유지.
+- 테스트 전용 원장·source-first·HTTP흐름 준비/무료검증 진행 중. 현재 신규 유료요청0. 병합·운영변경 없음.
+
+- Astra 안전 체크포인트: 신규 guard12 + HTTP/PG/원본gate mock1 =13PASS, ktlintFormat 포함 BUILD SUCCESSFUL. 실제API0, 승인claim/launchintent/실행manifest 미생성. Sol 전환 후 남은 검증·source고정·pilot부터 이어감.
+
+- Sol 재개: 확정 저장 assert와 poll회귀 보강14PASS. 최초launch는테스트사전검사 Path Iterable overload 결함으로API전차단(물리0·approvalclaim0); 원본manifest/log/intent/JUnit보존. 파일집합정정·부작용없는사전검증회귀추가16PASS/ktlintCheck PASS. 신규recovery1 manifest(source2667)고정,기존승인물리예산전부유지. 같은입력/threshold/prompt/모델정책변경없음.
+
+- 승인 blind20 실행 종료: 실제Jev3 HTTP200, 개인Luna0, 최종Luna1 TIMEOUT/HTTP미관측, 실제Gemini0/총4. 첫기술오류전역중단, 남은16슬롯재사용안함. Jev semantic NEEDS_REVIEW2/CLEAR1→confidence0.30/0.25/0.58<0.8→INDETERMINATE3→RECEIVED/UNRESOLVED3. 원문/사유/동결3/3독립확인,질문/답변0/구조화0/추천·확정미검증. sealedHOLD/하네스읽기0. 실행source2667변경0. DBCONFIGURATION과wireTIMEOUT차이/비동기transport[]한계조사,추가호출·정책·운영변경없음. 결과 docs/verification/experimental-blind20-result.md.
+
+- 2026-10-30 p2 반사실 개인Luna1회 승인 synthetic-authorization-bf0363f8c63841a9 실행완료. 원문/기준시각/V2prompt/schema고정,실제Jev/Gemini/최종0. 개인Luna1 HTTP200/CLEAR(promptnull/choices[]),3.178초,실제timeout14.999초≤15초,usage971/119(reasoning86포함),청구미확인. 무료loopback1+manifest검증1 및ktlintCheck PASS/실제JUnit1PASS/Gradle0.2676파일전후hash일치,기존blind20 sourcecompiled2667별도보존. 원래p2저신뢰스킵은불변,실제분기/공유잔여deadline/전체분석성공증거아님. 추가요청/정책/운영변경없음. 결과 docs/verification/experimental-p2-personal-counterfactual-result.md.
+
+
+## 2026-10-30 V2 라벨 중심 분기 승인
+
+- 사용자 synthetic-authorization-cffef69a5db86b9e: Choice유지,confidence/확률기록보존,V2 유효CLEAR접수/최초NEEDS_REVIEW·INDETERMINATE는Luna재확인/답변후추가질문0·미해결최종전달. 낮은confidence가라벨을덮지않도록격리수정/무료검증승인.
+- 유효하지않은응답/기술실패정상CLEAR금지,V1호환유지,운영·병합·추가유료모델호출금지. Noul변경하지않음. 역사조사와독립테스트설계병렬진행. 기존유료실행sourcecompiled2676개사전백업완료.
+- 독립일반불변테스트RED부터진행,단일pilot/봉인gold미사용.
+
+- V2 라벨중심분기 구현·무료검증완료. src/main Kotlin2파일 V2-only변경,Choice/통계필드보존,V1유지,초기REVIEW/IND→Luna,답변후추가생성0. 최종41suites/507PASS(신규V2 63포함),ktlintCheck/assemblePASS,새72기준24failRED보존·수정본정확복원. FI3/3탐지(당시53버전실패8/5/3),독립최종리뷰P1/P2없음. 실제모델0/병합·배포0,기존사례·봉인·유료결과보존. ADR065/PRD/Architecture/V2계약갱신. Noul실사용→Choice전환Git근거없음: 최초OpenAI e83d528/Jev289edad부터Choice3,NEEDS_EDIT삭제c945는Luna계층. 새정책두유보후속동작같으나Noul은미구현·추가결정필요. 보고 docs/verification/experimental-v2-label-routing-change.md.
+
+- 사용자 원칙 인계(synthetic-authorization-1a4f16b67449a6fc): Jev는 완벽한 모호성 관문이 아니라 보완 질문 판단의 보조 장치. 핵심은 전체 입력 최종 분석이며 완벽성을 이유로 과도한 분기/검사/차단을 추가하지 않음. V2 설계 우선순위와 검증 보고서 인계에 문서만 반영. 기존507PASS·archive는 당시 결과로 보존, 추가 코드/모델/API/외부 앱 변경·병합·배포없음.
+
+- 역할·목적 인계(synthetic-authorization-51f2c3bbac4abb8f): Jev 단순 보완필요분류→개인Luna 불필요CLEAR 또는Structured Output질문→전체입력최종해석. 사전검사는완전해석확정관문이아니라최종분석불가위험완화이며전체맥락해석기회보존. 개인사실비발명/끝내미해석입력제외·사유주최자표시유지. 기존라벨중심정책과목적부합확인,개인CLEAR/CONFIRMED를최종성공보장으로해석하지않음. 문서만보완,새코드/기능/API/유료모델/Noul/병합·배포없음.
+
+
+## 2026-10-30 라벨 중심 V2 무료 전체 연결 검증 후속
+
+- 사용자 synthetic-authorization-890fa4fd8b5e0955의 이어서 진행 요청: 무료 모의 E2E·관련 회귀·하네스 정합성·최종 Luna 예산 조사·최소 새 실모델 계획만 수행. 기존 cap20은 오류 중단으로 종료됐으며 잔여16회는 재사용하지 않는다. Choice 유지, 새 유료 요청/봉인 개봉/병합·운영 배포 금지.
+- [x] 새 통제 합성3명 모임에서 실제 앱/PG/HTTP와 원본 라벨 중심 adapter/TwoStage를 연결하되 공급자 응답만 모의로 격리한다. 질문1회·불필요 통과·답변후 미해결 접수·전체 분석·HOST 미반영/권한·추천 확정 저장을 검증한다.
+- [x] immutable pilot 원문과 과거 실행은 보존하고, 실행 메타데이터의 meetingMode를 명시해 카페 모임을 REMOTE로 조용히 생성하던 하네스를 수정한다. 봉인 모드는 독립 실행 담당자가 별도로 지정해야 한다.
+- [x] 성공/실패 최종 Luna의 상한·공유 deadline·관측 한계를 코드/보존 증거로 비교하고 추가 유료 실행 없이 다음 최소 상한/중단조건을 제안한다.
+
+완료: 새 연결1+timing2+관련79+V2 evidence PG10=9suites/92PASS·실패/오류/skip0, ktlintCheck/assemble 및 세 검사 Gradle0. 직접질문1/답변1→UNRESOLVED접수→동결3→반영2/미반영1·TIME사유/원문·답변HOST표시/개인질문비공개→대면참석2명추천1→확정·DB tuple/시각일치. fakeJev4/개인Luna2/최종Luna1+fakeGemini5031, 실제provider0·header/DNS/connect/place0. 첫compile/style오류와guest403잘못된기대1FAIL은보존하고401ACCOUNT_REQUIRED+민감정보부재로정확교정, 제품권한불변. source289/시나리오7hash불변·sealedparse0·웹청결·병합/배포0. 독립최종검토수정필요결함없음. 다음권장안pilot1/3명, 새승인Jev6+개인Luna3+최종Luna1=최대10/실제Gemini0·retry0·첫실오류중단은제안만. 기존cap20runner재사용불가·새한도사전검증필요. 보고 docs/verification/experimental-v2-free-flow-preparation.md, 증거 local-only-evidence/.
+
+
+## 2026-10-30 새 승인 pilot10 실모델 검증
+
+- 사용자 synthetic-authorization-300cb71b79ff69b2: 공개 개발 pilot1/3명, 실제Jev최대6+개인Luna3+최종Luna1=물리10, 실제Gemini0·retry0·첫기술오류전체중단. 기존cap20잔여재사용/봉인개봉/병합·운영반영금지.
+- [x] [AGENT] 새승인/plan/manifest·한번만소비되는claim/별도ledger를준비하고6/3/1/10·sourcefirst·immutable·첫오류stop을무료검증한다. 기존무료92소스/컴파일2692파일백업을보존했다.
+- [x] [SHARED] 라벨중심ChoiceV2·IN_PERSON·개인공유15초/최종최대27초를고정하고독립사전고정답변oracle와pilot만실행한다. 실제질문없으면꾸미거나재실행하지않는다.
+- [x] [AGENT] 실제요청/usage·wire와DB오류·caller/elapsed·최종전달/추천/미반영/확정저장과미검증을분리해보고한뒤추가호출없이종료한다.
+
+실행종료: d2119585-667e-47c4-8877-5d4152fd47e2. 무료최종93PASS/ktlintCheck·assemblePASS/독립P2보고수정후검토완료. 실제Jev4 HTTP200·개인Luna2 HTTP200(질문1/CLEAR1)·최종Luna1 TIMEOUT=7/10,실제Gemini0·재시도0·첫오류전역중단. 질문/고정답변1/1·p1재검사NEEDS_REVIEW에도추가질문0·RECEIVED/UNRESOLVED접수·원문/보완동결3/3확인. final caller26.995410560s/wire26.879518916s/adapter27.004642555s,DBattemptCONFIGURATION과wireTIMEOUT분리. 구조화0·추천/미반영/확정저장미검증,독립pilotPass=false·JUnit1FAIL/Gradle1. 관측usage Jev4724/205·개인Luna1927/365,최종/청구미확인. source/compiled/config2713·pilot3전후hash불변,sealed0·웹청결·병합/운영0. 남은3회도재사용안함. 준비 local-only-evidence/pilot10-20261030,결과 docs/verification/experimental-pilot10-result.md. 원문·과거증거보존,추가유료호출없이정지.
+
+## 2026-10-30 최종 Luna 성공/timeout 무료 비교
+
+- [x] 부모의 읽기 전용 후속에 따라 기존성공11ef9a92와실패d2119585의입력·v3schema·모델설정·caller/wire/adapter·실패분류를대조했다. 관련12소스SHA동일,원문234B vs995B+답변310B(전체request/token5.6배주장안함),둘다gpt-6-luna/strictv3/max32768/최대27초. reasoning/service_tier필드둘다미지정,실제기본값미관측.
+- [x] 성공caller26.995184908s/transport5.564061744s,실패caller26.995410560s/transport26.878637167s·wireTIMEOUT/DBCONFIGURATION확인. DB쓰기실패의미아님. finally.observe의분류덮어쓰기코드경로확인하되실제어느deadline거부/원격최초지연원인/입력복잡성인과는미확인.
+- [x] 다음최소안은동일논리합성입력재구성·별도단발Luna1회/60초/retry0진단제안뿐. 기존앱/fence27초라caller만늘리는안아님,별도경계·비용명시승인필요·운영반영안함. 무료오류보존신규계약대안도제안만. API/테스트재실행/봉인/생산코드변경0,보고 docs/verification/experimental-final-luna-success-timeout-comparison.md,계산 local-only-evidence/.
+
+## 2026-10-30 별도 최종 Luna60 단발 진단 승인
+
+- 사용자 synthetic-authorization-ead1921d8663f419: pilot10동일논리입력/보완을원본contract로재구성해 실제Luna물리최대1회·60초·재시도0. Jev/Gemini0,앱27초/운영/병합불변.
+- [x] [AGENT] 신규승인claim/실행장부·payload/source고정과로컬단발/503follow-up차단/짧은timeout/사전거부를무료검증한다. 이전pilot10원본2713source/compiled파일을해시일치확인후별도백업,현재60진단중복intent/claim없음확인.
+- [x] [SHARED] 새승인으로별도Responses요청1회만실행하고응답/오류모두종료한다. 실제본문크기/경과/HTTP/usage및원본strict계약검증과의미검토를보고한다.
+
+실행종료: e68de3eb-812a-4fc6-8b78-237ec77ea034. 실제Luna1 HTTP200/completed·Call33.295569652s/wrapper33.450660424s,본문16125B일치·最大60/retry0/JevGemini0. 원본파서3수용/제외0/조건11·7·11;독립시간gold3/3일치·원본/답변/참조3/3,일반지역표현의추가장소선호해석의심1개는미확정으로보존. usage3317in/3203out(내부reasoning1946포함)/합6520·청구미확인,응답metadata medium/default. 새무료6PASS+FI1탐지정확복원·ktlint/assemblePASS,실제JUnit1PASS/Gradle0. source2734/main289/old증거3hash불변·sealed0·앱27초/운영/웹불변. 앱E2E/후보/확정저장/도보집행미검증,추가호출없이종료. 보고 docs/verification/experimental-final-luna-sixty-result.md,준비 local-only-evidence/.
+
+## 2026-10-30 저장된 실제 Luna 응답 무료 재생
+
+- [x] [AGENT] 원본response조건/선호/거절을유지하고새동결input_ref만매핑,네트워크/Jev/개인Luna/Gemini/장소API를차단한격리앱/PG로후처리를재생한다. 기존60초진단bound2734파일은컴파일전별도보존,원본4artifact해시고정.
+- [x] [AGENT] 원래IN_PERSON은TravelConstraint/허용영역계산으로NO_MATCH가능성을그대로검증한다. 필요진단EITHER만바꾼별도방의비대면추천/확정DB저장을분리하고원래대면/개인비대면동의성공으로대체하지않는다.
+- [x] [AGENT] 장소허용'좋아요'와명시선호'였으면'의raw/gold/model차이및사용자결정필요여부를검토한다. 같은장소차원OR/참가자최대1점규칙을보존,단일gold과적합변경없음.
+
+무료재생완료: 신규3PASS/0fail,error,skip·ktlintCheck/assemble/Gradle0,외부API0/providerHeaders·DNS·connect·place0. 원본IN_PERSON은NO_MATCH/추천0/확정0/qualityCOMPLETE·applied3/total3/unapplied[]:p1p3TravelConstraint로offlineArea제거,p2Preferred만존재. 장소계산불가설명공백관측. 별도EITHER반사실대조군은REMOTE3안(3명2안/2명1안)·CONFIRMED·DB선택1/ID시간일치. 원본조건/선호/거절불변 input_ref만매핑,정규화DTO→DB전필드3/3각case일치. 일반지역'좋아요'를선호로해석한의심은동일장소차원의추가조건이며OR/참가자최대1점,자동2점아님으로이전표현정정. 즉시사용자결정불필요·일반분류/명시역도보정책변경은별도판단. main289/원본4hash불변·기존60진단2734sourcecompiled백업보존. 원래대면해결/개인비대면동의/실시간E2E성공주장안함. source/운영제한/병합배포·봉인변경0. 보고 docs/verification/experimental-saved-luna-replay-result.md,증거 local-only-evidence/.
+
+### 2026-10-31 구 웹 참석 의미 호환 — 1단계 최종 검증 완료
+
+- [x] 여섯 결과 API의 optional conditional-v1 지원 선언과 실제 false 결과의 구클라이언트409, write 전·replay·result·no-store 경계를 구현했다. 기존 인증·Origin·상태·CAS·domain protocol·V21/V22·provider 정책은 유지했다.
+- [x] 독립 HTTP/PostgreSQL20 및 fixture격리2 RED→GREEN,6mutants 탐지와 독립 검토(열린P1/P2없음)를 완료했다. 첫 전체12FAIL은 지원 선언 누락10건/테스트context격리2건으로 정정했고 기존 단언·test명·defaultnull을 유지했다.
+- [x] 최종 ktlintCheck·assemble·test:2697건 중2680PASS/기존17SKIP/실패·오류0,1002.547초,681소스불변. 웹 unit825/기본browser517PASS·기존1SKIP/evidence6/하네스사전검사단위3 및 build/lint/type/API 통과. 구·신4개별browser는API mock이며 실제HTTP+PG와 별도다.
+- [ ] 새 구체 승인 후 서버·웹Issue각1개와 지정feature/develop DraftPR·정확featureCI·ready/develop병합·정확mergeCI를 진행한다. 현재commit/push/PR/merge/deploy/유료·지도0. main/운영DB/V2활성화는별도단계다.
+
+정제근거 docs/verification/attendance-client-compatibility.md. 원본117/14파일 및 HEAD/index를 보존했다. 1단계완료를 전체Meetme운영완료로 표시하지 않는다. Commit/PR: 미승인·미실행.
+
+### 2026-10-31 2단계 게시·develop 통합 승인
+
+사용자가 Issue/검토 파일 commit·push/develop Draft PR/CI/ready·develop 병합/merge CI까지 승인했다. 실제 Issue #180를 생성했다. 1단계 검증 소스와 기존 결과는 유지하며 문서의 실행 상태만 갱신한다. main·운영 DB·배포·V2·유료 호출은 이 묶음에 포함하지 않는다.
+
+- [x] 로컬 호환 구현과 최종 무료 검사 완료
+- [x] Issue #180 생성 및 중복·원격 기준 확인
+- [ ] feature push와 develop Draft PR·정확 HEAD CI
+- [ ] ready/develop 병합과 정확 merge SHA CI 및 원격 포함 확인
+
+Commit/PR: 동일 커밋 예정.

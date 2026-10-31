@@ -303,6 +303,8 @@ internal class NaturalLanguageOnlyFixture(
     val normalizedRepository = mock(NormalizedPlaceRepository::class.java)
 
     init {
+        // A fresh fixture must not inherit a preceding MockMvc request on the same test thread.
+        RequestContextHolder.resetRequestAttributes()
         room = room.close(ClosureReason.EXPECTED_PARTICIPANTS, NOW, submissions.size).transition(activeRunId = run.id.value)
         `when`(roomRepository.findById(room.id)).thenReturn(room)
         `when`(roomRepository.findByIdForUpdate(room.id)).thenReturn(room)
@@ -389,7 +391,15 @@ internal class NaturalLanguageOnlyFixture(
                 mock(GuestOwnershipProofPort::class.java),
                 participants,
             )
-        val messages = StaticMessageSource().apply { addMessage("candidate.summary.explicit", Locale.KOREAN, "{0}") }
+        val messages =
+            StaticMessageSource().apply {
+                addMessage("candidate.summary.explicit", Locale.KOREAN, "{0}")
+                addMessage(
+                    "candidate.summary.unverified_place",
+                    Locale.KOREAN,
+                    "{0}. {1}명의 시간 조건이 맞지만, 일부 장소·이동 조건은 확인하지 못해 실제 대면 참석 여부는 미확정입니다.",
+                )
+            }
         return MatchingResultService(
             roomRepository,
             sessions,

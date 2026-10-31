@@ -1,0 +1,25 @@
+{
+  "workItem": "issue107-primary-only-smoke-preparation",
+  "sourceRevision": "c9453a35582ca6503c956ab4e8aff8d73b175ef3",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/PrimaryGeminiSmokeContractTest.kt",
+      "sha256": "ba3a1026e0dc6c2d4b02087108d3df0834cd86ca32c7960d5cd648fa7bc41f4c"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL local-only-evidence/analysis-gradle ktlintFormat test --tests *PrimaryGeminiSmokeContractTest",
+  "log": "local-only-evidence/followup-primary-smoke-red.log",
+  "tests": {
+    "name": "com.meetme.server.experiment.PrimaryGeminiSmokeContractTest",
+    "tests": "15",
+    "skipped": "0",
+    "failures": "14",
+    "errors": "0",
+    "timestamp": "2026-10-29T11:01:26.253Z",
+    "hostname": "f9379a754b07",
+    "time": "1.033"
+  },
+  "controls": "full blind actual fixture retains its existing fallback grant",
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "providerCalls": 0
+}

@@ -1,0 +1,29 @@
+{
+  "workItem": "issue107-evidence-current-host-authorization-bypass",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/EvidenceHostDiagnosticsPostgresTest.kt",
+      "sha256": "6c5c1ea1c7e4fd33d991a6af7d7815ac624c61b32ad1b07e9579b697828ec15d"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidenceHostDiagnosticsPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.EvidenceHostDiagnosticsPostgresTest.EX-PRIVACY V2 host sees final unresolved input and answer without the private question()",
+    "com.meetme.server.coordination.adapter.input.web.EvidenceHostDiagnosticsPostgresTest.EX-FINAL V2 missing interpretation yields an isolated host diagnostic with frozen answer()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:55:26.792734Z"
+}

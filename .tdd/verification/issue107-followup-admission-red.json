@@ -1,0 +1,15 @@
+{
+  "testSha256": "2a5155461aaeb63c172a331d4141b1467481b19ab4c4eeccc6785beaf0aefd9e",
+  "tests": {
+    "name": "com.meetme.server.experiment.LiveEvaluationAdmissionContractTest",
+    "tests": "8",
+    "skipped": "0",
+    "failures": "6",
+    "errors": "0",
+    "timestamp": "2026-10-29T10:54:06.923Z",
+    "hostname": "f9379a754b07",
+    "time": "6.058"
+  },
+  "log": "local-only-evidence/followup-admission-red-2.log",
+  "nonTestFormatterRun": "followup-admission-red.log is not RED evidence"
+}

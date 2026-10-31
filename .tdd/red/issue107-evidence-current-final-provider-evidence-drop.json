@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-evidence-current-final-provider-evidence-drop",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/EvidenceFinalContractTest.kt",
+      "sha256": "df2bbb56b41291288c4ce5a8e67862800bc8a7038bb6efc8dc0a11bfb24a2c5e"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidenceFinalContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.EvidenceFinalContractTest.EX-FINAL final provider receives frozen original scoped answer and unresolved state without replacement()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:57:07.251440Z"
+}

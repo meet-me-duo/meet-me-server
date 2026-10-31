@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-evidence-current-post-close-evidence-drop",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/EvidencePostCloseRevisionPostgresTest.kt",
+      "sha256": "d68df36ebaf88133b12de174b391da98003ea61a3a840db044a3309aca77ba73"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidencePostCloseRevisionPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.input.web.EvidencePostCloseRevisionPostgresTest.EX-CORRECTION post-close raw revision receives new unresolved evidence without carrying an old answer()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:56:11.222156Z"
+}

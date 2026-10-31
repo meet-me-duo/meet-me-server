@@ -1,0 +1,38 @@
+{
+  "workItem": "issue107-evidence-current-classifier-clear-promotion",
+  "sourceRevision": "40aea5139525b9ed2cba34428f0072cc42e15820",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidencePrecheckContractTest.kt",
+      "sha256": "4b092c578d3a1a16d8cfc8319aa792bc832730476c838a12443a8f5ded149ace"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/EvidenceUnresolvedReasonContractTest.kt",
+      "sha256": "0e5e615a2046619eab11b03c4d284523c1601a7cf28fc584cefc6c9bbfceeb9b"
+    }
+  ],
+  "command": [
+    "env",
+    "-u",
+    "GEMINI_API_KEY",
+    "-u",
+    "OPENAI_API_KEY",
+    "-u",
+    "TYPESAFE_API_KEY",
+    "local-only-evidence/analysis-gradle",
+    "test",
+    "--tests",
+    "*EvidencePrecheckContractTest",
+    "--tests",
+    "*EvidenceUnresolvedReasonContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest.EX-ONE-QUESTION answer recheck carries same original and never generates another question()",
+    "com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest.EX-ABSTAIN low confidence preserves unresolved without calling Luna or claiming clear()",
+    "com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-REASON classifier low confidence remains distinct from semantic uncertainty()",
+    "com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-REASON review after one answer is unresolved without a second generation()",
+    "com.meetme.server.precheck.adapter.output.provider.EvidenceUnresolvedReasonContractTest.EX-REASON model uncertainty retains its own normalized reason()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-29T08:56:38.251477Z"
+}

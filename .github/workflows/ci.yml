@@ -38,6 +38,25 @@ jobs:
       - name: Run quality gate
         run: ./gradlew --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g ktlintCheck assemble test
 
+  deployment-contracts:
+    name: Deployment Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Verify CI job boundaries
+        run: node --test .github/scripts/ci-job-boundaries.test.cjs
+
       - name: Verify production deployment policy
         run: node --test .github/scripts/deploy-workflow.test.cjs .github/scripts/deploy-guard-contract.test.cjs .github/scripts/deploy-extraction-contract.test.cjs
 
@@ -48,7 +67,7 @@ jobs:
         run: node --test .github/scripts/approved-release-pipeline.test.cjs .github/scripts/issue108-release-catalog.test.cjs .github/scripts/issue109-release-catalog.test.cjs .github/scripts/issue110-release-catalog.test.cjs .github/scripts/issue107-integrated-catalog.test.cjs .github/scripts/issue107-runtime-auth-catalog.test.cjs
 
       - name: Verify exact review and account history release catalogs
-        run: node --test .github/scripts/v19-review-release-catalog.test.cjs .github/scripts/v20-account-room-index-release-catalog.test.cjs
+        run: node --test .github/scripts/v19-review-release-catalog.test.cjs .github/scripts/v20-account-room-index-release-catalog.test.cjs .github/scripts/v21-input-evidence-release-catalog.test.cjs .github/scripts/v22-conditional-place-release-catalog.test.cjs
 
       - name: Verify OAuth proxy log privacy
         run: node --test .github/scripts/issue110-nginx-privacy.test.cjs

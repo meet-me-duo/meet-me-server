@@ -1,5 +1,6 @@
 package com.meetme.server.submission.adapter.output.persistence
 
+import com.meetme.server.shared.domain.InputEvidence
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.SubmissionId
@@ -61,7 +62,10 @@ object PersistenceMappers {
         )
     }
 
-    fun toDomain(records: SubmissionRecords): Submission {
+    fun toDomain(
+        records: SubmissionRecords,
+        evidence: InputEvidence? = null,
+    ): Submission {
         val availability =
             records.intervals.sortedBy { it.intervalOrder }.map { interval ->
                 val time = LocalTimeRange.of(interval.startTime, interval.endTime)
@@ -82,6 +86,7 @@ object PersistenceMappers {
                 availability,
                 Locale.forLanguageTag(records.version.locale),
                 records.version.createdAt.toInstant(),
+                evidence,
             )
         return Submission.restore(
             SubmissionId(records.head.id),

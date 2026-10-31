@@ -1,0 +1,20 @@
+{
+  "workItem": "conditional-attendance-cache-paths",
+  "sourceRevision": "6d67c8107832e51102059fa4d410150197dd1fa6",
+  "sourceWorkingTree": "local compatibility implementation before MVC path normalization fix; old filter sha recorded below",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AttendanceNoStoreEquivalentPathPostgresTest.kt",
+      "sha256": "9cb3e5866b129a454a280523ed17ee197a0f7c6335379632399e4281ccab1c52"
+    }
+  ],
+  "command": "./gradlew --offline --no-daemon --max-workers=2 -Dorg.gradle.jvmargs=-Xmx2g -Pkotlin.daemon.jvmargs=-Xmx2g ktlintTestSourceSetCheck test --tests com.meetme.server.coordination.adapter.input.web.AttendanceNoStoreEquivalentPathPostgresTest --continue",
+  "failedTests": [
+    "CACHE01 matrix parameter equivalents of all six result routes keep no store()",
+    "CACHE03 equivalent path compatibility conflicts retain no store without exposing false payload()",
+    "CACHE02 encoded literal equivalents of all six result routes keep no store()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-31T13:12:08.117626+00:00",
+  "redFilterSha256": "6969fd4b7cea292b24e3f35f32f4a26897052621545bdbd70e0be07616e9b302"
+}

@@ -99,11 +99,17 @@ abstract class RecommendationPostgresFixture : CorrectionRoundPostgresFixture() 
         matching.process(requireNotNull(runs.findById(CoordinationRunId(runId))).batch.id)
     }
 
-    protected fun recommendations(actor: CorrectionSession): Map<String, Any?> =
+    protected fun recommendations(
+        actor: CorrectionSession,
+        attendanceSupport: String? = null,
+    ): Map<String, Any?> =
         document(
             mvc
-                .perform(get("/api/rooms/{code}/recommendations", actor.code).cookie(actor.cookie()))
-                .andExpect(status().isOk)
+                .perform(
+                    get("/api/rooms/{code}/recommendations", actor.code).cookie(actor.cookie()).apply {
+                        attendanceSupport?.let { param("attendance_support", it) }
+                    },
+                ).andExpect(status().isOk)
                 .andReturn()
                 .response,
         )
@@ -114,6 +120,7 @@ abstract class RecommendationPostgresFixture : CorrectionRoundPostgresFixture() 
         analysis: UUID = fixture.sourceRun,
         limit: Int = 1,
         actor: CorrectionSession = fixture.host,
+        attendanceSupport: String? = null,
     ): MockHttpServletRequestBuilder {
         val request =
             get("/api/rooms/{code}/recommendations/alternatives", actor.code)
@@ -121,6 +128,7 @@ abstract class RecommendationPostgresFixture : CorrectionRoundPostgresFixture() 
                 .param("analysis_id", analysis.toString())
                 .param("limit", limit.toString())
         cursor?.let { request.param("cursor", it) }
+        attendanceSupport?.let { request.param("attendance_support", it) }
         return request
     }
 
@@ -132,6 +140,7 @@ abstract class RecommendationPostgresFixture : CorrectionRoundPostgresFixture() 
         start: String = child(option, "time_range").getValue("start_at").toString(),
         end: String = child(option, "time_range").getValue("end_at").toString(),
         actor: CorrectionSession = fixture.host,
+        attendanceSupport: String? = null,
     ): MockHttpServletRequestBuilder =
         post("/api/rooms/{code}/recommendations/{option}/confirmation", actor.code, option.getValue("option_id"))
             .header("Origin", ORIGIN)
@@ -141,13 +150,19 @@ abstract class RecommendationPostgresFixture : CorrectionRoundPostgresFixture() 
                 mapper.writeValueAsString(
                     mapOf("analysis_id" to analysis, "variant_id" to variant.getValue("variant_id"), "start_at" to start, "end_at" to end),
                 ),
-            )
+            ).apply { attendanceSupport?.let { param("attendance_support", it) } }
 
-    protected fun result(actor: CorrectionSession): Map<String, Any?> =
+    protected fun result(
+        actor: CorrectionSession,
+        attendanceSupport: String? = null,
+    ): Map<String, Any?> =
         document(
             mvc
-                .perform(get("/api/rooms/{code}/result", actor.code).cookie(actor.cookie()))
-                .andExpect(status().isOk)
+                .perform(
+                    get("/api/rooms/{code}/result", actor.code).cookie(actor.cookie()).apply {
+                        attendanceSupport?.let { param("attendance_support", it) }
+                    },
+                ).andExpect(status().isOk)
                 .andReturn()
                 .response,
         )

@@ -1,0 +1,47 @@
+{
+  "protocol": "issue176-publication-verification-v1",
+  "sourceBase": "c551e3dc07ef6351d90bc65671a2e182d697564f",
+  "originalGuardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+  "guardUnmodified": true,
+  "commands": [
+    "python3 .codex/hooks/tdd_guard.py (PreToolUse event)",
+    "./gradlew --no-daemon ktlintCheck assemble test"
+  ],
+  "finishedAt": "2026-10-31T08:16:38.879540+00:00",
+  "exitCode": 0,
+  "totals": {
+    "tests": 2675,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 17,
+    "passed": 2658
+  },
+  "sourceFiles": 675,
+  "sourceUnchanged": true,
+  "oldSkipIdentitiesUnchanged": true,
+  "liveModesAndProviderKeysUnset": true,
+  "nonloopbackConnectAttemptsBlocked": 0,
+  "defaultReplay": "INDEPENDENT_SYNTHETIC_FIXTURE",
+  "newPaidModelRequests": 0,
+  "newMapRequests": 0,
+  "historicalPreFixTotals": {
+    "tests": 2670,
+    "passed": 2625,
+    "failures": 28,
+    "errors": 0,
+    "skipped": 17
+  },
+  "focused": {
+    "budgetPreflightDdlAndLintPassed": 45,
+    "syntheticReplayAndFreeAppsPassed": 7
+  },
+  "ddlSqlSha256": "2e2aa1711a33676ea41801b64f93c0ed2d946105797724a288399097ffc6fcd6",
+  "ddlNewTestsPassed": 3,
+  "ddlRedTestsFailed": 2,
+  "ddlRedControlPassed": 1,
+  "catalogFinalSqlTestsPassed": 6,
+  "catalogEarlierFullTestsPassed": 132,
+  "catalogMutationFailuresDetected": 3,
+  "actualProviderIntegrationProven": false,
+  "productionUpgradeRollbackProven": false
+}

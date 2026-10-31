@@ -1,0 +1,26 @@
+{
+  "workItem": "conditional-attendance-client-compat",
+  "sourceRevision": "6d67c8107832e51102059fa4d410150197dd1fa6",
+  "sourceWorkingTree": "clean baseline",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AttendanceClientCompatibilityHttpPostgresTest.kt",
+      "sha256": "9d34ce605c3ac6037284b6448d37838303781cd7a76bb1c2bfa7bc181e7e8ab6"
+    }
+  ],
+  "command": "python3 /workspace/scratch/live-eval/attendance-compat-20261031/run_gradle.py red-attendance-final ktlintCheck test --tests com.meetme.server.coordination.adapter.input.web.AttendanceClientCompatibilityHttpPostgresTest",
+  "failedTests": [
+    "ACC02 primary recommendations reject every unsupported capability without hiding false variants()",
+    "ACC03 alternatives reject every unsupported capability and retain the complete supported page()",
+    "ACC05 unsupported legacy confirmation is rejected before any durable write()",
+    "ACC04 unsupported typed confirmation is rejected before any durable write()",
+    "ACC09 supported legacy selection preserves false and blocks an unsupported identical replay()",
+    "ACC08 supported typed selection preserves false explanation chosen time and rejects old client replay()",
+    "ACC01 candidates reject every unsupported capability without filtering mixed attendance()",
+    "ACC16 every supported result path returns no store including conditional confirmations()",
+    "ACC06 typed result rejects unsupported readers after a supported conditional selection()",
+    "ACC07 legacy result rejects unsupported readers without changing the historical protocol()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-10-31T13:12:08.117384+00:00"
+}

@@ -1,5 +1,6 @@
 package com.meetme.server.submission.adapter.output.persistence
 
+import com.meetme.server.shared.domain.InputEvidence
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.SubmissionBatchId
@@ -18,6 +19,7 @@ import org.komapper.core.dsl.query.firstOrNull
 import org.komapper.jdbc.JdbcDatabase
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import tools.jackson.databind.ObjectMapper
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -29,12 +31,15 @@ import java.util.UUID
 class KomapperSubmissionRepository(
     private val database: JdbcDatabase,
     private val jdbcTemplate: JdbcTemplate,
+    private val mapper: ObjectMapper,
 ) : SubmissionRepository {
+    @Transactional
     override fun insert(submission: Submission) {
         check(findByParticipant(submission.participantId) == null) { "Submission already exists for participant" }
         persistVersion(submission, insertHead = true)
     }
 
+    @Transactional
     override fun save(submission: Submission) {
         persistVersion(submission, insertHead = findByParticipant(submission.participantId) == null)
     }
@@ -48,7 +53,21 @@ class KomapperSubmissionRepository(
             val headWithoutVersion = records.head.copy(latestVersionId = null)
             database.runQuery { QueryDsl.insert(Meta.submissionHeadRecord).single(headWithoutVersion) }
         }
-        database.runQuery { QueryDsl.insert(Meta.submissionVersionRecord).single(records.version) }
+        if (submission.latest.evidence == null) {
+            database.runQuery { QueryDsl.insert(Meta.submissionVersionRecord).single(records.version) }
+        } else {
+            jdbcTemplate.update(
+                "INSERT INTO submission_versions(id,submission_id,revision,raw_text,locale,created_at,input_evidence) " +
+                    "VALUES (?,?,?,?,?,?,CAST(? AS jsonb))",
+                records.version.id,
+                records.version.submissionId,
+                records.version.revision,
+                records.version.rawText,
+                records.version.locale,
+                records.version.createdAt,
+                mapper.writeValueAsString(submission.latest.evidence),
+            )
+        }
         if (records.intervals.isNotEmpty()) {
             database.runQuery { QueryDsl.insert(Meta.manualAvailabilityRecord).multiple(records.intervals) }
         }
@@ -110,7 +129,7 @@ class KomapperSubmissionRepository(
                     .where { Meta.manualAvailabilityRecord.submissionVersionId eq latestVersionId }
                     .orderBy(Meta.manualAvailabilityRecord.intervalOrder)
             }
-        return PersistenceMappers.toDomain(SubmissionRecords(head, version, intervals))
+        return PersistenceMappers.toDomain(SubmissionRecords(head, version, intervals), evidence(version.id, version.rawText))
     }
 
     override fun findFrozenByVersionIds(
@@ -148,7 +167,10 @@ class KomapperSubmissionRepository(
                         .where { Meta.manualAvailabilityRecord.submissionVersionId eq versionId }
                         .orderBy(Meta.manualAvailabilityRecord.intervalOrder)
                 }
-            PersistenceMappers.toDomain(SubmissionRecords(head.copy(latestVersionId = versionId), version, intervals))
+            PersistenceMappers.toDomain(
+                SubmissionRecords(head.copy(latestVersionId = versionId), version, intervals),
+                evidence(version.id, version.rawText),
+            )
         }
     }
 
@@ -160,6 +182,14 @@ class KomapperSubmissionRepository(
                 roomId.value,
             ),
         )
+
+    private fun evidence(
+        versionId: UUID,
+        rawText: String?,
+    ): InputEvidence? =
+        jdbcTemplate.queryForObject("SELECT input_evidence::text FROM submission_versions WHERE id=?", String::class.java, versionId)?.let {
+            mapper.readValue(it, InputEvidence::class.java).also { evidence -> evidence.validateAgainst(requireNotNull(rawText)) }
+        }
 }
 
 @Repository

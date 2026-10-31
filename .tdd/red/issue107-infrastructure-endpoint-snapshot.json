@@ -1,0 +1,28 @@
+{
+  "workItem": "issue107-infrastructure-endpoint-snapshot",
+  "sourceRevision": "b4b3a8c54938b1f28dd4f1cd782a7333971ce24a",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/InfrastructureEndpointSnapshotContractTest.kt",
+      "sha256": "556cec2add88fcc767dbc61760f2eb4f6db7568804245a6f75fea2f914742d42"
+    }
+  ],
+  "command": [
+    "python",
+    "local-only-evidence/endpoint-red-refresh.py"
+  ],
+  "failedTests": [
+    "registered connection settings remain readable and unchanged after infrastructure stop and restart()"
+  ],
+  "expectedFailureCategory": "Test infrastructure connection suppliers follow mutable container lifecycle instead of preserving one registered context snapshot; no production or provider change",
+  "recordedAt": "2026-10-30T13:41:35.484986+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-infrastructure-endpoint-snapshot.log",
+  "totals": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "providerCalls": 0,
+  "sourceRestorationEvidence": "local-only-evidence/endpoint-formatted-red-evidence.json"
+}

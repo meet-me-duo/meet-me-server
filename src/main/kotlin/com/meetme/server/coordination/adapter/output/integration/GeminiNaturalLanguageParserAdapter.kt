@@ -16,6 +16,7 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguageBat
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserPort
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
+import com.meetme.server.coordination.application.port.output.ParserTransportDiagnosticPort
 import com.meetme.server.coordination.application.port.output.ParserTransportObservationPort
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException
@@ -45,6 +46,7 @@ class GeminiNaturalLanguageParserAdapter
         objectMapper: ObjectMapper,
         private val transportObservations: ParserTransportObservationPort? = null,
         private val dispatchGate: AiHttpDispatchGate? = null,
+        private val transportDiagnostics: ParserTransportDiagnosticPort? = null,
     ) : NaturalLanguageParserPort {
         private val contract = NaturalLanguageProviderContract(objectMapper)
         private val mapper = objectMapper
@@ -56,7 +58,8 @@ class GeminiNaturalLanguageParserAdapter
             objectMapper: ObjectMapper,
             managedDispatchGate: AiHttpDispatchGate,
             transportObservations: ParserTransportObservationPort? = null,
-        ) : this(properties, objectMapper, transportObservations, managedDispatchGate)
+            transportDiagnostics: ParserTransportDiagnosticPort? = null,
+        ) : this(properties, objectMapper, transportObservations, managedDispatchGate, transportDiagnostics)
 
         internal constructor(
             properties: GeminiProperties,
@@ -64,7 +67,8 @@ class GeminiNaturalLanguageParserAdapter
             endpoint: URI,
             transportObservations: ParserTransportObservationPort? = null,
             dispatchGate: AiHttpDispatchGate? = null,
-        ) : this(properties, objectMapper, transportObservations, dispatchGate) {
+            transportDiagnostics: ParserTransportDiagnosticPort? = null,
+        ) : this(properties, objectMapper, transportObservations, dispatchGate, transportDiagnostics) {
             this.endpoint = endpoint
         }
 
@@ -74,6 +78,7 @@ class GeminiNaturalLanguageParserAdapter
                     request.observationContext,
                     com.meetme.server.coordination.application.port.output.AnalysisProvider.GEMINI,
                     transportObservations,
+                    transportDiagnostics,
                 )
             try {
                 return parseObserved(request, observation)
@@ -91,9 +96,25 @@ class GeminiNaturalLanguageParserAdapter
             val budget = minOf(request.callTimeout, Duration.ofMillis(CALL_TIMEOUT_MILLIS.toLong()))
             if (budget.toMillis() <= 0) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
             val deadline = System.nanoTime() + budget.toNanos()
+            if (transportDiagnostics != null) {
+                val requestedNanos =
+                    try {
+                        request.callTimeout.toNanos()
+                    } catch (_: ArithmeticException) {
+                        null
+                    }
+                observation.configureTimeouts(requestedNanos, budget.toNanos(), request.dispatchContext?.deadlineNanos)
+            }
             var physical: GatedAiHttpExchange? = null
             var physicalUsage = AiBudgetUsage()
             var completed = false
+            var primaryFailure: NaturalLanguageParserException? = null
+
+            fun propagate(failure: NaturalLanguageParserException): Nothing {
+                primaryFailure = failure
+                throw failure
+            }
+
             try {
                 val retryOptions =
                     HttpRetryOptions
@@ -223,10 +244,12 @@ class GeminiNaturalLanguageParserAdapter
                     ),
                 )
             } catch (exception: NaturalLanguageParserException) {
-                throw exception
+                propagate(exception)
             } catch (exception: Exception) {
                 val causes = generateSequence<Throwable>(exception) { it.cause }.take(16).toList()
-                if (causes.any { it is AiHttpDispatchException }) throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                if (causes.any { it is AiHttpDispatchException }) {
+                    propagate(NaturalLanguageParserException(ParserFailureKind.CONFIGURATION))
+                }
                 val httpStatus = causes.filterIsInstance<AiHttpProviderStatusException>().firstOrNull()
                 if (httpStatus != null) {
                     val error = runCatching { mapper.readTree(httpStatus.responseBytes)["error"] }.getOrNull()
@@ -234,20 +257,22 @@ class GeminiNaturalLanguageParserAdapter
                         error?.get("status")?.takeIf { it.isString }?.asString() ?: error?.get("code")?.takeIf { it.isString }?.asString()
                     val type = error?.get("type")?.takeIf { it.isString }?.asString()
                     val statusKind = ProviderFailureClassifier.classifyStatus(httpStatus.status, code, type)
-                    throw NaturalLanguageParserException(
-                        statusKind,
-                        if (statusKind in
-                            TRANSIENT_KINDS
-                        ) {
-                            httpStatus.retryAfterMillis
-                        } else {
-                            null
-                        },
+                    propagate(
+                        NaturalLanguageParserException(
+                            statusKind,
+                            if (statusKind in
+                                TRANSIENT_KINDS
+                            ) {
+                                httpStatus.retryAfterMillis
+                            } else {
+                                null
+                            },
+                        ),
                     )
                 }
                 val kind = ProviderFailureClassifier.classify(exception)
                 val retryAfter = if (kind in TRANSIENT_KINDS && exception is RuntimeException) extractRetryAfterMillis(exception) else null
-                throw NaturalLanguageParserException(kind, retryAfter, exception)
+                propagate(NaturalLanguageParserException(kind, retryAfter, exception))
             } finally {
                 try {
                     physical?.observe(
@@ -255,10 +280,14 @@ class GeminiNaturalLanguageParserAdapter
                         if (completed) AiBudgetOutcome.SUCCEEDED else AiBudgetOutcome.FAILED,
                         physicalUsage,
                     )
-                } catch (
-                    _: AiHttpDispatchException,
-                ) {
-                    throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                } catch (observationFailure: AiHttpDispatchException) {
+                    val failure = primaryFailure
+                    if (failure == null) {
+                        // A successful reply still fails closed when its observation is rejected.
+                        throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+                    }
+                    // The secondary denial must not replace the already classified provider failure.
+                    failure.addSuppressed(observationFailure)
                 }
             }
         }

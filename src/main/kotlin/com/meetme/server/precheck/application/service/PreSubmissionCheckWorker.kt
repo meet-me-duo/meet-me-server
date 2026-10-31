@@ -66,7 +66,7 @@ class PreSubmissionCheckWorker(
                                         check.generation.toLong(),
                                         check.ownerToken ?: throw PrecheckProviderException("CONFIGURATION"),
                                         check.version,
-                                        AiDispatchFingerprints.personalSource(check.candidate.rawText),
+                                        AiDispatchFingerprints.personalSource(check.candidate.rawText, check.candidate.evidence),
                                         AiDispatchFingerprints.personalContext(
                                             check.candidate.referenceAt,
                                             claim.room.timeZone.value,
@@ -80,9 +80,10 @@ class PreSubmissionCheckWorker(
                             } else {
                                 null
                             },
+                        evidence = check.candidate.evidence,
                     )
                 result = provider.check(request)
-                validate(result, check.candidate.rawText)
+                validate(result, check.candidate.rawText, check.candidate.evidence != null)
             } catch (exception: PrecheckProviderException) {
                 failure = exception.failureCode.takeIf { it in FAILURES } ?: "PROVIDER_UNAVAILABLE"
                 result = null
@@ -111,10 +112,13 @@ class PreSubmissionCheckWorker(
     private fun validate(
         result: PrecheckProviderResult,
         raw: String,
+        evidenceProtocol: Boolean,
     ) {
         fun size(text: String) = text.codePointCount(0, text.length)
 
         fun invalid(): Nothing = throw PrecheckProviderException("INVALID_RESPONSE")
+        if (!evidenceProtocol && result.verdict == PrecheckVerdict.UNRESOLVED) invalid()
+        if (result.unresolvedReason?.let { it.isBlank() || size(it) > 64 || it.contains('\u0000') } == true) invalid()
         if (result.inputTokens?.let { it < 0 } == true ||
             result.outputTokens?.let { it < 0 || it > 2048 } == true ||
             result.responseBytes?.let { it < 0 || it > 16384 } == true
@@ -137,6 +141,8 @@ class PreSubmissionCheckWorker(
         ) {
             invalid()
         }
+        if (evidenceProtocol && raw.indexOf(excerpt) != raw.lastIndexOf(excerpt)) invalid()
+        if (evidenceProtocol && result.choices.isEmpty()) return
         if (result.choices.size != 2 ||
             result.choices
                 .map { it.id }

@@ -1,0 +1,20 @@
+{
+  "workItem": "issue107-experiment-ledger-concurrency",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentLedgerConcurrencyContractTest.kt",
+      "sha256": "d7b7e231ead69896db77c0efc1b03a7fe7f1c4264b0da6181b20820b8301e969"
+    }
+  ],
+  "command": "env -u GEMINI_API_KEY -u OPENAI_API_KEY -u TYPESAFE_API_KEY -u MEETME_LIVE_EVAL -u MEETME_PRIMARY_SMOKE_MODE local-only-evidence/analysis-gradle ktlintFormat test --tests *ExperimentLedgerConcurrencyContractTest",
+  "failedTests": [
+    "two ledger instances competing for the final reservation cannot exceed ten()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR: unimplemented counter lifecycle",
+  "recordedAt": "2026-10-29T15:03:12.230730+00:00",
+  "localLog": ".codex/tdd-evidence/issue107-experiment-ledger-concurrency.log",
+  "tests": 1,
+  "failures": 1,
+  "providerCalls": 0
+}

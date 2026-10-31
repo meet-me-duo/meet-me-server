@@ -1,0 +1,393 @@
+{
+  "completed": true,
+  "scope": "REAL_CHROMIUM_CURRENT_WEB_NATIVE_SERVER_PG_REDIS_SAVED_RESPONSE_REPLAY",
+  "auth": "Only auth refresh is synthetic bootstrap; real RS256 bearer verification by native API",
+  "actualModelCalls": 0,
+  "actualMapCalls": 0,
+  "roomResultApiInterceptions": 0,
+  "externalPageRequests": 0,
+  "deniedProxyRequests": 9,
+  "checks": [
+    {
+      "name": "desktop: three real candidate descriptions; exact times/cohorts, conditional attendance, no new place warning"
+    },
+    {
+      "name": "desktop: back/navigation writes0; two DOM activations produce one native confirmation; reload/native result/DB tuple and uncertainty unchanged"
+    },
+    {
+      "name": "mobile: three real candidate descriptions; exact times/cohorts, conditional attendance, no new place warning"
+    },
+    {
+      "name": "mobile: back/navigation writes0; two DOM activations produce one native confirmation; reload/native result/DB tuple and uncertainty unchanged"
+    },
+    {
+      "name": "time-conflict: native matching rejects known conflict and browser/reload has no candidate or selection"
+    },
+    {
+      "name": "place-conflict: native matching rejects known conflict and browser/reload has no candidate or selection"
+    }
+  ],
+  "cases": [
+    {
+      "name": "desktop",
+      "viewport": "1365x900",
+      "before": {
+        "selectionCount": 0,
+        "frozenCount": 3,
+        "structuredCount": 3,
+        "frozenSha256": "11c60a110473e7d4f4ccf3876b69174c0349eee2a475aea25dc397333cb12f1f",
+        "structuredSha256": "a58c0264d1eb100b2e9f09d890da531383a461891fee18627e533be50c5195fd"
+      },
+      "after": {
+        "selectionCount": 1,
+        "selection": {
+          "analysis_id": "1bcced28-c38d-4a6b-a744-6c52002df510",
+          "option_id": "29c4dd23-314b-3d4f-9402-12b7aaa7d390",
+          "variant_id": "0c1d5c7a-9ef3-3827-b109-6c4f10a9de99",
+          "start_epoch": 1794567900,
+          "end_epoch": 1794571500
+        },
+        "pendingSelectedParticipants": 2,
+        "frozenSha256": "11c60a110473e7d4f4ccf3876b69174c0349eee2a475aea25dc397333cb12f1f",
+        "structuredSha256": "a58c0264d1eb100b2e9f09d890da531383a461891fee18627e533be50c5195fd"
+      },
+      "selectedOption": 2,
+      "summary": "11월 13일 20:05~21:05. 3명의 시간 조건이 맞지만, 일부 장소·이동 조건은 확인하지 못해 실제 대면 참석 여부는 미확정입니다.",
+      "attendanceConfirmed": false,
+      "confirmationPosts": 1,
+      "doubleActivation": "two DOM click() activations; no retry",
+      "authBootstraps": 4,
+      "events": [
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/recommendations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/candidates/unapplied-inputs"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/recommendations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/candidates/unapplied-inputs"
+        },
+        {
+          "method": "POST",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/recommendations/29c4dd23-314b-3d4f-9402-12b7aaa7d390/confirmation"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/result"
+        },
+        {
+          "method": "POST",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/review-prompt"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/result"
+        },
+        {
+          "method": "POST",
+          "path": "/api/rooms/Mfb9IjuAxNHB_j3oim4CaA/review-prompt"
+        }
+      ]
+    },
+    {
+      "name": "mobile",
+      "viewport": "390x844",
+      "before": {
+        "selectionCount": 0,
+        "frozenCount": 3,
+        "structuredCount": 3,
+        "frozenSha256": "7a7af9823842aa454c40a1538c15cf43631e64e06e38d10763a451dd9c6ab4a5",
+        "structuredSha256": "e91ae14db18184373738536e8ec4f44fb5f73ca80a6adc9175a4ef907b9c73a6"
+      },
+      "after": {
+        "selectionCount": 1,
+        "selection": {
+          "analysis_id": "e1aa648a-32eb-419c-aee7-fe6ef59bb754",
+          "option_id": "deb9babb-0995-331d-9db8-7acc7f41d080",
+          "variant_id": "bfc21fe4-3d05-378f-bf3c-c7c21b58da1a",
+          "start_epoch": 1794479400,
+          "end_epoch": 1794484800
+        },
+        "pendingSelectedParticipants": 2,
+        "frozenSha256": "7a7af9823842aa454c40a1538c15cf43631e64e06e38d10763a451dd9c6ab4a5",
+        "structuredSha256": "e91ae14db18184373738536e8ec4f44fb5f73ca80a6adc9175a4ef907b9c73a6"
+      },
+      "selectedOption": 1,
+      "summary": "11월 12일 19:30~21:00. 3명의 시간 조건이 맞지만, 일부 장소·이동 조건은 확인하지 못해 실제 대면 참석 여부는 미확정입니다.",
+      "attendanceConfirmed": false,
+      "confirmationPosts": 1,
+      "doubleActivation": "two DOM click() activations; no retry",
+      "authBootstraps": 4,
+      "events": [
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/recommendations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/candidates/unapplied-inputs"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/recommendations"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/candidates/unapplied-inputs"
+        },
+        {
+          "method": "POST",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/recommendations/deb9babb-0995-331d-9db8-7acc7f41d080/confirmation"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/result"
+        },
+        {
+          "method": "POST",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/review-prompt"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/result"
+        },
+        {
+          "method": "POST",
+          "path": "/api/rooms/ha005tIwf_NwOmvhN-CY2A/review-prompt"
+        }
+      ]
+    },
+    {
+      "name": "time-conflict",
+      "scope": "explicit synthetic parser double, separate from saved original response",
+      "selectionCount": 0,
+      "options": 0,
+      "confirmationPosts": 0,
+      "events": [
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/MjzNls5KUOXRavtAE_U1SQ"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/MjzNls5KUOXRavtAE_U1SQ/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/MjzNls5KUOXRavtAE_U1SQ/candidates/unapplied-inputs"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/MjzNls5KUOXRavtAE_U1SQ"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/MjzNls5KUOXRavtAE_U1SQ/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/MjzNls5KUOXRavtAE_U1SQ/candidates/unapplied-inputs"
+        }
+      ]
+    },
+    {
+      "name": "place-conflict",
+      "scope": "explicit synthetic parser double, separate from saved original response",
+      "selectionCount": 0,
+      "options": 0,
+      "confirmationPosts": 0,
+      "events": [
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/hIW_WMJE3hvze4MHfJrqhA"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/hIW_WMJE3hvze4MHfJrqhA/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/hIW_WMJE3hvze4MHfJrqhA/candidates/unapplied-inputs"
+        },
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/hIW_WMJE3hvze4MHfJrqhA"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/hIW_WMJE3hvze4MHfJrqhA/submission/checks/current"
+        },
+        {
+          "method": "GET",
+          "path": "/api/rooms/hIW_WMJE3hvze4MHfJrqhA/candidates/unapplied-inputs"
+        }
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "browserVersion": "151.0.7922.173",
+  "providerCounters": {
+    "savedResponseReplays": 2,
+    "negativeDoubles": 2,
+    "headers": 0,
+    "dns": 0,
+    "connect": 0,
+    "map": 0
+  },
+  "serverProcess": {
+    "exitCode": 0,
+    "finishedAt": "2026-10-31T03:33:07.246349+00:00"
+  },
+  "browserProcess": {
+    "exitCode": 0
+  },
+  "sourceChanged": false,
+  "sourceComparedFiles": 791,
+  "frozenServerSourceFingerprint": "f7599a1ac881c2bc8a0b43e86a456324c38913381ad5fd5074203e6d78db57a6",
+  "previousServerFull": {
+    "passed": 2614,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 17
+  },
+  "previousWebDistinctPassed": 807,
+  "priorSuitesRepeated": false,
+  "linearModified": false,
+  "cleanupComplete": true,
+  "recordedAt": "2026-10-31T03:34:45.892585+00:00",
+  "networkControls": {
+    "serverDeniedNonloopbackConnects": 0,
+    "browserDeniedNonloopbackConnects": 6,
+    "localDenyProxyRejectedRequests": 9,
+    "externalPageRequests": 0,
+    "actualProviderRequests": 0,
+    "actualMapRequests": 0,
+    "scope": "Browser background attempts blocked; counts are separate controls and must not be summed into physical API calls; libcconnect not OS-wide DNS/syscall/daemon proof"
+  },
+  "limitations": [
+    "Synthetic auth refresh bootstrap; not OAuth/refresh integration validation",
+    "Mobile viewport/touch emulation, not physical device",
+    "Known conflict parser doubles, not real model/geography validation",
+    "Only local HTTP same-origin proxy; not production deployment/CORS/TLS proof",
+    "Native main/test source unchanged; documentation/evidence updates only"
+  ]
+}

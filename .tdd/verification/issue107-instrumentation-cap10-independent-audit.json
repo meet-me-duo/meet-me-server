@@ -1,0 +1,331 @@
+{
+  "workItem": "issue107-timeout-cancellation-cumulative10-independent-audit",
+  "sourceRevision": "f75fa60087ac7d74619585cd41e6ba1e0d1c5e0e",
+  "recordedAt": "2026-10-29T16:16:58.515251+00:00",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserDiagnosticOverflowCompatibilityTest.kt",
+      "sha256": "9e13bdb09229adf3b356ed39bc451b4ea08cc39c8bc642c5222a6b5d110a140e",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportDiagnosticContractTest.kt",
+      "sha256": "56e4cfe466e3cf058ab0a824ec0132b51d7d69d303fa762be0b3fc70641c2856",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeClassifierCountingContractTest.kt",
+      "sha256": "3514771688c622b59ac1fc4015ed4e13b0a03b0d1a3aada2a8b61868b3e1ffe0",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeExperimentDriverContractTest.kt",
+      "sha256": "0804f93e50af0ea2684d8277f5e146d75f20c9c930fa66ca8350693f0af527ec",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedgerContractTest.kt",
+      "sha256": "b2e041824d4af0c38e50ce2f1d561657e552fd2da4d7ffcdb93a8f4b79491e35",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentCurrentRoomExecutionsContractTest.kt",
+      "sha256": "0c64d438da862696f2492bb330df446a71898209bf5d25dffb93687891aaf6ad",
+      "postImplementationPositiveControlOnly": true
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentFailureCorrelationContractTest.kt",
+      "sha256": "beea2d5974c688ca8033f6664710ed282876763dcd3380b7ea515ca6f5aed924",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentLedgerConcurrencyContractTest.kt",
+      "sha256": "d7b7e231ead69896db77c0efc1b03a7fe7f1c4264b0da6181b20820b8301e969",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentPendingFailurePhaseContractTest.kt",
+      "sha256": "4e03991bbed4ee077997f2b9e097004a8893788fbfdebceb3ccc181e6dfcd40b",
+      "postImplementationPositiveControlOnly": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/ExperimentWireHookContractTest.kt",
+      "sha256": "ad13e4714ee3636414b64a399d96745476aa1a9665413d8f3f51231546562575",
+      "postImplementationPositiveControlOnly": false
+    }
+  ],
+  "executedRedHashChecks": [
+    {
+      "summary": ".tdd/red/issue107-timeout-cancel-telemetry.json",
+      "testPath": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportDiagnosticContractTest.kt",
+      "executedSha256": "56e4cfe466e3cf058ab0a824ec0132b51d7d69d303fa762be0b3fc70641c2856",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-diagnostic-overflow.json",
+      "testPath": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserDiagnosticOverflowCompatibilityTest.kt",
+      "executedSha256": "9e13bdb09229adf3b356ed39bc451b4ea08cc39c8bc642c5222a6b5d110a140e",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-cumulative-experiment-ledger.json",
+      "testPath": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedgerContractTest.kt",
+      "executedSha256": "b2e041824d4af0c38e50ce2f1d561657e552fd2da4d7ffcdb93a8f4b79491e35",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-experiment-ledger-concurrency.json",
+      "testPath": "src/test/kotlin/com/meetme/server/experiment/ExperimentLedgerConcurrencyContractTest.kt",
+      "executedSha256": "d7b7e231ead69896db77c0efc1b03a7fe7f1c4264b0da6181b20820b8301e969",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-experiment-wire-hook.json",
+      "testPath": "src/test/kotlin/com/meetme/server/shared/adapter/output/aihttp/ExperimentWireHookContractTest.kt",
+      "executedSha256": "ad13e4714ee3636414b64a399d96745476aa1a9665413d8f3f51231546562575",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-experiment-failure-finalization.json",
+      "testPath": "src/test/kotlin/com/meetme/server/experiment/ExperimentPendingFailurePhaseContractTest.kt",
+      "executedSha256": "4e03991bbed4ee077997f2b9e097004a8893788fbfdebceb3ccc181e6dfcd40b",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-experiment-failure-finalization.json",
+      "testPath": "src/test/kotlin/com/meetme/server/experiment/ExperimentFailureCorrelationContractTest.kt",
+      "executedSha256": "beea2d5974c688ca8033f6664710ed282876763dcd3380b7ea515ca6f5aed924",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-cumulative-runtime-contracts.json",
+      "testPath": "src/test/kotlin/com/meetme/server/experiment/CumulativeExperimentDriverContractTest.kt",
+      "executedSha256": "0804f93e50af0ea2684d8277f5e146d75f20c9c930fa66ca8350693f0af527ec",
+      "currentSha256Matches": true
+    },
+    {
+      "summary": ".tdd/red/issue107-cumulative-runtime-contracts.json",
+      "testPath": "src/test/kotlin/com/meetme/server/experiment/CumulativeClassifierCountingContractTest.kt",
+      "executedSha256": "3514771688c622b59ac1fc4015ed4e13b0a03b0d1a3aada2a8b61868b3e1ffe0",
+      "currentSha256Matches": true
+    }
+  ],
+  "allExecutedRedHashesStillMatch": true,
+  "implementationAndRuntimeFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/GeminiNaturalLanguageParserAdapter.kt",
+      "sha256": "b1df029f77a831738dc01c73c69c223d9e23a8237a9d01cd73cbac9564d8de71"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportObservationSession.kt",
+      "sha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/ParserTransportDiagnosticPort.kt",
+      "sha256": "4aec4aa2068298945aff66e517fdca5fac28e1074abf4af5ffc1410a5a212ab8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpDispatchGate.kt",
+      "sha256": "3ed75920b1706959fa2a338ea04e987a9216488a415c03bfd424fa658f74eaff"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpExperimentWireHook.kt",
+      "sha256": "2bbc46b7887e1fa636bfd76cd4de541f2f704a305ca9ee1ed1d963e73166f1ee"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeExperimentDriver.kt",
+      "sha256": "27e155edf85bcd7af0b4f51f58f54014e9df8dfde16949cbddb64df4b96a378f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeExperimentFixtures.kt",
+      "sha256": "b3d63372ebc4353b2358dab6bc57371fc066b6c244a72ded2a9b16a8dff55436"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeExperimentHttpFlow.kt",
+      "sha256": "df65454095c4ff17a475d9833099d61c23738477771310ab84bfe8786afb02b9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/CumulativeProviderEvaluationTest.kt",
+      "sha256": "2c065f77cc6014bff40ffb386445ab12ed64f2539c9c5fb98739a8818dc7876b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+      "sha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3"
+    }
+  ],
+  "focusedGreen": {
+    "suites": 16,
+    "tests": 129,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": "local-only-evidence/telemetry-runtime-contracts-green.log",
+    "verifiedBy": "model_contracts XML report plus successful raw build log"
+  },
+  "faultInjectionGroups": [
+    {
+      "evidence": "local-only-evidence/evidence.json",
+      "mutants": [
+        {
+          "mutant": "cancel-event-omitted",
+          "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+          "mutatedSha256": "edc9a3da5107503e4de239af3552ea5857b878e48ccbe4d3b99f33b2fe623601",
+          "exitCode": 1,
+          "tests": 14,
+          "failures": 1,
+          "errors": 0,
+          "detectedBy": [
+            "timeouts and cancel header failure order are facts without a causal origin claim()"
+          ]
+        },
+        {
+          "mutant": "applied-timeout-erased",
+          "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+          "mutatedSha256": "b306c8142a6757a6fedd03d4459d880fb313d1c8c6c019e68e1919b3c54fa9a0",
+          "exitCode": 1,
+          "tests": 14,
+          "failures": 3,
+          "errors": 0,
+          "detectedBy": [
+            "real SDK loopback failure keeps one call and records requested budget without provider content()",
+            "timeouts and cancel header failure order are facts without a causal origin claim()",
+            "zero timeout unset deadline and expired deadline stay distinct()"
+          ]
+        },
+        {
+          "mutant": "typed-reset-cause-erased",
+          "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+          "mutatedSha256": "7a6f6fec06a25a5aa7d664f9921b9563713cce5cf4b1284f3faf8e18a4461a63",
+          "exitCode": 1,
+          "tests": 14,
+          "failures": 1,
+          "errors": 0,
+          "detectedBy": [
+            "typed HTTP2 CANCEL is only a reset code and not evidence of remote cancellation()"
+          ]
+        },
+        {
+          "mutant": "diagnostic-recorder-escapes",
+          "sourceBaselineSha256": "46b0dba47bbf4ce8a52fdcf1b8fb0c052e709d368cb2015ccb970cd9a1379a7b",
+          "mutatedSha256": "2263aed7611882f2367d28acc382e857adb4520b11ba8d04bf9f86367e5f29d1",
+          "exitCode": 1,
+          "tests": 14,
+          "failures": 1,
+          "errors": 0,
+          "detectedBy": [
+            "diagnostic recorder failure preserves normal observation and finish remains once only()"
+          ]
+        }
+      ],
+      "exactRestore": true,
+      "restoredGreen": {
+        "tests": 33,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    {
+      "evidence": "local-only-evidence/evidence.json",
+      "mutants": [
+        {
+          "mutant": "cap-ceiling-expanded",
+          "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+          "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+          "mutatedSha256": "a14ee59984371d73a16df0323d4b39b889c0d882a1e69f75e231960725bd07ab",
+          "exitCode": 1,
+          "tests": 23,
+          "failures": 1,
+          "errors": 0,
+          "detectedBy": [
+            "a requested cap above ten cannot expand the authorized physical limit()"
+          ]
+        },
+        {
+          "mutant": "second-error-stop-delayed",
+          "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+          "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+          "mutatedSha256": "3df055a36fe4966211e34f974508935c7bd814690621a06034f2320b0151d18c",
+          "exitCode": 1,
+          "tests": 23,
+          "failures": 1,
+          "errors": 0,
+          "detectedBy": [
+            "two distinct physical calls with the same normalized code stop regardless of provider stage()"
+          ]
+        },
+        {
+          "mutant": "source-binding-ignored",
+          "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+          "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+          "mutatedSha256": "e02b4aa97f848c36074e1fd469a2510ae1187145d6c921dc735319a6dc682a13",
+          "exitCode": 1,
+          "tests": 23,
+          "failures": 1,
+          "errors": 0,
+          "detectedBy": [
+            "reopen cannot reset missing corrupted or mismatched initialized state()"
+          ]
+        },
+        {
+          "mutant": "unknown-error-normalized-as-network",
+          "source": "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt",
+          "sourceBaselineSha256": "5e55cd0e1138be6a2b6f533ead7e3e3037d80b2e166d48b61becf7580a2e8ea3",
+          "mutatedSha256": "f2a28acf782c3fe2d468baeed27fa4da7d76c0e997d284767676d397819f59f7",
+          "exitCode": 1,
+          "tests": 23,
+          "failures": 2,
+          "errors": 0,
+          "detectedBy": [
+            "unknown failure and unavailable observation fail closed without storing raw code()",
+            "fixed normalization supports typed names and aliases while unknown stays unknown()"
+          ]
+        },
+        {
+          "mutant": "pre-header-veto-omitted",
+          "source": "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpExperimentWireHook.kt",
+          "sourceBaselineSha256": "2bbc46b7887e1fa636bfd76cd4de541f2f704a305ca9ee1ed1d963e73166f1ee",
+          "mutatedSha256": "71e27d704a3a63133324d5518bfa2883aaa7cbc06b88a92a4dd3d0961bcef836",
+          "exitCode": 1,
+          "tests": 9,
+          "failures": 3,
+          "errors": 0,
+          "detectedBy": [
+            "actual gate composes durable reservation hook and existing diagnostic listener()",
+            "fresh SDK Call identity is distinct even when the second call reuses one prepared attempt()",
+            "hook refusal after valid original authority prevents actual request headers()"
+          ]
+        }
+      ],
+      "exactRestore": true,
+      "restoredGreen": {
+        "tests": 73,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  ],
+  "distinctFaults": 9,
+  "currentRestoredSourceMatches": {
+    "src/test/kotlin/com/meetme/server/experiment/ExperimentCallLedger.kt": true,
+    "src/main/kotlin/com/meetme/server/shared/adapter/output/aihttp/AiHttpExperimentWireHook.kt": true,
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ParserTransportObservationSession.kt": true
+  },
+  "allSourceRestoresIndependentlyVerified": true,
+  "laterRuntimeBoundaryInitialRed": {
+    "cases": 8,
+    "failures": 6,
+    "controlsPassed": 2,
+    "summary": ".tdd/red/issue107-cumulative-runtime-contracts.json"
+  },
+  "wholeQualityGate": "Original unchanged guard running under model_contracts; not claimed complete in this checkpoint",
+  "realProviderCallsByThisRole": 0,
+  "sealedHoldoutOrGoldRead": false,
+  "notes": [
+    "Initial compile/style-only runs executed zero behavioral tests and are excluded from valid RED.",
+    "The current-room multi-execution file is an explicit post-implementation positive control, not claimed as original RED.",
+    "Cancellation and reset metadata are observed facts; neither local causation nor remote RST origin is inferred.",
+    "No source/test/runtime edits after the final129 focused GREEN."
+  ]
+}
