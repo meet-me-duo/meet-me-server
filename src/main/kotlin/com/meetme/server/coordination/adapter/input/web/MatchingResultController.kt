@@ -5,6 +5,7 @@ import com.meetme.server.coordination.application.port.input.GetCandidatesUseCas
 import com.meetme.server.coordination.application.port.input.GetConfirmedResultUseCase
 import com.meetme.server.coordination.application.port.input.GetUnappliedInputsUseCase
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.Locale
 import java.util.UUID
@@ -48,7 +50,7 @@ class MatchingResultController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "후보 준비 전",
+            description = "후보 준비 전 또는 CLIENT_UPDATE_REQUIRED",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
     )
@@ -56,7 +58,15 @@ class MatchingResultController(
         @PathVariable inviteCode: String,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
-    ): CandidateListResponse = CandidateListResponse.from(getCandidates.getCandidates(inviteCode, credential, locale))
+        @Parameter(
+            description = "미확정 참석 의미 지원: conditional-v1만 지원 명시로 인정. 생략/기타 값은 해당 결과에 CLIENT_UPDATE_REQUIRED(409)",
+            schema = Schema(example = "conditional-v1"),
+        )
+        @RequestParam(name = "attendance_support", required = false) attendanceSupport: String?,
+    ): CandidateListResponse =
+        CandidateListResponse.from(
+            getCandidates.getCandidates(inviteCode, credential, locale, AttendanceClientSupport.supported(attendanceSupport)),
+        )
 
     @GetMapping("/candidates/unapplied-inputs")
     @Operation(summary = "주최자용 미반영 입력 조회")
@@ -109,7 +119,7 @@ class MatchingResultController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "다른 후보가 이미 확정됨",
+            description = "다른 후보가 이미 확정됨 또는 CLIENT_UPDATE_REQUIRED",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
         ApiResponse(
@@ -128,7 +138,15 @@ class MatchingResultController(
         @PathVariable candidateId: UUID,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
-    ): ConfirmedResultResponse = ConfirmedResultResponse.from(confirmCandidate.confirm(inviteCode, candidateId, credential, locale))
+        @Parameter(
+            description = "미확정 참석 의미 지원: conditional-v1만 지원 명시로 인정. 생략/기타 값은 해당 결과에 CLIENT_UPDATE_REQUIRED(409)",
+            schema = Schema(example = "conditional-v1"),
+        )
+        @RequestParam(name = "attendance_support", required = false) attendanceSupport: String?,
+    ): ConfirmedResultResponse =
+        ConfirmedResultResponse.from(
+            confirmCandidate.confirm(inviteCode, candidateId, credential, locale, AttendanceClientSupport.supported(attendanceSupport)),
+        )
 
     @GetMapping("/result")
     @Operation(summary = "확정 결과 조회")
@@ -151,7 +169,7 @@ class MatchingResultController(
         ),
         ApiResponse(
             responseCode = "409",
-            description = "분석 준비 전 또는 수정 라운드 OPEN",
+            description = "분석 준비 전·수정 라운드 OPEN·CLIENT_UPDATE_REQUIRED",
             content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
         ),
     )
@@ -159,5 +177,13 @@ class MatchingResultController(
         @PathVariable inviteCode: String,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
         locale: Locale,
-    ): ConfirmedResultResponse = ConfirmedResultResponse.from(getConfirmedResult.getConfirmed(inviteCode, credential, locale))
+        @Parameter(
+            description = "미확정 참석 의미 지원: conditional-v1만 지원 명시로 인정. 생략/기타 값은 해당 결과에 CLIENT_UPDATE_REQUIRED(409)",
+            schema = Schema(example = "conditional-v1"),
+        )
+        @RequestParam(name = "attendance_support", required = false) attendanceSupport: String?,
+    ): ConfirmedResultResponse =
+        ConfirmedResultResponse.from(
+            getConfirmedResult.getConfirmed(inviteCode, credential, locale, AttendanceClientSupport.supported(attendanceSupport)),
+        )
 }

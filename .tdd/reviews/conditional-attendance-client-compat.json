@@ -1,0 +1,65 @@
+{
+  "workItem": "conditional-attendance-client-compat",
+  "reviewRole": "independent test design, HTTP/PostgreSQL behavior review and mutation verification",
+  "sourceRevision": "6d67c8107832e51102059fa4d410150197dd1fa6",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AttendanceClientCompatibilityHttpPostgresTest.kt",
+      "sha256": "9d34ce605c3ac6037284b6448d37838303781cd7a76bb1c2bfa7bc181e7e8ab6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/AttendanceNoStoreEquivalentPathPostgresTest.kt",
+      "sha256": "9cb3e5866b129a454a280523ed17ee197a0f7c6335379632399e4281ccab1c52"
+    }
+  ],
+  "independentGreen": {
+    "tests": 20,
+    "passed": 20,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "mutantsPlanned": 6,
+  "mutantsDetected": 6,
+  "assertionFailuresObserved": 8,
+  "originalPublicFilesVerifiedUnchanged": 307,
+  "scratchRestoredAfterEachMutation": true,
+  "openP1": [],
+  "openP2": [],
+  "closedP2": "Raw URI cache filter differed from MVC normalized paths; fixed with RequestPath and PathPattern, matrix/encoded tests GREEN",
+  "limitations": [
+    "Real paid providers, operating users and production rollout were not exercised",
+    "Disconnected old DOM cannot be retroactively changed; request/confirmation and revalidation boundaries are enforced"
+  ],
+  "regressionRepairReview": {
+    "productionFilesUnchangedSinceIndependentReview": 295,
+    "assertionsAndTestNamesPreserved": true,
+    "sharedAttendanceSupportDefault": "null",
+    "fixtureIsolationOnly": true,
+    "productionAuthorizationChanged": false,
+    "independentFixtureTests": {
+      "testSha256": "2660c6c486e3fca1b6e110ef6ebf95280d0d10196c61fa32027a163cb0e6be54",
+      "red": {
+        "passed": 1,
+        "expectedFailures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "green": {
+        "passed": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "focusedTests": {
+      "passed": 67,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "ktlintCheckPassed": true,
+    "openP1": [],
+    "openP2": []
+  }
+}

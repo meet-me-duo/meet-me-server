@@ -85,10 +85,13 @@ class MatchingResultService(
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean,
     ): CandidateListView {
         val room = room(inviteCode)
         participant(room.id, rawCredential)
-        return candidateList(completedRun(room), room, locale)
+        return candidateList(completedRun(room), room, locale).also { view ->
+            requireAttendanceSupport(view.candidates.all { it.attendanceConfirmed }, supportsConditionalAttendance)
+        }
     }
 
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
@@ -165,6 +168,7 @@ class MatchingResultService(
         candidateId: UUID,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean,
     ): ConfirmedResultView {
         val room = room(inviteCode, lock = true)
         val viewer = participant(room.id, rawCredential, OwnershipOperation.HOST_COMMAND)
@@ -181,6 +185,8 @@ class MatchingResultService(
         val candidate =
             run.candidates.firstOrNull { it.id == requested }
                 ?: fail(MatchingResultErrorCode.CANDIDATE_NOT_FOUND)
+        val candidateView = candidate.toView(room, locale)
+        requireAttendanceSupport(candidateView.attendanceConfirmed, supportsConditionalAttendance)
         val confirmed =
             if (existing == requested) {
                 run
@@ -190,7 +196,7 @@ class MatchingResultService(
                 roomRepository.update(room.transition())
                 next
             }
-        return ConfirmedResultView(candidate.toView(room, locale), requireNotNull(confirmed.confirmedAt))
+        return ConfirmedResultView(candidateView, requireNotNull(confirmed.confirmedAt))
     }
 
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
@@ -198,14 +204,21 @@ class MatchingResultService(
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean,
     ): ConfirmedResultView {
         val room = room(inviteCode)
         participant(room.id, rawCredential)
         val run = completedRun(room)
-        run.recommendationSelection?.let { return selectedResult(run, room, it, locale) }
+        run.recommendationSelection?.let { selection ->
+            return selectedResult(run, room, selection, locale).also {
+                requireAttendanceSupport(it.candidate.attendanceConfirmed, supportsConditionalAttendance)
+            }
+        }
         val id = run.confirmedCandidateId ?: fail(MatchingResultErrorCode.RESULT_NOT_CONFIRMED)
         val candidate = run.candidates.firstOrNull { it.id == id } ?: fail(MatchingResultErrorCode.CANDIDATE_NOT_FOUND)
-        return ConfirmedResultView(candidate.toView(room, locale), requireNotNull(run.confirmedAt))
+        val view = candidate.toView(room, locale)
+        requireAttendanceSupport(view.attendanceConfirmed, supportsConditionalAttendance)
+        return ConfirmedResultView(view, requireNotNull(run.confirmedAt))
     }
 
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
@@ -213,6 +226,7 @@ class MatchingResultService(
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean,
     ): RecommendationListView {
         val room = room(inviteCode)
         participant(room.id, rawCredential)
@@ -224,7 +238,14 @@ class MatchingResultService(
                 .orEmpty()
                 .filter { it.primaryRank != null }
                 .sortedBy { it.primaryRank }
-        return recommendationList(run, room, analysis, primary, null, locale)
+        return recommendationList(run, room, analysis, primary, null, locale).also { view ->
+            requireAttendanceSupport(
+                view.options.all { option ->
+                    option.variants.all { it.attendanceConfirmed }
+                },
+                supportsConditionalAttendance,
+            )
+        }
     }
 
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
@@ -235,6 +256,7 @@ class MatchingResultService(
         limit: Int,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean,
     ): RecommendationListView {
         require(limit in 1..100)
         val room = room(inviteCode)
@@ -270,7 +292,14 @@ class MatchingResultService(
                     "$analysisId:${it.ordinal}".toByteArray(StandardCharsets.UTF_8),
                 )
             }
-        return recommendationList(run, room, analysis, page, next, locale)
+        return recommendationList(run, room, analysis, page, next, locale).also { view ->
+            requireAttendanceSupport(
+                view.options.all { option ->
+                    option.variants.all { it.attendanceConfirmed }
+                },
+                supportsConditionalAttendance,
+            )
+        }
     }
 
     @Transactional
@@ -311,8 +340,12 @@ class MatchingResultService(
             ) {
                 fail(MatchingResultErrorCode.CANDIDATE_ALREADY_CONFIRMED)
             }
-            return selectedResult(run, room, existing, command.locale)
+            return selectedResult(run, room, existing, command.locale).also {
+                requireAttendanceSupport(it.candidate.attendanceConfirmed, command.supportsConditionalAttendance)
+            }
         }
+        val variant = option.option.variants[option.variantIds.indexOf(command.variantId)]
+        requireAttendanceSupport(variant.unverifiedPlaceParticipantIds.isEmpty(), command.supportsConditionalAttendance)
         val selection =
             RecommendationSelection(
                 run.id.value,
@@ -326,6 +359,13 @@ class MatchingResultService(
         coordinationRunRepository.update(confirmed)
         roomRepository.update(room.transition())
         return selectedResult(confirmed, room, selection, command.locale)
+    }
+
+    private fun requireAttendanceSupport(
+        attendanceConfirmed: Boolean,
+        supported: Boolean,
+    ) {
+        if (!attendanceConfirmed && !supported) fail(MatchingResultErrorCode.CLIENT_UPDATE_REQUIRED)
     }
 
     private fun recommendationList(

@@ -66,7 +66,7 @@ class ConditionalPlacePersistenceContractTest : RecommendationPostgresFixture() 
                     PRIVATE_TRAVEL
             },
         )
-        val view = items(recommendations(fixture.host), "options").single()
+        val view = items(recommendations(fixture.host, "conditional-v1"), "options").single()
         val variant = items(view, "variants").single()
         assertEquals(false, variant["attendance_confirmed"])
         assertEquals("IN_PERSON", variant["meeting_mode"])
@@ -78,18 +78,18 @@ class ConditionalPlacePersistenceContractTest : RecommendationPostgresFixture() 
     fun `CPP02 selecting and rereading a time leaves actual in person attendance unverified`() {
         val fixture = conditionalRoom()
         val before = pendingRows(fixture.sourceRun)
-        val option = items(recommendations(fixture.host), "options").single()
+        val option = items(recommendations(fixture.host, "conditional-v1"), "options").single()
         val variant = items(option, "variants").single()
         val selected =
             document(
                 mvc
-                    .perform(selection(fixture, option, variant))
+                    .perform(selection(fixture, option, variant).param("attendance_support", "conditional-v1"))
                     .andExpect(status().isOk)
                     .andReturn()
                     .response,
             )
         assertEquals(false, child(selected, "candidate")["attendance_confirmed"])
-        val stored = result(fixture.host)
+        val stored = result(fixture.host, "conditional-v1")
         val candidate = child(stored, "candidate")
         assertEquals(false, candidate["attendance_confirmed"])
         assertEquals("IN_PERSON", candidate["meeting_mode"])
@@ -107,20 +107,24 @@ class ConditionalPlacePersistenceContractTest : RecommendationPostgresFixture() 
             ),
         )
         assertEquals("CONFIRMED", room(fixture.host)["public_status"])
-        mvc.perform(selection(fixture, option, variant)).andExpect(status().isOk)
-        assertEquals(stored, result(fixture.host), "Idempotent selection does not certify previously unverified conditions")
+        mvc.perform(selection(fixture, option, variant).param("attendance_support", "conditional-v1")).andExpect(status().isOk)
+        assertEquals(
+            stored,
+            result(fixture.host, "conditional-v1"),
+            "Idempotent selection does not certify previously unverified conditions",
+        )
     }
 
     @Test
     fun `CPP03 a time only in person proposal persists without inventing a venue or switching online`() {
         val fixture = conditionalRoom(removeKnownPlace = true)
-        val option = items(recommendations(fixture.host), "options").single()
+        val option = items(recommendations(fixture.host, "conditional-v1"), "options").single()
         val variant = items(option, "variants").single()
         assertEquals("IN_PERSON", variant["meeting_mode"])
         assertNull(variant["place"])
         assertEquals(false, variant["attendance_confirmed"])
-        mvc.perform(selection(fixture, option, variant)).andExpect(status().isOk)
-        val candidate = child(result(fixture.host), "candidate")
+        mvc.perform(selection(fixture, option, variant).param("attendance_support", "conditional-v1")).andExpect(status().isOk)
+        val candidate = child(result(fixture.host, "conditional-v1"), "candidate")
         assertEquals("IN_PERSON", candidate["meeting_mode"])
         assertNull(candidate["place"])
         assertEquals(false, candidate["attendance_confirmed"])
@@ -136,8 +140,8 @@ class ConditionalPlacePersistenceContractTest : RecommendationPostgresFixture() 
     @Test
     fun `CPP04 old SQL writers cannot clear uncertainty after confirmation in either stored projection`() {
         val fixture = conditionalRoom()
-        val option = items(recommendations(fixture.host), "options").single()
-        mvc.perform(selection(fixture, option)).andExpect(status().isOk)
+        val option = items(recommendations(fixture.host, "conditional-v1"), "options").single()
+        mvc.perform(selection(fixture, option).param("attendance_support", "conditional-v1")).andExpect(status().isOk)
         val before = pendingRows(fixture.sourceRun)
         assertFailsWith<DataAccessException> {
             jdbc.update(
@@ -152,7 +156,7 @@ class ConditionalPlacePersistenceContractTest : RecommendationPostgresFixture() 
             )
         }
         assertEquals(before, pendingRows(fixture.sourceRun))
-        assertEquals(false, child(result(fixture.host), "candidate")["attendance_confirmed"])
+        assertEquals(false, child(result(fixture.host, "conditional-v1"), "candidate")["attendance_confirmed"])
     }
 
     @Test

@@ -21,10 +21,10 @@ class RecommendationConfirmationPostgresTest : RecommendationPostgresFixture() {
     @Test
     fun `typed confirmation first makes waiting reopen fail and retains selected result`() {
         val fixture = recommendedRoom(partial = true)
-        val option = items(recommendations(fixture.host), "options").first()
-        assertEquals(200 to 409, ordered(fixture, selection(fixture, option), reopen(fixture)))
+        val option = items(recommendations(fixture.host, attendanceSupport = "conditional-v1"), "options").first()
+        assertEquals(200 to 409, ordered(fixture, selection(fixture, option, attendanceSupport = "conditional-v1"), reopen(fixture)))
         assertEquals("CONFIRMED", room(fixture.host)["public_status"])
-        assertEquals(option["option_id"], child(result(fixture.host), "selection")["option_id"])
+        assertEquals(option["option_id"], child(result(fixture.host, attendanceSupport = "conditional-v1"), "selection")["option_id"])
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM final_confirmations", Int::class.java))
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM input_revision_rounds", Int::class.java))
         assertEquals(fixture.sourceRun, activeRun(fixture.host))
@@ -33,8 +33,8 @@ class RecommendationConfirmationPostgresTest : RecommendationPostgresFixture() {
     @Test
     fun `reopen first makes waiting typed confirmation fail without writing a selection`() {
         val fixture = recommendedRoom(partial = true)
-        val option = items(recommendations(fixture.host), "options").first()
-        assertEquals(200 to 409, ordered(fixture, reopen(fixture), selection(fixture, option)))
+        val option = items(recommendations(fixture.host, attendanceSupport = "conditional-v1"), "options").first()
+        assertEquals(200 to 409, ordered(fixture, reopen(fixture), selection(fixture, option, attendanceSupport = "conditional-v1")))
         assertEquals("COLLECTING", room(fixture.host)["public_status"])
         assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM input_revision_rounds WHERE status = 'OPEN'", Int::class.java))
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM final_confirmations", Int::class.java))

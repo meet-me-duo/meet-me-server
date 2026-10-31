@@ -47,6 +47,7 @@ data class SelectRecommendationCommand(
     val endAt: Instant,
     val rawCredential: String?,
     val locale: Locale,
+    val supportsConditionalAttendance: Boolean = false,
 )
 
 interface RecommendationUseCase {
@@ -54,6 +55,7 @@ interface RecommendationUseCase {
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): RecommendationListView
 
     fun alternatives(
@@ -63,6 +65,7 @@ interface RecommendationUseCase {
         limit: Int,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): RecommendationListView
 
     fun confirm(command: SelectRecommendationCommand): ConfirmedResultView
