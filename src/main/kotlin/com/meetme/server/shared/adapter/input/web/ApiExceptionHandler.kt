@@ -152,6 +152,7 @@ private fun MatchingResultErrorCode.status(): HttpStatus =
         MatchingResultErrorCode.CANDIDATE_ALREADY_CONFIRMED,
         MatchingResultErrorCode.RECOMMENDATION_SELECTION_REQUIRED,
         MatchingResultErrorCode.STALE_ANALYSIS,
+        MatchingResultErrorCode.CLIENT_UPDATE_REQUIRED,
         -> HttpStatus.CONFLICT
     }
 

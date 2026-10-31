@@ -721,3 +721,8 @@ renderer는 승인된 두 계정을 위해 엄격한 SecureString의 쉼표 구�
 ### 격리 V2의 라벨 중심 개인 재확인 (ADR-065)
 
 V2 evidence가 있는 Jev 요청은 유효한 Choice 의미 라벨을 보존하고 confidence/확률은 관측 데이터로 유지한다. V1의 confidence 정규화와 동작 기준값은 기존대로다. V2 TwoStage는 semanticAssessment가 있으면 이를 읽고 없으면 assessment를 사용한다. 첫 CLEAR는 확정 종료, NEEDS_REVIEW/INDETERMINATE는 같은15초 잔여 안에서 원본 Luna 생성기로 재확인한다. supplement가 이미 있으면 추가 생성 없이 CLEAR 또는 미확정 접수한다. wire 유효성·기술 실패·source fencing·CAS·마감 불변 version은 유지한다. 공개 API·DB migration·생성 prompt/schema·후보 계산·웹 디자인 변경은 없다. 상세 상태와 별도 실모델 검증 한계는 [V2 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다.
+
+
+## 2026-10-31 조건부 참석의 클라이언트 호환 경계
+
+ADR-067에 따라 candidates/추천 primary·alternatives/result GET과 legacy·typed confirmation POST가 optional `attendance_support=conditional-v1`을 해석한다. HTTP adapter는 정확한 선언만 application의 의미 지원 boolean으로 전달한다. MatchingResultService는 기존 인증·상태·분석/선택 오류 순서를 유지하고 반환할 false 의미 및 write 전 selected variant의 미확인 상태를 검사한다. 미지원이면409 CLIENT_UPDATE_REQUIRED이며 후보를 true로 바꾸거나 filter하지 않는다. 결과 adapter의 좁은 no-store filter는 오류 응답에도 적용한다. query는 인증 capability가 아니고 CORS/Origin·소유권·트랜잭션·protocol·DB guard는 그대로다. 실제 OpenAPI로 optional parameter와409 계약을 생성하고 웹은 여섯 요청에 동일 지원 값을 넣는다. 기존 서버의 미지원 query 무시 및 구 웹의409 cache 처리도 검증한다.

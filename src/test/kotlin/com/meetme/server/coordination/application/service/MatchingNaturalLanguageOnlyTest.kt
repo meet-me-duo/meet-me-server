@@ -303,6 +303,8 @@ internal class NaturalLanguageOnlyFixture(
     val normalizedRepository = mock(NormalizedPlaceRepository::class.java)
 
     init {
+        // A fresh fixture must not inherit a preceding MockMvc request on the same test thread.
+        RequestContextHolder.resetRequestAttributes()
         room = room.close(ClosureReason.EXPECTED_PARTICIPANTS, NOW, submissions.size).transition(activeRunId = run.id.value)
         `when`(roomRepository.findById(room.id)).thenReturn(room)
         `when`(roomRepository.findByIdForUpdate(room.id)).thenReturn(room)

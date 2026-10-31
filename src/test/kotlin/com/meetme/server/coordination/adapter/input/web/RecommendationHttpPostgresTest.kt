@@ -159,7 +159,7 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
     @Test
     fun `typed confirmation preserves chosen twenty minutes and protects the whole immutable tuple`() {
         val fixture = recommendedRoom(partial = true)
-        val before = recommendations(fixture.host)
+        val before = recommendations(fixture.host, attendanceSupport = "conditional-v1")
         val option = items(before, "options").first()
         val range = child(option, "time_range")
         val start = Instant.parse(range["start_at"].toString()).plusSeconds(600).toString()
@@ -167,7 +167,7 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
         val first =
             document(
                 mvc
-                    .perform(selection(fixture, option, start = start, end = end))
+                    .perform(selection(fixture, option, start = start, end = end, attendanceSupport = "conditional-v1"))
                     .andExpect(status().isOk)
                     .andReturn()
                     .response,
@@ -182,13 +182,17 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
         val candidate = child(first, "candidate")
         assertNull(candidate["candidate_id"], "A new option UUID must never impersonate a legacy candidate FK")
         assertEquals(listOf(mapOf("start_at" to start, "end_at" to end)), items(candidate, "time_ranges"))
-        assertEquals(first, result(fixture.member), "Result reads must reload the persisted selection")
+        assertEquals(
+            first,
+            result(fixture.member, attendanceSupport = "conditional-v1"),
+            "Result reads must reload the persisted selection",
+        )
         assertEquals("CONFIRMED", room(fixture.host)["public_status"])
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM final_confirmations", Int::class.java))
         val replay =
             document(
                 mvc
-                    .perform(selection(fixture, option, start = start, end = end))
+                    .perform(selection(fixture, option, start = start, end = end, attendanceSupport = "conditional-v1"))
                     .andExpect(status().isOk)
                     .andReturn()
                     .response,
@@ -196,13 +200,35 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
         assertEquals(first, replay)
         mvc
             .perform(
-                selection(fixture, option, start = start, end = Instant.parse(end).plusSeconds(60).toString()),
+                selection(
+                    fixture,
+                    option,
+                    start = start,
+                    end = Instant.parse(end).plusSeconds(60).toString(),
+                    attendanceSupport = "conditional-v1",
+                ),
             ).andExpect(status().isConflict)
-        mvc.perform(selection(fixture, option, items(option, "variants").last(), start = start, end = end)).andExpect(status().isConflict)
-        mvc.perform(selection(fixture, items(before, "options").last())).andExpect(status().isConflict)
+        mvc
+            .perform(
+                selection(
+                    fixture,
+                    option,
+                    items(option, "variants").last(),
+                    start = start,
+                    end = end,
+                    attendanceSupport = "conditional-v1",
+                ),
+            ).andExpect(status().isConflict)
+        mvc
+            .perform(
+                selection(fixture, items(before, "options").last(), attendanceSupport = "conditional-v1"),
+            ).andExpect(status().isConflict)
         mvc.perform(reopen(fixture)).andExpect(status().isConflict)
-        assertEquals(first, result(fixture.host))
-        assertEquals(range, child(items(recommendations(fixture.host), "options").first(), "time_range"))
+        assertEquals(first, result(fixture.host, attendanceSupport = "conditional-v1"))
+        assertEquals(
+            range,
+            child(items(recommendations(fixture.host, attendanceSupport = "conditional-v1"), "options").first(), "time_range"),
+        )
     }
 
     @Test
@@ -344,7 +370,7 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
     @Test
     fun `open correction and replacement analysis protect frozen versions and reject old option selection`() {
         val fixture = recommendedRoom(partial = true)
-        val oldOption = items(recommendations(fixture.host), "options").first()
+        val oldOption = items(recommendations(fixture.host, attendanceSupport = "conditional-v1"), "options").first()
         val versions = frozenVersions(fixture.sourceRun)
         val frozenOriginalSql =
             "SELECT v.id, v.raw_text, v.created_at FROM coordination_runs r " +
@@ -357,8 +383,8 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
             .perform(
                 get("/api/rooms/{code}/recommendations", fixture.host.code).cookie(fixture.host.cookie()),
             ).andExpect(status().isConflict)
-        mvc.perform(alternatives(fixture)).andExpect(status().isConflict)
-        mvc.perform(selection(fixture, oldOption)).andExpect(status().isConflict)
+        mvc.perform(alternatives(fixture, attendanceSupport = "conditional-v1")).andExpect(status().isConflict)
+        mvc.perform(selection(fixture, oldOption, attendanceSupport = "conditional-v1")).andExpect(status().isConflict)
         mvc.perform(save(fixture.host, "H1 corrected", round, 1)).andExpect(status().isOk)
         mvc.perform(analyze(fixture, round)).andExpect(status().isAccepted)
         val next = activeRun(fixture.host)
@@ -372,9 +398,9 @@ class RecommendationHttpPostgresTest : RecommendationPostgresFixture() {
         assertTrue(afterState > beforeState, "Correction transitions must publish a newer room snapshot")
         assertEquals((room(fixture.host).getValue("state_version") as Number).toLong(), afterState)
         assertEquals("H1 corrected", owner(fixture.host)["raw_text"])
-        assertEquals(next.toString(), recommendations(fixture.host)["analysis_id"])
-        mvc.perform(selection(fixture, oldOption)).andExpect(status().isConflict)
-        mvc.perform(alternatives(fixture)).andExpect(status().isConflict)
+        assertEquals(next.toString(), recommendations(fixture.host, attendanceSupport = "conditional-v1")["analysis_id"])
+        mvc.perform(selection(fixture, oldOption, attendanceSupport = "conditional-v1")).andExpect(status().isConflict)
+        mvc.perform(alternatives(fixture, attendanceSupport = "conditional-v1")).andExpect(status().isConflict)
         assertEquals(next, activeRun(fixture.host))
     }
 

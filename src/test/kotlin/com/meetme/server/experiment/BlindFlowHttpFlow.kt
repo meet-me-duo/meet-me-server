@@ -187,8 +187,8 @@ class BlindFlowHttpFlow(
         val closed = request("POST", "$path/close", actor, body = mapOf("confirm_early" to true))
         check(closed.status == 200)
         val room = poll(path, actor) { it.body.path("public_status").asText() !in setOf("ANALYZING", "COLLECTING", "") }.body
-        val candidates = request("GET", "$path/candidates", actor)
-        val recommendations = request("GET", "$path/recommendations", actor)
+        val candidates = request("GET", "$path/candidates?attendance_support=conditional-v1", actor)
+        val recommendations = request("GET", "$path/recommendations?attendance_support=conditional-v1", actor)
         val unapplied = request("GET", "$path/candidates/unapplied-inputs", actor)
         val anonymous = request("GET", "$path/candidates/unapplied-inputs")
         val member = request("GET", "$path/candidates/unapplied-inputs", cookie = checkNotNull(participantCookie))
@@ -268,7 +268,7 @@ class BlindFlowHttpFlow(
                 val confirmed =
                     request(
                         "POST",
-                        "$path/recommendations/${option.path("option_id").asText()}/confirmation",
+                        "$path/recommendations/${option.path("option_id").asText()}/confirmation?attendance_support=conditional-v1",
                         actor,
                         body =
                             mapOf(
@@ -280,7 +280,7 @@ class BlindFlowHttpFlow(
                     )
                 evidence["confirmationStatus"] = confirmed.status
                 evidence["selectedWindow"] = mapOf("startAt" to start.toString(), "endAt" to end.toString())
-                val selected = request("GET", "$path/result", actor)
+                val selected = request("GET", "$path/result?attendance_support=conditional-v1", actor)
                 evidence["resultStatus"] = selected.status
                 val selection = selected.body.path("selection")
                 evidence["selectionPersisted"] =

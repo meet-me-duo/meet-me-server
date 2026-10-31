@@ -56,6 +56,7 @@ interface GetCandidatesUseCase {
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): CandidateListView
 }
 
@@ -72,6 +73,7 @@ interface ConfirmCandidateUseCase {
         candidateId: UUID,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): ConfirmedResultView
 }
 
@@ -80,6 +82,7 @@ interface GetConfirmedResultUseCase {
         inviteCode: String,
         rawCredential: String?,
         locale: Locale,
+        supportsConditionalAttendance: Boolean = false,
     ): ConfirmedResultView
 }
 
@@ -95,6 +98,7 @@ enum class MatchingResultErrorCode {
     CANDIDATE_ALREADY_CONFIRMED,
     RECOMMENDATION_SELECTION_REQUIRED,
     STALE_ANALYSIS,
+    CLIENT_UPDATE_REQUIRED,
 }
 
 class MatchingResultException(

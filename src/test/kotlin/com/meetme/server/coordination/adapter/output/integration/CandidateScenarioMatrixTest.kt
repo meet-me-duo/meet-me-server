@@ -120,6 +120,7 @@ class CandidateScenarioMatrixTest {
             mvc
                 .perform(
                     get("/api/rooms/{code}/candidates", fixture.room.inviteCode.value)
+                        .param("attendance_support", "conditional-v1")
                         .cookie(Cookie(GuestCookie.NAME, "host"))
                         .header("Accept-Language", "ko"),
                 ).andExpect(status().isOk)

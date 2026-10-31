@@ -1,3 +1,14 @@
+## 2026-10-31 현재 작업 — 구 웹 탭의 미확정 참석 의미 호환 보강
+
+- [x] `[USER]` 구버전 탭에서도 미확정 참석을 확정처럼 표시·저장하지 않도록 로컬 구현·무료 최종 검사·독립 검토를 승인했다. 새 Issue/PR/push/병합/운영·V2 활성화·유료모델/지도·권한/자격증명 변경은 이번 단계에 포함하지 않는다.
+- [x] `[AGENT]` 검증된 develop 서버 `6d67c8107832e51102059fa4d410150197dd1fa6`·웹 `2fa24d3a1e4bbd83ac2c848fe6ee20ef7cac6067`에서 별도 로컬 작업 공간/`fix/conditional-attendance-client-compat`를 준비했다. 사용자의 로컬 우선 범위에 따라 공개 Issue 생성 선행은 게시 승인 전 수행하지 않는다. 원본 미커밋과 CI179 결과는 보존한다.
+- [x] `[AGENT]` 서버 독립 HTTP+실제PG 계약17개 RED(7PASS/10예상FAIL/오류·skip0)·테스트 해시 동결, 웹 계약15개 RED(7PASS/8FAIL)→GREEN15PASS를 확인했다.
+- [ ] `[AGENT]` 여섯 결과 경로의 `attendance_support=conditional-v1` 선언, 미지원 조건부 결과409 CLIENT_UPDATE_REQUIRED, write 전 검증·기존 auth/Origin/source/CAS 순서와 설명·false 보존 및 no-store를 검증한다.
+- [ ] `[AGENT]` 생성 OpenAPI·웹 계약을 동기화하고 현재/구 main 웹 소스의 브라우저 cache/열린탭·선택·재조회, 전체 무료 검사·독립 검토/결함 주입을 확인한다.
+- [ ] `[SHARED]` 구체 공개 diff·검사 결과를 정리해 다음 게시/rollout 범위를 별도 제시한다. 자동으로 main/운영을 바꾸지 않는다.
+
+현재 단계: 서버 구현 후 집중 GREEN 진행. protocol/DB CHECK/기존 migration·판정/timeout/retry는 유지한다. 코디네이터가 수동 운영 사전점검의 정제 자료를 별도 검증했다. 실제 runtime/schema·복구 메타데이터는 로컬 운영 기록에 보존하고 공개 코드 기록과 분리한다. 사전점검을 복원 시험/자동 dispatch 준비 완료로 확대하지 않는다. 상세는 새 호환 검증 기록에 남긴다. 아래는 각 당시 시점 기록이다.
+
 ## 2026-10-31 현재 작업 — Issue #178 CI 작업 분리
 
 - [x] `[USER]` CI-only Issue 생성, 수정·검증·커밋·push·develop PR·병합 및 정확 merge SHA CI 확인을 승인했다. main·운영·V2 flag·보안/권한/자격증명 확대·유료 모델/지도 요청은 이번 범위에 포함하지 않는다.
@@ -1974,3 +1985,23 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] [AGENT] 장소허용'좋아요'와명시선호'였으면'의raw/gold/model차이및사용자결정필요여부를검토한다. 같은장소차원OR/참가자최대1점규칙을보존,단일gold과적합변경없음.
 
 무료재생완료: 신규3PASS/0fail,error,skip·ktlintCheck/assemble/Gradle0,외부API0/providerHeaders·DNS·connect·place0. 원본IN_PERSON은NO_MATCH/추천0/확정0/qualityCOMPLETE·applied3/total3/unapplied[]:p1p3TravelConstraint로offlineArea제거,p2Preferred만존재. 장소계산불가설명공백관측. 별도EITHER반사실대조군은REMOTE3안(3명2안/2명1안)·CONFIRMED·DB선택1/ID시간일치. 원본조건/선호/거절불변 input_ref만매핑,정규화DTO→DB전필드3/3각case일치. 일반지역'좋아요'를선호로해석한의심은동일장소차원의추가조건이며OR/참가자최대1점,자동2점아님으로이전표현정정. 즉시사용자결정불필요·일반분류/명시역도보정책변경은별도판단. main289/원본4hash불변·기존60진단2734sourcecompiled백업보존. 원래대면해결/개인비대면동의/실시간E2E성공주장안함. source/운영제한/병합배포·봉인변경0. 보고 docs/verification/experimental-saved-luna-replay-result.md,증거 local-only-evidence/.
+
+### 2026-10-31 구 웹 참석 의미 호환 — 1단계 최종 검증 완료
+
+- [x] 여섯 결과 API의 optional conditional-v1 지원 선언과 실제 false 결과의 구클라이언트409, write 전·replay·result·no-store 경계를 구현했다. 기존 인증·Origin·상태·CAS·domain protocol·V21/V22·provider 정책은 유지했다.
+- [x] 독립 HTTP/PostgreSQL20 및 fixture격리2 RED→GREEN,6mutants 탐지와 독립 검토(열린P1/P2없음)를 완료했다. 첫 전체12FAIL은 지원 선언 누락10건/테스트context격리2건으로 정정했고 기존 단언·test명·defaultnull을 유지했다.
+- [x] 최종 ktlintCheck·assemble·test:2697건 중2680PASS/기존17SKIP/실패·오류0,1002.547초,681소스불변. 웹 unit825/기본browser517PASS·기존1SKIP/evidence6/하네스사전검사단위3 및 build/lint/type/API 통과. 구·신4개별browser는API mock이며 실제HTTP+PG와 별도다.
+- [ ] 새 구체 승인 후 서버·웹Issue각1개와 지정feature/develop DraftPR·정확featureCI·ready/develop병합·정확mergeCI를 진행한다. 현재commit/push/PR/merge/deploy/유료·지도0. main/운영DB/V2활성화는별도단계다.
+
+정제근거 docs/verification/attendance-client-compatibility.md. 원본117/14파일 및 HEAD/index를 보존했다. 1단계완료를 전체Meetme운영완료로 표시하지 않는다. Commit/PR: 미승인·미실행.
+
+### 2026-10-31 2단계 게시·develop 통합 승인
+
+사용자가 Issue/검토 파일 commit·push/develop Draft PR/CI/ready·develop 병합/merge CI까지 승인했다. 실제 Issue #180를 생성했다. 1단계 검증 소스와 기존 결과는 유지하며 문서의 실행 상태만 갱신한다. main·운영 DB·배포·V2·유료 호출은 이 묶음에 포함하지 않는다.
+
+- [x] 로컬 호환 구현과 최종 무료 검사 완료
+- [x] Issue #180 생성 및 중복·원격 기준 확인
+- [ ] feature push와 develop Draft PR·정확 HEAD CI
+- [ ] ready/develop 병합과 정확 merge SHA CI 및 원격 포함 확인
+
+Commit/PR: 동일 커밋 예정.

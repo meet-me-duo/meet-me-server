@@ -480,3 +480,10 @@ develop `d5fce878`의 README 전체318행을 기준으로 정리했다. PR138에
 서버 PR177의 develop merge CI가 두 번 전체 job30분 제한으로 취소돼, 같은 job을 더 반복하지 않고 CI-only Issue178에서 검사를 분리한다. 앱/DB/입력 판정·provider timeout/retry·권한·운영 설정은 변경하지 않는다. 기존18명령과16배포 계약 단계/각job 순서, Quality Gate·ARM64 및기존30분제한·전체 main CI 성공 게시 gate를 유지하고 독립 Deployment Contracts job과 구조 검사1개만 추가했다.
 
 독립 RED2PASS/4FAIL→GREEN6PASS, 기존 source 계약25개와 함께31PASS, 결함주입27/27 탐지 및 원본해시 동일을 확인했다. 원본 TDD guard EXIT0(2,658PASS/기존SKIP17/FAIL0/ERROR0), source679개 불변과 skip 이름 보존을 확인했다. 별도 감시 wrapper는 Gradle daemon의 차단 시도12건으로 EXIT1이며 원본 검사 결과와 분리 기록했다. 목적지 미기록으로 시도 원인은 미확인이고 실제 모델·지도 요청은 없다. 원격feature/merge SHA CI는 아직 미완료이며 실제 결과만 후속으로 기록한다. 넓은 Issue107과 보류 PR158을 이 CI 수리 완료로 닫지 않는다. 상세는 [Issue178 검증 기록](verification/issue-178-ci-job-boundaries.md), 현재 진행은 [Implementation Plan](../implementation_plan.md)이다.
+
+
+## 2026-10-31 구 웹 참석 의미 호환 — 로컬 검증 단계
+
+별도 서버6d67/웹2fa 기반으로 여섯 결과 요청의 의미 지원 선언과 미지원 false 응답·확정 거부를 구현했다. DB/protocol/권한/provider/V2 설정은 유지했다. 독립ACC17 RED→GREEN, cache equivalent path P2의CACHE3 RED→framework수정 후20GREEN, 유한mutants6/6검출·원본307hash 보존을 확인했다. 웹unit825·관련browser98·frozenold/new4case 통과, 전체서버·웹나머지검사결과는 완료후기록한다. 새Issue/PR·병합·운영·추가유료/지도0, original분석파일보존. 상세는 [호환 검증](verification/attendance-client-compatibility.md). broad107을 이 작업의 로컬 성공만으로 완료하지 않는다.
+
+- 구 웹 호환 최종 회귀의 최초12FAIL/17SKIP를 보존했다. 명시 지원을 빠뜨린10호출과 MockMvc request-context 격리2건을 단언 유지로 정정했고 독립NFI2 RED→GREEN 및 관련67PASS/ktlintCheck를 확인했다. 웹 unit825/기본 browser517PASS·기존1SKIP/evidence6/하네스 사전검사 단위3 및 build/lint/type/API 통과. 최종 서버 ktlintCheck·assemble·test는2697건 중2680PASS/17기존SKIP/실패·오류0으로 통과했다. 전체 실행1002.547초·681소스불변·SKIP집합동일을 확인했다. 1단계 로컬 완료/2단계 게시·develop 통합 승인 대기이며 새 게시·유료·운영0이다.

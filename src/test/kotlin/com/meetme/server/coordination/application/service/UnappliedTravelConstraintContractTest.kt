@@ -333,7 +333,7 @@ class UnappliedTravelConstraintContractTest {
         unapplied: Int,
     ) {
         assertEquals(CandidateQuality.PARTIAL, f.run.quality)
-        val view = f.resultService().getCandidates(f.room.inviteCode.value, "host", Locale.KOREAN)
+        val view = f.resultService().getCandidates(f.room.inviteCode.value, "host", Locale.KOREAN, supportsConditionalAttendance = true)
         assertEquals(CandidateQuality.PARTIAL, view.quality)
         assertEquals(applied, view.appliedSubmissions)
         assertEquals(total, view.totalSubmissions)

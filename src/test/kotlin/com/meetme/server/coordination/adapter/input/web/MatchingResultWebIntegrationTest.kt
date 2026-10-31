@@ -244,6 +244,7 @@ class MatchingResultWebIntegrationTest {
             inviteCode: String,
             rawCredential: String?,
             locale: Locale,
+            supportsConditionalAttendance: Boolean,
         ): CandidateListView {
             requireParticipant(rawCredential)
             return candidates
@@ -263,6 +264,7 @@ class MatchingResultWebIntegrationTest {
             candidateId: UUID,
             rawCredential: String?,
             locale: Locale,
+            supportsConditionalAttendance: Boolean,
         ): ConfirmedResultView {
             if (rawCredential != HOST_CREDENTIAL) throw MatchingResultException(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
             val existing = confirmed
@@ -280,6 +282,7 @@ class MatchingResultWebIntegrationTest {
             inviteCode: String,
             rawCredential: String?,
             locale: Locale,
+            supportsConditionalAttendance: Boolean,
         ): ConfirmedResultView {
             requireParticipant(rawCredential)
             val candidateId = confirmed ?: throw MatchingResultException(MatchingResultErrorCode.RESULT_NOT_CONFIRMED)

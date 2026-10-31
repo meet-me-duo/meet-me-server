@@ -720,3 +720,15 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: 계산하지 못함과 실제 불가능함을 혼동하지 않고, 시간 선택의 가치를 보존하면서 조건 충족 여부에 대해 사실대로 설명하기 위해서다.
 
 **트레이드오프**: 시간 일치 참여자와 실제 대면 참석의 의미가 달라지므로 API의 attendance_confirmed 및 설명, PostgreSQL 참여자별 place_unverified 상태를 함께 보존해야 한다. 이전 완료·선택 행은 재판정하지 않는다. 지도 도입, 경로·도보 검증, 모델 정확성, 운영 정책·배포는 이번 결정에 포함되지 않는다.
+
+
+### ADR-067: 결과 요청의 조건부 참석 표시 지원 선언
+
+**상태**: Accepted for isolated compatibility work (게시·운영 적용 대기)
+**날짜**: 2026-10-31
+
+**결정**: ADR-066의 `attendance_confirmed=false` 의미를 이해하지 못하는 구 웹을 위해 결과 여섯 경로에 선택 query `attendance_support=conditional-v1`을 둔다. 이 정확한 값을 보내는 클라이언트만 미확정 참석 payload를 읽거나 확정할 수 있다. 누락·기타 값에서 해당 payload는409 `CLIENT_UPDATE_REQUIRED`와 locale별 새로고침 안내로 거부한다. true/과거 확인 결과는 기존 호환을 유지하고 혼합 list의 false 후보를 조용히 걸러내지 않는다. 선언은 인증 증명이 아니며 기존 participant/HOST·Origin·active analysis·OPEN round·선택 범위·충돌/CAS 검증을 유지한다. 확정은 write 전에 검사하고 동일 튜플 재요청과 결과 읽기도 미지원 응답을 제공하지 않는다. 여섯 경로의 성공/오류는 no-store다. 영속 protocol `diverse-time-v1`과 V9/V21/V22 CHECK·기존 데이터를 바꾸지 않는다.
+
+**이유**: 새 웹 선배포/HTML 갱신만으로 이미 실행 중인 구 JS를 교체할 수 없다. query로 의미 지원을 선언하면 새 CORS header·권한·migration 없이 기존 요청과 구별할 수 있고, 기존 오류 표시 경로로 새로고침을 안내할 수 있다.
+
+**트레이드오프**: 조건부 데이터가 필요한 구 클라이언트는 다음 읽기/쓰기에서 새로고침해야 한다. 이미 단절된 탭/미리 그린 DOM의 소급 삭제는 보장할 수 없고, 기존 운영 코드·schema의 의미와 최초 조건부 producer 전환의 안전 근거를 함께 검증한다. 구 bundle은409 뒤 캐시보다 오류를 우선 표시하는지 실제 브라우저에서 확인한다. 신 웹은 기존 서버가 query를 무시해도 과거 의미를 보존해야 하며 web-first 후 server guard를 적용한다. 미확정 상태·원문·설명·시간 선택은 그대로 보존하고 flag OFF를 rollback으로 삼지 않는다. 게시·운영·실모델 품질은 별도 경계다.
