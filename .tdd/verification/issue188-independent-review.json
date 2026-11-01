@@ -1,0 +1,89 @@
+{
+  "workItem": "issue-188-physical-runtime-and-eleven",
+  "baselineTests": 37,
+  "baselinePassed": true,
+  "restoredTests": 37,
+  "restoredSourceMatches": true,
+  "reviewedSourceSha256": {
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt": "740d6a8710f3a144c69039ecb7eeb7b3cfbb43fc53d7fe01b1b7ef412cff3190",
+    "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderConfiguration.kt": "f037530ddc5359933aa9eb84b04396df2f5839e93391313b2b16a13aed57914c",
+    "src/test/kotlin/com/meetme/server/experiment/ActivationElevenBudgetContractTest.kt": "bacac93f94bb93afa995704b4880ecb4f86b5077176ae35c809ee855255a2c5d",
+    "src/test/kotlin/com/meetme/server/experiment/ActivationElevenBudget.kt": "dd7e3716f42a0272393795beb2729b5656d23aff23549612c9c69126bd2ac219",
+    "src/test/kotlin/com/meetme/server/experiment/ActivationElevenHarnessContractTest.kt": "d2c059bfeee7818b7061507edd89bb6ed9596b95096aa40cbbf174391111c48d",
+    "src/test/kotlin/com/meetme/server/experiment/ActivationElevenHarness.kt": "08cd13132a19f11bbbafa34168ff8177dd1afadd054ced8a7f6cb2e4a2b7f725",
+    "src/test/kotlin/com/meetme/server/experiment/ActivationElevenAssertionOracleContractTest.kt": "6a61eb91259a68ac75120a85170f5b64f2fe1e85432f0690c4451a639b109772",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue188RuntimePhysicalFactoryContractTest.kt": "49951f710cadf35b261268f6046fc4e1994a77de07b56577c477a81ba45b4bb9",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue188ActualPrimaryRuntimeGraphPostgresTest.kt": "740dec8ac4e364ac7e03686b0a908750661aab9f3cc0a8c2478dc24e4b6e88f1",
+    "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckCompositionTest.kt": "88075b91fa7392be7884698274e8419a4b1af0a2f092b010c2eaccde02a7f811"
+  },
+  "mutants": [
+    {
+      "name": "restore-old-factory",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.precheck.adapter.output.provider.Issue188RuntimePhysicalFactoryContractTest.[1] mode = \"ABSENT\"",
+        "com.meetme.server.precheck.adapter.output.provider.Issue188RuntimePhysicalFactoryContractTest.[2] mode = \"DISABLED\"",
+        "com.meetme.server.precheck.adapter.output.provider.Issue188RuntimePhysicalFactoryContractTest.ADR061 activated runtime factory does not resolve an available legacy financial bean()"
+      ]
+    },
+    {
+      "name": "remove-classification-role-cap",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenBudgetContractTest.A11 each role cap rejects an extra request while other aggregate capacity remains()"
+      ]
+    },
+    {
+      "name": "skip-admission-persist",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenBudgetContractTest.A11 persistence failure never returns wire permission or refunds uncertain admission()"
+      ]
+    },
+    {
+      "name": "ignore-validation-barrier",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenBudgetContractTest.A11 HTTP200 remains blocked until independent validation completes()"
+      ]
+    },
+    {
+      "name": "skip-header-snapshot-check",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenHarnessContractTest.A11 snapshot is verified again immediately before physical headers()"
+      ]
+    },
+    {
+      "name": "permit-wrong-active-role",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenHarnessContractTest.A11 zero wire wrong role and two wire actions cannot pass harness coverage()"
+      ]
+    },
+    {
+      "name": "leak-action-exception",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenHarnessContractTest.A11 action or validation exceptions preserve consumed wire and hide private error content()"
+      ]
+    },
+    {
+      "name": "revert-assertion-sanitization",
+      "detected": true,
+      "failedTests": [
+        "com.meetme.server.experiment.ActivationElevenAssertionOracleContractTest.[1] mode = \"ACTION\"",
+        "com.meetme.server.experiment.ActivationElevenAssertionOracleContractTest.[2] mode = \"VALIDATOR\"",
+        "com.meetme.server.experiment.ActivationElevenAssertionOracleContractTest.[3] mode = \"SNAPSHOT\""
+      ]
+    }
+  ],
+  "assertionOracleFinalBinding": {
+    "oldHelperFailedTests": 3,
+    "finalHelperPassedTests": 37,
+    "testSha256": "6a61eb91259a68ac75120a85170f5b64f2fe1e85432f0690c4451a639b109772",
+    "repair": "four test-helper callback catch boundaries; preserve stop and sanitized error for AssertionError"
+  },
+  "providerRequests": 0,
+  "scope": "independent free unit/context/loopback tests; no live billing, model-quality or production claim"
+}

@@ -28,12 +28,15 @@ import java.util.function.LongSupplier
 class TwoStagePreSubmissionCheckProvider(
     private val classifier: AmbiguityClassificationPort,
     private val generator: PreSubmissionCheckProvider,
-    private val budget: AiCallBudgetPort = DefaultDenyAiCallBudget(),
+    private val budget: AiCallBudgetPort? = DefaultDenyAiCallBudget(),
     private val nanoTime: LongSupplier = LongSupplier(System::nanoTime),
     private val physicalDispatch: AiHttpDispatchGate? = null,
 ) : PreSubmissionCheckProvider {
     override fun check(request: PrecheckProviderRequest): PrecheckProviderResult {
         if (physicalDispatch?.properties?.enabled == true) return checkPhysical(request)
+        // Runtime construction is physical-only. An invalid graph cannot silently
+        // fall back to the separate legacy monetary component.
+        val legacyBudget = budget ?: fail("CONFIGURATION")
         val started = nanoTime.asLong
         val timeout = request.timeout.coerceAtMost(Duration.ofSeconds(15))
         if (timeout.isNegative || timeout.isZero) fail("TIMEOUT")
@@ -78,7 +81,7 @@ class TwoStagePreSubmissionCheckProvider(
                 )
             val reservation =
                 try {
-                    budget.reserve(intent)
+                    legacyBudget.reserve(intent)
                 } catch (_: Exception) {
                     fail("BUDGET_UNAVAILABLE")
                 } ?: fail("BUDGET_DENIED")
@@ -255,7 +258,7 @@ class TwoStagePreSubmissionCheckProvider(
             failure = failureCode(exception)
         }
         try {
-            budget.record(reservation, observation(failure))
+            (budget ?: fail("CONFIGURATION")).record(reservation, observation(failure))
         } catch (_: Exception) {
             fail("BUDGET_UNAVAILABLE")
         }
@@ -314,6 +317,14 @@ class TwoStagePreSubmissionCheckProvider(
     private fun fail(code: String): Nothing = throw PrecheckProviderException(code)
 
     companion object {
+        /** Operational dispatch does not resolve or substitute a monetary reservation port. */
+        fun runtime(
+            classifier: AmbiguityClassificationPort,
+            generator: PreSubmissionCheckProvider,
+            physicalDispatch: AiHttpDispatchGate,
+        ): TwoStagePreSubmissionCheckProvider =
+            TwoStagePreSubmissionCheckProvider(classifier, generator, budget = null, physicalDispatch = physicalDispatch)
+
         private val FAILURE_CODES =
             setOf(
                 "CONFIGURATION",

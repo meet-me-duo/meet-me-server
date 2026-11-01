@@ -501,3 +501,16 @@ develop `d5fce878`의 README 전체318행을 기준으로 정리했다. PR138에
 별도 서버6d67/웹2fa 기반으로 여섯 결과 요청의 의미 지원 선언과 미지원 false 응답·확정 거부를 구현했다. DB/protocol/권한/provider/V2 설정은 유지했다. 독립ACC17 RED→GREEN, cache equivalent path P2의CACHE3 RED→framework수정 후20GREEN, 유한mutants6/6검출·원본307hash 보존을 확인했다. 웹unit825·관련browser98·frozenold/new4case 통과, 전체서버·웹나머지검사결과는 완료후기록한다. 새Issue/PR·병합·운영·추가유료/지도0, original분석파일보존. 상세는 [호환 검증](verification/attendance-client-compatibility.md). broad107을 이 작업의 로컬 성공만으로 완료하지 않는다.
 
 - 구 웹 호환 최종 회귀의 최초12FAIL/17SKIP를 보존했다. 명시 지원을 빠뜨린10호출과 MockMvc request-context 격리2건을 단언 유지로 정정했고 독립NFI2 RED→GREEN 및 관련67PASS/ktlintCheck를 확인했다. 웹 unit825/기본 browser517PASS·기존1SKIP/evidence6/하네스 사전검사 단위3 및 build/lint/type/API 통과. 최종 서버 ktlintCheck·assemble·test는2697건 중2680PASS/17기존SKIP/실패·오류0으로 통과했다. 전체 실행1002.547초·681소스불변·SKIP집합동일을 확인했다. 1단계 로컬 완료/2단계 게시·develop 통합 승인 대기이며 새 게시·유료·운영0이다.
+
+
+### 2026-11-01 Issue #188 — 진단 정정과 runtime factory 경계·격리 11회 도구
+
+앞선 조사에서 기본 생성자의 DefaultDeny 테스트와 renderer 금융 flag를 실제 운영 그래프의 차단으로 잘못 해석했다. 실제 Spring wiring은 5e60b495/ADR-061부터 provider ON이면 기술 gate를 켜고 enforceBudget을 분리한다. 개인 입력과 최종 분석 모두 이미 금액 미설정/소진 때문에 차단하지 않는다. 보존된 Issue144 graph XML 16건도 통과했다. 원본 조사 기록은 삭제하지 않고 이 정정으로 대체한다. 현 배포본 74e4503c의 활성화 지원 경로는 별도이며 이 PR 배포가 필수 선행이 아니다.
+
+승인 범위의 최소 보강은 runtime factory에서 쓰지 않는 금전 포트 해석·DefaultDeny 대체 주입을 제거하고 물리 gate를 명시적으로 요구하는 것이다. 잘못된 연결은 CONFIGURATION으로 닫고 별도 직접 금융 컴포넌트의 거부·원장 방어는 유지한다. 최종 분석·timeout/retry·보안·DB·운영 설정은 변경하지 않는다.
+
+독립 테스트 설계로 factory 3 RED를 캡처한 뒤 GREEN, 실제 Gemini SDK/PG primary 2 GREEN, 기존 금융/설정 29 GREEN을 확인했다. 새 테스트 전용 11회 ledger 18 RED→GREEN과 실제 gate/로컬 HTTP session 13 RED→GREEN을 확인했다. 지문·배타적 승인·전송 전 영속화·단일 진행·검증 barrier·첫 오류 전체 중단을 검증한다. 유료/지도 호출은 0회이며 11회는 운영 이용 한도나 원화 금액 보증이 아니다. 추가 독립 검토·결함 주입과 최종 전체 guard/정확 HEAD CI는 진행 중이다. 상세 정제 근거는 docs/verification/issue188-physical-runtime-and-eleven.md에 기록한다.
+
+Issue #188 / Commit·Draft PR: 동일 커밋 예정. develop/main 병합·운영 배포·V2 활성화·유료 호출은 이번 작업에 포함하지 않는다.
+
+Issue #188 최종 로컬 검증: 추가 AssertionError 반례3 RED→GREEN을 포함해 마지막 원본 guard 2,724 PASS/기존17SKIP/실패·오류0. 독립 baseline37 PASS, 결함8/8 탐지, 복원37 PASS와 최종 지문 일치. 첫 전체2738/3fail/17skip와 수정 근거는 숨기지 않고 정제 verification 문서에 기록했다. feature commit/push와 Draft PR·정확 HEAD CI는 다음 승인된 단계이며 아직 완료로 표시하지 않는다.

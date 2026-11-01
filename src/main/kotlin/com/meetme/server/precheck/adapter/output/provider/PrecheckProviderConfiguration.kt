@@ -7,8 +7,6 @@ import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProv
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.shared.adapter.output.aihttp.AiDispatchGateProperties
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
-import com.meetme.server.shared.adapter.output.budget.DefaultDenyAiCallBudget
-import com.meetme.server.shared.application.port.output.AiCallBudgetPort
 import io.micrometer.core.instrument.MeterRegistry
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -37,7 +35,6 @@ class PrecheckProviderConfiguration {
         meterRegistry: MeterRegistry? = null,
         decisionRouting: PrecheckDecisionRoutingProperties = PrecheckDecisionRoutingProperties(),
         classifier: AmbiguityClassificationPort? = null,
-        budget: AiCallBudgetPort? = null,
         dispatchGate: AiHttpDispatchGate? = null,
         dispatchProperties: AiDispatchGateProperties = AiDispatchGateProperties(),
     ): PreSubmissionCheckProvider {
@@ -54,11 +51,13 @@ class PrecheckProviderConfiguration {
                 dispatchGate = dispatchGate,
             )
         if (!decisionRouting.enabled || !activation.enabled) return generator
-        return TwoStagePreSubmissionCheckProvider(
+        val physical =
+            dispatchGate?.takeIf { it.properties.enabled }
+                ?: return PreSubmissionCheckProvider { throw PrecheckProviderException("CONFIGURATION") }
+        return TwoStagePreSubmissionCheckProvider.runtime(
             classifier ?: AmbiguityClassificationPort { throw AmbiguityClassificationException("CONFIGURATION") },
             generator,
-            budget ?: DefaultDenyAiCallBudget(),
-            physicalDispatch = dispatchGate,
+            physical,
         )
     }
 }
