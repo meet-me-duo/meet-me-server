@@ -1,5 +1,18 @@
 ## 2026-11-01 현재 작업 — 신규 V2 모임 설정 전달 준비
 
+## 2026-11-01 현재 작업 — Issue #190 읽기 전용 reconcile 실패 단계 보존
+
+- [x] `[USER]` 진단 보강 구현·무료 테스트·별도 Issue·feature commit/push·develop Draft PR·정확 HEAD CI 완료를 승인했다. PR #189와 독립이며 병합·운영 실행·설정·owner/규칙 변경·유료 호출은 제외한다.
+- [x] `[AGENT]` [Issue #190](https://github.com/meet-me-duo/meet-me-server/issues/190)을 생성하고 원본 작업을 보존한 별도 체크아웃의 깨끗한 develop에서 pull --ff-only 후 `fix/issue-190-readonly-reconcile-diagnostics`를 생성했다.
+- [x] `[AGENT]` 독립 테스트 설계·최종 지문 baseline RED23·집중 GREEN10과 실제 준비 경로·실패 닫힘·비공개 경계를 확인했다.
+- [x] `[AGENT]` 준비/메타데이터/검증/journal 관측 실패의 허용된 단계·원인 코드만 별도 진단 artifact에 남기고 최종 workflow 표시까지 검증했다. 기존 v1 보고서·배포 gate·권한과 실패 상태를 유지하고 독립 결함8/8을 탐지했다.
+- [x] `[AGENT]` 독립 결함8/8·기존 관련277 PASS·원본 최종 guard2,685 PASS/기존17 SKIP/실패0을 확인했다. 첫1FAIL 원인 미확인·집중PASS·마지막0FAIL을 별도 보존한다.
+- [ ] `[AGENT]` 검토 파일만 commit/push·develop Draft PR·정확 HEAD 일반 CI 종료를 확인한다. 로컬 배포 계약19통과/Nginx1환경 제한과 CI 결과를 구분한다.
+- [ ] `[SHARED]` 진단 코드 승격/향후 읽기 전용 실행에 필요한 정확 승인 범위를 정리한다. 실제 운영 UNKNOWN 원인 확인·복구나 V2 ON 성공으로 표시하지 않는다.
+
+현재 단계: 집중·독립 검토와 원본 최종 전체 guard 완료, 검토 파일 commit/push·Draft PR·정확 CI 확인 준비. 최종 갱신:2026-11-01 UTC. 최초 배포의 동일 release 경로 거절과 새 reconcile의 무보고 진입 실패는 별개로 기록하며 아직 원 운영 command/journal을 직접 관측하지 않았다. 기존 원본 응답·실패 증거와 사용자 데이터는 게시하지 않는다. 아래는 각 당시 기록이다.
+
+
 - [x] `[USER]` 별도 로컬 구현·무료 검증·Issue/feature/Draft PR·정확 HEAD CI까지 승인했다. 이번 변경의 병합·운영 배포/활성화·유료 모델/지도·새 예산 기능·보안/자격증명 변경은 포함하지 않는다.
 - [x] `[AGENT]` 최신 원격 develop `422d8c26b24f7bce6a105f49b5f2efeafc57e5b3`·main `42db6039e961437b18575b901444e6e0da99fa30`과 원본 작업 지문을 확인하고 별도 detached worktree를 준비했다. 기존 운영 배포 실행을 중복하지 않는다.
 - [x] `[AGENT]` optional nonsecret `precheck-evidence-enabled`를 기존 Name/Type/boolean 검증과 raw env_file 경계로 전달했다. 기본 OFF·malformed 원자 보존·provider 독립·OFF 복원/실제 Compose의 shell 값 비간섭은 집중 RED7FAIL→GREEN7PASS 및 역방향 독립1PASS로 확인했다.

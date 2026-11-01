@@ -591,5 +591,9 @@ if __name__ == "__main__":
     try:
         main()
     except Exception:
-        print("Release operation unavailable; immutable metadata or fresh production facts failed validation.")
+        if (sys.argv[1:] in (["--pipeline-reconcile"], ["--pipeline-complete"])
+                and os.environ.get("RELEASE_ACTION") == "reconcile"):
+            print("Read-only reconciliation unavailable; inspect the sanitized diagnostic marker and artifact.")
+        else:
+            print("Release operation unavailable; immutable metadata or fresh production facts failed validation.")
         sys.exit(2)

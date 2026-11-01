@@ -501,3 +501,13 @@ develop `d5fce878`의 README 전체318행을 기준으로 정리했다. PR138에
 별도 서버6d67/웹2fa 기반으로 여섯 결과 요청의 의미 지원 선언과 미지원 false 응답·확정 거부를 구현했다. DB/protocol/권한/provider/V2 설정은 유지했다. 독립ACC17 RED→GREEN, cache equivalent path P2의CACHE3 RED→framework수정 후20GREEN, 유한mutants6/6검출·원본307hash 보존을 확인했다. 웹unit825·관련browser98·frozenold/new4case 통과, 전체서버·웹나머지검사결과는 완료후기록한다. 새Issue/PR·병합·운영·추가유료/지도0, original분석파일보존. 상세는 [호환 검증](verification/attendance-client-compatibility.md). broad107을 이 작업의 로컬 성공만으로 완료하지 않는다.
 
 - 구 웹 호환 최종 회귀의 최초12FAIL/17SKIP를 보존했다. 명시 지원을 빠뜨린10호출과 MockMvc request-context 격리2건을 단언 유지로 정정했고 독립NFI2 RED→GREEN 및 관련67PASS/ktlintCheck를 확인했다. 웹 unit825/기본 browser517PASS·기존1SKIP/evidence6/하네스 사전검사 단위3 및 build/lint/type/API 통과. 최종 서버 ktlintCheck·assemble·test는2697건 중2680PASS/17기존SKIP/실패·오류0으로 통과했다. 전체 실행1002.547초·681소스불변·SKIP집합동일을 확인했다. 1단계 로컬 완료/2단계 게시·develop 통합 승인 대기이며 새 게시·유료·운영0이다.
+
+
+## 2026-11-01 — Issue #190 읽기 전용 진단 실패 단계 보존
+
+- 사용자 승인 범위는 별도 Issue·feature 구현·무료 검증·commit/push·develop Draft PR·정확 HEAD 일반 CI까지다. PR #189와 독립이며 main/develop 병합·운영 재실행·설정·owner/규칙 변경·추가 유료 요청은 수행하지 않는다.
+- 기존 reconcile은 준비 실패 시 plan/report를 만들지 못하고 일반 exit2만 남겨 최종 artifact 누락과 원인 관측 실패가 섞였다. 별도 strict 진단 artifact에 허용된 단계/원인과 literal false만 남기고, 최종 검사에서 plan보다 먼저 검증·표시하며 실패 상태를 유지하도록 보강했다. 기존 v1 정상 보고서·event/origin/package/identity 검증과 무변경 권한 경계는 유지한다.
+- 독립 설계 테스트는 실제 driver/main/prepare/reconcile/complete와 실제 immutable validators를 사용하고 외부 서비스 응답만 합성했다. 최종 동결 테스트 지문으로 baseline 예상 실패23·설정오류0→집중10 PASS, 기존 issue154 전체277 PASS를 확인했다. 원자 발행 PermissionError fixture의 누락된 표준 OS 경계를 독립 설계자가 추가하고 기대값을 유지한 채 baseline RED를 다시 확인했다. 최초 실패와 원본 로그는 로컬에 보존했다.
+- 독립 검토·의도적 결함8/8 탐지·복원10 PASS·최종 소스/테스트/workflow4개 지문 일치를 확인했다. 원 운영 UNKNOWN 원인과 V2 ON 성공을 확인한 것으로 확대하지 않는다.
+- 최종 원본 전체 guard EXIT0: 2,685 PASS·기존17 SKIP·실패/오류0, 346 suites·1,017.304초·소스/guard 지문 불변. 첫1FAIL·집중PASS·마지막0FAIL은 별도 보존하고 초기 원인 미확인을 유지한다. 기존 배포 계약19명령 통과·Nginx1명령 로컬 환경 제한을 구분하며 정확 HEAD 일반 CI에서 원래 검사를 확인한다. 현재 Commit/PR은 동일 커밋 예정이며 feature 게시·CI 확인은 별도 후속이다.
+- 상세 계약·정제 증거는 [검증 기록](verification/issue190-readonly-reconcile-diagnostics.md)과 `.tdd/red/issue190-readonly-reconcile-diagnostics.json`, `.tdd/verification/issue190-reconcile-diagnostics.json`을 따른다. 원본 모델 응답·운영 로그·계정 비밀·DB·봉인 사례는 게시하지 않는다.
