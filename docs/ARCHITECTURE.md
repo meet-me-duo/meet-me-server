@@ -715,7 +715,9 @@ renderer는 승인된 두 계정을 위해 엄격한 SecureString의 쉼표 구�
 
 ### 원문·보완 근거를 보존하는 격리 V2 실험 (ADR-064)
 
-기본 OFF인 meetme.precheck.evidence-enabled를 켠 인스턴스의 새 방만 PRE_SUBMIT_V2를 기록한다. V21의 candidate/version input_evidence JSONB는 하나의 원문 기준과 하나의 대상 답변, 해석 상태를 보존한다. CLEAR와 미확정 RECEIVED 모두 submission version을 만들며 기존 마감은 그 ID를 동결한다. 개인/최종 source fencing은 동일 근거를 포함하고 최종 전송 검증은 동결 version을 읽는다. 최종 자연어 adapter는 전체 원문·근거를 기존 조건 schema로 구조화하고 기존 서버 matching/recommendation이 후보를 계산한다. 새 V2 주최자 진단만 최종 원문·답변을 반환하고 기존 V1 비공개 계약은 보존한다. 실험 가정과 운영 전 결정·롤백은 [V2 실험 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다.
+기본 OFF인 meetme.precheck.evidence-enabled를 켠 인스턴스의 새 방만 PRE_SUBMIT_V2를 기록한다. V21의 candidate/version input_evidence JSONB는 하나의 원문 기준과 하나의 대상 답변, 해석 상태를 보존한다. CLEAR와 미확정 RECEIVED 모두 submission version을 만들며 기존 마감은 그 ID를 동결한다. 개인/최종 source fencing은 동일 근거를 포함하고 최종 전송 검증은 동결 version을 읽는다. 최종 자연어 adapter는 전체 원문·근거를 기존 조건 schema로 구조화하고 기존 서버 matching/recommendation이 후보를 계산한다. 새 V2 주최자 진단만 최종 원문·답변을 반환하고 기존 V1 비공개 계약은 보존한다. 확정된 질문·미응답·공개 정책 및 운영 전달/복귀는 ADR-068과 [V2 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다.
+
+2026-11-01 준비한 renderer는 기존 optional String runtime Parameter `/config/precheck-evidence-enabled`를 정확한 boolean으로 검증해 `MEETME_PRECHECK_EVIDENCE_ENABLED`를 raw env_file로 전달한다. 미등록/조회 실패는 OFF이며 malformed 성공 응답은 이전 파일을 보존한다. Compose 환경의 shell 기본값으로 덮어쓰지 않는다. 기존 prefix 읽기 권한 외 IAM·비밀·예산·DB migration을 추가하지 않으며 provider 활성화와 독립적이다. app 재시작 뒤 신규 INSERT만 protocol을 정하고 기존 V2 reader와 frozen evidence는 OFF 후에도 유지한다. 실제 운영 활성화는 별도 승인 대상이다.
 
 
 ### 격리 V2의 라벨 중심 개인 재확인 (ADR-065)

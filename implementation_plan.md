@@ -1,3 +1,17 @@
+## 2026-11-01 현재 작업 — 신규 V2 모임 설정 전달 준비
+
+- [x] `[USER]` 별도 로컬 구현·무료 검증·Issue/feature/Draft PR·정확 HEAD CI까지 승인했다. 이번 변경의 병합·운영 배포/활성화·유료 모델/지도·새 예산 기능·보안/자격증명 변경은 포함하지 않는다.
+- [x] `[AGENT]` 최신 원격 develop `422d8c26b24f7bce6a105f49b5f2efeafc57e5b3`·main `42db6039e961437b18575b901444e6e0da99fa30`과 원본 작업 지문을 확인하고 별도 detached worktree를 준비했다. 기존 운영 배포 실행을 중복하지 않는다.
+- [x] `[AGENT]` optional nonsecret `precheck-evidence-enabled`를 기존 Name/Type/boolean 검증과 raw env_file 경계로 전달했다. 기본 OFF·malformed 원자 보존·provider 독립·OFF 복원/실제 Compose의 shell 값 비간섭은 집중 RED7FAIL→GREEN7PASS 및 역방향 독립1PASS로 확인했다.
+- [x] `[USER/AGENT]` 모임별 참여자당 질문1회·미응답/전송 실패의 이전 접수본 보존·사전 고지 후 주최자 한정 최종 미반영 원문/명시 답변/사유 공개를 ADR-068 및 PRD/V2 계약에 확정했다. 기존 구현의 동작·중간 질문 비공개·후보 계산/조건부 참석 보호를 유지한다.
+- [x] `[AGENT]` 독립 Spring 환경 이름 바인딩·실제 PostgreSQL 신규/기존 모임·V2 reader 보존5PASS와 runtime 결함 주입5개 탐지를 확인했다.
+- [x] `[AGENT]` 최종 원본 guard의 ktlintCheck·assemble·test exit0(978.996초), 2,685PASS/기존17SKIP/실패·오류0, 원본 guard·source 불변·SKIP 집합 동일을 확인했다. 정확 CI auth82PASS·운영자90PASS·기존 준비 Python8PASS와 독립 반례/FI5개도 확인했다. 첫 확대 회귀201건152PASS/49FAIL과 별도 Python5FAIL·서식 실패는 보존하고 대역/로컬 환경 문제를 단언·제한 변경 없이 정정했다.
+- [x] `[AGENT]` [Issue #184](https://github.com/meet-me-duo/meet-me-server/issues/184)의 실제 생성과 원격 상태를 확인하고, 깨끗한 최신 develop에서 `fix/issue-184-v2-runtime-evidence`를 생성해 검증된 변경을 연결했다.
+- [ ] `[AGENT]` feature commit/push·develop Draft PR·정확 HEAD 일반 CI 종료를 확인한다. 현재 Commit/PR: 동일 커밋 예정이며 원격 CI 완료를 주장하지 않는다.
+- [ ] `[USER/SHARED]` 실제 PR/검증 결과와 모델별 물리 호출·비용 상한을 검토한 뒤 별도로 병합·배포·신규 모임 활성화·유료 검증 범위를 승인한다. OFF는 새 writer만 중단하고 기존 V2 reader를 유지한다.
+
+현재 단계(커밋 직전 기록): 로컬 구현·독립/전체 무료 검증 완료, Issue184·feature 준비 후 게시 진행. 초기 Issue 호출은 기록 코드 오류와 응답 상세 미보존으로 원인이 미확인이었으며 미생성 재확인 후 같은 요청 한 번 재시도에서 실제 생성이 확인됐다. 검증된 code/test는 변경하지 않았다. [검증 기록](docs/verification/stage5-v2-runtime-evidence.md)을 따른다. 기존 Stage4 운영 배포 완료 인계(실행41217295517 attempt1, V1–V22 검증)와 구분하며 이번 준비에서 운영을 변경하지 않았다. 아래는 각 날짜 당시의 기록이다.
+
 ## 2026-10-31 현재 작업 — 구 웹 탭의 미확정 참석 의미 호환 보강
 
 - [x] `[USER]` 구버전 탭에서도 미확정 참석을 확정처럼 표시·저장하지 않도록 로컬 구현·무료 최종 검사·독립 검토를 승인했다. 새 Issue/PR/push/병합/운영·V2 활성화·유료모델/지도·권한/자격증명 변경은 이번 단계에 포함하지 않는다.

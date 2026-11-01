@@ -732,3 +732,16 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: 새 웹 선배포/HTML 갱신만으로 이미 실행 중인 구 JS를 교체할 수 없다. query로 의미 지원을 선언하면 새 CORS header·권한·migration 없이 기존 요청과 구별할 수 있고, 기존 오류 표시 경로로 새로고침을 안내할 수 있다.
 
 **트레이드오프**: 조건부 데이터가 필요한 구 클라이언트는 다음 읽기/쓰기에서 새로고침해야 한다. 이미 단절된 탭/미리 그린 DOM의 소급 삭제는 보장할 수 없고, 기존 운영 코드·schema의 의미와 최초 조건부 producer 전환의 안전 근거를 함께 검증한다. 구 bundle은409 뒤 캐시보다 오류를 우선 표시하는지 실제 브라우저에서 확인한다. 신 웹은 기존 서버가 query를 무시해도 과거 의미를 보존해야 하며 web-first 후 server guard를 적용한다. 미확정 상태·원문·설명·시간 선택은 그대로 보존하고 flag OFF를 rollback으로 삼지 않는다. 게시·운영·실모델 품질은 별도 경계다.
+
+### ADR-068: 신규 V2 모임 설정과 질문·접수·최종 공개 정책 확정
+
+**상태**: Accepted for implementation and free verification (실제 활성화·병합/배포·유료 검증은 별도 승인)
+**날짜**: 2026-11-01
+
+**결정**: 사용자 승인으로 ADR-064/065의 미결정 세부 정책을 확정한다. 보완 질문은 모임별 참여자당 1회이며 수정·취소·재시도로 한도를 초기화하지 않는다. 미응답·검사 중·전송 기술 실패는 이전 유효 접수본을 유지하고 없으면 미접수다. 사전 고지 후 최종 해석에 반영하지 못한 원문·명시 보완 답변·사유만 주최자에게 공개하며 중간 질문 이력은 공개하지 않는다. 기존 V1/LEGACY 정책과 후보 계산·조건부 참석 guard는 바꾸지 않는다.
+
+기존 runtime Parameter prefix의 optional nonsecret String `/config/precheck-evidence-enabled`를 renderer가 정확한 Name/Type/boolean으로 검증해 `MEETME_PRECHECK_EVIDENCE_ENABLED`로 전달한다. 기본값·미등록·조회 실패는 OFF이고 malformed 성공 응답은 전체 env 교체를 거부한다. Compose raw env_file을 유지하며 provider/routing/classifier나 재정 권한을 자동 활성화하지 않는다. app 재시작 후 신규 INSERT만 V2를 선택한다. OFF 복원은 이후 신규 방에만 적용하고 이미 생성한 V2 protocol·reader·불변 근거·마감 version을 보존한다.
+
+**이유**: 질문을 revision마다 새로 허용하지 않고 기술 실패를 정상 접수로 위장하지 않으면서, 기존 유효 제출과 최종 전체 문맥 해석 기회를 보존한다. 이미 존재하는 운영 Parameter 전달과 Compose 경계를 재사용하면 새 IAM·비밀·DB migration 없이 provider 활성화와 모임 protocol 선택을 분리할 수 있다.
+
+**트레이드오프**: optional 조회 실패도 신규 방의 OFF로 처리하므로 동시 운영 모임의 protocol은 다를 수 있다. 앱 재시작 없이 설정 파일만 바꿔도 즉시 적용된다고 주장하지 않는다. OFF는 reader나 최종 matcher의 rollback이 아니며 기존 V2 방이 있는 동안 구 binary로 되돌릴 수 없다. 활성화 전 provider 준비·정확한 배포/복구 계획·제한된 유료 검증의 호출/비용 상한은 별도 검토한다. 이번 준비는 실제 Parameter 등록·운영 renderer·재시작·외부 모델 요청을 수행하지 않는다.
