@@ -1,0 +1,18 @@
+{
+  "workItem": "issue-188-runtime-physical-factory",
+  "sourceRevision": "296caa124816d9911e4245ce7a4d13a29708b533",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/Issue188RuntimePhysicalFactoryContractTest.kt",
+      "sha256": "49951f710cadf35b261268f6046fc4e1994a77de07b56577c477a81ba45b4bb9"
+    }
+  ],
+  "command": "./gradlew --offline --no-daemon --max-workers=2 ktlintTestSourceSetFormat test --tests '*.ActivationElevenBudgetContractTest' --tests '*.Issue188RuntimePhysicalFactoryContractTest' --tests '*.Issue188ActualPrimaryRuntimeGraphPostgresTest'",
+  "failedTests": [
+    "[1] mode = \"ABSENT\"",
+    "[2] mode = \"DISABLED\"",
+    "ADR061 activated runtime factory does not resolve an available legacy financial bean()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-01T09:29:49.246418+00:00"
+}

@@ -18,7 +18,14 @@ import com.meetme.server.precheck.application.service.PrecheckProcessingService
 import com.meetme.server.precheck.domain.PrecheckCandidate
 import com.meetme.server.precheck.domain.PrecheckExecution
 import com.meetme.server.precheck.domain.PrecheckStatus
+import com.meetme.server.shared.adapter.output.aihttp.AiDispatchGateProperties
+import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
+import com.meetme.server.shared.application.port.output.AiBudgetExecution
+import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
 import com.meetme.server.shared.application.port.output.AiCallBudgetPort
+import com.meetme.server.shared.application.port.output.AiProviderDispatchContext
+import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
+import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.time.MeetingTimeZone
 import com.meetme.server.shared.domain.time.SearchDateRange
@@ -86,13 +93,14 @@ class TwoStagePrecheckCompositionTest {
 
     @ParameterizedTest
     @ValueSource(booleans = [false, true])
-    fun `TS11 both flags ON remain default-denied with or without a classifier bean`(classifierBean: Boolean) {
+    fun `TS11 both flags ON without current execution context remain denied with or without a classifier bean`(classifierBean: Boolean) {
         val outbound = AtomicInteger()
         val classifications = AtomicInteger()
         var runner =
             runner(
                 outbound,
             ).withPropertyValues("meetme.precheck.decision-routing.enabled=true", "meetme.precheck.provider.enabled=true")
+                .withBean(AiHttpDispatchGate::class.java, Supplier { physicalGate() })
         if (classifierBean) {
             runner =
                 runner.withBean(
@@ -145,12 +153,13 @@ class TwoStagePrecheckCompositionTest {
     }
 
     @Test
-    fun `TS11 only an explicit synthetic budget and classifier allow the opted in composition to classify`() {
+    fun `TS11 explicit technical gate context and classifier allow opted in classification without monetary reservation`() {
         val outbound = AtomicInteger()
         val classifications = AtomicInteger()
         val budget = TwoStageFakeBudget()
         runner(outbound)
             .withPropertyValues("meetme.precheck.decision-routing.enabled=true", "meetme.precheck.provider.enabled=true")
+            .withBean(AiHttpDispatchGate::class.java, Supplier { physicalGate() })
             .withBean(
                 AmbiguityClassificationPort::class.java,
                 Supplier {
@@ -163,9 +172,10 @@ class TwoStagePrecheckCompositionTest {
             .run { context ->
                 assertNull(context.startupFailure)
                 val provider = context.getBean(PreSubmissionCheckProvider::class.java)
-                assertEquals(PrecheckVerdict.CLEAR, provider.check(TwoStageFixtures.request()).verdict)
+                assertEquals(PrecheckVerdict.CLEAR, provider.check(physicalRequest()).verdict)
                 assertEquals(1, classifications.get())
-                assertEquals(1, budget.held(TwoStageFixtures.roomId))
+                assertEquals(0, budget.held(TwoStageFixtures.roomId))
+                assertTrue(budget.requests.isEmpty())
                 assertEquals(0, outbound.get())
             }
     }
@@ -239,6 +249,31 @@ class TwoStagePrecheckCompositionTest {
         assertEquals(room.searchRange.endExclusive, sent.searchEndDate)
         assertTrue(sent.timeout > Duration.ZERO && sent.timeout <= Duration.ofSeconds(15))
         verify(processing).publish(claim, result, null)
+    }
+
+    private fun physicalGate() =
+        AiHttpDispatchGate(
+            AiDispatchGateProperties(true),
+            mock(DurableAiBudgetPort::class.java),
+            Clock.fixed(TwoStageFixtures.anchor, ZoneOffset.UTC),
+            runtimeGuard = AiRuntimeDispatchGuardPort { _, _ -> null },
+            enforceBudget = false,
+        )
+
+    private fun physicalRequest(): PrecheckProviderRequest {
+        val request = TwoStageFixtures.request()
+        val execution =
+            AiBudgetExecution(
+                TwoStageFixtures.roomId,
+                AiBudgetExecutionKind.PRECHECK,
+                request.checkId,
+                requireNotNull(request.executionGeneration).toLong(),
+                UUID(0, 188),
+                1,
+                "a".repeat(64),
+                "b".repeat(64),
+            )
+        return request.copy(dispatchContext = AiProviderDispatchContext(execution, System.nanoTime() + request.timeout.toNanos()))
     }
 
     private fun runner(outbound: AtomicInteger) =

@@ -2019,3 +2019,18 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [ ] ready/develop 병합과 정확 merge SHA CI 및 원격 포함 확인
 
 Commit/PR: 동일 커밋 예정.
+
+
+### 2026-11-01 Issue #188 — 최소 runtime factory 정리와 격리 11회 검증
+
+현재 범위는 구현·무료 검사·feature commit/push·develop Draft PR·정확 SHA CI 종료까지다. 현 배포본의 정상 금액 분리는 이미 구현되어 있으며, 이전 차단 진단을 정정한다. 이 작업의 배포를 V2 활성화의 필수 선행으로 요구하지 않는다.
+
+- [x] 실제 개인/최종 운영 wiring·ADR-061·도입 커밋 및 잘못된 원인 해석 정정
+- [x] Issue #188, 최신 develop 기준 격리 feature와 원본 작업 보존
+- [x] 독립 factory 3 RED→GREEN, 실제 Gemini primary PG 2 GREEN 및 직접 금융/설정 29 회귀
+- [x] test-only 11회 ledger 18 RED→GREEN, 실제 로컬 HTTP harness 13 RED→GREEN
+- [x] 독립 검토와 의미 있는 결함 주입 8/8 검증, 최종 포맷 RED3→GREEN37 및 지문 일치
+- [x] 최종 ktlintCheck·assemble·test guard: 2,724 PASS/기존17SKIP/실패0, 공개 파일·비밀값 제외 검토
+- [ ] feature commit/push·develop Draft PR·정확 최종 HEAD 필수 CI 종료
+
+운영/지도/실제 모델 호출 0회. 기존 명시적 금융 컴포넌트·기술 gate·소유권·기한·질문 한도를 유지한다. 11회는 향후 승인된 격리 평가만의 전송 상한이며 금액 상한은 미확정이다. Commit·PR: 동일 커밋 예정.
