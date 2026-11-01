@@ -1,0 +1,39 @@
+{
+  "workItem": "issue-190-readonly-reconcile-diagnostics",
+  "sourceRevision": "296caa124816d9911e4245ce7a4d13a29708b533",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_issue190_reconcile_diagnostics.py",
+      "sha256": "cfd770689d1ca8abc032f223cd14e089c4bfb0384bd17069e42bc1d4833f6bc7"
+    }
+  ],
+  "command": "python -m unittest discover -s deploy/tests -p test_issue154_issue190_reconcile_diagnostics.py",
+  "failedTests": [
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_completion_consumes_valid_diagnostic_before_missing_or_poisoned_plan (poisoned=False)",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_completion_consumes_valid_diagnostic_before_missing_or_poisoned_plan (poisoned=True)",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_invalid_entry_context_fails_before_any_download",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_invalid_operation_input_has_entry_diagnostic_with_null_identity_and_no_service_read",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='MANIFEST_DOWNLOAD')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='MANIFEST_VALIDATION')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='ORIGIN_VALIDATION')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='ARCHIVE_DOWNLOAD')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='ARCHIVE_INTEGRITY')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='PACKAGE_VALIDATION')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='PUBLIC_CONTRACT')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='IDENTITY_VALIDATION')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='JOURNAL_READ')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='JOURNAL_VALIDATION')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_real_prepare_failures_have_distinct_stage_and_preserve_read_only_boundary (stage='REPORT_PUBLICATION')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_reason_is_based_on_typed_failure_and_never_exception_text_or_class (reason='NOT_FOUND', kind='FileNotFoundError')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_reason_is_based_on_typed_failure_and_never_exception_text_or_class (reason='ACCESS_DENIED', kind='PermissionError')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_reason_is_based_on_typed_failure_and_never_exception_text_or_class (reason='TIMED_OUT', kind='TimeoutError')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_reason_is_based_on_typed_failure_and_never_exception_text_or_class (reason='TIMED_OUT', kind='TimeoutExpired')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_reason_is_based_on_typed_failure_and_never_exception_text_or_class (reason='INTERRUPTED', kind='KeyboardInterrupt')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_reason_is_based_on_typed_failure_and_never_exception_text_or_class (reason='INVALID_OR_UNAVAILABLE', kind='ArbitrarySensitiveFailure')",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_unwritable_diagnostic_emits_only_sanitized_publication_failure_and_remains_red",
+    "test_issue154_issue190_reconcile_diagnostics.Issue190ReconcileDiagnosticTests.test_workflow_preserves_diagnostic_and_provides_completion_binding"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-01T12:22:14.066975+00:00",
+  "fixtureCorrection": "Atomic publication destination denial added by independent test designer; assertions unchanged; final test hash reverified RED on original production source. Initial RED retained locally."
+}

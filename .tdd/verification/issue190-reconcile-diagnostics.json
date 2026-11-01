@@ -1,0 +1,95 @@
+{
+  "workItem": "issue-190-readonly-reconcile-diagnostics",
+  "sourceRevision": "296caa124816d9911e4245ce7a4d13a29708b533",
+  "reviewType": "independent test design, frozen RED, source review and isolated fault injection",
+  "reviewedSourceHashes": {
+    "deploy/pipeline/release_pipeline.py": "eb66d2a96e330f1e864fdd4d1f68565b846584e2b40dcead064c73b0b1778a10",
+    "deploy/pipeline/run-approved-release.py": "407ed84ed3ee4b8298695b59c13c14a1b3797823c1929b4c1bc0904713a94d59",
+    ".github/workflows/deploy.yml": "f1f0c94a7519a7a691cec582e57f758f7f68f7b49bf38cf83266052fd8046152",
+    "deploy/tests/test_issue154_issue190_reconcile_diagnostics.py": "cfd770689d1ca8abc032f223cd14e089c4bfb0384bd17069e42bc1d4833f6bc7"
+  },
+  "baseline": {
+    "methods": 10,
+    "pass": 10,
+    "errors": 0
+  },
+  "restored": {
+    "methods": 10,
+    "pass": 10,
+    "errors": 0
+  },
+  "mutations": [
+    {
+      "name": "flatten-stage-recorder",
+      "detectedAssertionFailures": 11
+    },
+    {
+      "name": "guess-access-denial-from-text",
+      "detectedAssertionFailures": 1
+    },
+    {
+      "name": "accept-forged-schema",
+      "detectedAssertionFailures": 6
+    },
+    {
+      "name": "omit-event-env-operation-binding",
+      "detectedAssertionFailures": 2
+    },
+    {
+      "name": "read-plan-before-diagnostic",
+      "detectedAssertionFailures": 2
+    },
+    {
+      "name": "leak-causal-private-failure",
+      "detectedAssertionFailures": 6
+    },
+    {
+      "name": "disguise-observed-ssm-failed",
+      "detectedAssertionFailures": 1
+    },
+    {
+      "name": "claim-during-readonly-reconcile",
+      "detectedAssertionFailures": 1
+    }
+  ],
+  "meaningfulMutantsDetected": 8,
+  "testFixtureCorrection": {
+    "assertionsUnchanged": true,
+    "atomicPublicationDenialAdded": true,
+    "finalHashBaselineRedReconfirmed": true
+  },
+  "actualEntryAndPrepareUsed": true,
+  "serviceTransportSynthetic": true,
+  "externalNetworkAndMutationAuthority": 0,
+  "originalOperatingFailureRecovered": false,
+  "zeroAuthorityScope": "tested preparation failures and existing SSM Failed observation; unchanged successful-command verification may use the existing read-only host probe",
+  "finalOriginalGuard": {
+    "exitCode": 0,
+    "elapsedSeconds": 1017.3042049840005,
+    "sourceUnchanged": true,
+    "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+    "providerKeysRemoved": true,
+    "suites": 346,
+    "tests": 2702,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 17,
+    "pass": 2685
+  },
+  "initialOriginalGuard": {
+    "tests": 2702,
+    "pass": 2684,
+    "skipped": 17,
+    "failures": 1,
+    "relatedKotlinUnchanged": true,
+    "causeEstablished": false,
+    "isolatedExistingClassPass": true
+  },
+  "localDeploymentContracts": {
+    "passedCommands": 19,
+    "environmentBlocked": 1,
+    "blockedScript": "deploy/scripts/verify-nginx-runtime.sh",
+    "scriptUnchanged": true,
+    "ordinaryExactHeadCiPending": true
+  }
+}

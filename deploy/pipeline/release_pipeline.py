@@ -22,11 +22,104 @@ import uuid
 
 BASE = Path(__file__).resolve().parent
 MARKER = "MEETME_DEPLOYMENT_RESULT_V1 "
+DIAGNOSTIC_FILE = "reconcile-diagnostic.json"
+DIAGNOSTIC_MARKER = "MEETME_RECONCILE_DIAGNOSTIC_V1 "
+DIAGNOSTIC_STAGES = frozenset((
+    "ENTRY_VALIDATION", "MANIFEST_DOWNLOAD", "MANIFEST_VALIDATION", "ORIGIN_VALIDATION",
+    "ARCHIVE_DOWNLOAD", "ARCHIVE_INTEGRITY", "PACKAGE_VALIDATION", "PUBLIC_CONTRACT",
+    "IDENTITY_VALIDATION", "JOURNAL_READ", "JOURNAL_VALIDATION", "REPORT_PUBLICATION",
+))
+DIAGNOSTIC_REASONS = frozenset((
+    "INVALID_OR_UNAVAILABLE", "TIMED_OUT", "NOT_FOUND", "ACCESS_DENIED", "INTERRUPTED",
+))
 
 
 def _require(condition):
     if not condition:
         raise ValueError("UNTRUSTED_PIPELINE_RESULT")
+
+
+def _diagnostic_stage(diagnostic, stage):
+    if diagnostic is not None:
+        _require(stage in DIAGNOSTIC_STAGES)
+        diagnostic["stage"] = stage
+
+
+def _diagnostic_reason(error):
+    # Typed local failures only. Provider text never proves an access denial.
+    if isinstance(error, (KeyboardInterrupt, SystemExit)):
+        return "INTERRUPTED"
+    if isinstance(error, (TimeoutError, subprocess.TimeoutExpired)):
+        return "TIMED_OUT"
+    if isinstance(error, FileNotFoundError):
+        return "NOT_FOUND"
+    if isinstance(error, PermissionError):
+        return "ACCESS_DENIED"
+    return "INVALID_OR_UNAVAILABLE"
+
+
+def _diagnostic_record(env, stage, error):
+    requested = env.get("OPERATION_ID")
+    operation_id = requested if type(requested) is str and re.fullmatch(r"[0-9a-f]{64}", requested) else None
+    _require(stage in DIAGNOSTIC_STAGES)
+    return {"protocol": "meet-me-reconcile-diagnostic-v1", "operationId": operation_id,
+            "diagnosticComplete": False, "stage": stage, "reason": _diagnostic_reason(error)}
+
+
+def _emit_diagnostic(record):
+    # Only an exact, allowlisted projection may reach logs or the job summary.
+    _validate_diagnostic(record)
+    print(DIAGNOSTIC_MARKER + _canonical(record).decode("utf-8"))
+    summary = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary:
+        with Path(summary).open("a", encoding="utf-8") as stream:
+            stream.write("### Read-only reconciliation unavailable\n\n")
+            stream.write("- Failure stage: **" + record["stage"] + "**\n")
+            stream.write("- Reason: **" + record["reason"] + "**\n")
+            stream.write("- Diagnostic complete: **false**; no deployment success is asserted.\n\n")
+
+
+def _validate_diagnostic(record):
+    _require(type(record) is dict and set(record) == {
+        "protocol", "operationId", "diagnosticComplete", "stage", "reason"})
+    _require(record["protocol"] == "meet-me-reconcile-diagnostic-v1"
+             and record["diagnosticComplete"] is False)
+    _require(type(record["stage"]) is str and record["stage"] in DIAGNOSTIC_STAGES)
+    _require(type(record["reason"]) is str and record["reason"] in DIAGNOSTIC_REASONS)
+    operation = record["operationId"]
+    _require((type(operation) is str and re.fullmatch(r"[0-9a-f]{64}", operation))
+             or (operation is None and record["stage"] == "ENTRY_VALIDATION"))
+    return record
+
+
+def _publish_diagnostic_failure(env, diagnostic, error):
+    record = _diagnostic_record(env, diagnostic["stage"], error)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="wb", prefix=".reconcile-diagnostic-", dir=".", delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(_canonical(record) + b"\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, DIAGNOSTIC_FILE)
+    except BaseException as publication_error:
+        record = _diagnostic_record(env, "REPORT_PUBLICATION", publication_error)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    _emit_diagnostic(record)
+
+
+def _read_bound_diagnostic(env):
+    record = _validate_diagnostic(_file_json(DIAGNOSTIC_FILE, 8192))
+    event = _file_json(env["GITHUB_EVENT_PATH"], 262144)
+    requested = env.get("OPERATION_ID")
+    _require(env.get("RELEASE_ACTION") == "reconcile"
+             and event.get("inputs", {}).get("action") == "reconcile"
+             and event["inputs"].get("operation_id") == requested)
+    valid_requested = type(requested) is str and re.fullmatch(r"[0-9a-f]{64}", requested)
+    _require(record["operationId"] == (requested if valid_requested else None))
+    return record
 
 
 def aws_call(read_fallback, service, operation, *args):
@@ -236,11 +329,13 @@ def run_automatic(identity, adapter):
     return result(record)
 
 
-def reconcile_known_operation(identity, operation_id, adapter):
+def reconcile_known_operation(identity, operation_id, adapter, diagnostic=None):
     completion = _module("release_completion")
     current = completion.validate_identity(identity)
     _require(type(operation_id) is str and re.fullmatch(r"[0-9a-f]{64}", operation_id))
+    _diagnostic_stage(diagnostic, "JOURNAL_READ")
     record = adapter.read_operation_for_reconcile(operation_id)
+    _diagnostic_stage(diagnostic, "JOURNAL_VALIDATION")
     _require(type(record) is dict and type(record.get("identity")) is dict)
     original = completion.validate_identity(record["identity"])
     _require(_module("transition_orchestrator").operation_id(original) == operation_id == record.get("operationId"))
@@ -501,8 +596,9 @@ def _context(env):
 
 
 @contextmanager
-def prepare_release(driver, env, observe=True):
+def prepare_release(driver, env, observe=True, diagnostic=None):
     """Read the exact published package and current host; never pause or deploy."""
+    _diagnostic_stage(diagnostic, "ENTRY_VALIDATION")
     event = _file_json(env["GITHUB_EVENT_PATH"], 262144)
     context = _context(env)
     requested, approve = env["RELEASE_ACTION"], env.get("APPROVE_FIRST_TRANSITION", "false")
@@ -519,13 +615,17 @@ def prepare_release(driver, env, observe=True):
                 "imageRepository": env["ECR_REPOSITORY_URL"]}
     _require(all(re.fullmatch(r"[1-9][0-9]{0,19}", expected[name]) for name in ("buildRunId", "buildRunAttempt")))
     prefix = "releases/builds/" + expected["buildRunId"] + "/" + expected["buildRunAttempt"] + "/"
+    _diagnostic_stage(diagnostic, "MANIFEST_VALIDATION")
     policy = driver._load("pipeline_approved_policy", driver.BASE / "pipeline/approved_release.py")
     with tempfile.TemporaryDirectory(prefix="meet-me-pipeline-") as temporary:
         directory = Path(temporary)
+        _diagnostic_stage(diagnostic, "MANIFEST_DOWNLOAD")
         driver._download(bucket, prefix + "manifest.json", directory / "manifest.json", 65536)
+        _diagnostic_stage(diagnostic, "MANIFEST_VALIDATION")
         manifest = _file_json(directory / "manifest.json")
         validated = policy.validate_manifest(manifest, expected)
         _require(".ecr." + region + "." in manifest["imageRepository"])
+        _diagnostic_stage(diagnostic, "ORIGIN_VALIDATION")
         driver._verify_origin(manifest, action)
         if context["eventName"] == "workflow_run":
             _require(manifest["sourceSha"] == context["sourceSha"]
@@ -533,14 +633,19 @@ def prepare_release(driver, env, observe=True):
             tip = _github(driver, "branches/main")
             _require(type(tip) is dict and tip.get("commit", {}).get("sha") == manifest["sourceSha"])
         archive = directory / "release.tar.gz"
+        _diagnostic_stage(diagnostic, "ARCHIVE_DOWNLOAD")
         driver._download(bucket, prefix + "release.tar.gz", archive, driver.MAX_ARCHIVE)
+        _diagnostic_stage(diagnostic, "ARCHIVE_INTEGRITY")
         _require(hashlib.sha256(archive.read_bytes()).hexdigest() == manifest["archiveSha256"])
+        _diagnostic_stage(diagnostic, "PACKAGE_VALIDATION")
         auth = driver._verify_package(archive, manifest)
+        _diagnostic_stage(diagnostic, "PUBLIC_CONTRACT")
         with tarfile.open(archive, "r:gz") as package:
             public_contract = (validate_public_contract(strict_json(package.extractfile("public-api-contract.json").read(131073), 131072))
                                if "public-api-contract.json" in package.getnames() else None)
         facts, parameter_ready = (driver._collect_facts(instance, region, manifest, auth_required=auth,
                                                          maintenance_resume=action == "resume") if observe else (None, False))
+        _diagnostic_stage(diagnostic, "IDENTITY_VALIDATION")
         identity = {key: manifest[key] for key in ("sourceSha", "buildRunId", "buildRunAttempt", "releaseId", "imageDigest")}
         identity.update(workflowRunId=env["GITHUB_RUN_ID"], workflowRunAttempt=env["GITHUB_RUN_ATTEMPT"])
         identity = _module("release_completion").validate_identity(identity)
@@ -1056,21 +1161,27 @@ def _emit_reconciliation(report):
 
 
 def reconcile_pipeline(driver, env):
-    op_id = env.get("OPERATION_ID")
-    _require(type(op_id) is str and re.fullmatch(r"[0-9a-f]{64}", op_id))
-    event = _file_json(env["GITHUB_EVENT_PATH"], 262144)
-    _require(env["GITHUB_EVENT_NAME"] == "workflow_dispatch" and event.get("inputs", {}).get("action") == "reconcile"
-             and event["inputs"].get("operation_id") == op_id)
-    with prepare_release(driver, env, observe=False) as release:
-        adapter = AwsReleaseAdapter(release, "preflight", command_wait_seconds=30)
-        report = reconcile_known_operation(release["identity"], op_id, adapter)
-        plan = {"protocol": "meet-me-release-plan-v1", "identity": release["identity"], "manifest": release["manifest"],
-                "action": "reconcile", "mode": "TRANSITION_REQUIRED", "gateReady": False, "gateEnvironment": None,
-                "originalRules": None, "parameterReady": False}
-        Path("release-plan.json").write_bytes(_canonical(plan) + b"\n")
-        _outputs(plan)
-        _emit_reconciliation(report)
-        _emit_inspection(inspect_recovery_state(op_id, adapter))
+    diagnostic = {"stage": "ENTRY_VALIDATION"}
+    try:
+        op_id = env.get("OPERATION_ID")
+        _require(type(op_id) is str and re.fullmatch(r"[0-9a-f]{64}", op_id))
+        event = _file_json(env["GITHUB_EVENT_PATH"], 262144)
+        _require(env["GITHUB_EVENT_NAME"] == "workflow_dispatch" and event.get("inputs", {}).get("action") == "reconcile"
+                 and event["inputs"].get("operation_id") == op_id)
+        with prepare_release(driver, env, observe=False, diagnostic=diagnostic) as release:
+            adapter = AwsReleaseAdapter(release, "preflight", command_wait_seconds=30)
+            report = reconcile_known_operation(release["identity"], op_id, adapter, diagnostic=diagnostic)
+            _diagnostic_stage(diagnostic, "REPORT_PUBLICATION")
+            plan = {"protocol": "meet-me-release-plan-v1", "identity": release["identity"], "manifest": release["manifest"],
+                    "action": "reconcile", "mode": "TRANSITION_REQUIRED", "gateReady": False, "gateEnvironment": None,
+                    "originalRules": None, "parameterReady": False}
+            Path("release-plan.json").write_bytes(_canonical(plan) + b"\n")
+            _outputs(plan)
+            _emit_reconciliation(report)
+            _emit_inspection(inspect_recovery_state(op_id, adapter))
+    except BaseException as failure:
+        _publish_diagnostic_failure(env, diagnostic, failure)
+        raise ValueError("READ_ONLY_RECONCILIATION_UNAVAILABLE") from None
 
 
 def _validate_reconciliation_report(report, plan, env):
@@ -1207,8 +1318,14 @@ def main(driver, arguments):
     os.umask(0o077)
     _require(type(arguments) is list and len(arguments) == 1)
     env = os.environ
-    driver.validate_workflow_event(_file_json(env["GITHUB_EVENT_PATH"], 262144), _context(env))
     phase = arguments[0]
+    try:
+        driver.validate_workflow_event(_file_json(env["GITHUB_EVENT_PATH"], 262144), _context(env))
+    except BaseException as failure:
+        if phase == "--pipeline-reconcile":
+            _publish_diagnostic_failure(env, {"stage": "ENTRY_VALIDATION"}, failure)
+            raise ValueError("READ_ONLY_RECONCILIATION_UNAVAILABLE") from None
+        raise
     if phase == "--pipeline-plan":
         return plan_pipeline(driver, env)
     if phase == "--pipeline-reconcile":
@@ -1218,6 +1335,9 @@ def main(driver, arguments):
     if phase in ("--pipeline-automatic", "--pipeline-transition"):
         return execute_pipeline(driver, env, phase == "--pipeline-transition")
     _require(phase == "--pipeline-complete")
+    if env.get("RELEASE_ACTION") == "reconcile" and (Path(DIAGNOSTIC_FILE).exists() or Path(DIAGNOSTIC_FILE).is_symlink()):
+        _emit_diagnostic(_read_bound_diagnostic(env))
+        raise ValueError("READ_ONLY_RECONCILIATION_UNAVAILABLE") from None
     plan = _read_plan(env)
     if plan["action"] == "reconcile":
         report = _validate_reconciliation_report(_file_json("recovery-report.json", 8192), plan, env)

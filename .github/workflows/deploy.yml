@@ -221,6 +221,7 @@ jobs:
             approved-release-summary.json
             recovery-report.json
             recovery-inspection.json
+            reconcile-diagnostic.json
           retention-days: 3
           if-no-files-found: warn
 
@@ -395,6 +396,8 @@ jobs:
       BUILD_RUN_ATTEMPT: ${{ github.event_name == 'workflow_run' && needs.build-publish.outputs.build_run_attempt || inputs.build_run_attempt }}
       NORMAL_RELEASE_RESULT: ${{ needs.automatic-release.result }}
       TRANSITION_RELEASE_RESULT: ${{ needs.transition-release.result }}
+      RELEASE_ACTION: ${{ github.event_name == 'workflow_run' && 'automatic' || inputs.action }}
+      OPERATION_ID: ${{ inputs.operation_id }}
     steps:
       - name: Check out exact completion verifier
         uses: actions/checkout@v7
