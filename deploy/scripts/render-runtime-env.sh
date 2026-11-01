@@ -70,6 +70,7 @@ validate_auth_destination() {
 }
 if [[ "$auth_required" == true ]]; then validate_auth_destination; fi
 
+precheck_evidence_enabled=false
 openai_api_key=
 typesafe_api_key=
 if [[ "$runtime_mode" == gemini-luna-required ]]; then
@@ -158,6 +159,18 @@ except Exception:
 }
 
 if [[ "$auth_required" == true ]]; then
+  # Room protocol admission is independent of provider/model activation. Reuse
+  # the existing exact-name typed optional-boolean boundary; unavailable is OFF,
+  # malformed successful responses must preserve the previous environment.
+  if evidence_parameter="$(read_operations_parameter config/precheck-evidence-enabled String enabled)"; then
+    precheck_evidence_enabled="$evidence_parameter"
+  else
+    evidence_lookup_status="$?"
+    if [[ "$evidence_lookup_status" != 71 ]]; then
+      runtime_fail 'Pre-submit evidence runtime configuration is invalid'
+    fi
+  fi
+  unset evidence_parameter
   google_client_id="$(get_auth_parameter secret/google-client-id SecureString)"
   google_client_secret="$(get_auth_parameter secret/google-client-secret SecureString)"
   kakao_client_id="$(get_auth_parameter secret/kakao-client-id SecureString)"
@@ -340,6 +353,7 @@ trap 'rm -f "$temporary"' EXIT
     printf 'MEETME_PRECHECK_PROVIDER_ENABLED=%s\n' "$precheck_provider_enabled"
     printf 'MEETME_PRECHECK_DECISIONROUTING_ENABLED=%s\n' "$precheck_provider_enabled"
     printf 'MEETME_PRECHECK_CLASSIFIER_ENABLED=%s\n' "$precheck_provider_enabled"
+    printf 'MEETME_PRECHECK_EVIDENCE_ENABLED=%s\n' "$precheck_evidence_enabled"
     printf 'MEETME_AI_BUDGET_ENABLED=%s\n' "$financial_budget_enabled"
     printf 'MEETME_AI_BUDGET_POLICYPATH=/run/meetme-ai/runtime-ai-policy.json\n'
     printf 'MEETME_AI_BUDGET_POLICYSHA256=%s\n' "$policy_sha256"

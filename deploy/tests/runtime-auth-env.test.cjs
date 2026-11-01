@@ -124,6 +124,98 @@ function preserved(f, result, extra = []) {
   quiet(result, extra);
 }
 
+// Stage 5: the room protocol flag is separate from provider admission. Keep this
+// contract in the existing mandatory runtime suite; no live AWS/LLM is inherited.
+const evidenceParameter = 'config/precheck-evidence-enabled';
+const evidenceKey = 'MEETME_PRECHECK_EVIDENCE_ENABLED';
+const evidenceRow = Value => ({ Name: `/fixture/production/${evidenceParameter}`, Type: 'String', Value });
+const evidenceLines = f => f.read().split('\n').filter(line => line.startsWith(`${evidenceKey}=`));
+
+test('EV01 missing and unavailable optional evidence switch render explicit OFF', () => {
+  for (const unavailable of [[], [evidenceParameter]]) {
+    const f = fixture({ unavailable }); try {
+      const result = f.render(); assert.equal(result.error, undefined); assert.equal(result.status, 0); quiet(result);
+      assert.deepEqual(evidenceLines(f), [`${evidenceKey}=false`]);
+      assert.equal(f.calls().filter(call => call.name === `/fixture/production/${evidenceParameter}`).length, 1);
+    } finally { f.remove(); }
+  }
+});
+
+for (const value of ['true', 'false']) {
+  test(`EV02 exact ${value} is delivered independently of provider/routing/classifier`, () => {
+    const f = fixture({ changes: { [evidenceParameter]: evidenceRow(value) } }); try {
+      const result = f.render(); assert.equal(result.status, 0); quiet(result);
+      assert.deepEqual(evidenceLines(f), [`${evidenceKey}=${value}`]);
+      for (const key of ['PROVIDER', 'DECISIONROUTING', 'CLASSIFIER']) assert.ok(f.read().includes(`MEETME_PRECHECK_${key}_ENABLED=false\n`));
+      assert.ok(!f.calls().some(call => call.name?.endsWith('/secret/typesafe-api-key')));
+      assert.equal(fs.statSync(f.destination).mode & 0o777, 0o600);
+      assert.ok(f.calls().every(call => call.old_preserved));
+    } finally { f.remove(); }
+  });
+}
+
+test('EV03 malformed successful switch responses fail atomically without logging raw input', () => {
+  const rows = [
+    ...['', 'TRUE', 'False', '1', ' true', 'true\n', 'true\r', 'true\u0000', 'true\nINJECTED=true', null, true, 1, [], {}].map(evidenceRow),
+    { ...evidenceRow('true'), Type: 'SecureString' },
+    { ...evidenceRow('true'), Name: '/fixture/production/config/precheck-provider-enabled' },
+    { Type: 'String', Value: 'true' },
+  ];
+  for (const row of rows) {
+    const f = fixture({ changes: { [evidenceParameter]: row } }); try { preserved(f, f.render(), ['INJECTED=true']); } finally { f.remove(); }
+  }
+});
+
+test('EV04 malformed JSON refuses replacement of a previously enabled environment', () => {
+  const f = fixture({ changes: { [evidenceParameter]: evidenceRow('true') } }); try {
+    assert.equal(f.render().status, 0); const before = f.read();
+    const file = path.join(f.root, 'scenario.json'); const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    data.malformed = evidenceParameter; fs.writeFileSync(file, JSON.stringify(data));
+    const result = f.render(); assert.equal(result.error, undefined); assert.notEqual(result.status, 0); quiet(result, ['SYNTHETIC_INVALID_JSON']);
+    assert.equal(f.read(), before); assert.equal(fs.statSync(f.destination).mode & 0o777, 0o600);
+  } finally { f.remove(); }
+});
+
+test('EV05 OFF or unavailable refresh removes stale ON without enabling any provider', () => {
+  for (const replacement of ['false', null]) {
+    const f = fixture({ changes: { [evidenceParameter]: evidenceRow('true') } }); try {
+      assert.equal(f.render().status, 0); assert.deepEqual(evidenceLines(f), [`${evidenceKey}=true`]);
+      const file = path.join(f.root, 'scenario.json'); const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (replacement === null) delete data.parameters[evidenceParameter]; else data.parameters[evidenceParameter] = evidenceRow(replacement);
+      fs.writeFileSync(file, JSON.stringify(data)); const result = f.render(); assert.equal(result.status, 0); quiet(result);
+      assert.deepEqual(evidenceLines(f), [`${evidenceKey}=false`]);
+      assert.ok(f.read().includes('MEETME_PRECHECK_PROVIDER_ENABLED=false\n'));
+    } finally { f.remove(); }
+  }
+});
+
+test('EV06 real Compose raw env delivery preserves explicit flag despite opposite ambient shell value', () => {
+  for (const value of ['true', 'false']) {
+    const f = fixture({ changes: { [evidenceParameter]: evidenceRow(value) } }); try {
+      assert.equal(f.render().status, 0); const keys = path.join(f.root, 'keys'); fs.mkdirSync(keys);
+      const result = cp.spawnSync('docker', ['compose', '-f', path.join(repository, 'deploy/compose.production.yml'), 'config', '--format', 'json'], {
+        env: { PATH: process.env.PATH, APP_IMAGE: 'alpine:3.22', RUNTIME_ENV_FILE: f.destination, AUTH_KEYS_DIRECTORY: keys, [evidenceKey]: value === 'true' ? 'false' : 'true' },
+        encoding: 'utf8', timeout: 15_000,
+      });
+      assert.equal(result.error, undefined); assert.equal(result.status, 0);
+      assert.equal(JSON.parse(result.stdout).services.app.environment[evidenceKey], value);
+    } finally { f.remove(); }
+  }
+});
+
+test('EV07 enabling the existing provider switch cannot implicitly enable evidence admission', () => {
+  for (const evidence of [undefined, evidenceRow('false')]) {
+    const changes = { 'config/precheck-provider-enabled': { Type: 'String', Value: 'true' } };
+    if (evidence !== undefined) changes[evidenceParameter] = evidence;
+    const f = fixture({ changes }); try {
+      const result = f.render(); assert.equal(result.error, undefined); assert.equal(result.status, 0); quiet(result);
+      assert.deepEqual(evidenceLines(f), [`${evidenceKey}=false`]);
+      assert.ok(f.read().includes('MEETME_PRECHECK_PROVIDER_ENABLED=true\n'));
+      assert.ok(f.read().includes('MEETME_PRECHECK_CLASSIFIER_ENABLED=true\n'));
+    } finally { f.remove(); }
+  }
+});
+
 test('AR01 required release emits every exact typed auth value and fixed file paths atomically with mode0600', () => {
   const f = fixture(); try {
     const result = f.render(); assert.equal(result.error, undefined); assert.equal(result.status, 0, 'Complete required configuration must succeed');

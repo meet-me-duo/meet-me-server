@@ -1,5 +1,19 @@
 # 새 #107 구현·통합 Worklog
 
+## 2026-11-01 신규 V2 모임 설정 전달과 정책 확정 준비
+
+최신 develop `422d8c26`과 운영 배포 완료 인계 source `42db6039`의 tree가 같은 상태에서 별도 작업 공간을 준비했다. 이번 범위는 기본 OFF인 `meetme.precheck.evidence-enabled`의 runtime 전달 보완·무료 검증·develop Draft PR이며 병합·실제 활성화·유료 호출은 포함하지 않는다. 기존 제공자 스위치나 재정 정책·권한·timeout/retry·V21/V22·조건부 참석 guard를 바꾸지 않는다.
+
+기존 renderer의 exact Name/Type/boolean 경계를 재사용해 optional nonsecret `/config/precheck-evidence-enabled`를 `MEETME_PRECHECK_EVIDENCE_ENABLED`로 전달한다. Compose raw env_file은 이미 값을 전달하므로 shell 기본값 override를 추가하지 않았다. 집중 RED7FAIL→GREEN7PASS, provider ON/evidence OFF 역방향1PASS, 독립 Spring 이름 바인딩/실제PG 신규/기존 모임과 OFF 후 V2 reader 보존5PASS, 유한한 runtime mutant5개 탐지를 확인했다.
+
+질문1회의 모임별 참여자 범위, 미응답/검사 중/전송 실패의 이전 접수본 보존 및 최초 미접수, 사전 고지 후 주최자 한정 최종 미반영 원문·명시 답변·사유 공개는 사용자 확정 정책으로 ADR-068과 PRD/V2 계약에 기록했다. 기존 SQL 이력 집계·room lock·immutable accepted/frozen snapshot 및 HOST 진단/웹 제출 전 고지가 이미 정책을 구현하므로 새 상태/원문 재작성/중간 이력 공개/중복 경고 UI를 추가하지 않는다.
+
+첫 확대 runtime 회귀201건의152PASS/49FAIL은 원본으로 보존했다. 운영자 대역의 미등록 optional 설정 응답48건을 실제 미등록 실패로 바로잡아90PASS를 확인했으며, 기존20초 refresh1건은 같은 제한의 단독 실행에서12.7초로 통과했다. 기존 단언·시간 제한은 유지했다. 정확 CI auth command 및 최종 전체 검사는 별도 최종 결과로 기록한다. Commit/PR: 미실행; 실제 원격 게시/CI 결과는 확인 전 완료로 표시하지 않는다.
+
+최종 실제 CI auth 명령82PASS, 기존 production 준비 Python8PASS, 원본 guard의 ktlintCheck·assemble·test exit0(978.996초), 총2,702건 중2,685PASS/기존17SKIP/실패·오류0을 확인했다. 최초 guard의 새 테스트 서식 실패는 공백·줄바꿈·후행 쉼표만 정정했고 전체 source·guard 지문과 SKIP 집합을 보존했다. Deployment Contracts17개 경계 중16개는 원래 명령/동일 source 증거로 성공했고 Nginx는 관리형 로컬 환경의 공개 파일 읽기 모드와 자기 loopback 프록시 보정을 분리 기록해 검증했다. 네이티브 원격 CI 성공으로 확대하지 않는다. [정제 검증 요약](verification/stage5-v2-runtime-evidence.md)을 따른다.
+
+커밋 직전 기록: 로컬 검증 완료와 원격 CI 미완료를 구분한다. 초기 Issue 호출은 기록 코드 오류와 원래 응답 상세 미보존으로 원인이 미확인이었다. 원격 미생성 재확인과 같은 요청 한 번 재시도 후 [Issue #184](https://github.com/meet-me-duo/meet-me-server/issues/184)의 생성·원격 상태를 확인했다. 깨끗한 최신 develop에서 `fix/issue-184-v2-runtime-evidence`를 생성하고 검증된13파일만 연결했다. code/test·기존 실행 증거는 바꾸지 않았다. feature commit·push/develop Draft PR·정확 HEAD CI는 다음 게시 단계이며 원본 작업 공간과 정제 패치를 보존한다. Commit/PR: 동일 커밋 예정.
+
 ## 서버 develop 병합 승인·열린 PR 정리 (2026-10-18 UTC)
 
 사용자가 Decision Model 포함 검증 통과 뒤 서버 develop 병합을 명시 승인했다. main·운영 활성화·배포·추가 유료 호출과 웹 main 병합은 승인 범위에 포함하지 않는다. 아래 병합 제외 문구는 이전 단계의 이력이다. PR129의67bad4d0가 PR12618cdb5d와 PR122e83d5280를 정확 ancestor로 포함하므로, 독립 준비 리뷰는 최종 필수 CI/충돌/리뷰 확인 뒤 PR129 단일 normal merge를 권고했다. 검증된 source558·workflow·OFF/DENY는 그대로이며, 전체 통합 범위를 취소 수정 한 조건만으로 축소해 설명하지 않는다.
