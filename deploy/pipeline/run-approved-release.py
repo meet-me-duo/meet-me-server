@@ -458,48 +458,69 @@ def _deploy_command(bucket, key, region, manifest, attestation):
     source = base64.b64encode(Path(__file__).read_bytes()).decode("ascii")
     remote = """import base64,hashlib,importlib.util,json,os,pathlib,subprocess,sys,tempfile,shutil,stat,tarfile
 os.umask(0o077)
-manifest=json.loads(base64.b64decode(sys.argv[1],validate=True))
-release=pathlib.Path('/opt/meet-me/releases')/manifest['releaseId']
-if release.exists() or release.is_symlink():sys.exit(2)
-parent=release.parent
-while True:
- metadata=parent.lstat()
- if not stat.S_ISDIR(metadata.st_mode) or metadata.st_uid!=0 or stat.S_IMODE(metadata.st_mode)&0o022:sys.exit(2)
- if parent==parent.parent:break
- parent=parent.parent
-work=pathlib.Path(tempfile.mkdtemp(prefix='meet-me-read-state.',dir='/run'))
-archive=work/'release.tar.gz'
+stage='MANIFEST';work=None
+def reject(reason):
+ sys.stderr.write('MEETME_DEPLOY_WRAPPER_FAILURE_V1 '+json.dumps({'protocol':'meet-me-deploy-wrapper-failure-v1','stage':stage,'reason':reason},sort_keys=True,separators=(',',':'))+'\\n')
+ sys.exit(2)
 try:
+ manifest=json.loads(base64.b64decode(sys.argv[1],validate=True))
+ stage='RELEASE_PATH'
+ release=pathlib.Path('/opt/meet-me/releases')/manifest['releaseId']
+ if release.exists() or release.is_symlink():reject('ALREADY_EXISTS')
+ stage='PARENT_PERMISSIONS'
+ parent=release.parent
+ while True:
+  metadata=parent.lstat()
+  if not stat.S_ISDIR(metadata.st_mode) or metadata.st_uid!=0 or stat.S_IMODE(metadata.st_mode)&0o022:reject('UNTRUSTED_METADATA')
+  if parent==parent.parent:break
+  parent=parent.parent
+ work=pathlib.Path(tempfile.mkdtemp(prefix='meet-me-read-state.',dir='/run'))
+ archive=work/'release.tar.gz'
+ stage='ARCHIVE_DOWNLOAD'
  result=subprocess.run(['aws','--region',sys.argv[4],'s3api','get-object','--bucket',sys.argv[2],'--key',sys.argv[3],str(archive)],capture_output=True,timeout=30)
- if result.returncode:sys.exit(2)
+ if result.returncode:reject('COMMAND_FAILED')
+ stage='ARCHIVE_INTEGRITY'
  archive.chmod(0o600)
- if archive.stat().st_size>4194304 or hashlib.sha256(archive.read_bytes()).hexdigest()!=manifest['archiveSha256']:sys.exit(2)
+ if archive.stat().st_size>4194304 or hashlib.sha256(archive.read_bytes()).hexdigest()!=manifest['archiveSha256']:reject('INTEGRITY_MISMATCH')
+ stage='PACKAGE_VALIDATION'
  validator=work/'archive-validator.py';validator.write_bytes(base64.b64decode(sys.argv[6],validate=True));validator.chmod(0o600)
  spec=importlib.util.spec_from_file_location('trusted_archive_validator',validator);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
  module._verify_package(archive,manifest)
+ stage='RELEASE_CREATE'
  release.mkdir(mode=0o700)
  retained=release/'.approved-release.tar.gz';shutil.copyfile(archive,retained);retained.chmod(0o600)
+ stage='ARCHIVE_EXTRACTION'
  extracted=subprocess.run(['tar','-xzf',str(archive),'--no-same-owner','--no-same-permissions','-C',str(release)],capture_output=True,timeout=20)
- if extracted.returncode:sys.exit(2)
- # A single-file bind bypasses host parent directories but retains inode permissions for app UID10001.
- # Normalize only the archive-verified nonsecret policy. Auth keys and all other extracted files are untouched.
+ if extracted.returncode:reject('COMMAND_FAILED')
+ stage='POLICY_VALIDATION'
+ # Only the archive-verified nonsecret policy becomes app-readable.
  with tarfile.open(archive,'r:gz') as bundle:
   policy_members=[member for member in bundle.getmembers() if member.name=='runtime-ai-policy.json']
   if policy_members:
-   if len(policy_members)!=1 or not policy_members[0].isfile():sys.exit(2)
+   if len(policy_members)!=1 or not policy_members[0].isfile():reject('INVALID_POLICY')
    expected_policy=bundle.extractfile(policy_members[0]).read(65537)
    module._runtime_policy_bytes(expected_policy)
    policy=release/'runtime-ai-policy.json'
    fd=os.open(policy,os.O_RDONLY|os.O_NOFOLLOW)
    with os.fdopen(fd,'rb') as stream:
     metadata=os.fstat(stream.fileno())
-    if not stat.S_ISREG(metadata.st_mode) or stream.read(65537)!=expected_policy:sys.exit(2)
+    if not stat.S_ISREG(metadata.st_mode) or stream.read(65537)!=expected_policy:reject('INVALID_POLICY')
     os.fchmod(stream.fileno(),0o644)
- # Only the archive-verified reviewed host entrypoint may perform installation/deployment.
+ stage='HOST_DEPLOY'
  deployed=subprocess.run(['timeout','--signal=TERM','--kill-after=15s','1440s','python3',str(release/'pipeline/host-approved-release.py'),'--deploy',sys.argv[1],sys.argv[5]],capture_output=True,text=True,timeout=1460)
- if deployed.returncode or deployed.stderr.strip():sys.exit(2)
+ if deployed.returncode or deployed.stderr.strip():reject('COMMAND_FAILED')
  sys.stdout.write(deployed.stdout)
-finally:shutil.rmtree(work)
+except SystemExit:raise
+except subprocess.TimeoutExpired:reject('TIMED_OUT')
+except PermissionError:reject('ACCESS_DENIED')
+except Exception:reject('UNAVAILABLE')
+finally:
+ if work is not None:
+  unwinding=sys.exc_info()[0] is not None
+  try:shutil.rmtree(work)
+  except Exception:
+   if not unwinding:
+    stage='CLEANUP';reject('UNAVAILABLE')
 """
     tokens = [_encoded(manifest), bucket, key, region, _encoded(attestation), source]
     return "set +x\numask 077\npython3 - " + " ".join(shlex.quote(value) for value in tokens) + " <<'MEETME_APPROVED_DEPLOY'\n" + remote + "\nMEETME_APPROVED_DEPLOY"
@@ -516,6 +537,12 @@ def _deploy_result(status, stdout, stderr):
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ("--failed-closure-plan", "--failed-closure-apply"):
+        code = _load("explicit_failed_closure", BASE / "pipeline/release_pipeline.py").operator_failed_closure(
+            sys.modules[__name__], sys.argv[1:])
+        if code:
+            raise SystemExit(code)
+        return
     if len(sys.argv) == 2 and sys.argv[1].startswith("--pipeline-"):
         return _load("release_pipeline_controller", BASE / "pipeline/release_pipeline.py").main(
             sys.modules[__name__], sys.argv[1:])

@@ -104,7 +104,8 @@ class GeminiLocalHttp2DiagnosticTest {
             assertEquals(Duration.ofSeconds(15).toNanos(), call.adapterBudgetNanos)
             assertTrue(assertNotNull(call.actualCallTimeoutNanos) in Duration.ofSeconds(14).toNanos()..Duration.ofSeconds(15).toNanos())
             assertTrue(fixture.elapsedNanos in Duration.ofSeconds(14).toNanos()..Duration.ofSeconds(18).toNanos())
-            assertTrue(call.events.any { it.kind == ParserDiagnosticEventKind.CANCELED })
+            // OkHttp 4.12 permits canceled() after terminal callbacks. The physical state is captured at failure.
+            assertEquals(true, call.canceledAtFailure)
             assertTrue(call.events.any { it.kind == ParserDiagnosticEventKind.CALL_FAILED })
             assertTrue(call.events.none { it.kind == ParserDiagnosticEventKind.RESPONSE_HEADERS_END })
         }

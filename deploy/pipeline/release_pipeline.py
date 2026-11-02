@@ -457,6 +457,223 @@ def _applied_prior_host_matches(record, adapter, facts):
                and type(row["checksum"]) is int for row in history)
 
 
+def _closure_hash(value):
+    return hashlib.sha256(_canonical(value)).hexdigest()
+
+
+def _closure_equal(left, right):
+    # Python object equality aliases JSON false/0, true/1 and integer/float.
+    return _canonical(left) == _canonical(right)
+
+
+def _closure_target(value):
+    _require(type(value) is dict and set(value) == {"accountId", "region", "instanceId", "bucket", "manifestSha256"})
+    patterns = {"accountId": r"[0-9]{12}", "region": r"[a-z]{2}(?:-[a-z]+)+-[0-9]",
+                "instanceId": r"i-[0-9a-f]{8,17}", "bucket": r"[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]",
+                "manifestSha256": r"[0-9a-f]{64}"}
+    _require(all(type(value[key]) is str and re.fullmatch(pattern, value[key]) for key, pattern in patterns.items()))
+    return value
+
+
+def _closure_evidence(value, identity, journal):
+    _require(type(value) is dict and set(value) == {"commandStatus", "workflowStatus", "workflowRunId",
+             "workflowRunAttempt", "pendingCommands", "rules", "hostProof"})
+    _require(value["commandStatus"] == "Failed" and value["workflowStatus"] == "completed")
+    _require(all(type(value[key]) is str and value[key] == identity[key]
+                 for key in ("workflowRunId", "workflowRunAttempt")))
+    _require(type(value["pendingCommands"]) is int and value["pendingCommands"] == 0)
+    _require(type(value["rules"]) is dict and value["rules"] == journal["originalRules"])
+    host = value["hostProof"]
+    fields = {"protocol", "sourceSha", "releaseId", "buildRunId", "buildRunAttempt", "imageDigest",
+              "phase", "guardTrusted", "historyMatches", "health", "schemaFingerprint", "guardFingerprint", "historyDigest"}
+    _require(type(host) is dict and set(host) == fields and host["protocol"] == "meet-me-failed-closure-host-v1")
+    _require(host["phase"] == "READY" and host["guardTrusted"] is True
+             and host["historyMatches"] is True and host["health"] == "healthy")
+    _require(all(type(host[key]) is str and host[key] == identity[key]
+                 for key in ("sourceSha", "releaseId", "buildRunId", "buildRunAttempt", "imageDigest")))
+    _require(all(type(host[key]) is str and re.fullmatch(r"[0-9a-f]{64}", host[key])
+                 for key in ("schemaFingerprint", "guardFingerprint", "historyDigest")))
+    return value
+
+
+def _validate_failed_plan(plan):
+    fields = {"protocol", "target", "identity", "operationId", "originalJournal", "originalJournalEtag",
+              "originalOwner", "originalOwnerEtag", "evidence", "recoveryHolder", "approvalDigest"}
+    _require(type(plan) is dict and set(plan) == fields and plan["protocol"] == "meet-me-failed-closure-plan-v1")
+    _closure_target(plan["target"])
+    identity = _module("release_completion").validate_identity(plan["identity"])
+    op_id = _module("transition_orchestrator").operation_id(identity)
+    _require(plan["operationId"] == op_id)
+    record = _recovery_journal(plan["originalJournal"], op_id)
+    _require(record["identity"] == identity and record["protocol"] == "meet-me-automatic-operation-v1"
+             and record["deploymentState"] == "UNKNOWN" and record["outcome"] == "RECOVERY_REQUIRED"
+             and record["rulesState"] == "UNTOUCHED" and record["commandId"] is not None)
+    owner = plan["originalOwner"]
+    _require(type(owner) is dict and set(owner) == {"protocol", "operationId", "identity", "holder", "released"})
+    _require(owner["protocol"] == "meet-me-release-owner-v1" and owner["operationId"] == op_id
+             and owner["identity"] == identity and owner["released"] is False
+             and type(owner["holder"]) is str and re.fullmatch(r"[0-9a-f]{32}", owner["holder"]))
+    _require(all(type(plan[key]) is str and 0 < len(plan[key]) <= 256
+                 for key in ("originalJournalEtag", "originalOwnerEtag")))
+    _closure_evidence(plan["evidence"], identity, record)
+    seed = {key: value for key, value in plan.items() if key not in {"protocol", "recoveryHolder", "approvalDigest"}}
+    _require(plan["recoveryHolder"] == _closure_hash(seed)[:32] and plan["recoveryHolder"] != owner["holder"])
+    _require(plan["approvalDigest"] == _closure_hash({key: value for key, value in plan.items() if key != "approvalDigest"}))
+    _require(len(_canonical(plan)) <= 65536)
+    return plan
+
+
+def _closure_records(plan):
+    intent = {"protocol": "meet-me-failed-closure-intent-v1", "operationId": plan["operationId"],
+              "identity": plan["identity"], "planDigest": plan["approvalDigest"], "target": plan["target"],
+              "journalDigest": _closure_hash(plan["originalJournal"]), "journalEtag": plan["originalJournalEtag"],
+              "originalOwnerDigest": _closure_hash(plan["originalOwner"]), "originalOwnerEtag": plan["originalOwnerEtag"],
+              "recoveryHolder": plan["recoveryHolder"], "commandId": plan["originalJournal"]["commandId"],
+              "evidenceDigest": _closure_hash(plan["evidence"]), "plan": plan}
+    closure = {"protocol": "meet-me-failed-operation-closure-v1", "operationId": plan["operationId"],
+               "identity": plan["identity"], "commandId": plan["originalJournal"]["commandId"],
+               "outcome": "FAILED_CLOSED", "deploymentComplete": False, "intentDigest": _closure_hash(intent),
+               "planDigest": plan["approvalDigest"], "journalDigest": intent["journalDigest"],
+               "recoveryHolder": plan["recoveryHolder"], "evidenceDigest": intent["evidenceDigest"]}
+    return intent, closure
+
+
+def _closure_owner(plan, released=False):
+    return dict(plan["originalOwner"], holder=plan["recoveryHolder"], released=released)
+
+
+def _closure_snapshot(snapshot, plan):
+    _require(type(snapshot) is dict and set(snapshot) == {"journal", "journalEtag", "owner", "ownerEtag", "intent", "closure"})
+    _require(_closure_equal(snapshot["journal"], plan["originalJournal"]) and snapshot["journalEtag"] == plan["originalJournalEtag"])
+    _require(type(snapshot["ownerEtag"]) is str and 0 < len(snapshot["ownerEtag"]) <= 256)
+    intent, closure = _closure_records(plan)
+    _require(snapshot["intent"] is None or _closure_equal(snapshot["intent"], intent))
+    _require(snapshot["closure"] is None or (_closure_equal(snapshot["intent"], intent) and _closure_equal(snapshot["closure"], closure)))
+    owner = snapshot["owner"]
+    if _closure_equal(owner, plan["originalOwner"]):
+        _require(snapshot["ownerEtag"] == plan["originalOwnerEtag"] and snapshot["closure"] is None)
+    else:
+        _require(_closure_equal(snapshot["intent"], intent) and any(_closure_equal(owner, expected)
+                 for expected in (_closure_owner(plan), _closure_owner(plan, True))))
+        _require(owner["released"] is False or _closure_equal(snapshot["closure"], closure))
+    return snapshot
+
+
+def _closure_checkpoint(adapter, plan):
+    _require(adapter.closure_context() == plan["target"])
+    before = _closure_snapshot(adapter.read_closure_snapshot(plan["operationId"]), plan)
+    observed = adapter.closure_evidence(plan["identity"], plan["originalJournal"]["commandId"])
+    _closure_evidence(observed, plan["identity"], plan["originalJournal"])
+    _require(observed == plan["evidence"])
+    _require(adapter.closure_context() == plan["target"])
+    after = _closure_snapshot(adapter.read_closure_snapshot(plan["operationId"]), plan)
+    _require(_closure_equal(after, before))
+    return after
+
+
+def plan_failed_closure(identity, operation_id, adapter):
+    """Read-only, exact snapshot approval. Never rewrite an attempted failure."""
+    identity = _module("release_completion").validate_identity(identity)
+    _require(operation_id == _module("transition_orchestrator").operation_id(identity))
+    target = _closure_target(adapter.closure_context())
+    before = adapter.read_closure_snapshot(operation_id)
+    _require(type(before) is dict and set(before) == {"journal", "journalEtag", "owner", "ownerEtag", "intent", "closure"})
+    _require(before["intent"] is None and before["closure"] is None)
+    evidence = adapter.closure_evidence(identity, before["journal"]["commandId"])
+    plan = {"protocol": "meet-me-failed-closure-plan-v1", "target": target, "identity": identity,
+            "operationId": operation_id, "originalJournal": before["journal"], "originalJournalEtag": before["journalEtag"],
+            "originalOwner": before["owner"], "originalOwnerEtag": before["ownerEtag"], "evidence": evidence}
+    seed = {key: value for key, value in plan.items() if key != "protocol"}
+    plan["recoveryHolder"] = _closure_hash(seed)[:32]
+    plan["approvalDigest"] = _closure_hash(plan)
+    _validate_failed_plan(plan)
+    _require(adapter.closure_context() == target and _closure_equal(adapter.read_closure_snapshot(operation_id), before))
+    return copy.deepcopy(plan)
+
+
+def close_failed_operation(plan, approval_digest, adapter):
+    """Explicit operator action: append failure evidence, fence, then release.
+
+    All uncertain mutations are read back. A missing/conflicting observation
+    stops without another write. Retrying the same approved plan is bounded;
+    it never creates another deployment or changes the original journal.
+    """
+    plan = copy.deepcopy(_validate_failed_plan(plan))
+    _require(type(approval_digest) is str and approval_digest == plan["approvalDigest"])
+    result = {"protocol": "meet-me-failed-closure-result-v1", "operationId": plan["operationId"],
+              "outcome": "INCOMPLETE", "deploymentComplete": False, "ownerReleased": False}
+    op_id = plan["operationId"]
+    intent, closure = _closure_records(plan)
+
+    def write_then_read(method, *arguments):
+        try:
+            method(op_id, *arguments)
+        except Exception:
+            pass  # A transport failure is not proof that the write failed.
+        return _closure_snapshot(adapter.read_closure_snapshot(op_id), plan)
+
+    try:
+        snapshot = _closure_checkpoint(adapter, plan)
+        if snapshot["intent"] is None:
+            after = write_then_read(adapter.put_closure_intent, intent)
+            _require(_closure_equal(after, dict(snapshot, intent=intent)))
+            snapshot = after
+        if _closure_equal(snapshot["owner"], plan["originalOwner"]):
+            after = write_then_read(adapter.fence_closure_owner, _closure_owner(plan), snapshot["ownerEtag"])
+            _require(after["owner"] == _closure_owner(plan) and after["intent"] == intent
+                     and after["closure"] is None and after["ownerEtag"] != snapshot["ownerEtag"])
+            snapshot = after
+        snapshot = _closure_checkpoint(adapter, plan)
+        if snapshot["closure"] is None:
+            _require(snapshot["owner"] == _closure_owner(plan))
+            after = write_then_read(adapter.put_failed_closure, closure)
+            _require(_closure_equal(after, dict(snapshot, closure=closure)))
+            snapshot = after
+        snapshot = _closure_checkpoint(adapter, plan)
+        if snapshot["owner"] == _closure_owner(plan):
+            after = write_then_read(adapter.release_closure_owner, _closure_owner(plan, True), snapshot["ownerEtag"])
+            _require(after["owner"] == _closure_owner(plan, True) and after["intent"] == intent
+                     and after["closure"] == closure and after["ownerEtag"] != snapshot["ownerEtag"])
+        final = _closure_checkpoint(adapter, plan)
+        _require(final["owner"] == _closure_owner(plan, True) and final["closure"] == closure)
+        result.update(outcome="CLOSED", ownerReleased=True)
+    except Exception:
+        pass
+    return result
+
+
+def _validated_closed_snapshot(snapshot, target, evidence):
+    """Validate a terminal sidecar; this never treats the failed deploy as APPLIED."""
+    plan = _validate_failed_plan(snapshot["intent"]["plan"])
+    _require(plan["target"] == target and evidence == plan["evidence"])
+    _closure_evidence(evidence, plan["identity"], plan["originalJournal"])
+    _closure_snapshot(snapshot, plan)
+    _require(snapshot["owner"] == _closure_owner(plan, True)
+             and snapshot["closure"] == _closure_records(plan)[1])
+    return True
+
+
+def _inspect_failed_closure(adapter, record, owner, owner_etag):
+    snapshot = adapter.read_closure_snapshot(record["operationId"])
+    _require(snapshot["closure"] is not None and snapshot["intent"] is not None
+             and _closure_equal(snapshot["owner"], owner) and snapshot["ownerEtag"] == owner_etag
+             and _closure_equal(snapshot["journal"], record))
+    plan = _validate_failed_plan(snapshot["intent"]["plan"])
+    current = adapter.release
+    _require(all(plan["target"][key] == current[name] for key, name in (
+        ("region", "region"), ("instanceId", "instance"), ("bucket", "bucket"))))
+    _require(plan["target"]["accountId"] == current["manifest"]["imageRepository"].split(".", 1)[0])
+    # A new candidate may have a different manifest. Reopen the ORIGINAL exact
+    # immutable package; never compare the new candidate proof to an old closure.
+    with _prepare_closure_release(adapter.driver, plan["target"], record["identity"]["buildRunId"],
+                                  record["identity"]["buildRunAttempt"], record["operationId"], record["identity"]) as release:
+        original = AwsReleaseAdapter(release, "preflight")
+        _validated_closed_snapshot(snapshot, original.closure_context(),
+                                   original.closure_evidence(plan["identity"], record["commandId"]))
+        _require(_closure_equal(original.read_closure_snapshot(record["operationId"]), snapshot))
+    return True
+
+
 def _inspect_recovery(adapter, requested=None):
     core = _module("transition_orchestrator")
     selected = requested if requested is not None else core.operation_id(adapter.identity)
@@ -532,6 +749,12 @@ def _inspect_recovery(adapter, requested=None):
                            and (not transition or record["phase"] == "COMPLETE"))
                 if not terminal and not applied:
                     report["reason"] = "UNFINISHED_OPERATION"
+                    if state == "UNKNOWN":
+                        try:
+                            if _inspect_failed_closure(adapter, record, first, etag):
+                                report.update(safeToProceed=True, reason="SAFE_TERMINAL")
+                        except Exception:
+                            pass  # Missing, partial, foreign or stale closure remains blocked.
                 else:
                     try:
                         facts = adapter.inspection_facts()
@@ -662,6 +885,100 @@ def _rule_map(states):
     _require(type(states) is list and len(states) == 2 and all(s in ("ENABLED", "DISABLED") for s in states))
     return {"meet-me-production-db-credential-rotated": states[0],
             "meet-me-production-db-credential-reconcile": states[1]}
+
+
+@contextmanager
+def _prepare_closure_release(driver, target, build_id, build_attempt, op_id, expected_identity=None):
+    """Explicit operator-only preparation; no synthetic workflow or deployment."""
+    _require(type(target) is dict and set(target) in (
+        {"accountId", "region", "instanceId", "bucket"},
+        {"accountId", "region", "instanceId", "bucket", "manifestSha256"}))
+    _closure_target(dict(target, manifestSha256=target.get("manifestSha256", "0" * 64)))
+    _require(os.environ.get("AWS_REGION") == target["region"]
+             and re.fullmatch(r"[1-9][0-9]{0,19}", build_id)
+             and re.fullmatch(r"[1-9][0-9]{0,19}", build_attempt)
+             and re.fullmatch(r"[0-9a-f]{64}", op_id))
+    _require(driver._aws("sts", "get-caller-identity").get("Account") == target["accountId"])
+    repository = target["accountId"] + ".dkr.ecr." + target["region"] + ".amazonaws.com/meet-me/server"
+    _require(target["bucket"] == "meet-me-production-artifacts-" + target["accountId"])
+    expected = {"buildRunId": build_id, "buildRunAttempt": build_attempt, "imageRepository": repository}
+    prefix = "releases/builds/" + build_id + "/" + build_attempt + "/"
+    policy = _module("approved_release")
+    with tempfile.TemporaryDirectory(prefix="meet-me-failed-closure-") as temporary:
+        directory = Path(temporary)
+        driver._download(target["bucket"], prefix + "manifest.json", directory / "manifest.json", 65536)
+        manifest = _file_json(directory / "manifest.json")
+        validated = policy.validate_manifest(manifest, expected)
+        actual_target = dict(target, manifestSha256=_closure_hash(manifest))
+        if "manifestSha256" in target:
+            _require(actual_target == target)
+        driver._verify_origin(manifest, "preflight")
+        archive = directory / "release.tar.gz"
+        driver._download(target["bucket"], prefix + "release.tar.gz", archive, driver.MAX_ARCHIVE)
+        _require(hashlib.sha256(archive.read_bytes()).hexdigest() == manifest["archiveSha256"])
+        auth = driver._verify_package(archive, manifest)
+        namespace = hashlib.sha256(target["instanceId"].encode("ascii")).hexdigest()
+        key = "releases/operations/" + namespace + "/" + op_id + ".json"
+        driver._download(target["bucket"], key, directory / "original-operation.json", 131072)
+        record = _recovery_journal(_file_json(directory / "original-operation.json", 131072), op_id)
+        identity = record["identity"]
+        _require(all(identity[name] == manifest[name] for name in (
+            "sourceSha", "releaseId", "buildRunId", "buildRunAttempt", "imageDigest")))
+        if expected_identity is not None:
+            _require(identity == expected_identity)
+        yield {"driver": driver, "directory": directory, "instance": target["instanceId"], "region": target["region"],
+               "bucket": target["bucket"], "prefix": prefix, "manifest": manifest, "validated": validated,
+               "identity": identity, "facts": None, "auth": auth, "policy": policy, "closureTarget": actual_target}
+
+
+def operator_failed_closure(driver, arguments):
+    """Local reviewed plan/apply CLI, never dispatched by normal deployment."""
+    import argparse
+    parser = argparse.ArgumentParser(description="Explicit failed-operation closure; does not deploy or mark APPLIED.")
+    parser.add_argument("mode", choices=("plan", "apply"))
+    parser.add_argument("--plan-file", required=True)
+    parser.add_argument("--profile")
+    parser.add_argument("--account-id")
+    parser.add_argument("--region")
+    parser.add_argument("--instance-id")
+    parser.add_argument("--bucket")
+    parser.add_argument("--build-run-id")
+    parser.add_argument("--build-run-attempt")
+    parser.add_argument("--operation-id")
+    parser.add_argument("--approve-digest")
+    # argparse interprets leading -- as options, so mode is parsed separately.
+    _require(arguments and arguments[0] in ("--failed-closure-plan", "--failed-closure-apply"))
+    mode = arguments[0]
+    args = parser.parse_args(["plan" if mode.endswith("plan") else "apply", *arguments[1:]])
+    if args.profile is not None:
+        _require(re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", args.profile))
+        os.environ["AWS_PROFILE"] = args.profile
+    path = Path(args.plan_file)
+    if mode.endswith("plan"):
+        _require(args.approve_digest is None and not path.exists() and not path.is_symlink())
+        target = {"accountId": args.account_id, "region": args.region, "instanceId": args.instance_id, "bucket": args.bucket}
+        _closure_target(dict(target, manifestSha256="0" * 64))
+        os.environ["AWS_REGION"] = target["region"]
+        with _prepare_closure_release(driver, target, args.build_run_id, args.build_run_attempt, args.operation_id) as release:
+            plan = plan_failed_closure(release["identity"], args.operation_id, AwsReleaseAdapter(release, "preflight"))
+        with path.open("xb") as stream:
+            os.chmod(path, 0o600)
+            stream.write(_canonical(plan) + b"\n")
+        print("MEETME_FAILED_CLOSURE_PLAN_V1 " + _canonical({"operationId": plan["operationId"],
+              "approvalDigest": plan["approvalDigest"], "deploymentComplete": False}).decode("utf-8"))
+        return 0
+    _require(all(getattr(args, name) is None for name in (
+        "account_id", "region", "instance_id", "bucket", "build_run_id", "build_run_attempt", "operation_id")))
+    _require(path.is_file() and not path.is_symlink())
+    plan = _validate_failed_plan(_file_json(path, 65536))
+    _require(args.approve_digest == plan["approvalDigest"])
+    os.environ["AWS_REGION"] = plan["target"]["region"]
+    identity = plan["identity"]
+    with _prepare_closure_release(driver, plan["target"], identity["buildRunId"], identity["buildRunAttempt"],
+                                  plan["operationId"], identity) as release:
+        result = close_failed_operation(plan, args.approve_digest, AwsReleaseAdapter(release, "preflight"))
+    print("MEETME_FAILED_CLOSURE_RESULT_V1 " + _canonical(result).decode("utf-8"))
+    return 0 if result["outcome"] == "CLOSED" else 2
 
 
 def _gate_config():
@@ -798,6 +1115,104 @@ class AwsReleaseAdapter:
         _require(type(op_id) is str and re.fullmatch(r"[0-9a-f]{64}", op_id))
         value, _ = self._read_object(self.root_key + op_id + ".json")
         return value
+
+    def closure_context(self):
+        release = self.release
+        caller = self.driver._aws("sts", "get-caller-identity")
+        account = release["manifest"]["imageRepository"].split(".", 1)[0]
+        _require(caller.get("Account") == account)
+        target = {"accountId": account, "region": release["region"], "instanceId": release["instance"],
+                  "bucket": release["bucket"], "manifestSha256": _closure_hash(release["manifest"])}
+        if "closureTarget" in release:
+            _require(target == release["closureTarget"])
+        return _closure_target(target)
+
+    def read_closure_snapshot(self, op_id):
+        _require(type(op_id) is str and re.fullmatch(r"[0-9a-f]{64}", op_id))
+        journal, journal_etag = self._read_object(self.root_key + op_id + ".json")
+        owner, owner_etag = self._owner()
+        intent, _ = self._read_object(self.root_key + op_id + ".closure-intent.json")
+        closure, _ = self._read_object(self.root_key + op_id + ".closure.json")
+        return {"journal": journal, "journalEtag": journal_etag, "owner": owner, "ownerEtag": owner_etag,
+                "intent": intent, "closure": closure}
+
+    def closure_evidence(self, identity, command_id):
+        """Read actual full history/guard/healthy host before projecting booleans."""
+        r = self.release
+        _module("release_completion").validate_identity(identity)
+        _require(all(identity[key] == r["manifest"][key] for key in (
+            "sourceSha", "releaseId", "buildRunId", "buildRunAttempt", "imageDigest")))
+        command = self.driver._aws("ssm", "get-command-invocation", "--command-id", command_id,
+                                   "--instance-id", r["instance"])
+        _require(command.get("CommandId") == command_id and command.get("InstanceId") == r["instance"]
+                 and command.get("Status") == "Failed" and type(command.get("ResponseCode")) is int
+                 and command["ResponseCode"] != 0)
+        run = self.driver._github_run(identity["workflowRunId"], identity["workflowRunAttempt"])
+        _require(type(run.get("id")) is int and str(run["id"]) == identity["workflowRunId"]
+                 and type(run.get("run_attempt")) is int and str(run["run_attempt"]) == identity["workflowRunAttempt"]
+                 and run.get("status") == "completed" and run.get("path") == ".github/workflows/deploy.yml"
+                 and run.get("head_branch") == "main" and run.get("event") in {"workflow_dispatch", "workflow_run"}
+                 and run.get("repository", {}).get("full_name") == "meet-me-duo/meet-me-server"
+                 and run.get("head_repository", {}).get("full_name") == "meet-me-duo/meet-me-server")
+        facts, ready = self.driver._collect_facts(r["instance"], r["region"], r["manifest"],
+                                                 auth_required=r["auth"], require_healthy=True)
+        expected = [dict(row, success=True) for row in r["manifest"]["migrations"]]
+        contract = facts.get("automaticContract")
+        _require(ready is True and expected and _closure_equal(facts.get("history"), expected)
+                 and _applied_prior_host_matches({"identity": identity}, self, facts))
+        _require(_closure_equal(contract.get("history"), expected))
+        _require(all(contract.get(key) == r["manifest"][key] for key in ("schemaFingerprint", "guardFingerprint")))
+        proof = {"protocol": "meet-me-failed-closure-host-v1", **{key: identity[key] for key in (
+            "sourceSha", "releaseId", "buildRunId", "buildRunAttempt", "imageDigest")},
+            "phase": "READY", "guardTrusted": True, "historyMatches": True, "health": "healthy",
+            "schemaFingerprint": r["manifest"]["schemaFingerprint"], "guardFingerprint": r["manifest"]["guardFingerprint"],
+            "historyDigest": _closure_hash(expected)}
+        rules = self.read_rules()  # Also revalidates both exact target bindings.
+        pending = self.active_commands()
+        _require(type(facts.get("pendingCommands")) is int and facts["pendingCommands"] == 0 and pending == 0
+                 and _rule_map(facts["refreshRuleStates"]) == rules)
+        return {"commandStatus": "Failed", "workflowStatus": "completed", "workflowRunId": identity["workflowRunId"],
+                "workflowRunAttempt": identity["workflowRunAttempt"], "pendingCommands": pending,
+                "rules": rules, "hostProof": proof}
+
+    def put_closure_intent(self, op_id, value):
+        _require(type(op_id) is str and re.fullmatch(r"[0-9a-f]{64}", op_id))
+        plan = _validate_failed_plan(value["plan"])
+        _require(_closure_equal(value, _closure_records(plan)[0]) and value["operationId"] == op_id
+                 and self.closure_context() == plan["target"])
+        snapshot = _closure_snapshot(self.read_closure_snapshot(op_id), plan)
+        _require(snapshot["intent"] is None and snapshot["closure"] is None
+                 and _closure_equal(snapshot["owner"], plan["originalOwner"]))
+        self._write_object(self.root_key + op_id + ".closure-intent.json", value, None)
+
+    def fence_closure_owner(self, op_id, value, etag):
+        intent, _ = self._read_object(self.root_key + op_id + ".closure-intent.json")
+        plan = _validate_failed_plan(intent["plan"])
+        _require(plan["operationId"] == op_id and _closure_equal(intent, _closure_records(plan)[0])
+                 and _closure_equal(value, _closure_owner(plan)) and etag == plan["originalOwnerEtag"]
+                 and self.closure_context() == plan["target"])
+        snapshot = _closure_snapshot(self.read_closure_snapshot(op_id), plan)
+        _require(_closure_equal(snapshot["owner"], plan["originalOwner"])
+                 and snapshot["ownerEtag"] == etag and snapshot["closure"] is None)
+        self._write_object(self.owner_key, value, etag)
+
+    def put_failed_closure(self, op_id, value):
+        intent, _ = self._read_object(self.root_key + op_id + ".closure-intent.json")
+        plan = _validate_failed_plan(intent["plan"])
+        _require(plan["operationId"] == op_id and _closure_equal(intent, _closure_records(plan)[0])
+                 and _closure_equal(value, _closure_records(plan)[1]) and self.closure_context() == plan["target"])
+        snapshot = _closure_snapshot(self.read_closure_snapshot(op_id), plan)
+        _require(_closure_equal(snapshot["owner"], _closure_owner(plan)) and snapshot["closure"] is None)
+        self._write_object(self.root_key + op_id + ".closure.json", value, None)
+
+    def release_closure_owner(self, op_id, value, etag):
+        snapshot = self.read_closure_snapshot(op_id)
+        plan = _validate_failed_plan(snapshot["intent"]["plan"])
+        _closure_snapshot(snapshot, plan)
+        _require(plan["operationId"] == op_id and _closure_equal(snapshot["closure"], _closure_records(plan)[1])
+                 and _closure_equal(snapshot["owner"], _closure_owner(plan)) and _closure_equal(value, _closure_owner(plan, True))
+                 and snapshot["ownerEtag"] == etag and self.closure_context() == plan["target"])
+        self._write_object(self.owner_key, value, etag)
 
     def save_operation(self, op_id, record):
         _require(self.owns_operation(op_id))

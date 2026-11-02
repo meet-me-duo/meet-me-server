@@ -108,6 +108,63 @@ class ParserTransportDiagnosticContractTest {
     }
 
     @Test
+    fun `early canceled callback and physical cancellation are both retained before snapshot cutoff`() {
+        val call = call()
+        val session = session()
+        val events = session.eventListenerFactory.create(call)
+        events.callStart(call)
+        clock = 1_010
+        `when`(call.isCanceled()).thenReturn(true)
+        events.canceled(call)
+        clock = 1_020
+        events.callFailed(call, SocketTimeoutException("PRIVATE_TIMEOUT_BODY"))
+        session.finish()
+
+        val observed = diagnostics.single().calls.single()
+        assertEquals(true, observed.canceledAtFailure)
+        assertEquals(
+            listOf(ParserDiagnosticEventKind.CALL_START, ParserDiagnosticEventKind.CANCELED, ParserDiagnosticEventKind.CALL_FAILED),
+            observed.events.map { it.kind },
+        )
+        assertEquals(listOf(0L, 10L, 20L), observed.events.map { it.elapsedNanos })
+        assertEquals(listOf(ParserDiagnosticCause.SOCKET_TIMEOUT), observed.causes)
+        assertTrue(observed.settled)
+        assertFalse(observed.metadataUnavailable)
+    }
+
+    @Test
+    fun `late canceled callback cannot erase physical cancellation or rewrite a finished snapshot`() {
+        val call = call()
+        val session = session()
+        val events = session.eventListenerFactory.create(call)
+        events.callStart(call)
+        clock = 1_010
+        `when`(call.isCanceled()).thenReturn(true)
+        events.callFailed(call, SocketTimeoutException("PRIVATE_TIMEOUT_BODY"))
+        session.finish()
+
+        val observed = diagnostics.single().calls.single()
+        val encodedBeforeLateCallback = json.writeValueAsString(diagnostics.single())
+        assertEquals(true, observed.canceledAtFailure)
+        assertEquals(listOf(ParserDiagnosticEventKind.CALL_START, ParserDiagnosticEventKind.CALL_FAILED), observed.events.map { it.kind })
+        assertEquals(listOf(0L, 10L), observed.events.map { it.elapsedNanos })
+        assertEquals(listOf(ParserDiagnosticCause.SOCKET_TIMEOUT), observed.causes)
+        assertTrue(observed.settled)
+        assertFalse(observed.metadataUnavailable)
+
+        clock = 1_020
+        events.canceled(call)
+        session.finish()
+        assertEquals(1, diagnostics.size)
+        assertEquals(1, normal.size)
+        assertEquals(encodedBeforeLateCallback, json.writeValueAsString(diagnostics.single()))
+        val afterLateCallback = diagnostics.single().calls.single()
+        assertEquals(true, afterLateCallback.canceledAtFailure)
+        assertFalse(afterLateCallback.events.any { it.kind == ParserDiagnosticEventKind.CANCELED })
+        assertFalse(encodedBeforeLateCallback.contains("PRIVATE_"))
+    }
+
+    @Test
     fun `zero timeout unset deadline and expired deadline stay distinct`() {
         val session = session()
         session.configureTimeouts(0, 0, 900)
