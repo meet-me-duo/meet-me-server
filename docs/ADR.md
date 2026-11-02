@@ -745,3 +745,14 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: 질문을 revision마다 새로 허용하지 않고 기술 실패를 정상 접수로 위장하지 않으면서, 기존 유효 제출과 최종 전체 문맥 해석 기회를 보존한다. 이미 존재하는 운영 Parameter 전달과 Compose 경계를 재사용하면 새 IAM·비밀·DB migration 없이 provider 활성화와 모임 protocol 선택을 분리할 수 있다.
 
 **트레이드오프**: optional 조회 실패도 신규 방의 OFF로 처리하므로 동시 운영 모임의 protocol은 다를 수 있다. 앱 재시작 없이 설정 파일만 바꿔도 즉시 적용된다고 주장하지 않는다. OFF는 reader나 최종 matcher의 rollback이 아니며 기존 V2 방이 있는 동안 구 binary로 되돌릴 수 없다. 활성화 전 provider 준비·정확한 배포/복구 계획·제한된 유료 검증의 호출/비용 상한은 별도 검토한다. 이번 준비는 실제 Parameter 등록·운영 renderer·재시작·외부 모델 요청을 수행하지 않는다.
+
+### ADR-069: 실패 배포 journal 보존과 별도 명시적 종결
+
+**상태**: Accepted for implementation and free verification (운영 종결·병합/배포는 별도 승인)
+**날짜**: 2026-11-02
+
+**결정**: ADR-063의 UNKNOWN 보존을 유지하며, 이미 제출된 automatic operation의 terminal Failed를 별도 FAILED_CLOSED sidecar로 종결할 수 있게 한다. 원 journal·sequence·commandId·immutable identity·send claim을 그대로 남기고 APPLIED나 NOT_ATTEMPTED로 바꾸지 않는다. 정확한 원 workflow run/attempt 종료, 활성 명령 없음, 같은 의도 release의 trusted READY/healthy·전체 DB history·image/schema/guard와 원 규칙/target binding을 검증한다. 검토한 snapshot digest의 명시 승인 후 불변 intent, 조건부 recovery holder fence, 불변 closure, 조건부 owner 해제 순서로 진행한다. 부분 쓰기·응답 유실은 정확 readback으로 판정하고 새로운 증거·동시 변경은 자동 승인하지 않는다.
+
+**이유**: 실패 기록의 진실성과 다음 배포의 안전 경계를 함께 보존한다. owner만 해제하면 기존 UNKNOWN 검사가 계속 차단되며, 실패를 성공이나 미시도로 재기록하면 원 실행 사실을 잃는다. 독립 sidecar는 역사 journal의 wire contract를 보존하고 기존 소비자는 이해하지 못한 상태를 계속 차단할 수 있다.
+
+**트레이드오프**: metadata 여러 객체는 단일 트랜잭션이 아니므로 불완전 intent/fence/closure는 의도적으로 차단 상태를 남긴다. 기존 runner의 생존 여부와 전체 baseline을 증명하지 못하면 자동 해제하지 않는다. 운영 적용 전 새 safety checker의 호환성과 plan/digest를 검토해야 하며, local operator CLI의 compiled read-only probe·기존 인증이 필요하다. 새 closure 검사는 원 package와 전체 현재 증명을 다시 읽을 수 있다. 기존 release 경로 거절은 파일 보존을 위해 유지하며 같은 build 재적용은 허용하지 않는다. 세부 절차는 [실패 종결 안내](../deploy/FAILED_OPERATION_CLOSURE.md)를 따른다.

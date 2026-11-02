@@ -1,3 +1,15 @@
+## 2026-11-02 현재 작업 — Issue #192 실패 기록 보존과 명시적 종결
+
+- [x] `[USER]` 구현·무료 검증·Issue·검토한 feature push·develop Draft PR·정확 HEAD CI를 승인했다. 이후 정확 HEAD의 테스트·독립 검토·필수 CI가 모두 통과한 경우에만 복구 변경 병합, 원 실패 기록을 보존한 종결/owner 해제, 기존 보호 절차의 새 immutable release 배포·설정/상태 검증까지 조건부 승인했다. 보호 gate·권한·credential·보안 설정은 유지하며 불일치/예기치 않은 DB 변경 시 중단한다.
+- [x] `[AGENT]` 원 PC checkout의 미커밋 implementation_plan.md를 보존하고 별도 clone의 최신 develop `7b0aed8`에서 작업했다. 첫 Issue 생성은 자동 검토 거절로 미실행이었고, 새 명시 승인 후 미생성 재조회와 한 번의 재시도로 [Issue #192](https://github.com/meet-me-duo/meet-me-server/issues/192)를 확인했다. 깨끗한 develop 재동기화 후 `fix/issue-192-failed-operation-closure`를 생성했다.
+- [x] `[AGENT]` 원 UNKNOWN journal·sequence·commandId를 그대로 보존하는 불변 intent/FAILED_CLOSED sidecar, 정확 승인 digest·종료 workflow/Failed·전체 baseline 증명·조건부 owner fence/해제·불확실 결과 readback을 구현했다. 새 후보 검사도 원 manifest를 다시 확인한다. wrapper는 기존 release를 보존하면서 허용된 실패 단계만 표시한다.
+- [x] `[AGENT]` closure 43개(독립 핵심26·writer5·전체 history proof1·FI gate2·통합9) PASS와16개 mutant 검출을 확인했다. native HTTP2/observer22·DB16·ktlint, 배포 Python424 및 Compose/refresh/Nginx 검사도 PASS다. 두 번째 원본 전체 guard는 컨테이너 복합 준비 timeout으로2,693개 중 실패1/기존17SKIP이며, 해당 class의12개가 초기화 실패1개로 대체돼 실행되지 않은 점을 기록했다. 하위 관측을 추가한 DB16개 집중 검증 후, 정상 NAT 호스트 구성의 원본 전체 guard EXIT0(2,687PASS/기존17SKIP/실패·오류0,1,448.457초)을 확인했다. 로컬 Node315 PASS/94 FAIL은 jq정상경로의격리이미지에서402 PASS/7 Docker관련FAIL/skip0으로분리했고 정확 HEAD Ubuntu CI를 확인해야 한다. 과거 PASS를 현재 결과로 재사용하지 않는다.
+- [ ] `[AGENT]` 최종 전체 검사와 독립 diff 검토 후 검토 파일만 commit/push·develop Draft PR·정확 HEAD CI terminal 결과를 기록한다. Commit/PR: 동일 커밋 예정.
+- [ ] `[AGENT/SHARED]` 모든 검증 조건 충족 후 기존 조건부 승인 범위에서 정확 identity와 fresh plan digest를 확인하고 실패 종결·보호 배포·상태 검증을 진행한다. 같은 build 재적용이나 활성 release 삭제는 해결책이 아니다. 기존 실제 사용자 승인 gate는 우회하지 않는다.
+- [x] `[USER/AGENT]` 합성 보완 질문→분석→추천의 유료 실제 검증은 재시도·fallback 포함 총1,000원 상한으로 승인됐으나, 물리 호출·토큰·환율 등을 합친 상한을 현재 강제할 수 없어 실행하지 않는다. 유료 호출0이며 일반 가격/운영 제한을 새로 만들지 않는다.
+
+현재 범위는 [종결 절차](deploy/FAILED_OPERATION_CLOSURE.md)와 [독립 검증](docs/verification/issue192-independent-closure-review.md)을 따른다. 실제 운영 원본 로그·비밀·plan 파일은 공개하지 않는다. PR189와 PR191의 별도 범위를 유지한다.
+
 ## 2026-11-01 현재 작업 — 신규 V2 모임 설정 전달 준비
 
 ## 2026-11-01 현재 작업 — Issue #190 읽기 전용 reconcile 실패 단계 보존

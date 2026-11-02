@@ -1,0 +1,29 @@
+{
+  "workItem": "issue192-failed-operation-closure",
+  "sourceRevision": "7b0aed8ec9e6f51bc52726dd6b749dce1563382b",
+  "recordedAt": "2026-11-02T13:26:28.625307+00:00",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_failed_operation_closure.py",
+      "sha256": "fd9545c6f1cb87e4c3132cc14e922af29ef40fe2600213247f5ef01daba30120"
+    }
+  ],
+  "cycles": [
+    {
+      "kind": "untouched-source-independent-red",
+      "tests": 24,
+      "assertionFailures": 89,
+      "reason": "Missing public closure behavior, no import/setup errors",
+      "rawLog": ".codex/tdd-evidence/failed-operation-closure-red.log"
+    },
+    {
+      "kind": "strict-json-alias-red",
+      "tests": 26,
+      "assertionFailures": 5,
+      "reason": "Persisted false/0, true/1 and integer/float aliases must be rejected",
+      "rawLog": ".codex/tdd-evidence/failed-operation-closure-alias-red.log"
+    }
+  ],
+  "independentReview": "docs/verification/issue192-independent-closure-review.md",
+  "faultInjection": "deploy/tests/test_issue154_failed_closure_fi.py"
+}

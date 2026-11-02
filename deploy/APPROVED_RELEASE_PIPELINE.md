@@ -48,6 +48,8 @@ IAM의 `ManageMeetMeCredentialRefreshRules`는 기존 `meet-me-production-db-cre
 
 ## 중단과 복구
 
+Issue #192의 [명시적 실패 종결](FAILED_OPERATION_CLOSURE.md)은 원 automatic journal을 변경하지 않고 불변 sidecar와 조건부 owner fence·해제로 `FAILED_CLOSED`를 별도 기록한다. 원 Failed 명령과 정확한 종료 workflow, 현재 전체 trusted baseline 및 규칙/활성 명령 증명이 필요하며 배포 완료는 false다. 기존 `action=reconcile`은 계속 읽기 전용이고 종결을 실행하지 않는다. 새 closure 검사 경로의 전체 읽기 probe와 기존 journal-only 진단의 새 probe 없음 경계를 구분한다. 같은 build 재적용은 기존 경로 보존 정책 때문에 해결책이 아니며 새 immutable release와 운영 승인은 별도다.
+
 승인된 전환 모듈에서만 EventBridge의 정확한 EnableRule/DisableRule에 정상 종료·빈 stdout의 응답을 허용한다. 공통 읽기 전용 preflight는 원본을 유지하고, 전환 모듈이 없는 역사 archive는 기존 읽기 처리로 계속한다. 이는 전송 응답 확인이며 실제 규칙 상태·target 재조회를 대체하지 않는다. 실패 진단은 해당 두 명령과 허용된 이유 enum만 남기며 argv·stderr·원본 응답은 출력하지 않는다.
 
 명령 전송 전에 durable intent를 기록하고 받은 commandId를 보존한다. 동일 operation의 새 실행이 원래 owner를 임의로 탈취하거나 lease 시간만으로 재제출하지 않는다. 원래 DISABLED였던 규칙을 ENABLED로 바꾸지 않는다.

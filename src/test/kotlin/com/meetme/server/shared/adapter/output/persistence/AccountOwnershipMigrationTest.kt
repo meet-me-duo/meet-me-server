@@ -1,10 +1,10 @@
 package com.meetme.server.shared.adapter.output.persistence
 
+import com.meetme.server.support.mappedPortReadyPostgres
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.testcontainers.postgresql.PostgreSQLContainer
 import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.UUID
@@ -119,7 +119,7 @@ class AccountOwnershipMigrationTest {
     private fun connection() = DriverManager.getConnection(postgres.jdbcUrl, postgres.username, postgres.password)
 
     companion object {
-        private val postgres = PostgreSQLContainer("postgres:18-alpine")
+        private val postgres = mappedPortReadyPostgres()
 
         init {
             postgres.start()

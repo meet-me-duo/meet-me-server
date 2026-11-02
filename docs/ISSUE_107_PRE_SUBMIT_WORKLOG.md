@@ -1,5 +1,14 @@
 # 새 #107 구현·통합 Worklog
 
+## 2026-11-02 실패 operation 종결 준비 — Issue #192
+
+정상 runtime을 보존한 채 원 실패 journal을 재기록하지 않는 explicit closure와 안전한 wrapper 진단을 별도 작업 공간에서 구현한다. PR189의 factory/harness와 PR191의 읽기 전용 진단을 섞지 않는다. 초기 게시 승인 뒤 사용자가 정확 HEAD 테스트·독립 검토·필수 CI 통과를 전제로 복구 변경 병합, 원 실패 기록 보존 종결/owner 해제, 보호 절차의 새 배포·설정/상태 검증까지 조건부 승인했다. 그 조건이 충족되기 전에는 실행하지 않으며 실제 사용자 보호 gate·identity·DB·권한 경계를 유지한다.
+
+불변 intent/FAILED_CLOSED sidecar와 조건부 recovery fence·해제, 원 workflow 정확 attempt 종료·원 SSM Failed·활성 명령0·원 manifest와 전체 history/guard/healthy runtime 증명·정확 snapshot digest를 요구한다. 실패는 APPLIED가 아니고 UNKNOWN을 NOT_ATTEMPTED로 바꾸지 않는다. 현재 디렉터리 시각과 짧은 무출력 실패는 과거 분기의 직접 로그로 주장하지 않는다. 같은 build 재적용 안내는 기존 release 보존 거절 정책과 충돌하므로 [종결/새 publication 절차](../deploy/FAILED_OPERATION_CLOSURE.md)로 정정한다.
+
+closure43개(독립26·writer5·전체 history proof1·FI gate2·통합9) PASS 및16개 mutant 탐지를 확인했다. 최종 원본nativeguard EXIT0:2,704개 중2,687PASS/기존17SKIP/실패·오류0,1,448.457초를 확인했다. native Python424와Compose/refresh/Nginx도PASS다. 로컬Node315/94FAIL은jq정상경로의격리이미지에서402PASS/7Docker관련FAIL/skip0이며실패를무시하지않는다. source/test지문을검증commit과대조하고 exactHEAD Ubuntu필수CI를게시단계에서확인한다. 운영 정상화·V2 ON·실제 서비스/유료 검증 완료로 표시하지 않는다. 상세 검증은 [독립 검토](verification/issue192-independent-closure-review.md)와 PR의 실제 결과를 따른다.
+
+
 ## 2026-11-01 신규 V2 모임 설정 전달과 정책 확정 준비
 
 최신 develop `422d8c26`과 운영 배포 완료 인계 source `42db6039`의 tree가 같은 상태에서 별도 작업 공간을 준비했다. 이번 범위는 기본 OFF인 `meetme.precheck.evidence-enabled`의 runtime 전달 보완·무료 검증·develop Draft PR이며 병합·실제 활성화·유료 호출은 포함하지 않는다. 기존 제공자 스위치나 재정 정책·권한·timeout/retry·V21/V22·조건부 참석 guard를 바꾸지 않는다.

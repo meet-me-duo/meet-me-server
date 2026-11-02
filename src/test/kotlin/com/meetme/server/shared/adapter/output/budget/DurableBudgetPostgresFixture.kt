@@ -24,6 +24,7 @@ import com.meetme.server.shared.application.port.output.AiVerifiedCompleteBill
 import com.meetme.server.shared.application.port.output.AiVerifiedFinalReserve
 import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import com.meetme.server.shared.application.service.DurableAiBudgetService
+import com.meetme.server.support.mappedPortReadyPostgres
 import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
@@ -33,7 +34,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.transaction.support.TransactionTemplate
-import org.testcontainers.postgresql.PostgreSQLContainer
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.Clock
@@ -50,7 +50,7 @@ import kotlin.test.assertNotNull
 /** Test-only authority/coverage: these arbitrary TEST_SUBUNIT receipts are NOT production billing proof. */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class DurableBudgetPostgresFixture {
-    private val postgres = PostgreSQLContainer("postgres:18-alpine").apply { start() }
+    private val postgres = mappedPortReadyPostgres().apply { start() }
     protected val dataSource = DriverManagerDataSource(postgres.jdbcUrl, postgres.username, postgres.password)
     protected val jdbc = JdbcTemplate(dataSource)
     protected val transaction = TransactionTemplate(DataSourceTransactionManager(dataSource))
