@@ -1,5 +1,14 @@
 # 새 #107 구현·통합 Worklog
 
+## 2026-11-02 실패 operation 종결 준비 — Issue #192
+
+정상 runtime을 보존한 채 원 실패 journal을 재기록하지 않는 explicit closure와 안전한 wrapper 진단을 별도 작업 공간에서 구현한다. PR189의 factory/harness와 PR191의 읽기 전용 진단을 섞지 않는다. 초기 게시 승인 뒤 사용자가 정확 HEAD 테스트·독립 검토·필수 CI 통과를 전제로 복구 변경 병합, 원 실패 기록 보존 종결/owner 해제, 보호 절차의 새 배포·설정/상태 검증까지 조건부 승인했다. 그 조건이 충족되기 전에는 실행하지 않으며 실제 사용자 보호 gate·identity·DB·권한 경계를 유지한다.
+
+불변 intent/FAILED_CLOSED sidecar와 조건부 recovery fence·해제, 원 workflow 정확 attempt 종료·원 SSM Failed·활성 명령0·원 manifest와 전체 history/guard/healthy runtime 증명·정확 snapshot digest를 요구한다. 실패는 APPLIED가 아니고 UNKNOWN을 NOT_ATTEMPTED로 바꾸지 않는다. 현재 디렉터리 시각과 짧은 무출력 실패는 과거 분기의 직접 로그로 주장하지 않는다. 같은 build 재적용 안내는 기존 release 보존 거절 정책과 충돌하므로 [종결/새 publication 절차](../deploy/FAILED_OPERATION_CLOSURE.md)로 정정한다.
+
+closure43개(독립26·writer5·전체 history proof1·FI gate2·통합9) PASS 및16개 mutant 탐지를 확인했다. 최종 원본nativeguard EXIT0:2,704개 중2,687PASS/기존17SKIP/실패·오류0,1,448.457초를 확인했다. native Python424와Compose/refresh/Nginx도PASS다. 로컬Node315/94FAIL은jq정상경로의격리이미지에서402PASS/7Docker관련FAIL/skip0이며실패를무시하지않는다. source/test지문을검증commit과대조하고 exactHEAD Ubuntu필수CI를게시단계에서확인한다. 운영 정상화·V2 ON·실제 서비스/유료 검증 완료로 표시하지 않는다. 상세 검증은 [독립 검토](verification/issue192-independent-closure-review.md)와 PR의 실제 결과를 따른다.
+
+
 ## 2026-11-01 신규 V2 모임 설정 전달과 정책 확정 준비
 
 최신 develop `422d8c26`과 운영 배포 완료 인계 source `42db6039`의 tree가 같은 상태에서 별도 작업 공간을 준비했다. 이번 범위는 기본 OFF인 `meetme.precheck.evidence-enabled`의 runtime 전달 보완·무료 검증·develop Draft PR이며 병합·실제 활성화·유료 호출은 포함하지 않는다. 기존 제공자 스위치나 재정 정책·권한·timeout/retry·V21/V22·조건부 참석 guard를 바꾸지 않는다.
@@ -501,3 +510,13 @@ develop `d5fce878`의 README 전체318행을 기준으로 정리했다. PR138에
 별도 서버6d67/웹2fa 기반으로 여섯 결과 요청의 의미 지원 선언과 미지원 false 응답·확정 거부를 구현했다. DB/protocol/권한/provider/V2 설정은 유지했다. 독립ACC17 RED→GREEN, cache equivalent path P2의CACHE3 RED→framework수정 후20GREEN, 유한mutants6/6검출·원본307hash 보존을 확인했다. 웹unit825·관련browser98·frozenold/new4case 통과, 전체서버·웹나머지검사결과는 완료후기록한다. 새Issue/PR·병합·운영·추가유료/지도0, original분석파일보존. 상세는 [호환 검증](verification/attendance-client-compatibility.md). broad107을 이 작업의 로컬 성공만으로 완료하지 않는다.
 
 - 구 웹 호환 최종 회귀의 최초12FAIL/17SKIP를 보존했다. 명시 지원을 빠뜨린10호출과 MockMvc request-context 격리2건을 단언 유지로 정정했고 독립NFI2 RED→GREEN 및 관련67PASS/ktlintCheck를 확인했다. 웹 unit825/기본 browser517PASS·기존1SKIP/evidence6/하네스 사전검사 단위3 및 build/lint/type/API 통과. 최종 서버 ktlintCheck·assemble·test는2697건 중2680PASS/17기존SKIP/실패·오류0으로 통과했다. 전체 실행1002.547초·681소스불변·SKIP집합동일을 확인했다. 1단계 로컬 완료/2단계 게시·develop 통합 승인 대기이며 새 게시·유료·운영0이다.
+
+
+## 2026-11-01 — Issue #190 읽기 전용 진단 실패 단계 보존
+
+- 사용자 승인 범위는 별도 Issue·feature 구현·무료 검증·commit/push·develop Draft PR·정확 HEAD 일반 CI까지다. PR #189와 독립이며 main/develop 병합·운영 재실행·설정·owner/규칙 변경·추가 유료 요청은 수행하지 않는다.
+- 기존 reconcile은 준비 실패 시 plan/report를 만들지 못하고 일반 exit2만 남겨 최종 artifact 누락과 원인 관측 실패가 섞였다. 별도 strict 진단 artifact에 허용된 단계/원인과 literal false만 남기고, 최종 검사에서 plan보다 먼저 검증·표시하며 실패 상태를 유지하도록 보강했다. 기존 v1 정상 보고서·event/origin/package/identity 검증과 무변경 권한 경계는 유지한다.
+- 독립 설계 테스트는 실제 driver/main/prepare/reconcile/complete와 실제 immutable validators를 사용하고 외부 서비스 응답만 합성했다. 최종 동결 테스트 지문으로 baseline 예상 실패23·설정오류0→집중10 PASS, 기존 issue154 전체277 PASS를 확인했다. 원자 발행 PermissionError fixture의 누락된 표준 OS 경계를 독립 설계자가 추가하고 기대값을 유지한 채 baseline RED를 다시 확인했다. 최초 실패와 원본 로그는 로컬에 보존했다.
+- 독립 검토·의도적 결함8/8 탐지·복원10 PASS·최종 소스/테스트/workflow4개 지문 일치를 확인했다. 원 운영 UNKNOWN 원인과 V2 ON 성공을 확인한 것으로 확대하지 않는다.
+- 최종 원본 전체 guard EXIT0: 2,685 PASS·기존17 SKIP·실패/오류0, 346 suites·1,017.304초·소스/guard 지문 불변. 첫1FAIL·집중PASS·마지막0FAIL은 별도 보존하고 초기 원인 미확인을 유지한다. 기존 배포 계약19명령 통과·Nginx1명령 로컬 환경 제한을 구분하며 정확 HEAD 일반 CI에서 원래 검사를 확인한다. 현재 Commit/PR은 동일 커밋 예정이며 feature 게시·CI 확인은 별도 후속이다.
+- 상세 계약·정제 증거는 [검증 기록](verification/issue190-readonly-reconcile-diagnostics.md)과 `.tdd/red/issue190-readonly-reconcile-diagnostics.json`, `.tdd/verification/issue190-reconcile-diagnostics.json`을 따른다. 원본 모델 응답·운영 로그·계정 비밀·DB·봉인 사례는 게시하지 않는다.

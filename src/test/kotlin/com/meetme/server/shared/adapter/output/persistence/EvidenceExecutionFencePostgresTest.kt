@@ -16,6 +16,7 @@ import com.meetme.server.shared.domain.InputEvidence
 import com.meetme.server.shared.domain.InputInterpretation
 import com.meetme.server.shared.domain.InputSupplement
 import com.meetme.server.shared.domain.ParticipantId
+import com.meetme.server.support.mappedPortReadyPostgres
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,7 +32,6 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
-import org.testcontainers.postgresql.PostgreSQLContainer
 import tools.jackson.databind.ObjectMapper
 import java.security.MessageDigest
 import java.time.Clock
@@ -439,7 +439,7 @@ class EvidenceExecutionFencePostgresTest {
         private const val RAW = "일요일 오후 온라인 합성 조건"
         private val TIME = AtomicReference(START)
         private val EPOCHS = ConcurrentHashMap<UUID, UUID>()
-        private val postgres = PostgreSQLContainer("postgres:18-alpine").apply { start() }
+        private val postgres = mappedPortReadyPostgres().apply { start() }
 
         @JvmStatic @DynamicPropertySource
         fun database(registry: DynamicPropertyRegistry) {

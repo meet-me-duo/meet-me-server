@@ -89,6 +89,8 @@ flowchart LR
 - **AWS:** 애플리케이션 런타임과 운영 PostgreSQL을 제공한다.
 - **Grafana Cloud (Post-MVP):** Alloy가 전송한 애플리케이션·Worker 지표와 로그를 관리형 Metrics 및 Loki에 저장하고 Grafana-managed Alerting으로 운영 알림을 평가한다. 제출 MVP는 계정·전송 자격 증명 없이 애플리케이션의 Prometheus endpoint와 JSON 표준 출력까지만 제공한다.
 
+- Issue #192 / ADR-069는 원 UNKNOWN journal을 변경하지 않는 명시적 실패 종결 sidecar와 조건부 owner fence·해제를 추가한다. terminal Failed·원 workflow 종료·전체 trusted runtime/history/guard·원 규칙·활성 명령 0·검토 snapshot digest를 요구하며 FAILED_CLOSED도 deploymentComplete=false다. 새 후보는 원 immutable manifest/package와 현재 전체 증명을 대조하고 부분/불명 상태는 계속 차단한다. 같은 build 재적용 대신 새 immutable release를 사용하며 실제 운영 승인은 [실패 종결 절차](../deploy/FAILED_OPERATION_CLOSURE.md)와 분리한다.
+
 ### 제출 MVP 접근 모드
 
 - Wanted AI Champion 심사·투표용 배포는 소셜 로그인 없이 공개한다.
