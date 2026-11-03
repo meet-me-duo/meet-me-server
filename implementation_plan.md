@@ -1,3 +1,17 @@
+## 2026-11-03 현재 작업 — Issue #197 개인 목록 숨김·생성일부터 30일 보존
+
+- [x] `[USER]` 본인 내 모임에서만 숨김, participants 관계의 숨김 시각, 생성일부터 30일 보존, Issue·PR·CI·조건 충족 병합을 승인했다. UI/Web은 별도 작업이며 서버 운영 배포·migration은 제외한다.
+- [x] `[AGENT]` BOOK-DOPPPHMJ4D의 별도 clone `C:/Users/jinhy/Documents/Codex/2026-11-03/task-3/meet-me-server`, 최신 develop `9038c7b32c61e608d0c92c082de8fd251e550748`에서 `feature/197-account-room-hide-retention`을 만들었다. 기존 복구 checkout/운영 DB는 변경하지 않는다. [Issue #197](https://github.com/meet-me-duo/meet-me-server/issues/197).
+- [x] `[AGENT]` 독립 테스트 설계와 RED18개(초기48개 실행/19FAIL 중 기존 fixture 오류1개는 RED 제외) 및 동시성 보완 RED2개를 확인했다. 실제 PostgreSQL 집중90개 모두 PASS로 인가/Origin/동시성/목록/cleanup·비동기 안전과 migration을 검증했다.
+- [x] `[AGENT]` participants nullable 숨김 시각·guest CHECK와 API·목록·생성일 cleanup 및 V23 배포 카탈로그를 구현하고 생성 OpenAPI/PRD/구조 문서를 맞췄다.
+- [x] `[AGENT]` 독립 코드/테스트 리뷰 PASS(P1/P2 0), 앱 결함6/6 탐지·복원12 PASS, 배포 catalog152 Node+2 Python PASS·결함6/6·복원6 PASS를 확인했다. 최신 schema 기대값2파일도 독립 검토 후3 PASS이며 기존 business열 비교와 새6행NULL 단언을 유지한다.
+- [x] `[AGENT]` 원본 native Linux TDD guard가 04:06:02~04:28:33 UTC exit0으로 통과했다:350 suites/2,720 tests/2,703 PASS/기존17 SKIP/실패·오류0. Windows 첫 실행과 skip집합 동일, 실행 입력697개 byte-identical이며 guard/code/security 완화는 없다.
+- [ ] `[AGENT]` 커밋 이후 최종 SHA의 CI 3개 필수 작업을 PR Checks에서 확인한다.
+- [ ] `[AGENT]` 검증 후 Draft PR을 게시하고 정확 최종 SHA CI/리뷰를 충족하면 develop에 병합한다. main은 운영 배포를 유발하므로 병합하지 않는다.
+- [ ] `[USER/SHARED]` 실제 서버 배포·V23 운영 migration은 별도 승인 후 수행한다. Web은 서버 준비 확인 전 새 API 활성화를 보류한다.
+
+현재 단계(커밋 직전): 집중90개·독립 리뷰·결함 주입·최종 native 전체 가드 완료. 원격 게시·CI·develop 병합은 이 커밋 이후 PR Checks와 Git 이력에서 확인한다. 첫 원본 전체 guard 실행 중 최신 migration count를 V22로 고정한 기존 테스트2파일을 추가 발견해 독립 보완·집중3 PASS로 확인했고, 첫 Windows guard는 24분58초·2,724개 중110 FAIL/기존17 SKIP로 종료했다. 버전·보존·native API inventory 기대값을 독립 보완했고 POSIX/symlink/TLS 환경 실패는 가드/테스트를 완화하지 않고 새 WSL native 경로 `/tmp/meetme197-local-20261103/repo`에서 분리 검증한다. 원본 guard 재실행이 04:28:33 UTC exit0으로 완료됐으며 JDK17.0.21·새 캐시·프로세스2GiB/workers2/현재NAT172.29.160.1을 사용한다. 실행 입력697개가 검토된 작업과 byte-identical이다. 첫 Gradle 인자 파싱·신규 테스트의 초기 formatter 실패는 유효 RED가 아니다. 최초 추천 보존 테스트는 selection 준비 오류1건으로 RED에서 제외했으며 기대값/준비 코드를 약화하지 않은 집중 GREEN 재실행에서 통과했다. 원인은 아직 미확인이며 후속 전체/CI 결과와 구분한다. 최종 갱신: 2026-11-03 UTC. Commit/PR: 동일 커밋 예정.
+
 ## 2026-11-03 정리와 게시 준비 — 임시 이슈 문서와 스크립트 수명주기
 
 - [x] `[AGENT]` 원격 main `89d4e0d193aa1a5018f3e62168654e34b607f032`를 직접 확인하고 별도 clone의 `chore/cleanup-temporary-artifacts-20261103`에서 정리했다. 복구 checkout·운영·AWS·컨테이너·GitHub 설정은 변경하지 않았다.

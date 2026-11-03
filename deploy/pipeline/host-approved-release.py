@@ -286,7 +286,7 @@ def _record():
                 tuple(map(str, range(1, 13))), tuple(map(str, range(1, 12))) + ('13',),
                 tuple(map(str, range(1, 11))) + ('14', '15'),
                 tuple(map(str, range(1, 12))) + ('14', '15'), tuple(map(str, range(1, 17))),
-                tuple(map(str, range(1, 18))), tuple(map(str, range(1, 19))), tuple(map(str, range(1, 20))), tuple(map(str, range(1, 21))), tuple(map(str, range(1, 22))), tuple(map(str, range(1, 23))))
+                tuple(map(str, range(1, 18))), tuple(map(str, range(1, 19))), tuple(map(str, range(1, 20))), tuple(map(str, range(1, 21))), tuple(map(str, range(1, 22))), tuple(map(str, range(1, 23))), tuple(map(str, range(1, 24))))
     _require(versions in catalogs)
     sparse = '14' in versions
     names = ('create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
@@ -304,6 +304,7 @@ def _record():
         '20': 'V20__add_account_room_history_index.sql',
         '21': 'V21__add_submission_input_evidence.sql',
         '22': 'V22__preserve_unverified_candidate_place.sql',
+        '23': 'V23__add_account_room_archive_hidden_at.sql',
     })
     for version, row in zip(versions, record['history']):
         _require(type(row) is dict and set(row) == {'version', 'script', 'checksum', 'success'})

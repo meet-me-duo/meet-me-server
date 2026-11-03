@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-/** Issue161: real PGJDBC preparation behavior and unchanged account-history port semantics. */
+/** Issue161: real PGJDBC preparation behavior with creation-based account-history retention. */
 class AccountRoomLookupPreparationPostgresTest {
     private lateinit var pool: HikariDataSource
     private lateinit var jdbc: JdbcTemplate
@@ -98,7 +98,7 @@ class AccountRoomLookupPreparationPostgresTest {
 
     @Test
     fun `mixed account role filters preserve retained rows own roles literal search creation range and keyset order`() {
-        val expectedAll = listOf(id(1), id(2), id(3), id(5), id(6), id(4))
+        val expectedAll = listOf(id(1), id(2), id(3), id(5), id(6))
         repeat(12) { iteration ->
             val roles =
                 if (iteration % 2 ==
@@ -116,7 +116,7 @@ class AccountRoomLookupPreparationPostgresTest {
                     ) {
                         listOf(id(1), id(5))
                     } else {
-                        listOf(id(2), id(3), id(6), id(4))
+                        listOf(id(2), id(3), id(6))
                     },
                     rows.map { it.roomId },
                 )
@@ -131,7 +131,6 @@ class AccountRoomLookupPreparationPostgresTest {
                     ParticipantRole.MEMBER,
                     ParticipantRole.MEMBER,
                     ParticipantRole.HOST,
-                    ParticipantRole.MEMBER,
                     ParticipantRole.MEMBER,
                 ),
                 all.map {
@@ -167,10 +166,7 @@ class AccountRoomLookupPreparationPostgresTest {
             )
             assertEquals(emptyList(), repository.findByAccount(fixtures.accountA, CUTOFF, AccountRoomsQuery(query = "' OR 1=1 --")))
             assertEquals(
-                listOf(
-                    id(6),
-                    id(4),
-                ),
+                emptyList(),
                 repository.findByAccount(fixtures.accountA, CUTOFF, AccountRoomsQuery(createdBefore = CUTOFF)).map {
                     it.roomId
                 },
@@ -188,7 +184,7 @@ class AccountRoomLookupPreparationPostgresTest {
             )
             assertEquals(NOW, all.first { it.roomId == id(5) }.expiresAt)
             assertEquals(NOW, all.first { it.roomId == id(6) }.expiresAt)
-            assertEquals(NOW.plus(Duration.ofDays(29)), all.first { it.roomId == id(4) }.expiresAt)
+            assertFalse(all.any { it.roomId in listOf(id(4), id(7), id(8)) }, "Recent closure must not retain old creation")
         }
         val seen = mutableListOf<UUID>()
         var cursor: AccountRoomCursor? = null
@@ -251,7 +247,7 @@ class AccountRoomLookupPreparationPostgresTest {
         room(setup, 3, a, ParticipantRole.MEMBER, NOW.minus(Duration.ofDays(2)), "지난 참여")
         room(setup, 4, a, ParticipantRole.MEMBER, NOW.minus(Duration.ofDays(60)), "오래된 생성 최근 마감", NOW.minus(Duration.ofDays(1)))
         room(setup, 5, a, ParticipantRole.HOST, CUTOFF, "수집 경계")
-        room(setup, 6, a, ParticipantRole.MEMBER, CUTOFF.minus(Duration.ofDays(10)), "마감 경계", CUTOFF)
+        room(setup, 6, a, ParticipantRole.MEMBER, CUTOFF, "생성 경계 최근 마감", NOW.minus(Duration.ofDays(1)))
         room(setup, 7, a, ParticipantRole.HOST, CUTOFF.minusNanos(1000), "만료 수집")
         room(setup, 8, a, ParticipantRole.MEMBER, NOW.minus(Duration.ofDays(60)), "만료 마감", CUTOFF.minusNanos(1000))
         room(setup, 9, b, ParticipantRole.HOST, NOW.minusSeconds(3600), "다른 계정")

@@ -9,7 +9,7 @@ const scripts = [...f.scripts,
   'V19__add_confirmed_result_reviews.sql',
   'V20__add_account_room_history_index.sql',
   'V21__add_submission_input_evidence.sql'];
-const currentScripts = [...scripts, 'V22__preserve_unverified_candidate_place.sql'];
+const currentScripts = [...scripts, 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql'];
 
 function fixture() {
   const value = f.currentFixture();
@@ -21,12 +21,12 @@ function fixture() {
   return value;
 }
 
-test('V21C01 current publication retains V21 in all twenty-two real SQL files and exact independent checksums', () => {
+test('V21C01 current publication retains V21 in all twenty-three real SQL files and exact independent checksums', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture();
   try {
     const actual = f.publish(value);
-    assert.equal(actual.ok, true, 'The exact additive V22 catalog must be recognized');
+    assert.equal(actual.ok, true, 'The exact additive V23 catalog must be recognized');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     const schema = currentScripts.map((script, i) => ({ version: String(i + 1), script,
@@ -35,7 +35,7 @@ test('V21C01 current publication retains V21 in all twenty-two real SQL files an
   } finally { value.remove(); }
 });
 
-test('V21C02 current publisher rejects every missing reviewed version and unknown twenty-three', () => {
+test('V21C02 current publisher rejects every missing reviewed version and unknown twenty-four', () => {
   for (const missing of currentScripts) {
     const value = fixture();
     try {
@@ -45,7 +45,7 @@ test('V21C02 current publisher rejects every missing reviewed version and unknow
   }
   const value = fixture();
   try {
-    fs.copyFileSync(path.join(value.migrations, scripts.at(-1)), path.join(value.migrations, 'V23__unknown.sql'));
+    fs.copyFileSync(path.join(value.migrations, scripts.at(-1)), path.join(value.migrations, 'V24__unknown.sql'));
     assert.deepEqual(f.publish(value), f.untrusted);
   } finally { value.remove(); }
 });

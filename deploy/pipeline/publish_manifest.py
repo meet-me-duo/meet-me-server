@@ -41,6 +41,7 @@ MIGRATION_SCRIPTS = (
     'V20__add_account_room_history_index.sql',
     'V21__add_submission_input_evidence.sql',
     'V22__preserve_unverified_candidate_place.sql',
+    'V23__add_account_room_archive_hidden_at.sql',
 )
 
 

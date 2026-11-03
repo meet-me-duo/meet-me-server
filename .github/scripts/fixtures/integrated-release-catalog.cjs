@@ -18,7 +18,7 @@ const scripts = [
   'V17__add_durable_ai_room_budgets.sql',
 ];
 // Reviewed V22 is an additive candidate catalog; scripts/manifest keep historical V17 defaults.
-const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql', 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql'];
+const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql', 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql'];
 const guardFiles = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',

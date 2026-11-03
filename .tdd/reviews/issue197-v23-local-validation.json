@@ -1,0 +1,75 @@
+{
+  "recordedAt": "2026-11-03T03:38:26.937092Z",
+  "verifier": "/root/v23_release_catalog",
+  "scope": "V23 release publication, readers, historical catalogs and additive CI coverage",
+  "results": {
+    "readerRed": "1 PASS / 2 expected assertion FAIL",
+    "ciBoundaryRed": "4 PASS / 2 expected assertion FAIL",
+    "publisherRed": "3 PASS / 3 expected assertion FAIL",
+    "focusedNode": "46 PASS / 0 FAIL / 0 SKIP",
+    "pythonPublication": "2 PASS / 0 FAIL",
+    "faultInjection": "6/6 detected; restored V23 control 6 PASS",
+    "allCatalogRegression": "152 PASS / 0 FAIL / 0 SKIP (472.138 seconds)"
+  },
+  "files": [
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "75cbcf69005ef2c421300f33c166d55a863ff81f1261bfdb9bcdd6518e11b3ca"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "9b969a06244236b5b15981197b91d76419bc71a389bcd23c82fbf52cadc0375e"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "8fca827e3d20f3cd3b68aa4edb269088e1069b84ef0e377e34a2bb0d782c367f"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "96e6cf2f80cb4c932905a30f923dfa4aa1606caec3a697fb5927b97c4b6b647c"
+    },
+    {
+      "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+      "sha256": "d0f45f79b0aafddd005a3bf1fdc0ad6cf666992a15c1e645497a1dada576209c"
+    },
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "b3f3a52008036f2f9ea54a6554c12681eb4d2ed6ff17b8be1d5713fc27a8645a"
+    },
+    {
+      "path": "src/main/resources/db/migration/V23__add_account_room_archive_hidden_at.sql",
+      "sha256": "b7f80b12785446d8241f7c42ca73acb0599ea3f874e1d1293097ee929c6d9e31"
+    }
+  ],
+  "independentReview": "PENDING",
+  "remoteCI": "NOT RUN BY SUBTASK",
+  "serverDeployment": "NOT RUN",
+  "operatingDatabaseChanges": "NONE",
+  "providerCalls": 0,
+  "sourceLogs": [
+    ".codex/tdd-evidence/issue197-v23-release-catalog.log",
+    ".codex/tdd-evidence/issue197-v23-ci-boundary.log",
+    ".codex/tdd-evidence/issue197-v23-publication.log",
+    ".codex/tdd-evidence/issue197-v23-fault-injection.log",
+    ".codex/tdd-evidence/issue197-v23-catalog-green.log",
+    ".codex/tdd-evidence/issue197-v23-python-publication.log",
+    ".codex/tdd-evidence/issue197-v23-all-catalog-regression.log"
+  ],
+  "deploymentRedCycles": [
+    {
+      "workItem": "issue197-v23-ci-boundary",
+      "expectedFailure": "Additional unconditional V23 verification step absent; all original CI boundary controls pass",
+      "summaryPath": ".tdd/deployment/issue197-v23-ci-boundary.json"
+    },
+    {
+      "workItem": "issue197-v23-publication",
+      "expectedFailure": "Baseline publisher still requires exactly V1-V22: rejects real V23 and incorrectly admits omission of V23. Three reader/transition controls pass after their separately recorded RED/GREEN cycle.",
+      "summaryPath": ".tdd/deployment/issue197-v23-publication.json"
+    },
+    {
+      "workItem": "issue197-v23-release-catalog",
+      "expectedFailure": "V23 exact metadata and V22-to-V23 transition are unsupported by baseline readers; malformed metadata remains rejected",
+      "summaryPath": ".tdd/deployment/issue197-v23-release-catalog.json"
+    }
+  ]
+}

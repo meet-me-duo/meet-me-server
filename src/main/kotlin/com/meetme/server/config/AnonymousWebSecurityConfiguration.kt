@@ -24,7 +24,9 @@ class AnonymousWebSecurityConfiguration(
     }
 
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(ExactOriginInterceptor(properties.allowedOrigins)).addPathPatterns("/api/rooms", "/api/rooms/**")
+        registry
+            .addInterceptor(ExactOriginInterceptor(properties.allowedOrigins))
+            .addPathPatterns("/api/rooms", "/api/rooms/**", "/api/account/rooms/**")
     }
 }
 

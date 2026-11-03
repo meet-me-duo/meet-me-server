@@ -11,6 +11,8 @@ interface RoomOwnershipUseCase {
     ): RoomView
 
     fun accountRooms(query: AccountRoomsQuery = AccountRoomsQuery()): AccountRoomsResult
+
+    fun hideAccountRoom(inviteCode: String)
 }
 
 data class AccountRoomsQuery(

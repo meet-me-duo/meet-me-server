@@ -9,7 +9,7 @@
 
 사용자 승인 #109는 기존 익명 제출 모드에서 계정 HOST로 전환하는 후속 버전이다. account 영역의 application port 뒤에 Google/Kakao OIDC, RSA JWT, Redis 회전 세션, JDBC 영구 계정 저장을 둔다. Domain에는 공급자·HTTP·Redis 타입을 노출하지 않는다. 계정 생성은 provider+subject unique 및 transaction으로 보호하고 이메일 자동 연결을 하지 않는다. login-only 공급자 토큰은 검증 뒤 폐기하며 Calendar 지속 grant/암호화 저장은 별도 범위다.
 
-participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 내 모임 목록은 PostgreSQL의 현재 계정 HOST·MEMBER 소유권을 기준으로 읽고 기존 cleanup 기준30일을 expires_at으로 계산한다. 2026-10-28 사용자 요청으로 ADR-051의 HOST 전용 목록 범위만 참여 목록까지 확장하며 인증·명시적 연결·권한 경계는 유지한다. AccountRoomArchivePort의 조회 조건은 역할·생성 시각 범위·이름·커서이며 JDBC adapter에서 계정 조건과 보존 조건을 항상 함께 적용한다. HTTP adapter는 KST 생성일과 불투명 커서를 application 값으로 변환하고 Domain에는 HTTP 형식을 노출하지 않는다. 자세한 계약은 [내 모임 목록 API](ACCOUNT_ROOM_HISTORY_API.md)를 따른다.
+participants는 account user 또는 guest session 정확히 하나를 소유자로 가진다. 인증된 account가 있으면 guest cookie로 권한을 보충하지 않는다. 명시적 claim은 room row lock 아래 이중 증명·계정 충돌을 확인하고 기존 participant owner만 원자 변경한다. 방·제출·역할 식별자는 보존한다. 인증 context를 application port로 읽으며 기존 소유권 경계에 연결한다. 내 모임 목록은 PostgreSQL의 현재 계정 HOST·MEMBER 소유권을 기준으로 읽고 created_at 기준30일을 expires_at으로 계산한다. 2026-10-28 사용자 요청으로 ADR-051의 HOST 전용 목록 범위만 참여 목록까지 확장하며 인증·명시적 연결·권한 경계는 유지한다. AccountRoomArchivePort의 조회 조건은 역할·생성 시각 범위·이름·커서이며 JDBC adapter에서 계정 조건·개인 숨김 제외·생성일 보존 조건을 항상 함께 적용한다. participants.account_archive_hidden_at은 계정 소유 관계의 내 목록 숨김 시각이며 NULL은 표시 상태다. V23은 nullable 컬럼과 guest 행은 NULL이어야 하는 CHECK를 추가하므로 기존 관계는 모두 표시된다. 숨김은 room row lock 아래 본인 user_id 관계만 COALESCE로 원자 갱신하며 cleanup과 동일한 room→participant 순서를 유지한다. 관계의 역할·소유자나 방·분석 상태는 갱신하지 않고 재참여도 숨김을 해제하지 않는다. 기존 ExactOriginInterceptor는 /api/account/rooms/**의 변경 요청에도 동일한 정확 Origin 검증을 적용한다. 허용 Origin/CORS 메소드는 확대하지 않는다. HTTP adapter는 KST 생성일과 불투명 커서를 application 값으로 변환하고 Domain에는 HTTP 형식을 노출하지 않는다. 자세한 계약은 [내 모임 목록 API](ACCOUNT_ROOM_HISTORY_API.md)를 따른다.
 
 Issue161의 계정 목록 접근 경로는 `participants(user_id, room_id) WHERE user_id IS NOT NULL` B-tree와 기존 HOST 인덱스를 사용한다. JDBC adapter는 이 조회의 statement만 named server preparation을 끄고, 선택된 role의 반환값을 enum 상수로 투영하면서 실제 role 조건은 바인딩한다. 풀·다른 조회의 준비문 정책과 PostgreSQL의 인덱스 선택은 유지한다. 날짜는 meeting_rooms의 원본 생성일로 필터·정렬하며 새 날짜/role 인덱스나 조회 모델은 추가하지 않는다. 후보별 회귀·재계획 비용과 운영 적용 제약은 [DB 부하 검증](verification/account-room-db-load-20261029.md)에 기록한다.
 
@@ -311,7 +311,7 @@ Gemini 프롬프트는 AVAILABLE/UNAVAILABLE·명시 대안·하드 제외·부�
 - 공개 room 응답의 viewer.context_id는 현재 세션이 소유한 방 참여자의 opaque UUID이며, 미참여·익명·만료 세션은 null이다. 같은 이름·역할인 다른 세션의 자기 원문 캐시를 구별하는 hint로 사용하고 권한 증명으로 사용하지 않는다. raw credential, guest-session ID나 다른 참여자의 ID는 추가하지 않는다. viewer identity 전환과 401/403은 state_version과 별도로 캐시를 정리해야 하며, 이 field가 없는 구 응답만으로는 같은 이름·역할의 세션 교체를 안전하게 구별할 수 없다.
 - 공개 room/candidates/owner 응답은 REPEATABLE_READ snapshot을 사용하고 room.version을 state_version으로 반환한다. 라운드 generation은 라운드를 식별하고 state_version은 같은 generation 안의 open/consume/publish/confirm도 정렬한다. owner 원문의 별도 revision 및 세션별 cache scope가 함께 필요하다.
 - 새 논리 correction run은 방 수명 동안 3회로 제한한다. replay·REUSED·rollback은 소비하지 않으며 기술 실패로 환불하지 않는다. 기존 지연 분석 retry의 물리 호출은 별도이므로 이 한도는 USD/물리 호출 상한이 아니다. 3회 후에도 OPEN/저장은 가능하며 변경 없는 REUSED는 허용하지만 새 run은 409이다. 새 HOST 경로는 기존 Redis 429/503 fail-closed 제한을 적용한다.
-- 기존 close는 CLOSED 200 no-op, analysis/retry는 delayed-only를 유지한다. 복구 쓰기는 새 클라이언트만 지원하며 rollout은 roll-forward를 전제로 한다. retention은 최초 closed_at의 기존 30일을 유지하고 active pointer와 round를 먼저 지운 뒤 run/batch를 지운다.
+- 기존 close는 CLOSED 200 no-op, analysis/retry는 delayed-only를 유지한다. 복구 쓰기는 새 클라이언트만 지원하며 rollout은 roll-forward를 전제로 한다. retention은 수정 라운드와 무관하게 created_at부터 30일을 적용하고 active pointer와 round를 먼저 지운 뒤 run/batch를 지운다.
 
 ## 7. 데이터 저장 원칙
 
@@ -385,7 +385,7 @@ Redis Pub/Sub은 비동기 비즈니스 작업에 사용하지 않는다. 향후
 
 ### 개인정보
 
-Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 그룹도 개인정보로 취급한다. 제출 MVP는 장소 좌표를 수집하지 않으며 `집`, `회사`, `학교 근처` 같은 개인 기준 표현에도 별도 좌표를 만들지 않는다. 종료된 방은 `closed_at`, 종료되지 않은 방은 `created_at`부터 30일이 지나면 제출 원문·일정·장소 그룹·후보·Outbox 이력을 함께 삭제한다. 만료되고 어떤 참여자도 참조하지 않는 게스트 세션도 삭제한다. Post-MVP 공급자 토큰과 지도 좌표의 보관·폐기 정책은 해당 연동 전에 별도로 확정한다.
+Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 그룹도 개인정보로 취급한다. 제출 MVP는 장소 좌표를 수집하지 않으며 `집`, `회사`, `학교 근처` 같은 개인 기준 표현에도 별도 좌표를 만들지 않는다. 모든 방은 종료·개인 숨김 여부와 관계없이 `created_at`부터 30일이 지나면 제출 원문·일정·장소 그룹·후보·Outbox 이력을 함께 삭제한다. 만료되고 어떤 참여자도 참조하지 않는 게스트 세션도 삭제한다. Post-MVP 공급자 토큰과 지도 좌표의 보관·폐기 정책은 해당 연동 전에 별도로 확정한다.
 
 정상 반영된 참여자 조건은 주최자에게도 공개하지 않는다. 예외적으로 Gemini 응답 성공 후 의미·스키마·도메인 검증에 실패하여 후보 생성에 반영하지 못한 원문만 제출 전 고지를 전제로 결과 생성 후 주최자에게 공개할 수 있다. 기술적 전체 장애인 `ANALYSIS_DELAYED`에서는 모든 원문을 주최자에게 공개하지 않는다. 각 참여자는 로그인 여부와 관계없이 본인 증명을 거쳐 자신의 최신 제출만 조회할 수 있다. 원문은 다른 참여자용 결과, 로그, 지표와 Redis 메시지 payload에 포함하지 않는다.
 

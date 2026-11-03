@@ -413,7 +413,7 @@ class RoomOwnershipWebIntegrationTest {
     }
 
     @Test
-    fun `archive lists only own host rooms and exposes created or closed anchored 30 day expiry`() {
+    fun `archive lists only own host rooms and exposes creation anchored 30 day expiry`() {
         val owner = login()
         val now = NOW
         val open = room(now.minus(Duration.ofDays(10)))
@@ -436,14 +436,15 @@ class RoomOwnershipWebIntegrationTest {
                 .perform(
                     get("/api/account/rooms").param("role", "HOST"),
                 ).andExpect(status().isOk)
-                .andExpect(jsonPath("$.rooms.length()").value(3))
+                .andExpect(jsonPath("$.rooms.length()").value(2))
                 .andReturn()
                 .response.contentAsString
         assertFalse(result.contains(member.invite))
         assertFalse(result.contains(other.invite))
         assertFalse(result.contains(legacy.invite))
         assertFalse(result.contains(expired.invite))
-        for (expected in listOf(open.createdAt.plus(Duration.ofDays(30)), requireNotNull(closed.closedAt).plus(Duration.ofDays(30)))) {
+        assertFalse(result.contains(closed.invite))
+        for (expected in listOf(open.createdAt.plus(Duration.ofDays(30)), boundary.createdAt.plus(Duration.ofDays(30)))) {
             org.springframework.test.util
                 .JsonPathExpectationsHelper(
                     "$.rooms[*].expires_at",

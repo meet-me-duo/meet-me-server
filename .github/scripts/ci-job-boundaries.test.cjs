@@ -10,6 +10,7 @@ const root = path.resolve(__dirname, '../..');
 const frozen = require('./fixtures/ci-original-checks.json');
 const read = relative => fs.readFileSync(path.join(root, relative), 'utf8');
 const boundaryCommand = 'node --test .github/scripts/ci-job-boundaries.test.cjs';
+const archiveCatalogCommand = 'node --test .github/scripts/v23-account-room-hide-release-catalog.test.cjs';
 
 // This intentionally accepts the existing explicit block layout only. Exact
 // source comparisons below reject added conditions, authority, failure masking,
@@ -79,25 +80,27 @@ test('Issue178 Quality Gate retains Java17, the exact Gradle command and its 30 
   assert.deepEqual(quality.steps, [...frozen.setupSteps, frozen.qualityRunSteps[0]], 'Only the existing checkout, Java17 and Gradle quality gate remain in this job');
 });
 
-test('Issue178 Deployment Contracts runs its own setup then the new boundary check and all 16 original checks', () => {
+test('Issue178 Deployment Contracts preserves all 16 original checks and adds only the exact V23 catalog check', () => {
   const contracts = job(workflow(read('.github/workflows/ci.yml')), 'deployment-contracts');
   const expectedHeader = frozen.qualityHeader.replace('  quality:', '  deployment-contracts:').replace('    name: Quality Gate', '    name: Deployment Contracts');
   assert.equal(contracts.header, expectedHeader, 'Deployment Contracts must run in parallel on ubuntu-latest for 30 minutes without needs, if, environment or added permissions');
-  assert.equal(contracts.steps.length, 19, 'Two setup steps, one boundary check and all 16 contracts must run');
+  assert.equal(contracts.steps.length, 20, 'Two setup steps, one boundary check, all 16 contracts and exact V23 coverage must run');
   assert.deepEqual(contracts.steps.slice(0, 2), frozen.setupSteps, 'This job must check out source and configure Java17 independently');
   const boundaryStep = contracts.steps[2];
   assert.match(boundaryStep, /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/ci-job-boundaries\.test\.cjs$/, 'The only new execution is the unconditionally blocking boundary test');
-  assert.deepEqual(contracts.steps.slice(3), frozen.qualityRunSteps.slice(1), 'All original deployment checks retain their exact strings and meaningful order');
+  assert.deepEqual(contracts.steps.slice(3, -1), frozen.qualityRunSteps.slice(1), 'All original deployment checks retain their exact strings and meaningful order');
+  assert.match(contracts.steps.at(-1), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v23-account-room-hide-release-catalog\.test\.cjs$/, 'The additive V23 catalog check must be unconditional and blocking');
 });
 
-test('Issue178 executes each original command exactly once with only one new command', () => {
+test('Issue178 executes each original command exactly once with the boundary and additive V23 checks', () => {
   const ci = workflow(read('.github/workflows/ci.yml'));
   const actual = [...ci.jobs.keys()].flatMap(id => job(ci, id).steps.map(command).filter(run => run !== null));
   for (const expected of frozen.originalRunCommands) {
     assert.equal(actual.filter(run => run === expected).length, 1, `Original CI command must run exactly once: ${expected}`);
   }
   assert.equal(actual.filter(run => run === boundaryCommand).length, 1, 'The new boundary check must run exactly once');
-  assert.equal(actual.length, 19, 'No omitted, copied or additional execution commands');
+  assert.equal(actual.filter(run => run === archiveCatalogCommand).length, 1, 'The additive V23 catalog check must run exactly once');
+  assert.equal(actual.length, 20, 'No omitted, copied or unreviewed execution commands');
 });
 
 test('Issue178 preserves the complete isolated ARM64 job and successful whole main CI publication gate', () => {

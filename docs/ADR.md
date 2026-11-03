@@ -756,3 +756,14 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: 실패 기록의 진실성과 다음 배포의 안전 경계를 함께 보존한다. owner만 해제하면 기존 UNKNOWN 검사가 계속 차단되며, 실패를 성공이나 미시도로 재기록하면 원 실행 사실을 잃는다. 독립 sidecar는 역사 journal의 wire contract를 보존하고 기존 소비자는 이해하지 못한 상태를 계속 차단할 수 있다.
 
 **트레이드오프**: metadata 여러 객체는 단일 트랜잭션이 아니므로 불완전 intent/fence/closure는 의도적으로 차단 상태를 남긴다. 기존 runner의 생존 여부와 전체 baseline을 증명하지 못하면 자동 해제하지 않는다. 운영 적용 전 새 safety checker의 호환성과 plan/digest를 검토해야 하며, local operator CLI의 compiled read-only probe·기존 인증이 필요하다. 새 closure 검사는 원 package와 전체 현재 증명을 다시 읽을 수 있다. 기존 release 경로 거절은 파일 보존을 위해 유지하며 같은 build 재적용은 허용하지 않는다. 세부 절차는 [실패 종결 안내](../deploy/FAILED_OPERATION_CLOSURE.md)를 따른다.
+
+### ADR-070: 개인 관계의 목록 숨김과 생성일 기준 30일 보존
+
+**상태**: Accepted for implementation (운영 서버 배포·migration 적용은 별도 승인)
+**날짜**: 2026-11-03
+
+**결정**: participants의 nullable account_archive_hidden_at으로 로그인 계정의 HOST·MEMBER 관계만 내 모임 목록에서 숨긴다. guest 행은 NULL이어야 한다. 전역 room status나 별도 관계 테이블은 추가하지 않는다. 반복·동시 숨김은 최초 시각을 유지하고 재참여는 복원하지 않는다. 목록, expires_at과 물리 정리는 상태·숨김과 무관하게 created_at부터 30일이며 정확한 경계는 포함한다. ADR-040/046/051의 closed_at 기준 보존 부분을 대체하며 나머지 소유권·비동기 안전 경계는 유지한다.
+
+**이유**: 기존 participants가 계정과 모임의 유일 관계를 이미 보장하므로 작은 변경으로 계정별 선호를 저장할 수 있다. 다른 참가자·초대 링크·제출·결과에 영향을 주지 않으며 사용자가 승인한 생성일 고정 수명을 일관되게 적용한다.
+
+**트레이드오프**: 최근에 마감했어도 생성 후 30일을 넘은 방은 다음 정리 배치에서 삭제된다. 기존 행을 표시 상태로 유지하는 V23이 필요하며 서버 배포 이전에는 새 숨김 API를 활성화할 수 없다. 숨김은 접근 회수가 아니고 복원 기능은 제공하지 않는다.

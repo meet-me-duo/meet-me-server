@@ -1,10 +1,10 @@
 # 계정별 내 모임 목록 API
 
-2026-10-28 사용자 결정: 주최·참여 모임을 기본 전체 목록으로 조회하고, 기간은 **모임 생성일**, 히스토리는 기존 **30일 정리 정책**을 적용한다. 이 문서는 구현 계약이며 운영 배포 완료를 의미하지 않는다.
+2026-11-03 사용자 결정: 주최·참여 모임을 기본 전체 목록으로 조회하고, 기간은 **모임 생성일**, 히스토리는 **모임 생성 시각부터 30일 정리 정책**을 적용한다. 이 문서는 구현 계약이며 운영 배포 완료를 의미하지 않는다.
 
-프론트 생성 입력은 native exporter가 생성한 [OpenAPI JSON](openapi/account-room-history.openapi.json)이다. 파일 SHA-256은 `a491cf66707c1009e82ebe521239a0fe2c87a7c872ecdda3f117f76b781df60a`이며 생성 후 수동으로 수정하지 않았다. 게시된 commit의 동일 경로를 고정해 사용한다.
+프론트 생성 입력은 native exporter가 생성한 [OpenAPI JSON](openapi/account-room-history.openapi.json)이다. 생성 파일은 수동으로 수정하지 않으며 현재 커밋의 생성 결과를 사용한다. 게시된 commit의 동일 경로를 고정해 사용한다.
 
-`GET /api/account/rooms`는 기존 Access Token 인증을 요구한다. 계정 ID는 인증 context에서만 얻고 `participants.user_id`가 같은 방만 반환한다. 게스트 쿠키, 이름 일치, 초대 링크로 익명 기록이나 다른 계정 기록을 자동 귀속하지 않는다. 명시적 claim·HOST 권한·Origin/CSRF 계약은 그대로다. 응답은 `Cache-Control: no-store`다.
+`GET /api/account/rooms`는 기존 Access Token 인증을 요구한다. 계정 ID는 인증 context에서만 얻고 `participants.user_id`가 같고 `account_archive_hidden_at IS NULL`인 방만 반환한다. 게스트 쿠키, 이름 일치, 초대 링크로 익명 기록이나 다른 계정 기록을 자동 귀속하지 않는다. 명시적 claim·HOST 권한·Origin/CSRF 계약은 그대로다. 응답은 `Cache-Control: no-store`다.
 
 | 파라미터 | 계약 |
 | --- | --- |
@@ -41,7 +41,25 @@
 
 ## 30일 보관과 삭제 경계
 
-- `COLLECTING`: `created_at`에서 30×24시간 후가 `expires_at`이다.
-- `CLOSED`: `closed_at`(입력 마감 시각)에서 30×24시간 후가 `expires_at`이다. 생성 후 30일이 지났어도 최근에 마감됐다면 남을 수 있다.
+- `COLLECTING`과 `CLOSED` 모두 `created_at`에서 30×24시간 후가 `expires_at`이다. 개인 숨김·최근 마감·수정 라운드는 이를 연장하지 않는다.
 - 기존 정리 로직은 기준 시각이 `now - 30일`보다 **작은** 방을 삭제한다. 목록도 같은 비교를 적용해 정확히 30일 경계인 방은 포함하고 경계를 지난 방은 정리 배치 실행 전이라도 숨긴다. 삭제 실행 시각은 기존 스케줄러를 따른다.
 - 생성일 필터는 보관 기준을 변경하거나 보관 기간을 연장하지 않는다. 가입·재로그인·명시적 연결 역시 기간을 연장하지 않는다. 이미 삭제된 기록은 복구하지 않으며 별도 장기 아카이브 테이블을 만들지 않는다.
+
+## 내 목록에서 숨김
+
+`POST /api/account/rooms/{inviteCode}/hide`는 body 없이 Access Token과 기존 정확한 프론트엔드 Origin을 보낸다. 계정 ID는 인증 context에서만 얻으며 guest cookie로 계정 권한을 보충하지 않는다. 본인의 HOST·MEMBER 관계만 숨긴다. 최초 성공과 이미 숨긴 본인 모임은 모두 `204 No Content`, `Cache-Control: no-store`이며 응답 body와 Content-Type은 없다. Web은 성공 시 JSON 파서를 호출하지 않는다.
+
+| 응답 | 계약 |
+| --- | --- |
+| 204 | 본인 관계 숨김 완료 또는 이미 숨김 |
+| 401 / ACCOUNT_REQUIRED | 로그인 계정 없음, guest 단독 요청 |
+| 401 / 기존 인증 오류 | 무효·만료 Access Token |
+| 403 / ORIGIN_NOT_ALLOWED | Origin 누락. 불허 Origin은 기존 CORS 403 응답이며 Problem JSON을 보장하지 않음 |
+| 404 / ROOM_NOT_FOUND | 타인 모임·없는/잘못된 코드·생성일부터 30일 초과 모임을 동일하게 처리 |
+| 503 / 기존 인증 오류 | 인증 검증 키 사용 불가 |
+
+동일 관계의 반복·동시 요청은 같은 결과이며 최초 숨김 시각을 유지한다. 숨김은 서버에 저장되어 다른 기기·검색·역할·생성일 필터·커서와 재참여에서도 유지된다. 숨긴 항목은 페이지 크기 계산 전에 제외된다. 복원 API는 제공하지 않는다.
+
+모임 전역 상태와 다른 사람의 목록·직접 초대 링크·참여·역할·제출과 결과 접근은 바뀌지 않는다. 모임/참여자를 삭제하거나 분석을 취소하지 않는다. 모든 데이터의 물리 정리는 위 생성일 30일 정책을 따른다.
+
+서버 배포와 V23 운영 migration 적용 승인은 별도다. 이 문서나 develop 병합만으로 Web에서 새 API를 사용할 수 있다고 간주하지 않는다.

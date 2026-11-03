@@ -110,6 +110,9 @@ jobs:
       - name: Verify production Nginx runtime
         run: bash deploy/scripts/verify-nginx-runtime.sh
 
+      - name: Verify exact personal room archive release catalog
+        run: node --test .github/scripts/v23-account-room-hide-release-catalog.test.cjs
+
   built-image:
     name: ARM64 Built Image
     runs-on: ubuntu-latest
