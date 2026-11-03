@@ -28,7 +28,7 @@
 부분 참석 시간안에는 실제 가능한 인원과 제외 이름을 함께 표시합니다.
 
 이 흐름은 통합 개발본 기준입니다. 개인 확인의 운영 활성화와 실제 공급자 검증 상태는
-[운영 준비 문서](docs/ISSUE_107_MAIN_READINESS.md)에서 구분합니다. 조건부 대체는 한 참여자의 한 단계까지
+[배포 완료 기준](deploy/APPROVED_RELEASE_PIPELINE.md)과 [외부 설정 안내](docs/USER_INTERVENTION.md)에서 구분합니다. 조건부 대체는 한 참여자의 한 단계까지
 지원하며, 해석 실패나 지원하지 않는 복합 조건을 참석 가능한 것으로 추정하지 않습니다.
 조건을 만족하는 후보가 없으면 후보 없음으로 알립니다.
 
@@ -70,6 +70,6 @@ API는 `http://localhost:8080`에서 실행됩니다. Windows에서는 `./gradle
 운영 API 계약은 실행 중인 OpenAPI를 기준으로 확인합니다.
 
 - [제품 요구사항](docs/PRD.md) · [Frontend Handoff](docs/FRONTEND_HANDOFF.md)
-- [운영 준비와 비용·검증 범위](docs/ISSUE_107_MAIN_READINESS.md) · [외부 설정 안내](docs/USER_INTERVENTION.md)
-- [구현 계획](implementation_plan.md) · [상세 작업 기록](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md)
+- [배포 완료 기준](deploy/APPROVED_RELEASE_PIPELINE.md) · [외부 설정 안내](docs/USER_INTERVENTION.md)
+- [구현 계획](implementation_plan.md) · [격리 V2 계약](docs/EXPERIMENTAL_INPUT_EVIDENCE.md)
 - [프론트엔드 저장소](https://github.com/meet-me-duo/meet-me-web) · [흐름도 디자인 원본](https://www.figma.com/design/1Y3BUYKbKiMQEemQ1rnoIq?node-id=11-2)

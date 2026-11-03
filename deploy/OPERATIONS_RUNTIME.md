@@ -1,5 +1,35 @@
 # 운영자 설정 전달 계약
 
+## 조회·감사 계약
+
+현재 인증된 `CurrentAccountPort`의 accountId와 명시적 허용 목록만 운영자 근거다.
+HOST·회원·게스트·이름·이메일·요청의 ID는 권한을 부여하지 않는다. 잘못된 Bearer는 401,
+인증 기반 장애는 503이며 guest로 fallback하지 않는다. 인가는 대상 UUID·페이지 조건 검증과 비즈니스 조회보다 먼저 수행한다.
+
+| 읽기 경로 | 범위 |
+| --- | --- |
+| `GET /api/operations/rooms` | 현재 방 설정·상태 요약 페이지 |
+| `GET /api/operations/rooms/{roomId}` | 해당 방과 과거 버전을 포함한 실행·수정 라운드 요약 |
+| `GET /api/operations/invocations/{invocationId}` | 해당 실행에 소속된 승인 시도·공급자별 사용량 |
+
+응답 DTO와 오류의 정확한 필드는 실행 중인 OpenAPI를 따른다. 페이지 크기는 기본20·1~100,
+timestamp+UUID 내림차순 keyset과 불투명 cursor를 사용한다. cursor는 권한 증명이 아니다.
+모든 응답은 오류를 포함해 `Cache-Control: no-store`다. 원문·공급자 응답·owner token·URL/query·헤더·secret은 노출하지 않는다.
+인가 거부 시 대상 존재 여부를 조회하지 않으며 잘못된 입력과 DB 예외 원문을 응답·감사에 복사하지 않는다.
+
+보호 데이터 반환 전 별도 트랜잭션으로 최소 접근 감사를 내구 저장한다. 감사 실패는 503이며 데이터를 반환하지 않는다.
+감사의 필드는 서버 생성 id·시각, 검증된 actor/target UUID 또는 null, 고정 route·outcome뿐이다.
+방·계정 FK로 기존 삭제를 막지 않는다. `audit-retention-days=30`, `audit-cleanup-batch-size=100`,
+`cleanup-enabled=true`, 정리 주기 `PT1H`를 기본으로 하며 cutoff보다 엄격히 이전인 행만 제한 삭제한다.
+운영 조회에는 방·제출·시도·Outbox 수정·재분석·삭제 명령을 추가하지 않는다.
+
+미확인은 null, 알려진 사용량은 소계로 표시한다. V10 승인 기록이나 V15 parser dispatch·local call 관측은
+공급자 수신·청구·실제 HTTP 건수·exactly-once 증명이 아니다. `RECORDED_ADMISSIONS` 분모,
+현재 방 설정과 과거 실행 snapshot, 승인·dispatch·게시 성공을 구분한다.
+웹은 요청마다 현재 메모리 token·세션 revision을 사용하고 로그아웃·계정 변경 시 보호 cache와 늦은 응답을 폐기한다.
+
+## 설정 전달
+
 이 변경은 기존 읽기 전용 운영 조회의 설정 전달만 보완한다. 인가 서비스, 계정 role, 로그인, 입력·분석·결과 로직은 변경하지 않는다. 실제 계정 UUID는 저장소·PR·일반 로그에 기록하지 않는다. 테스트의 UUID는 모두 합성 값이다.
 
 | Parameter Store 상대 경로 | 타입 | runtime 환경 변수 | 동작 |

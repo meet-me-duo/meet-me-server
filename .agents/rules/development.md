@@ -23,6 +23,7 @@
 - 외부 계정, 권한, 결제, 동의 또는 비밀정보가 관련되면 `.agents/rules/user-intervention.md`에 따라 `[AGENT]`, `[USER]`, `[SHARED]` 작업으로 분리하고 사용자가 그대로 수행할 수 있는 단계별 행동을 종속 작업 전에 안내한다.
 - 외부 계약과 아키텍처에 영향을 주지 않고 쉽게 되돌릴 수 있는 사소한 내부 세부사항만 합리적인 기본값으로 진행한다.
 - 변경 후 영향 범위가 가장 작은 테스트부터 실행하고 결과를 확인한다.
+- CI의 `Quality Gate`, `Deployment Contracts`, `ARM64 Built Image`는 독립 작업이며 모두 성공해야 전체 CI 성공이다. 문서·임시 파일 정리를 이유로 기존 검사·단언·명령·권한·timeout을 줄이거나 건너뛰지 않는다. 이번 변경에서 실행하지 않은 검사와 환경 제한은 실제 결과와 구분해 보고한다.
 - 프로덕션 Kotlin 코드를 변경할 때는 `src/test/kotlin` 아래의 관련 테스트를 먼저 추가하거나 함께 변경한다.
 - ArchUnit·Konsist 같은 자동 아키텍처 검사는 initial commit과 Phase 1의 선행 조건 또는 공통 품질 게이트에 넣지 않는다. 그동안 코드 리뷰에서 `domain <- application <- adapter` 의존 방향과 Domain의 프레임워크 독립성을 확인한다. 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 도구의 Kotlin 호환성·검사 범위·유지 비용을 다시 비교한 뒤 선택 도입한다.
 - Codex가 `git commit`을 실행하기 전 `.codex/hooks/tdd_guard.py`로 `ktlintCheck`, `assemble`, `test`를 모두 검증한다.

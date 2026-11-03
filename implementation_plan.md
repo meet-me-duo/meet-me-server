@@ -1,4 +1,18 @@
-## 2026-11-02 현재 작업 — Issue #192 실패 기록 보존과 명시적 종결
+## 2026-11-03 정리와 게시 준비 — 임시 이슈 문서와 스크립트 수명주기
+
+- [x] `[AGENT]` 원격 main `89d4e0d193aa1a5018f3e62168654e34b607f032`를 직접 확인하고 별도 clone의 `chore/cleanup-temporary-artifacts-20261103`에서 정리했다. 복구 checkout·운영·AWS·컨테이너·GitHub 설정은 변경하지 않았다.
+- [x] `[AGENT]` `docs/` 하위 `ISSUE`/`issue` 접두 Markdown 114개를 제거했다. 현재 유효한 OAuth·소유권/추천·운영 조회·진단 규칙은 기존 상시 문서에 반영했다. 배포 스크립트·사전점검·복구·guard·회귀 테스트/fixture 78개는 반복 사용되므로 보존했다. 제거할 일회성 deploy 스크립트는 없었다.
+- [x] `[AGENT]` 임시 산출물은 필요할 때만 만들고 사용 후 삭제하거나 좁은 경로로 Git에서 제외하도록 규칙을 명시했다. `.scratch/`만 추가 제외하며 상시 스크립트는 숨기지 않는다. 현재 문서의 삭제 대상 로컬 링크를 고치고, 봉인된 JSON·지문·검증 근거는 원본을 보존했다.
+- [x] `[AGENT]` CI/이미지 source 계약22·hook12·배포 승인/완료 계약45 PASS, 평가 구조/SHA·protocol 검사와 `git diff --check` PASS다. 최초 Windows CRLF checkout의 원문/SHA 검사 실패는 기록하고 검증 입력을 Git 원본 bytes로 맞춘 뒤 통과했다. 테스트·기대값은 변경하지 않았다. 최초 로컬 정리 단계에서는 Gradle 전체 gate와 컨테이너 검사를 실행하지 않았다. 게시 준비의 원본 전체 검증 결과는 아래에 별도로 기록한다.
+- [x] `[USER/AGENT]` 후속 commit·push·develop 대상 Draft PR·정확 HEAD CI 확인을 승인받았다. 독립 검토에서 발견한 게스트 암호·재접근 계약 누락은 기존 PRD·Architecture에 보완했고 재검토가 통과했다. 원격 main은 위 기준과 동일하며 develop `eba3ed19b9ec1b0dbd3f3f459975e0f54e128ffe`와 기준 main의 파일 내용도 동일하다.
+- [x] `[USER/AGENT]` 정리 Issue 1개 생성의 추가 명시 승인을 확인하고 중복·기존 생성 부재를 재조회한 뒤 [Issue #195](https://github.com/meet-me-duo/meet-me-server/issues/195)를 생성·재조회했다. 기존 기능/정상화 Issue를 임의로 종료 대상으로 재사용하지 않는다.
+- [x] `[AGENT]` Windows 원본 가드는 Kotlin 512MiB 컴파일러의 full GC 소모로 첫 실행을 중단·보존했고, CI와 같은 프로세스 전용 Kotlin 2GiB로 다시 실행했다. 두 번째 실행은 346 suites·2,708건 중2,586 PASS/105 FAIL/기존17 SKIP이며 POSIX 파일 권한·TLS 초기화 등 실패와 가드 출력 디코딩 오류가 있어 미통과다. 원본 XML·로그를 로컬에 보존하고 테스트·가드를 수정하지 않은 별도 WSL native filesystem 검증을 준비한다.
+- [x] `[AGENT]` 별도 WSL native filesystem에서 동일 diff SHA-256 `1172a5bf687a4bc854ee9c3949021d77e71c0f462e6bb1126e4f0cedce0781ae`의 원본 가드를 실행했다. 2026-11-03 10:33:59~10:56:07 KST, hook 자체 검사·ktlintCheck·assemble·test EXIT0이며 fresh XML은346 suites·2,704건 중2,687 PASS/기존17 SKIP/실패·오류0이다. 프로세스 전용 Gradle/Kotlin 2GiB·worker2·현재 NAT host 연결만 사용했고 원본 가드·테스트·보호와 복구 checkout·증거는 변경하지 않았다. Windows 실패를 통과나 Windows 호환성 수정으로 바꾸어 보고하지 않는다.
+- 게시 범위는 검토 파일의 정리 브랜치 commit/push와 `Closes #195`로 연결한 develop Draft PR·정확 HEAD CI 확인이다. 이 단락은 커밋 전 기록이며 원격 게시·CI 종료 결과와 정확 SHA는 Git/PR 이력에서 확인한다. Commit/PR: 동일 커밋 예정.
+
+현재 요구사항·설계는 PRD·Architecture·ADR, 인증 설정은 [외부 설정 안내](docs/USER_INTERVENTION.md), 웹 연결은 [Frontend Handoff](docs/FRONTEND_HANDOFF.md), 배포·복구는 [공식 pipeline](deploy/APPROVED_RELEASE_PIPELINE.md)과 [실패 종결 절차](deploy/FAILED_OPERATION_CLOSURE.md)를 따른다. 아래 날짜별 기록의 Git 링크는 당시 출처이며 현재 계약을 찾기 위한 필수 아카이브가 아니다. 이번 게시 승인은 병합·배포·운영 변경을 포함하지 않고 과거 완료·승인을 새 운영 결과로 해석하지 않는다.
+
+## 2026-11-02 당시 작업 — Issue #192 실패 기록 보존과 명시적 종결
 
 - [x] `[USER]` 구현·무료 검증·Issue·검토한 feature push·develop Draft PR·정확 HEAD CI를 승인했다. 이후 정확 HEAD의 테스트·독립 검토·필수 CI가 모두 통과한 경우에만 복구 변경 병합, 원 실패 기록을 보존한 종결/owner 해제, 기존 보호 절차의 새 immutable release 배포·설정/상태 검증까지 조건부 승인했다. 보호 gate·권한·credential·보안 설정은 유지하며 불일치/예기치 않은 DB 변경 시 중단한다.
 - [x] `[AGENT]` 원 PC checkout의 미커밋 implementation_plan.md를 보존하고 별도 clone의 최신 develop `7b0aed8`에서 작업했다. 첫 Issue 생성은 자동 검토 거절로 미실행이었고, 새 명시 승인 후 미생성 재조회와 한 번의 재시도로 [Issue #192](https://github.com/meet-me-duo/meet-me-server/issues/192)를 확인했다. 깨끗한 develop 재동기화 후 `fix/issue-192-failed-operation-closure`를 생성했다.
@@ -8,7 +22,7 @@
 - [ ] `[AGENT/SHARED]` 모든 검증 조건 충족 후 기존 조건부 승인 범위에서 정확 identity와 fresh plan digest를 확인하고 실패 종결·보호 배포·상태 검증을 진행한다. 같은 build 재적용이나 활성 release 삭제는 해결책이 아니다. 기존 실제 사용자 승인 gate는 우회하지 않는다.
 - [x] `[USER/AGENT]` 합성 보완 질문→분석→추천의 유료 실제 검증은 재시도·fallback 포함 총1,000원 상한으로 승인됐으나, 물리 호출·토큰·환율 등을 합친 상한을 현재 강제할 수 없어 실행하지 않는다. 유료 호출0이며 일반 가격/운영 제한을 새로 만들지 않는다.
 
-현재 범위는 [종결 절차](deploy/FAILED_OPERATION_CLOSURE.md)와 [독립 검증](docs/verification/issue192-independent-closure-review.md)을 따른다. 실제 운영 원본 로그·비밀·plan 파일은 공개하지 않는다. PR189와 PR191의 별도 범위를 유지한다.
+현재 범위는 [종결 절차](deploy/FAILED_OPERATION_CLOSURE.md)와 [독립 검증 요약](.tdd/red/issue192-failed-operation-closure.json)을 따른다. 실제 운영 원본 로그·비밀·plan 파일은 공개하지 않는다. PR189와 PR191의 별도 범위를 유지한다.
 
 ## 2026-11-01 현재 작업 — 신규 V2 모임 설정 전달 준비
 
@@ -57,7 +71,7 @@
 - [x] `[AGENT]` 원본 TDD guard의 ktlintCheck·assemble·test EXIT0, 2,658 PASS/기존SKIP17/FAIL0/ERROR0·source679개 전후 동일을 확인했다. 별도 감시 wrapper의 차단 시도12건/EXIT1은 원본 검사 결과와 구분해 검증 문서에 기록했다. 공개 변경은 CI/테스트/문서8개이며 비밀·원본 로그를 제외한다.
 - [ ] `[AGENT]` CI-only feature commit/push·develop PR·최종feature SHA CI·병합·정확merge SHA CI 종료를 확인한다. Commit/PR: 동일 커밋 예정 / 게시 후 확인.
 
-현재 단계: 로컬 계약·원본 전체 가드 검증 완료, feature 게시 준비. 원격 새 CI의 runner별 독립 실행·실제 소요 시간은 아직 미확인이다. [검증 기록](docs/verification/issue-178-ci-job-boundaries.md)을 따른다. 아래 기록은 각 당시의 범위/상태이며 현재 새 권한으로 해석하지 않는다.
+현재 단계: 로컬 계약·원본 전체 가드 검증 완료, feature 게시 준비. 원격 새 CI의 runner별 독립 실행·실제 소요 시간은 아직 미확인이다. [검증 기록](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/verification/issue-178-ci-job-boundaries.md)을 따른다. 아래 기록은 각 당시의 범위/상태이며 현재 새 권한으로 해석하지 않는다.
 
 ## 2026-10-31 현재 작업 — Issue #176 게시 준비
 
@@ -68,7 +82,7 @@
 - [ ] `[AGENT]` 검증 후 허용된 피처만 commit/push하고 Draft PR 및 해당 최종 SHA의 일반 CI 종료를 확인한다. 현재 Commit/PR: 동일 커밋 예정 / 새 PR 미생성.
 - [ ] `[USER/SHARED]` 실제 운영의 DB/reader·웹/서버 적용 순서·복귀·V2 활성화·남은 정책/실모델 품질은 별도 결정과 승인이 필요하다. 웹은 사용자 피처 확인 전 develop 병합하지 않는다.
 
-현재 단계: 원본 TDD guard 통과(최종 2,658 PASS/기존SKIP17/실패·오류0, source675개 전후 동일). 웹 Draft PR #61의 cb6903b CI는 성공했다. 서버 지정 feature commit/push·Draft PR 및 최종 SHA CI 확인을 진행한다. [공개 검증 요약](docs/verification/issue-176-publication-readiness.md)을 따른다. 아래 내용은 각 날짜 당시의 역사 기록이며 과거 미승인·진단 종료를 현재 권한이나 새 실행 성공으로 읽지 않는다.
+현재 단계: 원본 TDD guard 통과(최종 2,658 PASS/기존SKIP17/실패·오류0, source675개 전후 동일). 웹 Draft PR #61의 cb6903b CI는 성공했다. 서버 지정 feature commit/push·Draft PR 및 최종 SHA CI 확인을 진행한다. [공개 검증 요약](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/verification/issue-176-publication-readiness.md)을 따른다. 아래 내용은 각 날짜 당시의 역사 기록이며 과거 미승인·진단 종료를 현재 권한이나 새 실행 성공으로 읽지 않는다.
 
 ## 2026-10-31 최신저장Luna응답 로컬worker/DB/Chromium 통합 완료
 
@@ -347,7 +361,7 @@
 - [ ] `[USER]` AWS 인증·운영 설정·배포는 귀가 후 개인 PC에서 이어간다. 새 위임의 feature 게시·PR·CI·develop 통합을 제외한 main 병합·AWS·운영 명령은 실행하지 않는다.
 - [SHARED] 기존 provider 키를 비밀값 없이 확인한다. 새 자격증명·IAM/인증 변경은 별도 행동 승인, 실제 유료 검증 호출은 구체적 범위 확인 전 실행하지 않는다. 개선 기능과 UI는 다른 작업에서 담당한다.
 
-상세 불변식은 `docs/ISSUE_144_PRODUCTION_AI_ACTIVATION.md`를 따른다. 실제 활성화와 유료 모델 응답 검증을 구분해 보고한다.
+상세 불변식은 `docs/ARCHITECTURE.md`의 ADR-061 운영 실행 권한 계약을 따른다. 실제 활성화와 유료 모델 응답 검증을 구분해 보고한다.
 
 ## Issue #141 — 배포 권한과 중단 전환 재개 (2026-10-27 UTC)
 
@@ -468,7 +482,7 @@
 - [x] [AGENT] metadata 독립FI3 실제assert6/5/2탐지·각exactrestore7/9/5PASS·최종26PASS/원본source,test지문동일. exactrawreplay 독립질문/대안/usage보존감사PASS·fresh15s/UI미검증유지
 - [x] [AGENT] metadata 후속 새unchanged필수guard exit0: fresh213 suite/1710 중1706PASS·기존4SKIP·실패/오류0, source557 before=after=current. 이전b377 guard/실제parserFAIL이력별도보존
 - [x] [AGENT] 새 진단상태·근거 docs commit/push→PR126 HEAD4101038/정확CI39104937154 Quality/ARM64·최신Lifecycle39105119118 성공. 원격결과는Git이력·PR126/ignoredpublicationreceipt에기록. 60초진단을제품15초전체성공으로표시하지않음
-- 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](docs/ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)을 따른다.
+- 최신 실호출 누계 Decisions6/count2/generation4=HTTP12·생성200응답1/수정 전 parser수용0. 알려진 usage견적USD0.00612370(2.2배, invoice아님)·청구UNKNOWN/예약USD1.01330944·여유USD0.98669056 유지, 추가유료STOP. 이하 USD1/생성질문미확보/미게시 항목은 b377 이전의 당시 이력이며 최신 상태는 이 단락과 [USD2 진단](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_123_USD2_GENERATION_DIAGNOSTIC.md)을 따른다.
 
 - 사용자 최신 승인: 영속 PG 원장·최종/fallback/HOST retry 포함 전체 물리 호출 연결을 독립 TDD·합성 provider·리뷰·필수 guard로 구현한다. Decisions develop/main 병합·배포 제외, 운영 DB/Secret/접근 변경0. 실제 Gemini+OpenAI 합산 USD1 안에서 고정 payload/byte 기반 보수 견적의 격리 Decisions 진단4회·현재 production parser offline 검증을 완료했다. 모호 사례의 raw label 불일치/confidence0.06에서 중단했으며 운영 가격·활성화나 전체 의미 평가는 별도다.
 - [x] [AGENT] 1단계 [PR122](https://github.com/meet-me-duo/meet-me-server/pull/122) e83d5280… 코드 CI39093790134 Quality/ARM64 success·최신 Lifecycle39094909440 success. 완료 범위 #124 / 남은 전체 #123 분리. Refs-only 실패39094466469 이력 보존·workflow 변경0
@@ -500,7 +514,7 @@
 - [x] [AGENT] 분류 adapter/2단계 bridge·shared budget port/default DENY 독립 RED→집중160/79 GREEN·단계별 FI14·전체1479(1475PASS/기존4SKIP)·512지문 일치·독립 최종 local 게시 PASS
 - [x] [AGENT] commit/push/Draft PR122 e83d5280…·정확 HEAD CI39093790134 success·Lifecycle39094821627 success·Worklog/Linear 인계
 - [AGENT/SHARED] 당시 실제 호출 전 보류 기록. 현재 최소 실제4회와 보수 견적·중단 결과는 맨 위 #123 및 실제 진단 문서를 따른다. 최종 청구/운영 confidence·예산 정책/활성화는 미확정
-- 상세: [공통 설계](docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md). 아래는 이전 단위의 당시 기록이다. PR121은 develop01d00e7f, exact merge CI39070926139 성공으로 완료됐다.
+- 상세: [공통 설계](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_107_DECISION_CLASSIFICATION_DESIGN.md). 아래는 이전 단위의 당시 기록이다. PR121은 develop01d00e7f, exact merge CI39070926139 성공으로 완료됐다.
 
 ## 현재 #107 제출 전 확인·통합 (2026-10-17 UTC)
 
@@ -519,11 +533,11 @@
 - [x] [AGENT] 서버 PR120 develop 일반merge bb996482a3090739a8ce02c8b093561e2c5c58a2 및 pushCI39064886318 두 job 실제 checkout 동일 SHA·성공 확인. 웹 Draft·미병합 유지
 - [x] [AGENT] main 준비 후속: provider opt-in 코드 부재·동일 API cap 공식 근거 정정, 30개 실제 평가 호출/중단/측정/조건부 비용 명세, 완료된 공개 OAuth 설정 재요구 없는 인증/DB 안내
 - [x] [AGENT] 기존 API 지원 profile·기본 OFF 실제 바인딩/인증 전달·input gate 독립 TDD/FI. 필수 전체1258(1254PASS/기존skip4), Node140·V837·합성 Nginx PASS. 근거 없는 verified=true·유료 호출0 유지
-- [x] [AGENT] runtime 준비 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음 (`docs/verification/issue107-runtime-readiness-independent-review.md`)
+- [x] [AGENT] runtime 준비 최종 독립 게시 리뷰 PASS·미해결 P1/P2 없음 (`https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/verification/issue107-runtime-readiness-independent-review.md`)
 - [x] [AGENT] runtime 준비 PR121 HEAD20fb099·CI39069432900→develop01d00e7f 일반merge·exact merge CI39070926139 완료(최신 격리 대조로 재확인)
 - [ ] [USER/SHARED] 모임 총 AI10원 정책 충돌 결정·입증된 상한으로 별도 유료 평가 승인, 런타임 자격 증명·RS256/JWKS 및 실로그인/운영 읽기·복구·전환 승인. 공개 OAuth 설정은 완료 유지. 운영자 요약은 기본 OFF이며 출시 차단 조건 아님
-- 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
-- 상세상태/다음시작점/역할·검증한계: [새107 Worklog](docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음
+- 웹develop은생성하지않고기존main경로유지. 서버/웹main은사용자조건부승인됐으나 [운영 준비 경계](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_107_MAIN_READINESS.md)상 미승인DB/Secret/권한·인증준비·비용이 남으면해당main병합만보류
+- 상세상태/다음시작점/역할·검증한계: [새107 Worklog](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_107_PRE_SUBMIT_WORKLOG.md). 유료모델/운영/OAuth/DB/Secret변경0. 개별CI를새통합성공으로합산하지않음
 
 
 ## 과거 #109 단독 세션 기록 (2026-10-17 UTC)
@@ -537,7 +551,7 @@
 - [ ] [USER/SHARED] 실제 OAuth 앱·콘솔·키 및 운영 RS256/secret 전달·실제 공급자 검증 (별도 승인)
 - [ ] [USER] push/PR/병합/배포/운영DB 승인 (요청 전 미실행)
 - 기준 서버 develop3232128의 별도 feature, 웹은 원격 develop 부재·고유 지침에 따라 최신 main9b18397에서 local feature 분리(차이를 보고/기록). 독립 구현·테스트·리뷰 역할을 분리했다. 서버773개(실행769PASS/기존skip4), 웹unit364/E2E383PASS+기존skip1, native12와V11 catalog16/추가fault3종을 확인했다. 기존CI부가검사도통과했으며원격exacthead CI는PR/최종receipt를기준으로한다.
-- 상세 계약/증거/복구: [#109 WORKLOG](docs/ISSUE_109_WORKLOG.md), [CONTRACT](docs/ISSUE_109_CONTRACT.md), [OAUTH SETUP](docs/ISSUE_109_OAUTH_SETUP.md).
+- 상세 계약/증거/복구: [#109 WORKLOG](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_109_WORKLOG.md), [CONTRACT](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_109_CONTRACT.md), [OAUTH SETUP](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_109_OAUTH_SETUP.md).
 - 아래 다른 이슈 기록과 과거 완료/게시 승인은 이번 #109 승인으로 확장하지 않는다.
 
 
@@ -555,7 +569,7 @@
 - `[AGENT]` 실제 소켓 HTTP14+마이그레이션1 GREEN; 웹 단위415와 production 브라우저395+기존skip1, 실제 격리 API 연결8검사 PASS. 실제 OAuth 공급자 로그인이나 운영 활성화가 아니다. 웹 Draft PR29 HEAD `ab25c6f8008cba191f2cf96dfb171b189f32a66f`, CI39054110586 성공이며 원시 로그에서도415/395+skip1을 확인했다.
 - `[AGENT]` Linux catalog/Nginx32와 Windows 실제 Git approval7 PASS. Nginx 실제 로컬 HTTP 투영에서 callback502 두 건과 사전 location 파싱400의 code/state 미노출을 확인했다(TLS·운영 검증 아님). 메모리 연동 결함2, catalog/log 결함3, 인증 상태 결함1을 assertion으로 검출하고 원본과 테스트 지문을 복원했다. 기존 단독 transport 변이 기록과 합산하지 않는다.
 - `[AGENT]` 첫 전체888개 실행은 고정 마이그레이션 기대값3건과 미구성 인증 대역1건으로4실패/오류0/기존skip4였다. UTF-8/CP949 출력 오류도 별도로 보존했다. 독립 작성자가 기존 보존/인가 assertion을 유지해 정정했으며 수정 전 bytes·SHA·실패 XML은 `.tdd/history/issue-110-full-gate-contract-reconciliation`에 기록했다. 수정 후 대상20개+ktlintCheck PASS, 전체 원본 commit guard 재검증은 진행 중이다.
-- `[SHARED]` #107+#109 PR117/웹PR28, #108과의 중앙 통합은 이 단위에 포함하지 않는다. V11=109/V12=108/V13=107/V14·15=110이며 현재 strict catalog는12·13을 의도적으로 거부한다. 실제 파일·checksum·history·approval fingerprint를 함께 확장해야 한다. 상세 인계는 `docs/ISSUE_110_HANDOFF.md`를 따른다.
+- `[SHARED]` #107+#109 PR117/웹PR28, #108과의 중앙 통합은 이 단위에 포함하지 않는다. V11=109/V12=108/V13=107/V14·15=110이며 현재 strict catalog는12·13을 의도적으로 거부한다. 실제 파일·checksum·history·approval fingerprint를 함께 확장해야 한다. 상세 인계는 `https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_110_HANDOFF.md`를 따른다.
 - `[AGENT]` 정정 후 원본 commit guard(수정 없음)가 17:36:05–17:43:54 UTC exit0으로 통과했다. fresh150 suite/888개 중884 PASS/기존skip4/실패0/오류0이며 이전 실패 실행을 합산하지 않는다. hook self-test·ktlintCheck·assemble·test를 실행했고, 증거·189 source raw/LF 지문·초기 frozen 테스트2개 유지·이전 실패 분류는 `docs/verification/issue-110-integration-final.json`에 봉인했다. 서버 게시 HEAD CI는 다음 단계이며 운영 접근/설정 변경은 없다.
 
 - `[USER]` 이 세션은 #110만 맡으며 내부 세부 결정은 dot에 위임됐다. 서버·웹 전체 구현, 합성/로컬 테스트와 독립 리뷰를 진행한다. push·병합·운영 설정·배포와 실제 운영자 등록은 별도 승인 전 실행하지 않는다. 전용 goal 도구는 없어 이 기록과 실행 계획으로 완료 기준을 관리한다.
@@ -574,7 +588,7 @@
 - [x] `[AGENT]` 구현자와 분리된 테스트 설계 및 유효한 RED 증거: 새 15개 중 누락 동작 14개 실패, 허용 필드 경계 1개 통과. `.tdd/red/issue-110-analysis-observation.json`과 로컬 제외 로그에 보존했다.
 - [x] `[AGENT]` 최소 구현과 대상 테스트 GREEN: 새 15개와 기존 Gemini 처리 3개, 합계 18개 PASS/실패 0/스킵 0. 독립 정적 리뷰에서 차단 결함이 발견되지 않았다.
 - [x] `[AGENT]` 최종 `--offline --no-daemon ktlintCheck assemble test` Gradle exit 0/8m39s. 전체 113 suite/678 test 중 674 PASS/기존 opt-in skip 4/실패 0/오류 0이다. 첫 실행의 연결 단절 및 부분 77개 결과는 별도 보존했고 전체 통과로 집계하지 않았다. 종료 후 보조 실행기의 CP949 콘솔 출력 오류는 저장된 Gradle exit 0·성공 로그·완료 XML과 분리 확인했다.
-- [x] `[AGENT]` 고의 결함 3종을 assertion으로 탐지하고 제품 원본 바이트·테스트 지문을 복원·유지했다. 독립 최종 리뷰가 전체 XML 113개·로그·지문·스킵 조건과 `SubmissionService.kt`의 기준 커밋 동일성을 확인했으며 차단 결함은 없다. 근거는 `docs/verification/issue-110-local.md`와 작업 복사본 상위 `verification/issue-110-final-evidence.json`, `issue-110-independent-review.md`에 보존했다. 공유 Docker 엔진 재시작·종료·전체 컨테이너 정리와 원격 쓰기는 없다.
+- [x] `[AGENT]` 고의 결함 3종을 assertion으로 탐지하고 제품 원본 바이트·테스트 지문을 복원·유지했다. 독립 최종 리뷰가 전체 XML 113개·로그·지문·스킵 조건과 `SubmissionService.kt`의 기준 커밋 동일성을 확인했으며 차단 결함은 없다. 근거는 `https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/verification/issue-110-local.md`와 작업 복사본 상위 `verification/issue-110-final-evidence.json`, `issue-110-independent-review.md`에 보존했다. 공유 Docker 엔진 재시작·종료·전체 컨테이너 정리와 원격 쓰기는 없다.
 - `[USER]` 운영자 권한·최소 조회 정보·보관기간은 TBD다. 신규 조회 API·웹 운영 화면·외부 telemetry 전송은 이번에 추가하지 않는다. #107 질문 시점/미응답, #108 중복 이름/분실/계정 연결, #109 익명 방 귀속/공급자/보관 정책도 확정하지 않는다.
 - `[SHARED]` 이 단위는 #110 전체 완료가 아니다. 실제 AI·운영 방 생성·운영 쓰기·보안 설정·병합·배포와 원격 게시 권한으로 확장하지 않는다.
 
@@ -675,7 +689,7 @@
 - [x] `[AGENT]` 변경 없는 필수 guard exit0·ktlintCheck/assemble·109suite 전체631건/실패0/오류0/skip4, hook self-tests12 PASS. 첫 전체의 기존 schema 분기수 assertion은 독립 supersession과 focused12 GREEN으로 보완했다.
 - [x] `[AGENT]` Worklog 최종 갱신과 commit/push/Draft PR 준비. Commit/PR은 동일 커밋 예정이며 코드·현재 증거 지문과 완료 근거를 동기화했다.
 - [x] `[AGENT]` 최초 통합51a4c0d commit/push·develop 대상 Draft PR100 게시·CI37591069034 전 단계 성공을 확인했다. 후속 시간배분의 정확 HEAD CI는 별도로 확인한다.
-- [x] `[SHARED]` 전담 실제 평가 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS를 docs/ISSUE_99_LIVE_EVALUATION.md에 기록했다. 구현/CI 호출0, 평가추가18·누적41/50을 구분하며 새entrypoint/운영키의 실제 전달은 미완료다.
+- [x] `[SHARED]` 전담 실제 평가 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS를 https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_99_LIVE_EVALUATION.md에 기록했다. 구현/CI 호출0, 평가추가18·누적41/50을 구분하며 새entrypoint/운영키의 실제 전달은 미완료다.
 - [ ] `[USER]` 운영 V8guard/digest/드레인 승인. 코드 완료와 배포 준비를 구분하며 main/develop 병합·배포·운영 migration·보안/비밀정보/자동화 변경은 실행하지 않는다.
 
 
@@ -1709,7 +1723,7 @@
 - root는2026-10-07 03:09:19 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`의 최종 exit0을 확인했다. `ktlintCheck assemble test`는78suite/438test/실패0/오류0/opt-in skip4이고 guard 단위 검증12개도 통과했다. legacy HOST/auth/idempotency/worker 기존 테스트와 신규503 회귀3개가 이 전체 GREEN에 포함된다. source112개와 adapter `d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17`은 불변이다. 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-full-guard.json`이며 문서 owner의 source/test/harness 변경·Gradle·모델 호출은0이다.
 - 웹 #17의 unit174·결함7과 push head `059f049a4832effb2e2cc844d33f4cdd50b5dc1e`는 앞 단계의 이력이다. 최종 head는 `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`이며 unit176 PASS·browser329 PASS/기존 skip1/flaky0·오류0, 결함8 탐지/정확한 원본 복원과 구/신 번들 합성6검사를 완료했다. native22225 지문은 동일하다. 이 웹 결과를 서버 CI·운영 배포 완료로 사용하지 않는다.
 - 구 웹 정확한 source `68c41f7619e7f1a28b2b597cb56867e4d3e852bc` 재빌드 bundle과 최초 baseline의 바이트 동일성을 확인한 뒤 구/신 실제 bundle 격리 브라우저6검사가 모두 PASS했다. 구 PUT409는 draft·revision1을 유지하고 close200은 OPEN/no analysis이며 hosting 교체만으로 구 탭은 바뀌지 않았다. 명시적 reload 후 신 UI는 현재 round/revision으로 저장하고 구 Join은 ROOM_CLOSED·신 Join은 숨김이다. 신 웹+신규 필드 없는 구 계약은 raw-only 저장/HOST close를 유지한다. 실제 backend/model/운영 호출0인 합성 HTTP 검증이며 real cross-version backend/운영 Origin 검증과 구분한다. 새로고침은 미저장 구 draft를 잃게 하므로 먼저 복사하고 신 웹에서 다시 입력·명시적 저장·결과 확인하는 안내·지원 및 운영 갱신 gate는 아직 미구현/미실행이다. 상세6검사와 잔여 조건은 [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 기록했다.
-- 합성 모임6개의 기대 시간·참석자·실제 결과·검증 범위는 [ISSUE_92_SCENARIO_RESULTS.md](docs/ISSUE_92_SCENARIO_RESULTS.md)에 추적한다. 실제 PostgreSQL/HTTP/application processor/matcher이며 자연어 port는 mock, Redis consumer end-to-end와 실제 모델 정확도 증거는 아니다.
+- 합성 모임6개의 기대 시간·참석자·실제 결과·검증 범위는 [ISSUE_92_SCENARIO_RESULTS.md](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_92_SCENARIO_RESULTS.md)에 추적한다. 실제 PostgreSQL/HTTP/application processor/matcher이며 자연어 port는 mock, Redis consumer end-to-end와 실제 모델 정확도 증거는 아니다.
 - 앞선 PR 생성 거절은 최초 게시 금지의 명확한 철회가 없었던 시점의 이력이다. 이후 사용자가 직접 게시를 명확히 승인하여 root가 서버 `bf367bee46bbb2cc78b15f1f418c8e09efc29d0e`를 push하고 [서버 Draft PR #94](https://github.com/meet-me-duo/meet-me-server/pull/94)(base develop)와 [웹 Draft PR #18](https://github.com/meet-me-duo/meet-me-web/pull/18)(base main)을 게시했다. 이는 새 직접 승인에 따른 재개이며 이전 거절을 우회하지 않았다. 웹의 정확한 head `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`의 CI #37566261043은 unit176·browser329/기존 skip1 검사를 포함해 성공했다. 서버 최초 head bf367의 CI #37566280630은 합성 모임6개 결과 기록의 `/workspace` 경로 권한 때문에 실패했다. 독립 저자의 이식성 수정 뒤 해당6개 검사는 통과했고 root의 변경하지 않은 전체438 gate는 2026-10-07 03:34:18 UTC에78suite/438test/실패0/오류0/opt-in skip4로 다시 통과했다. 독립 리뷰 PASS 뒤 이식성 수정·검증·기록3파일을 checkpoint `83a29f60537b5df883cc608d0e8e920747e447a2`로 commit/push했고 정확한 새 head의 CI #37567631982는 전체8단계가 성공했다. 별도 guard 생산 파일은 이 이식성 checkpoint에 포함하지 않는다. 기능 기대·운영 정책·평가 도구를 완화하지 않았으며, 이 CI 실패를 기능 GREEN 또는 전체 CI 성공으로 기록하지 않는다. 병합·운영 배포는 실행하지 않았다.
 - 사용자가 별도로 승인한 V8 lifecycle guard는 독립 실제 script의 세 assertion RED(writer가 실행 중인 migration·구 image fallback·sticky marker 부재)를 확인한 뒤 생산 source를 구현했다. 첫 독립31검사와 설치된 READY guard를 사용하는 기존 credential-refresh 검사를 통과했다. 후속 리뷰 경계의 실제 TSV extra empty TAB·미승인 current에서 승인 target rollback·신규 static CI 연결 assertion RED를 확인하고 최소 수정 뒤 해당 runtime2개와 static9개 GREEN을 확인했다. FD 관측 실패·manifest 없는 기존 설치 artifact의 조기 거절도 별도 assertion RED 뒤 최소 수정했다. 최종 현재 source의37개 검사는381.325초/실패0/오류0으로 통과했다. source hash는 launcher `57117c373ea4a73ea5a6babb2da0784d19f801986301c7da8c35319904696e2f`, installer `3ee4718626ef2725503486e5ca635eff7a5d95b173d6b3aba64f34cdfab5b1d1`다.15개 strict 결함은 모두 DETECTED이며 각 실행 뒤 선택한210개(99main Kotlin·81test Kotlin·25deploy·5CI) SHA를 정확히 복원했다. 이 선택 집합은 resources를 제외하므로 기존 source/test 전부 동결했다고 확대하지 않는다. 별도로 tracked src main/test196개를 이식성83a checkpoint와 비교하여 resources를 포함한 바이트 불변도 확인했다. 최종 독립 리뷰·복원 뒤 JVM gate invocation·새 head CI는 확인 대기다. source·독립 테스트·문서·근거는 같은 후속 feature commit으로 보존할 예정이며 아직 새 commit/push/CI 성공을 기록하지 않는다. 새 guard 전체 완료로 표시하지 않으며 이식성 checkpoint에는 guard 생산 코드와 테스트가 포함되지 않는다. [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)는 root 호스트 선행조건·operator 설치·직접 관리자 실행의 잔여 경계·캐시 구 웹 안내·읽기 전용 smoke를 기록한다. 실제 host guard/unit 설치·automation pause/drain·migration·서버/웹 배포·운영 smoke·develop/main 병합은 미실행이다. main CI 이후 자동 CD 경계를 유지하며 배포 준비 완료로 보고하지 않는다.
 
@@ -1768,7 +1782,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 ## Issue #95 Worklog — 다양한 날짜·시간 추천 (2026-10-07 UTC)
 
 - [x] `[AGENT]` 이슈95, AGENTS/rules/project-architecture와 PRD/Architecture/ADR·기존 Worklog를 먼저 읽었다. 최신 develop848b968 clean pull 후 독립 feature에 PR94bf4edff를 fast-forward하고 PR93 포함을 확인했다.
-- [x] `[AGENT]` [재구성 계약](docs/ISSUE_95_CONTRACT.md), [웹 인계](docs/ISSUE_95_WEB_HANDOFF.md)와 실제 OpenAPI를 작성했다. option/variant는 candidate와 별도이며 protocol은 diverse-time-v1이다. 확정의 실제 구간을 기존 result 표현과 typed selection에 함께 담는다.
+- [x] `[AGENT]` [재구성 계약](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_95_CONTRACT.md), [웹 인계](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_95_WEB_HANDOFF.md)와 실제 OpenAPI를 작성했다. option/variant는 candidate와 별도이며 protocol은 diverse-time-v1이다. 확정의 실제 구간을 기존 result 표현과 typed selection에 함께 담는다.
 - [x] `[AGENT]` 독립 테스트 저자의 총50개 대상 테스트 GREEN을 확인했다. 수정 라운드의 원frozen version id/raw_text/created_at을 보존하고 최신 방 state_version만 증가하는 계약도 검증했다. V1~V8·기존 배포 guard·권한 정책은 변경하지 않았다.
 - [x] `[AGENT]` 독립 리뷰의 초/마이크로초 요약, 새 nullable schema와 variant2값enum, typedconfirmed 방 retention 순서 문제를 수정했다. V9는 구candidate writer와 확정 뒤 run/room/revision 변경을 DB에서도 거부한다. 구V8 reader 호환/운영rollback은 별도 대응이 필요하다.
 - [x] `[AGENT]` 원격 계약 인계 첫 commit 전 필수 변경 없는 tdd_guard를 통과했다. ktlintCheck/assemble/전체 test488개 중484PASS·기존 옵션형 live probe·디버그/스키마 export4SKIP·실패0, hook self-testsPASS다. Commit/PR: 동일 커밋 예정.
@@ -1785,14 +1799,14 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - `[AGENT]` 2026-10-07 UTC 첫 API/구현commit `fcde6ca716357cfc923786669c944ca3fc48d734`를원격feature에push하고구현전체완료전부모/웹에게nativeOpenAPI·DTO·protocol/confirm/errors/cursorURL을즉시인계했다. DraftPR97 base는develop848b968이며PR94/93의존을본문에명시했다. D2대기는동일하다.
 - `[AGENT]` 고의결함5종(N하한·장소union·낮은인원다양성·DBlegacywriter우회·마이크로초체크우회)은정확한namedassertion실패로모두탐지했다. mutation마다finally로원본복구후source/testSHA검증을통과했다. sourceRevision은첫원격구현commitfcde6ca다. rawlog는Git제외로컬codex evidence에보존한다.
 
-- `[AGENT]` 사용자추가인계에따라 PR98 HEAD9a4c4d5의V9 invocation schema를read-only확인했다. #95의추천V9와같은version충돌이며단독GREEN/CI로배포준비완료를선언하지않는다. [통합인계](docs/ISSUE_95_96_INTEGRATION_HANDOFF.md)에별도브랜치·#96V9/#95V10제안·bounded게시와projection원자성·빈DB/기존V8데이터및전체통합HEAD검증순서를기록했다. feature번호변경/운영적용/병합은수행하지않았다.
+- `[AGENT]` 사용자추가인계에따라 PR98 HEAD9a4c4d5의V9 invocation schema를read-only확인했다. #95의추천V9와같은version충돌이며단독GREEN/CI로배포준비완료를선언하지않는다. [통합인계](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_95_96_INTEGRATION_HANDOFF.md)에별도브랜치·#96V9/#95V10제안·bounded게시와projection원자성·빈DB/기존V8데이터및전체통합HEAD검증순서를기록했다. feature번호변경/운영적용/병합은수행하지않았다.
 
 
 ### D2 승인과 새 구현 세션 인계 (2026-10-07 UTC)
 
 - 사용자 직접 승인으로 계약·PRD·Architecture·ADR-048·웹/통합 인계를 갱신했다. 승인 전 기록과 독립 리뷰의 당시 판단은 이력으로 보존한다.
 - #96 HEAD9a4c4d5463e578829baed12cfebad16fb0bf33a4를 read-only 확인했다. 두 live adapter가 공통 NaturalLanguageProviderContract의 strict validator/schema/prompt를 사용하며 기존 fixture helper의 비strict v1/v2 경로와 영속 JSON mapper도 함께 검토해야 한다.
-- [D2 구현 인계](docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md)에 승인 예시·정확한 baseline·공유 파일·필수 회귀/결함 주입·통합 deadline/rollback·공개 API 유지와 0유료호출 범위를 기록했다.
+- [D2 구현 인계](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_95_D2_IMPLEMENTATION_HANDOFF.md)에 승인 예시·정확한 baseline·공유 파일·필수 회귀/결함 주입·통합 deadline/rollback·공개 API 유지와 0유료호출 범위를 기록했다.
 - 이 후속은 문서만 변경한다. src/main·src/test·native OpenAPI·migration·guard·권한/배포 정책은 구현 baseline627e0b7과 바이트 동일하게 유지한다. Commit/PR: 동일 커밋 예정 / 기존 Draft PR97. 새 문서 HEAD CI는 push 이후 확인하며 baseline CI 성공을 재사용해 새 HEAD 성공으로 표시하지 않는다.
 
 - 문서 후속 검증(2026-10-07 UTC): 공통 #96 validator/schema와 영속 mapper를 고정 SHA에서 독립 읽기 전용 대조한 리뷰 PASS·blocking 없음. 계약 키워드/로컬 링크 확인과 git diff --check PASS, source/test/native API/guard 바이트 불변 확인. 변경 없는 필수 tdd_guard exit0는 docs-only source의 기존 Gradle up-to-date 결과를 재사용했으며 새488건 실행으로 주장하지 않는다. 새 문서 HEAD CI는 원격 push 이후 별도 확인해야 한다.
@@ -1839,10 +1853,10 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 
 - 사용자 승인으로 기존 GHA production 역할/SSM의 읽기 preflight를 준비한다. 새 IAM/토큰/OS 설정은 하지 않는다. 서비스 중단은 실제 대상·시작 조건을 부모에게 먼저 보고한 뒤 별도로 진행한다. main merge 자동CD는 preflight·운영키·digest 순서 확정 전 실행하지 않는다.
 - 기존 gh 인증이 있으나 실행환경 프록시가 직접 GitHub REST를403으로 차단하고 연결 도구에는 workflow dispatch가 없다. 기존 bootstrap에는 production OIDC 역할의 ReadOnlyAccess와 특정instance AWS-RunShellScript 권한이 선언돼 있으나 실제 적용은 조회 전 미확정이다. 새 공개Issue는 내부운영metadata 공개 위험으로 자동승인검토가거절해생성하지않았다. 기존Issue99/PR100 feature 안에서 비밀값 없는 조회코드와독립검증을준비한다.
-- [실제 평가 기록](docs/ISSUE_99_LIVE_EVALUATION.md)은 전담이 보고한 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS, 추가18생성·누적41/50 및추정/미확정비용을구분한다. 기록/운영조회작업의 유료호출0이며 이후문서/조회코드 HEAD를 새로운 실제평가대상으로 혼동하지않는다.
+- [실제 평가 기록](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_99_LIVE_EVALUATION.md)은 전담이 보고한 서버6f7f54e/웹8e56fe0의3시나리오·4분석PASS, 추가18생성·누적41/50 및추정/미확정비용을구분한다. 기록/운영조회작업의 유료호출0이며 이후문서/조회코드 HEAD를 새로운 실제평가대상으로 혼동하지않는다.
 - 현재 조회 구현/독립 RED·리뷰·원격 실행은 진행 중이다. 운영OpenAI 값은 사용자 보안입력이며 시험환경에서 복사/출력하지않는다. 조회거부·예상밖migration·새비용/권한은 확대하지않고보고한다.
 - 읽기 전용 조회의 독립20검사는 RED6 assertion→GREEN20/skip0이며 결함3개를 assertion7개로 탐지하고 관련6파일 exact 복원을 확인했다. 독립 최종 리뷰 PASS·차단0, 기존 배포정책13 PASS다. 실제 격리PG18.6/current bootJar PropertiesLauncher reader smoke는 운영 조회와 구분한다. 변경 없는 mandatory guard exit0(8.725초)는 기존654건의 Gradle up-to-date 결과를 재사용하며 새654 실행으로 주장하지 않는다. 제품 src/main·src/test/V1~V10 및 guard는6f7f54e와 동일하다.
-- [실행 인계](docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)에 승인 경계·조회 방법·키 위치·digest/CD 순서·남은 시작 조건을 정리했다. 기존Draft PR100 feature에서 조회workflow와 평가기록을 commit/push하며 새 정확HEAD CI와 실제 AWS 접근은 원격 실행 결과로 별도 보고한다. 이 기록 시점의 실제 운영조회 성공0·서비스중단0·유료호출0이다.
+- [실행 인계](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md)에 승인 경계·조회 방법·키 위치·digest/CD 순서·남은 시작 조건을 정리했다. 기존Draft PR100 feature에서 조회workflow와 평가기록을 commit/push하며 새 정확HEAD CI와 실제 AWS 접근은 원격 실행 결과로 별도 보고한다. 이 기록 시점의 실제 운영조회 성공0·서비스중단0·유료호출0이다.
 
 ## Issue #99 Worklog — Luna 운영키 전달 후속 (2026-10-07 UTC)
 
@@ -1851,7 +1865,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - `[AGENT]` 7fault(type/rawASCII/startupguard/atomicrename/legacyOpenAIquery/rawmode/packagemode누락)를 assertion12개로탐지했고9source/testfileexact복원후19GREEN을재확인했다. 별도독립reviewJSON으로추적하며배포13+preflight20 combined33GREEN/skip0, 실제localAlpine rawCompose의합성DB/OpenAI키와mode byte보존을확인했다. 실제secret/운영AWS/모델 호출은0이다.
 - `[AGENT]` 변경없는mandatoryguardexit0(9.556초)는기존654건의Gradleup-to-date결과를재사용한다. 새654실행으로주장하지않는다. src/main·src/test·V1~V10·시간배분·nativeAPI·hostguard·runtimeIAM은실제평가6f7f54e와동일하다. image에포함되는entrypoint는변경되므로이전image digest를새배포에재사용하지않는다.
 - `[AGENT]` IAM선언의SSM /meet-me/production/*는새path를포함하며Terraform에는수동등록name출력만추가했다. 새secret값/resource/IAM/KMS정책/권한은만들지않는다. TerraformCLI가선택환경에없어fmt/validate를실행했다고주장하지않으며값없는output/path를정적검토했다. 실제적용권한은미확인이다.
-- `[USER]` 수동키생성/SSM SecureString등록과실제전달확인은미완료다. docs/ISSUE_99_LUNA_RUNTIME_SETUP.md에책임/정확경로/완료신호/비밀공유금지를기록했다. 집PC의첫AWS시도는명령전transport연결실패로조회0이라는부모보고를기록하며재접속을권한확대승인으로취급하지않는다. 기존production환경의PRmerge-ref거부를우회하거나수동rerun하지않았다. main/develop병합·운영중단·배포·자동화/보안정책변경은보류한다.
+- `[USER]` 수동키생성/SSM SecureString등록과실제전달확인은미완료다. https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_99_LUNA_RUNTIME_SETUP.md에책임/정확경로/완료신호/비밀공유금지를기록했다. 집PC의첫AWS시도는명령전transport연결실패로조회0이라는부모보고를기록하며재접속을권한확대승인으로취급하지않는다. 기존production환경의PRmerge-ref거부를우회하거나수동rerun하지않았다. main/develop병합·운영중단·배포·자동화/보안정책변경은보류한다.
 - Commit/PR: 동일커밋예정, 기존DraftPR100갱신. 새정확HEADCI는push후별도로확인하며기존48b8957 CI37610286399의성공을재사용하지않는다. 새코드는앱/시간배분을바꾸지않지만배포entrypoint/env계약은새source로구분한다.
 
 ## Issue #99 Worklog — 격리 ARM64 이미지와 운영 대상 대조 (2026-10-07 UTC)
@@ -1860,7 +1874,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - `[USER]` 본인 PowerShell의 기존 AWS 프로필 로그인과 수동 키 등록을 보고했다. 별도 집PC 실행계정은 프로필 접근이 없어 자동 조회가 불가능하다. 마지막 성공 운영 배포37279832865의 SSM 대상과 사용자 전달 대상이 일치함을 로그로 확인했다. 현재 환경 변수 직접 읽기는403으로 차단됐으며 현재 설정·host·parameter 타입/버전·실제 권한/전달은 미검증이다. 비밀값/실제 대상ID는 공개 기록에 넣지 않는다.
 - `[AGENT]` 새 CI built-image job은 정확 PR HEAD checkout/persist-credentials=false·contents read만 사용한다. 기존 GHA QEMU/buildx로 linux/arm64 Dockerfile image를 build/load하되 registry push/login·AWS·production environment는 없다. 실제 UID/JAR/entrypoint SHA와 JRE17, required mode의24개 거부를 포함한28개 격리 probe는 network none·read-only·capdrop/no-new-privileges이며 Java sentinel로 guard 결함에도 Spring/migration이 시작되지 않는다. 합성 키만 사용하고 sanitized proof JSON만3일 보존한다. config image ID를 ECR 승인 digest로 취급하지 않는다.
 - `[AGENT]` 독립 source 계약10개의 최초RED5 assertion/pass5→GREEN10/skip0, 6fault를6assertion으로탐지하고3파일exact복원→GREEN10을 확인했다. 원본10/최초RED를byte보존한뒤implicitDockerartifact/summary차단test1을추가해11RED10pass/1assertion→두jobenvflags추가→GREEN11/skip0을확인했다. 최종11에서8fault/8assertion과3파일exact복원을재확인했다. 독립 reviewer/helper/test author 역할을 분리했다. 이것은 source 계약 근거이며 실제 ARM64 build/28probe 실행은 push 후 새 exactHEAD CI에서 확인한다.
-- `[AGENT]` 제품 Kotlin/SQL·runtime renderer/entrypoint·Compose·Dockerfile·IAM·deployment workflow·mandatoryguard는82b8d2a와 동일하다. 앱의 실제 paid/web 평가SHA는6f7f54e/8e56fe0 그대로이며 새 유료 호출0이다. 원격명령·main/develop병합·운영배포·DB적용·자동화/보안/인증설정변경0. 수동 metadata 준비 명령은 docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md에만 마련했다.
+- `[AGENT]` 제품 Kotlin/SQL·runtime renderer/entrypoint·Compose·Dockerfile·IAM·deployment workflow·mandatoryguard는82b8d2a와 동일하다. 앱의 실제 paid/web 평가SHA는6f7f54e/8e56fe0 그대로이며 새 유료 호출0이다. 원격명령·main/develop병합·운영배포·DB적용·자동화/보안/인증설정변경0. 수동 metadata 준비 명령은 https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_99_PRODUCTION_PREFLIGHT_HANDOFF.md에만 마련했다.
 - 변경없는최종mandatoryguardexit0(9.07초), 기존배포13/preflight20/runtime19/최종image11의combined63GREEN/skip0. 앱코드는동일하므로새654실행으로주장하지않는다.
 - Commit/PR: 기존DraftPR100의동일커밋예정. 새ARM64image/전체CI는push후별도로확인하며운영키82CI성공을새image성공으로재사용하지않는다.
 
@@ -1893,7 +1907,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] [AGENT] 최종 nativeOpenAPI 동기화·서버 전체719(715 PASS/기존skip4)와 guard·웹 전체360/브라우저391 PASS(기존skip1)·서버6/웹4 결함 주입·독립 최종 리뷰 검증. 재개 근거와 정확 SHA는 docs/verification/issue-107-local.json을 따른다.
 - [ ] [SHARED] 실제 공급자의 자연어 의미·질문품질·비용/latency 평가 및 운영 적용은 이 세션 범위 밖. mock/격리 통과를 이 완료로 집계하지 않음.
 - 보호파일 GeminiBatchProcessor.kt·SubmissionService.kt·관측 계층은 수정하지 않음.
-- 현재 근거/계약: docs/ISSUE_107_CONTRACT.md, docs/ISSUE_107_TEST_DESIGN.md, .tdd/red/issue-107-*.json. 최종 게이트와 구현상태는 후속 검증 기록으로 갱신.
+- 현재 근거/계약: https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_107_CONTRACT.md, https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_107_TEST_DESIGN.md, .tdd/red/issue-107-*.json. 최종 게이트와 구현상태는 후속 검증 기록으로 갱신.
 
 ### 후속 게시 승인과 통합 대기
 

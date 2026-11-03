@@ -7,6 +7,7 @@
 - 구현 순서와 진행 상황은 `implementation_plan.md`의 체크리스트로 관리하되, 제품·기술 결정의 기준 문서를 대체하지 않는다.
 - 사용자와의 대화에서 범위, 우선순위 또는 결정이 바뀌면 `implementation_plan.md`도 현재 합의에 맞게 갱신한다.
 - 브랜치, TDD, 코드 리뷰와 개발 흐름은 `.agents/rules/development.md`에서 관리한다.
+- 이슈별 임시 문서·스크립트는 `.agents/rules/documentation.md`의 수명주기를 따른다. 현재 결정은 기존 상시 문서에 반영하고, 임시 파일은 사용 후 삭제하거나 Git에서 제외한다.
 
 ## 필수 규칙
 

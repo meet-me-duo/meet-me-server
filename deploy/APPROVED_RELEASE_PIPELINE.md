@@ -46,6 +46,15 @@ IAM의 `ManageMeetMeCredentialRefreshRules`는 기존 `meet-me-production-db-cre
 
 기존 workflow에 정확한 `action=reconcile`, `build_run_id`, `build_run_attempt`, `operation_id`, `approve_first_transition=false`를 전달한다. 새 IAM·OIDC 신뢰·환경 보호 설정은 필요하지 않으며 실제 workflow 실행과 보호 승인은 별도 확인한다.
 
+### 읽기 전용 진단 실패
+
+`reconcile-diagnostic.json`과 `MEETME_RECONCILE_DIAGNOSTIC_V1`은 고정 protocol,
+검증된 operationId 또는 잘못된 입력의 null, `diagnosticComplete=false`, 허용된 stage/reason만 포함한다.
+최종 검사는 이 검증된 실패를 plan보다 먼저 읽고 실패 상태를 유지한다. 알 수 없는 필드·단계·원인,
+operation 불일치·완료 위조를 거부하며 예외 원문·환경 값·traceback을 노출하지 않는다.
+저장 자체가 실패하면 `REPORT_PUBLICATION`의 정제 marker만 남을 수 있다. 이를 진단 artifact 생성 성공으로 표시하지 않는다.
+진단 실패는 배포 완료·미실행·권한 거절의 증거가 아니며 command 재전송·owner 해제·규칙 변경을 허용하지 않는다.
+
 ## 중단과 복구
 
 Issue #192의 [명시적 실패 종결](FAILED_OPERATION_CLOSURE.md)은 원 automatic journal을 변경하지 않고 불변 sidecar와 조건부 owner fence·해제로 `FAILED_CLOSED`를 별도 기록한다. 원 Failed 명령과 정확한 종료 workflow, 현재 전체 trusted baseline 및 규칙/활성 명령 증명이 필요하며 배포 완료는 false다. 기존 `action=reconcile`은 계속 읽기 전용이고 종결을 실행하지 않는다. 새 closure 검사 경로의 전체 읽기 probe와 기존 journal-only 진단의 새 probe 없음 경계를 구분한다. 같은 build 재적용은 기존 경로 보존 정책 때문에 해결책이 아니며 새 immutable release와 운영 승인은 별도다.
