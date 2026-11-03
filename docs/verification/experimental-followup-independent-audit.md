@@ -1,6 +1,6 @@
 # Independent follow-up audit
 
-> 공개용 역사 기록: 아래 수치와 실행 제한은 해당 실험 당시의 결과다. 원본 응답·로그·개인정보·내부 대화 식별자는 게시하지 않는다. 현재 통합 소스의 검사 상태는 [게시 준비 요약](issue-176-publication-readiness.md)을 따른다.
+> 공개용 역사 기록: 아래 수치와 실행 제한은 해당 실험 당시의 결과다. 원본 응답·로그·개인정보·내부 대화 식별자는 게시하지 않는다. 이 기록을 최신 소스의 통과·운영 상태로 확대하지 않는다. 현재 계약은 [V2 계약](../EXPERIMENTAL_INPUT_EVIDENCE.md)과 [배포 완료 기준](../../deploy/APPROVED_RELEASE_PIPELINE.md)을 따른다.
 
 This follow-up uses synthetic fixtures, mock SDK factories and offline runner tests only. It makes no paid provider calls, reads no sealed inputs or gold, and leaves the original c945 evaluation outputs, manifests and runner unchanged. The original null-status CONFIGURATION causes remain unknown. Reproducing an observation-clobber path does not diagnose those calls.
 

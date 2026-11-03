@@ -1,6 +1,6 @@
 # 이동 제약 미지원 진단 보존 — 격리 무료 검증 (2026-10-30)
 
-> 공개용 역사 기록: 아래 수치와 실행 제한은 해당 실험 당시의 결과다. 원본 응답·로그·개인정보·내부 대화 식별자는 게시하지 않는다. 현재 통합 소스의 검사 상태는 [게시 준비 요약](issue-176-publication-readiness.md)을 따른다.
+> 공개용 역사 기록: 아래 수치와 실행 제한은 해당 실험 당시의 결과다. 원본 응답·로그·개인정보·내부 대화 식별자는 게시하지 않는다. 이 기록을 최신 소스의 통과·운영 상태로 확대하지 않는다. 현재 계약은 [V2 계약](../EXPERIMENTAL_INPUT_EVIDENCE.md)과 [배포 완료 기준](../../deploy/APPROVED_RELEASE_PIPELINE.md)을 따른다.
 
 > 후속 마무리: 무료 settings 공유 상태를 분리한 뒤 최종 전체 **2593PASS/0FAIL/기존17SKIP**, ktlint·assemble PASS를 확인했다. 아래 마지막1FAIL 수치는 이전 체크포인트의 기록이다. [최신 원인·전체 검증 결과](experimental-place-regression-closure-result.md)를 기준으로 한다.
 

@@ -648,6 +648,10 @@ A/B 선택은 새 revision과 created_at을 생성하되 interpretation_referenc
 
 ### 게스트 재접근과 제한된 대체
 
+선택 암호는 최초 참여와 같은 트랜잭션에서 JDK PBKDF2-HMAC-SHA256 600,000회, 암호별 무작위 salt16바이트·파생키32바이트로 저장한다. versioned `pbkdf2-sha256$600000$<salt>$<key>` 형식의 정규 padding 없는 Base64url만 허용하고 constant-time digest 비교를 사용한다. 입력은 trim 없이 1~128 Unicode 코드포인트이며 고립 surrogate·빈 암호·잘못된 형식·허용하지 않은 cost·비정규 인코딩은 fail closed한다. 추가 라이브러리 없는 JDK 구현을 택했으며 메모리 경화 방식보다 낮은 오프라인 공격 저항성과 CPU 비용을 수용한다. 회원 로그인 암호를 도입하는 결정은 아니다.
+
+암호 검증 전에 Redis 기반 재접근 제한을 IP별30회·방/참여 기록별5회, 각각15분으로 적용한다. IP는 servlet remote address에서 얻고 임의 forwarded header를 신뢰하지 않는다. Redis 실패는503으로 거부하고 한도 초과는429와 Retry-After로 반환한다. 실패 응답·감사·DTO 문자열에 암호 존재 여부·해시·credential·내부 예외를 노출하지 않는다. grant는 검증된 room/session/participant와 현재 revision에 결속하며 원 세션의 고정 만료를 넘기지 않는다.
+
 이름·초대 링크·participant UUID는 소유 증명이 아니다. 서버가 검증한 VERIFIED_GUEST만 본인 읽기·수정을 허용하며 REPLACE_ONLY는 읽기·HOST·claim 없이 제한된 대체만 허용한다. 계정은 guest보다 우선하고 무효 Bearer나 계정 참여 없음에서 guest로 fallback하지 않는다. 재접근 grant는 서버 세션·방·participant·현재 revision에 결속한다. 무암호 대체의 두 동시 명령 중 하나만 성공하고 동일 원문도 새 버전으로 증명을 소비하여 원문 일치 여부를 누출하지 않는다. claim은 로그인과 유효 소유 증명을 함께 요구하며 room 잠금 아래 회원 충돌을 검사한다. 이름·이메일 자동 병합, HOST 암호 우회, 대체 후 읽기 승격은 없다. IP+대상 시도 제한은 Redis 장애 시 fail closed다.
 
 

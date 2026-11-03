@@ -9,6 +9,51 @@
 실제 API Key, Client Secret, Access Token, 비밀번호, 복구 코드와 private key는 채팅, Git, Issue,
 PR, 로그에 남기지 않는다.
 
+## 현재 계정·런타임 설정 계약
+
+이 절은 계정·소유권 후속 구현의 설정 계약이며, 아래 초기 제출 MVP의 OAuth 미구현·예약 변수 안내보다 우선한다.
+설정 계약을 문서화한 사실은 실제 등록·로그인·운영 배포 성공의 증거가 아니다. 기존 앱·키는 불필요하게 다시 만들지 않는다.
+
+- Google 로그인 scope는 `openid profile`, Kakao는 `openid,profile_nickname`이다. 이메일·Calendar 권한은 로그인에 요청하지 않는다. Google은 기존 Web OAuth client, Kakao는 REST API key와 활성화된 Client Secret을 사용하며 Admin/JavaScript key로 대체하지 않는다.
+- 공급자 callback은 로컬 `http://localhost:8080/api/auth/{google|kakao}/callback`, 운영 `https://api.meet-me.co.kr/api/auth/{google|kakao}/callback`이다. 각 공급자 URI를 정확히 등록하고 끝 slash를 추가하지 않는다.
+- 서버에서 돌아갈 웹 callback은 로컬 `http://localhost:5173/auth/callback`, 운영 `https://app.meet-me.co.kr/auth/callback`이다. 이는 공급자 콘솔 redirect가 아니다. 허용 Origin은 각각 `http://localhost:5173`, `https://app.meet-me.co.kr`로 고정하고 wildcard나 `127.0.0.1` 혼용을 사용하지 않는다.
+- 현재 변수 이름은 `.env.example`의 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`, `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET`, `KAKAO_REDIRECT_URI`다. 초기 `*_OAUTH_CLIENT_*` 예약 이름을 현재 런타임 이름으로 사용하지 않는다.
+
+`runtime-auth-mode=oauth-rs256-required` 릴리스는 아래 Parameter Store 계약을 사용한다. 상대 경로의 기본 root는 `/meet-me/production`이다.
+
+| 런타임 변수 | 상대 Parameter 경로 | 타입·형식 |
+| --- | --- | --- |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | `/secret/google-client-id`, `/secret/google-client-secret` | `SecureString`, 기존 Web OAuth client |
+| `KAKAO_CLIENT_ID`, `KAKAO_CLIENT_SECRET` | `/secret/kakao-client-id`, `/secret/kakao-client-secret` | `SecureString`, REST API key·Client Secret |
+| `GOOGLE_REDIRECT_URI` | `/config/google-redirect-uri` | `String`, 위 운영 Google callback |
+| `KAKAO_REDIRECT_URI` | `/config/kakao-redirect-uri` | `String`, 위 운영 Kakao callback |
+| `AUTH_SIGNING_KEY_ID` | `/config/auth-signing-key-id` | `String`, 현재 RSA 서명키의 고유 `kid` |
+| `AUTH_ISSUER`, `AUTH_AUDIENCE` | `/config/auth-issuer`, `/config/auth-audience` | `String`, `https://api.meet-me.co.kr` / `meetme-web` |
+| `AUTH_WEB_CALLBACK_URI` | `/config/auth-web-callback-uri` | `String`, 위 운영 웹 callback |
+| `APP_ALLOWED_ORIGINS` | `/config/allowed-origins` | `String`, 정확한 운영 frontend Origin |
+
+서명키는 RSA PKCS#8 PEM, JWKS는 현재 및 교체 중 이전 키의 공개 RSA `kty,n,e,kid`만 담는다.
+JWKS에 private `d,p,q,dp,dq,qi`를 넣지 않으며 현재 `kid`와 서명키의 공개 부분이 일치해야 한다.
+호스트 `${AUTH_KEYS_DIRECTORY:-/opt/meet-me/auth}`를 `/run/meetme-auth`에 read-only mount한다.
+renderer는 `AUTH_SIGNING_PRIVATE_KEY_PATH=/run/meetme-auth/signing-private.pem`과
+`AUTH_VERIFICATION_JWKS_PATH=/run/meetme-auth/verification.jwks.json`을 고정 출력한다.
+키 파일은 각각 16KiB·64KiB 이내이며 UID/GID 10001의 필요한 읽기·탐색 권한만 허용한다.
+없는 호스트 디렉터리나 임시 운영키를 자동 생성하지 않는다. 파일 본문을 env 단일행에 넣지 않는다.
+원본 JSON·타입·NUL/개행 검증 후 0600 env를 원자 교체하며 실패하면 이전 파일을 보존한다.
+
+Luna는 기존 `OPENAI_API_KEY`를 `/secret/openai-api-key`의 `SecureString`에서 전달한다.
+`runtime-provider-mode=gemini-luna-required`의 키 전달과 `gemini-only` 역사 호환은 renderer·entrypoint의 검증을 유지한다.
+운영 AI 실행 권한과 금액 정책의 분리는 [Architecture](ARCHITECTURE.md)의 ADR-061 적용 절을 따른다.
+설정되지 않은 금액 정책을 이유로 운영 분석을 막도록 초기 평가 준비 지침을 재사용하지 않는다.
+운영자 등록은 로그인·분석의 선행 조건이 아니며 별도 [운영자 runtime 계약](../deploy/OPERATIONS_RUNTIME.md)을 따른다.
+
+`[USER/SHARED]` 실제 자격 증명·키 생성/회전·안전한 입력과 운영 변경은 승인된 환경에서만 수행한다.
+완료 신호는 환경명, 변수/Parameter 이름과 `configured`, 파일 존재·권한·read-only 검사 결과로 제한한다.
+`[AGENT/SHARED]` 값 비출력 설정 검사와 실제 Google/Kakao 로그인·취소·재로그인,
+callback/Origin·cookie·RS256 `kid`/issuer/audience·계정/기기별 소유권 검증을 구분해 보고한다.
+배포 완료는 [공식 pipeline](../deploy/APPROVED_RELEASE_PIPELINE.md)의 정확 image/source·전체 DB·공개 API 증명으로 확인한다.
+설정 등록이나 CI 성공만으로 실제 사용자 흐름까지 검증됐다고 표시하지 않는다.
+
 ## 1. 설정 저장 위치
 
 | 환경 | 저장 위치 | 원칙 |
