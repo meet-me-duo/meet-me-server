@@ -71,6 +71,7 @@ data class RoomCapabilities(
 
 data class RoomView(
     val inviteCode: String,
+    val expiresAt: Instant,
     val purpose: String,
     val meetingMode: MeetingMode,
     val timeZoneId: String,

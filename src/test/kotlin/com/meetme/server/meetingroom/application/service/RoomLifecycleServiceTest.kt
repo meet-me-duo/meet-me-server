@@ -9,6 +9,7 @@ import com.meetme.server.meetingroom.application.port.output.InviteCodeGenerator
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
+import com.meetme.server.meetingroom.domain.MeetingRoom
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.participant.application.port.output.GuestSessionRepository
 import com.meetme.server.participant.application.port.output.ParticipantRepository
@@ -45,7 +46,11 @@ class RoomLifecycleServiceTest {
 
         `when`(inviteGenerator.next()).thenReturn(firstCode, secondCode)
         `when`(idGenerator.next()).thenAnswer { ids.next() }
-        `when`(roomRepository.insertIfInviteAvailable(anyValue())).thenReturn(false, true)
+        `when`(roomRepository.insertIfInviteAvailable(anyValue())).thenAnswer { invocation ->
+            val candidate = invocation.getArgument<MeetingRoom>(0)
+            `when`(roomRepository.findById(candidate.id)).thenReturn(candidate)
+            candidate.inviteCode == secondCode
+        }
         val service =
             RoomLifecycleService(
                 roomRepository,

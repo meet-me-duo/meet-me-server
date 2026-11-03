@@ -41,6 +41,8 @@
 
 ## 30일 보관과 삭제 경계
 
+- 상세 D-day의 입력은 공통 `RoomResponse.expires_at`이다. `GET /api/rooms/{inviteCode}` 및 공통 생성·참여·마감·계정 연결·재분석·수정 라운드 응답에 required/non-null UTC `date-time`으로 제공한다. 실제 저장 `created_at + 30×24시간`이며 목록의 `expires_at`과 같다. `closed_at`, `submission_deadline`, 목록 캐시를 대체 기준으로 쓰지 않는다. 생성 응답도 PostgreSQL에 저장된 시각을 읽어 정밀도를 맞춘다.
+- 목록은 생성일만 유지하고 정리 예정일은 표시하지 않으며, 상세에서만 자동 정리 D-day를 표시한다. 이 응답 추가는 상세 GET에 새 만료 거부 조건을 도입하지 않으며, 물리 정리 전 조회 가능한 방은 기존 접근 계약을 따른다. 실제 springdoc 생성 [공통 방 OpenAPI](openapi/account-room-history.openapi.json)를 게시 commit SHA에 고정해 소비한다.
 - `COLLECTING`과 `CLOSED` 모두 `created_at`에서 30×24시간 후가 `expires_at`이다. 개인 숨김·최근 마감·수정 라운드는 이를 연장하지 않는다.
 - 기존 정리 로직은 기준 시각이 `now - 30일`보다 **작은** 방을 삭제한다. 목록도 같은 비교를 적용해 정확히 30일 경계인 방은 포함하고 경계를 지난 방은 정리 배치 실행 전이라도 숨긴다. 삭제 실행 시각은 기존 스케줄러를 따른다.
 - 생성일 필터는 보관 기준을 변경하거나 보관 기간을 연장하지 않는다. 가입·재로그인·명시적 연결 역시 기간을 연장하지 않는다. 이미 삭제된 기록은 복구하지 않으며 별도 장기 아카이브 테이블을 만들지 않는다.
