@@ -64,5 +64,16 @@ class RoomOwnershipService(
         return AccountRoomsResult(page, nextCursor)
     }
 
+    @Transactional
+    override fun hideAccountRoom(inviteCode: String) {
+        val account = accounts.currentAccount() ?: fail(RoomLifecycleErrorCode.ACCOUNT_REQUIRED)
+        val code = runCatching { InviteCode.of(inviteCode) }.getOrNull() ?: fail(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
+        // Share cleanup's room -> participant lock order; hiding never changes room state or ownership.
+        val room = rooms.findByInviteCodeForUpdate(code) ?: fail(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
+        val now = clock.instant()
+        if (room.createdAt < now.minus(Duration.ofDays(30))) fail(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
+        if (!archive.hideByAccount(account.accountId, room.id.value, now)) fail(RoomLifecycleErrorCode.ROOM_NOT_FOUND)
+    }
+
     private fun fail(code: RoomLifecycleErrorCode): Nothing = throw RoomLifecycleException(code)
 }

@@ -12,6 +12,8 @@ const scripts = [...f.scripts,
   'V21__add_submission_input_evidence.sql',
   'V22__preserve_unverified_candidate_place.sql'];
 assert.equal(scripts.length, 22);
+// Keep V22 metadata/package fixtures frozen; current publication additionally requires V23.
+const currentScripts = [...scripts, 'V23__add_account_room_archive_hidden_at.sql'];
 
 function release(count = 22) {
   const result = f.manifest();
@@ -60,13 +62,13 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V22C01 current publication binds exactly all twenty-two actual SQL CRCs and independent schema SHA', () => {
-  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...scripts].sort());
+test('V22C01 current publication retains V22 in all twenty-three actual SQL CRCs and independent schema SHA', () => {
+  assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact V22 publication must be admitted');
-    assert.deepEqual(actual.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V23 publication must be admitted');
+    assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(actual.result.schemaFingerprint, hash(canonical(scripts.map((script, i) => ({ version: String(i + 1), script,
+    assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,
       sha256: hash(fs.readFileSync(path.join(value.migrations, script))) })))));
   } finally { value.remove(); }
 });

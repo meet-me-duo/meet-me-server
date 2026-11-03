@@ -60,7 +60,7 @@ class RoomOwnershipController(
     @GetMapping("/api/account/rooms")
     @Operation(
         summary = "현재 계정의 주최·참여 모임 목록",
-        description = "역할 생략은 전체. 생성일은 KST 양끝 포함 날짜이며 생성 시각 DESC, 방 ID ASC 커서 페이지를 사용한다. 기존 30일 보관 정책을 적용한다.",
+        description = "본인이 숨긴 모임은 제외한다. 역할 생략은 전체. 생성일은 KST 양끝 포함 날짜이며 생성 시각 DESC, 방 ID ASC 커서 페이지를 사용한다. 생성일부터 30일 보관한다.",
     )
     @ApiResponses(
         ApiResponse(responseCode = "200", description = "30일 보관 범위 내 본인 방"),
@@ -115,23 +115,57 @@ class RoomOwnershipController(
             ),
         )
     }
+
+    @PostMapping("/api/account/rooms/{inviteCode}/hide")
+    @Operation(
+        summary = "본인 내 모임 목록에서 숨김",
+        description = "로그인 계정의 HOST·MEMBER 관계만 숨긴다. 모임·참여·역할·제출·결과 접근과 타인 목록은 유지한다. body 없음. 반복 요청은 멱등이며 Web은 204 응답을 JSON으로 파싱하지 않는다.",
+    )
+    @ApiResponses(
+        ApiResponse(responseCode = "204", description = "본인 모임 숨김 완료 또는 이미 숨김. 응답 body 없음", content = [Content()]),
+        ApiResponse(
+            responseCode = "401",
+            description = "로그인 계정 누락(ACCOUNT_REQUIRED) 또는 무효·만료 인증. guest cookie로 대체 불가",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "403",
+            description = "Origin 누락(ORIGIN_NOT_ALLOWED) 또는 불허 Origin. 기존 CORS 거부는 Problem JSON을 보장하지 않음",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "타인 모임·없는/잘못된 코드·생성일부터 30일 초과를 동일하게 ROOM_NOT_FOUND 처리",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "503",
+            description = "인증 검증 키 사용 불가",
+            content = [Content(schema = Schema(implementation = com.meetme.server.shared.adapter.input.web.ApiProblemSchema::class))],
+        ),
+    )
+    fun hideAccountRoom(
+        @PathVariable @Parameter(description = "본인이 참여한 모임의 초대 코드") inviteCode: String,
+    ): ResponseEntity<Void> {
+        ownership.hideAccountRoom(inviteCode)
+        return ResponseEntity.noContent().cacheControl(CacheControl.noStore()).build()
+    }
 }
 
 @Schema(description = "계정 본인의 주최·참여 모임 목록. 생성 시각 DESC, 방 ID ASC 커서 정렬")
 data class AccountRoomsResponse(
-    @field:Schema(description = "계정 소유권과 기존 30일 보관 범위를 만족하는 모임") val rooms: List<AccountRoomResponse>,
+    @field:Schema(description = "계정 소유권과 생성일부터 30일 보관 범위를 만족하고 본인이 숨기지 않은 모임") val rooms: List<AccountRoomResponse>,
     @field:JsonProperty("has_more") @field:Schema(description = "다음 페이지 존재 여부") val hasMore: Boolean,
     @field:JsonProperty("next_cursor")
     @field:Schema(description = "다음 페이지 커서. has_more가 false면 null. 필터 변경 시 초기화", nullable = true)
     val nextCursor: String?,
 )
 
-@Schema(description = "기존 30일 보관 정책의 본인 주최 또는 참여 모임")
+@Schema(description = "생성일부터 30일 보관 정책의 본인 주최 또는 참여 모임")
 data class AccountRoomResponse(
     @field:JsonProperty("invite_code") @field:Schema(description = "방 초대 코드") val inviteCode: String,
     @field:Schema(description = "모임 이름(목적)") val purpose: String,
     @field:JsonProperty("created_at") @field:Schema(description = "방 생성 시각, UTC ISO-8601") val createdAt: Instant,
-    @field:JsonProperty("expires_at") @field:Schema(description = "마감된 방은 마감 시각, 수집 중 방은 생성 시각에서 30일 후 정리 기준 시각. 정확한 경계는 포함") val expiresAt:
-        Instant,
+    @field:JsonProperty("expires_at") @field:Schema(description = "상태·숨김과 무관하게 생성 시각에서 30일 후 정리 기준 시각. 정확한 경계는 포함") val expiresAt: Instant,
     @field:Schema(description = "현재 계정 본인의 모임 역할", allowableValues = ["HOST", "MEMBER"]) val role: String,
 )

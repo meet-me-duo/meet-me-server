@@ -12,12 +12,12 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 
-// Independent #95 retention boundary: confirmed recommendation rows follow original CLOSED anchor and room retention.
+// Independent retention boundary: confirmed recommendation rows follow room creation, including recently closed rooms.
 class RecommendationRetentionPostgresTest : RecommendationPostgresFixture() {
     @Autowired private lateinit var retention: RoomDataRetentionPort
 
     @Test
-    fun `expired typed confirmed room is deleted without leftovers and recently closed room remains intact`() {
+    fun `expired typed confirmed room is deleted without leftovers and creation boundary room remains intact`() {
         val expired = recommendedRoom()
         val fresh = recommendedRoom()
         for (fixture in listOf(expired, fresh)) {
@@ -37,12 +37,12 @@ class RecommendationRetentionPostgresTest : RecommendationPostgresFixture() {
         jdbc.update(
             "UPDATE meeting_rooms SET created_at = ?, closed_at = ? WHERE id = ?",
             now.minus(32, ChronoUnit.DAYS).atOffset(ZoneOffset.UTC),
-            now.minus(31, ChronoUnit.DAYS).atOffset(ZoneOffset.UTC),
+            now.atOffset(ZoneOffset.UTC),
             expired.roomId,
         )
         jdbc.update(
             "UPDATE meeting_rooms SET created_at = ?, closed_at = ? WHERE id = ?",
-            now.minus(32, ChronoUnit.DAYS).atOffset(ZoneOffset.UTC),
+            now.minus(30, ChronoUnit.DAYS).atOffset(ZoneOffset.UTC),
             now.atOffset(ZoneOffset.UTC),
             fresh.roomId,
         )

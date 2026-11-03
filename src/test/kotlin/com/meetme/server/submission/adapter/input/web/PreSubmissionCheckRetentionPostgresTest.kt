@@ -84,11 +84,11 @@ class PreSubmissionCheckRetentionPostgresTest {
     }
 
     @Test
-    fun `R01 PS29 closed anchor removes every private precheck row without extending retention to recent answers`() {
+    fun `R01 PS29 creation anchor removes every private precheck row despite recent closure and answers`() {
         val expired = fullHistory(close = true)
         val fresh = fullHistory(close = true)
-        jdbc.update("UPDATE meeting_rooms SET created_at=?,closed_at=? WHERE id=?", time(32), time(31), expired.room.id)
-        jdbc.update("UPDATE meeting_rooms SET created_at=?,closed_at=? WHERE id=?", time(40), time(29), fresh.room.id)
+        jdbc.update("UPDATE meeting_rooms SET created_at=?,closed_at=? WHERE id=?", time(32), time(1), expired.room.id)
+        jdbc.update("UPDATE meeting_rooms SET created_at=?,closed_at=? WHERE id=?", time(30), time(1), fresh.room.id)
         val freshBefore = roomRows(fresh.room)
         assertEquals(listOf(3, 3, 3, 4), newRowCounts(expired.room))
         assertTrue(

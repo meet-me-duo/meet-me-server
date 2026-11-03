@@ -1,0 +1,175 @@
+{
+  "workItem": "issue197-account-room-hide",
+  "sourceRevision": "9038c7b32c61e608d0c92c082de8fd251e550748",
+  "reviewer": "/root/independent_review",
+  "testAuthors": [
+    "/root/test_design",
+    "/root/independent_review (timestamp and actual lock probes)"
+  ],
+  "implementationAuthors": [
+    "/root (application and migration)",
+    "/root/v23_release_catalog (release catalog)"
+  ],
+  "independence": "Reviewer read the accepted contract and independently reviewed tests before production changes, added two missing concurrency/idempotency tests, then reviewed the final application/DDL/catalog/documentation diff. All six application mutations were executed only in an isolated copied checkout; parent production files were never mutated. Both copied and parent source/test bytes were compared after exact restoration.",
+  "result": "PASS",
+  "openP1": 0,
+  "openP2": 0,
+  "sourceFiles": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "96e6cf2f80cb4c932905a30f923dfa4aa1606caec3a697fb5927b97c4b6b647c"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "9b969a06244236b5b15981197b91d76419bc71a389bcd23c82fbf52cadc0375e"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "8fca827e3d20f3cd3b68aa4edb269088e1069b84ef0e377e34a2bb0d782c367f"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "75cbcf69005ef2c421300f33c166d55a863ff81f1261bfdb9bcdd6518e11b3ca"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/AnonymousWebSecurityConfiguration.kt",
+      "sha256": "6b48f64b512b6a0b92884fce5d756d735d5df6e0facd4751793ca1389f8d3b43"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipController.kt",
+      "sha256": "d3ea850e192d5bb48791dafb2ad6ab2410e29c5d016b64d388e5cd9d7db24996"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/JdbcAccountRoomArchiveRepository.kt",
+      "sha256": "bd45afd5483b8e953a20aa77fb708cb564d63c0916d44c7a2784f2226cd281b1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/RoomDataRetentionRepository.kt",
+      "sha256": "877bdf7986a7444481ce80410e7f8a718322d9f72d2af085cde67732a732135f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomOwnershipUseCase.kt",
+      "sha256": "c1b955141e63e8a2810738cb60fd8a7575cf83a508754557cf6f412633634de9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/port/output/AccountRoomArchivePort.kt",
+      "sha256": "bae1beb3719463b3c3cc945961a39d8236f3fe323f93de5831d366d44d55fac8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomOwnershipService.kt",
+      "sha256": "3c862343b860de9e3e5792afe47aeb1712ac03f8397b8022a722ad615a44bc95"
+    },
+    {
+      "path": "src/main/resources/db/migration/V23__add_account_room_archive_hidden_at.sql",
+      "sha256": "b7f80b12785446d8241f7c42ca73acb0599ea3f874e1d1293097ee929c6d9e31"
+    },
+    {
+      "path": "deploy/public-api-contract.json",
+      "sha256": "f2b2d958af9362d4242bd6b7d0b6dda0ef08a55a37ca39ccd330da7e2bcd7306"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationAccountHidePostgresTest.kt",
+      "sha256": "003012259d7407f5bf62db89d465465c0fe50371ce8b8f45a5e4927f42fa9484"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationRetentionPostgresTest.kt",
+      "sha256": "a2027138c7b223f8f8917f3d6676078e978bae28f7b82e3eba2d6dbb1d79423d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHideConcurrencyPostgresTest.kt",
+      "sha256": "58ff4dbd78b0d2f4f55f97b7b91a81b1084d937f5c6f916dc292c4df18730486"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHideWebIntegrationTest.kt",
+      "sha256": "b403b93b08d5a546214e4b6a25a59df977b49f04402161d6b7ad746faf21f3e0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHistoryWebIntegrationTest.kt",
+      "sha256": "1291606859b870898ca39bd8c8aeb8d1213141c8dfcd0614c966f9feee2fc703"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipWebIntegrationTest.kt",
+      "sha256": "d9a40bda8677d318510f6513312709fb783876231f8e9ddeacc3dd48ce8b9b55"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHideMigrationPostgresTest.kt",
+      "sha256": "626aa710e8f3af08ebe9001714f9a36299d3db41ccff08bdae58121b15efcfab"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "3c2705dcda27c61a951fbfddd7901dc0bc276017afeb2373b8e4938224aba80c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "b6db39f9a77244ad2b51d563704a3b9cfe4c8bbffe4dd42a6383f79fe5654501"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "96e7b6f088c145bc07ab36931092cb79d6ea4eed35c8f876f28b9b406c53a10a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckRetentionPostgresTest.kt",
+      "sha256": "601b2849075d4aaf2aa9076bec362a7221df26b99ae7ff2f3e55f20afebaa190"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+      "sha256": "cd104fe4a740b1b57d73869893ef6ec4eb8267d83456508074778f617e5eaa4e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+      "sha256": "4abdd2d5b04caa72581e15eb4c3cbda8eb2dd73f5659ffe87bc82552b70bc957"
+    }
+  ],
+  "verified": [
+    "Account identity is obtained only from CurrentAccountPort; no guest-cookie fallback; HOST and MEMBER can hide only their own participants.user_id relationship. Missing account is401; foreign, invalid, nonexistent and creation-expired rooms share404.",
+    "Command is POST with no request body;204 has no body/content type and no-store. Existing exact Origin protection is applied to account-room commands without expanding allowed origins, headers or methods. Generated OpenAPI contains204/401/403/404/503 and creation-based expires_at.",
+    "Hide is transactional and takes room FOR UPDATE before updating its participant; COALESCE retains the first timestamp. Four concurrent/repeated hides and independent real PostgreSQL blocking probes cover the lock and timestamp boundaries.",
+    "Archive ownership, creation cutoff and personal-hidden exclusion are unconditional and applied before search/role/date/cursor pagination. All expiry values are created_at plus30days; exact equality remains retained.",
+    "No room status, participant ownership or role, original submission, direct invite link, recommendation/result or active run is changed by hiding. Rejoining an account returns its existing relationship without clearing the preference.",
+    "V23 is additive nullable timestamptz plus account-owner CHECK; guest preferences remain NULL. Historical SQL is unchanged. Existing participant insert/claim writes do not overwrite the preference. Cleanup retains room-first SKIP LOCKED and existing dependent deletion/async safety boundaries while selecting only created_at below cutoff.",
+    "Independent application baseline12PASS; six semantic faults detected individually (ownership, hidden exclusion, closure retention, Origin protection, timestamp refresh, room lock removal); restored12PASS and byte-exact source/test equality confirmed.",
+    "V23 publisher, controller and host readers admit only the exact additive reviewed catalog while retaining historical catalogs. Current schema publication/checksum/package bindings and explicit transition approval/pending-command/rule guards remain enforced. Existing CI controls are preserved; the V23 check is additive and blocking.",
+    "Catalog evidence independently inspected:152Node PASS,2Python PASS, six implementer catalog faults detected and restored6PASS; production catalog source hashes match the recorded evidence.",
+    "Latest-schema fixture review found two old V22-only oracles. Updated entrypoint23/current23 and V8-to-latest15/23 while preserving all legacy business-column comparisons; only the new hidden column is additionally excluded from the old snapshot and all six legacy participant rows are explicitly asserted NULL. Focused fresh/PostgreSQL upgrade tests3PASS/0FAIL/0SKIP.",
+    "Follow-up independently updates two additional stale regression oracles: current partial-confirmation migration now23; account-lookup retained rows1,2,3,5,6 include exact collecting/closed creation boundaries, exclude old creation despite recent closure, and preserve every PGJDBC named-preparation/connection-default/plan-cache/query-variant/keyset assertion. Focused3PASS/0FAIL/0SKIP. Public API deploy inventory adds only POST hideAccountRoom; all prior operations and fields are identical."
+  ],
+  "evidence": ".tdd/verification/issue197-account-room-hide.json",
+  "catalogEvidence": [
+    ".tdd/reviews/issue197-v23-local-validation.json",
+    ".tdd/reviews/issue197-v23-fault-injection.json"
+  ],
+  "latestSchemaEvidence": ".codex/tdd-evidence/issue197-independent-latest-schema-green.log (local only)",
+  "reviewCheckout": "C:\\Users\\jinhy\\Documents\\Codex\\2026-11-03\\task-3\\issue197-fi-review",
+  "limitations": [
+    "This is an independent local code/test review, not a GitHub APPROVE submission.",
+    "Original complete TDD guard, final-commit CI terminal states and merge are tracked by the parent; they are not claimed complete by this review.",
+    "No production deployment, operating database change, paid provider request, real OAuth login or account/security setting change was performed. main/server deployment and V23 runtime application remain separately authorized work."
+  ],
+  "recordedAt": "2026-11-03T04:00:25.184717Z",
+  "followUpReview": {
+    "reason": "Parent first complete Windows guard exposed two additional latest-schema/closed-at-retention expectations alongside environment-specific failures. Only these requested test oracles were changed; production source was untouched.",
+    "updatedTests": [
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+        "sha256": "cd104fe4a740b1b57d73869893ef6ec4eb8267d83456508074778f617e5eaa4e"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/output/persistence/AccountRoomLookupPreparationPostgresTest.kt",
+        "sha256": "4abdd2d5b04caa72581e15eb4c3cbda8eb2dd73f5659ffe87bc82552b70bc957"
+      }
+    ],
+    "results": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 64
+    },
+    "preserved": "Twenty query repetitions, twelve mixed-role passes, connection threshold5, auto plan_cache_mode, unrelated named preparation, archive unnamed preparation, own-role/search/date/limit+1/keyset checks and physical fixture row preservation remain intact.",
+    "evidence": ".codex/tdd-evidence/issue197-independent-lookup-partial-regression-green.log (local only)",
+    "sourceChangesByReviewer": 0,
+    "fullGuardStatus": "Parent-reported first Windows guard110FAIL/17SKIP is preserved separately; final original Linux guard and remote CI remain parent-tracked and are not claimed passed here.",
+    "recordedAt": "2026-11-03T04:00:25.184696Z"
+  }
+}

@@ -98,7 +98,7 @@ class AccountRoomHistoryWebIntegrationTest {
     }
 
     @Test
-    fun `creation dates use inclusive KST days independently of closed retention anchor`() {
+    fun `creation dates use inclusive KST days and cannot extend creation retention`() {
         val owner = login()
         room(owner, "HOST", Instant.parse("2026-10-14T14:59:59.999999Z"))
         val start = room(owner, "MEMBER", Instant.parse("2026-10-14T15:00:00Z"))
@@ -108,27 +108,23 @@ class AccountRoomHistoryWebIntegrationTest {
         assertEquals(listOf(end, start), invites(result))
         assertEquals(3, invites(response("created_from" to "2026-10-15")).size)
         assertEquals(3, invites(response("created_to" to "2026-10-15")).size)
-        val oldClosed = room(owner, "HOST", NOW.minus(Duration.ofDays(45)), NOW.minus(Duration.ofDays(1)))
-        assertEquals(listOf(oldClosed), invites(response("created_to" to "2026-09-05")))
+        room(owner, "HOST", NOW.minus(Duration.ofDays(45)), NOW.minus(Duration.ofDays(1)))
+        assertEquals(emptyList(), invites(response("created_to" to "2026-09-05")))
     }
 
     @Test
-    fun `existing thirty day boundaries include equality and keep closed and collecting anchors distinct`() {
+    fun `thirty day boundaries include equality for both closed and collecting creation anchors`() {
         val owner = login()
         val cutoff = NOW.minus(Duration.ofDays(30))
         val collectingBoundary = room(owner, "MEMBER", cutoff)
         room(owner, "HOST", cutoff.minusNanos(1000))
-        val closedBoundary = room(owner, "HOST", cutoff.minus(Duration.ofDays(5)), cutoff)
+        val closedBoundary = room(owner, "HOST", cutoff, NOW.minus(Duration.ofDays(1)))
         room(owner, "MEMBER", cutoff.minus(Duration.ofDays(5)), cutoff.minusNanos(1000))
-        val closedRecent = room(owner, "MEMBER", NOW.minus(Duration.ofDays(60)), NOW.minus(Duration.ofDays(2)))
+        room(owner, "MEMBER", NOW.minus(Duration.ofDays(60)), NOW.minus(Duration.ofDays(2)))
         val rows = response()["rooms"]
-        assertEquals(setOf(collectingBoundary, closedBoundary, closedRecent), rows.toList().map { it["invite_code"].asText() }.toSet())
+        assertEquals(setOf(collectingBoundary, closedBoundary), rows.toList().map { it["invite_code"].asText() }.toSet())
         assertEquals(NOW.toString(), rows.first { it["invite_code"].asText() == collectingBoundary }["expires_at"].asText())
         assertEquals(NOW.toString(), rows.first { it["invite_code"].asText() == closedBoundary }["expires_at"].asText())
-        assertEquals(
-            NOW.plus(Duration.ofDays(28)).toString(),
-            rows.first { it["invite_code"].asText() == closedRecent }["expires_at"].asText(),
-        )
         assertEquals(5, jdbc.queryForObject("SELECT count(*) FROM meeting_rooms", Int::class.java))
     }
 

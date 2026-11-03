@@ -2,6 +2,10 @@
 
 Issue #154 / ADR-063. 일반 배포는 main의 정확한 CI 이후 실제 운영 검증까지 자동으로 진행한다. SQL/guard 계약이 다른 특별 전환은 pipeline의 실제 승인 후 계속하며, 개인 PC의 AWS CLI를 정상 배포의 마지막 단계로 요구하지 않는다.
 
+## 개인 목록 숨김 migration 준비
+
+2026-11-03 구현 기준 현재 게시 catalog는 V1~V23이다. V23은 기존 participants에 계정별 목록 숨김 시각을 추가하며 V1~V22 SQL bytes는 유지한다. 기존 완전한 역사 catalog의 읽기·package 검증은 유지하고 현재 게시에는 정확한 V23 파일과 CRC·schema SHA를 요구한다. V22에서 V23으로의 전환은 schema 변경이므로 TRANSITION_REQUIRED이며 기존 승인·writer drain·전체 DB 이력·guard 검증을 통과해야 한다. 코드 병합이나 무료 테스트 성공을 운영 migration 적용·서버 배포 승인으로 간주하지 않는다.
+
 ## 정상 경로
 
 1. **Build and Publish**가 성공한 main CI의 정확한 SHA로 ARM64 image와 불변 run/attempt manifest·archive를 게시한다.
