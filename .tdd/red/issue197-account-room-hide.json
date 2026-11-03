@@ -1,0 +1,74 @@
+{
+  "workItem": "issue197-account-room-hide",
+  "sourceRevision": "9038c7b32c61e608d0c92c082de8fd251e550748",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHideWebIntegrationTest.kt",
+      "sha256": "b403b93b08d5a546214e4b6a25a59df977b49f04402161d6b7ad746faf21f3e0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/AccountRoomHideMigrationPostgresTest.kt",
+      "sha256": "626aa710e8f3af08ebe9001714f9a36299d3db41ccff08bdae58121b15efcfab"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationAccountHidePostgresTest.kt",
+      "sha256": "003012259d7407f5bf62db89d465465c0fe50371ce8b8f45a5e4927f42fa9484"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/AccountRoomHistoryWebIntegrationTest.kt",
+      "sha256": "1291606859b870898ca39bd8c8aeb8d1213141c8dfcd0614c966f9feee2fc703"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomOwnershipWebIntegrationTest.kt",
+      "sha256": "d9a40bda8677d318510f6513312709fb783876231f8e9ddeacc3dd48ce8b9b55"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/input/web/PreSubmissionCheckRetentionPostgresTest.kt",
+      "sha256": "601b2849075d4aaf2aa9076bec362a7221df26b99ae7ff2f3e55f20afebaa190"
+    }
+  ],
+  "command": [
+    "gradlew.bat",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*AccountRoomHideWebIntegrationTest",
+    "--tests",
+    "*AccountRoomHideMigrationPostgresTest",
+    "--tests",
+    "*RecommendationAccountHidePostgresTest",
+    "--tests",
+    "*AccountRoomHistoryWebIntegrationTest",
+    "--tests",
+    "*RoomOwnershipWebIntegrationTest",
+    "--tests",
+    "*RecommendationRetentionPostgresTest",
+    "--tests",
+    "*PreSubmissionCheckRetentionPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationAccountHidePostgresTest.host and member hide preserve recommendations confirmed results and own originals()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationAccountHidePostgresTest.cleanup skips an uncommitted hide transaction then deletes its room and result without resurrection()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.hidden entries stay excluded from search role dates and an already issued cursor()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.anonymous and guest-only requests cannot hide even with the owning guest cookie()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.missing and untrusted origins cannot hide and exact trusted POST preflight remains supported()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.closed and collecting archive expiry use creation and exact 30 day boundary is retained()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.repeated concurrent hides all succeed without changing room or participation identity()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.retention deletes hidden and recently closed old rooms with dependencies but retains exact creation boundary()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.other accounts nonexistent invalid and expired rooms share the same not-found contract()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.member can hide own relationship and another device with same account still sees it hidden()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.host hide returns empty uncached response and preserves member list direct link and submission ownership()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHideWebIntegrationTest.OpenAPI documents empty 204 hide response and relevant security and not-found contracts()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.thirty day boundaries include equality for both closed and collecting creation anchors()",
+    "com.meetme.server.meetingroom.adapter.input.web.AccountRoomHistoryWebIntegrationTest.creation dates use inclusive KST days and cannot extend creation retention()",
+    "com.meetme.server.meetingroom.adapter.input.web.RoomOwnershipWebIntegrationTest.archive lists only own host rooms and exposes creation anchored 30 day expiry()",
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHideMigrationPostgresTest.fresh migration prevents guest archive hiding while permitting account preferences()",
+    "com.meetme.server.shared.adapter.output.persistence.AccountRoomHideMigrationPostgresTest.upgrade preserves existing account and guest data with visible NULL preference and claim keeps it visible()",
+    "com.meetme.server.submission.adapter.input.web.PreSubmissionCheckRetentionPostgresTest.R01 PS29 creation anchor removes every private precheck row despite recent closure and answers()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-03T03:24:50.214117Z"
+}

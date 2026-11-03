@@ -2,6 +2,10 @@
 
 Issue #154 / ADR-063. 일반 배포는 main의 정확한 CI 이후 실제 운영 검증까지 자동으로 진행한다. SQL/guard 계약이 다른 특별 전환은 pipeline의 실제 승인 후 계속하며, 개인 PC의 AWS CLI를 정상 배포의 마지막 단계로 요구하지 않는다.
 
+## 개인 목록 숨김 migration 준비
+
+2026-11-03 구현 기준 현재 게시 catalog는 V1~V23이다. V23은 기존 participants에 계정별 목록 숨김 시각을 추가하며 V1~V22 SQL bytes는 유지한다. 기존 완전한 역사 catalog의 읽기·package 검증은 유지하고 현재 게시에는 정확한 V23 파일과 CRC·schema SHA를 요구한다. V22에서 V23으로의 전환은 schema 변경이므로 TRANSITION_REQUIRED이며 기존 승인·writer drain·전체 DB 이력·guard 검증을 통과해야 한다. 코드 병합이나 무료 테스트 성공을 운영 migration 적용·서버 배포 승인으로 간주하지 않는다.
+
 ## 정상 경로
 
 1. **Build and Publish**가 성공한 main CI의 정확한 SHA로 ARM64 image와 불변 run/attempt manifest·archive를 게시한다.
@@ -45,6 +49,15 @@ IAM의 `ManageMeetMeCredentialRefreshRules`는 기존 `meet-me-production-db-cre
 분류 단계는 gate 출력 전에 검사하고, 실행 단계도 claim·운영 쓰기 전에 재검사한다. 이전 APPLIED는 이미 수집한 실제 host·history·자동 배포 계약과 원래 identity를 대조한다. NOT_ATTEMPTED 종료 기록은 commandId 없음과 원래 규칙 복원을 요구한다. 동일 operation의 UNKNOWN을 미실행으로 바꾸지 않는다. 검사 자체는 새 host probe·command polling·잠금 삭제·강제 인수·재배포를 하지 않는다.
 
 기존 workflow에 정확한 `action=reconcile`, `build_run_id`, `build_run_attempt`, `operation_id`, `approve_first_transition=false`를 전달한다. 새 IAM·OIDC 신뢰·환경 보호 설정은 필요하지 않으며 실제 workflow 실행과 보호 승인은 별도 확인한다.
+
+### 읽기 전용 진단 실패
+
+`reconcile-diagnostic.json`과 `MEETME_RECONCILE_DIAGNOSTIC_V1`은 고정 protocol,
+검증된 operationId 또는 잘못된 입력의 null, `diagnosticComplete=false`, 허용된 stage/reason만 포함한다.
+최종 검사는 이 검증된 실패를 plan보다 먼저 읽고 실패 상태를 유지한다. 알 수 없는 필드·단계·원인,
+operation 불일치·완료 위조를 거부하며 예외 원문·환경 값·traceback을 노출하지 않는다.
+저장 자체가 실패하면 `REPORT_PUBLICATION`의 정제 marker만 남을 수 있다. 이를 진단 artifact 생성 성공으로 표시하지 않는다.
+진단 실패는 배포 완료·미실행·권한 거절의 증거가 아니며 command 재전송·owner 해제·규칙 변경을 허용하지 않는다.
 
 ## 중단과 복구
 

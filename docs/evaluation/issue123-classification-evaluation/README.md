@@ -1,5 +1,7 @@
 # Preregistered classification evaluation assets
 
+Current product and runtime contracts live in `docs/PRD.md`, `docs/ARCHITECTURE.md`, `docs/ADR.md` and the permanent deployment runbooks. Issue-specific Markdown is no longer retained in the working tree. Paths and hashes in frozen audit/provenance JSON remain historical source references, resolved at their recorded Git revision (the pre-cleanup tree is `89d4e0d193aa1a5018f3e62168654e34b607f032`). They are not required current files or instructions to recreate those documents. Preserve sealed asset bytes, gold, hashes and scoring criteria; cleanup does not authorize a new evaluation or change the oracle.
+
 These assets are ready for a separately authorized evaluation. No model, HTTP or Gradle calls were made to prepare them. They contain gold annotations, not model predictions, measured accuracy or confidence calibration. The original development60 and untuned-holdout60 remain byte-identical to their frozen source commit. The new16 are a separate all-blind supplemental partition of eight independently reviewed single-factor contrasts.
 
 Do not open holdout or supplemental payloads as a prompt/schema/threshold author. File access is procedural, not cryptographically enforced. The oracle author and independent reviewer have accessed the data and cannot claim it is unseen by them. Root and implementation roles receive only aggregates and file-level hashes. No individual corpus gold or text is present in this aggregate directory; the protocol-only records are wholly invented.

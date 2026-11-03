@@ -6,6 +6,12 @@ import java.time.Instant
 import java.util.UUID
 
 interface AccountRoomArchivePort {
+    fun hideByAccount(
+        userId: UUID,
+        roomId: UUID,
+        hiddenAt: Instant,
+    ): Boolean
+
     fun findByAccount(
         userId: UUID,
         retainedSince: Instant,

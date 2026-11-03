@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Existing V8 rows survive exact V1..V22 integration without automatic linking or reanalysis. */
+/** Existing V8 rows survive exact V1..V23 integration without automatic linking or reanalysis. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,17 +18,17 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly twenty-two versions and validates both independent legacy schemas`() {
-        assertEquals(22, flyway().migrate().migrationsExecuted)
+    fun `blank PostgreSQL migrates exactly twenty-three versions and validates both independent legacy schemas`() {
+        assertEquals(23, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "22",
+            "23",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("22", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("23", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
@@ -54,7 +54,7 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(14, flyway().migrate().migrationsExecuted)
+        assertEquals(15, flyway().migrate().migrationsExecuted)
         flyway().validate()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
@@ -64,6 +64,11 @@ class IntegratedLegacyUpgradePostgresTest {
             "V21 must not invent interpretation evidence for any legacy submission version",
         )
         assertEquals("0", scalar("SELECT count(*)::text FROM participants WHERE user_id IS NOT NULL"))
+        assertEquals(
+            "6",
+            scalar("SELECT count(*)::text FROM participants WHERE account_archive_hidden_at IS NULL"),
+            "V23 must leave all six preexisting guest relationships visible without changing their ownership",
+        )
         assertEquals("3", scalar("SELECT count(*)::text FROM meeting_rooms WHERE submission_protocol='LEGACY'"))
         for (table in listOf("precheck_candidates", "precheck_checks", "precheck_executions", "precheck_operations")) {
             assertEquals("0", scalar("SELECT count(*)::text FROM $table"), "Legacy upgrade must not invent checks or rewrite saved input")
@@ -240,7 +245,7 @@ class IntegratedLegacyUpgradePostgresTest {
                 if (table == "coordination_attempts") {
                     "to_jsonb(t) - 'provider' - 'model' - 'policy_version' - 'invocation_id'"
                 } else if (table == "participants") {
-                    "to_jsonb(t) - 'user_id'"
+                    "to_jsonb(t) - 'user_id' - 'account_archive_hidden_at'"
                 } else if (table == "meeting_rooms") {
                     "to_jsonb(t) - 'submission_protocol'"
                 } else if (table == "submission_versions") {

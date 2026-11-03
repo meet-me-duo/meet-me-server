@@ -23,14 +23,12 @@ class RoomDataRetentionRepository(
             jdbcTemplate.query(
                 """
                 SELECT id FROM meeting_rooms
-                WHERE (collection_status = 'CLOSED' AND closed_at < ?)
-                   OR (collection_status = 'COLLECTING' AND created_at < ?)
-                ORDER BY COALESCE(closed_at, created_at), id
+                WHERE created_at < ?
+                ORDER BY created_at, id
                 LIMIT ?
                 FOR UPDATE SKIP LOCKED
                 """.trimIndent(),
                 { rs, _ -> rs.getObject("id", UUID::class.java) },
-                cutoff.atOffset(ZoneOffset.UTC),
                 cutoff.atOffset(ZoneOffset.UTC),
                 limit,
             )

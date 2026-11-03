@@ -30,7 +30,7 @@ LEGACY_CATALOGS = (
     tuple(range(1, 12)) + (13,),
     tuple(range(1, 11)) + (14, 15), tuple(range(1, 12)) + (14, 15),
 )
-NEW_CATALOGS = (tuple(range(1, 17)), tuple(range(1, 18)), tuple(range(1, 19)), tuple(range(1, 20)), tuple(range(1, 21)), tuple(range(1, 22)), tuple(range(1, 23)))
+NEW_CATALOGS = (tuple(range(1, 17)), tuple(range(1, 18)), tuple(range(1, 19)), tuple(range(1, 20)), tuple(range(1, 21)), tuple(range(1, 22)), tuple(range(1, 23)), tuple(range(1, 24)))
 COMPLETE_CATALOGS = LEGACY_CATALOGS + NEW_CATALOGS
 MIGRATION_NAMES = (
     'create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
@@ -50,6 +50,7 @@ MIGRATION_SCRIPTS.update({
     20: 'V20__add_account_room_history_index.sql',
     21: 'V21__add_submission_input_evidence.sql',
     22: 'V22__preserve_unverified_candidate_place.sql',
+    23: 'V23__add_account_room_archive_hidden_at.sql',
 })
 
 

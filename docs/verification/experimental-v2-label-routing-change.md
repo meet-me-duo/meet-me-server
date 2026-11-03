@@ -1,6 +1,6 @@
 # V2 라벨 중심 분기와 Jev 출력 형식 이력 (2026-10-30)
 
-> 공개용 역사 기록: 아래 수치와 실행 제한은 해당 실험 당시의 결과다. 원본 응답·로그·개인정보·내부 대화 식별자는 게시하지 않는다. 현재 통합 소스의 검사 상태는 [게시 준비 요약](issue-176-publication-readiness.md)을 따른다.
+> 공개용 역사 기록: 아래 수치와 실행 제한은 해당 실험 당시의 결과다. 원본 응답·로그·개인정보·내부 대화 식별자는 게시하지 않는다. 이 기록을 최신 소스의 통과·운영 상태로 확대하지 않는다. 현재 계약은 [V2 계약](../EXPERIMENTAL_INPUT_EVIDENCE.md)과 [배포 완료 기준](../../deploy/APPROVED_RELEASE_PIPELINE.md)을 따른다.
 
 사용자 승인 `synthetic-authorization-cffef69a5db86b9e` 범위에서 격리 V2만 수정하고 무료 검증했다. Choice를 유지했으며 유료 모델 호출·운영 적용·병합은 없다. [ADR-065](../ADR.md)와 [V2 계약](../EXPERIMENTAL_INPUT_EVIDENCE.md)이 현재 정책을 기록한다.
 
@@ -45,7 +45,7 @@ confidence/확률 보존은 기존 결과 객체와 실험 관측에 해당한�
 
 접근 가능한 Git 전체 이력에서 Jev를 Noul로 실제 호출했다가 Choice로 전환한 증거는 찾지 못했다. Noul 소스 이력은 [잘못된 응답 type 거부용 negative fixture](https://github.com/meet-me-duo/meet-me-server/blob/289edadc4534faa4d5a323f988c4117578934369/src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/JevAmbiguityClassificationTransportTest.kt#L550)였고, 설계 문서는 공급자 기능 목록에서만 Noul을 소개했다. Git에 없는 초기 실험·외부 Codex 대화까지 없었다고 단정하지 않는다.
 
-보존된 오전/오후 없는8~9시 CLEAR/confidence0.06 오판 기록은 Jev Noul이 아니라 OpenAI Decisions Choice다([실제 진단 기록](../ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)). Y/N이라는 질문의 개념과 Noul이라는 API primitive는 같은 말이 아니다.
+보존된 오전/오후 없는8~9시 CLEAR/confidence0.06 오판 기록은 Jev Noul이 아니라 OpenAI Decisions Choice다([실제 진단 기록](https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_123_LIVE_DECISIONS_DIAGNOSTIC.md)). Y/N이라는 질문의 개념과 Noul이라는 API primitive는 같은 말이 아니다.
 
 ADR-056과 Architecture는 원래48개를 이미 본 개발 세트로 구분하고 관련 시각 선별·시간대 판단을 분리한 별도 Choice 후보를 기록한다. relevance3라벨/period4라벨도 Noul은 아니었다. 이는 rubric·질문·평가 자료 가공이며 우리 자료로 Jev 가중치를 학습시켰다는 증거는 확인하지 못했다. 과거40+개 전체 원본을 확보·재검증한 것도 아니다.
 

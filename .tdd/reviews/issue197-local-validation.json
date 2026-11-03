@@ -1,0 +1,67 @@
+{
+  "workItem": "issue197-account-room-hide",
+  "baseRevision": "9038c7b32c61e608d0c92c082de8fd251e550748",
+  "isolatedWindowsPath": "C:\\Users\\jinhy\\Documents\\Codex\\2026-11-03\\task-3\\meet-me-server",
+  "branch": "feature/197-account-room-hide-retention",
+  "results": {
+    "focusedPostgres": {
+      "passed": 90,
+      "failed": 0,
+      "skipped": 0
+    },
+    "hookSelfTests": {
+      "passed": 12
+    },
+    "independentAppFaults": "6/6 DETECTED; restored12 PASS",
+    "independentLatestSchemaRegression": "3 PASS",
+    "independentLookupPartialRegression": "3 PASS",
+    "catalogNode": {
+      "passed": 152,
+      "failed": 0,
+      "skipped": 0
+    },
+    "catalogPython": {
+      "passed": 2
+    },
+    "catalogFaults": "6/6 DETECTED; restored6 PASS",
+    "firstWindowsGuard": {
+      "tests": 2724,
+      "failed": 110,
+      "skipped": 17,
+      "duration": "24m58s",
+      "status": "FAILED; preserved",
+      "classification": "Latest migration counts, creation retention and native API inventory expectations corrected independently. POSIX, symlink, protected ledger and TLS failures require native Linux validation. No assertions/guard/security settings weakened."
+    },
+    "finalNativeGuard": {
+      "status": "PASS",
+      "startedAt": "2026-11-03T04:06:02Z",
+      "path": "/tmp/meetme197-local-20261103/repo",
+      "jdk": "17.0.21",
+      "gradle": "9.7.1",
+      "processHeapGiB": 2,
+      "workers": 2,
+      "natGateway": "172.29.160.1",
+      "byteIdenticalExecutionInputCount": 697,
+      "guardExit": 0,
+      "suites": 350,
+      "totals": {
+        "tests": 2720,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 17
+      },
+      "finishedAt": "2026-11-03T04:28:33Z",
+      "unchangedSkipSet": true,
+      "executionInputManifestSha256": "012f131fcfe3130742f4c947250e78cb6841780b7d37d7a08478364fb524631d"
+    }
+  },
+  "independentReview": ".tdd/reviews/issue197-independent-review.json",
+  "openApiSnapshot": "docs/openapi/account-room-history.openapi.json",
+  "publication": "After this pre-publication record: see PR and Git history",
+  "remoteCI": "Final commit checks are authoritative in the pull request",
+  "merge": "Target develop only; outcome is authoritative in the pull request/Git history",
+  "serverDeployment": "NOT RUN; separate approval required",
+  "operatingDatabaseChanges": 0,
+  "paidProviderCalls": 0,
+  "recordedAt": "2026-11-03T04:29:11.863674Z"
+}

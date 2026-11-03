@@ -1,12 +1,17 @@
 # Frontend implementation handoff
 
-> **대상:** Wanted 제출 MVP 프론트엔드 프로젝트의 구현 AI
+> **대상:** 현재 백엔드와 연결하는 프론트엔드 구현
 >
 > **계약 우선순위:** 실행 중인 `/v3/api-docs` > 이 문서 > `docs/PRD.md` > prototype HTML
 
 이 문서는 API 필드와 응답 스키마를 복제하지 않는다. endpoint, DTO, nullable 여부, enum과 HTTP 응답은 반드시
 Swagger/OpenAPI를 기준으로 생성하거나 확인한다. 이 문서는 화면 흐름과 브라우저 보안 경계처럼 스키마만으로
 알기 어려운 구현 규칙만 설명한다.
+
+계정·게스트 소유권은 [Architecture](ARCHITECTURE.md)의 현재 계정 계약을 따른다.
+아래 기존 제출·polling 흐름은 LEGACY 방의 호환 계약이며 개인 검사 방에 그대로 적용하지 않는다.
+PRE_SUBMIT_V1은 CLEAR accepted만 완료로 집계하고, PRE_SUBMIT_V2의 RECEIVED·보완·마감/공개 정책은
+[V2 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다. 신규 방 protocol과 실제 OpenAPI를 먼저 확인한다.
 
 ## 1. API 문서 위치
 
@@ -19,12 +24,14 @@ Swagger가 이 문서나 prototype과 다르면 임의로 맞추지 말고 백�
 
 ## 2. 브라우저 세션과 요청 공통 규칙
 
-- 제출 MVP에는 로그인 화면과 Google·Kakao OAuth endpoint가 없다.
-- 서버는 방 생성 또는 최초 참여 시 `meet_me_guest`를 `Secure HttpOnly; SameSite=Lax; Path=/api` cookie로 발급한다.
+- Google·Kakao 로그인 후 Access Token은 메모리에 두고 `Authorization: Bearer`로 보낸다. Refresh Token은 API 호스트 전용 `Secure HttpOnly; SameSite=Lax; Path=/api/auth` cookie로만 전달한다. token을 URL·브라우저 영구 저장소에 복사하지 않는다.
+- 주최자는 계정으로 인증한다. 게스트 참여에는 `meet_me_guest`의 `Secure HttpOnly; SameSite=Lax; Path=/api` cookie와 서버가 검증한 소유권을 사용한다. 잘못된 Bearer·계정 권한 부족을 guest fallback으로 우회하지 않는다.
 - 프론트엔드는 cookie 값을 읽거나 body, URL, `localStorage`, `sessionStorage`에 복사하지 않는다.
 - 모든 API 요청은 cookie가 자동 전송되도록 `fetch`의 `credentials: "include"` 또는 동등한 설정을 사용한다.
 - 운영 Origin은 정확히 `https://app.meet-me.co.kr`이다. wildcard CORS나 임의 Origin fallback을 가정하지 않는다.
 - cookie를 잃거나 다른 브라우저·기기로 이동하면 기존 참여·주최자 권한을 자동 복구하지 않는다.
+- 이름·초대 링크·participant UUID는 소유 증명이 아니다. 서버가 검증한 VERIFIED_GUEST만 본인 조회를 허용하고 REPLACE_ONLY는 읽기·HOST·claim 권한을 주지 않는다. 계정 연결은 로그인과 유효 소유 증명을 모두 갖춘 명시적 claim으로만 수행한다.
+- refresh·로그아웃은 정확한 Origin 검사를 유지한다. 로그아웃·계정 변경은 보호 cache와 진행 중 form을 비우며 이전 세션의 늦은 응답을 폐기한다. 내 모임 목록은 [현재 목록 계약](ACCOUNT_ROOM_HISTORY_API.md)을 따른다.
 - 표시 문구는 `detail`을 사용할 수 있지만 분기 로직은 locale과 무관한 RFC 9457 `code`를 사용한다.
 - 요청에는 `Accept-Language: ko-KR`을 보내고 모든 절대 시각은 ISO 8601 offset 형식으로 처리한다.
 
@@ -79,6 +86,16 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 
 ## 5. 후보와 확정
 
+### 현재 다양한 시간 추천
+
+- 방의 `recommendation_protocol`이 정확히 `diverse-time-v1`이면 `/recommendations`의 최대3개 시간안을 A/B/C 순서로 표시한다. 표시 순서는 대면·온라인·부분 참석의 종류를 뜻하지 않는다. 같은 창의 방식·장소·참석 조합은 variant다. 알 수 없는 protocol에서 새 확정을 활성화하지 않는다.
+- 전체 대안은 같은 `analysis_id`의 `/recommendations/alternatives`로 조회한다. `has_alternatives`와 불투명 `next_cursor`를 구분하고 다른 분석의 cursor를 재사용하지 않는다. `STALE_ANALYSIS`이면 방·primary를 다시 읽고 이전 선택을 비운다.
+- HOST는 `/recommendations/{optionId}/confirmation`에 조회한 `analysis_id`, `variant_id`와 창 안에서 고른 실제 `start_at`, `end_at`을 보낸다. 시작은 포함·끝은 배타적이며 PostgreSQL 마이크로초 정밀도까지만 허용한다. 같은 전체 선택만 멱등이고 다른 확정은 충돌이다. 신규 분석을 legacy candidate 확정 URL로 보내지 않는다.
+- result의 typed `selection`과 실제 선택 구간을 표시한다. `candidate.plan_type`은 legacy 호환 의미이며 새 A/B/C 라벨로 사용하지 않는다. 자정 넘김은 양쪽 날짜를 보존한다.
+- 조건부 참석 의미를 표현하는 클라이언트는 candidates·추천 primary/alternatives·result GET과 두 confirmation POST에 `attendance_support=conditional-v1`을 보낸다. `attendance_confirmed=false`를 확정 참석으로 바꾸거나 숨기지 않는다. 미지원 요청의 `409 CLIENT_UPDATE_REQUIRED`는 새로고침/업데이트 안내로 처리한다.
+
+### LEGACY 후보 호환
+
 - `READY` 또는 `READY_WITH_WARNINGS`에서 `GET /api/rooms/{inviteCode}/candidates`를 호출한다.
 - 후보는 Plan A/B/C 중 서버가 만든 항목만 표시하며 프론트엔드에서 다시 점수화하거나 정렬하지 않는다.
 - A는 전원 대면, B는 전원 비대면, C는 부분 참석 후보 유형이다. 각 유형은 최대 한 카드이며 가능한 시간이 여러 개여도 `time_ranges`와 `summary`에 모두 묶인다. 실제 후보가 한 개이면 한 카드만 표시한다. 요약의 `24:00`은 표시 날짜 다음날 자정의 배타적 끝점이다.
@@ -99,9 +116,8 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - `429`: `retry_after_seconds` 또는 `Retry-After` 뒤에만 재시도한다. 자동 무한 재시도하지 않는다.
 - `503`: 비용 유발 명령의 제한 저장소 장애. 사용자에게 잠시 후 재시도를 안내한다.
 
-## 7. 제출 MVP에서 만들지 않을 기능
+## 7. 현재 범위에 포함하지 않는 기능
 
-- Google·Kakao 로그인
 - Google Calendar 연결
 - 이메일·비밀번호 계정
 - 장소 전용 검색 입력 또는 지도 좌표 선택

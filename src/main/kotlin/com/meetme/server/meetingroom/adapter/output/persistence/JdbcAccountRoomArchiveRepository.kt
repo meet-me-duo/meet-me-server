@@ -18,13 +18,29 @@ import java.util.UUID
 class JdbcAccountRoomArchiveRepository(
     private val jdbc: JdbcTemplate,
 ) : AccountRoomArchivePort {
+    override fun hideByAccount(
+        userId: UUID,
+        roomId: UUID,
+        hiddenAt: Instant,
+    ): Boolean =
+        jdbc.update(
+            """
+            UPDATE participants
+            SET account_archive_hidden_at = COALESCE(account_archive_hidden_at, ?)
+            WHERE room_id = ? AND user_id = ?
+            """.trimIndent(),
+            hiddenAt.atOffset(ZoneOffset.UTC),
+            roomId,
+            userId,
+        ) == 1
+
     override fun findByAccount(
         userId: UUID,
         retainedSince: Instant,
         query: AccountRoomsQuery,
     ): List<AccountRoomView> {
         val conditions = mutableListOf<String>()
-        val arguments = mutableListOf<Any>(userId, retainedSince.atOffset(ZoneOffset.UTC), retainedSince.atOffset(ZoneOffset.UTC))
+        val arguments = mutableListOf<Any>(userId, retainedSince.atOffset(ZoneOffset.UTC))
         query.role?.let {
             conditions += "p.role = ?"
             arguments += it.name
@@ -53,12 +69,11 @@ class JdbcAccountRoomArchiveRepository(
         val roleProjection = query.role?.let { "'${it.name}'::varchar AS role" } ?: "p.role"
         return jdbc.query(
             """
-            SELECT r.id, r.invite_code, r.purpose, r.created_at, $roleProjection,
-                CASE WHEN r.collection_status = 'CLOSED' THEN r.closed_at ELSE r.created_at END AS retention_anchor
+            SELECT r.id, r.invite_code, r.purpose, r.created_at, $roleProjection
             FROM meeting_rooms r JOIN participants p ON p.room_id = r.id
             WHERE p.user_id = ?
-              AND ((r.collection_status = 'CLOSED' AND r.closed_at >= ?)
-                OR (r.collection_status = 'COLLECTING' AND r.created_at >= ?))
+              AND r.created_at >= ?
+              AND p.account_archive_hidden_at IS NULL
               $additionalWhere
             ORDER BY r.created_at DESC, r.id ASC
             LIMIT ?
@@ -74,7 +89,7 @@ class JdbcAccountRoomArchiveRepository(
                     rs.getString("invite_code"),
                     rs.getString("purpose"),
                     rs.getTimestamp("created_at").toInstant(),
-                    rs.getTimestamp("retention_anchor").toInstant().plus(Duration.ofDays(30)),
+                    rs.getTimestamp("created_at").toInstant().plus(Duration.ofDays(30)),
                     ParticipantRole.valueOf(rs.getString("role")),
                     rs.getObject("id", UUID::class.java),
                 )

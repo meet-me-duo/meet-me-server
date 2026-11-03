@@ -18,6 +18,7 @@ __pycache__/
 **/*.tfplan
 **/terraform.tfvars
 /.codex/tdd-evidence/
+/.scratch/
 
 !gradle/wrapper/gradle-wrapper.jar
 

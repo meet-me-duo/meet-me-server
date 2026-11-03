@@ -11,7 +11,7 @@ const script19 = 'V19__add_confirmed_result_reviews.sql';
 const script20 = 'V20__add_account_room_history_index.sql';
 const scripts = [...f.scripts, script18, script19, script20];
 assert.equal(scripts.length, 20);
-const currentScripts = [...scripts, 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql'];
+const currentScripts = [...scripts, 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql'];
 
 function release(version = 20) {
   const result = f.manifest();
@@ -29,7 +29,7 @@ function fixture() {
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
   return value;
 }
-function schema(value, version = 22) {
+function schema(value, version = 23) {
   return currentScripts.slice(0, version).map((script, i) => ({ version: String(i + 1), script,
     sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
 }
@@ -64,10 +64,10 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V20R01 actual candidate publisher retains V20 in exact V22 and independently binds CRC SQL SHA and guard SHA', () => {
+test('V20R01 actual candidate publisher retains V20 in exact V23 and independently binds CRC SQL SHA and guard SHA', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V22 candidate publication must be supported');
+    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V23 candidate publication must be supported');
     assert.deepEqual(built.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value))));
@@ -81,7 +81,7 @@ test('V20R01 actual candidate publisher retains V20 in exact V22 and independent
 });
 
 test('V20R02 current publication rejects any missing version and malformed V20 or unknown V21 identity', () => {
-  for (const fault of [...range(22).map(n => `missing-${n}`), 'duplicate20', 'wrong20', 'leadingZero20', 'unknown21', 'extra', 'directory20', 'symlink20']) {
+  for (const fault of [...range(23).map(n => `missing-${n}`), 'duplicate20', 'wrong20', 'leadingZero20', 'unknown21', 'extra', 'directory20', 'symlink20']) {
     const value = fixture(); try {
       const latest = path.join(value.migrations, script20);
       if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, currentScripts[Number(fault.slice(8)) - 1]));
