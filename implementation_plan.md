@@ -1,3 +1,14 @@
+## 2026-11-04 별도 작업 — Issue #213 추천 variant의 가능한 이름 표시
+
+- [x] `[AGENT]` 신규 클라우드 환경에서 깨끗한 develop `9db8c067305e19d37f668de5c9648e179955adbc`를 ff-only 확인하고 `feature/recommendation-participant-names`로 분리했다. 초기 체크아웃과 원격 main은 `6e6ecacf1e54f2328e66d5f6970bd5473bd22afd`다.
+- [x] `[AGENT]` 고정 배치·variant identity로 가능한 공개 이름을 추가했다. 전원 참석에서도 이름을 조회하며 미제출자·늦은 참여자 제외와 동명이인 수를 보존한다. 제외는 이 조합의 비포함 의미를 유지하고 조건부 참석은 미확정으로 표시한다.
+- [x] `[AGENT]` 최종 테스트 지문으로 필드 누락 RED7개를 재현했다. 최종 전체 실행 중 PostgreSQL HTTP6·native OpenAPI1 및 기존 추천 권한·stale 분석12개가 통과했다. 게스트 주최자 명령은 기존 401 계약으로 검증하며 권한 코드는 변경하지 않았다.
+- [x] `[AGENT]` 로컬 native 명세의 의미 차이는 새 배열 필드와 제외 명단 설명 두 부분뿐이다. Web snapshot/생성 타입과 배포 API 속성 목록을 동기화했고 projection Python20·배포 catalog Node14개가 최종 통과했다. Node 첫 실행의 오프라인 Python status=null 1건과 재실행 기록은 검증 결과에 보존했다.
+- [x] `[AGENT]` 최종 ktlintCheck·assemble·test 전체 검사가 통과했다: 352 suites/2742 tests/2725 PASS/17 SKIP/실패·오류0. Web은 단위920·API/lint/typecheck/build 및 추천 브라우저42개 통과, 고정 빌드 전체633 PASS/2 FAIL/기존1 SKIP다. 실패2개 단독 재검증·baseline/feature 각20개는 통과했으나 원인 귀속은 미확정이다.
+- [x] `[USER/AGENT]` 사용자의 후속 승인으로 commit·feature push·develop Draft PR·정확한 최종 head의 원격 CI 확인까지 범위를 확장했다. 기존 Issue를 검색한 뒤 이번 목적의 [Issue #213](https://github.com/meet-me-duo/meet-me-server/issues/213)를 연결했다.
+- [ ] `[AGENT]` 커밋 이후 원격 head와 Draft PR·CI 완료 여부를 확인하고 PR 본문에 결과를 기록한다. 커밋 시점 Commit/PR: 동일 커밋 예정.
+- `[USER/SHARED]` merge·auto-merge·main 릴리스·운영 배포는 승인 범위 밖이다. 운영 데이터·비밀 값·실제 유료 AI/지도는 사용하지 않는다.
+
 ## 2026-11-04 현재 작업 — Issue #205 공개 방 제출 참여자 집계
 
 - [x] `[AGENT]` 원격 main `d3391fbf7eb2de7f9c617c0dcd90cd685b6cc86f`와 develop `780b144d4355b41d2b21eeb109252a8fc84abc33`의 동일 tree를 확인하고 깨끗한 develop을 ff-only 갱신한 뒤 `feature/submitted-participant-count`에서 격리했다. Web UI는 별도 담당이 재개했으며 이 작업에서는 서버만 변경한다.

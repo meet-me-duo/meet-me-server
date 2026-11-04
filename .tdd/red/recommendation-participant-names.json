@@ -1,0 +1,36 @@
+{
+  "workItem": "recommendation-participant-names",
+  "sourceRevision": "9db8c067305e19d37f668de5c9648e179955adbc",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialAttendanceHttpPostgresTest.kt",
+      "sha256": "d8fa1b8145c6a21c78d5e647b0bc7fea66cca67557f6f0a055125ab9db452938"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationOpenApiExportPostgresTest.kt",
+      "sha256": "687ecd3fac8ae8539a05eb55377801a1747fb835adfcee02e39e3f7c586aeb0e"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*RecommendationPartialAttendanceHttpPostgresTest",
+    "--tests",
+    "*RecommendationOpenApiExportPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest.PN05 names are returned on every variant and alternative page for a verified guest()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest.PN02 full attendance exposes an empty excluded name list and one maximal remote variant()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest.PN03 later room membership never enlarges the frozen recommendation excluded cohort()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest.PN01 two of five actual attendees expose exactly three excluded display names without raw input or IDs()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest.PN06 conditional attendance names identify time matches without claiming place verification()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest.PN04 distinct participants with identical names retain both entries by identity()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest.native OpenAPI documents real recommendation endpoints selection requiredness and nullable schemas()"
+  ],
+  "recordedAt": "2026-11-04T08:15:31.654547Z",
+  "expectedFailureCategory": "MISSING_BEHAVIOR"
+}

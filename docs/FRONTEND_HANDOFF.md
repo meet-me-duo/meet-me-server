@@ -131,6 +131,10 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - SSE·WebSocket 연결
 - cookie 원문을 보여주는 디버그 UI
 
+### 추천 variant의 공개 이름
+
+추천 variant의 `available_participant_names`는 고정 분석 배치 중 해당 조합에 포함된 참여자의 공개 표시 이름 목록이다. 전원 참석과 대안 페이지에도 제공하며 동명이인은 별도 항목으로 유지한다. `attendance_confirmed=false`이면 시간 조건 일치 명단으로 표시하고 장소·이동 및 실제 참석 미확정 설명을 유지한다. `excluded_participant_names`는 해당 조합에서 제외된 명단이며 불참 확정이나 해석 실패 사유를 뜻하지 않는다. 구 서버에서 새 이름 필드가 없으면 명단을 추정하지 않는다.
+
 ## 8. 완료 검증
 
 - Swagger의 모든 공개 endpoint와 주요 오류 응답이 클라이언트 타입에 반영됐는지 확인한다.
@@ -145,4 +149,3 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - 신 서버는 구 웹의 nonempty 수동 요청을 400으로 거부하며 detail에 페이지 새로고침 후 자연어 재입력을 명시한다. 조용히 무시하지 않는다.
 - 캐시와 오래 열린 구 번들은 순서만으로 해결되지 않는다. 구 화면 잔존과 오류 문구를 별도로 확인한다.
 - 신 웹은 전송 전에 ECMAScript trim을 적용한다. 현 서버의 Kotlin trim과 다른 U+001C~001F 처리 등은 전환 중 호환 차이로 분리 보고하며 계약을 임의로 바꾸지 않는다.
-

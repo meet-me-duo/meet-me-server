@@ -377,9 +377,8 @@ class MatchingResultService(
         locale: Locale,
     ): RecommendationListView {
         check(analysis == null || analysis.roomId == room.id.value)
-        val partial = options.any { option -> option.option.variants.any { it.participantIds.size < run.batch.submissionVersionIds.size } }
         val frozenCohort =
-            if (partial) {
+            if (options.isNotEmpty()) {
                 FrozenSubmissionReader
                     .read(
                         submissionRepository,
@@ -428,6 +427,7 @@ class MatchingResultService(
                                 variant.unverifiedPlaceParticipantIds.isNotEmpty(),
                                 locale,
                             ),
+                            availableParticipantNames = frozenCohort.filter { it in variant.participantIds }.map(publicNames::getValue),
                         )
                     },
                     renderWindow(option.option.window, room, locale),

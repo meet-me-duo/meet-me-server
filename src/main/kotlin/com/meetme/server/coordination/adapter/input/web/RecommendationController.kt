@@ -217,6 +217,7 @@ class RecommendationController(
                             variant.excludedParticipantNames,
                             variant.attendanceConfirmed,
                             variant.summary,
+                            variant.availableParticipantNames,
                         )
                     },
                     option.summary,

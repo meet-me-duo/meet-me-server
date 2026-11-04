@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.postgresql.PostgreSQLContainer
@@ -43,6 +44,7 @@ class RecommendationPartialAttendanceHttpPostgresTest : RecommendationPostgresFi
         assertEquals(2, (variant.getValue("attendance_count") as Number).toInt())
         assertEquals(5, (variant.getValue("total_participants") as Number).toInt())
         assertEquals(true, variant["partial_attendance"])
+        assertEquals(listOf("가온", "나래").sorted(), included(variant).map { it.toString() }.sorted())
         val excluded = names(variant)
         assertEquals(setOf("민수", "다온", "라온"), excluded.toSet())
         assertEquals(3, excluded.size)
@@ -62,6 +64,7 @@ class RecommendationPartialAttendanceHttpPostgresTest : RecommendationPostgresFi
         assertEquals(5, (variant.getValue("total_participants") as Number).toInt())
         assertEquals(false, variant["partial_attendance"])
         assertEquals(emptyList<String>(), names(variant))
+        assertEquals(listOf("가온", "나래", "민수", "다온", "라온").sorted(), included(variant).map { it.toString() }.sorted())
     }
 
     @Test
@@ -81,8 +84,73 @@ class RecommendationPartialAttendanceHttpPostgresTest : RecommendationPostgresFi
         assertEquals(5, (variant.getValue("total_participants") as Number).toInt())
         assertEquals(setOf("민수", "다온", "라온"), names(variant).toSet())
         assertTrue("늦은 참여자" !in names(variant))
+        assertTrue("늦은 참여자" !in included(variant))
         assertEquals(before, after, "Published recommendations belong to their frozen batch rather than live room membership")
     }
+
+    @Test
+    fun `PN04 distinct participants with identical names retain both entries by identity`() {
+        val fixture = fiveMemberRoom(availableCount = 2)
+        jdbc.update("UPDATE participants SET display_name='동명' WHERE room_id=?", fixture.roomId)
+        val variant = items(items(recommendations(fixture.host), "options").single(), "variants").single()
+        assertEquals(listOf("동명", "동명"), included(variant))
+        assertEquals(listOf("동명", "동명", "동명"), names(variant))
+        assertEquals(recommendations(fixture.host), recommendations(fixture.member))
+    }
+
+    @Test
+    fun `PN05 names are returned on every variant and alternative page for a verified guest`() {
+        val fixture = completedRoom(memberAccount = false)
+        jdbc.update("UPDATE meeting_rooms SET meeting_mode='EITHER' WHERE id=?", fixture.roomId)
+        publish(fixture.sourceRun)
+        val primary = recommendations(fixture.host)
+        assertEquals(primary, recommendations(fixture.member))
+        val options = items(primary, "options").toMutableList()
+        var cursor: String? = null
+        do {
+            val page =
+                document(
+                    mvc
+                        .perform(alternatives(fixture, cursor, actor = fixture.member))
+                        .andExpect(status().isOk)
+                        .andReturn()
+                        .response,
+                )
+            options += items(page, "options")
+            cursor = page["next_cursor"] as String?
+        } while (cursor != null)
+        assertEquals(5, options.size)
+        for (option in options) {
+            assertEquals(setOf("REMOTE", "IN_PERSON"), items(option, "variants").map { it["meeting_mode"] }.toSet())
+            for (variant in items(option, "variants")) {
+                assertEquals(listOf("host", "member"), included(variant).map { it.toString() }.sorted())
+                assertEquals(emptyList<String>(), names(variant))
+            }
+        }
+        mvc.perform(selection(fixture, options.first(), actor = fixture.member)).andExpect(status().isUnauthorized)
+        mvc.perform(get("/api/rooms/{code}/recommendations", fixture.host.code)).andExpect(status().isUnauthorized)
+        val outsider = accounts.newAccount("외부인")
+        mvc.perform(get("/api/rooms/{code}/recommendations", fixture.host.code).cookie(outsider)).andExpect(status().isForbidden)
+        mvc.perform(alternatives(fixture, actor = CorrectionSession(fixture.host.code, outsider.value))).andExpect(status().isForbidden)
+    }
+
+    @Test
+    fun `PN06 conditional attendance names identify time matches without claiming place verification`() {
+        val fixture = recommendedRoom(partial = true)
+        val view = recommendations(fixture.host, attendanceSupport = "conditional-v1")
+        for (option in items(view, "options")) {
+            for (variant in items(option, "variants")) {
+                assertEquals((variant.getValue("attendance_count") as Number).toInt(), included(variant).size)
+                assertEquals(2, included(variant).size + names(variant).size)
+                if (variant["attendance_confirmed"] == false) {
+                    assertTrue(variant.getValue("summary").toString().contains("미확정"))
+                }
+            }
+        }
+        assertTrue(items(view, "options").flatMap { items(it, "variants") }.any { it["attendance_confirmed"] == false })
+    }
+
+    private fun included(variant: Map<String, Any?>): List<*> = variant.getValue("available_participant_names") as List<*>
 
     private fun names(variant: Map<String, Any?>): List<*> = variant.getValue("excluded_participant_names") as List<*>
 
@@ -118,6 +186,15 @@ class RecommendationPartialAttendanceHttpPostgresTest : RecommendationPostgresFi
             actors += CorrectionSession(code, cookie.value)
         }
         actors.forEachIndexed { index, actor -> mvc.perform(save(actor, "synthetic private input $index")).andExpect(status().isOk) }
+        val unsubmitted = accounts.newAccount("미제출 참여자")
+        mvc
+            .perform(
+                post("/api/rooms/{code}/participants", code)
+                    .cookie(unsubmitted)
+                    .header("Origin", ORIGIN)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"display_name":"미제출 참여자"}"""),
+            ).andExpect(status().isCreated)
         mvc
             .perform(
                 post("/api/rooms/{code}/close", code)
