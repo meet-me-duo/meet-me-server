@@ -1,3 +1,36 @@
+## 2026-11-04 현재 — Server 상태 반환의 P05 조사·기존 Draft PR 반영
+
+- [x] 최신 승인 범위는 Server 상태 반환의 로컬 구현·P05 원인 조사·안전한 수정/검증 및 기존 feature/recommendation-participant-names·Draft PR #214 원격 반영·정확 head CI다. 새 이슈/중복 PR·Web 구현/디자인/검사/원격 변경·양쪽 병합·운영 배포·실제 모델/지도 호출·운영 방 데이터 접근은 하지 않는다. 아래 로컬 전용 절의 원격 금지는 이번 Server Draft PR/CI 승인 범위에서만 갱신한다.
+- [x] 원본 P05 전체 FAIL·단독 PASS를 보존했다. 임시 계측의 normal은 P05/P11/P15 3 PASS이며,4 CPU 환경의8 worker/각6초 부하에서는 첫 missing-excerpt P05가 TIMEOUT·P11/P15는 PASS였다. handler 지연과 헤더 완료 미관측은 부하 민감성의 증거이며 최초 실패 원인 증명은 아니다. 계측 caller 시간에는 adapter 생성도 포함되어 실제2초 경과로 단정하지 않는다. 최초 부하 시도의 UP-TO-DATE 결과는 실행 근거에서 제외했다. 테스트 원본 SHA와 production/test diff 없음·단언/deadline 보존을 별도 검토자가 확인했다. 구체 validator 결함·안전한 영구 수정 근거는 확인하지 못해 원인 미확정을 유지한다.
+- [ ] 게시 직전 원격 head/base·타인 변경을 확인하고, 승인된 Server 변경만 기존 feature에 안전하게 통합한다. 보호 절차와 원본 commit guard를 유지하고 Draft PR 본문에 새 계약·정확 검증·기존 실패 이력을 기록한다. 강제 push·보호 우회·GitHub APPROVE는 하지 않는다.
+- [x] 게시 전 원본 `.codex/hooks/tdd_guard.py`(수정 없음)를 실행해15:51~16:53 UTC, exit0을 확인했다. 최종 ktlintCheck·assemble·test는356 suites/2,782 tests 중2,765 PASS·17 SKIP·실패/오류0이며 Kotlin 소스 지문은 전후 동일하다. 최초 P05 전체 FAIL·단독 PASS·통제 부하의 TIMEOUT과 원인 미확정 이력은 보존한다.
+
+최종 갱신: 2026-11-04 16:53 UTC. Commit/PR: 동일 커밋 예정 / 기존 Draft Server #214. 원격 반영과 정확 head CI는 커밋 이후 실제 PR 최신 본문·Actions 결과를 기준으로 확인한다. 병합·운영 반영은 이번 승인 범위 밖이다.
+
+## 2026-11-04 이전 단계 — Server 전용 추천 참여자 상태 로컬 작업
+
+- [x] 사용자 승인 범위는 Server 설계·구현·로컬 검사다. Web 구현·문구/디자인 결정·새 검사·원격 게시·병합·운영 반영은 하지 않는다. Server push·PR 수정·병합·배포도 승인되지 않았다.
+- [x] 기존 Server #214와 선행 미리보기 통합 후보를 별도 로컬 `feature/recommendation-participant-statuses-local`에 복제했다. 원래 merge 진행 상태·원본 guard 검사·Web 소스와 전체 실패/중단 로그는 보존한다.
+- [x] 고정 배치 전체 입력을 순수 복원하고 지원되는 전체 창/현재 장소 조건의 충족·확인된 불일치·확인 불가를 구분한다. 기존 추천 집합은 변경하지 않는다. optional `participant_statuses`와 분석 내 공개 참조만 추가하고 native OpenAPI와 배포용 속성 projection을 동기화했다.
+- [x] 정책17·HTTP14·native1·생성/조건부 시간/권한/stale 회귀 등 관련66개와 ktlintCheck·assemble이 통과했다. 이는 추가 PS09 이전의 결과다. 과거 장소 키 복원 근거가 빠진 PS09는 예상 RED를 확인하고 보수적으로 수정했으며 최종 검사에 포함한다.
+- [x] 최종 테스트 지문으로 정책 skeleton17·HTTP/OpenAPI 필드 누락11의 유효 RED를 확인하고 원본 로그를 보존했다. 제외→불가능 추론, 개인 장소 미검증의 전체 전파, 일부 시간 겹침, 해석 실패 무시, 불완전 배치의 fallback 활성화, 내부 UUID 공개 참조의 의도적 결함6종을 탐지했다. 주입 후 production 소스를 byte-identical로 복원했다.
+- [x] 별도 검토자가 복원·고정된 코드와 테스트를 읽기 전용으로 독립 검토했다. 정상 지원 경로의 구체적 P1/P2 결함은 없었고, 권한·과거 버전·동명이인·optional native 계약·PS04의 정확 state_version+1·PS09·결함 주입을 확인했다. 정상 producer는 배치 공통 schema_version과 단일 응답 전체 교체를 사용하므로 legacy/explicit 장소 키 혼합 경로를 찾지 못했지만, DB/codec이 임의 복구·주입한 혼합 JSON의 안전성까지 보장하지는 않는다. 검토자는 코드 수정·새 검사·외부 리뷰 제출을 하지 않았다.
+- [x] 복원한 최종 코드의 필터 없는 ktlintCheck·assemble·test가 종료됐다(13:57~15:15 UTC, exit1). 356 suites/2,782 tests 중2,764 PASS·17 SKIP·1 FAIL·오류0이다. 집중66개와 PS09를 최종 XML에서 대조한 관련67개는 모두 PASS다. 전체 소스 지문은 실행 전후 동일하다.
+- [ ] 전체 품질 게이트 GREEN은 미확인이다. 변경하지 않은 `PrecheckProviderTransportContractTest` P05에서 INVALID_RESPONSE 기대 대신 TIMEOUT이 반환됐다. 로컬 합성 HTTP의2초 제한이며 원인·환경/기준 귀속은 미확정이다. 최초 전체 XML·HTML·로그를 보존했다. 소스 변경 없이 해당1건만 격리 재확인해1 PASS·ktlintCheck 성공을 확인했지만, 단독 통과는 전체 실행 실패나 원인 미확정을 대체하지 않는다.
+- 기존 이름+미리보기 전체 guard는 종료됐다: 355 suites/2,756 tests 중 2,738 PASS·17 SKIP·경합 테스트1 FAIL이며 원인은 미확정이다. 이 실패는 새3상태 변경 이전 결과로 보존한다. 해당 경합 테스트의 새 작업 공간 단독 재실행은 PASS였으며 최초 실패를 무효화하지 않는다. Web의 기존 전체633 PASS/2 timeout FAIL/1 SKIP와 중단된 통합 브라우저 결과도 보존한다.
+
+아래는 이전 작업 시점의 기록이다. 현재 승인 범위는 이 절을 따른다.
+
+## 2026-11-04 현재 — 승인된 참석 가능자 이름 통합·운영 반영 준비
+
+- [x] `[USER/AGENT]` 사용자가 참석 가능자 이름 Server #214·Web #83의 병합·운영 반영을 승인했다. 선행 미리보기 담당의 배포 완료와 쓰기 인계를 받은 뒤 기존 feature 브랜치에 develop `856cdad8adee1cf0b97ece1ab7686af9c2b9e8de`를 통합했다. 양쪽 implementation plan 기록과 기존 브라우저 633 PASS/2 timeout FAIL/1 SKIP·원인 미확정 한계를 보존한다.
+- [x] `[AGENT]` production 코드의 충돌은 없고 문서만 양쪽 기록을 함께 유지해 해결했다. 기존 CloudFront 경로·자산 보존·인증·권한·DB migration·모델 정책은 그대로다.
+- [x] `[AGENT]` 통합 tree의 이름 PostgreSQL HTTP6·native OpenAPI1·미리보기14개, 합계21개가 실패/오류/skip 없이 통과했다. 실제 native 명세는 Web snapshot과 JSON 의미가 같고 배포 공개 계약 projection도 일치한다. optional string 배열을 재확인했고 Python 공개 계약20·Node catalog5도 통과했다.
+- [ ] `[AGENT]` 원본 commit guard의 전체 ktlintCheck·assemble·test와 정확한 새 head CI를 확인한다. 초기512MB cold compile은 테스트 실행 전에 종료했고 CI와 같은2GB로 다시 검증했다. 테스트·단언·운영 설정을 변경하지 않았다.
+- [ ] `[AGENT/SHARED]` 보호된 feature→develop→main PR 절차와 정확 CI를 거쳐 Server 실제 배포 완료·공개 API 계약을 먼저 확인하고 Web 운영 반영·격리 합성 번들 검증을 이어간다. 운영 데이터 쓰기·사용자 방 조회·실제 모델/지도 호출·secret/보안 설정 변경·GitHub APPROVE·보호 우회는 하지 않는다.
+
+현재 단계: 선행 배포 이후 통합 검증 중. 최종 갱신: 2026-11-04 UTC. Commit/PR: 동일 커밋 예정 / Server #214·Web #83. 아래는 각 구현·게시 시점의 기록이며 현재 승인 범위는 이 절을 따른다.
+
 ## 2026-11-04 별도 작업 — Issue #213 추천 variant의 가능한 이름 표시
 
 - [x] `[AGENT]` 신규 클라우드 환경에서 깨끗한 develop `9db8c067305e19d37f668de5c9648e179955adbc`를 ff-only 확인하고 `feature/recommendation-participant-names`로 분리했다. 초기 체크아웃과 원격 main은 `6e6ecacf1e54f2328e66d5f6970bd5473bd22afd`다.
@@ -8,6 +41,25 @@
 - [x] `[USER/AGENT]` 사용자의 후속 승인으로 commit·feature push·develop Draft PR·정확한 최종 head의 원격 CI 확인까지 범위를 확장했다. 기존 Issue를 검색한 뒤 이번 목적의 [Issue #213](https://github.com/meet-me-duo/meet-me-server/issues/213)를 연결했다.
 - [ ] `[AGENT]` 커밋 이후 원격 head와 Draft PR·CI 완료 여부를 확인하고 PR 본문에 결과를 기록한다. 커밋 시점 Commit/PR: 동일 커밋 예정.
 - `[USER/SHARED]` merge·auto-merge·main 릴리스·운영 배포는 승인 범위 밖이다. 운영 데이터·비밀 값·실제 유료 AI/지도는 사용하지 않는다.
+
+## 2026-11-04 현재 작업 — 모임별 공유 링크 제목 (Draft PR 게시 준비)
+
+- [x] `[AGENT]` 실제 origin remote 확인, 깨끗한 develop ff-only 갱신 후 `9db8c06`에서 `feature/room-preview-title` 생성. 기존 work 브랜치와 사용자 작업 보존, Server Draft PR #208 사용·변경 없음.
+- [x] `[AGENT]` 기존 `/rooms/{inviteCode}`와 공개 `purpose`를 사용해 제목/OG/canonical을 제공하는 서버 HTML adapter와 Web 탭 제목 구현. 홈페이지 제목 유지, 이미지·추가 개인 데이터·migration·새 URL 없음.
+- [x] `[AGENT]` 고정 HTTPS `/index.html`, 요청 헤더 미전파, redirect 금지, 256KiB streaming 제한과 전체 3초 deadline, no-store 및 중첩 SPA/누락·삭제·이름 조회 장애 fallback 테스트 준비. shell 장애는503으로 구분.
+- [x] `[AGENT]` Web 자산 보존 변경과 CloudFront CachingDisabled/모든 TTL0 ordered behavior·전환/복귀 계획 문서화. Nginx는 기존 HTTPS 전체 proxy 사용.
+- [x] `[AGENT]` 최종 집중 14/14와 ktlintCheck 통과. 최초 RED 14/14 실패 확인 뒤 구현했고, escaping·잘못된 canonical·무제한 body handler 결함 3개를 각각 관련 테스트가 탐지했다. 이후 두 source 파일의 byte-identical 복원 및 독립 리뷰 P1/P2 0을 확인했다. HEAD는 GET 표현의 UTF-8 길이·동일 헤더와 빈 body를 제공한다.
+- [x] `[AGENT]` 전체 ktlintCheck·assemble·test 종료 코드 0, 23분 40초. 실제 XML 집계는 355 suites / 2,753 tests 중 2,736 PASS, 17 SKIP, 실패·오류 0이며 신규 14개도 모두 PASS다. 로그 `/tmp/meetme-server-quality.log`.
+- [x] `[AGENT]` 배포 계약의 최초 결과를 보존한다. Node 전체 415개는 405 PASS / 10 FAIL, 준비 후 관련 99개는 97 PASS / 2 FAIL이었다. Python 전체 424개는 1 FAIL / 37 ERROR였다. **현재 feature의 전체 Python 424개와 Node 전체 415개는 이후 재실행하지 않았다.** 아래 집중·기준 비교 결과를 전체 배포 계약 통과로 대체하지 않는다.
+- [x] `[AGENT]` 깨끗한 develop `9db8c067305e19d37f668de5c9648e179955adbc`와 비교했다. JAVA_HOME 미설정 시 기준에서도 JDBC 2개가 실패했고 Java 17 지정·Alpine 캐시 준비 후 관련 Node 7개는 모두 PASS다. AR15·AR16·AR24는 기준 3/3 PASS(46.2초), feature 3/3 PASS(45.4초)다. 최초 Python 실패 대상은 중복 subtest를 제외한 동일 34개 메서드로 기준에서 모두 PASS(509.4초)했다. 배포 스크립트·fixture는 양쪽에서 바이트 단위로 동일하다.
+- [x] `[AGENT]` 기준 소스의 제한된 부하 재현에서도 공통 installer의 원래 15초 timeout과 AR15 실패를 확인했다. 4 CPU 작업과 관련 검사 2개의 동시 실행에서 throttling이 증가했고 19.9초에 종료됐다. 초기 동시 검사 부하가 fixture 제한을 넘길 수 있는 환경 타이밍 현상으로 분류하며 기능 diff로 인한 회귀로 확정하지 않는다. assertion·timeout·운영 코드는 변경하지 않았다.
+- [x] `[AGENT]` **Compose secret-fidelity는 기준·feature 모두 종료 코드 0이다.** 연결 명령 묶음의 종료 코드 1을 Compose에 잘못 귀속한 이전 보고를 정정한다. 기존 개별 재검사도 종료 코드 0이었다. credential-refresh 전체 스크립트도 기준 37.2초·feature 37.8초에 각각 종료 코드 0으로 통과했다. Docker auth 10개와 정책 extraction 재검사도 PASS다.
+- [x] `[AGENT]` Nginx 환경 실패는 기준에서도 재현했다. config 모드 0600은 컨테이너 읽기 거부를 유발했고, 임시 0644 보정 후에도 localhost health 요청이 환경 HTTP 프록시를 통해 403을 받았다. 같은 임시 컨테이너의 로컬 직접 요청은 200이었다. 권한은 원복했고 프록시·네트워크 정책은 변경하지 않았다. **수정하지 않은 Nginx runtime 검사 자체는 이 환경에서 미통과다.** 추가로 임시 로컬 사본의 비밀정보 없는 config만 0644로 두고 고정 localhost wget에만 `-Y off`를 적용하자 종료 코드 0(2.3초)으로 통과했다. assertion·timeout·컨테이너 capability는 그대로이며 추적 fixture·전역 프록시·운영 설정은 변경하지 않았다. 기준 worktree와 임시 사본은 삭제했다.
+- [ ] `[SHARED]` Nginx health fixture의 환경 프록시 처리 검토, ARM64 Built Image, 정확 HEAD 원격 CI와 실제 운영 검증은 남아 있다. ARM64 이미지·emulation은 로컬 준비되지 않았다. 전체 CI·배포 준비 완료로 표시하지 않으며 원격 게시·운영 전환은 하지 않는다.
+- [x] `[USER/AGENT]` 사용자가 두 feature 브랜치 push·develop 대상 Draft PR 생성·정확 HEAD 원격 CI 확인을 명시 승인했다. 새 Issue를 필수로 요구하거나 번호를 만들지 않는다. 병합·auto-merge·운영 배포·CloudFront 적용은 승인 범위 밖이다.
+- [ ] `[AGENT]` 검토된 변경을 로컬 commit/push하고 각 Draft PR의 정확 HEAD CI를 확인한다. Commit/PR: 동일 커밋 예정 / 게시 후 확인.
+
+최종 갱신: 2026-11-04 UTC. Commit/PR: 동일 커밋 예정. 원격 게시 및 CI 결과는 실제 Git/PR 기록에서 확인한다. 일회성 추적 `.tdd` JSON/임시 스크립트는 만들지 않는다.
 
 ## 2026-11-04 현재 작업 — Issue #205 공개 방 제출 참여자 집계
 

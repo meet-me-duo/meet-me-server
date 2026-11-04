@@ -25,6 +25,28 @@ Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 
 
 HTTP는 `attendance_confirmed`와 variant의 `summary`를 추가한다. false는 참석 인원이 시간 조건 기준임을 나타낸다. 공개 설명은 시간과 일반적인 미검증 사유만 제공하고 타인의 원문·개별 제한은 기존 소유권 경계를 유지한다. UI는 기존 후보 설명·참석 문구를 사용하며 새 배지/경고 영역을 추가하지 않는다. 지도/API/도보 환산/운영 timeout은 변경하지 않는다. 실제 도보 충족과 실제 모델 정확성은 검증 범위 밖이다.
 
+## 모임별 공유 HTML (2026-11-04 로컬 구현, 운영 전환 미적용)
+
+`GetRoomPreviewUseCase`는 기존 repository의 현재 방에서 공개 `purpose`만 반환한다.
+게스트·계정·참여자·제출 조회나 쿠키 발급을 수행하지 않고 기존 물리 삭제 기준을 따른다.
+`RoomPreviewController`는 `/rooms/**`에서 브라우저와 크롤러 모두에게 같은 SPA HTML을
+제공한다. 정확한 22자 코드의 단일 방 경로만 이름 조회·canonical을 만들며 중첩 경로와
+잘못된 코드는 기본 SPA로 전달한다. 사용자 입력은 HTML text/attribute에 escape한다.
+
+`PublishedWebAppShell`은 고정 `https://app.meet-me.co.kr/index.html`만 조회한다.
+요청 Host/forwarded/쿠키/Authorization/query는 전파하지 않는다. HTTPS, redirect 금지,
+1초 연결·전체 3초 교환 deadline과 256KiB streaming 상한을 사용한다. 매 요청 현재 shell을
+읽으며 방 HTML이나 shell을 캐시하지 않는다. 원격 shell 장애는 상세 없는 503/no-store,
+없는 방과 이름 조회 장애는 기본 제목의 SPA 200/no-store로 응답한다. 공개 HTML endpoint는 REST OpenAPI 경로에
+추가하지 않고 Controller의 HTML 상태 계약 및 이 문서로 관리한다.
+
+운영 전환은 별도 승인 대상이다. 기존 HTTPS Nginx `location /`는 이미 이 경로를 전달한다.
+Web은 기존 해시 자산을 보존하고 CloudFront의 `/rooms/*` ordered behavior를 기존 API
+origin으로 보내며 `Managed-CachingDisabled`(모든 TTL 0)를 사용해야 한다. `/index.html`과
+자산은 S3에 남겨 순환 fetch를 막는다. HTML origin 의존성과 서버 outbound IP의 WAF 집계,
+추가 DB/shell GET 비용을 감수하며 새 유료 컴퓨팅은 만들지 않는다. 상세 전환·검증·복귀는
+Web 저장소 `docs/DEPLOYMENT.md`의 모임별 링크 제목 전환 계획을 따른다.
+
 ## 1. 목적과 범위
 
 이 문서는 `meet-me-server`의 기술적 구조, 컴포넌트 책임, 의존성 방향과 외부 시스템 경계를 정의한다. 이 저장소는 백엔드만 포함하며 프론트엔드는 별도 저장소에서 개발한다.
@@ -736,3 +758,12 @@ V2 evidence가 있는 Jev 요청은 유효한 Choice 의미 라벨을 보존하�
 ## 2026-10-31 조건부 참석의 클라이언트 호환 경계
 
 ADR-067에 따라 candidates/추천 primary·alternatives/result GET과 legacy·typed confirmation POST가 optional `attendance_support=conditional-v1`을 해석한다. HTTP adapter는 정확한 선언만 application의 의미 지원 boolean으로 전달한다. MatchingResultService는 기존 인증·상태·분석/선택 오류 순서를 유지하고 반환할 false 의미 및 write 전 selected variant의 미확인 상태를 검사한다. 미지원이면409 CLIENT_UPDATE_REQUIRED이며 후보를 true로 바꾸거나 filter하지 않는다. 결과 adapter의 좁은 no-store filter는 오류 응답에도 적용한다. query는 인증 capability가 아니고 CORS/Origin·소유권·트랜잭션·protocol·DB guard는 그대로다. 실제 OpenAPI로 optional parameter와409 계약을 생성하고 웹은 여섯 요청에 동일 지원 값을 넣는다. 기존 서버의 미지원 query 무시 및 구 웹의409 cache 처리도 검증한다.
+
+
+## 추천 참여자 상태의 읽기 전용 판정 (2026-11-04 로컬 확장)
+
+`FrozenMatchingInputPolicy`는 고정 제출 버전과 저장된 structured result를 matching input으로 복원하는 순수 Application 계산이다. `MatchingProcessor`는 같은 계산을 사용하되 기존 legacy/미지원 진단 저장·방 전이·추천 게시의 위치와 책임을 유지한다. 조회는 `FrozenSubmissionReader`와 기존 읽기 port만 사용하고 이 processor 또는 persistence service를 실행하지 않는다. 모델·지도·원문 재해석·새 분석·DB mutation이 없다.
+
+`WholeRoomConditionalTimePolicy`는 같은 고정 배치 전체에 한 번 적용한다. `RecommendationParticipantStatusPolicy`는 그 결과로 option의 전체 시간 창과 현재 variant의 방식·장소를 평가한다. 비포함만으로 UNAVAILABLE을 만들지 않으며, 저장된 포함 집합과 복원 결과가 모순되면 UNKNOWN으로 남기고 기존 집합을 바꾸지 않는다. 장소 미검증은 사람별 저장 marker와 복원된 조건을 따르며, 알려진 강한 장소 제약은 계속 binding이다. 근거가 없는 legacy 지역/좌표 변환은 추정하지 않는다. 제약이 없는 것으로 확인된 다른 사람에게 장소 참조 부족을 전파하지 않는다.
+
+추가되는 공개 DTO는 participant_ref·display_name·status뿐이다. participant_ref는 고정 배치의 안정적인 순서에서 생성하며 같은 analysis 내 variant·페이지 사이에서만 유효하다. 다른 분석과 연결되는 영속 개인 식별이나 인증/조회 키가 아니다. 새 DB column·migration·secret·role·권한 설정을 추가하지 않는다. 추가 필드는 optional이고 구 이름 배열 및 구 클라이언트의 조건부 참석 지원 선언은 유지한다. Web 소스·생성 타입·스냅샷은 이번 Server 작업에서 변경하지 않는다.
