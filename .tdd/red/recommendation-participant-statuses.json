@@ -1,0 +1,217 @@
+{
+  "workItem": "recommendation-participant-statuses",
+  "sourceRevision": "9938c71e42ebd54e48244a1b5821028ad7a8b8a7",
+  "inheritedBase": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationOpenApiExportPostgresTest.kt",
+      "sha256": "6e392be6b17b951cc2a59023677d384ab739137fc0ddce42385fd415edd109f4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialAttendanceHttpPostgresTest.kt",
+      "sha256": "8ae69fed7e3b5d2b9eb417478fe5f20d678b5cdaa64a7909b4b1bd2756059ca6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationParticipantStatusPolicyTest.kt",
+      "sha256": "868b263dd675f9eca24feea9f6b84f091ee3b9dfd322b504beff57917e9c2c7d"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/workspace/scratch/participant-statuses/run-check.py",
+    "test",
+    "--tests",
+    "*RecommendationPartialAttendanceHttpPostgresTest",
+    "--tests",
+    "*RecommendationOpenApiExportPostgresTest"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "failedTests": [
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PN05 names are returned on every variant and alternative page for a verified guest()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS06 only the individually unverified attendee is unknown in a conditional variant()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS08 conditional fallback is resolved for the whole frozen batch and missing peer evidence cannot activate a subset fallback()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS04 status uses the full recommendation window even after a shorter actual selection()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS07 each variant checks its own known place rather than treating all excluded people as time mismatches()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS03 rejected and missing interpretation is unknown without publishing reasons or changing saved membership()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS02 duplicate display names keep distinct stable public references()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS01 each frozen person has one scoped public reference and a justified status()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS09 missing peer evidence cannot silently reuse reconstructed legacy area identities()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest",
+      "test": "PS05 historical frozen versions remain the status source after the current submission head changes()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    },
+    {
+      "class": "com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest",
+      "test": "native OpenAPI documents real recommendation endpoints selection requiredness and nullable schemas()",
+      "type": "java.util.NoSuchElementException",
+      "message": "java.util.NoSuchElementException: Key participant_statuses is missing in the map."
+    }
+  ],
+  "recordedAt": "2026-11-04T15:18:47.181452+00:00",
+  "finalPolicyRed": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "/workspace/scratch/participant-statuses/run-check.py",
+      "test",
+      "--tests",
+      "*RecommendationParticipantStatusPolicyTest"
+    ],
+    "failedTests": [
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "current matching area is checked rather than choosing a different compatible area()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "inconsistent saved inclusion is not rewritten by newly restored conditions()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "confirmed full-window time mismatch establishes unavailability for an excluded person()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "included participant with complete supported conditions is available()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "unverified travel or place does not become a confirmed feasible attendance()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "excluded membership alone cannot establish unavailability()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "missing rejected or unsupported time evidence remains unknown rather than unavailable()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "known time conflict remains binding despite unverified place()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "a shorter later actual selection must not replace the entire offered window()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "another owner evidence or inconsistent room mode cannot establish availability()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "known area conflict remains binding despite additional unverified travel()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "a verified unrestricted person needs no legacy area to coordinate conversion()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "unrestricted verified person does not inherit another persons missing place reference()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "historical coordinate without a supported area conversion remains unknown()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "confirmed current variant area mismatch establishes unavailability()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "required area with an unspecified variant location remains unknown()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      },
+      {
+        "class": "com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicyTest",
+        "test": "stored individual place uncertainty affects only that participant()",
+        "type": "kotlin.NotImplementedError",
+        "message": "kotlin.NotImplementedError: An operation is not implemented: TDD RED: participant status policy"
+      }
+    ],
+    "recordedAt": "2026-11-04T13:45:18.045409+00:00"
+  },
+  "legacyPlaceRed": {
+    "sha256": "8ae69fed7e3b5d2b9eb417478fe5f20d678b5cdaa64a7909b4b1bd2756059ca6",
+    "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialAttendanceHttpPostgresTest.kt",
+    "recordedAt": "2026-11-04T13:44:33.799406+00:00"
+  }
+}

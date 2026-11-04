@@ -1,3 +1,47 @@
+## 2026-11-04 현재 — Server 상태 반환의 P05 조사·기존 Draft PR 반영
+
+- [x] 최신 승인 범위는 Server 상태 반환의 로컬 구현·P05 원인 조사·안전한 수정/검증 및 기존 feature/recommendation-participant-names·Draft PR #214 원격 반영·정확 head CI다. 새 이슈/중복 PR·Web 구현/디자인/검사/원격 변경·양쪽 병합·운영 배포·실제 모델/지도 호출·운영 방 데이터 접근은 하지 않는다. 아래 로컬 전용 절의 원격 금지는 이번 Server Draft PR/CI 승인 범위에서만 갱신한다.
+- [x] 원본 P05 전체 FAIL·단독 PASS를 보존했다. 임시 계측의 normal은 P05/P11/P15 3 PASS이며,4 CPU 환경의8 worker/각6초 부하에서는 첫 missing-excerpt P05가 TIMEOUT·P11/P15는 PASS였다. handler 지연과 헤더 완료 미관측은 부하 민감성의 증거이며 최초 실패 원인 증명은 아니다. 계측 caller 시간에는 adapter 생성도 포함되어 실제2초 경과로 단정하지 않는다. 최초 부하 시도의 UP-TO-DATE 결과는 실행 근거에서 제외했다. 테스트 원본 SHA와 production/test diff 없음·단언/deadline 보존을 별도 검토자가 확인했다. 구체 validator 결함·안전한 영구 수정 근거는 확인하지 못해 원인 미확정을 유지한다.
+- [ ] 게시 직전 원격 head/base·타인 변경을 확인하고, 승인된 Server 변경만 기존 feature에 안전하게 통합한다. 보호 절차와 원본 commit guard를 유지하고 Draft PR 본문에 새 계약·정확 검증·기존 실패 이력을 기록한다. 강제 push·보호 우회·GitHub APPROVE는 하지 않는다.
+- [x] 게시 전 원본 `.codex/hooks/tdd_guard.py`(수정 없음)를 실행해15:51~16:53 UTC, exit0을 확인했다. 최종 ktlintCheck·assemble·test는356 suites/2,782 tests 중2,765 PASS·17 SKIP·실패/오류0이며 Kotlin 소스 지문은 전후 동일하다. 최초 P05 전체 FAIL·단독 PASS·통제 부하의 TIMEOUT과 원인 미확정 이력은 보존한다.
+
+최종 갱신: 2026-11-04 16:53 UTC. Commit/PR: 동일 커밋 예정 / 기존 Draft Server #214. 원격 반영과 정확 head CI는 커밋 이후 실제 PR 최신 본문·Actions 결과를 기준으로 확인한다. 병합·운영 반영은 이번 승인 범위 밖이다.
+
+## 2026-11-04 이전 단계 — Server 전용 추천 참여자 상태 로컬 작업
+
+- [x] 사용자 승인 범위는 Server 설계·구현·로컬 검사다. Web 구현·문구/디자인 결정·새 검사·원격 게시·병합·운영 반영은 하지 않는다. Server push·PR 수정·병합·배포도 승인되지 않았다.
+- [x] 기존 Server #214와 선행 미리보기 통합 후보를 별도 로컬 `feature/recommendation-participant-statuses-local`에 복제했다. 원래 merge 진행 상태·원본 guard 검사·Web 소스와 전체 실패/중단 로그는 보존한다.
+- [x] 고정 배치 전체 입력을 순수 복원하고 지원되는 전체 창/현재 장소 조건의 충족·확인된 불일치·확인 불가를 구분한다. 기존 추천 집합은 변경하지 않는다. optional `participant_statuses`와 분석 내 공개 참조만 추가하고 native OpenAPI와 배포용 속성 projection을 동기화했다.
+- [x] 정책17·HTTP14·native1·생성/조건부 시간/권한/stale 회귀 등 관련66개와 ktlintCheck·assemble이 통과했다. 이는 추가 PS09 이전의 결과다. 과거 장소 키 복원 근거가 빠진 PS09는 예상 RED를 확인하고 보수적으로 수정했으며 최종 검사에 포함한다.
+- [x] 최종 테스트 지문으로 정책 skeleton17·HTTP/OpenAPI 필드 누락11의 유효 RED를 확인하고 원본 로그를 보존했다. 제외→불가능 추론, 개인 장소 미검증의 전체 전파, 일부 시간 겹침, 해석 실패 무시, 불완전 배치의 fallback 활성화, 내부 UUID 공개 참조의 의도적 결함6종을 탐지했다. 주입 후 production 소스를 byte-identical로 복원했다.
+- [x] 별도 검토자가 복원·고정된 코드와 테스트를 읽기 전용으로 독립 검토했다. 정상 지원 경로의 구체적 P1/P2 결함은 없었고, 권한·과거 버전·동명이인·optional native 계약·PS04의 정확 state_version+1·PS09·결함 주입을 확인했다. 정상 producer는 배치 공통 schema_version과 단일 응답 전체 교체를 사용하므로 legacy/explicit 장소 키 혼합 경로를 찾지 못했지만, DB/codec이 임의 복구·주입한 혼합 JSON의 안전성까지 보장하지는 않는다. 검토자는 코드 수정·새 검사·외부 리뷰 제출을 하지 않았다.
+- [x] 복원한 최종 코드의 필터 없는 ktlintCheck·assemble·test가 종료됐다(13:57~15:15 UTC, exit1). 356 suites/2,782 tests 중2,764 PASS·17 SKIP·1 FAIL·오류0이다. 집중66개와 PS09를 최종 XML에서 대조한 관련67개는 모두 PASS다. 전체 소스 지문은 실행 전후 동일하다.
+- [ ] 전체 품질 게이트 GREEN은 미확인이다. 변경하지 않은 `PrecheckProviderTransportContractTest` P05에서 INVALID_RESPONSE 기대 대신 TIMEOUT이 반환됐다. 로컬 합성 HTTP의2초 제한이며 원인·환경/기준 귀속은 미확정이다. 최초 전체 XML·HTML·로그를 보존했다. 소스 변경 없이 해당1건만 격리 재확인해1 PASS·ktlintCheck 성공을 확인했지만, 단독 통과는 전체 실행 실패나 원인 미확정을 대체하지 않는다.
+- 기존 이름+미리보기 전체 guard는 종료됐다: 355 suites/2,756 tests 중 2,738 PASS·17 SKIP·경합 테스트1 FAIL이며 원인은 미확정이다. 이 실패는 새3상태 변경 이전 결과로 보존한다. 해당 경합 테스트의 새 작업 공간 단독 재실행은 PASS였으며 최초 실패를 무효화하지 않는다. Web의 기존 전체633 PASS/2 timeout FAIL/1 SKIP와 중단된 통합 브라우저 결과도 보존한다.
+
+아래는 이전 작업 시점의 기록이다. 현재 승인 범위는 이 절을 따른다.
+
+## 2026-11-04 현재 — 승인된 참석 가능자 이름 통합·운영 반영 준비
+
+- [x] `[USER/AGENT]` 사용자가 참석 가능자 이름 Server #214·Web #83의 병합·운영 반영을 승인했다. 선행 미리보기 담당의 배포 완료와 쓰기 인계를 받은 뒤 기존 feature 브랜치에 develop `856cdad8adee1cf0b97ece1ab7686af9c2b9e8de`를 통합했다. 양쪽 implementation plan 기록과 기존 브라우저 633 PASS/2 timeout FAIL/1 SKIP·원인 미확정 한계를 보존한다.
+- [x] `[AGENT]` production 코드의 충돌은 없고 문서만 양쪽 기록을 함께 유지해 해결했다. 기존 CloudFront 경로·자산 보존·인증·권한·DB migration·모델 정책은 그대로다.
+- [x] `[AGENT]` 통합 tree의 이름 PostgreSQL HTTP6·native OpenAPI1·미리보기14개, 합계21개가 실패/오류/skip 없이 통과했다. 실제 native 명세는 Web snapshot과 JSON 의미가 같고 배포 공개 계약 projection도 일치한다. optional string 배열을 재확인했고 Python 공개 계약20·Node catalog5도 통과했다.
+- [ ] `[AGENT]` 원본 commit guard의 전체 ktlintCheck·assemble·test와 정확한 새 head CI를 확인한다. 초기512MB cold compile은 테스트 실행 전에 종료했고 CI와 같은2GB로 다시 검증했다. 테스트·단언·운영 설정을 변경하지 않았다.
+- [ ] `[AGENT/SHARED]` 보호된 feature→develop→main PR 절차와 정확 CI를 거쳐 Server 실제 배포 완료·공개 API 계약을 먼저 확인하고 Web 운영 반영·격리 합성 번들 검증을 이어간다. 운영 데이터 쓰기·사용자 방 조회·실제 모델/지도 호출·secret/보안 설정 변경·GitHub APPROVE·보호 우회는 하지 않는다.
+
+현재 단계: 선행 배포 이후 통합 검증 중. 최종 갱신: 2026-11-04 UTC. Commit/PR: 동일 커밋 예정 / Server #214·Web #83. 아래는 각 구현·게시 시점의 기록이며 현재 승인 범위는 이 절을 따른다.
+
+## 2026-11-04 별도 작업 — Issue #213 추천 variant의 가능한 이름 표시
+
+- [x] `[AGENT]` 신규 클라우드 환경에서 깨끗한 develop `9db8c067305e19d37f668de5c9648e179955adbc`를 ff-only 확인하고 `feature/recommendation-participant-names`로 분리했다. 초기 체크아웃과 원격 main은 `6e6ecacf1e54f2328e66d5f6970bd5473bd22afd`다.
+- [x] `[AGENT]` 고정 배치·variant identity로 가능한 공개 이름을 추가했다. 전원 참석에서도 이름을 조회하며 미제출자·늦은 참여자 제외와 동명이인 수를 보존한다. 제외는 이 조합의 비포함 의미를 유지하고 조건부 참석은 미확정으로 표시한다.
+- [x] `[AGENT]` 최종 테스트 지문으로 필드 누락 RED7개를 재현했다. 최종 전체 실행 중 PostgreSQL HTTP6·native OpenAPI1 및 기존 추천 권한·stale 분석12개가 통과했다. 게스트 주최자 명령은 기존 401 계약으로 검증하며 권한 코드는 변경하지 않았다.
+- [x] `[AGENT]` 로컬 native 명세의 의미 차이는 새 배열 필드와 제외 명단 설명 두 부분뿐이다. Web snapshot/생성 타입과 배포 API 속성 목록을 동기화했고 projection Python20·배포 catalog Node14개가 최종 통과했다. Node 첫 실행의 오프라인 Python status=null 1건과 재실행 기록은 검증 결과에 보존했다.
+- [x] `[AGENT]` 최종 ktlintCheck·assemble·test 전체 검사가 통과했다: 352 suites/2742 tests/2725 PASS/17 SKIP/실패·오류0. Web은 단위920·API/lint/typecheck/build 및 추천 브라우저42개 통과, 고정 빌드 전체633 PASS/2 FAIL/기존1 SKIP다. 실패2개 단독 재검증·baseline/feature 각20개는 통과했으나 원인 귀속은 미확정이다.
+- [x] `[USER/AGENT]` 사용자의 후속 승인으로 commit·feature push·develop Draft PR·정확한 최종 head의 원격 CI 확인까지 범위를 확장했다. 기존 Issue를 검색한 뒤 이번 목적의 [Issue #213](https://github.com/meet-me-duo/meet-me-server/issues/213)를 연결했다.
+- [ ] `[AGENT]` 커밋 이후 원격 head와 Draft PR·CI 완료 여부를 확인하고 PR 본문에 결과를 기록한다. 커밋 시점 Commit/PR: 동일 커밋 예정.
+- `[USER/SHARED]` merge·auto-merge·main 릴리스·운영 배포는 승인 범위 밖이다. 운영 데이터·비밀 값·실제 유료 AI/지도는 사용하지 않는다.
+
 ## 2026-11-04 현재 작업 — 모임별 공유 링크 제목 (Draft PR 게시 준비)
 
 - [x] `[AGENT]` 실제 origin remote 확인, 깨끗한 develop ff-only 갱신 후 `9db8c06`에서 `feature/room-preview-title` 생성. 기존 work 브랜치와 사용자 작업 보존, Server Draft PR #208 사용·변경 없음.

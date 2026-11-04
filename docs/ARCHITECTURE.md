@@ -758,3 +758,12 @@ V2 evidence가 있는 Jev 요청은 유효한 Choice 의미 라벨을 보존하�
 ## 2026-10-31 조건부 참석의 클라이언트 호환 경계
 
 ADR-067에 따라 candidates/추천 primary·alternatives/result GET과 legacy·typed confirmation POST가 optional `attendance_support=conditional-v1`을 해석한다. HTTP adapter는 정확한 선언만 application의 의미 지원 boolean으로 전달한다. MatchingResultService는 기존 인증·상태·분석/선택 오류 순서를 유지하고 반환할 false 의미 및 write 전 selected variant의 미확인 상태를 검사한다. 미지원이면409 CLIENT_UPDATE_REQUIRED이며 후보를 true로 바꾸거나 filter하지 않는다. 결과 adapter의 좁은 no-store filter는 오류 응답에도 적용한다. query는 인증 capability가 아니고 CORS/Origin·소유권·트랜잭션·protocol·DB guard는 그대로다. 실제 OpenAPI로 optional parameter와409 계약을 생성하고 웹은 여섯 요청에 동일 지원 값을 넣는다. 기존 서버의 미지원 query 무시 및 구 웹의409 cache 처리도 검증한다.
+
+
+## 추천 참여자 상태의 읽기 전용 판정 (2026-11-04 로컬 확장)
+
+`FrozenMatchingInputPolicy`는 고정 제출 버전과 저장된 structured result를 matching input으로 복원하는 순수 Application 계산이다. `MatchingProcessor`는 같은 계산을 사용하되 기존 legacy/미지원 진단 저장·방 전이·추천 게시의 위치와 책임을 유지한다. 조회는 `FrozenSubmissionReader`와 기존 읽기 port만 사용하고 이 processor 또는 persistence service를 실행하지 않는다. 모델·지도·원문 재해석·새 분석·DB mutation이 없다.
+
+`WholeRoomConditionalTimePolicy`는 같은 고정 배치 전체에 한 번 적용한다. `RecommendationParticipantStatusPolicy`는 그 결과로 option의 전체 시간 창과 현재 variant의 방식·장소를 평가한다. 비포함만으로 UNAVAILABLE을 만들지 않으며, 저장된 포함 집합과 복원 결과가 모순되면 UNKNOWN으로 남기고 기존 집합을 바꾸지 않는다. 장소 미검증은 사람별 저장 marker와 복원된 조건을 따르며, 알려진 강한 장소 제약은 계속 binding이다. 근거가 없는 legacy 지역/좌표 변환은 추정하지 않는다. 제약이 없는 것으로 확인된 다른 사람에게 장소 참조 부족을 전파하지 않는다.
+
+추가되는 공개 DTO는 participant_ref·display_name·status뿐이다. participant_ref는 고정 배치의 안정적인 순서에서 생성하며 같은 analysis 내 variant·페이지 사이에서만 유효하다. 다른 분석과 연결되는 영속 개인 식별이나 인증/조회 키가 아니다. 새 DB column·migration·secret·role·권한 설정을 추가하지 않는다. 추가 필드는 optional이고 구 이름 배열 및 구 클라이언트의 조건부 참석 지원 선언은 유지한다. Web 소스·생성 타입·스냅샷은 이번 Server 작업에서 변경하지 않는다.

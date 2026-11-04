@@ -217,6 +217,8 @@ class RecommendationController(
                             variant.excludedParticipantNames,
                             variant.attendanceConfirmed,
                             variant.summary,
+                            variant.availableParticipantNames,
+                            variant.participantStatuses.map(RecommendationParticipantStatusResponse::from),
                         )
                     },
                     option.summary,

@@ -131,6 +131,10 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - SSE·WebSocket 연결
 - cookie 원문을 보여주는 디버그 UI
 
+### 추천 variant의 공개 이름
+
+추천 variant의 `available_participant_names`는 고정 분석 배치 중 해당 조합에 포함된 참여자의 공개 표시 이름 목록이다. 전원 참석과 대안 페이지에도 제공하며 동명이인은 별도 항목으로 유지한다. `attendance_confirmed=false`이면 시간 조건 일치 명단으로 표시하고 장소·이동 및 실제 참석 미확정 설명을 유지한다. `excluded_participant_names`는 해당 조합에서 제외된 명단이며 불참 확정이나 해석 실패 사유를 뜻하지 않는다. 구 서버에서 새 이름 필드가 없으면 명단을 추정하지 않는다.
+
 ## 8. 완료 검증
 
 - Swagger의 모든 공개 endpoint와 주요 오류 응답이 클라이언트 타입에 반영됐는지 확인한다.
@@ -146,3 +150,25 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - 캐시와 오래 열린 구 번들은 순서만으로 해결되지 않는다. 구 화면 잔존과 오류 문구를 별도로 확인한다.
 - 신 웹은 전송 전에 ECMAScript trim을 적용한다. 현 서버의 Kotlin trim과 다른 U+001C~001F 처리 등은 전환 중 호환 차이로 분리 보고하며 계약을 임의로 바꾸지 않는다.
 
+
+## 추천 조합별 참여자 상태 계약 초안 (로컬 작업, 2026-11-04)
+
+Server #214의 기존 optional 이름 배열은 유지한다. 추가할 optional `participant_statuses`는 각 variant에 고정 분석 배치의 참여자만 한 번씩 담는다. 항목은 `participant_ref`, `display_name`, `status`이며 상태는 언어 중립 `AVAILABLE`, `UNAVAILABLE`, `UNKNOWN`이다. 원문·보완 답변·실패 사유·이메일·내부 UUID는 추가하지 않는다. 화면 문구와 디자인은 이 계약에서 결정하지 않는다.
+
+`participant_ref`는 같은 analysis 안에서 primary·다른 variant·대안 페이지에 안정적인 불투명 참조이며 인증·조회 키가 아니다. 새 분석에서는 동일인의 참조 유지나 다른 분석과의 연결을 보장하지 않는다. 동명이인의 이름을 합치지 않는다. 현재 방 전체 명단·미제출자·배치 고정 후 참여자는 이 목록에 포함하지 않는다.
+
+판정 창은 option의 전체 `time_range`다. 사용자가 나중에 고른 짧은 실제 시간으로 재판정하지 않는다. 조회는 고정 submission version과 저장된 구조화 결과를 읽고 순수 입력 복원·정책 평가만 수행한다. MatchingProcessor의 저장·방 전이·재분석이나 공급자 호출을 실행하지 않는다. 조건부 시간은 같은 고정 배치 전체의 WholeRoomConditionalTimePolicy를 한 번 적용한 결과를 모든 variant에 공통 사용한다.
+
+- `AVAILABLE`: 저장된 포함 집합에 속하며 지원되는 시간·해당 방식/장소 조건의 충족 근거가 충분하다. 실제 출석 의사나 장소 예약의 확정이 아니다.
+- `UNAVAILABLE`: 저장된 비포함 집합에 있고 충분히 해석된 조건에서 전체 창 또는 현재 variant 장소와의 불일치가 확인된다. 비포함만으로 이 상태를 만들지 않는다.
+- `UNKNOWN`: 해석 실패/누락/미지원, 해당인의 장소·이동 미검증, 복원 불충분 또는 저장된 집합과 복원 판단의 불일치다. `attendance_confirmed=false`여도 미검증자로 저장된 해당인만 UNKNOWN으로 판정하며 다른 사람까지 일괄 변경하지 않는다.
+
+기존 `attendance_count`, 포함/제외 이름, 추천 option·variant·선택 tuple과 권한·stale·구 클라이언트 처리 의미는 그대로 유지한다. 상태 누락은 구 서버 미지원이며 빈 값이나 이름 배열을 근거로 상태를 추정하지 않는다. 새로운 enum의 한국어 UI 표현은 별도 사용자 논의 대상이다.
+
+합성 계약 예시(variant 필드 일부):
+
+```json
+{"participant_statuses":[{"participant_ref":"p1","display_name":"동명","status":"AVAILABLE"},{"participant_ref":"p2","display_name":"동명","status":"UNKNOWN"},{"participant_ref":"p3","display_name":"합성 참여자","status":"UNAVAILABLE"}]}
+```
+
+확인된 강한 시간/장소 불일치는 추가 미검증 조건이 있어도 UNAVAILABLE일 수 있다. 반대로 해석 실패로 계산상 가능 시간이 빈 것은 확인된 시간 충돌이 아니므로 UNKNOWN이다. 과거 입력의 `AREA_n`을 query 정렬로 생성했던 경우 배치 일부의 저장된 해석이 없으면 같은 장소 키를 복원했다고 보장할 수 없으므로 그 키에 의존하는 장소 판정은 UNKNOWN으로 남긴다. 명시적 장소 키나 장소 제한이 없는 다른 참여자에게 이 불확실성을 일괄 전파하지 않는다. 상태별 UI 표시나 번역 문구는 이 예시에서 정하지 않는다.

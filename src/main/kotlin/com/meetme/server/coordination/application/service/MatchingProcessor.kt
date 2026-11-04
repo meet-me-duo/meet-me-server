@@ -4,7 +4,6 @@ import com.meetme.server.coordination.application.port.output.AnalysisInvocation
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
-import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
 import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.coordination.domain.CandidatePlace
 import com.meetme.server.coordination.domain.CandidateQuality
@@ -12,32 +11,20 @@ import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
 import com.meetme.server.coordination.domain.MeetingCandidate
 import com.meetme.server.coordination.domain.StoredRecommendationOption
-import com.meetme.server.coordination.domain.matching.CompatiblePlaceArea
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
-import com.meetme.server.coordination.domain.matching.OfflinePlaceAssessment
-import com.meetme.server.coordination.domain.matching.ParticipantAllowedArea
-import com.meetme.server.coordination.domain.matching.ParticipantMatchInput
-import com.meetme.server.coordination.domain.matching.ParticipantPreferences
 import com.meetme.server.coordination.domain.matching.RecommendationProjection
 import com.meetme.server.coordination.domain.matching.RecommendationProjector
-import com.meetme.server.coordination.domain.matching.TimeRangeMatcher
-import com.meetme.server.coordination.domain.matching.WholeRoomConditionalTimePolicy
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CandidateId
 import com.meetme.server.shared.domain.SubmissionBatchId
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
-import com.meetme.server.submission.domain.StructuredCondition
-import com.meetme.server.submission.domain.StructuredSubmissionResult
-import com.meetme.server.submission.domain.TimePolarity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.nio.charset.StandardCharsets
-import java.text.Normalizer
 import java.time.Clock
 import java.time.Duration
-import java.util.Locale
 import java.util.UUID
 
 @Service
@@ -71,168 +58,16 @@ class MatchingProcessor(
         val room = persistence.room(run.roomId)
         val submissions = FrozenSubmissionReader.read(submissionRepository, run.batch)
         val existingStructured = structuredSubmissionRepository.findByBatch(batchId)
-        val legacyResults =
-            submissions.filter { it.latest.rawText == null }.map {
-                StructuredSubmissionResult(it.latest.id, emptyList(), "LEGACY_MANUAL_ONLY_UNSUPPORTED")
-            }
-        val legacyIds = legacyResults.mapTo(mutableSetOf()) { it.submissionVersionId }
-        val availableResults = existingStructured.filter { it.submissionVersionId !in legacyIds } + legacyResults
-        if (legacyResults.isNotEmpty()) {
-            structuredSubmissionRepository.replaceForBatch(batchId, availableResults, clock.instant())
+        val reconstructed = FrozenMatchingInputPolicy.reconstruct(submissions, existingStructured)
+        if (reconstructed.legacyResults.isNotEmpty()) {
+            structuredSubmissionRepository.replaceForBatch(batchId, reconstructed.availableResults, clock.instant())
         }
-        val resultIds = availableResults.mapTo(mutableSetOf()) { it.submissionVersionId }
-        val missingResults =
-            submissions.filter { it.latest.id !in resultIds }.map {
-                StructuredSubmissionResult(it.latest.id, emptyList(), "STRUCTURED_RESULT_MISSING")
-            }
-        val results = availableResults + missingResults
-        val structured = results.associateBy { it.submissionVersionId }
-        val snapshots = mutableListOf<NormalizedPlace>()
-        var hasUnappliedInput = structured.values.any { it.rejectionCode != null } || submissions.any { it.latest.id !in structured }
-        val legacyAreaKeys =
-            structured.values
-                .flatMap { it.conditions }
-                .filterIsInstance<StructuredCondition.SpecificPlace>()
-                .filter { it.areaKey == null }
-                .map { normalizeQuery(it.query) }
-                .distinct()
-                .sorted()
-                .mapIndexed { index, query -> query to "AREA_${index + 1}" }
-                .toMap()
-
-        val primaryInputs =
-            submissions.map { submission ->
-                val result = structured[submission.latest.id]
-                val conditions = result?.conditions.orEmpty()
-                if (PlaceConstraintDiagnostics.unappliedReason(conditions) != null) hasUnappliedInput = true
-                val naturalWindows = conditions.filterIsInstance<StructuredCondition.TimeWindow>()
-                val failedWithoutAvailability =
-                    result == null || (result.rejectionCode != null && naturalWindows.none { it.polarity == TimePolarity.AVAILABLE })
-                val areas =
-                    conditions
-                        .filterIsInstance<StructuredCondition.SpecificPlace>()
-                        .map { condition ->
-                            CompatiblePlaceArea(
-                                key = condition.areaKey ?: legacyAreaKeys.getValue(normalizeQuery(condition.query)),
-                                displayName = condition.areaName ?: condition.query,
-                            )
-                        }.distinctBy { it.key }
-                val unresolved =
-                    conditions.withIndex().filter { it.value is StructuredCondition.UnresolvedPlace }.map { indexed ->
-                        val condition = indexed.value as StructuredCondition.UnresolvedPlace
-                        NormalizedPlace(
-                            batchId = batchId,
-                            submissionVersionId = submission.latest.id,
-                            conditionIndex = indexed.index,
-                            query = condition.query,
-                            radiusMeters = 1_000,
-                            status = NormalizedPlaceStatus.NO_EXACT_MATCH,
-                        )
-                    }
-                if (unresolved.isNotEmpty()) {
-                    hasUnappliedInput = true
-                    snapshots += unresolved
-                }
-                ParticipantMatchInput(
-                    participantId = submission.participantId,
-                    availableTimes =
-                        if (submission.latest.rawText == null ||
-                            failedWithoutAvailability ||
-                            result.rejectionCode in UNSAFE_TIME_REASONS
-                        ) {
-                            emptyList()
-                        } else {
-                            TimeRangeMatcher.calculateAvailability(
-                                naturalWindows = naturalWindows,
-                                datedManualAvailability = emptyList(),
-                                weeklyManualAvailability = emptyList(),
-                                blocked = emptyList(),
-                                searchRange = room.searchRange,
-                                zone = room.timeZone,
-                            )
-                        },
-                    offlineArea = if (areas.isNotEmpty()) ParticipantAllowedArea(areas) else null,
-                    offlinePlaceAssessment =
-                        when {
-                            result == null || submission.latest.rawText == null -> OfflinePlaceAssessment.LEGACY_REQUIRED
-                            result.rejectionCode != null ||
-                                conditions.any {
-                                    it is StructuredCondition.TravelConstraint || it is StructuredCondition.UnresolvedPlace
-                                } -> OfflinePlaceAssessment.UNVERIFIED
-                            else -> OfflinePlaceAssessment.UNRESTRICTED
-                        },
-                    explicitPreferences =
-                        ParticipantPreferences(
-                            timeRanges =
-                                TimeRangeMatcher.expandNaturalWindows(
-                                    conditions.filterIsInstance<StructuredCondition.PreferredTimeWindow>().map {
-                                        StructuredCondition.TimeWindow(
-                                            TimePolarity.AVAILABLE,
-                                            it.date,
-                                            it.dayOfWeek,
-                                            it.startTime,
-                                            it.endTime,
-                                            it.endsAtNextDayStart,
-                                        )
-                                    },
-                                    room.searchRange,
-                                    room.timeZone,
-                                ),
-                            areaKeys =
-                                conditions.filterIsInstance<StructuredCondition.PreferredPlace>().mapTo(
-                                    mutableSetOf(),
-                                ) { it.areaKey },
-                            hasTimePreference = conditions.any { it is StructuredCondition.PreferredTimeWindow },
-                            hasPlacePreference = conditions.any { it is StructuredCondition.PreferredPlace },
-                            canScore = result != null && result.rejectionCode == null,
-                        ),
-                )
-            }
-
-        val conditionalFallbacks =
-            submissions
-                .mapNotNull { submission ->
-                    val conditions = structured[submission.latest.id]?.conditions.orEmpty()
-                    val fallback = conditions.filterIsInstance<StructuredCondition.ConditionalFallbackTimeWindow>()
-                    if (fallback.isEmpty()) return@mapNotNull null
-                    submission.participantId to
-                        TimeRangeMatcher.calculateAvailability(
-                            naturalWindows =
-                                fallback.map {
-                                    StructuredCondition.TimeWindow(
-                                        TimePolarity.AVAILABLE,
-                                        it.date,
-                                        it.dayOfWeek,
-                                        it.startTime,
-                                        it.endTime,
-                                        it.endsAtNextDayStart,
-                                    )
-                                } +
-                                    conditions.filterIsInstance<StructuredCondition.TimeWindow>().filter {
-                                        it.polarity ==
-                                            TimePolarity.UNAVAILABLE
-                                    },
-                            datedManualAvailability = emptyList(),
-                            weeklyManualAvailability = emptyList(),
-                            blocked = emptyList(),
-                            searchRange = room.searchRange,
-                            zone = room.timeZone,
-                        )
-                }.toMap()
-        val primaryInputsKnown =
-            submissions.all { submission ->
-                val result = structured[submission.latest.id]
-                submission.latest.rawText != null &&
-                    result != null &&
-                    result.rejectionCode == null &&
-                    (
-                        submission.participantId !in conditionalFallbacks ||
-                            result.conditions.filterIsInstance<StructuredCondition.TimeWindow>().any {
-                                it.polarity == TimePolarity.AVAILABLE
-                            }
-                    )
-            }
-        val resolution = WholeRoomConditionalTimePolicy.resolve(primaryInputs, conditionalFallbacks, primaryInputsKnown)
+        val results = reconstructed.results
+        val missingResults = reconstructed.missingResults
+        val prepared = FrozenMatchingInputPolicy.prepare(room, submissions, results, batchId)
+        val snapshots = prepared.snapshots
+        var hasUnappliedInput = prepared.hasUnappliedInput
+        val resolution = prepared.resolution
         val inputs = resolution.participants
         val persistInputDiagnostics: (() -> Unit)? =
             if (resolution.unsupportedParticipantIds.isEmpty() && missingResults.isEmpty()) {
@@ -319,15 +154,6 @@ class MatchingProcessor(
             }
         }
         metrics?.matching("COMPLETED", Duration.ofNanos(System.nanoTime() - startedNanos), candidates.size)
-    }
-
-    private fun normalizeQuery(value: String): String =
-        Normalizer.normalize(value, Normalizer.Form.NFKC).lowercase(Locale.ROOT).filterNot(Char::isWhitespace)
-
-    private companion object {
-        // These inputs contain time restrictions that the flat condition schema cannot preserve.
-        // Keeping them in the participant total while declining availability prevents invented attendance.
-        val UNSAFE_TIME_REASONS = setOf("UNSUPPORTED_CONDITIONAL_CONSTRAINT", "AMBIGUOUS_TIME_CONSTRAINT", "AMBIGUOUS_INPUT")
     }
 }
 
