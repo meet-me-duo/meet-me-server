@@ -137,6 +137,15 @@ data class RoomResponse(
     @field:JsonProperty("invite_code")
     @field:Schema(description = "공개 방 초대 코드", minLength = 22, maxLength = 22, pattern = "^[A-Za-z0-9_-]{22}$")
     val inviteCode: String,
+    @field:JsonProperty("expires_at")
+    @field:Schema(
+        description = "실제 저장된 방 생성 시각부터 30×24시간 후인 UTC 정리 기준 시각. 상태·개인 숨김과 무관하며 정확한 물리 삭제 실행 시각을 보장하지 않음",
+        type = "string",
+        format = "date-time",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        example = "2026-11-30T12:00:00Z",
+    )
+    val expiresAt: Instant,
     @field:Schema(description = "모임 목적")
     val purpose: String,
     @field:JsonProperty("meeting_mode")
@@ -213,6 +222,7 @@ data class RoomResponse(
         fun from(view: RoomView) =
             RoomResponse(
                 view.inviteCode,
+                view.expiresAt,
                 view.purpose,
                 view.meetingMode,
                 view.timeZoneId,

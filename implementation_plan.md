@@ -1,3 +1,17 @@
+## 2026-11-03 현재 작업 — Issue #201 상세 자동 정리 기준 시각
+
+- [x] `[AGENT]` 최신 develop `d4cfe518d8ddf7174ec16223938c39720c93ca3d`을 ff-only로 확인하고 [Issue #201](https://github.com/meet-me-duo/meet-me-server/issues/201) 및 `feature/201-room-response-expiry`를 준비했다. 최초 Issue 생성은 승인 검토에서 실행 전 거부됐으나 최초 사용자 요청의 명시 Issue 허가가 추가 전달되어 미생성 확인 후 한 번 재시도하여 생성했다.
+- [x] `[AGENT]` 계약은 공통 `RoomResponse.expires_at` required/non-null UTC date-time이며 실제 저장 `created_at + 30×24시간`이다. 물리 삭제의 정확 실행 시각 보장은 아니다. 별도 공개 created_at·DB/migration·cleanup/status·접근/소유권 변경은 없다.
+- [x] `[AGENT]` 독립 작성 계약 테스트를 최종 지문으로 RED10개/7예상FAIL→GREEN10PASS로 확인했다. 생성 정밀도·공통 반환 경로·목록 일치·공개/계정/게스트 조회·숨김·접근 경계를 검증했다. 최초 GREEN의 retry 성공 코드200 기대는 기존202 계약으로 정정한 뒤 원본 source에서 RED를 다시 확인했다.
+- [x] `[AGENT]` 실제 springdoc `/v3/api-docs` 응답 bytes로 기존 `docs/openapi/account-room-history.openapi.json`을 갱신했다. 의미 diff는 RoomResponse의 expires_at 속성과 required 추가뿐이며 SHA-256은 `03043ac4658ba676bad0eed6015937ebb5f4801bf9e303666ba9cb4a0de04a4e`이다. 게시 source SHA는 최종 commit 후 확인하며 손작성 명세로 대체하지 않는다.
+- [x] `[AGENT]` 독립 코드/테스트 리뷰 P1/P2 0과 결함3/3 탐지·정확 source 복원을 확인했다. 마감 시각으로 기준 변경·생성 재조회 제거·schema optional 선언을 각각 RE03/RE01/RE07이 탐지했다. 근거는 `.tdd/verification/issue-201-room-expiry.json`이다.
+- [x] `[AGENT]` 최초 원본 전체 guard는 20분9초, 2,727개/351suites 중 2,709PASS·1FAIL·기존17SKIP였다. 유일 실패는 기존 native API 전체 projection과 배포 data의 equality였다. 실제 native exporter 출력 bytes로 `deploy/public-api-contract.json`을 갱신했고 의미 diff는 RoomResponse.expires_at 1개뿐이다. 독립 검토 후 해당 PG계약1개·Python 배포 무결성20개 PASS, 추가 RED 근거는 `.tdd/red/issue-201-public-contract.json`이다. 테스트·가드·배포 절차는 변경하지 않았다.
+- [x] `[AGENT]` 원본 commit guard 재실행의 ktlintCheck·assemble·test exit0: 351suites/2727개 중 2710PASS·기존17SKIP·실패/오류0. 최종 native 산출물2개와 게시 파일 bytes 일치, RED/결함 지문 및 원본 guard/CI/build 불변을 재확인했다. OpenAPI 객체 순서는 실행 간 달랐지만 JSON 의미가 같음을 확인하고 최종 전체 실행의 실제 응답 bytes로 게시 파일을 맞췄다.
+- [ ] `[AGENT]` 검증된 소스를 commit/push하고 develop 대상 Draft PR 및 정확 최종 SHA의 CI 3개 작업을 확인한다.
+- [ ] `[USER/SHARED]` develop/main 병합·운영 배포는 별도 승인 대기다. cloud AWS·운영 DB·운영 방 쓰기·유료 외부 호출은 수행하지 않는다.
+
+현재 단계: 집중10PASS·독립 코드/테스트 리뷰 P1/P2 0·생성 OpenAPI 확인, 결함3/3 탐지·복원 및 공개 배포 계약 생성 data 동기화 뒤 원본 전체 가드 exit0. 검증된 소스 게시와 CI 확인 준비. 기존 RoomLifecycleServiceTest·RoomLifecycleWebIntegrationTest baseline11개는 3분57초 exit0이다. JDK17.0.21·Gradle9.7.1·로컬 Docker28.4.0을 사용한다. Web 저장소는 변경하지 않는다. 최종 갱신: 2026-11-03 UTC. Commit/PR: 동일 커밋 예정 / 게시 후 확인.
+
 ## 2026-11-03 현재 작업 — Issue #197 개인 목록 숨김·생성일부터 30일 보존
 
 - [x] `[USER]` 본인 내 모임에서만 숨김, participants 관계의 숨김 시각, 생성일부터 30일 보존, Issue·PR·CI·조건 충족 병합을 승인했다. UI/Web은 별도 작업이며 서버 운영 배포·migration은 제외한다.

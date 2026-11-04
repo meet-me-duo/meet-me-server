@@ -118,6 +118,7 @@ class ReviewSupportHintPostgresTest : RecommendationPostgresFixture() {
                 "viewer",
                 "capabilities",
                 "invite_code",
+                "expires_at",
                 "meeting_mode",
                 "time_zone_id",
                 "search_start_date",

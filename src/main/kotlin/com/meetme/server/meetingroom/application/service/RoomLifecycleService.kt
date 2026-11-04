@@ -42,6 +42,7 @@ import com.meetme.server.submission.application.port.output.SubmissionRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
+import java.time.Duration
 
 @Service
 class RoomLifecycleService(
@@ -108,7 +109,9 @@ class RoomLifecycleService(
             )
         participantRepository.insert(host)
         newRoomAiBudget?.initialize(room.id.value, now)
-        return RoomAccessResult(room.toView(host, 0), null, true)
+        // Read the stored creation timestamp so create and later reads share PostgreSQL precision.
+        val persistedRoom = checkNotNull(roomRepository.findById(room.id))
+        return RoomAccessResult(persistedRoom.toView(host, 0), null, true)
     }
 
     @Transactional(readOnly = true, isolation = org.springframework.transaction.annotation.Isolation.REPEATABLE_READ)
@@ -296,6 +299,7 @@ class RoomLifecycleService(
                 (!run.hasSelectableResult || run.quality == com.meetme.server.coordination.domain.CandidateQuality.PARTIAL)
         return RoomView(
             inviteCode = inviteCode.value,
+            expiresAt = createdAt.plus(Duration.ofDays(30)),
             purpose = purpose,
             meetingMode = mode,
             timeZoneId = timeZone.value.id,
