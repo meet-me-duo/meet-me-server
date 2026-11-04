@@ -1,8 +1,0 @@
-{
-  "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/Issue123WholeRoomBudgetPostgresTest.kt",
-  "sha256": "f3b9756c890f8133b3877de325331c7fd583ce9e017520abb1850fbeee560356",
-  "classification": "NEW_INTEGRATION_ORACLE_NOT_YET_EXECUTED",
-  "fixtureNote": "Existing pre-submit ECMAScript boundary trim remains unchanged. Synthetic raw uses two internal spaces plus emoji, so exact persistence assertion does not conflict with original trim contract. No expected assertion changed.",
-  "paidProviderCalls": 0,
-  "recordedAt": "2026-10-18T04:49:03.839250+00:00"
-}

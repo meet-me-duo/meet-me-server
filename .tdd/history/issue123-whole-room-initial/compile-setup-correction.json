@@ -1,8 +1,0 @@
-{
-  "classification": "COMPILE_SETUP_FAILURE_NOT_VALID_RED",
-  "reason": "JdbcTemplate.queryForList Java platform element is UUID?; assertNotNull before required UUID callCount argument",
-  "expectedBehaviorChanged": false,
-  "oldSha256": "22df1fb3ebd2507b688ef28a9aed83c98b66111b8cccd6cbc85bdd879eabb878",
-  "currentSha256": "f288b1ced2b0dfb2633657470bf16cfd456a682f4777a720f3b79aa42efa355a",
-  "recordedAt": "2026-10-18T04:47:47.037350+00:00"
-}

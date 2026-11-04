@@ -1,2 +1,0 @@
-Error: Could not find or load main class com.meetme.server.precheck.adapter.output.provider.Issue123TwoStageSmokeHarness
-Caused by: java.lang.ClassNotFoundException: com.meetme.server.precheck.adapter.output.provider.Issue123TwoStageSmokeHarness

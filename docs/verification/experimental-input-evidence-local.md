@@ -12,7 +12,7 @@
 
 최종 모델은 원문과 보완 근거를 받아 기존 조건 schema로 구조화한다. 서버의 결정론적 후보 계산은 유지한다. 최종 모델이 다시 질문하거나 입력 하나의 필수 시간 의미를 해석하지 못하면 그 입력만 안전하게 제외한다. 다른 사람의 가능 시간으로 개인 사실을 확정하지 않는다. 새 V2 주최자 진단은 최종 미반영 원문과 답변만 공개하며 중간 질문과 타인의 개인 화면은 공개하지 않는다.
 
-독립 검토와 결함 주입의 범위·소스 지문은 [최종 감사](experimental-input-evidence-aggregate-audit.md), [기능 FI](../../.tdd/verification/issue107-evidence-contract.json), [정밀도 FI](../../.tdd/verification/issue107-evidence-precision.json)에 기록했다. 기능 결함11개 및 정밀도 결함1개가 실제 assertion에 탐지됐고 각 실행 후 exact restore를 확인했다. 복원 기능53개와 정밀도3개는 별도 실행 결과이며 합산해 새로운 전체 테스트 수로 집계하지 않는다.
+독립 검토와 결함 주입의 범위·소스 지문은 [최종 감사](experimental-input-evidence-aggregate-audit.md), [기능 FI](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue107-evidence-contract.json), [정밀도 FI](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue107-evidence-precision.json)에 기록했다. 기능 결함11개 및 정밀도 결함1개가 실제 assertion에 탐지됐고 각 실행 후 exact restore를 확인했다. 복원 기능53개와 정밀도3개는 별도 실행 결과이며 합산해 새로운 전체 테스트 수로 집계하지 않는다.
 
 V2 영속 기준 시각은 PostgreSQL과 JSON에서 동일한 마이크로초 값으로 보존한다. KST 자정 직전 나노초 값이 DB 반올림 때문에 다음 날로 이동하지 않도록 저장 시 정규화했다. 권한·마감 검사에는 원래 Clock 값을 계속 사용하고 source fingerprint 비교에 허용 오차를 추가하지 않았다. 실제 PostgreSQL dispatch authorize의 긍정 대조군도 통과했다.
 

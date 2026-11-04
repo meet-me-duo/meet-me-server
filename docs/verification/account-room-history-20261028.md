@@ -15,7 +15,7 @@
 - 독립 검토의 미해결 P1/P2는 0이다. 계정 조건 우회, CLOSED 30일 경계 제외, 같은 생성 시각의 UUID 커서 방향 반전 결함을 각각 테스트가 탐지했다. 매회 정확한 원본 SHA로 복원한 뒤 8개를 다시 통과했다.
 - 테스트 SHA는 RED 이후 변경하지 않았고 검토한 생산 코드 SHA도 결함 주입 복원 후 동일하다. RED·결함 주입 JSON은 저장소 증거 스키마 검사를 통과했다.
 
-근거: [RED 요약](../../.tdd/red/account-room-history.json), [독립 검토](../../.tdd/reviews/account-room-history.json), [결함 주입](../../.tdd/verification/account-room-history-faults.json). 원본 로그는 Git 제외 로컬 `.codex/tdd-evidence/account-room-history*.log`와 `/tmp/account-history-*.log`에 보존했다.
+근거: [RED 요약](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/account-room-history.json), [독립 검토](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/reviews/account-room-history.json), [결함 주입](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/account-room-history-faults.json). 원본 로그는 Git 제외 로컬 `.codex/tdd-evidence/account-room-history*.log`와 `/tmp/account-history-*.log`에 보존했다.
 
 ## 전체 품질 검사
 

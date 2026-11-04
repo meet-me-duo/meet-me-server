@@ -8,8 +8,8 @@ The independent review found no remaining blocker in the reviewed implementation
 
 Eleven isolated functional faults and one timestamp precision fault were detected by compiled assertions. Every modified production source was restored byte for byte. The restored functional run passed 53 tests, and the restored precision run passed three tests, including actual PostgreSQL source authorization with the application dispatch mode enabled. The eleven-fault snapshot precedes the precision correction; the separate precision summary records the final versions of those two source files.
 
-- Functional evidence: [issue107-evidence-contract.json](../../.tdd/verification/issue107-evidence-contract.json).
-- Precision evidence: [issue107-evidence-precision.json](../../.tdd/verification/issue107-evidence-precision.json).
+- Functional evidence: [issue107-evidence-contract.json](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue107-evidence-contract.json).
+- Precision evidence: [issue107-evidence-precision.json](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue107-evidence-precision.json).
 - Detailed test scope and oracle corrections: [independent test plan](experimental-intake-independent-test-plan.md).
 
 The faults covered collapsed evidence fingerprints, original replacement, false CLEAR promotion in receipt and classification, unauthorized host diagnostics, lost post-close evidence, omitted final-provider evidence, reintroduced final questions, discarded second-question safety, incorrect failure scope, missing frozen evidence on reload, and nanosecond/microsecond drift. Exact source fencing was retained; no tolerance or missing-column production fallback was introduced.

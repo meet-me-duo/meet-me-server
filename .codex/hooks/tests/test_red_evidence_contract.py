@@ -79,12 +79,14 @@ class RedEvidenceContractTest(unittest.TestCase):
         lifecycle = LIFECYCLE_PATH.read_text(encoding="utf-8")
 
         self.assertIn("테스트 파일의 내용이 바뀌면 기존 요약은 무효", lifecycle)
-        self.assertIn("병합 후에도 저장소에 유지", lifecycle)
+        self.assertIn("현재 작업의 요약은 검증과 인계가 끝나면 삭제", lifecycle)
+        self.assertIn("과거 근거는 정확한 Git revision", lifecycle)
 
     def test_ignores_local_raw_evidence_directory(self) -> None:
         gitignore_lines = GITIGNORE_PATH.read_text(encoding="utf-8").splitlines()
 
         self.assertIn("/.codex/tdd-evidence/", gitignore_lines)
+        self.assertIn("/.scratch/", gitignore_lines)
 
     def assert_valid(self, document: dict[str, Any]) -> None:
         self._validate(self.schema, document, "$")

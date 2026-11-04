@@ -1,9 +1,0 @@
-{
-  "recordedAt": "2026-10-17T19:23:12.669609+00:00",
-  "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckProviderTransportContractTest.kt",
-  "beforeSha256": "874d13bb1cb182119982b03b81c0c0c9c03d92ac939b02cdc07e483a2c277624",
-  "afterSha256": "0a31ce73a1c74aca991d36f67e59b96b1d557ac59da0f120136770a88a9e735c",
-  "change": "P03 Endpoint arguments split to lines with one trailing comma; exact deterministic transform verified, identical literals, expressions, expectations and invocation order.",
-  "ruleEngineOutput": "empty, no diagnostics",
-  "chronology": "Previous RED records remain historical; supplemental reconstructed RED on final fingerprint will be collected separately."
-}
