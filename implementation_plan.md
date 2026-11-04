@@ -1,3 +1,22 @@
+## 2026-11-04 현재 작업 — 모임별 공유 링크 제목 (Draft PR 게시 준비)
+
+- [x] `[AGENT]` 실제 origin remote 확인, 깨끗한 develop ff-only 갱신 후 `9db8c06`에서 `feature/room-preview-title` 생성. 기존 work 브랜치와 사용자 작업 보존, Server Draft PR #208 사용·변경 없음.
+- [x] `[AGENT]` 기존 `/rooms/{inviteCode}`와 공개 `purpose`를 사용해 제목/OG/canonical을 제공하는 서버 HTML adapter와 Web 탭 제목 구현. 홈페이지 제목 유지, 이미지·추가 개인 데이터·migration·새 URL 없음.
+- [x] `[AGENT]` 고정 HTTPS `/index.html`, 요청 헤더 미전파, redirect 금지, 256KiB streaming 제한과 전체 3초 deadline, no-store 및 중첩 SPA/누락·삭제·이름 조회 장애 fallback 테스트 준비. shell 장애는503으로 구분.
+- [x] `[AGENT]` Web 자산 보존 변경과 CloudFront CachingDisabled/모든 TTL0 ordered behavior·전환/복귀 계획 문서화. Nginx는 기존 HTTPS 전체 proxy 사용.
+- [x] `[AGENT]` 최종 집중 14/14와 ktlintCheck 통과. 최초 RED 14/14 실패 확인 뒤 구현했고, escaping·잘못된 canonical·무제한 body handler 결함 3개를 각각 관련 테스트가 탐지했다. 이후 두 source 파일의 byte-identical 복원 및 독립 리뷰 P1/P2 0을 확인했다. HEAD는 GET 표현의 UTF-8 길이·동일 헤더와 빈 body를 제공한다.
+- [x] `[AGENT]` 전체 ktlintCheck·assemble·test 종료 코드 0, 23분 40초. 실제 XML 집계는 355 suites / 2,753 tests 중 2,736 PASS, 17 SKIP, 실패·오류 0이며 신규 14개도 모두 PASS다. 로그 `/tmp/meetme-server-quality.log`.
+- [x] `[AGENT]` 배포 계약의 최초 결과를 보존한다. Node 전체 415개는 405 PASS / 10 FAIL, 준비 후 관련 99개는 97 PASS / 2 FAIL이었다. Python 전체 424개는 1 FAIL / 37 ERROR였다. **현재 feature의 전체 Python 424개와 Node 전체 415개는 이후 재실행하지 않았다.** 아래 집중·기준 비교 결과를 전체 배포 계약 통과로 대체하지 않는다.
+- [x] `[AGENT]` 깨끗한 develop `9db8c067305e19d37f668de5c9648e179955adbc`와 비교했다. JAVA_HOME 미설정 시 기준에서도 JDBC 2개가 실패했고 Java 17 지정·Alpine 캐시 준비 후 관련 Node 7개는 모두 PASS다. AR15·AR16·AR24는 기준 3/3 PASS(46.2초), feature 3/3 PASS(45.4초)다. 최초 Python 실패 대상은 중복 subtest를 제외한 동일 34개 메서드로 기준에서 모두 PASS(509.4초)했다. 배포 스크립트·fixture는 양쪽에서 바이트 단위로 동일하다.
+- [x] `[AGENT]` 기준 소스의 제한된 부하 재현에서도 공통 installer의 원래 15초 timeout과 AR15 실패를 확인했다. 4 CPU 작업과 관련 검사 2개의 동시 실행에서 throttling이 증가했고 19.9초에 종료됐다. 초기 동시 검사 부하가 fixture 제한을 넘길 수 있는 환경 타이밍 현상으로 분류하며 기능 diff로 인한 회귀로 확정하지 않는다. assertion·timeout·운영 코드는 변경하지 않았다.
+- [x] `[AGENT]` **Compose secret-fidelity는 기준·feature 모두 종료 코드 0이다.** 연결 명령 묶음의 종료 코드 1을 Compose에 잘못 귀속한 이전 보고를 정정한다. 기존 개별 재검사도 종료 코드 0이었다. credential-refresh 전체 스크립트도 기준 37.2초·feature 37.8초에 각각 종료 코드 0으로 통과했다. Docker auth 10개와 정책 extraction 재검사도 PASS다.
+- [x] `[AGENT]` Nginx 환경 실패는 기준에서도 재현했다. config 모드 0600은 컨테이너 읽기 거부를 유발했고, 임시 0644 보정 후에도 localhost health 요청이 환경 HTTP 프록시를 통해 403을 받았다. 같은 임시 컨테이너의 로컬 직접 요청은 200이었다. 권한은 원복했고 프록시·네트워크 정책은 변경하지 않았다. **수정하지 않은 Nginx runtime 검사 자체는 이 환경에서 미통과다.** 추가로 임시 로컬 사본의 비밀정보 없는 config만 0644로 두고 고정 localhost wget에만 `-Y off`를 적용하자 종료 코드 0(2.3초)으로 통과했다. assertion·timeout·컨테이너 capability는 그대로이며 추적 fixture·전역 프록시·운영 설정은 변경하지 않았다. 기준 worktree와 임시 사본은 삭제했다.
+- [ ] `[SHARED]` Nginx health fixture의 환경 프록시 처리 검토, ARM64 Built Image, 정확 HEAD 원격 CI와 실제 운영 검증은 남아 있다. ARM64 이미지·emulation은 로컬 준비되지 않았다. 전체 CI·배포 준비 완료로 표시하지 않으며 원격 게시·운영 전환은 하지 않는다.
+- [x] `[USER/AGENT]` 사용자가 두 feature 브랜치 push·develop 대상 Draft PR 생성·정확 HEAD 원격 CI 확인을 명시 승인했다. 새 Issue를 필수로 요구하거나 번호를 만들지 않는다. 병합·auto-merge·운영 배포·CloudFront 적용은 승인 범위 밖이다.
+- [ ] `[AGENT]` 검토된 변경을 로컬 commit/push하고 각 Draft PR의 정확 HEAD CI를 확인한다. Commit/PR: 동일 커밋 예정 / 게시 후 확인.
+
+최종 갱신: 2026-11-04 UTC. Commit/PR: 동일 커밋 예정. 원격 게시 및 CI 결과는 실제 Git/PR 기록에서 확인한다. 일회성 추적 `.tdd` JSON/임시 스크립트는 만들지 않는다.
+
 ## 2026-11-04 현재 작업 — Issue #205 공개 방 제출 참여자 집계
 
 - [x] `[AGENT]` 원격 main `d3391fbf7eb2de7f9c617c0dcd90cd685b6cc86f`와 develop `780b144d4355b41d2b21eeb109252a8fc84abc33`의 동일 tree를 확인하고 깨끗한 develop을 ff-only 갱신한 뒤 `feature/submitted-participant-count`에서 격리했다. Web UI는 별도 담당이 재개했으며 이 작업에서는 서버만 변경한다.

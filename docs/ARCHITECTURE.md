@@ -25,6 +25,28 @@ Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 
 
 HTTP는 `attendance_confirmed`와 variant의 `summary`를 추가한다. false는 참석 인원이 시간 조건 기준임을 나타낸다. 공개 설명은 시간과 일반적인 미검증 사유만 제공하고 타인의 원문·개별 제한은 기존 소유권 경계를 유지한다. UI는 기존 후보 설명·참석 문구를 사용하며 새 배지/경고 영역을 추가하지 않는다. 지도/API/도보 환산/운영 timeout은 변경하지 않는다. 실제 도보 충족과 실제 모델 정확성은 검증 범위 밖이다.
 
+## 모임별 공유 HTML (2026-11-04 로컬 구현, 운영 전환 미적용)
+
+`GetRoomPreviewUseCase`는 기존 repository의 현재 방에서 공개 `purpose`만 반환한다.
+게스트·계정·참여자·제출 조회나 쿠키 발급을 수행하지 않고 기존 물리 삭제 기준을 따른다.
+`RoomPreviewController`는 `/rooms/**`에서 브라우저와 크롤러 모두에게 같은 SPA HTML을
+제공한다. 정확한 22자 코드의 단일 방 경로만 이름 조회·canonical을 만들며 중첩 경로와
+잘못된 코드는 기본 SPA로 전달한다. 사용자 입력은 HTML text/attribute에 escape한다.
+
+`PublishedWebAppShell`은 고정 `https://app.meet-me.co.kr/index.html`만 조회한다.
+요청 Host/forwarded/쿠키/Authorization/query는 전파하지 않는다. HTTPS, redirect 금지,
+1초 연결·전체 3초 교환 deadline과 256KiB streaming 상한을 사용한다. 매 요청 현재 shell을
+읽으며 방 HTML이나 shell을 캐시하지 않는다. 원격 shell 장애는 상세 없는 503/no-store,
+없는 방과 이름 조회 장애는 기본 제목의 SPA 200/no-store로 응답한다. 공개 HTML endpoint는 REST OpenAPI 경로에
+추가하지 않고 Controller의 HTML 상태 계약 및 이 문서로 관리한다.
+
+운영 전환은 별도 승인 대상이다. 기존 HTTPS Nginx `location /`는 이미 이 경로를 전달한다.
+Web은 기존 해시 자산을 보존하고 CloudFront의 `/rooms/*` ordered behavior를 기존 API
+origin으로 보내며 `Managed-CachingDisabled`(모든 TTL 0)를 사용해야 한다. `/index.html`과
+자산은 S3에 남겨 순환 fetch를 막는다. HTML origin 의존성과 서버 outbound IP의 WAF 집계,
+추가 DB/shell GET 비용을 감수하며 새 유료 컴퓨팅은 만들지 않는다. 상세 전환·검증·복귀는
+Web 저장소 `docs/DEPLOYMENT.md`의 모임별 링크 제목 전환 계획을 따른다.
+
 ## 1. 목적과 범위
 
 이 문서는 `meet-me-server`의 기술적 구조, 컴포넌트 책임, 의존성 방향과 외부 시스템 경계를 정의한다. 이 저장소는 백엔드만 포함하며 프론트엔드는 별도 저장소에서 개발한다.
