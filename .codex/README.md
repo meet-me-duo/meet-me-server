@@ -14,10 +14,20 @@ The hooks do not modify files or send data outside the repository. The TDD
 guard reads only Git's changed-file lists and captures Gradle output. It prints
 the tail of that output only when the quality gate fails.
 
-Production Kotlin RED evidence is split between a Git-tracked summary under
-`.tdd/red/` and a local-only raw log under `.codex/tdd-evidence/`. The schema,
-creation steps, invalidation rules, and retention policy are documented in
+Production Kotlin RED evidence is recorded concisely in the PR/review with its
+exact revision and test hashes; raw logs stay local under `.codex/tdd-evidence/`.
+Create temporary JSON only when a tool consumes it, keep it in that ignored
+directory, and remove it after verification and handoff. The schema,
+invalidation rules, and retention policy are documented in
 [`../.tdd/README.md`](../.tdd/README.md).
+
+The unchanged commit guard also discovers `test_temporary_artifact_lifecycle.py`.
+It rejects indexed or non-ignored work-item outputs in retired evidence and
+handoff locations. Stage intended deletions before the check; removing a file
+only from the working tree must not leave it in the next commit.
+Schemas, reusable fixtures, and the explicitly retained
+recovery/failure evidence are preserved. The FI contract example lives in
+`hooks/tests/fixtures/fault-injection-example.json` rather than historical results.
 
 After cloning or changing the hook definition, open `/hooks` in Codex, review
 the project-local hook, and trust its current definition. Codex skips untrusted

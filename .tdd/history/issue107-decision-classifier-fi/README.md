@@ -1,7 +1,0 @@
-# Independent Decisions classifier fault injection
-
-Standard Gradle project sources/wrapper/build configuration and main/resources were copied to the recorded temporary directory, together with only the unchanged classifier5 and legacy Gemini3 test files. No original repository file was mutated. No secrets, .env, original build output or Git metadata were copied. Full production compilation used the copied main sources and shared Gradle dependency cache. Every Gradle call was serialized by `/tmp/meetme-gradle.lock`.
-
-The copied126-test baseline passed, all six intentional faults produced assertion failures (no compilation/setup failures), each copied production mutation was restored byte-for-byte, and the unchanged126 tests passed again. Original classifier source/test hashes were checked throughout. Exact patches and outcome/hash manifest are retained here; raw logs/XML/original-source copies remain local under `.codex/tdd-evidence/issue107-decision-fi/`. The canonical seven-field record is `../../verification/issue107-decision-classifier-fi.json`. These are post-implementation fault injections, not additional chronological RED claims.
-
-External/paid model calls0. Canonical endpoint tests intercept before sockets; all HTTP exchanges are literal loopback. Confidence quality, semantic model accuracy, real API access, token billing equivalence and actual latency/cost remain unmeasured. Root owns unrestricted final quality gates and publication.

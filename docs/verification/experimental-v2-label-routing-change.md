@@ -30,7 +30,7 @@ confidence/확률 보존은 기존 결과 객체와 실험 관측에 해당한�
 - 의도적 결함3개를 각53개 버전에서 검증해 전부 탐지했다: V2 confidence 덮어쓰기 복원8실패, 최초 INDETERMINATE 생성 생략5실패, 답변 후 추가 생성 허용3실패. 컴파일 오류·skip은 없었고 각 단계 원본 SHA를 복원했다. 이후 추가한 physical10개와 FI의 과거53개 지문을 혼동하지 않는다.
 - 모델 키와 paid mode를 회귀 child 환경에서 제거했다. 실제 공급자 모델 호출0. 독립 최종 source/문서/physical 테스트 검토에서 P1/P2가 없었다.
 
-증거는 `.tdd/red/issue107-v2-label-routing.json`, `.tdd/verification/issue107-v2-label-routing.json`, `local-only-evidence/label-routing-preparation-20261030`이다. 제품 코드 변경은 src/main 아래 Kotlin 두 파일의 로컬 작업 트리에 있으며 HEAD는 기존 b4b3a8c54938b1f28dd4f1cd782a7333971ce24a다. 새 commit/push/PR/merge/deploy는 없다.
+증거는 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue107-v2-label-routing.json`, `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue107-v2-label-routing.json`, `local-only-evidence/label-routing-preparation-20261030`이다. 제품 코드 변경은 src/main 아래 Kotlin 두 파일의 로컬 작업 트리에 있으며 HEAD는 기존 b4b3a8c54938b1f28dd4f1cd782a7333971ce24a다. 새 commit/push/PR/merge/deploy는 없다.
 
 기존 p2 실제 진단의 source/compiled2676파일은 변경 전에 별도 archive로 보존했다. 기존 결과·manifest·모델 응답·봉인 자료는 수정하지 않았다. 과거 유료 결과를 새 라우팅이 실모델로 통과한 증거로 재사용하지 않는다. 최종 Luna timeout 등 이전 기술 실패의 해결이나 전체 흐름 실모델 성공을 이번 무료 변경으로 주장하지 않는다.
 

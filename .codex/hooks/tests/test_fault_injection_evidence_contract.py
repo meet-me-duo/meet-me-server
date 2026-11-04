@@ -8,11 +8,11 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).parents[3]
 SCHEMA_PATH = REPO_ROOT / ".tdd" / "schema" / "fault-injection-evidence.schema.json"
-EVIDENCE_PATH = REPO_ROOT / ".tdd" / "verification" / "issue-10-persistence.json"
+EVIDENCE_PATH = Path(__file__).parent / "fixtures" / "fault-injection-example.json"
 
 
 class FaultInjectionEvidenceContractTest(unittest.TestCase):
-    def test_schema_and_issue_10_summary_are_well_formed(self) -> None:
+    def test_schema_and_example_summary_are_well_formed(self) -> None:
         schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         evidence = json.loads(EVIDENCE_PATH.read_text(encoding="utf-8"))
 

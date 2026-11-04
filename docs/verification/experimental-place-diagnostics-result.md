@@ -49,7 +49,7 @@
 - 명시적 HOST 검사 한 층만 제거한 경우는 기존 ownership resolver가 독립적으로 거부해 테스트가 통과했다. 이를 실제 권한 우회를 놓친 것으로 해석하지 않는다.
 - 인위적인 Elvis-null 변이는 Kotlin 컴파일러 코드 생성 오류로 test에 도달하지 못해 무효다. 이전 XML을 그 실행의 실패 근거로 사용하지 않도록 정정했고, 컴파일 가능한 사유 누락 변이로 다시 확인했다.
 
-각 변이는 `finally`에서 원래 소스 바이트를 복원하고 지문 불변을 확인했다. 테스트 입력·기대조건은 약화하지 않았다. 최종 테스트 지문은 `e7a03910e3becae7f80955c9e1ec198ddfa00f4a6c140a818ce65839e1ef6121`이며 최종 형식 기준 RED를 `.tdd/red/issue107-place-diagnostics.json`에 기록했다.
+각 변이는 `finally`에서 원래 소스 바이트를 복원하고 지문 불변을 확인했다. 테스트 입력·기대조건은 약화하지 않았다. 최종 테스트 지문은 `e7a03910e3becae7f80955c9e1ec198ddfa00f4a6c140a818ce65839e1ef6121`이며 최종 형식 기준 RED를 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue107-place-diagnostics.json`에 기록했다.
 
 ## 전체 회귀와 테스트 환경 수정의 구분
 
@@ -77,4 +77,4 @@
 
 **마지막 단일 전체 회귀는 2609건 중 2591PASS/1FAIL/17SKIP 상태로 보존한다.** 이후 영향 검사5개는 통과했지만 최종 단일 전체 녹색 실행을 확인한 것은 아니다. 남은 검증은 전체 실행의 불완료 원인 분리·향후 통합 전 최종 전체 회귀, 실시간 공급자/독립 봉인 평가다. 실제 보행 충족·장소 미검증 후보 허용·장소 필수 조건 없는 참여자의 취급은 별도 정책/지원 범위이며 이번에는 구현하지 않았다.
 
-새 외부 공급자 API 요청0, 봉인 내용 파싱/열람·모델 전송0, 게시/PR·병합·운영 배포0이다. 무료 preflight의 봉인 파일 지문 확인은 내용 평가와 구분한다. 재생 usage는 과거 응답의 값이며 신규 유료 사용량이 아니다. 증거: `.tdd/verification/issue107-place-diagnostics.json`과 준비 폴더의 `final-verification.json`·`final-scoped-source-checkpoint.json`·실행별 로그/XML/요약. 추가 검사나 유료 호출 없이 결과 보고로 종료한다.
+새 외부 공급자 API 요청0, 봉인 내용 파싱/열람·모델 전송0, 게시/PR·병합·운영 배포0이다. 무료 preflight의 봉인 파일 지문 확인은 내용 평가와 구분한다. 재생 usage는 과거 응답의 값이며 신규 유료 사용량이 아니다. 증거: `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue107-place-diagnostics.json`과 준비 폴더의 `final-verification.json`·`final-scoped-source-checkpoint.json`·실행별 로그/XML/요약. 추가 검사나 유료 호출 없이 결과 보고로 종료한다.

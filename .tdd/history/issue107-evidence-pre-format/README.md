@@ -1,1 +1,0 @@
-This preserves executed pre-format RED fingerprints and the original command. Current-byte intentional-fault RED summaries are `.tdd/red/issue107-evidence-current-*.json`; their raw logs remain local in `.codex/tdd-evidence`. No old execution is claimed to have run formatted test bytes.

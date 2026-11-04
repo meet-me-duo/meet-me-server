@@ -1,3 +1,22 @@
+## 2026-11-04 현재 작업 — 임시 검증 산출물 정리와 재생성 방지
+
+- [x] `[USER]` 삭제 가능한 파일 정리, 필요한 임시 산출물의 생성·사용·정리, 불필요한 생성 방지를 승인했다. 로컬 검증 완료 후 커밋·원격 브랜치 push·Issue·develop 대상 Draft PR 게시와 정확 head의 CI 확인도 명시적으로 승인했다. 병합·운영 배포는 승인 범위에 포함하지 않는다.
+- [x] `[AGENT]` 원격 main `d3391fbf7eb2de7f9c617c0dcd90cd685b6cc86f`와 파일 내용이 같은 develop `780b144d4355b41d2b21eeb109252a8fc84abc33`을 ff-only로 동기화하고 `chore/temporary-artifact-lifecycle`을 만들었다. 최초 Issue 생성은 당시 로컬 전용 권한 밖의 게시라는 자동 승인 검토 사유로 거절돼 미실행이었다. 새 명시적 게시 승인 후 원격 브랜치·PR·Issue 중복 부재와 동일 develop SHA를 재확인하고 1회 재시도로 [Issue #206](https://github.com/meet-me-duo/meet-me-server/issues/206)을 생성했다.
+- [x] `[AGENT]` `.tdd` 역사 사본491개·이전 검증 기록과 handoff5개·과거 OpenAPI/검증 JSON18개·일회성 FI runner2개를 포함해 기존 경로984개를 정리했다(실제 삭제983개·FI 예제 이동1개). 이 중 FI 계약 예제1개는 새 테스트 fixture로 원래 바이트 그대로 옮겼다. 과거 원본은 정리 전 정확 Git revision에 남기고 현재 Markdown 링크44개 대상을 그 revision으로 연결했다. source/test 지문이나 실패 결과를 현재 값으로 고쳐 쓰지 않았다.
+- [x] `[AGENT]` #190·#192 운영 복구/실패 보존 요청과 연결된 증거3개 및 스키마2개를 보존했다. #197·#201은 PR #198/#200/#202/#204의 병합 SHA와 main 배포 [41586238794](https://github.com/meet-me-duo/meet-me-server/actions/runs/41586238794)·[41751675850](https://github.com/meet-me-duo/meet-me-server/actions/runs/41751675850)의 정확 SHA·최종 runtime/DB/API/복원 증명 성공을 원격에서 대조해 관련13개를 추가 정리했다. `.tdd`는967→7개, issue 접두 JSON은514→14개다. 제품 소스·재사용 배포/검증 도구·CI·기존 commit guard·스키마 등 보호 대상821개는 원래 바이트와 동일하며 운영설정과 Web은 변경하지 않았다.
+- [x] `[AGENT]` 지침을 실제 소비자에 필요한 임시 파일만 ignored 경로에서 만들고 성공·실패 후 자신의 임시 자원을 정리하는 수명주기로 통일했다. 짧은 RED/FI·독립 검토 근거는 PR/리뷰와 정확 revision으로 남기며 검증 의무는 유지한다. 새 파일 누적을 막는 hook 자체 테스트를 추가했고 기존 guard/CI 명령·단언·권한·timeout은 줄이지 않았다.
+- [x] `[AGENT]` hook13·격리 수명주기13·CI/이미지 source 계약31 PASS, 삭제로 인한 Markdown 링크 누락0, pinned Git 대상44개 존재, FI 예제 bytes 동일, `git diff --check` PASS다. 격리 검사는 `TemporaryDirectory`에서 새 산출물6종 차단과 ignored 경로/영구 fixture5종 허용, index에 남은 파일의 미stage 삭제 차단·stage 삭제 허용2종을 검증하고 자동 정리했다.
+- [x] `[AGENT]` 별도 읽기 전용 독립 검토와 배포 완료 근거 반영 후 재검토에서 P1/P2 지적0을 확인했다. 삭제 경로의 현재 실행 소비자 부재, FI 예제의 원래 바이트·기존 단언, index 차단과 ignored 임시 경로 허용, 운영 실패 증거3개 보존 의무를 확인했다.
+- [x] `[AGENT]` 공식 checksum을 확인한 임시 JDK17·writable Gradle cache·프로세스 전용 proxy로 원래 `ktlintCheck assemble test`를 끝까지 실행했다. ktlintCheck·assemble PASS, 전체351 suites/2727개 중2708 PASS·2 FAIL·기존17 SKIP·오류0,44분51초,exit1이다. 수정하지 않은 `StandaloneGeminiOnceContractTest`의30초 경과시간 범위(98행)와 body-stall HTTP status200/null(110행) assertion이 실패했다. 원본 전체 XML/binary 결과를 별도 보존했고 단언·timeout·skip을 바꾸지 않았다.
+- [x] `[AGENT]` 전체 실행 종료 후 source/class bytes를 그대로 둔 해당 HTTP2 테스트 클래스만 offline 집중 실행했다. 9개 PASS·실패/오류/skip0,exit0,1분19초다. 집중 성공을 전체 실행의 성공으로 합산하거나 원래 실패를 덮어쓰지 않는다. 환경/실행 조건 영향 가능성은 있으나 원인은 확정하지 않는다. 최초 wrapper의 home cache 권한과 직접 DNS 실패는 실행 전 설정 실패로 구분하며 저장소 설정은 바꾸지 않았다.
+- [x] `[AGENT]` 원본 실패 증거를 보존한 후 선행 `SavedLunaReplayTest`와 HTTP2 클래스의 격리 대조는2 suites/10 PASS였다. 최초 전체 실행의 닫힌 DB 연결·종료된 event-loop 경고는 자원 수명 불일치 가능성을 보여 주지만 대조 실행에서도 일부 경고와 함께 성공했으므로 최초 실패의 정확한 원인은 확정하지 않는다.
+- [x] `[AGENT]` 필터 없는 `ktlintCheck assemble test --rerun`을 2026-11-04 03:14 UTC부터1회 관측 재실행했다. 테스트는 실제 전체 실행됐고351 suites/2727개 중2710 PASS·실패/오류0·기존과 동일한17 SKIP,exit0,32분36초다. ktlintCheck·assemble은 동일 입력으로 UP-TO-DATE였다. 관측은 실패 임시 디렉터리 보존과 GC/스케줄링 기록뿐이며 제품 코드·테스트 단언·timeout·skip·guard는 변경하지 않았다. 기존 실행의 일시적인 제어 연결 장애 후 같은 PID의 진행·종료를 확인했고 중복 실행하지 않았다. 임시 init은 소비 후 제거됐으며 관련 PID와 실행 중 컨테이너는0개다.
+- [x] `[AGENT]` 승인 전 staged 패치 SHA-256 `83dedfe2610732de73e83abbceb49305c00ed6aca22b76be2d92beba0d6890ef`와 복구 ZIP, 최종 검증 요약을 Library에 별도로 보존했다. ZIP SHA-256은 `2b3e0b9484ac967f239e365edb58a98d06c89cb05ca69483dbe8617cf36e96d5`, 요약 SHA-256은 `453bd4c25554e8224b43b50ad5c44d8e58db197b32dfe9baebfe116b1bf17232`다. 원본 로그·비밀값은 첨부하지 않았다. 이번 게시 기록 갱신 전 보호 대상822개를 확장 대조해 바이트 동일·unstaged 변경0을 재확인했다.
+- [x] `[AGENT]` 게시 승인 후 원본 `.codex/hooks/tdd_guard.py`를2026-11-04 04:07:42 UTC부터 실행했다. hook 자체 검사와 원래 `ktlintCheck assemble test`가 exit0,30분59초로 끝났고351 suites/2727개 중2710 PASS·실패/오류0·기존17 SKIP이다. 실행 중 staged 패치 SHA-256 `ea56011f68480ea98ea1d73f2f5e5204e95af2a42b4d6ab97df9b21f44e22fd7`는 그대로 유지됐다. 이후 이 진행 결과만 기록했다.
+- [ ] `[AGENT]` 검증된 변경을 커밋·push한 뒤 develop 대상 Draft PR과 정확 최종 head의 Quality Gate·Deployment Contracts·ARM64 Built Image 및 Issue Link 결과를 확인한다.
+
+현재 단계: 로컬 정리·독립 재검토 P1/P2 0·필터 없는 전체 재실행과 게시 전 원본 commit guard 모두2710 PASS/0 FAIL/기존17 SKIP, 별도 Library 보존 완료. 최초 전체2 FAIL과 집중9 PASS·선행 대조10 PASS는 별도 결과로 유지한다. 사용자가 승인한 커밋·push·Draft PR·CI 확인을 진행하며 병합·운영 배포는 하지 않는다. 최종 갱신: 2026-11-04 UTC. Commit/PR: 동일 커밋 예정 / 게시 후 정확 head CI 확인.
+
 ## 2026-11-03 현재 작업 — Issue #201 상세 자동 정리 기준 시각
 
 - [x] `[AGENT]` 최신 develop `d4cfe518d8ddf7174ec16223938c39720c93ca3d`을 ff-only로 확인하고 [Issue #201](https://github.com/meet-me-duo/meet-me-server/issues/201) 및 `feature/201-room-response-expiry`를 준비했다. 최초 Issue 생성은 승인 검토에서 실행 전 거부됐으나 최초 사용자 요청의 명시 Issue 허가가 추가 전달되어 미생성 확인 후 한 번 재시도하여 생성했다.
@@ -356,7 +375,7 @@
 - [x] `[AGENT]` 최신 main `84324bb11afd7b69316b151c580b90f3c8729b4d`를 확인하고 별도 `feature/account-room-history` 브랜치를 만들었다. 초기 로컬 구현 단계에서는 원격 Issue/PR 생성·게시와 develop/main 병합·운영 배포를 하지 않았고 기존 AI·리뷰 통합 이력과 운영 전환 설정을 보존했다.
 - [x] `[AGENT]` 사용자 확정: 주최·참여 전체 기본, HOST/MEMBER 필터, 모임 생성일 기준 KST 기간, 모임 이름 검색, 기존 30일 보관·삭제 유지. CLOSED는 마감 시각, COLLECTING은 생성 시각 기준이며 삭제 경계를 모두 생성일로 변경하지 않는다.
 - [x] `[AGENT]` 파라미터·역할·KST 경계·커서·30일 경계를 [API 계약](docs/ACCOUNT_ROOM_HISTORY_API.md)에 정리했다. 계정 조건·명시 claim·게스트 비자동귀속·CSRF 계약을 유지한다.
-- [x] `[AGENT]` 독립 HTTP/PostgreSQL 새 8개는 요구사항 단언 실패 RED, 기존 소유권 17개는 PASS(오류·skip 0)를 확인했다. 테스트 지문과 source revision을 `.tdd/red/account-room-history.json`, 원본을 로컬 `.codex/tdd-evidence/account-room-history.log`에 보존했다. 이후 port/service/JDBC/controller와 Swagger를 확장해 새 8+기존 17+no-store 1=26개 GREEN을 확인했다.
+- [x] `[AGENT]` 독립 HTTP/PostgreSQL 새 8개는 요구사항 단언 실패 RED, 기존 소유권 17개는 PASS(오류·skip 0)를 확인했다. 테스트 지문과 source revision을 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/account-room-history.json`, 원본을 로컬 `.codex/tdd-evidence/account-room-history.log`에 보존했다. 이후 port/service/JDBC/controller와 Swagger를 확장해 새 8+기존 17+no-store 1=26개 GREEN을 확인했다.
 - [x] `[AGENT]` 독립 검토 P1/P2=0. 계정 조건 우회·CLOSED 30일 경계 제외·같은 시각 UUID 커서 반전 3종을 모두 단언으로 탐지하고 매회 정확 복원 뒤 새 8개를 통과했다. RED 테스트와 생산 코드 지문은 동일하며 요약 JSON 스키마도 통과했다.
 - [x] `[AGENT]` JDK17/Gradle9.7.1의 `ktlintCheck assemble test` exit0. 264 suites / 2244 tests 중 2240 PASS·기존4 SKIP·실패/오류0이며 원본 로그와 XML을 로컬 보존했다. 실제 생성 OpenAPI의 query 타입·기본값·역할 enum·날짜·nullable 커서·오류 응답도 통과했고 source/test 지문이 동일하다. [검증 기록](docs/verification/account-room-history-20261028.md)에 결과와 미확인 범위를 구분했다.
 - [x] `[AGENT]` 열린 이슈·PR을 먼저 확인해 중복 기능이 없음을 확인하고 추적 [이슈151](https://github.com/meet-me-duo/meet-me-server/issues/151)을 생성했다. native OpenAPI를 `docs/openapi/account-room-history.openapi.json`에 동일 바이트로 포함했다. DB migration·스키마·release catalog·배포 guard·권한/보존 설정 변경0이다.
@@ -550,9 +569,9 @@
 - 사용자 D1/D2 승인 완료: CLEAR 뒤 완료 집계·시각/수동 마감의 마지막 accepted 동결, pending 수정은 이전 accepted·최초 미확인/미응답은 결과 미반영, 마감 연장0.
 - [x] [AGENT] 6개 PR 정확SHA/공통조상/중복patch-id·실제pairwise충돌·마감113 흡수/fixture회귀·개발배포경계 독립 조사
 - [x] [AGENT] PR115 exact c06b60a를 서버 develop에 일반merge: 59e39bea8db58e17de119be353cb673fb68d9d98. tree는원래검증HEAD와동일. 첫자동검토거절후최신명시승인의동일HEAD1회재시도로성공,우회0
-- [x] [AGENT] PR115 mergeSHA59e39bea의 pushCI39057006651 SUCCESS 및 두 job 실제 checkout SHA 로그 확인 (`docs/verification/issue-115-develop-merge-ci.json`)
+- [x] [AGENT] PR115 mergeSHA59e39bea의 pushCI39057006651 SUCCESS 및 두 job 실제 checkout SHA 로그 확인 (`https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/docs/verification/issue-115-develop-merge-ci.json`)
 - [x] [AGENT] PR118 exactbd881862 일반merge→9ec4c6ce7381c9fb2594f98a2112e0cc22b988f9, 원본HEAD tree동일
-- [x] [AGENT] PR118 실제mergeSHA9ec4c6ce의 pushCI39058071664 SUCCESS·두job checkout로그 확인 (`docs/verification/issue-118-develop-merge-ci.json`)
+- [x] [AGENT] PR118 실제mergeSHA9ec4c6ce의 pushCI39058071664 SUCCESS·두job checkout로그 확인 (`https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/docs/verification/issue-118-develop-merge-ci.json`)
 - [x] [AGENT] 기존107/108/109/110 내용 통합+새check 독립TDD·합성provider/실제PG/proof/browser 구현
 - [x] [AGENT] unchanged mandatoryguard 전체1197(1193PASS/기존skip4), provider18, 웹unit620/전체browser425PASS·기존skip1, 최종actualnative12PASS
 - [x] [AGENT] 독립coreFI6/각복구·provider경계5+NUL1·웹11종, 형식변경backend7/provider13 유효assertion 사후RED와원복GREEN·원본chronology구분
@@ -598,7 +617,7 @@
 - `[AGENT]` Linux catalog/Nginx32와 Windows 실제 Git approval7 PASS. Nginx 실제 로컬 HTTP 투영에서 callback502 두 건과 사전 location 파싱400의 code/state 미노출을 확인했다(TLS·운영 검증 아님). 메모리 연동 결함2, catalog/log 결함3, 인증 상태 결함1을 assertion으로 검출하고 원본과 테스트 지문을 복원했다. 기존 단독 transport 변이 기록과 합산하지 않는다.
 - `[AGENT]` 첫 전체888개 실행은 고정 마이그레이션 기대값3건과 미구성 인증 대역1건으로4실패/오류0/기존skip4였다. UTF-8/CP949 출력 오류도 별도로 보존했다. 독립 작성자가 기존 보존/인가 assertion을 유지해 정정했으며 수정 전 bytes·SHA·실패 XML은 `.tdd/history/issue-110-full-gate-contract-reconciliation`에 기록했다. 수정 후 대상20개+ktlintCheck PASS, 전체 원본 commit guard 재검증은 진행 중이다.
 - `[SHARED]` #107+#109 PR117/웹PR28, #108과의 중앙 통합은 이 단위에 포함하지 않는다. V11=109/V12=108/V13=107/V14·15=110이며 현재 strict catalog는12·13을 의도적으로 거부한다. 실제 파일·checksum·history·approval fingerprint를 함께 확장해야 한다. 상세 인계는 `https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/ISSUE_110_HANDOFF.md`를 따른다.
-- `[AGENT]` 정정 후 원본 commit guard(수정 없음)가 17:36:05–17:43:54 UTC exit0으로 통과했다. fresh150 suite/888개 중884 PASS/기존skip4/실패0/오류0이며 이전 실패 실행을 합산하지 않는다. hook self-test·ktlintCheck·assemble·test를 실행했고, 증거·189 source raw/LF 지문·초기 frozen 테스트2개 유지·이전 실패 분류는 `docs/verification/issue-110-integration-final.json`에 봉인했다. 서버 게시 HEAD CI는 다음 단계이며 운영 접근/설정 변경은 없다.
+- `[AGENT]` 정정 후 원본 commit guard(수정 없음)가 17:36:05–17:43:54 UTC exit0으로 통과했다. fresh150 suite/888개 중884 PASS/기존skip4/실패0/오류0이며 이전 실패 실행을 합산하지 않는다. hook self-test·ktlintCheck·assemble·test를 실행했고, 증거·189 source raw/LF 지문·초기 frozen 테스트2개 유지·이전 실패 분류는 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/docs/verification/issue-110-integration-final.json`에 봉인했다. 서버 게시 HEAD CI는 다음 단계이며 운영 접근/설정 변경은 없다.
 
 - `[USER]` 이 세션은 #110만 맡으며 내부 세부 결정은 dot에 위임됐다. 서버·웹 전체 구현, 합성/로컬 테스트와 독립 리뷰를 진행한다. push·병합·운영 설정·배포와 실제 운영자 등록은 별도 승인 전 실행하지 않는다. 전용 goal 도구는 없어 이 기록과 실행 계획으로 완료 기준을 관리한다.
 - `[USER]` 확정 정책은 일반 HOST·회원·게스트와 분리된 명시적 운영자 allowlist, 기본 접근 거부, 원문·응답·비밀정보 없는 요약, 접근 감사다. 감사 보존기간은 구성 가능하며 초기 목표는 30일이다. 실제 계정 지정과 실제 보존 설정 적용은 외부 적용 전에 확인한다. 기존 방 데이터 30일 정책은 바꾸지 않는다.
@@ -613,7 +632,7 @@
 
 - `[AGENT]` #107~#110과 웹 #22를 실제 조회했다. 웹 #22 핵심 흐름은 현재 웹 main에 반영돼 있으며, 서버는 develop `3232128`에서 분기한 별도 작업 복사본 `feature/110-analysis-observation-summary`를 사용한다. 기존 저장소의 미커밋 변경은 보존한다.
 - `[AGENT]` 이번 단위는 내부 계측에 한정한다. 승인된 시도와 파서 dispatch를 분리하고, provider별 token·비용의 known/unknown 확인 범위를 기록한다. 파서 dispatch를 실제 HTTP 또는 청구된 호출 수로 간주하지 않는다. 기존 Gemini 배치 비용은 모든 dispatch의 Gemini 비용이 확인된 경우에만 전체 합계로 전달한다.
-- [x] `[AGENT]` 구현자와 분리된 테스트 설계 및 유효한 RED 증거: 새 15개 중 누락 동작 14개 실패, 허용 필드 경계 1개 통과. `.tdd/red/issue-110-analysis-observation.json`과 로컬 제외 로그에 보존했다.
+- [x] `[AGENT]` 구현자와 분리된 테스트 설계 및 유효한 RED 증거: 새 15개 중 누락 동작 14개 실패, 허용 필드 경계 1개 통과. `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue-110-analysis-observation.json`과 로컬 제외 로그에 보존했다.
 - [x] `[AGENT]` 최소 구현과 대상 테스트 GREEN: 새 15개와 기존 Gemini 처리 3개, 합계 18개 PASS/실패 0/스킵 0. 독립 정적 리뷰에서 차단 결함이 발견되지 않았다.
 - [x] `[AGENT]` 최종 `--offline --no-daemon ktlintCheck assemble test` Gradle exit 0/8m39s. 전체 113 suite/678 test 중 674 PASS/기존 opt-in skip 4/실패 0/오류 0이다. 첫 실행의 연결 단절 및 부분 77개 결과는 별도 보존했고 전체 통과로 집계하지 않았다. 종료 후 보조 실행기의 CP949 콘솔 출력 오류는 저장된 Gradle exit 0·성공 로그·완료 XML과 분리 확인했다.
 - [x] `[AGENT]` 고의 결함 3종을 assertion으로 탐지하고 제품 원본 바이트·테스트 지문을 복원·유지했다. 독립 최종 리뷰가 전체 XML 113개·로그·지문·스킵 조건과 `SubmissionService.kt`의 기준 커밋 동일성을 확인했으며 차단 결함은 없다. 근거는 `https://github.com/meet-me-duo/meet-me-server/blob/89d4e0d193aa1a5018f3e62168654e34b607f032/docs/verification/issue-110-local.md`와 작업 복사본 상위 `verification/issue-110-final-evidence.json`, `issue-110-independent-review.md`에 보존했다. 공유 Docker 엔진 재시작·종료·전체 컨테이너 정리와 원격 쓰기는 없다.
@@ -807,7 +826,7 @@
 - **결과 요약:** 반복 조건은 예외 날짜 수가 실제 가능 날짜 수보다 적을 때만 `패턴 + 모든 예외`로 압축한다. 명시 날짜는 날짜별 시간 구간 목록이 같으면 연속 범위를 `매일`, 비연속 날짜를 `·`, 한 날짜 복수 시간을 `또는`으로 손실 없이 묶는다.
 - **시간 입력:** 제출 MVP는 ECMAScript trim 후 필수 자연어만 저장한다. 수동 요청은 생략·[]·null shim만 허용하며 nonempty 배열은 400과 새로고침·자연어 재입력을 안내한다. 수동 응답은 deprecated 항상 []다. legacy 슬롯 전용은 빈 가능 구간·미반영이며 원본·배치·인원·저장 결과는 보존한다. 내부 수동 호환 인자는 계산에 사용하지 않는다. Calendar는 Post-MVP다.
 - **GitHub:** 초기 구성 PR #1과 국제화 기반 PR #3이 `develop`에 병합되었다. 기본 브랜치가 `main`이므로 PR #3의 `Closes #2`는 GitHub 기본 기능에서 무시되어 Issue #2를 수동 종료했다. 이후 `develop` 병합은 프로젝트 Action이 연결 Issue를 종료한다.
-- **현재 작업:** `feature/83-natural-language-only-submission`의 커밋 준비 단계다. origin fetch 후 origin/develop은 기준 `ab7917e048fab75868c2be2417785facc1c29a4a`와 동일하며 origin/main은 병합 이력 16개 앞서지만 파일 차이는 없다. 기존 feature PR은 없다. 다음 동작은 의도한 변경만 stage→commit guard→commit→push→develop 대상 draft PR→Linux CI 확인이다. 검증 증거는 `.tdd/verification/issue-83-natural-language-only.json`을 따른다.
+- **현재 작업:** `feature/83-natural-language-only-submission`의 커밋 준비 단계다. origin fetch 후 origin/develop은 기준 `ab7917e048fab75868c2be2417785facc1c29a4a`와 동일하며 origin/main은 병합 이력 16개 앞서지만 파일 차이는 없다. 기존 feature PR은 없다. 다음 동작은 의도한 변경만 stage→commit guard→commit→push→develop 대상 draft PR→Linux CI 확인이다. 검증 증거는 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue-83-natural-language-only.json`을 따른다.
 
 ## 자연어 조건 제출 통일 — Issue #83
 
@@ -1658,7 +1677,7 @@
 ### 최종 로컬 검증·출판 인계
 
 - `.codex/hooks/tdd_guard.py`에 synthetic PreToolUse `git commit --dry-run` 이벤트를 입력해 실제 commit 없이 전체 게이트를 실행했다. hook exit 0, `ktlintCheck`·`assemble`·`test` 성공, 총329/실패0/errors0/skip2를 실제 XML에서 집계하고 `.codex/tdd-evidence/candidate-final-verification.json`과 보존 XML에 기록했다. skip은 기존 opt-in OpenAPI export와 새 opt-in 실제 Gemini probe이며, 각각 별도 실행에서 성공했다. 원격 Linux CI와 브라우저 E2E는 실행하지 않았다.
-- 최종 결함 주입은 summary baseline 복원5, unsafe-time guard 제거3, prompt baseline 복원4, mixed-pattern guard 제거2개의 assertion 실패를 탐지했다. 소스는 각 실행의 finally에서 원래 바이트로 복구하고 `.tdd/verification/candidate-semantics.json`의 source3/test4 지문을 모두 대조했다. 독립 리뷰의 blocking 지적은 모두 해소됐다.
+- 최종 결함 주입은 summary baseline 복원5, unsafe-time guard 제거3, prompt baseline 복원4, mixed-pattern guard 제거2개의 assertion 실패를 탐지했다. 소스는 각 실행의 finally에서 원래 바이트로 복구하고 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/candidate-semantics.json`의 source3/test4 지문을 모두 대조했다. 독립 리뷰의 blocking 지적은 모두 해소됐다.
 - 실제 OpenAPI 생성 검증은 `UnappliedInputResponse.reason`의 type=string·enum없음을 확인했다. 기존 웹 `openapi/meet-me.openapi.json`과 생성 JSON 전체를 파싱해 비교한 결과 동일, 차이 경로0이었다. 생성 바이트 SHA는 `697bf2aa065b57d480308dc1dc5f530f180ed817d43693b8092f129f9815daf2`이며 비교한 snapshot과 직렬화 바이트만 달랐다.
 - 로컬 전용 PR 제목/본문은 `.codex/tdd-evidence/candidate-pr-draft.md`, 게시·CI·배포 선행조건/차단범위/신규reason 한국어 안내와 합성 응답은 `.codex/tdd-evidence/candidate-deployment-handoff.md`에 남겼다. 실제 열린 Issue가 없으므로 가짜 `Closes` 번호를 만들거나 PR을 게시하지 않았다.
 - 자동 승인 검토는 GitHub Issue 생성을 현재 실행 스레드의 신뢰 가능한 직접 승인 부재·최초 원격 게시 금지를 이유로 거절했다. 부모의 이후 지시대로 원격 승인 재시도와 다른 게시 경로 우회는 하지 않는다. 로컬 검증 완료와 원격 게시/배포 완료를 구분한다.
@@ -1714,11 +1733,11 @@
 
 - 사용자 후속 요구와 독립 아키텍처 검토에 따라 `KoreanTimeContextResolver`와 adapter 원문 semantic gate를 제거했다. 유효한 provider SUCCESS의 시간·장소를 보존하고 AMBIGUOUS를 합성 성공으로 복구하지 않는다. Prompt는 일반 부모/자식 시각과 AVAILABLE union minus UNAVAILABLE, immutable reference_date를 안내한다. API·모델·SDK·재시도 설정은 변경하지 않는다.
 - 독립 신규 authority15개는 기존 `20bd3b4` 코드에서 컴파일 후 예상 assertion7개 RED를 확인했다. 기존37개를 행별 검토해 raw lexical 기대18개를 대체했고 구조/provider14개와 기준일5개를 보존했다. 기준일의 성공 pipeline은 명시적 provider SUCCESS fixture로 바꾸고 정확한 five-window 기대값은 유지했다. 변경된 테스트의 34개 migration 묶음도 기존 코드를 복원해 assertion7개 RED를 재확인한 뒤 지문을 고정했다. 원문 로그는 ignored `.codex/tdd-evidence/`에만 있다.
-- 이전7RED·6결함 근거를 `.tdd/history/issue-91-lexical-f70536e/`로 바이트 그대로 옮기고 `.tdd/supersessions/issue-91-llm-boundary.json`에 대체 사유와 보존 본문 지문을 기록했다. 이전 커밋과 성공366건은 당시 제한 문법 계약의 이력이며 새 설계의 검증 근거로 재사용하지 않는다. 원문 행 보존의 기존 prompt 계약은 테스트 바이트가 같아 해당 RED 근거를 활성 트리에도 그대로 유지한다.
+- 이전7RED·6결함 근거를 `.tdd/history/issue-91-lexical-f70536e/`로 바이트 그대로 옮기고 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/supersessions/issue-91-llm-boundary.json`에 대체 사유와 보존 본문 지문을 기록했다. 이전 커밋과 성공366건은 당시 제한 문법 계약의 이력이며 새 설계의 검증 근거로 재사용하지 않는다. 원문 행 보존의 기존 prompt 계약은 테스트 바이트가 같아 해당 RED 근거를 활성 트리에도 그대로 유지한다.
 - 추가 실제 평가5사례는 실제 응답 관측 전에 독립 작성자가 고정했다. 평일6–9/7–10·주말1–6·명시AM부모·독립안양역의 정확한 구간·참가자·COMPLETE·요약을 유지하며 모델 결과에 맞춰 변경하지 않는다. 공급자 호출은 별도 부모 지정 평가 작업만 수행한다. 구현 작업의 실제 호출은0이다.
 - #92 서버 production과 웹 #17 연결은 별도 worktree와 담당자로 병렬 진행한다. 실제 OpenAPI 생성과 서버 Gradle은 공유 캐시 충돌을 피하도록 root가 순차 실행한다. 새로운 분석 라운드와 비용 상한은 별도 계약이며 모델 의미 미리보기 API를 추정하여 구현하지 않는다.
 
-- 새 경계 최종 검증: authority15+보존provider14+reference5가 GREEN이며 새 결함7개(lexical복귀,상수덮어쓰기,모호성성공변환,worker기준일,ref검증누락,날짜/요일검증누락,area명검증누락)를 모두 assertion으로 탐지했다. 실제 소스를 복구하고 독립 reviewer가 source3/test6/삭제resolver/archive8의 지문을 다시 확인했다. 리뷰 기록은 `.tdd/reviews/issue-91-provider-authority.json`, 새 결함 기록은 `.tdd/verification/issue-91-provider-authority.json`이다.
+- 새 경계 최종 검증: authority15+보존provider14+reference5가 GREEN이며 새 결함7개(lexical복귀,상수덮어쓰기,모호성성공변환,worker기준일,ref검증누락,날짜/요일검증누락,area명검증누락)를 모두 assertion으로 탐지했다. 실제 소스를 복구하고 독립 reviewer가 source3/test6/삭제resolver/archive8의 지문을 다시 확인했다. 리뷰 기록은 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/reviews/issue-91-provider-authority.json`, 새 결함 기록은 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue-91-provider-authority.json`이다.
 - 2026-10-07 01:57 UTC 변경하지 않은 mandatory tdd_guard는 exit0, ktlintCheck/assemble/test 모두 성공했다. XML62suite/369건/실패0/오류0/기존skip2다. 새6개 offline 공유원장 테스트가 잠금·누적25회/USD0.30·미정산예약·중복·정책변경을 검사한다. 기본25/확장30 dryrun은 모두 UNRUN/호출0, synthetic replay는 예상PASS1/foreignrefFAIL1/UNRUN28이며 실제 공급자 응답이나 새prompt 모델 정확성 근거가 아니다.
 - 최종 feature commit/push 및 Draft PR #93의 설명을 현재 LLM 중심 경계로 갱신한다. 커밋 해시는 Git 이력으로 추적한다. 실제 모델 평가의 input100k 예약 하드 상한은 아직 별도 확인이 필요하고 live 기본flagfalse다. 새 outputdir이 승인을 초기화하지 않도록 approvalID+sharedledgerdir를 필수로 하며 미정산 예약은 전체 비용을 유지한 채 중단한다. 실제 모델·운영 데이터·병합·배포 호출0. #92 생산 컴파일 성공과 웹 mock검증은 별도이며 실제 PostgreSQL 확장 경계/OpenAPI/native연결 최종gate는 미완료다.
 
@@ -1726,7 +1745,7 @@
 
 - [x] 별도 develop 기반 feature worktree와 #91 의존 commit 보존, 독립 설계 검토 및 보수적 계약 승인.
 - [x] ADR-046으로 CLOSED 불변·수정 cohort·명시적 분석·영속 멱등·활성 pointer·3회 논리 분석 한도 확정.
-- [x] 독립 PostgreSQL/HTTP/실제 잠금 테스트 17개 컴파일 후 missing reopen endpoint 404 assertion RED 확인·지문 고정 (`.tdd/red/issue-92-correction-round-compatibility.json`). 앞선 compile 오류는 RED에서 제외했다.
+- [x] 독립 PostgreSQL/HTTP/실제 잠금 테스트 17개 컴파일 후 missing reopen endpoint 404 assertion RED 확인·지문 고정 (`https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue-92-correction-round-compatibility.json`). 앞선 compile 오류는 RED에서 제외했다.
 - [x] immutable version 복원·migration·라운드 API·owner 수정·worker 활성 상태·확정 경쟁 기능 구현 및 실제 경계 검증.
 - [x] 최종 독립 결함 주입9개 전체 탐지와 동결195개 파일 원본 복원.
 - [x] 결함 완료 후 최종 독립 리뷰 PASS 및 source/test 동결 지문 일치.
@@ -1746,8 +1765,8 @@
 
 - 통합 전후 최초 경계 44개 GREEN 이후, 최종 기능·migration·Redis·권한·6개 모임·native schema selector는 총66개/실행65개 PASS/diagnostic capture1skip/실패0/오류0이다. root 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-final66-native.json`이다. skip은 진단용 schema capture이며 검증 assertion을 생략한 성공으로 계산하지 않는다.
 - 실제 OpenAPI SHA-256은 `22225ba0db80bf9afb31fa641f8edc385a2dda69abf83f0c063fb18741890ce0`이다. 필수 request5/round3, 기본 false, revision_round anyOf(object ref,null)를 native JSON에서 확인했다. 독립 JSON Schema와 실제 TypeScript 생성 결과도 `RevisionRoundResponse | null`을 보존한다. generated JSON/타입을 손으로 고치지 않았다.
-- root의 신규 worker fixture에서 정확한 stub6개를 보강한 detector baseline35개 GREEN 뒤 최종 결함9개를 모두 DETECTED로 확인했다. 각 실행 당시 동결195개 파일 원본 바이트를 복원했으며, 앞선 fault3 SURVIVED는 탐지 성공으로 계산하지 않는다. `.tdd/verification/issue-92-recovery-boundaries.json`은 현재 실제 detector/helper5개와 source112개 지문을 추적한다. 이후 추가 테스트를 포함한 새196개 파일 전체를 다시 결함 주입·복원했다는 주장은 하지 않는다. 독립 리뷰는 production39개·source112개 불변과 실제 detector5개·결함9개 이력을 확인했고 source blocker0이다.
-- 첫 전체 guard의435개 중55개 fixture 실패 뒤 독립 저자가 활성 포트/정확한 버전 조회 등 fixture 정합을 보완하여 legacy79개 GREEN을 확인했다. RED 근거의 비실패 sidecar 지문만 좁힌 이유·원본 이력은 [.tdd/supersessions/issue-92-legacy-fixture-compatibility.json](.tdd/supersessions/issue-92-legacy-fixture-compatibility.json) 및 `.tdd/history/issue-92-legacy-fixture-compatibility/`에 보존한다. 원래 실제 실패 테스트의 기대·실패·sourceRevision·실행 명령·로그는 바꾸지 않았으며, 이 과거 근거를 현재 의존 전체의 신규 RED로 과장하지 않는다.
+- root의 신규 worker fixture에서 정확한 stub6개를 보강한 detector baseline35개 GREEN 뒤 최종 결함9개를 모두 DETECTED로 확인했다. 각 실행 당시 동결195개 파일 원본 바이트를 복원했으며, 앞선 fault3 SURVIVED는 탐지 성공으로 계산하지 않는다. `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue-92-recovery-boundaries.json`은 현재 실제 detector/helper5개와 source112개 지문을 추적한다. 이후 추가 테스트를 포함한 새196개 파일 전체를 다시 결함 주입·복원했다는 주장은 하지 않는다. 독립 리뷰는 production39개·source112개 불변과 실제 detector5개·결함9개 이력을 확인했고 source blocker0이다.
+- 첫 전체 guard의435개 중55개 fixture 실패 뒤 독립 저자가 활성 포트/정확한 버전 조회 등 fixture 정합을 보완하여 legacy79개 GREEN을 확인했다. RED 근거의 비실패 sidecar 지문만 좁힌 이유·원본 이력은 [https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/supersessions/issue-92-legacy-fixture-compatibility.json](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/supersessions/issue-92-legacy-fixture-compatibility.json) 및 `.tdd/history/issue-92-legacy-fixture-compatibility/`에 보존한다. 원래 실제 실패 테스트의 기대·실패·sourceRevision·실행 명령·로그는 바꾸지 않았으며, 이 과거 근거를 현재 의존 전체의 신규 RED로 과장하지 않는다.
 - root는2026-10-07 03:09:19 UTC에 변경하지 않은 `.codex/hooks/tdd_guard.py`의 최종 exit0을 확인했다. `ktlintCheck assemble test`는78suite/438test/실패0/오류0/opt-in skip4이고 guard 단위 검증12개도 통과했다. legacy HOST/auth/idempotency/worker 기존 테스트와 신규503 회귀3개가 이 전체 GREEN에 포함된다. source112개와 adapter `d166e57eb625883243e055e261dd8c32e070d3fcb37953be92b4704c56b9fc17`은 불변이다. 실행 요약은 저장소 밖 `scratch/meet-me-bootstrap/issue-92-full-guard.json`이며 문서 owner의 source/test/harness 변경·Gradle·모델 호출은0이다.
 - 웹 #17의 unit174·결함7과 push head `059f049a4832effb2e2cc844d33f4cdd50b5dc1e`는 앞 단계의 이력이다. 최종 head는 `3c403a2667d4a3921ba8a661fb2a4e9758b220ed`이며 unit176 PASS·browser329 PASS/기존 skip1/flaky0·오류0, 결함8 탐지/정확한 원본 복원과 구/신 번들 합성6검사를 완료했다. native22225 지문은 동일하다. 이 웹 결과를 서버 CI·운영 배포 완료로 사용하지 않는다.
 - 구 웹 정확한 source `68c41f7619e7f1a28b2b597cb56867e4d3e852bc` 재빌드 bundle과 최초 baseline의 바이트 동일성을 확인한 뒤 구/신 실제 bundle 격리 브라우저6검사가 모두 PASS했다. 구 PUT409는 draft·revision1을 유지하고 close200은 OPEN/no analysis이며 hosting 교체만으로 구 탭은 바뀌지 않았다. 명시적 reload 후 신 UI는 현재 round/revision으로 저장하고 구 Join은 ROOM_CLOSED·신 Join은 숨김이다. 신 웹+신규 필드 없는 구 계약은 raw-only 저장/HOST close를 유지한다. 실제 backend/model/운영 호출0인 합성 HTTP 검증이며 real cross-version backend/운영 Origin 검증과 구분한다. 새로고침은 미저장 구 draft를 잃게 하므로 먼저 복사하고 신 웹에서 다시 입력·명시적 저장·결과 확인하는 안내·지원 및 운영 갱신 gate는 아직 미구현/미실행이다. 상세6검사와 잔여 조건은 [INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 기록했다.
@@ -1764,9 +1783,9 @@
 - #92 구현 역할은 `/root/server92_implementation`, 테스트 설계는 `/root/issue91_test_design`로 분리한다. 기존 17개 frozen test는 변경하지 않았다. Gradle은 shared cache 충돌을 막기 위해 root만 순차 실행한다. 첫 compile/targeted GREEN, 추가 worker/confirmation/retention/rollback RED·fault injection·OpenAPI export·독립 review는 아직 확인하지 않았다. 외부 모델/운영 접근 0.
 - 알려진 승인 계약의 제약: quota0에서도 OPEN/저장은 허용하지만 새 version 저장 후 REUSED가 불가능하여 새 분석409 뒤 OPEN이 유지될 수 있다. 별도 cancel API를 임의 추가하지 않았고 사용자 UI와 최종 보고에서 이 제한을 명시한다.
 - 첫 production compile 성공. 첫 phase1 17개 중 16개 통과, analyze-first의 늦은 PUT는 올바른409 후 테스트 외부 TransactionTemplate의 UnexpectedRollbackException을 확인하여 독립 저자가 rollback-aware wrapper를 보완한다. 해당 변경 파일의 RED 지문은 다시 기록한다. production lock/state를 완화하지 않았다.
-- 독립 review에서 V8 CONSUMED outcome NULL을 PostgreSQL CHECK UNKNOWN으로 허용하는 결함을 발견했다. 실제 PostgreSQL에서 UPDATE 성공1/expected exception 없음의 assertion RED를 확인 (`.tdd/red/issue-92-consumed-null-outcome.json`), 최소 IS NOT NULL 제약을 추가했다. 새 테스트의 frozen 지문은 유지되며 GREEN 재검증 대기다.
+- 독립 review에서 V8 CONSUMED outcome NULL을 PostgreSQL CHECK UNKNOWN으로 허용하는 결함을 발견했다. 실제 PostgreSQL에서 UPDATE 성공1/expected exception 없음의 assertion RED를 확인 (`https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue-92-consumed-null-outcome.json`), 최소 IS NOT NULL 제약을 추가했다. 새 테스트의 frozen 지문은 유지되며 GREEN 재검증 대기다.
 - 추가 승인한 viewer.context_id는 같은 이름·역할의 세션 교체에서 자기 원문 cache를 분리하는 본인 participant opaque UUID hint다. credential/session ID와 다른 참여자 ID를 노출하거나 권한 증명으로 사용하지 않는다. 독립 실제 HTTP 회귀 3개 RED를 먼저 확인한 뒤 additive DTO mapping과 native OpenAPI에 반영한다.
-- 후속 실제 PostgreSQL 검증: 수정된 rollback-aware fixture를 포함한 phase1 17개와 NULL outcome 1개가 모두 GREEN. viewer.context_id 독립 HTTP 3개는 컴파일·setup 성공 후 예상 assertion RED (`.tdd/red/issue-92-viewer-context.json`)를 고정하고 ViewerParticipation→RoomLifecycle→Web DTO에 본인 opaque UUID 최소 mapping을 추가했다. 21개 재GREEN 및 worker/역사 버전/확정 경쟁/rollback/retention·OpenAPI·최종 guard는 대기다.
+- 후속 실제 PostgreSQL 검증: 수정된 rollback-aware fixture를 포함한 phase1 17개와 NULL outcome 1개가 모두 GREEN. viewer.context_id 독립 HTTP 3개는 컴파일·setup 성공 후 예상 assertion RED (`https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue-92-viewer-context.json`)를 고정하고 ViewerParticipation→RoomLifecycle→Web DTO에 본인 opaque UUID 최소 mapping을 추가했다. 21개 재GREEN 및 worker/역사 버전/확정 경쟁/rollback/retention·OpenAPI·최종 guard는 대기다.
 
 
 ### #92 기존 클라이언트·배포·읽기 전용 확인 인계
@@ -1785,7 +1804,7 @@
 - 독립 runtime 요청 검증은 omitted/null expected_generation 모두400이며 DB 변화가 없음을 확인했다. 런타임 타입 변경은 불필요하여 nonnull Long/UUID와 force_reparse=false를 유지하고 request 필수5·round response 필수3의 OpenAPI requiredMode만 명시했다. 독립 presence8/schema1 RED 이후 native export 재검증을 기다린다.
 - PR에서 검토 가능한 배포 준비안은 [docs/INPUT_REVISION_ROLLOUT.md](docs/INPUT_REVISION_ROLLOUT.md)에 추적했다. 실제 차단 명령과 quiesce/compatible roll-forward/기존 refresh 경로/구 캐시 안내/읽기 전용 smoke를 분리해 기록했으며 승인·구현·운영 실행 완료로 표시하지 않는다.
 
-- 후속 요청·migration·Redis·권한·legacy 검증과 native export의 root 집계는 총65개(64실행 성공, debug capture1skip)였다. 웹 실제 생성기 검증에서 RoomResponse.revision_round가 OpenAPI3.1의 object ref와 type:null을 같은 schema에 둔 모순을 발견했다. 별도 독립 실제HTTP/null-schema test1의 assertion RED (`.tdd/red/issue-92-nullable-round-schema.json`) 후 해당 신규 property만 anyOf(object ref, null)로 교체하는 RoomOpenApiConfiguration을 추가했다. 다른 nullable enum·DTO·실제 응답·generated JSON은 수정하지 않는다. root format·66개 재검증 및 native 생성기의 object|null 확인은 대기다.
+- 후속 요청·migration·Redis·권한·legacy 검증과 native export의 root 집계는 총65개(64실행 성공, debug capture1skip)였다. 웹 실제 생성기 검증에서 RoomResponse.revision_round가 OpenAPI3.1의 object ref와 type:null을 같은 schema에 둔 모순을 발견했다. 별도 독립 실제HTTP/null-schema test1의 assertion RED (`https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/red/issue-92-nullable-round-schema.json`) 후 해당 신규 property만 anyOf(object ref, null)로 교체하는 RoomOpenApiConfiguration을 추가했다. 다른 nullable enum·DTO·실제 응답·generated JSON은 수정하지 않는다. root format·66개 재검증 및 native 생성기의 object|null 확인은 대기다.
 
 
 ### 공급자 503 High Demand의 기존 보존 경로 읽기 검토
@@ -1802,7 +1821,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 
 - `06bc741` CI #37569594968는 JVM gate·정적9·Compose fidelity·credential refresh·가드37·Nginx를 모두 통과했다. 위 기록의 CI 대기는 이 완료 상태로 갱신한다.
 - 별도 독립 저자가 추가한 압축 해제 계약4개는 기존 `06bc741` 설정에서 모두 실제 본체 assertion RED였다. 구현자는 workflow2개만 변경했고 정적13개 GREEN, 옵션/umask/CI 연결 누락 결함4개 탐지와 workflow 정확 복원을 확인했다. 실제 GNU tar의 일반 사용자 fixture는 외부 UID/GID·0777 archive에서 실행 사용자 소유권·0750 추출을 확인했으며 root/SSM 운영 실행 증명이 아니다.
-- 기존 가드·deploy·기존 정적 검사 및 기능196개는 `06bc741`과 바이트 동일하다. 과거 선택210개 복원 증거는 `06bc741`의 당시 범위로 보존하고, workflow2개가 달라진 현재 전체210개와 동일하다고 표시하지 않는다. 별도 후속 근거는 `.tdd/deployment/issue-92-release-extraction.json`으로 추적한다.
+- 기존 가드·deploy·기존 정적 검사 및 기능196개는 `06bc741`과 바이트 동일하다. 과거 선택210개 복원 증거는 `06bc741`의 당시 범위로 보존하고, workflow2개가 달라진 현재 전체210개와 동일하다고 표시하지 않는다. 별도 후속 근거는 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/deployment/issue-92-release-extraction.json`으로 추적한다.
 - 실제 모델 평가는 부모가 별도 환경에서 총10/50회 진행했다. 9번째 원문 해석200 성공과 10번째 실제 HTTP·DB 배치503 미완료를 합성 검사와 구분한다. 이 구현·검증 작업의 공급자 호출 및 평가 도구 변경은0이다.
 - Commit/PR: 동일 커밋 예정, 기존 Draft PR #94 업데이트. 정확 새 head CI는 push 이후 확인하며 운영 host 설치·설정·migration·배포·main/develop 병합은 미실행이다.
 
@@ -1814,7 +1833,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [x] `[AGENT]` 독립 테스트 저자의 총50개 대상 테스트 GREEN을 확인했다. 수정 라운드의 원frozen version id/raw_text/created_at을 보존하고 최신 방 state_version만 증가하는 계약도 검증했다. V1~V8·기존 배포 guard·권한 정책은 변경하지 않았다.
 - [x] `[AGENT]` 독립 리뷰의 초/마이크로초 요약, 새 nullable schema와 variant2값enum, typedconfirmed 방 retention 순서 문제를 수정했다. V9는 구candidate writer와 확정 뒤 run/room/revision 변경을 DB에서도 거부한다. 구V8 reader 호환/운영rollback은 별도 대응이 필요하다.
 - [x] `[AGENT]` 원격 계약 인계 첫 commit 전 필수 변경 없는 tdd_guard를 통과했다. ktlintCheck/assemble/전체 test488개 중484PASS·기존 옵션형 live probe·디버그/스키마 export4SKIP·실패0, hook self-testsPASS다. Commit/PR: 동일 커밋 예정.
-- [x] `[AGENT]` 독립 결함 주입5/5 DETECTED와 원본bytes/SHA복구, 최종독립리뷰 blocking없음, [Draft PR97](https://github.com/meet-me-duo/meet-me-server/pull/97) 공개. [결함주입증거](.tdd/verification/issue-95-boundaries.json).
+- [x] `[AGENT]` 독립 결함 주입5/5 DETECTED와 원본bytes/SHA복구, 최종독립리뷰 blocking없음, [Draft PR97](https://github.com/meet-me-duo/meet-me-server/pull/97) 공개. [결함주입증거](https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue-95-boundaries.json).
 - [x] `[AGENT]` mutation정확복구후 변경없는최종필수guard 재통과: lint/assemble/test488개·실패0/오류0·기존live probe/디버그/export4SKIP, hook self-testsPASS.
 - [x] `[AGENT]` 구현 HEAD627e0b717a7f4f72dfc27b2ff580b2ed9f46c24a의 CI37582706551 전 단계 성공·Issue Lifecycle 성공을 확인했다. Draft PR97 본문에도 실제 결과를 기록했다.
 - [x] `[USER]` D2 제안에 사용자 직접 승인 “Meet me는 네 제안대로 진행해”를 확인했다. 동일 차원 OR·여러 차원 AND·참석자별 최대1점·창 전체 충족·선호 하위 창 보존·필수 제약 우선·자연어 입력 유지가 확정됐다.
@@ -1850,7 +1869,7 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - 이 구현 세션의 유료 모델 호출·운영 접근·비밀값 읽기/출력/저장·운영 등록·권한 변경은0이다. 부모의 Gemini10+Luna9 실제 품질 평가를 이 세션의 호출 또는 새 transport 실검증으로 집계하지 않는다. 개인 OPENAI 연결은 운영 설정·배포 승인과 별개이며 코드에는 변수 참조만 추가했다.
 - Commit/PR: 동일 커밋 예정, develop 대상 독립 draft PR. #94 bf4edff 기준과 #93 포함, #95 migration 번호 예약은 통합 담당 조율 항목이다. 운영 배포·병합은 미실행이다.
 
-**#96 최종 로컬 완료 근거**: 변경하지 않은 .codex/hooks/tdd_guard.py가 exit0(130.077초)로 ktlintCheck·assemble·test 및 guard self-tests를 통과했다. 실제90suite/526건/실패0/오류0/skip4이며 기존 유료 live probe·export/debug opt-in만 skip했다. 독립 source/test SHA 검토 PASS와 결함15개 assertion 탐지·전체218개 바이트 복원을 .tdd/reviews/issue-96-independent-review.json 및 .tdd/verification/issue-96-bounded-fallback.json으로 추적한다. 모든 #96 RED8개 요약의 JSON Schema와 최종 테스트 지문이 일치한다. 원시 로그·XML은 ignored .codex/tdd-evidence에만 보존한다. 커밋·draft PR 생성과 정확 HEAD CI는 이 검증 지문을 사용하며 결과 URL·head SHA는 PR 본문과 Git 이력에서 확인한다. 운영 배포·main/develop 병합 및 유료 호출은0이다.
+**#96 최종 로컬 완료 근거**: 변경하지 않은 .codex/hooks/tdd_guard.py가 exit0(130.077초)로 ktlintCheck·assemble·test 및 guard self-tests를 통과했다. 실제90suite/526건/실패0/오류0/skip4이며 기존 유료 live probe·export/debug opt-in만 skip했다. 독립 source/test SHA 검토 PASS와 결함15개 assertion 탐지·전체218개 바이트 복원을 https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/reviews/issue-96-independent-review.json 및 .tdd/verification/issue-96-bounded-fallback.json으로 추적한다. 모든 #96 RED8개 요약의 JSON Schema와 최종 테스트 지문이 일치한다. 원시 로그·XML은 ignored .codex/tdd-evidence에만 보존한다. 커밋·draft PR 생성과 정확 HEAD CI는 이 검증 지문을 사용하며 결과 URL·head SHA는 PR 본문과 Git 이력에서 확인한다. 운영 배포·main/develop 병합 및 유료 호출은0이다.
 
 
 ## Issue #99 Worklog — 추천·Luna 폴백 통합과 D2 (2026-10-07 UTC)

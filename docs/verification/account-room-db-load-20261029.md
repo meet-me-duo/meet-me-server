@@ -84,7 +84,7 @@ API, KST 생성일 경계, 대소문자 무시 literal substring, created_at DES
 
 2026-10-29 UTC 원본 작업 브랜치에서 `ktlintCheck assemble test`가9분37초에 성공했다. 267 suites/2250건 중2246 PASS·기존4 SKIP·실패/오류0이다. 집중30·Node180·배포 Python311도 PASS다. 독립 새 준비문 테스트의 유효 RED1/control1, 준비 설정 제거·잘못된 role 투영 FI2가 각각 예상 assertion을 탐지했으며 exact restore 후각2 PASS다. 독립 검토 P1/P2는0이다. 이전 동일 V20의 migration FI2는 SQL/테스트 SHA 일치로 범위를 한정해 재사용했다.
 
-최종 검증 기록은 `.tdd/verification/issue161-account-room-db-load.json`, 독립 검토는 `.tdd/reviews/issue161-account-room-db-load.json`이다. 실제 JDBC 전체283개 관측의24 workload/user 키별 rowCount·순서 지문 불일치는0이다. 원격 소스 게시·PR·병합·운영DB 변경은 수행하지 않았다.
+최종 검증 기록은 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue161-account-room-db-load.json`, 독립 검토는 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/reviews/issue161-account-room-db-load.json`이다. 실제 JDBC 전체283개 관측의24 workload/user 키별 rowCount·순서 지문 불일치는0이다. 원격 소스 게시·PR·병합·운영DB 변경은 수행하지 않았다.
 
 ## 최신 develop 통합과 게시 준비
 
@@ -109,7 +109,7 @@ CI/CD 복구 완료와 부모 조율 후 승인된 runtime DB에서 [metadata-on
 
 ## 최종 게시 전 검증 (시간 제한 포함 V20)
 
-최신 develop `bccf36e405536c689f03b33ff5768030bb058d73`에서 원본 `.codex/hooks/tdd_guard.py`를 실제 commit 이벤트로 실행했다. guard exit0,638.59초이며 `ktlintCheck assemble test` 결과 XML은268 suites/2252건 중2248 PASS·기존4 SKIP·실패/오류0이다. 최종 V20 SHA99062f·checksum-881458142와 독립 테스트 지문을 다시 확인했다. 새 기록은 `.tdd/verification/issue161-publication-final.json`이며 최초4bc/시간 제한 전2250건 기록은 역사 근거로 보존한다.
+최신 develop `bccf36e405536c689f03b33ff5768030bb058d73`에서 원본 `.codex/hooks/tdd_guard.py`를 실제 commit 이벤트로 실행했다. guard exit0,638.59초이며 `ktlintCheck assemble test` 결과 XML은268 suites/2252건 중2248 PASS·기존4 SKIP·실패/오류0이다. 최종 V20 SHA99062f·checksum-881458142와 독립 테스트 지문을 다시 확인했다. 새 기록은 `https://github.com/meet-me-duo/meet-me-server/blob/780b144d4355b41d2b21eeb109252a8fc84abc33/.tdd/verification/issue161-publication-final.json`이며 최초4bc/시간 제한 전2250건 기록은 역사 근거로 보존한다.
 
 원격 게시·PR와 정확 HEAD CI는 이 검증 뒤 진행한다. 운영 반영은 승인되었지만 CI/CD 복구 완료와 부모의 직렬 배포 조율, 기존 승인 전환 및 실제 metadata 검증을 완료하기 전에는 운영 성공으로 표시하지 않는다.
 
