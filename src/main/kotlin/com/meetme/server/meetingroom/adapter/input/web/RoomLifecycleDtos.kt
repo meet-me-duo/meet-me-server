@@ -166,6 +166,17 @@ data class RoomResponse(
     @field:JsonProperty("expected_participants")
     @field:Schema(description = "자동 마감 참여자 목표", nullable = true)
     val expectedParticipants: Int?,
+    @field:JsonProperty("submitted_participant_count")
+    @field:Schema(
+        description =
+            "현재 최신 제출 버전이 존재하는 고유 참여자 수. 제출한 주최자·회원·게스트를 포함하며 " +
+                "수정·재참여·계정 연결·개인 목록 숨김으로 중복 집계하거나 제외하지 않음. " +
+                "초안·제출 전 확인만 존재하면 제외하며 현재 수정 라운드의 재제출 수나 고정 분석 배치 인원이 아님",
+        minimum = "0",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        example = "0",
+    )
+    val submittedParticipantCount: Int,
     @field:JsonProperty("submission_deadline")
     @field:Schema(description = "제출 마감 절대 시각", nullable = true)
     val submissionDeadline: Instant?,
@@ -230,6 +241,7 @@ data class RoomResponse(
                 view.searchEndDate,
                 view.searchRangeSource,
                 view.expectedParticipants,
+                view.submittedParticipantCount,
                 view.submissionDeadline,
                 view.manualOnly,
                 view.collectionStatus,

@@ -125,6 +125,7 @@ class ReviewSupportHintPostgresTest : RecommendationPostgresFixture() {
                 "search_end_date",
                 "search_range_source",
                 "expected_participants",
+                "submitted_participant_count",
                 "submission_deadline",
                 "manual_only",
                 "collection_status",

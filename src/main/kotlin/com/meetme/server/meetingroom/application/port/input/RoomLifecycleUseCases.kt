@@ -79,6 +79,7 @@ data class RoomView(
     val searchEndDate: LocalDate,
     val searchRangeSource: SearchRangeSource,
     val expectedParticipants: Int?,
+    val submittedParticipantCount: Int,
     val submissionDeadline: Instant?,
     val manualOnly: Boolean,
     val collectionStatus: CollectionStatus,
