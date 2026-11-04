@@ -13,6 +13,12 @@ Swagger/OpenAPI를 기준으로 생성하거나 확인한다. 이 문서는 화�
 PRE_SUBMIT_V1은 CLEAR accepted만 완료로 집계하고, PRE_SUBMIT_V2의 RECEIVED·보완·마감/공개 정책은
 [V2 계약](EXPERIMENTAL_INPUT_EVIDENCE.md)을 따른다. 신규 방 protocol과 실제 OpenAPI를 먼저 확인한다.
 
+## 공개 방 제출 진행 집계
+
+공통 `RoomResponse`의 `submitted_participant_count`는 required/non-null integer(minimum 0)이다. 해당 room의 최신 제출 버전이 존재하는 고유 participant head 수이며 제출한 주최자·회원·게스트를 포함한다. 수정·재참여·claim·개인 목록 숨김으로 인원은 변하지 않고, 초안·precheck만 있는 참여자는 제외한다. 현재 수정 라운드의 재제출 수나 후보의 고정 분석 배치 수와 다를 수 있다. 공개 invite-code API는 집계 숫자만 추가하며 이름·개인 식별자·명단·조건 원문을 추가하지 않는다.
+
+`expected_participants`는 nullable 자동 마감 목표(2~50명)다. 수동 마감·시간-only 자동 마감에서는 null이며 표시용 가입자/접속자 수나 정원이 아니다. 목표 없는 경우 임의 분모를 만들지 않고 목표를 초과한 집계도 자르지 않는다. 마감·보존·권한 정책은 그대로다. 실제 생성 계약은 `docs/openapi/account-room-history.openapi.json`, 배포 검증 projection은 `deploy/public-api-contract.json`에서 확인하며 원격 source SHA는 검증 소스 게시 후 Git/PR에서 확인한다. Web UI 구현과 배포는 별도 담당이며 이 서버 작업의 병합·운영 배포는 별도 승인 범위다.
+
 ## 1. API 문서 위치
 
 - 로컬 Swagger UI: `http://localhost:8080/swagger-ui/index.html`

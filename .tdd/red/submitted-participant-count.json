@@ -1,0 +1,28 @@
+{
+  "work_item": "submitted-participant-count",
+  "source_revision": "780b144d4355b41d2b21eeb109252a8fc84abc33",
+  "equivalent_main": "d3391fbf7eb2de7f9c617c0dcd90cd685b6cc86f",
+  "tests": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomSubmittedParticipantCountWebIntegrationTest.kt",
+      "sha256": "af2ee3f2319f231846b88bcbd4e8158f092382bf1a501e453387ed925306d8dc"
+    }
+  ],
+  "command": "JAVA_HOME=/tmp/submission-jdk17 GRADLE_USER_HOME=/tmp/submission-gradle-home ./gradlew --no-daemon test --tests *RoomSubmittedParticipantCountWebIntegrationTest",
+  "failed_tests": [
+    "SP09 a frozen analysis batch does not replace the current stored head count()",
+    "SP06 time only goals stay null and a stored count above the goal is never clamped to its denominator()",
+    "SP07 first and repeated close and analysis retry carry the same current submitted count()",
+    "SP08 opening and partially resubmitting a correction round do not reset the count to its resubmitted cohort()",
+    "SP02 submitted host member and guest each count once across repeated updates and joins()",
+    "SP01 room creation and public detail return integer zero without inventing an expected participant goal()",
+    "SP12 confirmation and replay preserve submissions and expose the same count in confirmed detail()",
+    "SP11 participant target still closes by OR before the future deadline using only submitted heads()",
+    "SP10 native schema requires a nonnull nonnegative integer count and exports actual springdoc bytes()",
+    "SP04 public counts are isolated by room without revealing another participant to anonymous invalid or unrelated viewers()",
+    "SP03 joining a draft precheck and a head without a latest version do not count as submitted()",
+    "SP05 explicit guest claim hide and account rejoin preserve the same submitted participant()"
+  ],
+  "expected_failure_classification": "12 compiled public-contract assertions fail because submitted_participant_count is absent from RoomResponse/native OpenAPI",
+  "recorded_at": "2026-11-04T03:43:09.464773+00:00"
+}

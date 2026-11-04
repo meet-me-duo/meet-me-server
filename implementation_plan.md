@@ -1,3 +1,18 @@
+## 2026-11-04 현재 작업 — Issue #205 공개 방 제출 참여자 집계
+
+- [x] `[AGENT]` 원격 main `d3391fbf7eb2de7f9c617c0dcd90cd685b6cc86f`와 develop `780b144d4355b41d2b21eeb109252a8fc84abc33`의 동일 tree를 확인하고 깨끗한 develop을 ff-only 갱신한 뒤 `feature/submitted-participant-count`에서 격리했다. Web UI는 별도 담당이 재개했으며 이 작업에서는 서버만 변경한다.
+- [x] `[AGENT]` 계약은 공통 `RoomResponse.submitted_participant_count` required/non-null integer/int32/minimum 0이다. 해당 방 `submission_heads.latest_version_id IS NOT NULL`인 고유 participant 수로 실제 제출 HOST·회원·게스트를 포함한다. 초안·precheck만 있으면 제외하고 반복 수정·재참여·claim·개인 목록 숨김으로 중복/감소하지 않는다. 현재 수정 라운드 재제출 수나 고정 분석 배치 인원과 다르다.
+- [x] `[AGENT]` `expected_participants`는 nullable 자동 마감 목표(2~50명)를 유지한다. 수동/시간-only 마감이면 null이며 접속자·가입자 수나 임의 분모로 대체하지 않는다. 실제3/목표2인 저장 상태도3을 반환한다. OR 마감·submission_deadline·manual_only·expires_at·30일 보존·V23/schema·운영자 권한은 변경하지 않았다.
+- [x] `[AGENT]` 독립 테스트12개의 최종 지문 `af2ee3f2319f231846b88bcbd4e8158f092382bf1a501e453387ed925306d8dc`로 원본12 RED(필드/schema 누락, 오류0)→GREEN을 확인했다. 기존 baseline11, 복원 후 집중22 및 배포 공개 계약 Python31 PASS다. 최초 GREEN의 익명 접근 기대와 확정 저장소 fixture를 기존401 GUEST_SESSION_REQUIRED·recommendation_selections1/legacy0으로 독립 정정하고 원본 RED를 재확인했다. native schema 문자열 생성 문제는 integer 기대를 유지한 채 Kotlin Int 추론으로 수정했다.
+- [x] `[AGENT]` 독립 코드·개인정보·테스트 리뷰 P1/P2 0, 결함4/4 탐지와 정확한 source 복원을 확인했다. null-head 포함·목표 clamp·frozen batch 집계·schema optional 결함을 각각 SP03/06/09/10이 탐지했다. 숫자 외 이름·식별자·명단·원문을 추가하지 않고 기존 read-only REPEATABLE_READ·count1회·권한을 유지한다. 소규모 모임에서 공개 총수 변화와 외부 지식을 결합한 개별 제출 추론 위험은 Architecture에 남겼다.
+- [x] `[AGENT]` 실제 springdoc bytes로 `docs/openapi/account-room-history.openapi.json`을 동기화했다(SHA-256 `9e1149f01c35e3b27762c4e3586ac7ed03ed9f26d98be6472ad438ce3103c8a7`). 기존 native exporter의 `deploy/public-api-contract.json` SHA-256은 `e31b094fd72cd7e7356a4a471f620be31539d802b6fe8ec24c83c81bbd0e3f28`다. 의미 diff는 RoomResponse의 새 속성/required와 배포 property명 추가뿐이며 손작성 snapshot을 사용하지 않았다. 원격 source SHA는 이 검증 소스의 게시 commit/PR에서 확인한다.
+- [x] `[AGENT]` 최초 원본 가드는 DTO 설명의140자 줄 제한에서 실패하여 assemble/전체 test는 미실행이었다. 동일 문자열을 나눠 수정한 후 전체2739개에서 기존 리뷰 힌트의 정확 필드 목록1개가 실패했다. 모든 기존 단언을 유지한 새 필드1개만 독립 반영하고 원본 RS02 RED를 재확인했다. 최종 재실행은 2026-11-04T04:13:11.091508+00:00~2026-11-04T04:30:07.975745+00:00 UTC exit0, ktlintCheck·assemble·test 모두 통과했다: 352 suites/2739개 중 2722 PASS/17 SKIP/실패·오류0. 원본 guard·CI·build와 검증 source 입력 지문은 그대로다. 상세 근거는 `.tdd/verification/submitted-participant-count.json`이다.
+- [x] `[USER/AGENT]` 첫 Issue 생성은 자동 승인 검토에서 실행 전 거부됐으나 사용자 명시 승인(03:43 UTC), 대화 read와 미생성 재조회 후 동일 작업을 한 번 재시도하여 [Issue #205](https://github.com/meet-me-duo/meet-me-server/issues/205)를 생성했다. feature push·develop Draft PR·정확 HEAD CI까지 승인됐으며 병합/운영은 제외한다.
+- [ ] `[AGENT]` 검증 소스를 commit/push하고 `Closes #205`인 develop Draft PR을 게시한다. 최종 SHA의 Quality Gate·Deployment Contracts·ARM64 Built Image는 커밋 이후 PR Checks의 실제 결과로 확인하며 이 커밋 전 기록을 CI 완료 근거로 해석하지 않는다.
+- [ ] `[USER/SHARED]` develop/main 병합·운영 배포·운영 데이터 수정은 별도 승인 범위다. cloud AWS·SSM·운영 DB·유료 AI·보호 설정·PR approve API 접근은 수행하지 않았다.
+
+현재 단계: 로컬 독립 계약·생성 산출물·원본 전체 가드 검증 완료, 승인된 게시 및 정확 HEAD CI 확인 준비. 최종 갱신: 2026-11-04 UTC. Commit/PR: 동일 커밋 예정 / Issue #205, 게시 후 실제 Git/PR 결과로 확인.
+
 ## 2026-11-03 현재 작업 — Issue #201 상세 자동 정리 기준 시각
 
 - [x] `[AGENT]` 최신 develop `d4cfe518d8ddf7174ec16223938c39720c93ca3d`을 ff-only로 확인하고 [Issue #201](https://github.com/meet-me-duo/meet-me-server/issues/201) 및 `feature/201-room-response-expiry`를 준비했다. 최초 Issue 생성은 승인 검토에서 실행 전 거부됐으나 최초 사용자 요청의 명시 Issue 허가가 추가 전달되어 미생성 확인 후 한 번 재시도하여 생성했다.

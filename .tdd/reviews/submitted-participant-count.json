@@ -1,0 +1,44 @@
+{
+  "work_item": "submitted-participant-count",
+  "reviewed_at": "2026-11-04T03:46:27.741632+00:00",
+  "test_designer": "contract_tests",
+  "implementer": "root",
+  "independent_test_reviewer": "test_review",
+  "independent_code_privacy_reviewer": "privacy_review",
+  "test_sha256": "af2ee3f2319f231846b88bcbd4e8158f092382bf1a501e453387ed925306d8dc",
+  "unresolved_p1": 0,
+  "unresolved_p2": 0,
+  "resolved_findings": [
+    "Assert first join after existing submissions and first COLLECTING-to-CLOSED response count",
+    "Anonymous own-submission absence follows existing exact 401 GUEST_SESSION_REQUIRED",
+    "Typed recommendation confirmation asserts recommendation_selections=1 and legacy final_confirmations=0"
+  ],
+  "privacy": {
+    "added_public_data": "aggregate count only; no names, identifiers, lists, or submission content",
+    "residual_risk": "Small-group total changes can be combined with external knowledge to infer an individual submission",
+    "unchanged": [
+      "READ_ONLY REPEATABLE_READ get transaction",
+      "existing count query and invocation count",
+      "ownership and origin checks",
+      "closure policy and expectedParticipants nullability",
+      "retention and V23 schema"
+    ]
+  },
+  "generated_contract_review": "actual exporter bytes; only new RoomResponse property/required and deployment property-name addition",
+  "execution_status": "focused22/Python31/FI4 and original full guard passed; exact HEAD CI is a post-commit check",
+  "additional_reviewed_test": {
+    "path": "src/test/kotlin/com/meetme/server/review/ReviewSupportHintPostgresTest.kt",
+    "sha256": "a9add58f8b48be37ebb27d152688dc7d7c8bca0e566ab4dadbf9b9d761f88930",
+    "change": "Exact field set adds only submitted_participant_count; every prior field and assertion remains intact",
+    "independent_test_reviewer": "test_review",
+    "unresolved_p1": 0,
+    "unresolved_p2": 0
+  },
+  "production_files": {
+    "src/main/kotlin/com/meetme/server/meetingroom/application/port/input/RoomLifecycleUseCases.kt": "e503969f65e30623e69ad942e49a4396dd1c3cd9b5a88e10f9638e6bc289e54d",
+    "src/main/kotlin/com/meetme/server/meetingroom/application/service/RoomLifecycleService.kt": "90f81af57bd9edfaebc3ee2f668b4b1a5c2981a17f255d5fee5870d1731c72a3",
+    "src/main/kotlin/com/meetme/server/meetingroom/adapter/input/web/RoomLifecycleDtos.kt": "3aa731e41d517156f18e262647c18f0d077cf475efc77fd86c66b98c9b402986"
+  },
+  "final_reviewed_at": "2026-11-04T04:31:17.349170+00:00",
+  "final_review_result": "Independent fresh XML, actual native artifact bytes, semantic diff and source/gate consistency rechecked; P1/P2=0"
+}

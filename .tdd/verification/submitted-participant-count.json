@@ -1,0 +1,131 @@
+{
+  "work_item": "submitted-participant-count",
+  "source_revision": "780b144d4355b41d2b21eeb109252a8fc84abc33",
+  "equivalent_main": "d3391fbf7eb2de7f9c617c0dcd90cd685b6cc86f",
+  "test_sha256": "af2ee3f2319f231846b88bcbd4e8158f092382bf1a501e453387ed925306d8dc",
+  "focused": {
+    "suites": 4,
+    "tests": 22,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "skipped_tests": [],
+    "passed": 22
+  },
+  "intentional_mutations": {
+    "results": [
+      {
+        "mutation": "null-head-filter",
+        "test": "SP03 joining a draft precheck and a head without a latest version do not count as submitted()",
+        "detected": true,
+        "exit_code": 1,
+        "started_at": "2026-11-04T03:45:45.925218+00:00",
+        "log": ".codex/tdd-evidence/submitted-count-fi-null-head-filter.log"
+      },
+      {
+        "mutation": "goal-clamp",
+        "test": "SP06 time only goals stay null and a stored count above the goal is never clamped to its denominator()",
+        "detected": true,
+        "exit_code": 1,
+        "started_at": "2026-11-04T03:46:19.760364+00:00",
+        "log": ".codex/tdd-evidence/submitted-count-fi-goal-clamp.log"
+      },
+      {
+        "mutation": "frozen-batch",
+        "test": "SP09 a frozen analysis batch does not replace the current stored head count()",
+        "detected": true,
+        "exit_code": 1,
+        "started_at": "2026-11-04T03:46:57.180690+00:00",
+        "log": ".codex/tdd-evidence/submitted-count-fi-frozen-batch.log"
+      },
+      {
+        "mutation": "schema-optional",
+        "test": "SP10 native schema requires a nonnull nonnegative integer count and exports actual springdoc bytes()",
+        "detected": true,
+        "exit_code": 1,
+        "started_at": "2026-11-04T03:47:32.324585+00:00",
+        "log": ".codex/tdd-evidence/submitted-count-fi-schema-optional.log"
+      }
+    ],
+    "source_restored": true
+  },
+  "prior_guard_attempts": [
+    {
+      "exit_code": 2,
+      "failure": "DTO schema description exceeded 140 character line limit",
+      "full_tests_executed": false,
+      "fix": "wrap the same constant string without changing its value"
+    },
+    {
+      "exit_code": 2,
+      "full_tests_executed": true,
+      "tests": 2739,
+      "passed": 2721,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 17,
+      "failure": "ReviewSupportHintPostgresTest.RS02 exact RoomResponse inventory missing the added aggregate field",
+      "fix": "Independent one-entry inventory update preserving every prior field and assertion; original-source RS02 RED reconfirmed"
+    }
+  ],
+  "full_guard": {
+    "command": "python3 .codex/hooks/tdd_guard.py < PreToolUse(Bash git commit) event",
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "started_at": "2026-11-04T04:13:11.091508+00:00",
+    "finished_at": "2026-11-04T04:30:07.975745+00:00",
+    "exit_code": 0,
+    "results": {
+      "suites": 352,
+      "tests": 2739,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 17,
+      "skipped_tests": [
+        "com.meetme.server.experiment.FinalLunaSixtyPreflightTest.fixed source and payload validate offline without claiming approval()",
+        "com.meetme.server.experiment.P2PersonalOnceContractTest.current V2 p2 payload and original adapter use one bounded request with no replay()",
+        "com.meetme.server.coordination.adapter.output.integration.CandidateScenarioLiveProbeTest.bounded live Gemini semantic probe()",
+        "com.meetme.server.experiment.FinalLunaSixtyPrepareTest.frozen original and supplement generate the unchanged final contract offline()",
+        "com.meetme.server.submission.adapter.input.web.Issue83OpenApiExportIntegrationTest.export actual generated OpenAPI JSON after Issue 83 GREEN()",
+        "com.meetme.server.experiment.StandaloneGeminiOncePaidTest.new approved single use plan sends at most one tiny Gemini request and stops()",
+        "com.meetme.server.experiment.P2PersonalOncePaidTest.explicit approved counterfactual sends at most one current personal Luna request()",
+        "com.meetme.server.experiment.FinalLunaSixtyPaidTest.fresh approval sends one frozen logical final request with a standalone sixty second deadline()",
+        "com.meetme.server.coordination.adapter.input.web.Issue92OpenApiExportIntegrationTest.verify correction public schemas then export actual native OpenAPI JSON()",
+        "com.meetme.server.coordination.adapter.input.web.CorrectionRoundRequestPresencePostgresTest.capture actual native schema for debugging explicitly marked unvalidated()",
+        "com.meetme.server.experiment.BlindFlowPaidTest.approved fixed pilot and conditionally opened sealed flow()",
+        "com.meetme.server.experiment.CumulativeProviderEvaluationTest.one capped actual-provider experiment preserves a safe final report on every outcome()",
+        "com.meetme.server.experiment.PrimaryGeminiTechnicalSmokeTest.explicit approved primary-only smoke uses real closure source fence and at most one primary identity()",
+        "com.meetme.server.experiment.LunaFallbackOncePaidTest.synthetic Gemini 503 switches to one original Luna adapter and validates stored results and host APIs()",
+        "com.meetme.server.experiment.ExperimentalLiveHttpEvaluationTest.explicitly approved blind payload traverses actual HTTP workers and providers once()",
+        "com.meetme.server.experiment.PilotTenPaidTest.new approval permits only the frozen development pilot and stops without a second run()",
+        "com.meetme.server.experiment.P2PersonalOnceValidationTest.frozen paid manifest validates without consuming approval or issuing HTTP()"
+      ],
+      "passed": 2722
+    },
+    "original_gates_unchanged": true,
+    "source_inputs_unchanged": true
+  },
+  "generated_artifacts": {
+    "docs/openapi/account-room-history.openapi.json": {
+      "sha256": "9e1149f01c35e3b27762c4e3586ac7ed03ed9f26d98be6472ad438ce3103c8a7",
+      "generated_from": "build/room-submitted-participant-count.openapi.json",
+      "byte_identical": true
+    },
+    "deploy/public-api-contract.json": {
+      "sha256": "e31b094fd72cd7e7356a4a471f620be31539d802b6fe8ec24c83c81bbd0e3f28",
+      "generated_from": "build/issue154-native-public-api-contract.json",
+      "byte_identical": true
+    }
+  },
+  "remote_ci": "pending commit/push/Draft PR; final SHA results must be checked separately",
+  "no_operations": [
+    "AWS direct access",
+    "production writes",
+    "paid provider requests",
+    "merge",
+    "deployment"
+  ]
+}
