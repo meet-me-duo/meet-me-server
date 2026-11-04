@@ -307,6 +307,7 @@ class RoomLifecycleService(
             searchEndDate = searchRange.endExclusive,
             searchRangeSource = searchRange.source,
             expectedParticipants = closurePolicy.expectedParticipants,
+            submittedParticipantCount = submittedParticipants,
             submissionDeadline = closurePolicy.deadline,
             manualOnly = closurePolicy.manualOnly,
             collectionStatus = collectionStatus,
