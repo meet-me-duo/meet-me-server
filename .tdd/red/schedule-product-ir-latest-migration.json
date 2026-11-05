@@ -1,0 +1,48 @@
+{
+  "workItem": "schedule-product-ir-latest-migration",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "75226a09ed0f8c7d83e259f812da33506661a6e5845aff81d2db0dc079f6fd57"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "89780fc56ec2d62b02692ddc60bd67fc292b19ca4931ddad9099890d08b7a760"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+      "sha256": "55d8bdf7d396624841be02eca7b8dbf9cfca8f3e1bc578739d7d16a87f8bba78"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "9a99a740cd116c013ef5e8c878ebb599dbb0810cb256e09fd6226d0a7ffae465"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "clean",
+    "test",
+    "--tests",
+    "*DatabaseMigrationRunnerTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest",
+    "--tests",
+    "*RecommendationPartialConfirmationMigrationPostgresTest.PC06*",
+    "--tests",
+    "*CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다*"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest.PC06 V17 to V18 preserves previous confirmations and permits pending two of five selection()",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.blank PostgreSQL migrates exactly twenty-four versions and validates both independent legacy schemas()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T20:05:00.115901Z"
+}

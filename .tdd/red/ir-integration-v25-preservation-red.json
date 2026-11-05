@@ -1,0 +1,28 @@
+{
+  "workItem": "ir-integration-v25-preservation-red",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrIntegrationPostgresTest.kt",
+      "sha256": "0780f2851ea34d0ac537dd54a4e30605fdc29ba38f8d60b82a7605b71106d5a9"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrIntegrationPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.I36 V24 upgrades add a separate empty choice table without inventing identity or rewriting existing data()",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.I36 upgrading existing V24 typed IR does not backfill a run identity or rewrite stored evidence()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T22:46:40.090411Z"
+}

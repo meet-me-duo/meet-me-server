@@ -1,3 +1,45 @@
+## 2026-11-05 DSL1 전체 가드 및 전송 체크포인트
+
+- [x] 저장소 원본 tdd_guard.py 전체검사 종료0: 3,258건 = 3,241 PASS / 기존17SKIP / 실패·오류0. src780 지문 불변, lint·assemble·test PASS.
+- [ ] DSL1은 질문 prompt를 digest에만 포함하고 provider에는 전달하지 않는 한계가 있어 완전한 보완 흐름을 입증하지 못한다. 원본전체실행을 보존한 별도 context2 작업트리에서 질문과 답변 관계를 비증거 metadata로 전달하는 명시 버전2를 구현·검증한다. 원 accepted InputEvidence에는 UI 선택지 정의가 없어 복구 불가 범위를 추측하지 않는다.
+- [ ] 이 커밋은 비배포 전송 checkpoint다. 운영 등록·공개DTO/장소·조건부 결과 정책은 미완료이고 main/develop 병합·배포는 하지 않는다. 이전 AD04/OA04 실패 원인 미확정 이력을 보존한다. Commit/PR: 동일 커밋 예정.
+
+## 2026-11-05 명시적 일정 DSL·AST 전달 체크포인트
+
+- [x] strict DSL 응답 계약·typed AST의 AND/OR·분기별 제외/선호·배타적 선택과 근거 검증을 구현했다. 의미 AVAILABLE과 시간 경계 미정을 분리하며 임의 시간 기본값을 만들지 않는다.
+- [x] 실제 loopback Gemini HTTP → 명시적 worker → PostgreSQL 저장/새 복원 → AST → 기존 결정론 커널을 합성 자료로 검증했다. 집중158/158 PASS, lint·assemble PASS이며 기존 동결46 및 IR2회귀4가 포함된다.
+- [x] 독립 리뷰의 정정 권한7 ASSERTION RED → 최소 preflight →158 GREEN을 확인했다. 권한 또는 선택 경로가 불일치한 정정은 해당 program을 RELATION_SCOPE로 보류하고 원 claims·peer를 보존한다. 독립 FI3을 탐지하고 원본780파일을 복원했다.
+- [x] 전달할 제품 소스37개/219762B와9JAR만으로 JVM17 재컴파일·DB없는 CLI4명령을 실행했다. 제품 compiled JAR와 결과가 바이트까지 같다. 실제 모델0회이며 합성 AST 교집합 검증을 의미 정확도 성과로 제시하지 않는다. 상세 source/dependency 지문은 docs/verification/schedule-dsl-offline-runtime.json에 둔다.
+- [ ] 저장소 commit guard의 필터 없는 전체 검사, 비배포 개발 branch 게시·정확 HEAD CI, 원 실험 환경의 승인된30회 이내 실제 평가를 이어간다. 기존49회 장부는 별도로 보존하며 이 환경에서 호출하지 않는다.
+- [ ] 기존 운영 worker/controller·추천 DTO/권한·만료 접합과 typed 장소/구간 mode, 시간어 기본값 및 조건부 공개/확정 정책은 미완료다. 새 경로는 명시 호출만 가능하고 기본 운영 라우팅은 바꾸지 않았다. main/develop 병합·배포는 이 체크포인트의 전달 범위가 아니다.
+
+이전 IR2 전체3150=3133PASS/17SKIP와 기초 전체 AD04/OA04 2실패·원인 미확정은 별도 source/실행의 이력으로 보존한다. 새 DSL 전체 gate의 결과로 재사용하지 않는다. 최종 갱신2026-11-05 UTC. Commit/PR: 동일 커밋 예정.
+
+## 2026-11-04 현재 작업 — 독립 IR→결정론 계산 접합
+
+- [x] `[AGENT]` 기초 29파일 patch·manifest·실패 이력을 원래 worktree/evidence에 고정하고, 같은 기준 `856cdad8adee1cf0b97ece1ab7686af9c2b9e8de`의 별도 detached worktree에 byte-identical 적용했다. 이후 구현은 새 worktree에서만 진행한다.
+- [x] `[AGENT]` PR214 head `675599dfb9b4cc778e155f714ccc48240a1e7b6c`의 순수 경계를 읽었다. legacy 조건 map을 경유하지 않고 기존 ParticipantMatchInput과 시간·후보·추천 계산기를 재사용한다.
+- [ ] `[AGENT]` 독립 fixture·기대값과 RED→GREEN으로 model response→strict parser/IR→실제 저장·복원→안전 구간 projection→기존 계산기를 연결한다.
+- [ ] `[AGENT]` prepare의 최초 선택을 독립 트랜잭션에 고정한다. consume 실패 시 선택은 유지하고 IR 결과의 부분 저장은 rollback한다. 계약·의미·정책은 별도 식별자이며 같은 정책 version이라도 실제 선택이 다르면 재사용을 거부한다.
+- [ ] `[AGENT]` 독립 리뷰·결함 주입·관련 검증을 수행한다. 기초 전체 gate의 AD04/OA04 2실패와 원인 미확정을 유지하고 새 통합 성공으로 대체하지 않는다.
+
+현재는 기술적 로컬 실행 경계다. eligible label·배타 대안 선택·명시 UNCONSTRAINED 허용은 default 없이 필수 주입한다. REMOTE 명시 fixture를 먼저 계산하고 미지원 place/mode, 공개·확정 자격, 시간어 숫자, 인증·만료·원본 입력 재사용의 제품 연결을 임의 선택하지 않는다. 기존 worker/MatchingProcessor/DTO/사용자 동작·운영 설정·상대 PR은 변경하지 않는다. 실모델 추가0·ledger49/50 유지, commit/push/PR/merge/deploy·운영 DB 변경0이다.
+
+## 2026-11-04 현재 작업 — 분석 IR 제품 경계의 로컬 검증
+
+- [x] `[AGENT]` 기존 A–D·계약 버전 검증과 다른 작업을 보존하고 develop 기준 `856cdad8adee1cf0b97ece1ab7686af9c2b9e8de`의 별도 detached worktree에서 구현했다. 기본 legacy 경로의 보호 파일 14개와 기존 5개 worktree의 HEAD·변경 내용을 보존했다.
+- [x] `[AGENT]` 신뢰된 불변 snapshot, 원문·보완별 revision/code-point 근거, 모델 해석과 사용자 확인의 분리, 네 Availability 상태, 관계·범위 격리와 strict parser를 구현했다. 새 6개 클래스 167건은 최종 전체 실행에서도 모두 PASS다. span 일치나 모델 라벨을 의미 정확성·사용자 확인으로 승격하지 않는다.
+- [x] `[AGENT]` V24의 별도 versioned envelope를 실제 PostgreSQL에 원자 저장·복원하고 frozen membership/context·게시 fencing·멱등·동시성·손상·run 삭제 cascade를 검증했다. 기존 조건 map에 새 필드를 덧붙이거나 미지원 IR를 legacy로 자동 강등하지 않는다.
+- [x] `[AGENT]` 독립 리뷰와 결함 5종 탐지·원본 SHA 복원을 완료했다. V24 추가로 바뀐 기존 최신 버전·개수 기대값만 수정했으며, 최종 테스트 지문으로 V24 부재 5/5 assertion RED와 SQL 정확 복원도 확인했다. 역사 마이그레이션·사업 데이터 보존 assertion은 유지했다.
+- [x] `[AGENT]` 마지막 소스의 집중 222/222 PASS, 실패·오류·skip 0과 lint·assemble 통과를 확인했다. 새 IR 167건·고정 계약 46건·마이그레이션 5건·이전 컨테이너 실패 회귀 4건을 포함한다.
+- [x] `[AGENT]` 마지막 코드의 무필터 Gradle gate를 2026-11-04 20:16:39~21:31:15 UTC 실행했다. lint·assemble PASS, 실제 XML 361 suites / 2,920건 = 2,901 PASS / 2 FAIL / 17 SKIP다. 기존 skip 집합이 같고, 첫 실행보다 2건 적은 것은 초기화 오류의 synthetic executionError 두 항목이 사라진 결과임을 이름별로 확인했다. 전체 gate는 미통과다.
+- [ ] `[AGENT]` 남은 기존 AD04는 MATCHING 대신 ANALYSIS_DELAYED, OA04의 existing/exhausted 조합은 예상 요청 5회 대신 4회로 실패했다. 첫 전체 실행의 같은 사례는 PASS이며 관련 source SHA가 같다. 원인은 미확정이다. 기존 source·assertion·timeout·skip을 유지한 외부 관측자 1회 진단은 원래 AD04 1건·OA04 4개 parameter 모두 PASS였다. 저장된 enum은 primary 또는 의도한 fallback 성공을 보였으나 실패를 재현하지 못했다. 관측자·독립 실행의 타이밍 영향이 있으므로 이 5 PASS로 원래 전체 실패를 대체하거나 원인 해결을 주장하지 않는다. 추가 재시도는 하지 않는다.
+- [x] `[AGENT]` 참가자 상태 PR214의 정확 head `675599dfb9b4cc778e155f714ccc48240a1e7b6c`를 fetch/read했다. boolean/flat 시간의 기존 순수 경계에는 새 typed 근거를 보존하는 접합이 필요하다. 상대 변경을 적용·병합하지 않았다.
+- [ ] `[USER/SHARED]` 미확정 해석의 기본 추천·조건부 후보·주최자 확정 자격과 새 프로토콜의 장소-only/불가-only 정책은 아직 결정하지 않는다. 일반 합성 비교는 모델 정확도 측정과 구분한다.
+- [ ] `[AGENT]` 운영 활성화 전에 run별 prompt 계약·IR 의미·정책 선택의 영속, InputRevision 재사용·retry/fallback 전파, typed Matching/최종 DTO 및 인증·만료 서비스의 전체 경로를 구현·검증한다. 현재 parser·snapshot·저장소 각각의 검증을 새 제품 전체 경로의 검증으로 간주하지 않는다.
+
+현재 범위의 IR·저장 구현과 집중 검증은 완료했으나 전체 회귀 2건은 미해결이다. 첫 무필터 실행의 2,922건 = 2,897 PASS / 8 FAIL / 17 SKIP와 원본 증거도 보존했다. 그 실패 8건은 V24 최신 기대값 2건과 컨테이너 초기화·파생 6건이며, 실제 6개 테스트(V24 기대값 2개와 초기화 실패 대상 4개)는 마지막 집중 및 전체 실행에서 통과했고, 파생 executionError 2건은 생성되지 않았다. 실제 제품 활성화·정책 선택·typed 장소/mode/최종 DTO 통합은 미완료다. 실모델 호출 0회이며 기존 실험 ledger 49/50을 사용하지 않았다. commit/push/PR/merge/deploy·운영 DB/서비스 변경은 하지 않는다. 운영 opt-in·시간어 기본값·질문 횟수·기존 UX도 변경하지 않는다.
+
 ## 2026-11-04 현재 작업 — 모임별 공유 링크 제목 (Draft PR 게시 준비)
 
 - [x] `[AGENT]` 실제 origin remote 확인, 깨끗한 develop ff-only 갱신 후 `9db8c06`에서 `feature/room-preview-title` 생성. 기존 work 브랜치와 사용자 작업 보존, Server Draft PR #208 사용·변경 없음.
@@ -2122,3 +2164,14 @@ V8 guard 최종 커밋 전 확인: 독립 리뷰 PASS(guard57117c…/installer3e
 - [ ] ready/develop 병합과 정확 merge SHA CI 및 원격 포함 확인
 
 Commit/PR: 동일 커밋 예정.
+
+### 2026-11-05 비활성 IR2 의미·시간 정밀도 통합
+
+- [x] 기존 V1 정상 소스 737개를 검증해 독립 detached worktree에 보존하고, 기존 733개 소스는 불변·공통 경계 4개만 리팩터 허용으로 고정했다.
+- [x] 가용성 의미와 숫자 시간 정밀도를 분리한 명시적 IR2 계약, 독립 합성 테스트와 적용 전 독립 검토를 준비했다.
+- [x] 독립 계약·순수 계산·실제 JDBC 저장 및 재생의 RED→GREEN을 확인했다. IR2 72건과 관련 V1 회귀를 합한452건 전부PASS,오류·skip0,ktlintCheck·assemble PASS. 비정밀 AVAILABLE의 의미는 보존하고 숫자 후보는 만들지 않는다.
+- [x] 최종 코드의 V1 회귀·동결46건과733개불변/보호14파일 해시, 독립검토를 확인했다. 의도결함5개를 모두탐지하고 전체소스를focused통과지문과동일하게복원했다. FI4의3건/2실패는I34선택자중복에따른집계오기였으며 원본중단기록·독립판정근거를보존했고 재실행하지 않았다.
+- [ ] 같은 최종 소스에서 ktlintCheck·assemble·필터 없는 test를 완료하고 기존 AD04/OA04 미확정 실패와 구분해 기록한다.
+- [ ] 최종 검토 패치·파일별 hash·검증 보고서를 정리한다.
+
+시간 기본값·조건부 공개 및 확정 자격·질문 UX는 미정이며 이번 구현에서 선택하지 않는다. 명시적 생성만 가능한 경계로 두고 provider의 실제 IR2 출력 계약 등록, worker/controller 연결, 공개 DTO·권한·만료 정책, 원격 쓰기·운영 활성화는 포함하지 않는다. 실제 모델 호출은 추가하지 않는다. 수동 합성 fixture의 통합 검증을 과거 모델의 의미 오분류 해결 증거로 표현하지 않는다. Commit/PR: 금지·미실행.

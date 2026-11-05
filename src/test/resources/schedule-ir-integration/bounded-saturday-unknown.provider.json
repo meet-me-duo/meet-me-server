@@ -1,0 +1,109 @@
+{
+  "semantic_version": "schedule-ir-product-1",
+  "results": [
+    {
+      "input_ref": "00000000-0000-0000-0000-000000000101",
+      "availability": "KNOWN_WINDOWS",
+      "conditions": [
+        {
+          "id": "fri",
+          "effect": "AVAILABLE",
+          "interpretation": "EXPLICIT",
+          "scope": {
+            "dimension": "TIME",
+            "start": "2027-01-08T18:00:00",
+            "end": "2027-01-08T21:00:00"
+          },
+          "evidence": [
+            {
+              "source_id": "original",
+              "revision": 3,
+              "start_code_point": 8,
+              "end_code_point": 26,
+              "quote": "금요일 18시부터 21시까지 가능"
+            }
+          ],
+          "assertion": "ASSERTED",
+          "supersedes": [],
+          "alternative_group": null,
+          "alternative": null
+        },
+        {
+          "id": "sat-unknown",
+          "effect": "UNRESOLVED",
+          "interpretation": "UNRESOLVED",
+          "scope": {
+            "dimension": "TIME",
+            "start": "2027-01-09T00:00:00",
+            "end": "2027-01-10T00:00:00"
+          },
+          "evidence": [
+            {
+              "source_id": "original",
+              "revision": 3,
+              "start_code_point": 30,
+              "end_code_point": 44,
+              "quote": "토요일 시간은 아직 몰라요"
+            }
+          ],
+          "assertion": "ASSERTED",
+          "supersedes": [],
+          "alternative_group": null,
+          "alternative": null
+        }
+      ]
+    },
+    {
+      "input_ref": "00000000-0000-0000-0000-000000000102",
+      "availability": "KNOWN_WINDOWS",
+      "conditions": [
+        {
+          "id": "fri",
+          "effect": "AVAILABLE",
+          "interpretation": "EXPLICIT",
+          "scope": {
+            "dimension": "TIME",
+            "start": "2027-01-08T19:00:00",
+            "end": "2027-01-08T22:00:00"
+          },
+          "evidence": [
+            {
+              "source_id": "original",
+              "revision": 3,
+              "start_code_point": 8,
+              "end_code_point": 26,
+              "quote": "금요일 19시부터 22시까지 가능"
+            }
+          ],
+          "assertion": "ASSERTED",
+          "supersedes": [],
+          "alternative_group": null,
+          "alternative": null
+        },
+        {
+          "id": "sat",
+          "effect": "AVAILABLE",
+          "interpretation": "EXPLICIT",
+          "scope": {
+            "dimension": "TIME",
+            "start": "2027-01-09T19:00:00",
+            "end": "2027-01-09T22:00:00"
+          },
+          "evidence": [
+            {
+              "source_id": "original",
+              "revision": 3,
+              "start_code_point": 30,
+              "end_code_point": 48,
+              "quote": "토요일 19시부터 22시까지 가능"
+            }
+          ],
+          "assertion": "ASSERTED",
+          "supersedes": [],
+          "alternative_group": null,
+          "alternative": null
+        }
+      ]
+    }
+  ]
+}

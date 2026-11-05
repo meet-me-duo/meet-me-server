@@ -1,0 +1,157 @@
+package com.meetme.server.coordination.adapter.output.integration
+
+import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
+import com.meetme.server.coordination.application.port.output.ParserFailureKind
+import com.meetme.server.submission.domain.ir.IrAssertion
+import com.meetme.server.submission.domain.ir.IrDimension
+import com.meetme.server.submission.domain.ir.IrEffect
+import com.meetme.server.submission.domain.ir.IrInterpretation
+import com.meetme.server.submission.domain.ir.IrProblem
+import com.meetme.server.submission.domain.ir.IrQuarantine
+import com.meetme.server.submission.domain.ir.IrScope
+import com.meetme.server.submission.domain.ir.IrTemporalResolution
+import com.meetme.server.submission.domain.ir.ProposedIrEvidence
+import com.meetme.server.submission.domain.ir.ProposedIrV2Condition
+import com.meetme.server.submission.domain.ir.ProposedIrV2Result
+import com.meetme.server.submission.domain.ir.SCHEDULE_IR_V2_VERSION
+import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
+import com.meetme.server.submission.domain.ir.ScheduleIrV2Envelope
+import com.meetme.server.submission.domain.ir.ScheduleIrV2Proposal
+import com.meetme.server.submission.domain.ir.ScheduleIrV2Validator
+import tools.jackson.core.StreamReadFeature
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.ObjectMapper
+import java.time.LocalDateTime
+import java.util.UUID
+
+/** The explicit IR2 wire requires temporal_resolution and does not select a legacy decoder. */
+class ScheduleIrV2ProviderContract(
+    objectMapper: ObjectMapper,
+) {
+    private val reader =
+        objectMapper
+            .readerFor(Map::class.java)
+            .with(StreamReadFeature.STRICT_DUPLICATE_DETECTION)
+            .with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+
+    fun parseProviderResponse(
+        json: String,
+        snapshot: ScheduleEvidenceSnapshot,
+        semanticVersion: String,
+    ): ScheduleIrV2Envelope =
+        try {
+            require(semanticVersion == SCHEDULE_IR_V2_VERSION && json.toByteArray(Charsets.UTF_8).size <= 262_144)
+            val root = fields(reader.readValue<Map<*, *>>(json), setOf("semantic_version", "results"))
+            require(root["semantic_version"] == semanticVersion)
+            val results = list(root["results"])
+            require(results.size in 2..50)
+            ScheduleIrV2Validator().validate(ScheduleIrV2Proposal(semanticVersion, results.map(::result)), snapshot)
+        } catch (_: RuntimeException) {
+            // A cause can contain raw JSON, source quotes or answers. Do not retain it.
+            throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
+        }
+
+    private fun result(value: Any?): ProposedIrV2Result {
+        val map = fields(value, setOf("input_ref", "conditions"))
+        val inputRef = text(map["input_ref"])
+        val inputId = UUID.fromString(inputRef)
+        require(inputRef == inputId.toString())
+        val conditions = list(map["conditions"])
+        require(conditions.size <= 32)
+        val suppliedIds = conditions.mapNotNull { (it as? Map<*, *>)?.get("id") as? String }
+        require(suppliedIds.distinct().size == suppliedIds.size)
+        val rejected = mutableListOf<IrQuarantine>()
+        val parsed =
+            conditions.mapNotNull { raw ->
+                try {
+                    condition(raw)
+                } catch (_: RuntimeException) {
+                    val id = ((raw as? Map<*, *>)?.get("id") as? String)?.takeIf { it.matches(TOKEN) }
+                    rejected += IrQuarantine(id, IrProblem.SHAPE, null)
+                    null
+                }
+            }
+        return ProposedIrV2Result(inputId, parsed, rejected)
+    }
+
+    private fun condition(value: Any?): ProposedIrV2Condition {
+        val map =
+            fields(
+                value,
+                setOf(
+                    "id",
+                    "effect",
+                    "interpretation",
+                    "temporal_resolution",
+                    "scope",
+                    "evidence",
+                    "assertion",
+                    "supersedes",
+                    "alternative_group",
+                    "alternative",
+                ),
+            )
+        val id = text(map["id"])
+        require(id.matches(TOKEN))
+        val scope =
+            map["scope"]?.let {
+                val fields = fields(it, setOf("dimension", "start", "end"))
+                IrScope(
+                    IrDimension.valueOf(text(fields["dimension"])),
+                    optionalText(fields["start"])?.let(LocalDateTime::parse),
+                    optionalText(fields["end"])?.let(LocalDateTime::parse),
+                )
+            }
+        val evidence =
+            list(map["evidence"]).map {
+                val fields = fields(it, setOf("source_id", "revision", "start_code_point", "end_code_point", "quote"))
+                ProposedIrEvidence(
+                    text(fields["source_id"]),
+                    integer(fields["revision"]),
+                    integer(fields["start_code_point"]),
+                    integer(fields["end_code_point"]),
+                    text(fields["quote"]),
+                )
+            }
+        return ProposedIrV2Condition(
+            id,
+            IrEffect.valueOf(text(map["effect"])),
+            IrInterpretation.valueOf(text(map["interpretation"])),
+            IrTemporalResolution.valueOf(text(map["temporal_resolution"])),
+            scope,
+            evidence,
+            IrAssertion.valueOf(text(map["assertion"])),
+            list(map["supersedes"]).map(::text),
+            optionalText(map["alternative_group"]),
+            optionalText(map["alternative"]),
+        )
+    }
+
+    private fun fields(
+        value: Any?,
+        names: Set<String>,
+    ): Map<*, *> {
+        val fields = value as? Map<*, *> ?: invalid()
+        require(fields.keys == names)
+        return fields
+    }
+
+    private fun list(value: Any?): List<*> = value as? List<*> ?: invalid()
+
+    private fun text(value: Any?): String = value as? String ?: invalid()
+
+    private fun optionalText(value: Any?): String? = if (value == null) null else text(value)
+
+    private fun integer(value: Any?): Int {
+        require(value is Int || value is Long)
+        val number = (value as Number).toLong()
+        require(number in Int.MIN_VALUE..Int.MAX_VALUE)
+        return number.toInt()
+    }
+
+    private fun invalid(): Nothing = throw IllegalArgumentException("Invalid IR2 shape")
+
+    companion object {
+        private val TOKEN = Regex("[A-Za-z0-9._:-]{1,64}")
+    }
+}

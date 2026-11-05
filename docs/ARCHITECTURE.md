@@ -758,3 +758,26 @@ V2 evidence가 있는 Jev 요청은 유효한 Choice 의미 라벨을 보존하�
 ## 2026-10-31 조건부 참석의 클라이언트 호환 경계
 
 ADR-067에 따라 candidates/추천 primary·alternatives/result GET과 legacy·typed confirmation POST가 optional `attendance_support=conditional-v1`을 해석한다. HTTP adapter는 정확한 선언만 application의 의미 지원 boolean으로 전달한다. MatchingResultService는 기존 인증·상태·분석/선택 오류 순서를 유지하고 반환할 false 의미 및 write 전 selected variant의 미확인 상태를 검사한다. 미지원이면409 CLIENT_UPDATE_REQUIRED이며 후보를 true로 바꾸거나 filter하지 않는다. 결과 adapter의 좁은 no-store filter는 오류 응답에도 적용한다. query는 인증 capability가 아니고 CORS/Origin·소유권·트랜잭션·protocol·DB guard는 그대로다. 실제 OpenAPI로 optional parameter와409 계약을 생성하고 웹은 여섯 요청에 동일 지원 값을 넣는다. 기존 서버의 미지원 query 무시 및 구 웹의409 cache 처리도 검증한다.
+
+### 로컬 비활성 IR2 의미·정밀도 경계
+
+`ScheduleIrV2ResponseParser`와 `ScheduleIrV2IntegrationService`는 호출자가 명시적으로 구성하는 별도 경계다. 기본 legacy provider 계약과 기존 V1 wire/model은 유지하며, 운영 worker/controller의 bean graph에 새 IR2 서비스를 등록하지 않는다. 응답 계약 식별자, `schedule-ir-product-2` 의미 형식, 주입된 계산 정책 식별자는 서로 별개다.
+
+IR2 조건은 `effect`와 `temporalResolution`을 각각 저장한다. NON_PRECISE AVAILABLE은 숫자 구간이 없어도 가용성 의미를 보존한다. 범위가 없는 positive 조건을 검색 전 기간 가능이나 전 기간 불가로 변환하지 않으며, 독립된 정밀 가용성은 유지한다. PREFERRED는 가용성을 생성하지 않는다. 불확실한 선호 정정은 그 대상 조건의 점수만 보류하며, 겹치는 독립 선호 점수는 보존한다. 모델 EXPLICIT 라벨은 사용자 확인이 아니다.
+
+Application이 만든 불변 제출 snapshot의 ID·revision·code-point span·digest로 근거를 검증한다. V1 근거/관계 검증을 위한 임시 proof projection은 비공개이며 IR2 의미, 저장 문서, 숫자 계산 입력으로 반환하지 않는다. 알려진 시간 효과의 PLACE/ALL 조합은 지원하지 않고, 미해결 차원 근거와 구분한다. 격리 범위를 신뢰할 수 없으면 임의의 국소 범위를 부여하지 않는다.
+
+V24 JSONB의 명시적 semantic/format 쌍(V1=1, IR2=2)을 별도 typed 저장소로 읽는다. 지원하지 않는 버전이나 반대 버전의 행을 legacy로 해석하지 않는다. 공유 SQL 경계는 room→run 잠금, 동결 입력·참조 완전성·현재 run version 및 확인 보호를 유지한다. V25 첫 선택 binding은 전체 계약·정책·입력·시간대를 고정하고, 같은 run에서 버전을 바꾸지 않는다. prepare는 별도 트랜잭션으로 binding을 보존하며 consume의 저장·재조회·순수 계산은 호출자 트랜잭션에 참여한다.
+
+숫자 계산은 기존 `TimeRangeMatcher`의 정규화·교집합·차집합, `DeterministicCandidateMatcher`, `RecommendationProjector`를 재사용한다. AVAILABLE이 없으면 전 기간을 여는 legacy 복원 함수를 IR2에 사용하지 않는다. 결과의 정밀 후보 유무와 원래 의미 근거를 따로 보존한다. 시간 언어의 숫자 기본값, 조건부 후보 공개·주최자 확정 자격, 새로운 질문 UX 및 typed 장소·구간 mode는 이 경계에서 결정하지 않는다. 실제 provider의 IR2 출력 지침/요청 schema 등록, worker 연결, 공개 DTO·권한·만료 계약과 운영 활성화는 별도 검토가 남아 있다. 합성 응답의 통합 검증은 실모델 의미 정확도의 증거가 아니다.
+
+
+### 명시적 일정 DSL·AST 경계 (2026-11-05)
+
+새 응답 계약 schedule-dsl-response-1, IR 의미 schedule-ir-product-3, AST schedule-ast-1과 별도 matching policy version을 명시한다. 기존 LEGACY/V1/IR2의 wire·기본 요청 경로는 유지한다. DSL은 근거 있는 claim과 CLAIM_REF/ALL_OF/ANY_OF/EXCEPT/CHOICE/PREFER 그래프를 보존하며, 교집합·차집합·후보 점수는 기존 결정론 커널에서 계산한다. 정정 관계가 현재 선택된 ASSERTED·허용 해석의 AST 경로와 불일치하면 RELATION_SCOPE로 해당 program을 보류한다. 원 근거·의미와 독립 참여자 결과는 보존한다.
+
+ScheduleDslAnalysisService는 불변 run/batch/제출 버전·근거·계약/정책 결속과 트랜잭션을 기존 execution support로 검증한다. 새 JDBC codec은 기존 IR 테이블에 semantic3/format3을 저장하고 fresh restore에서 명시 버전을 검증한다. ScheduleDslAnalysisWorker는 frozen input → 단일 provider 응답 → strict parser/validator → 저장/복원 → AST 계산을 연결한다. Gemini adapter는 기본15초 한도 내 물리 요청1회이며 SDK/상위 재시도·Luna fallback을 호출하지 않는다. 동시 run의 단일 admission은 외부 ScheduleDslCallBudget 구현이 전역 cap과 logicalKey를 원자적으로 관리해야 하며 worker 자체의 exactly-once 보장은 아니다.
+
+DB 없는 ScheduleDslOfflineEntryPoint는 동일 제품 코드로 파일 기반 prepare/prepare-gemini/evaluate/evaluate-gemini를 수행한다. 네트워크·키 조회·DB는 없고 새 출력은0600으로 생성한다. 전달 source/JAR 지문과 검증 범위는 docs/verification/schedule-dsl-offline-runtime.json을 따른다. 이 CLI는 기존 Jev/필요 시 Luna·답변 재검사 state machine의 대체가 아니라 최종 배치 DSL 해석/계산의 재사용 경계다.
+
+새 service/worker/repository/provider는 운영 component scan·Outbox/controller에 등록하지 않았다. typed 장소/구간 mode가 없어 non-REMOTE는 REQUIRES_DECISION으로 의미와 준비 입력을 보존하고 최종 후보를 발명하지 않는다. 시간어·날짜만 입력의 숫자 기본값, 조건부 후보 공개/주최자 확정 자격, 인증·만료/최종 DTO 운영 접합은 미정 또는 미구현이며 이 경계의 mock·replay 성공으로 운영 준비나 모델 의미 정확도를 주장하지 않는다.

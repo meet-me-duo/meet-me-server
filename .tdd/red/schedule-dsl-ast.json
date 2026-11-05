@@ -1,0 +1,534 @@
+{
+  "schema_version": 1,
+  "work_item_id": "schedule-dsl-ast",
+  "baseline_source_revision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "recorded_at": "2026-11-05T02:44:44.695356+00:00",
+  "tests": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslOfflineEntryPointTest.kt",
+      "sha256": "76ed41db27c452b8d35a442ff70df5b4b9e650ef3a82e3208fef7da932c0f63e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslGeminiWireTest.kt",
+      "sha256": "86e1d34f15a09988fd2fd5c695dfa1e8c08805ee57c50f6c3aa6f6ea34f2b4ad"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslProviderContractTest.kt",
+      "sha256": "68f106506367e354171325256e1a123ca9a8f88f969deb4f9a991bcac5d77cf1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslWorkerPostgresTest.kt",
+      "sha256": "87ce40969500ac27bcfcddd7d8e7be6921091d277e68423953dd6aa4ab47f973"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslCorrectionAuthorityBoundaryTest.kt",
+      "sha256": "7ba8a8ebddda3ec6afd75e0be279d9c6a5ba8a261e4e60dfec092cffe3f8acfb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslInputPolicyTest.kt",
+      "sha256": "f48174867457e505fb5f3c0d73634bace35063ed8679a216acf6febb86e8dd00"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslWithheldChannelBoundaryTest.kt",
+      "sha256": "cd19b28e7a5f4392f4fa7e82c3a0e06bc3fdd9f538030ae110dbadca6e3e05d0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslValidatorTest.kt",
+      "sha256": "57f892bc0988d7c0016d01ab96b954dd4d2fc3e7f5886dc7a9df06206eacde70"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslSyntheticFixture.kt",
+      "sha256": "7d43f840a024ed7f51cb94600a22c49a9fae75fb1a3f9288f3cdd68f878d35c6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslWireFixture.kt",
+      "sha256": "d146750e25997a922b95ffed9e48a838b8d1763edfa08997335401d091bb4680"
+    }
+  ],
+  "red_runs": [
+    {
+      "recorded_at": "2026-11-05T02:20:55.611851+00:00",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "*ScheduleDsl*Test"
+      ],
+      "counts": {
+        "tests": 101,
+        "failures": 101,
+        "errors": 0,
+        "skipped": 0
+      },
+      "source_unchanged": true,
+      "failed_tests": [
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "DSLW06 response schema is a closed flat node registry with every supported operator()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "DSLW01 strict wire retains nested registry and verified evidence through restored validation()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[1] defect = \"duplicate_key\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[2] defect = \"trailing_object\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[3] defect = \"trailing_scalar\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[4] defect = \"truncated\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[1] changed = \"contract\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[2] changed = \"semantic\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[3] changed = \"ast\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[1] defect = \"null_program\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[2] defect = \"extra_program\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[3] defect = \"missing_root\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[4] defect = \"nodes_object\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[5] defect = \"extra_node\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[6] defect = \"missing_operator\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[7] defect = \"numeric_operator\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[8] defect = \"children_null\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[9] defect = \"numeric_child\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[10] defect = \"revision_float\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[11] defect = \"revision_string\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[12] defect = \"span_null\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "DSLW05 same trusted input and selected identities yield deterministic provider request bytes()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[1] defect = \"missing\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[2] defect = \"duplicate\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[3] defect = \"foreign\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[1] defect = \"unknown_root\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[2] defect = \"missing_semantic\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[3] defect = \"null_ast\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[4] defect = \"wrong_semantic\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[5] defect = \"wrong_ast\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[6] defect = \"results_object\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[7] defect = \"extra_result\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[8] defect = \"missing_input\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[9] defect = \"numeric_input\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest",
+          "test": "[10] defect = \"conditions_object\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWireTest",
+          "test": "[1] defect = \"malformed\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWireTest",
+          "test": "[2] defect = \"missing_candidates\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWireTest",
+          "test": "[3] defect = \"missing_text\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWireTest",
+          "test": "[4] defect = \"truncated_generation\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWireTest",
+          "test": "DSLWIRE01 Gemini transport wraps exact neutral prompt and the agreed schema and generation config()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWireTest",
+          "test": "DSLWIRE02 real Gemini response envelope retains exact DSL text and usage for the same strict parser()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslWithheldChannelBoundaryTest",
+          "test": "DSLC01 withheld PREFER upper is bounded by base and cannot inherit wider preference possibility()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslWithheldChannelBoundaryTest",
+          "test": "DSLC02 withheld EXCEPT upper cannot enlarge base into the excluded child's separate interval()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslWithheldChannelBoundaryTest",
+          "test": "DSLC03 withheld BLOCK conjunction retains both possible negative influences instead of empty intersection()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO02 prepare emits the same neutral bytes as the real product provider contract()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO01 trusted snapshot reuses evidence bindings and preserves Unicode answer revisions and immutable sources()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO06 prepare creates private new output using real neutral pipeline without writing raw input to stdout()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO03 offline typed AST calculation uses conjunction and existing candidate preference kernels()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "[1] defect = \"batch_fixed\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "[2] defect = \"accepted_at\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "[3] defect = \"answer_revision\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "[4] defect = \"duplicate_id\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "[5] defect = \"semantic_version\""
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO04 nonremote capability is not silently calculated as REMOTE and retains prepared meaning()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO08 existing output is never overwritten and failure diagnostics reveal neither source nor exception text()"
+        },
+        {
+          "class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+          "test": "DSLO07 evaluate writes private typed AST numeric result and prints only bounded diagnostics()"
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "DSLG01 actual Gemini HTTP worker parses stores restores and evaluates AST intersection then replays without dispatch()"
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "DSLG06 malformed AST retains claims but cannot silently calculate flat IR2 availability()"
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[1] defect = \"run_version\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[2] defect = \"source_revision\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[3] defect = \"source_text\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[4] defect = \"inactive_run\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[5] defect = \"room_mode\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "DSLG02 consume joins outer transaction and marker identity proves successful work was rolled back()"
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[1] field = \"format\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[2] field = \"semantic\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[1] defect = \"http_failure\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[2] defect = \"invalid_json\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[1] field = \"policy\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[2] field = \"contract\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "[3] field = \"semantic\""
+        },
+        {
+          "class": "com.meetme.server.coordination.application.service.ScheduleDslWorkerPostgresTest",
+          "test": "DSLG08 denied call admission never sends HTTP or publishes consumed results()"
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "DSLV03 shared DAG with consistent role and depth eight remains valid()"
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "DSLV04 superseded history preserves meaning without hiding an active negative()"
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[1] defect = \"dangling\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[2] defect = \"cycle\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[3] defect = \"duplicate_id\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[4] defect = \"unreachable\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[5] defect = \"empty_operator\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[6] defect = \"duplicate_child\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[7] defect = \"wrong_role\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[8] defect = \"uncovered_negative\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[9] defect = \"hidden_negative\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[10] defect = \"operator_quote\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[11] defect = \"operator_revision\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[12] defect = \"operator_span\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[13] defect = \"node_limit\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "[14] defect = \"depth_limit\""
+        },
+        {
+          "class": "com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest",
+          "test": "DSLV01 nested graph preserves claims structure and verified operator evidence through restoration()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "[1] operator = \"ANY_OF\", supported = \"true\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "[2] operator = \"ALL_OF\", supported = \"false\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "DSL03 branch local EXCEPT never becomes a global exclusion()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "DSL05 missing epistemic choice never acts as ordinary OR()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "DSL02 nested ALL over ANY is neither flat union nor flat intersection()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "DSL08 corrected inactive reference is not rewritten to TRUE or resurrected()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "[1] assertion = \"QUOTED_OTHER\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "[2] assertion = \"RETRACTED\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "[1] operator = \"ALL_OF\", start = \"19\", end = \"21\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "[2] operator = \"ANY_OF\", start = \"18\", end = \"22\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "DSL09 block root without explicit allow root cannot create availability()"
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest",
+          "test": "DSL06 branch preference clips to its own base and cannot leak to another OR branch()"
+        }
+      ],
+      "expected_failure_classification": "unimplemented explicit DSL behavior",
+      "local_log": ".codex/tdd-evidence/schedule-dsl-formatted-actual-red.log"
+    },
+    {
+      "recorded_at": "2026-11-05T02:30:14.146166+00:00",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest"
+      ],
+      "counts": {
+        "tests": 7,
+        "failures": 7,
+        "errors": 0,
+        "skipped": 0
+      },
+      "source_unchanged": true,
+      "failed_tests": [
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "[1] location = \"leaf\", assertion = \"QUOTED_OTHER\", interpretation = \"EXPLICIT\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "[2] location = \"leaf\", assertion = \"RETRACTED\", interpretation = \"EXPLICIT\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "[3] location = \"ancestor\", assertion = \"QUOTED_OTHER\", interpretation = \"EXPLICIT\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "[4] location = \"ancestor\", assertion = \"RETRACTED\", interpretation = \"EXPLICIT\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "[5] location = \"leaf\", assertion = \"ASSERTED\", interpretation = \"INFERRED\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "[6] location = \"ancestor\", assertion = \"ASSERTED\", interpretation = \"INFERRED\""
+        },
+        {
+          "class": "com.meetme.server.coordination.domain.dsl.ScheduleDslCorrectionAuthorityBoundaryTest",
+          "test": "DSLAUTH02 ungrouped correction present only in an unselected valid choice branch cannot withdraw the old negative()"
+        }
+      ],
+      "expected_failure_classification": "assertion: ineligible or unselected AST correction reopens an old negative",
+      "local_log": ".codex/tdd-evidence/schedule-dsl-authority-actual-red.log"
+    }
+  ],
+  "independent_test_design": true,
+  "independent_source_review": true,
+  "fault_injections_detected": 3,
+  "legacy_contract_preserved": true
+}

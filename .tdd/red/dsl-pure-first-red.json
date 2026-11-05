@@ -1,0 +1,99 @@
+{
+  "workItem": "dsl-pure-first-red",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslWireFixture.kt",
+      "sha256": "dfffc2681c5cc27ee39706f929d684c667f0c5a068e3cf3631a8dbc6b2044f56"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslSyntheticFixture.kt",
+      "sha256": "bf3b6d8684d6e6e49d990b52f17c1f8e2025be17d9aa5b86fddd03e715812d8d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslValidatorTest.kt",
+      "sha256": "1bc55928ae7d40e2aeeab7e92468e589a1079c0baf569f2ec142dbe31fdeeeed"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslInputPolicyTest.kt",
+      "sha256": "a18f9b10f56286cacc30c5f91249907adbb2120c92b515b9d9f8fb7d4ed6076d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslProviderContractTest.kt",
+      "sha256": "f1826d75097ddd96c6ecc8d44872498b7e1432701192a978a8fd8484249942f1"
+    }
+  ],
+  "command": [
+    "python",
+    "/workspace/schedule-dsl-ast-evidence/run-narrow.py",
+    "dsl-pure-first-red"
+  ],
+  "failedTests": [
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL04 known nonprecise availability has no lower support but is not a negative sibling', methodParameterTypes = 'java.lang.String, boolean'] / [1] \"ANY_OF\", \"true\"",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL04 known nonprecise availability has no lower support but is not a negative sibling', methodParameterTypes = 'java.lang.String, boolean'] / [2] \"ALL_OF\", \"false\"",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL03 branch local EXCEPT never becomes a global exclusion', methodParameterTypes = ''] / DSL03 branch local EXCEPT never becomes a global exclusion()",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL05 missing epistemic choice never acts as ordinary OR', methodParameterTypes = ''] / DSL05 missing epistemic choice never acts as ordinary OR()",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL02 nested ALL over ANY is neither flat union nor flat intersection', methodParameterTypes = ''] / DSL02 nested ALL over ANY is neither flat union nor flat intersection()",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL08 corrected inactive reference is not rewritten to TRUE or resurrected', methodParameterTypes = ''] / DSL08 corrected inactive reference is not rewritten to TRUE or resurrected()",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL07 nonasserted operator evidence cannot authorize its precise child', methodParameterTypes = 'java.lang.String'] / [1] \"QUOTED_OTHER\"",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL07 nonasserted operator evidence cannot authorize its precise child', methodParameterTypes = 'java.lang.String'] / [2] \"RETRACTED\"",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL01 explicit conjunction and disjunction retain different set semantics', methodParameterTypes = 'java.lang.String, int, int'] / [1] \"ALL_OF\", \"19\", \"21\"",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL01 explicit conjunction and disjunction retain different set semantics', methodParameterTypes = 'java.lang.String, int, int'] / [2] \"ANY_OF\", \"18\", \"22\"",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL09 block root without explicit allow root cannot create availability', methodParameterTypes = ''] / DSL09 block root without explicit allow root cannot create availability()",
+    "MethodSource [className = 'com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest', methodName = 'DSL06 branch preference clips to its own base and cannot leak to another OR branch', methodParameterTypes = ''] / DSL06 branch preference clips to its own base and cannot leak to another OR branch()",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV03 shared DAG with consistent role and depth eight remains valid', methodParameterTypes = ''] / DSLV03 shared DAG with consistent role and depth eight remains valid()",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV04 superseded history preserves meaning without hiding an active negative', methodParameterTypes = ''] / DSLV04 superseded history preserves meaning without hiding an active negative()",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [1] \"dangling\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [2] \"cycle\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [3] \"duplicate_id\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [4] \"unreachable\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [5] \"empty_operator\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [6] \"duplicate_child\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [7] \"wrong_role\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [8] \"uncovered_negative\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [9] \"hidden_negative\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [10] \"operator_quote\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [11] \"operator_revision\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [12] \"operator_span\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [13] \"node_limit\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV02 malformed program is withheld without dropping claim meaning or trusted peer', methodParameterTypes = 'java.lang.String'] / [14] \"depth_limit\"",
+    "MethodSource [className = 'com.meetme.server.submission.domain.dsl.ScheduleDslValidatorTest', methodName = 'DSLV01 nested graph preserves claims structure and verified operator evidence through restoration', methodParameterTypes = ''] / DSLV01 nested graph preserves claims structure and verified operator evidence through restoration()",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW06 response schema is a closed flat node registry with every supported operator', methodParameterTypes = ''] / DSLW06 response schema is a closed flat node registry with every supported operator()",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW01 strict wire retains nested registry and verified evidence through restored validation', methodParameterTypes = ''] / DSLW01 strict wire retains nested registry and verified evidence through restored validation()",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW03 duplicate JSON keys or trailing content cannot be silently accepted', methodParameterTypes = 'java.lang.String'] / [1] \"duplicate_key\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW03 duplicate JSON keys or trailing content cannot be silently accepted', methodParameterTypes = 'java.lang.String'] / [2] \"trailing_object\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW03 duplicate JSON keys or trailing content cannot be silently accepted', methodParameterTypes = 'java.lang.String'] / [3] \"trailing_scalar\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW03 duplicate JSON keys or trailing content cannot be silently accepted', methodParameterTypes = 'java.lang.String'] / [4] \"truncated\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW04 response contract semantic and AST identities are independently selected', methodParameterTypes = 'java.lang.String'] / [1] \"contract\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW04 response contract semantic and AST identities are independently selected', methodParameterTypes = 'java.lang.String'] / [2] \"semantic\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW04 response contract semantic and AST identities are independently selected', methodParameterTypes = 'java.lang.String'] / [3] \"ast\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [1] \"null_program\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [2] \"extra_program\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [3] \"missing_root\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [4] \"nodes_object\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [5] \"extra_node\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [6] \"missing_operator\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [7] \"numeric_operator\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [8] \"children_null\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [9] \"numeric_child\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [10] \"revision_float\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [11] \"revision_string\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW07 malformed program wire is isolated while claims and trusted peer remain intact', methodParameterTypes = 'java.lang.String'] / [12] \"span_null\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW05 same trusted input and selected identities yield deterministic provider request bytes', methodParameterTypes = ''] / DSLW05 same trusted input and selected identities yield deterministic provider request bytes()",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW08 document input identity completeness is mandatory', methodParameterTypes = 'java.lang.String'] / [1] \"missing\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW08 document input identity completeness is mandatory', methodParameterTypes = 'java.lang.String'] / [2] \"duplicate\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW08 document input identity completeness is mandatory', methodParameterTypes = 'java.lang.String'] / [3] \"foreign\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [1] \"unknown_root\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [2] \"missing_semantic\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [3] \"null_ast\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [4] \"wrong_semantic\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [5] \"wrong_ast\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [6] \"results_object\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [7] \"extra_result\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [8] \"missing_input\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [9] \"numeric_input\"",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContractTest', methodName = 'DSLW02 malformed document or result never falls back to an older decoder', methodParameterTypes = 'java.lang.String'] / [10] \"conditions_object\""
+  ],
+  "expectedFailureClassification": "64 compiled/discovered pure Kotlin/JUnit cases reach genuine TDD TODO bodies, including wrapped AssertionFailedError; no compile/setup/container/skip failures. Standalone bounded JVM validation, not Gradle/CI.",
+  "recordedAt": "2026-11-05T01:26:20.284989+00:00"
+}

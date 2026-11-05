@@ -1,0 +1,127 @@
+{
+  "workItem": "schedule-product-ir-boundaries",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "boundary": "IR evidence, relation complexity, strict parsing and atomic versioned persistence",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrValidator.kt",
+      "sha256": "739de6bc326a9c65237a23f92ce3d87ee40142121f75ec7bd07230f315a4bba0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleIrProviderContract.kt",
+      "sha256": "6ac0caf53d365a5b9b56d4ceea2fb5cad1f0b4321805e88b2c0b8286f5961902"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/JdbcScheduleIrRepository.kt",
+      "sha256": "207653bba215b476ebb10b8fea397e6a8408fbd81daea923dba3d90e8973eadb"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleIrProviderContractTest.kt",
+      "sha256": "bd5935a2ca3802e8fced64457e34705bf0c70456a72443a8a18a26a1b8ba6244"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "cea2fa9b50e34a4f818a787833c8f7fa4de689d2fd94fbae4acb68ecffa8db7b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrValidationBoundaryTest.kt",
+      "sha256": "9e8e2b69d15a17980a93af15973bb37b9c054bb58dc4f56074e4e3f96873c8bb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrValidatorTest.kt",
+      "sha256": "cc0a7332cb0bec2ec5d90353f7db0fd35595b6caea25a601625d66fcc5c4cc07"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrRelationComplexityTest.kt",
+      "sha256": "849fcaeccb21e9d8e99c4e8c3973bbba137f326b3254261cf044e68771311566"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Exponential repeated DAG traversal",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "*ScheduleIrRelationComplexityTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.ir.ScheduleIrRelationComplexityTest.maximum dense acyclic corrections preserve every condition and finish within five seconds()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Missing exact quote validation",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "*ScheduleIrValidatorTest",
+        "--tests",
+        "*ScheduleIrValidationBoundaryTest",
+        "--tests",
+        "*ScheduleIrProviderContractTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.ir.ScheduleIrValidationBoundaryTest.server generated availability diagnosis does not consume provider condition budget on restoration()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Unknown response fields accepted",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "*ScheduleIrProviderContractTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.all malformed conditions produce unknown with retained diagnostics rather than unconstrained()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Non-atomic envelope and reference publication",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "*ScheduleIrRepositoryPostgresTest.failure while writing source references rolls back the envelope and all references*"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.failure while writing source references rolls back the envelope and all references()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Lossy persisted scalar coercion",
+      "command": [
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "test",
+        "--tests",
+        "*ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text*",
+        "--tests",
+        "*ScheduleIrRepositoryPostgresTest.reader rejects scalar corruption of frozen original revision without exposing answers*",
+        "--tests",
+        "*ScheduleIrRepositoryPostgresTest.publication rejects scalar corruption of frozen original revision without partial writes*"
+      ],
+      "detectedBy": "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.[1] defect = \"evidence_float\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-04T18:32:04.574209Z"
+}
