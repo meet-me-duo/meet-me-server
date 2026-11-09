@@ -1,0 +1,54 @@
+{
+  "workItem": "service-stored-read",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslStoredReadPostgresTest.kt",
+      "sha256": "dc8c0c5dc2e2df7911939dd2b3316eef78bb52b2db760bc197d5f05139d8dfd9"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR02 legitimate matching retry version growth never changes selection or reparses()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR07 selected route without envelope is not an empty success or new dispatch()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR08 legacy choice is never inferred as DSL from a stored envelope()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR09 old format1 selection alone is not a new route and old write guards stay strict()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[1] defect = \"raw\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[2] defect = \"locale\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[3] defect = \"supplement\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[4] defect = \"mode\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[5] defect = \"zone\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[6] defect = \"search\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[7] defect = \"inactive\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[8] defect = \"reference\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[9] defect = \"format\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR11 standalone reader establishes one readonly RR snapshot itself()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[1] defect = \"same-version-different-policy\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[2] defect = \"different-fingerprint\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR10 completed confirmed stored read is permitted but does not publish or dispatch()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#SR05 newer latest head cannot replace exact historical frozen cohort()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[1] eligible = false",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[2] eligible = true",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[1] status = \"MATCHING\", format = \"3\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[2] status = \"MATCHING\", format = \"4\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[3] status = \"COMPLETED\", format = \"3\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[4] status = \"COMPLETED\", format = \"4\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[1] status = \"QUEUED\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[2] status = \"STRUCTURING\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[3] status = \"ANALYSIS_DELAYED\"",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest#[4] status = \"DEAD_LETTERED\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T11:12:52.357242+00:00"
+}

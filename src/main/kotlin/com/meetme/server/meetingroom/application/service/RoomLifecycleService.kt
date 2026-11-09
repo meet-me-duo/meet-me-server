@@ -2,6 +2,8 @@ package com.meetme.server.meetingroom.application.service
 
 import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.service.FinalAnalysisRouteSelectionService
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisContractSelection
 import com.meetme.server.meetingroom.application.port.input.CloseRoomCommand
 import com.meetme.server.meetingroom.application.port.input.CloseRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.CreateRoomCommand
@@ -61,6 +63,7 @@ class RoomLifecycleService(
     private val ownership: ParticipantOwnershipResolver,
     private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
     private val newRoomAiBudget: NewRoomAiBudgetPort? = null,
+    private val finalAnalysisSelection: FinalAnalysisRouteSelectionService? = null,
 ) : CreateRoomUseCase,
     GetRoomUseCase,
     JoinRoomUseCase,
@@ -197,6 +200,10 @@ class RoomLifecycleService(
         val participant = ownership.resolve(room.id, command.rawCredential, OwnershipOperation.HOST_COMMAND)
         val submitted = submissionRepository.countSubmittedParticipants(room.id)
         if (room.collectionStatus == CollectionStatus.CLOSED) {
+            if (command.analysisContract != FinalAnalysisContractSelection.LEGACY) {
+                checkNotNull(finalAnalysisSelection) { "Selected contract graph is not configured" }
+                    .requireExisting(room.activeRunId, command.analysisContract)
+            }
             return room.toView(participant, submitted)
         }
         val now = clock.instant()
@@ -212,7 +219,7 @@ class RoomLifecycleService(
             )
         }
         val reason = automaticReason ?: ClosureReason.MANUAL
-        val closed = closureService.close(room, reason, submitted, now)
+        val closed = closureService.close(room, reason, submitted, now, command.analysisContract)
         return closed.toView(participant, submitted)
     }
 

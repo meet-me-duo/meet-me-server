@@ -1,0 +1,53 @@
+{
+  "workItem": "schedule-c5-condition-term-binding",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslConditionTermBindingContractTest.kt",
+      "sha256": "75594288f45e4a35f8c5a40a817a491a0a41cedcf59f78d2292341f1facedab3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslDateScopeInlineContractTest.kt",
+      "sha256": "ebe12a6ebf78cfb2e500b9ccd216205c97c12ba5fe0c0107ad43f188030e2a7e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralCompletionContractTest.kt",
+      "sha256": "ea94f6bf1cb89283d8b1711d3231edf2ee8efee582f22b54b076a0078e471bf5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralTermEvidenceContractTest.kt",
+      "sha256": "9a60ef5a15ec3989aea9d49e3e0b8517dc847ec9ca890589f16e6da2aa7320ba"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB01 four date and meal bindings preserve separate original conditions and intervening gaps()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB04 mixed duplicate malformed and misowned bindings fail closed without dropping a negative()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB03 mutually exclusive dates remain CHOICE and contextual estimates retain their original provenance()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB02 attached terms retain negatives preference availability and explicit availability clipping()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB06 producer schema owns one nullable binding per condition while preserving C4 and native inputs()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB05 legacy flat terms stay equivalent and date or unknown scopes retain their established meaning()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest.DI08 producer grammar exposes typed dates and inline roots without changing native context or C4 bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE03 producer distinguishes exact word term evidence from broad context and forbids widening an ambiguous repeated lexeme()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC02 C5 format descriptions keep derivations reachability and closed response shape()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T07:04:33.472704+00:00"
+}

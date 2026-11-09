@@ -1,0 +1,29 @@
+{
+  "workItem": "schedule-dsl-structural-storage",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslStructuralPostgresTest.kt",
+      "sha256": "4ee1843c7c345dd8cd8eeaf4e6ce6e5ef50fd8f154f5602e78b5cce362831bcd"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest.SPG02 fresh restoration refuses stale native context revision and safe invariant witness or projection tampering()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest.SPG01 strict C5 format7 fresh roundtrip preserves independent exact mode windows and provenance without raw duplication()",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest.SPG03 idempotent winner cannot bypass current run fences or resurrect deleted IR in matching phase()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T10:32:52.047280+00:00"
+}

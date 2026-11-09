@@ -1,0 +1,62 @@
+{
+  "work_item": "schedule-c5-instruction-layer",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslInstructionLayerContractTest.kt",
+      "sha256": "cfe1e2f9e0ba1d37a8013136d28fcf016715db26f513cfc859bbaf6c69ad7ff4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5LunaReasoningWirePostgresTest.kt",
+      "sha256": "2bcceaa3b9f33b66bb199a50cf33d090c684059521cee3f477e954f63b5fc637"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslInstructionLayerContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.C5LunaReasoningWirePostgresTest"
+  ],
+  "failed_tests": [
+    "IL02 adversarial native sources and answers remain data while instructions and every source field stay exact()",
+    "IL01 C5 OpenAI promotes the exact existing prompt and leaves precisely the remaining neutral JSON as input()",
+    "IL03 C5 instruction separation preserves the pinned model schema low reasoning storage and output budget()",
+    "C5LOW01 actual C5 Luna separates trusted instructions with low reasoning and one native wire reservation()"
+  ],
+  "expected_failure_classification": "C5 instructions missing and native input not separated; no setup/compile failures",
+  "recorded_at": "2026-11-07T10:29:41.812108+00:00",
+  "additional_red_controls": [
+    {
+      "test_files": [
+        {
+          "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SelectedDirectLunaPostgresTest.kt",
+          "sha256": "90a4244de640f7c74aab6fff9930ba9e354d657ee478206375443fa8a004379c"
+        }
+      ],
+      "command": [
+        "python3",
+        "/workspace/schedule-gradle-tools/run-clean.py",
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "--init-script",
+        "/workspace/schedule-diagnosis-evidence/c5-instruction-layer-contract-20261107/DL-baseline-controls.init.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.integration.SelectedDirectLunaPostgresTest.DL01*"
+      ],
+      "recorded_at": "2026-11-07T10:39:09.632854+00:00",
+      "failure": "DL01 exact instructions missing in preserved P8 transport"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "workItem": "schedule-context-mode-cli",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslContextModeOfflineEntryPointTest.kt",
+      "sha256": "cdc662a5a4d453865c35faf66dbbcb2ce0041918f57daeae7ac3468d8bc395d8"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextModeOfflineEntryPointTest"
+  ],
+  "failedTests": [
+    {
+      "test": "CMCLI01 actual prepare command preserves native sources questions vocabulary and explicit C4 identity()",
+      "reason": "org.opentest4j.AssertionFailedError: expected: <0> but was: <2>"
+    },
+    {
+      "test": "CMCLI02 actual evaluate command preserves contextual provenance and hard modes without disclosing native text()",
+      "reason": "org.opentest4j.AssertionFailedError: expected: <0> but was: <2>"
+    }
+  ],
+  "expectedFailureClassification": "Newly specified C4 CLI verbs are not registered and exit2; no syntax, configuration or fixture error",
+  "recordedAt": "2026-11-06T04:03:52.210082+00:00"
+}

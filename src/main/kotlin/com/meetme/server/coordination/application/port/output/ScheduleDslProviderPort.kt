@@ -1,5 +1,6 @@
 package com.meetme.server.coordination.application.port.output
 
+import com.meetme.server.coordination.domain.dsl.ScheduleDslProviderInputCapsule
 import com.meetme.server.coordination.domain.ir.IrExecutionTicket
 import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
 import java.time.Duration
@@ -9,6 +10,7 @@ data class ScheduleDslProviderRequest(
     val ticket: IrExecutionTicket,
     val snapshot: ScheduleEvidenceSnapshot,
     val timeout: Duration,
+    val inputCapsule: ScheduleDslProviderInputCapsule? = null,
 )
 
 data class ScheduleDslProviderResponse(

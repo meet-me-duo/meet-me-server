@@ -1,18 +1,30 @@
 package com.meetme.server.coordination.adapter.input.cli
 
+import com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsProviderContract
+import com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeProviderContract
+import com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextProviderContract
 import com.meetme.server.coordination.adapter.output.integration.ScheduleDslGeminiWire
 import com.meetme.server.coordination.adapter.output.integration.ScheduleDslProviderContract
+import com.meetme.server.coordination.adapter.output.integration.StrictScheduleDslApprovedTermsResponseParser
+import com.meetme.server.coordination.adapter.output.integration.StrictScheduleDslContextModeResponseParser
+import com.meetme.server.coordination.adapter.output.integration.StrictScheduleDslContextResponseParser
 import com.meetme.server.coordination.adapter.output.integration.StrictScheduleDslResponseParser
+import com.meetme.server.coordination.domain.dsl.SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT
+import com.meetme.server.coordination.domain.dsl.ScheduleDslCalculation
+import com.meetme.server.coordination.domain.dsl.ScheduleDslCalculator
+import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeCalculation
+import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeCalculator
+import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModePolicy
 import com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicy
 import com.meetme.server.coordination.domain.dsl.ScheduleDslNodeDisposition
 import com.meetme.server.coordination.domain.dsl.ScheduleDslPreparedInputs
+import com.meetme.server.coordination.domain.dsl.ScheduleDslProviderInputCapsule
 import com.meetme.server.coordination.domain.ir.IrCalculationStatus
 import com.meetme.server.coordination.domain.ir.IrPrecisionOutcome
 import com.meetme.server.coordination.domain.matching.CandidateGenerationResult
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
 import com.meetme.server.coordination.domain.matching.IrConditionDisposition
 import com.meetme.server.coordination.domain.matching.IrMatchingPolicy
-import com.meetme.server.coordination.domain.matching.MatchOutcome
 import com.meetme.server.coordination.domain.matching.RecommendationProjection
 import com.meetme.server.coordination.domain.matching.RecommendationProjector
 import com.meetme.server.meetingroom.domain.MeetingMode
@@ -24,13 +36,20 @@ import com.meetme.server.shared.domain.SubmissionVersionId
 import com.meetme.server.submission.domain.Submission
 import com.meetme.server.submission.domain.SubmissionVersion
 import com.meetme.server.submission.domain.dsl.SCHEDULE_AST_VERSION
+import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_APPROVED_TERMS_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_APPROVED_TERMS_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTIC_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsEnvelope
+import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeEnvelope
 import com.meetme.server.submission.domain.dsl.ScheduleDslEnvelope
 import com.meetme.server.submission.domain.dsl.ScheduleDslValidator
 import com.meetme.server.submission.domain.ir.IrEvidenceBindings
 import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
 import com.meetme.server.submission.domain.ir.ScheduleIrContext
+import com.meetme.server.submission.domain.time.APPROVED_KOREAN_TIME_TERM_VERSION
 import tools.jackson.core.StreamReadFeature
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.MapperFeature
@@ -88,14 +107,121 @@ data class ScheduleDslOfflineResult(
     val precisionOutcome: IrPrecisionOutcome,
 )
 
+data class ScheduleDslApprovedTermsOfflineResult(
+    val envelope: ScheduleDslApprovedTermsEnvelope,
+    val calculation: ScheduleDslCalculation,
+)
+
+data class ScheduleDslContextModeOfflineResult(
+    val envelope: ScheduleDslContextModeEnvelope,
+    val calculation: ScheduleDslContextModeCalculation,
+)
+
 object ScheduleDslOfflinePipeline {
     private val mapper = offlineMapper()
     private val token = Regex("[A-Za-z0-9._:-]{1,64}")
 
-    fun snapshot(input: ScheduleDslOfflineInput): ScheduleEvidenceSnapshot {
+    fun snapshotContextMode(input: ScheduleDslOfflineInput): ScheduleDslProviderInputCapsule {
+        require(input.policy == ScheduleDslContextModePolicy.contextual(input.policy.alternativeChoices))
+        val (snapshot, submissions) =
+            nativeInput(
+                input,
+                SCHEDULE_DSL_CONTEXT_MODE_RESPONSE_CONTRACT,
+                SCHEDULE_DSL_CONTEXT_MODE_SEMANTIC_VERSION,
+            )
+        return ScheduleDslProviderInputCapsule.create(snapshot, submissions)
+    }
+
+    fun prepareContextMode(input: ScheduleDslOfflineInput): ByteArray =
+        ScheduleDslContextModeProviderContract(mapper).requestBytes(snapshotContextMode(input), input.meetingMode)
+
+    fun evaluateContextMode(
+        input: ScheduleDslOfflineInput,
+        responseJson: String,
+    ): ScheduleDslContextModeOfflineResult {
+        val snapshot = snapshotContextMode(input).snapshot
+        val envelope =
+            StrictScheduleDslContextModeResponseParser(mapper).parse(
+                responseJson,
+                snapshot,
+                input.responseContractVersion,
+                input.semanticVersion,
+                input.astVersion,
+                APPROVED_KOREAN_TIME_TERM_VERSION,
+            )
+        return ScheduleDslContextModeOfflineResult(
+            envelope,
+            ScheduleDslContextModeCalculator.calculate(envelope, snapshot, input.policy, input.meetingMode),
+        )
+    }
+
+    fun snapshotApprovedTerms(input: ScheduleDslOfflineInput): ScheduleDslProviderInputCapsule {
+        val (snapshot, submissions) =
+            nativeInput(
+                input,
+                SCHEDULE_DSL_APPROVED_TERMS_RESPONSE_CONTRACT,
+                SCHEDULE_DSL_APPROVED_TERMS_SEMANTIC_VERSION,
+            )
+        return ScheduleDslProviderInputCapsule.create(snapshot, submissions)
+    }
+
+    fun prepareApprovedTerms(input: ScheduleDslOfflineInput): ByteArray =
+        ScheduleDslApprovedTermsProviderContract(mapper).requestBytes(snapshotApprovedTerms(input), input.meetingMode)
+
+    fun evaluateApprovedTerms(
+        input: ScheduleDslOfflineInput,
+        responseJson: String,
+    ): ScheduleDslApprovedTermsOfflineResult {
+        val snapshot = snapshotApprovedTerms(input).snapshot
+        val envelope =
+            StrictScheduleDslApprovedTermsResponseParser(mapper).parse(
+                responseJson,
+                snapshot,
+                input.responseContractVersion,
+                input.semanticVersion,
+                input.astVersion,
+                APPROVED_KOREAN_TIME_TERM_VERSION,
+            )
+        return ScheduleDslApprovedTermsOfflineResult(
+            envelope,
+            ScheduleDslCalculator.calculateApprovedTerms(envelope, snapshot, input.policy, input.meetingMode),
+        )
+    }
+
+    fun snapshotContext(input: ScheduleDslOfflineInput): ScheduleDslProviderInputCapsule {
+        val (snapshot, submissions) = nativeInput(input, SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT)
+        return ScheduleDslProviderInputCapsule.create(snapshot, submissions)
+    }
+
+    fun prepareContext(input: ScheduleDslOfflineInput): ByteArray =
+        ScheduleDslContextProviderContract(mapper).requestBytes(snapshotContext(input))
+
+    fun evaluateContext(
+        input: ScheduleDslOfflineInput,
+        responseJson: String,
+    ): ScheduleDslOfflineResult {
+        val snapshot = snapshotContext(input).snapshot
+        val parsed =
+            StrictScheduleDslContextResponseParser(mapper).parse(
+                responseJson,
+                snapshot,
+                input.responseContractVersion,
+                input.semanticVersion,
+                input.astVersion,
+            )
+        return calculate(input, snapshot, parsed)
+    }
+
+    fun snapshot(input: ScheduleDslOfflineInput): ScheduleEvidenceSnapshot = nativeInput(input, SCHEDULE_DSL_RESPONSE_CONTRACT).first
+
+    private fun nativeInput(
+        input: ScheduleDslOfflineInput,
+        expectedResponseContract: String,
+        expectedSemanticVersion: String = SCHEDULE_DSL_SEMANTIC_VERSION,
+    ): Pair<ScheduleEvidenceSnapshot, List<Submission>> {
         require(input.manifestVersion == "schedule-dsl-pilot-input-1") { "Unsupported offline manifest" }
-        require(input.responseContractVersion == SCHEDULE_DSL_RESPONSE_CONTRACT)
-        require(input.semanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION && input.astVersion == SCHEDULE_AST_VERSION)
+        require(input.responseContractVersion == expectedResponseContract)
+        require(input.semanticVersion == expectedSemanticVersion && input.astVersion == SCHEDULE_AST_VERSION)
         require(input.inputs.size in 2..50)
         require(
             input.inputs
@@ -123,7 +249,7 @@ object ScheduleDslOfflinePipeline {
         require(choices.map { it.submissionVersionId to it.group }.distinct().size == choices.size)
         val versions = input.inputs.map { it.submissionVersionId }.toSet()
         require(choices.all { it.submissionVersionId in versions && it.group.matches(token) && it.alternative.matches(token) })
-        val bindings =
+        val submissions =
             input.inputs.sortedBy { it.submissionVersionId }.map { item ->
                 require(item.locale.isNotBlank())
                 val locale = Locale.Builder().setLanguageTag(item.locale).build()
@@ -142,21 +268,24 @@ object ScheduleDslOfflinePipeline {
                             item.evidence,
                         ),
                     )
-                IrEvidenceBindings.create(submission)
+                submission
             }
-        return ScheduleEvidenceSnapshot(
-            ScheduleIrContext(
-                input.runId,
-                input.batchId,
-                input.roomId,
-                zone.id,
-                input.searchStart,
-                input.searchEnd,
-                input.policy.version,
-                bindings.map { it.first },
-            ),
-            bindings.associate { it.first.submissionVersionId to it.second },
-        )
+        val bindings = submissions.map { IrEvidenceBindings.create(it) }
+        val snapshot =
+            ScheduleEvidenceSnapshot(
+                ScheduleIrContext(
+                    input.runId,
+                    input.batchId,
+                    input.roomId,
+                    zone.id,
+                    input.searchStart,
+                    input.searchEnd,
+                    input.policy.version,
+                    bindings.map { it.first },
+                ),
+                bindings.associate { it.first.submissionVersionId to it.second },
+            )
+        return snapshot to submissions
     }
 
     fun prepare(input: ScheduleDslOfflineInput): ByteArray =
@@ -180,21 +309,18 @@ object ScheduleDslOfflinePipeline {
                 input.semanticVersion,
                 input.astVersion,
             )
+        return calculate(input, snapshot, parsed)
+    }
+
+    private fun calculate(
+        input: ScheduleDslOfflineInput,
+        snapshot: ScheduleEvidenceSnapshot,
+        parsed: ScheduleDslEnvelope,
+    ): ScheduleDslOfflineResult {
         val envelope = ScheduleDslValidator().validateRestored(parsed, snapshot)
         val prepared = ScheduleDslInputPolicy.project(envelope, input.policy)
-        val unsupported = input.meetingMode != MeetingMode.REMOTE
-        val candidates =
-            if (unsupported) {
-                CandidateGenerationResult(MatchOutcome.NO_MATCH, emptyList())
-            } else {
-                DeterministicCandidateMatcher.generate(input.meetingMode, prepared.participants)
-            }
-        val recommendations =
-            if (unsupported) {
-                RecommendationProjection(emptyList(), emptyList())
-            } else {
-                RecommendationProjector.generate(input.meetingMode, prepared.participants, ZoneId.of(input.timeZone))
-            }
+        val candidates = DeterministicCandidateMatcher.generate(input.meetingMode, prepared.participants)
+        val recommendations = RecommendationProjector.generate(input.meetingMode, prepared.participants, ZoneId.of(input.timeZone))
         val partial =
             prepared.evidence.values.any { evidence ->
                 evidence.unresolvedTime ||
@@ -204,7 +330,6 @@ object ScheduleDslOfflinePipeline {
             }
         val status =
             when {
-                unsupported -> IrCalculationStatus.REQUIRES_DECISION
                 partial -> IrCalculationStatus.PARTIAL
                 else -> IrCalculationStatus.CALCULATED
             }
@@ -232,42 +357,97 @@ object ScheduleDslOfflineEntryPoint {
         try {
             require(args.isNotEmpty())
             val operation = args[0]
-            val preparing = operation == "prepare" || operation == "prepare-gemini"
-            val evaluating = operation == "evaluate" || operation == "evaluate-gemini"
+            val preparing =
+                operation in
+                    setOf(
+                        "prepare",
+                        "prepare-gemini",
+                        "prepare-context",
+                        "prepare-context-gemini",
+                        "prepare-approved-terms",
+                        "prepare-context-mode",
+                    )
+            val evaluating =
+                operation in
+                    setOf(
+                        "evaluate",
+                        "evaluate-gemini",
+                        "evaluate-context",
+                        "evaluate-context-gemini",
+                        "evaluate-approved-terms",
+                        "evaluate-context-mode",
+                    )
             require(preparing || evaluating)
             require(args.size == if (preparing) 3 else 4)
             failure = OfflineFailure.INVALID_INPUT
             val input = inputReader.readValue<ScheduleDslOfflineInput>(readBounded(Path.of(args[1])))
-            ScheduleDslOfflinePipeline.snapshot(input)
+            val contextual = operation in setOf("prepare-context", "prepare-context-gemini", "evaluate-context", "evaluate-context-gemini")
+            val approvedTerms = operation in setOf("prepare-approved-terms", "evaluate-approved-terms")
+            val contextMode = operation in setOf("prepare-context-mode", "evaluate-context-mode")
+            if (contextMode) {
+                ScheduleDslOfflinePipeline.snapshotContextMode(input)
+            } else if (approvedTerms) {
+                ScheduleDslOfflinePipeline.snapshotApprovedTerms(input)
+            } else if (contextual) {
+                ScheduleDslOfflinePipeline.snapshotContext(input)
+            } else {
+                ScheduleDslOfflinePipeline.snapshot(input)
+            }
             val bytes: ByteArray
             val status: String
             if (preparing) {
                 bytes =
-                    if (operation == "prepare-gemini") {
-                        ScheduleDslGeminiWire.requestBytes(
-                            mapper,
-                            ScheduleDslOfflinePipeline.snapshot(input),
-                            ScheduleDslGeminiWire.PINNED_MODEL,
-                        )
-                    } else {
-                        ScheduleDslOfflinePipeline.prepare(input)
+                    when (operation) {
+                        "prepare-context-mode" -> ScheduleDslOfflinePipeline.prepareContextMode(input)
+                        "prepare-approved-terms" -> ScheduleDslOfflinePipeline.prepareApprovedTerms(input)
+                        "prepare-context-gemini" ->
+                            ScheduleDslGeminiWire.requestContextBytes(
+                                mapper,
+                                ScheduleDslOfflinePipeline.snapshotContext(input),
+                                ScheduleDslGeminiWire.PINNED_MODEL,
+                            )
+                        "prepare-context" -> ScheduleDslOfflinePipeline.prepareContext(input)
+                        "prepare-gemini" ->
+                            ScheduleDslGeminiWire.requestBytes(
+                                mapper,
+                                ScheduleDslOfflinePipeline.snapshot(input),
+                                ScheduleDslGeminiWire.PINNED_MODEL,
+                            )
+                        else -> ScheduleDslOfflinePipeline.prepare(input)
                     }
                 status = "PREPARED"
             } else {
                 failure = OfflineFailure.INVALID_RESPONSE
                 val response = readBounded(Path.of(args[2]))
                 val json =
-                    if (operation == "evaluate-gemini") {
+                    if (operation in setOf("evaluate-gemini", "evaluate-context-gemini")) {
                         ScheduleDslGeminiWire.response(mapper, response).responseJson
                     } else {
                         val text = response.toString(Charsets.UTF_8)
                         require(text.toByteArray(Charsets.UTF_8).contentEquals(response)) { "Invalid response encoding" }
                         text
                     }
-                val result = ScheduleDslOfflinePipeline.evaluate(input, json)
-                failure = OfflineFailure.OUTPUT_FAILURE
-                bytes = mapper.writeValueAsBytes(result)
-                status = result.status.name
+                if (contextMode) {
+                    val result = ScheduleDslOfflinePipeline.evaluateContextMode(input, json)
+                    failure = OfflineFailure.OUTPUT_FAILURE
+                    bytes = mapper.writeValueAsBytes(result)
+                    status = result.calculation.status.name
+                } else if (approvedTerms) {
+                    val result = ScheduleDslOfflinePipeline.evaluateApprovedTerms(input, json)
+                    failure = OfflineFailure.OUTPUT_FAILURE
+                    bytes = mapper.writeValueAsBytes(result)
+                    status = result.calculation.status.name
+                } else {
+                    val result =
+                        if (contextual) {
+                            ScheduleDslOfflinePipeline.evaluateContext(input, json)
+                        } else {
+                            ScheduleDslOfflinePipeline.evaluate(input, json)
+                        }
+                    failure = OfflineFailure.OUTPUT_FAILURE
+                    bytes = mapper.writeValueAsBytes(result)
+                    status = result.status.name
+                }
             }
             failure = OfflineFailure.OUTPUT_FAILURE
             privateOutput(Path.of(args.last()), bytes)

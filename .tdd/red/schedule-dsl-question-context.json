@@ -1,0 +1,41 @@
+{
+  "workItem": "schedule-dsl-question-context",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextProviderContractTest.kt",
+      "sha256": "5d8db153368883f227e5e29115bb83b5dbd4e65d32cf5dcff4fa6e5b870807fa"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslContextWorkerPostgresTest.kt",
+      "sha256": "e9ded3518786c62bdee33bae17fe4f2a8afe91fb4725b6828b2854aa7a6bcae6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslProviderInputCapsuleTest.kt",
+      "sha256": "53810b812345d1a76ce158dbdd81d554785f0d298849e22441da42623aed5238"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslQuestionContextFixture.kt",
+      "sha256": "2a247ab4dbd4de36d80a5db600f5ff5cc7d0e6ebb6b877323c11a4798d5a38c7"
+    }
+  ],
+  "command": [
+    "python",
+    "/workspace/schedule-dsl-context-evidence/run-context-red.py",
+    "context-actual-red-4"
+  ],
+  "failedTests": [
+    "CTX01 capsule carries actual prompt choice times IDs and Unicode source linkage without creating evidence()",
+    "CTX02 mutable native collection changes cannot alter a created capsule and ordering is deterministic()",
+    "CTX04 free answer retains null choice and its own answer reference time without inventing UI choices()",
+    "CTXG01 explicit response2 worker sends native question context once and stores the same AST calculation()",
+    "CTXG02 changing only native question prompt after prepare fences the worker before budget or HTTP()",
+    "CTXP01 explicit version2 sends readable question linkage without promoting metadata into evidence()",
+    "CTXP02 input without a stored question carries an explicit empty clarification context list()",
+    "CTXP03 original response1 request bytes remain unchanged after explicit context rendering()",
+    "CTXP05 explicit response2 uses unchanged output schema and actual native context with no metadata condition()",
+    "CTXP06 Gemini context wire wraps the exact version2 neutral payload with existing generation config()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T04:11:45.515102Z"
+}

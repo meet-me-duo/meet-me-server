@@ -1,0 +1,37 @@
+{
+  "workItem": "schedule-dcs05-deadline-fixture",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "preparation is included in the unchanged250ms absolute provider deadline",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassifier.kt",
+      "sha256": "81ab138ddbc7dd55bec7ab93bc3c91018beffea23f2e4dc06c2d803c4f91a610"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/DecisionClassificationFixtures.kt",
+      "sha256": "6743c23e95e1cfffdbc4d9288110fd662ab34b7eed2d930ba396423642173d6f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityClassificationSafetyTest.kt",
+      "sha256": "eba26dfa4cd1c42383e96f2a0729bfa7ee8fa3eef14b5d26e576308dc46e4413"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/classification/OpenAiAmbiguityPreparationDeadlineTest.kt",
+      "sha256": "d4cfdfe5975de1edfa09684d979485a75b3197ae6093c41b7b8be02faaabb5be"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "start absolute deadline after payload serialization",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-final-deadline-fingerprint-fault.py"
+      ],
+      "detectedBy": "OpenAiAmbiguityPreparationDeadlineTest.DCSP01 preparation expiration ends before transport admission and records only safe failure metrics",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-05T07:23:38.810409Z"
+}

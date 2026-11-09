@@ -605,7 +605,7 @@ class ScheduleIrIntegrationPostgresTest {
         flyway().migrate()
         flyway().validate()
         assertEquals(
-            "25",
+            "31",
             flyway()
                 .info()
                 .current()!!
@@ -807,7 +807,7 @@ class ScheduleIrIntegrationPostgresTest {
         flyway().migrate()
         flyway().validate()
         assertEquals(
-            "25",
+            "31",
             flyway()
                 .info()
                 .current()!!

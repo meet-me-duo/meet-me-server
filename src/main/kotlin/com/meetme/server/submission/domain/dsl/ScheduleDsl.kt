@@ -1,12 +1,16 @@
 package com.meetme.server.submission.domain.dsl
 
 import com.meetme.server.submission.domain.ir.IrAssertion
+import com.meetme.server.submission.domain.ir.IrDimension
 import com.meetme.server.submission.domain.ir.IrEffect
 import com.meetme.server.submission.domain.ir.IrEvidenceBindings
 import com.meetme.server.submission.domain.ir.IrEvidenceSpan
 import com.meetme.server.submission.domain.ir.IrInterpretation
+import com.meetme.server.submission.domain.ir.IrProblem
 import com.meetme.server.submission.domain.ir.IrV2Result
 import com.meetme.server.submission.domain.ir.ProposedIrEvidence
+import com.meetme.server.submission.domain.ir.ProposedIrV2Condition
+import com.meetme.server.submission.domain.ir.ProposedIrV2Result
 import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
 import com.meetme.server.submission.domain.ir.ScheduleIrContext
 import com.meetme.server.submission.domain.ir.ScheduleIrV2Envelope
@@ -70,6 +74,7 @@ data class ScheduleDslEnvelope(
     val astVersion: String,
     val claims: ScheduleIrV2Envelope,
     val programs: List<ParticipantScheduleProgram>,
+    val rejectedPreferenceWitnesses: List<RejectedPreferenceWitness> = emptyList(),
 ) {
     val context: ScheduleIrContext get() = claims.context
 }
@@ -83,11 +88,15 @@ class ScheduleDslValidator {
             "Unsupported schedule DSL"
         }
         val claims = ScheduleIrV2Validator().validate(proposal.claims, snapshot)
+        val candidates = rejectionWitnesses(proposal.claims, claims, snapshot)
+        val programs = validatePrograms(proposal.programs, claims, snapshot, candidates)
+        val verifiedInputs = programs.filter { it.program != null }.map { it.submissionVersionId }.toSet()
         return ScheduleDslEnvelope(
             proposal.semanticVersion,
             proposal.astVersion,
             claims,
-            validatePrograms(proposal.programs, claims, snapshot),
+            programs,
+            candidates.filter { it.submissionVersionId in verifiedInputs },
         )
     }
 
@@ -138,14 +147,148 @@ class ScheduleDslValidator {
                     participant.problems,
                 )
             }
-        require(validatePrograms(proposed, envelope.claims, snapshot) == envelope.programs) { "Invalid persisted DSL program" }
+        if (envelope.rejectedPreferenceWitnesses.isEmpty()) {
+            require(validatePrograms(proposed, envelope.claims, snapshot, emptyList()) == envelope.programs) {
+                "Invalid persisted DSL program"
+            }
+        } else {
+            val restoredClaims = restoreRejectedClaims(envelope, snapshot)
+            val verified =
+                validate(
+                    ScheduleDslProposal(envelope.semanticVersion, envelope.astVersion, restoredClaims, proposed),
+                    snapshot,
+                )
+            require(verified == envelope) { "Invalid persisted DSL rejection witness" }
+        }
         return envelope
+    }
+
+    private fun rejectionWitnesses(
+        proposal: ScheduleIrV2Proposal,
+        claims: ScheduleIrV2Envelope,
+        snapshot: ScheduleEvidenceSnapshot,
+    ): List<RejectedPreferenceWitness> {
+        val results = claims.results.associateBy { it.submissionVersionId }
+        return proposal.results
+            .flatMap { original ->
+                val result = results.getValue(original.submissionVersionId)
+                val incoming = original.conditions.flatMap { it.supersedes }.toSet()
+                original.conditions.mapNotNull { condition ->
+                    val quarantine = result.quarantined.singleOrNull { it.conditionId == condition.id }
+                    if (quarantine?.problem != IrProblem.SCOPE ||
+                        quarantine.scope != null ||
+                        condition.effect != IrEffect.PREFERRED ||
+                        condition.scope?.dimension != IrDimension.PLACE ||
+                        condition.assertion != IrAssertion.ASSERTED ||
+                        condition.supersedes.isNotEmpty() ||
+                        condition.alternativeGroup != null ||
+                        condition.alternative != null ||
+                        condition.id in incoming
+                    ) {
+                        return@mapNotNull null
+                    }
+                    val evidence =
+                        try {
+                            require(condition.evidence.size in 1..32)
+                            condition.evidence.map { verifyEvidence(it, original.submissionVersionId, snapshot) }
+                        } catch (_: IllegalArgumentException) {
+                            return@mapNotNull null
+                        }
+                    RejectedPreferenceWitness(
+                        original.submissionVersionId,
+                        condition.id,
+                        condition.effect,
+                        condition.interpretation,
+                        condition.temporalResolution,
+                        condition.scope,
+                        evidence,
+                        condition.assertion,
+                        condition.supersedes.toList(),
+                        condition.alternativeGroup,
+                        condition.alternative,
+                    )
+                }
+            }.sortedWith(compareBy({ it.submissionVersionId }, { it.conditionId }))
+    }
+
+    private fun restoreRejectedClaims(
+        envelope: ScheduleDslEnvelope,
+        snapshot: ScheduleEvidenceSnapshot,
+    ): ScheduleIrV2Proposal {
+        val witnesses = envelope.rejectedPreferenceWitnesses
+        require(witnesses.map { it.submissionVersionId to it.conditionId }.distinct().size == witnesses.size) {
+            "Duplicate DSL rejection witness"
+        }
+        val results = envelope.claims.results.associateBy { it.submissionVersionId }
+        require(witnesses.all { it.submissionVersionId in results }) { "Unknown DSL rejection input" }
+        witnesses.forEach { witness ->
+            val result = results.getValue(witness.submissionVersionId)
+            require(result.conditions.none { it.id == witness.conditionId }) { "Accepted DSL claim cannot be a rejection witness" }
+            val quarantine = result.quarantined.singleOrNull { it.conditionId == witness.conditionId }
+            require(quarantine?.problem == IrProblem.SCOPE && quarantine.scope == null) { "DSL rejection witness mismatch" }
+        }
+        val byInput = witnesses.groupBy { it.submissionVersionId }
+        return ScheduleIrV2Proposal(
+            envelope.claims.semanticVersion,
+            envelope.claims.results.map { result ->
+                val inputWitnesses = byInput[result.submissionVersionId].orEmpty().associateBy { it.conditionId }
+                val accepted =
+                    result.conditions.map { condition ->
+                        ProposedIrV2Condition(
+                            condition.id,
+                            condition.effect,
+                            condition.interpretation,
+                            condition.temporalResolution,
+                            condition.scope,
+                            condition.evidence.map { restoreEvidence(it, result.submissionVersionId, snapshot) },
+                            condition.assertion,
+                            condition.supersedes,
+                            condition.alternativeGroup,
+                            condition.alternative,
+                        )
+                    }
+                // Preserve rejection order while replacing each proof's existing budget slot, never adding a condition.
+                val rejected =
+                    result.quarantined.mapNotNull { quarantine ->
+                        inputWitnesses[quarantine.conditionId]?.let { witness ->
+                            ProposedIrV2Condition(
+                                witness.conditionId,
+                                witness.effect,
+                                witness.interpretation,
+                                witness.temporalResolution,
+                                witness.declaredScope,
+                                witness.evidence.map { restoreEvidence(it, result.submissionVersionId, snapshot) },
+                                witness.assertion,
+                                witness.supersedes,
+                                witness.alternativeGroup,
+                                witness.alternative,
+                            )
+                        }
+                    }
+                ProposedIrV2Result(
+                    result.submissionVersionId,
+                    accepted + rejected,
+                    result.quarantined.filter { it.conditionId !in inputWitnesses },
+                )
+            },
+        )
+    }
+
+    private fun restoreEvidence(
+        span: IrEvidenceSpan,
+        input: UUID,
+        snapshot: ScheduleEvidenceSnapshot,
+    ): ProposedIrEvidence {
+        val quote = extract(snapshot, input, span.sourceId, span.startCodePoint, span.endCodePoint)
+        require(IrEvidenceBindings.sha256(quote) == span.contentSha256) { "DSL evidence digest mismatch" }
+        return ProposedIrEvidence(span.sourceId, span.revision, span.startCodePoint, span.endCodePoint, quote)
     }
 
     private fun validatePrograms(
         proposed: List<ProposedParticipantScheduleProgram>,
         claims: ScheduleIrV2Envelope,
         snapshot: ScheduleEvidenceSnapshot,
+        witnesses: List<RejectedPreferenceWitness>,
     ): List<ParticipantScheduleProgram> {
         val expected = claims.results.associateBy { it.submissionVersionId }
         require(proposed.size == expected.size && proposed.map { it.submissionVersionId }.toSet() == expected.keys) {
@@ -154,21 +297,33 @@ class ScheduleDslValidator {
         return proposed.map { participant ->
             val program = participant.program
             val claimResult = expected.getValue(participant.submissionVersionId)
+            val preferences = witnesses.filter { it.submissionVersionId == participant.submissionVersionId }
+            val localizedIds = preferences.map { it.conditionId }.toSet()
             val problems =
                 participant.problems +
-                    if (claimResult.quarantined.isEmpty()) emptySet() else setOf(ScheduleDslProblem.REFERENCE)
+                    if (claimResult.quarantined.all { it.conditionId in localizedIds }) {
+                        emptySet()
+                    } else {
+                        setOf(ScheduleDslProblem.REFERENCE)
+                    }
             if (problems.isNotEmpty() || program == null) {
                 ParticipantScheduleProgram(
                     participant.submissionVersionId,
                     null,
-                    problems.ifEmpty { setOf(ScheduleDslProblem.SHAPE) },
+                    problems.ifEmpty { setOf(ScheduleDslProblem.SHAPE) } +
+                        if (claimResult.quarantined.isEmpty()) emptySet() else setOf(ScheduleDslProblem.REFERENCE),
                 )
             } else {
                 try {
-                    val verified = verifyProgram(program, claimResult, snapshot)
+                    val verified = verifyProgram(program, claimResult, snapshot, preferences)
                     ParticipantScheduleProgram(participant.submissionVersionId, verified, emptySet())
                 } catch (failure: ProgramFailure) {
-                    ParticipantScheduleProgram(participant.submissionVersionId, null, setOf(failure.problem))
+                    ParticipantScheduleProgram(
+                        participant.submissionVersionId,
+                        null,
+                        setOf(failure.problem) +
+                            if (claimResult.quarantined.isEmpty()) emptySet() else setOf(ScheduleDslProblem.REFERENCE),
+                    )
                 }
             }
         }
@@ -178,12 +333,23 @@ class ScheduleDslValidator {
         program: ScheduleDslProgram<ProposedIrEvidence>,
         result: IrV2Result,
         snapshot: ScheduleEvidenceSnapshot,
+        witnesses: List<RejectedPreferenceWitness>,
     ): ScheduleDslProgram<IrEvidenceSpan> {
         ensure(program.nodes.size <= 128, ScheduleDslProblem.COMPLEXITY)
-        ensure(result.quarantined.isEmpty(), ScheduleDslProblem.REFERENCE)
+        val localizedIds = witnesses.map { it.conditionId }.toSet()
+        ensure(result.quarantined.all { it.conditionId in localizedIds }, ScheduleDslProblem.REFERENCE)
         val nodes = program.nodes.associateBy { it.id }
         ensure(nodes.size == program.nodes.size && nodes.keys.all { it.matches(TOKEN) }, ScheduleDslProblem.REFERENCE)
-        val claims = result.conditions.associateBy { it.id }
+        // Rejected declarations exist only in this role/coverage view, never in accepted IR conditions.
+        val declarations =
+            result.conditions.map {
+                ClaimDeclaration(it.id, it.effect, it.assertion, it.supersedes, it.alternativeGroup, it.alternative)
+            } +
+                witnesses.map {
+                    ClaimDeclaration(it.conditionId, it.effect, it.assertion, it.supersedes, it.alternativeGroup, it.alternative)
+                }
+        val claims = declarations.associateBy { it.id }
+        ensure(claims.size == declarations.size, ScheduleDslProblem.REFERENCE)
         program.nodes.forEach { node ->
             val count = node.children.size
             ensure(node.children.distinct().size == count, ScheduleDslProblem.SHAPE)
@@ -238,7 +404,7 @@ class ScheduleDslValidator {
         ensure(heights.keys == nodes.keys, ScheduleDslProblem.REFERENCE)
         val history = program.historyConditionIds
         ensure(history.distinct().size == history.size && history.all { it in claims }, ScheduleDslProblem.REFERENCE)
-        val syntacticallySuperseded = result.conditions.flatMap { it.supersedes }.toSet()
+        val syntacticallySuperseded = declarations.flatMap { it.supersedes }.toSet()
         ensure(
             history.all { claims.getValue(it).assertion != IrAssertion.ASSERTED || it in syntacticallySuperseded },
             ScheduleDslProblem.REFERENCE,
@@ -277,7 +443,7 @@ class ScheduleDslValidator {
             } else if (node.operator == ScheduleDslOperator.CHOICE) {
                 val group = requireNotNull(node.choiceGroup)
                 val declared =
-                    result.conditions
+                    declarations
                         .filter { it.alternativeGroup == group }
                         .mapNotNull { it.alternative }
                         .toSet()
@@ -367,6 +533,15 @@ class ScheduleDslValidator {
         val id: String,
         val role: ScheduleDslRole,
         val choices: Map<String, String>,
+    )
+
+    private data class ClaimDeclaration(
+        val id: String,
+        val effect: IrEffect,
+        val assertion: IrAssertion,
+        val supersedes: List<String>,
+        val alternativeGroup: String?,
+        val alternative: String?,
     )
 
     private class ProgramFailure(

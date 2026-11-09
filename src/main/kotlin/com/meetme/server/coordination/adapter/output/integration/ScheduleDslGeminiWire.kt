@@ -5,6 +5,7 @@ import com.meetme.server.coordination.application.port.output.NaturalLanguagePar
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.ScheduleDslProviderResponse
+import com.meetme.server.coordination.domain.dsl.ScheduleDslProviderInputCapsule
 import com.meetme.server.submission.domain.dsl.SCHEDULE_AST_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
@@ -17,6 +18,28 @@ import tools.jackson.databind.ObjectMapper
 object ScheduleDslGeminiWire {
     const val PINNED_MODEL = "gemini-3.8-flash"
     const val MAX_OUTPUT_TOKENS = 32768
+
+    fun requestContextBytes(
+        mapper: ObjectMapper,
+        capsule: ScheduleDslProviderInputCapsule,
+        model: String,
+    ): ByteArray {
+        require(model == PINNED_MODEL) { "Unsupported DSL model" }
+        val prompt = ScheduleDslContextProviderContract(mapper).requestBytes(capsule)
+        return mapper.writeValueAsBytes(
+            linkedMapOf(
+                "contents" to listOf(mapOf("role" to "user", "parts" to listOf(mapOf("text" to prompt.toString(Charsets.UTF_8))))),
+                "generationConfig" to
+                    linkedMapOf(
+                        "responseMimeType" to "application/json",
+                        "responseJsonSchema" to ScheduleDslProviderContract(mapper).responseSchema(),
+                        "candidateCount" to 1,
+                        "maxOutputTokens" to MAX_OUTPUT_TOKENS,
+                        "thinkingConfig" to mapOf("thinkingLevel" to "LOW"),
+                    ),
+            ),
+        )
+    }
 
     fun requestBytes(
         mapper: ObjectMapper,

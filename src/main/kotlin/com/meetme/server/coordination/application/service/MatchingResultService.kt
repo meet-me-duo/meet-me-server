@@ -17,6 +17,7 @@ import com.meetme.server.coordination.application.port.input.RecommendationVaria
 import com.meetme.server.coordination.application.port.input.SelectRecommendationCommand
 import com.meetme.server.coordination.application.port.input.UnappliedInputView
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
 import com.meetme.server.coordination.application.port.output.RecommendationQuery
@@ -29,6 +30,7 @@ import com.meetme.server.coordination.domain.RECOMMENDATION_PROTOCOL
 import com.meetme.server.coordination.domain.RecommendationAnalysis
 import com.meetme.server.coordination.domain.RecommendationSelection
 import com.meetme.server.coordination.domain.StoredRecommendationOption
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.coordination.domain.matching.PlanType
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
@@ -75,6 +77,8 @@ class MatchingResultService(
     private val recommendations: RecommendationRepository? = null,
     private val ownership: ParticipantOwnershipResolver,
     private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
+    private val finalRoutes: FinalAnalysisRouteRegistry? = null,
+    private val storedDsl: ScheduleDslStoredReadService? = null,
 ) : GetCandidatesUseCase,
     GetUnappliedInputsUseCase,
     ConfirmCandidateUseCase,
@@ -104,6 +108,15 @@ class MatchingResultService(
         if (viewer.role != ParticipantRole.HOST) fail(MatchingResultErrorCode.HOST_PERMISSION_REQUIRED)
         val run = completedRun(room)
         val submissions = frozenSubmissions(run)
+        val selected = selectedInputDiagnostics(run)
+        if (selected != null) {
+            return submissions.mapNotNull { submission ->
+                val reason = selected[submission.latest.id.value] ?: return@mapNotNull null
+                val owner = requireNotNull(participantRepository.findById(submission.participantId)) { "Frozen participant is missing" }
+                check(owner.roomId == room.id)
+                UnappliedInputView(owner.displayName.value, null, reason, null, "INPUT")
+            }
+        }
         val structured = structuredSubmissionRepository.findByBatch(run.batch.id).associateBy { it.submissionVersionId }
         val placeFailures =
             normalizedPlaceRepository
@@ -515,6 +528,18 @@ class MatchingResultService(
         room: MeetingRoom,
         locale: Locale,
     ): CandidateListView {
+        val selected = selectedInputDiagnostics(run)
+        if (selected != null) {
+            return CandidateListView(
+                quality = requireNotNull(run.quality),
+                appliedSubmissions = run.batch.submissionVersionIds.size - selected.size,
+                totalSubmissions = run.batch.submissionVersionIds.size,
+                unappliedInputs = selected.size,
+                candidates = run.candidates.map { it.toView(room, locale) },
+                analysisId = run.id.value,
+                stateVersion = room.version,
+            )
+        }
         val structured = structuredSubmissionRepository.findByBatch(run.batch.id)
         val rejectedIds =
             structured
@@ -536,6 +561,24 @@ class MatchingResultService(
             analysisId = run.id.value,
             stateVersion = room.version,
         )
+    }
+
+    private fun selectedInputDiagnostics(run: CoordinationRun): Map<UUID, String>? {
+        val route = finalRoutes?.find(run.id.value) ?: return null
+        return when (route.choice) {
+            FinalAnalysisRouteChoice.Legacy -> null
+            is FinalAnalysisRouteChoice.DslContextV2,
+            is FinalAnalysisRouteChoice.DslApprovedTermsV3,
+            is FinalAnalysisRouteChoice.DslStructuralV5,
+            is FinalAnalysisRouteChoice.DslContextModeV4,
+            -> {
+                val diagnostics =
+                    checkNotNull(storedDsl) { "Selected DSL result reader is not configured" }
+                        .readInputDiagnostics(run.id, run.version, route.fingerprint())
+                check(diagnostics.keys.all { id -> run.batch.submissionVersionIds.any { it.value == id } })
+                diagnostics
+            }
+        }
     }
 
     private fun MeetingCandidate.toView(

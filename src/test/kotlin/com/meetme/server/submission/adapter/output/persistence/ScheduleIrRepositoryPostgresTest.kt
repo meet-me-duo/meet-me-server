@@ -85,8 +85,8 @@ class ScheduleIrRepositoryPostgresTest {
     @Test
     fun `V23 legacy data upgrades through V24 into separate typed storage without rewriting existing rows`() {
         val migrations = flyway().info()
-        assertEquals(25, migrations.applied().size)
-        assertEquals("25", migrations.current()!!.version.version)
+        assertEquals(31, migrations.applied().size)
+        assertEquals("31", migrations.current()!!.version.version)
         val envelopeColumns =
             jdbc
                 .queryForList(

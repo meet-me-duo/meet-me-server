@@ -1,0 +1,37 @@
+{
+  "workItem": "schedule-c5-luna-low",
+  "baseSha": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "recordedAt": "2026-11-06T14:19:58.055241Z",
+  "scope": "Only C5 Luna extra reasoning low; no schema/pruning/budget/default legacy changes",
+  "testResult": {
+    "tests": 101,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "exitCode": 0,
+  "finishedAt": "2026-11-06T14:17:13.615023+00:00",
+  "lint": "PASS",
+  "assemble": "PASS",
+  "sourceSha256": "da63044c081136fd527a8a2a8a0b4d5c6e718269f93011e49a9d26d52c4ad49a",
+  "testSha256": {
+    "src/test/kotlin/com/meetme/server/coordination/application/service/SelectedScheduleDslBatchProcessorContractTest.kt": "889b1edf52a291f43c4833d996a8aba8e9c225077ebaf7d6b9ac4f3214066311",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedContextModeOperatingHttpPostgresTest.kt": "94748e45b201d262f8b24bff1492f60c1a088bcc9204ec2cec4d853b2b4eab1e",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/FinalOutboundInputBoundaryTest.kt": "8f9aa74ef799dc0543032bf3d7ca1a636d88af5176ff6cf9daae96c6e1a20a63",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModeProviderContractTest.kt": "07cc4fba616a4aa1fa0f3f5d5fbe31c85778a79f20ac503e8a0c7431526b899b",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5LunaReasoningWirePostgresTest.kt": "2a205d55f6cfa2a098ef08f53a4776c828177134d59c59098ec9a4c5dbbaa3fc",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralProviderContractTest.kt": "6bbbf88f229e9660f57e4ea84c8c70e7a9e35f5006cc443c699555b7b39697c9",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SelectedApprovedTermsProviderPostgresTest.kt": "64be17f8a99c868534a0b5c212f842b719e435f69cb54468e255b40750a6644a"
+  },
+  "independentReviewSha256": "1383527d869f01aac403dff47a73ec553694bf5b96baca4ec68cf4d79987944d",
+  "oracleFormatProofSha256": "743863dd61a02b46ad5c6daba08062776307147c6d8b2a30a244e7d6d78effd0",
+  "newPaidModelCalls": 0,
+  "actualModelSpeedOrQualityVerified": false,
+  "sourceAndJar": {
+    "path": "/workspace/schedule-context-mode-worktree/build/libs/meet-me-server-0.0.1-SNAPSHOT.jar",
+    "bytes": 79309017,
+    "sha256": "b04ce119b64622dbfa85529a128fcb709eac1f2dfbc2e19e4a4514191a534823"
+  },
+  "historicalFullGateUnchanged": "3749total3730pass2fail17skip exit2",
+  "remaining": "Deployment Contracts timeouts/health403; final full Quality Gate; exactcommitCI; actualproductmodels and deployment"
+}

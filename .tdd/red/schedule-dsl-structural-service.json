@@ -1,0 +1,32 @@
+{
+  "workItem": "schedule-dsl-structural-service",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedContextModeOperatingHttpPostgresTest.kt",
+      "sha256": "94748e45b201d262f8b24bff1492f60c1a088bcc9204ec2cec4d853b2b4eab1e"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralRejectedProofTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest.SC5HTTP*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest.SC5HTTP02 actual C5 HTTP504 falls back once to Luna within the same admission and preserves directional results()",
+    "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest.SC5HTTP01 actual JWT C5 close worker and restored directional witnesses reach authenticated recommendations()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T10:53:31.486816+00:00"
+}

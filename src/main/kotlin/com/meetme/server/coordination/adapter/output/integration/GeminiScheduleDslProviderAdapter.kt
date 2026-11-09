@@ -8,6 +8,7 @@ import com.meetme.server.coordination.application.port.output.ScheduleDslCallBud
 import com.meetme.server.coordination.application.port.output.ScheduleDslProviderPort
 import com.meetme.server.coordination.application.port.output.ScheduleDslProviderRequest
 import com.meetme.server.coordination.application.port.output.ScheduleDslProviderResponse
+import com.meetme.server.coordination.domain.dsl.SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
 import okhttp3.MediaType.Companion.toMediaType
@@ -28,10 +29,16 @@ class GeminiScheduleDslProviderAdapter(
     private val endpoint: URI = URI("https://generativelanguage.googleapis.com"),
 ) : ScheduleDslProviderPort {
     override fun generate(request: ScheduleDslProviderRequest): ScheduleDslProviderResponse {
-        require(
-            request.ticket.identity.irSemanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION &&
-                request.ticket.identity.responseContractVersion == SCHEDULE_DSL_RESPONSE_CONTRACT,
-        )
+        require(request.ticket.identity.irSemanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION)
+        val responseVersion = request.ticket.identity.responseContractVersion
+        when (responseVersion) {
+            SCHEDULE_DSL_RESPONSE_CONTRACT -> require(request.inputCapsule == null)
+            SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT -> {
+                val capsule = requireNotNull(request.inputCapsule)
+                require(capsule.snapshot == request.snapshot)
+            }
+            else -> throw IllegalArgumentException("Unsupported DSL response contract")
+        }
         require(request.snapshot.context == request.ticket.context)
         require(properties.apiKey.isNotBlank() && properties.apiKey.all { it in '!'..'~' }) { "Missing DSL provider configuration" }
         val canonical = endpoint == URI("https://generativelanguage.googleapis.com")
@@ -44,10 +51,15 @@ class GeminiScheduleDslProviderAdapter(
         val timeout = request.timeout.coerceAtMost(AnalysisInvocationBudget.GEMINI_CALL_TIMEOUT)
         if (timeout.isNegative || timeout.isZero) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
         val cutoff = System.nanoTime() + timeout.toNanos()
-        val body = ScheduleDslGeminiWire.requestBytes(mapper, request.snapshot, properties.model)
+        val body =
+            if (responseVersion == SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT) {
+                ScheduleDslGeminiWire.requestContextBytes(mapper, requireNotNull(request.inputCapsule), properties.model)
+            } else {
+                ScheduleDslGeminiWire.requestBytes(mapper, request.snapshot, properties.model)
+            }
         require(body.size <= 1_048_576)
         try {
-            budget.claim(request.ticket.fingerprint() + ":FINAL:" + SCHEDULE_DSL_RESPONSE_CONTRACT, "GEMINI", properties.model)
+            budget.claim(request.ticket.fingerprint() + ":FINAL:" + responseVersion, "GEMINI", properties.model)
         } catch (
             _: RuntimeException,
         ) {

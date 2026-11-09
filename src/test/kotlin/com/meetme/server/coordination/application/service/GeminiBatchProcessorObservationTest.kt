@@ -79,7 +79,7 @@ class GeminiBatchProcessorObservationTest {
     }
 
     @Test
-    fun `late discarded response usage contributes alongside the eventual winner`() {
+    fun `late discarded response usage is retained when no Luna is configured and timeout ends the execution`() {
         val fixture = Fixture()
         var calls = 0
         fixture.gemini = { request ->
@@ -91,14 +91,14 @@ class GeminiBatchProcessorObservationTest {
         fixture.process()
 
         val execution = fixture.observations.single()
-        assertEquals(AnalysisExecutionOutcome.COMPLETED, execution.outcome)
-        assertEquals(2, execution.attempts.size)
+        assertEquals(AnalysisExecutionOutcome.ANALYSIS_DELAYED, execution.outcome)
+        assertEquals(1, execution.attempts.size)
         execution.attempts.forEach {
             assertTrue(it.parserDispatched)
             assertEquals(100L, it.inputTokens)
             assertCost("0.00026250", it.estimatedCostUsd)
         }
-        assertCost("0.00052500", fixture.legacyCosts.single())
+        assertCost("0.00026250", fixture.legacyCosts.single())
     }
 
     @Test
@@ -141,7 +141,7 @@ class GeminiBatchProcessorObservationTest {
 
         val execution = fixture.observations.single()
         assertEquals(AnalysisExecutionOutcome.COMPLETED, execution.outcome)
-        assertEquals(4, execution.attempts.count { it.provider == ObservedAnalysisProvider.GEMINI })
+        assertEquals(1, execution.attempts.count { it.provider == ObservedAnalysisProvider.GEMINI })
         val fallback = execution.attempts.single { it.provider == ObservedAnalysisProvider.OPENAI }
         assertTrue(fallback.parserDispatched)
         assertEquals(500L, fallback.inputTokens)

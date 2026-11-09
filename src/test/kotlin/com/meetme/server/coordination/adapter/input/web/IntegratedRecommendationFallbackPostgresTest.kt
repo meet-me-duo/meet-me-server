@@ -136,7 +136,6 @@ class IntegratedRecommendationFallbackPostgresTest : RecommendationPostgresFixtu
         assertEquals(
             listOf(
                 AnalysisProvider.GEMINI to Duration.ofSeconds(15),
-                AnalysisProvider.GEMINI to Duration.ofSeconds(15),
                 AnalysisProvider.OPENAI to Duration.ofSeconds(27),
             ),
             calls,
@@ -146,7 +145,7 @@ class IntegratedRecommendationFallbackPostgresTest : RecommendationPostgresFixtu
         assertEquals(OutboxStatus.PROCESSED, outbox.findById(message.eventId)?.status)
         verify(queue).acknowledge(message.streamRecordId)
         val invocation = assertNotNull(invocations.findLatestByRun(run.id))
-        assertEquals(2, invocation.geminiAttempts)
+        assertEquals(1, invocation.geminiAttempts)
         assertEquals(1, invocation.lunaAttempts)
         assertEquals(NOW.plusSeconds(60), invocation.deadlineAt)
         assertNotNull(invocation.finishedAt)
@@ -171,7 +170,7 @@ class IntegratedRecommendationFallbackPostgresTest : RecommendationPostgresFixtu
             assertEquals(0, count("candidates"))
         }
         worker.process(message.copy(streamRecordId = "synthetic-timeout-redelivery"))
-        assertEquals(3, calls.size, "ACKed timeout/fallback execution cannot dispatch again on redelivery")
+        assertEquals(2, calls.size, "ACKed timeout/fallback execution cannot dispatch again on redelivery")
         assertEquals(invocation, invocations.findLatestByRun(run.id))
         assertEquals(if (lunaSucceeds) 1 else 0, count("recommendation_analyses"))
     }

@@ -23,6 +23,7 @@ import com.meetme.server.submission.domain.ir.IrCondition
 import com.meetme.server.submission.domain.ir.IrDimension
 import com.meetme.server.submission.domain.ir.IrEffect
 import com.meetme.server.submission.domain.ir.IrEvidenceSpan
+import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.ir.IrScope
 import com.meetme.server.submission.domain.ir.IrTemporalResolution
 import com.meetme.server.submission.domain.ir.SCHEDULE_IR_V2_VERSION
@@ -59,9 +60,21 @@ data class ScheduleDslPreparedInputs(
 )
 
 object ScheduleDslInputPolicy {
+    /** Explicit semantic4 defaults and preferred availability; frozen DSL projection stays compatible. */
+    fun projectWithPreferredAvailability(
+        envelope: ScheduleDslEnvelope,
+        policy: IrMatchingPolicy,
+    ): ScheduleDslPreparedInputs = project(envelope, policy, true)
+
     fun project(
         envelope: ScheduleDslEnvelope,
         policy: IrMatchingPolicy,
+    ): ScheduleDslPreparedInputs = project(envelope, policy, false)
+
+    private fun project(
+        envelope: ScheduleDslEnvelope,
+        policy: IrMatchingPolicy,
+        approvedAvailability: Boolean,
     ): ScheduleDslPreparedInputs {
         require(envelope.semanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION && envelope.astVersion == SCHEDULE_AST_VERSION)
         require(envelope.claims.semanticVersion == SCHEDULE_IR_V2_VERSION)
@@ -126,10 +139,16 @@ object ScheduleDslInputPolicy {
                             c.alternative,
                         )
                     }
+                val rejectedPreferences =
+                    envelope.rejectedPreferenceWitnesses
+                        .filter { it.submissionVersionId == authority.submissionVersionId }
+                        .associateBy { it.conditionId }
                 val participantProgram = programs.getValue(authority.submissionVersionId)
                 val problems = participantProgram.problems.toMutableSet()
                 val program = participantProgram.program
-                if (program == null || result.getValue(authority.submissionVersionId).quarantined.isNotEmpty()) {
+                if (program == null ||
+                    result.getValue(authority.submissionVersionId).quarantined.any { it.conditionId !in rejectedPreferences }
+                ) {
                     problems += ScheduleDslProblem.REFERENCE
                 }
                 val refs =
@@ -139,6 +158,8 @@ object ScheduleDslInputPolicy {
                         ?.toSet()
                         .orEmpty()
                 val dispositions = authority.conditions.associate { it.conditionId to it.disposition }
+                val withheldCorrections = mutableSetOf<String>()
+                val protectedNegatives = mutableSetOf<String>()
                 if (program != null && problems.isEmpty()) {
                     val activeReferences = authoritativeReferences(program, authority.submissionVersionId, policy)
                     if (claims.values.any { claim ->
@@ -149,6 +170,38 @@ object ScheduleDslInputPolicy {
                     ) {
                         // A global correction cannot acquire authority through an excluded AST path.
                         problems += ScheduleDslProblem.RELATION_SCOPE
+                    }
+                    if (approvedAvailability) {
+                        val explicitWithdrawals =
+                            claims.values
+                                .filter {
+                                    it.assertion == IrAssertion.ASSERTED &&
+                                        it.interpretation == IrInterpretation.EXPLICIT &&
+                                        dispositions[it.id] == IrConditionDisposition.APPLIED &&
+                                        it.id in activeReferences
+                                }.flatMap { it.supersedes }
+                                .toSet()
+                        claims.values
+                            .filter { claim ->
+                                claim.assertion == IrAssertion.ASSERTED &&
+                                    claim.interpretation == IrInterpretation.INFERRED &&
+                                    dispositions[claim.id] == IrConditionDisposition.APPLIED &&
+                                    claim.id in activeReferences
+                            }.forEach { claim ->
+                                val protectedTargets =
+                                    claim.supersedes.filter { targetId ->
+                                        val target = claims[targetId]
+                                        target?.assertion == IrAssertion.ASSERTED &&
+                                            target.effect in setOf(IrEffect.UNAVAILABLE, IrEffect.UNRESOLVED) &&
+                                            dispositions[targetId] == IrConditionDisposition.SUPERSEDED &&
+                                            targetId !in explicitWithdrawals
+                                    }
+                                if (protectedTargets.isNotEmpty()) {
+                                    // Keep independent AST operands while withholding an estimated withdrawal.
+                                    withheldCorrections += claim.id
+                                    protectedNegatives += protectedTargets
+                                }
+                            }
                     }
                 }
                 val history = program?.historyConditionIds.orEmpty().toSet()
@@ -161,7 +214,11 @@ object ScheduleDslInputPolicy {
                 }
                 if (authority.correctionInfluences.any { it.targetConditionId !in refs }) problems += ScheduleDslProblem.RELATION_SCOPE
                 val nodes = mutableMapOf<String, ScheduleDslNodeCalculationEvidence>()
-                var unresolved = problems.isNotEmpty() || authority.unresolvedTime || authority.unsupportedDimensions.isNotEmpty()
+                var unresolved =
+                    problems.isNotEmpty() ||
+                        withheldCorrections.isNotEmpty() ||
+                        authority.unresolvedTime ||
+                        authority.unsupportedDimensions.isNotEmpty()
                 val memo = mutableMapOf<Pair<String, ScheduleDslRole>, Bounds>()
                 val visiting = mutableSetOf<Pair<String, ScheduleDslRole>>()
                 val byId = program?.nodes?.associateBy { it.id }.orEmpty()
@@ -189,6 +246,21 @@ object ScheduleDslInputPolicy {
                             TimeRangeMatcher.intersect(ranges.flatten(), clip)
                         }.filterValues { it.isNotEmpty() }
 
+                fun protectedNegativeIsDefinite(id: String): Boolean {
+                    val claim = claims.getValue(id)
+                    val branchSelected =
+                        claim.alternativeGroup == null ||
+                            policy.alternativeChoices.any {
+                                it.submissionVersionId == authority.submissionVersionId &&
+                                    it.group == claim.alternativeGroup &&
+                                    it.alternative == claim.alternative
+                            }
+                    return branchSelected &&
+                        claim.interpretation in policy.eligibleInterpretations &&
+                        claim.effect == IrEffect.UNAVAILABLE &&
+                        claim.temporalResolution == IrTemporalResolution.PRECISE_INTERVAL
+                }
+
                 fun eval(
                     id: String,
                     role: ScheduleDslRole,
@@ -203,9 +275,15 @@ object ScheduleDslInputPolicy {
                         if (node.assertion != IrAssertion.ASSERTED) {
                             disposition = ScheduleDslNodeDisposition.EXCLUDED_ASSERTION
                             Bounds.EMPTY
+                        } else if (node.operator == ScheduleDslOperator.CLAIM_REF && node.claimId in rejectedPreferences) {
+                            require(role == ScheduleDslRole.PREFER) { "Unvalidated rejected preference role" }
+                            disposition = ScheduleDslNodeDisposition.WITHHELD
+                            unresolved = true
+                            Bounds.EMPTY
                         } else if (node.operator == ScheduleDslOperator.CLAIM_REF) {
                             val claim = requireNotNull(claims[node.claimId]) { "Missing DSL claim" }
-                            val state = dispositions.getValue(claim.id)
+                            val state =
+                                if (claim.id in withheldCorrections) IrConditionDisposition.WITHHELD else dispositions.getValue(claim.id)
                             val influence = authority.correctionInfluences.filter { it.targetConditionId == claim.id }.map { it.window }
                             val bound = window(claim.scope)
                             val definiteInactive =
@@ -356,7 +434,17 @@ object ScheduleDslInputPolicy {
                     if (problems.isEmpty() &&
                         program != null
                     ) {
-                        program.availabilityRoot?.let { eval(it, ScheduleDslRole.ALLOW) } ?: Bounds.EMPTY
+                        program.availabilityRoot?.let { eval(it, ScheduleDslRole.ALLOW) }
+                            ?: if (approvedAvailability &&
+                                program.preferenceRoot == null &&
+                                withheldCorrections.isEmpty() &&
+                                result.getValue(authority.submissionVersionId).quarantined.isEmpty()
+                            ) {
+                                // A validated absence of restrictions uses policy support, never an invented claim.
+                                Bounds(listOf(search), listOf(search))
+                            } else {
+                                Bounds.EMPTY
+                            }
                     } else {
                         Bounds.EMPTY
                     }
@@ -364,7 +452,12 @@ object ScheduleDslInputPolicy {
                     if (problems.isEmpty() &&
                         program != null
                     ) {
-                        program.exclusionRoot?.let { eval(it, ScheduleDslRole.BLOCK) } ?: Bounds.EMPTY
+                        val original = program.exclusionRoot?.let { eval(it, ScheduleDslRole.BLOCK) } ?: Bounds.EMPTY
+                        Bounds(
+                            original.lower +
+                                protectedNegatives.filter(::protectedNegativeIsDefinite).flatMap { window(claims.getValue(it).scope) },
+                            original.upper + protectedNegatives.flatMap { window(claims.getValue(it).scope) },
+                        )
                     } else {
                         Bounds.EMPTY
                     }
@@ -376,22 +469,52 @@ object ScheduleDslInputPolicy {
                     } else {
                         Bounds.EMPTY
                     }
-                val precise = TimeRangeMatcher.subtract(available.lower, excluded.upper)
-                val possible = TimeRangeMatcher.subtract(available.upper, excluded.lower)
-                val credits = mergeCredits(listOf(available, preferred), precise).values.flatten()
+                val preferenceSuppliesAvailability = approvedAvailability && program?.availabilityRoot == null
+                val lower = if (preferenceSuppliesAvailability) available.lower + preferred.lower else available.lower
+                val upper = if (preferenceSuppliesAvailability) available.upper + preferred.upper else available.upper
+                val precise = TimeRangeMatcher.subtract(lower, excluded.upper)
+                val possible = TimeRangeMatcher.subtract(upper, excluded.lower)
+                val credits =
+                    if (preferenceSuppliesAvailability) {
+                        emptyList()
+                    } else {
+                        mergeCredits(listOf(available, preferred), precise).values.flatten()
+                    }
                 ParticipantMatchInput(
                     participant.participantId,
                     precise,
                     explicitPreferences = ParticipantPreferences(timeRanges = TimeRangeMatcher.normalize(credits)),
-                    offlinePlaceAssessment = OfflinePlaceAssessment.UNVERIFIED,
+                    offlinePlaceAssessment =
+                        if (claims.values.none { it.scope?.dimension == IrDimension.PLACE } &&
+                            result.getValue(authority.submissionVersionId).quarantined.isEmpty() &&
+                            authority.unsupportedDimensions.isEmpty()
+                        ) {
+                            OfflinePlaceAssessment.UNRESTRICTED
+                        } else {
+                            OfflinePlaceAssessment.UNVERIFIED
+                        },
                 ) to
                     ScheduleDslParticipantEvidence(
                         authority.submissionVersionId,
                         participant.participantId,
-                        conditionEvidence,
+                        conditionEvidence.map { evidence ->
+                            when (evidence.conditionId) {
+                                in withheldCorrections -> evidence.copy(disposition = IrConditionDisposition.WITHHELD)
+                                in protectedNegatives ->
+                                    evidence.copy(
+                                        disposition =
+                                            if (protectedNegativeIsDefinite(evidence.conditionId)) {
+                                                IrConditionDisposition.APPLIED
+                                            } else {
+                                                IrConditionDisposition.WITHHELD
+                                            },
+                                    )
+                                else -> evidence
+                            }
+                        },
                         program?.nodes?.mapNotNull { nodes[it.id] }.orEmpty(),
                         unresolved || precise != possible,
-                        problems.toSet(),
+                        problems + if (withheldCorrections.isNotEmpty()) setOf(ScheduleDslProblem.RELATION_SCOPE) else emptySet(),
                         possible,
                     )
             }

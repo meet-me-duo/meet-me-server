@@ -1,0 +1,111 @@
+{
+  "workItem": "selected-service-lifecycle-and-native-output",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Fresh revision contract, durable host matching authority and transactional deadline, complete real CLI output. External class overlays; original source and compiled classes unchanged.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslOfflineEntryPoint.kt",
+      "sha256": "0c20adbf41436302f3938e33e1d43519a1c02c36ffd59fa3d1870bccdcc9a6aa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/CoordinationPersistenceAdapters.kt",
+      "sha256": "2c2b2faaeff602c5b5116b55e1ea6e880035e59a06c9a9d7ec6426489e1ecb13"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/InputRevisionService.kt",
+      "sha256": "36fca7169b5956d03f0a9368aeb78e5939a84b012572d65f5a600707f8ea2ca2"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/MatchingProcessor.kt",
+      "sha256": "813d036e92f68748ceccb7b5fb2f4b762a671d890434723434b204c0c4e89cb4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/SelectedScheduleDslMatchingService.kt",
+      "sha256": "7731f517e5fab5746c17a1fb60da2a4ea3d9ebd6d6837243585ef65c4b9bb5c8"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedRevisionRoutePropagationPostgresTest.kt",
+      "sha256": "c39377765a50b1962d846b51395e44da8138ac04e46d89e78da492dc93a01112"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedHostMatchingRetryPostgresTest.kt",
+      "sha256": "33a1e7a710fa9026a7c4ef09d03ab05fc0afcaf3755b5c12b3d58fc29a1e0e52"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslContextOfflineEntryPointTest.kt",
+      "sha256": "dd791c190dd5f5fbb1c39ba945d295c655de33a77c7c428dfce1c77f2e82b9aa"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslNativeProcessCapture.kt",
+      "sha256": "30fbd82f067734ef07ae6e9983855d640d50381b282d15702367169d055dc4be"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "swallow-propagation",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.SelectedRevisionRoutePropagationPostgresTest#SRP03 unchanged reuse preserves original selection then unsupported successor rolls back the whole revision()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "discard-duplicate-authority",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.SelectedHostMatchingRetryPostgresTest#HMR04 duplicate same version DB retry authorities are rejected rather than choosing a convenient winner()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "reuse-old-host-deadline",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.SelectedHostMatchingRetryPostgresTest#HMR01 explicit host CTA publishes new pure compute authority after original provider expiry without changing history()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "omit-writer-postcheck",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.web.SelectedHostMatchingRetryPostgresTest#HMR05 new host deadline crossing after actual recommendation write rolls back every matching write()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "leak-stdout",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextOfflineEntryPointTest#CTXC03 existing context output cannot be overwritten and malformed private input is never printed()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "leak-stderr",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextOfflineEntryPointTest#CTXC03 existing context output cannot be overwritten and malformed private input is never printed()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "leak-child-thread",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-selected-lifecycle-faults.py"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextOfflineEntryPointTest#CTXC03 existing context output cannot be overwritten and malformed private input is never printed()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-05T20:26:10.723505Z"
+}

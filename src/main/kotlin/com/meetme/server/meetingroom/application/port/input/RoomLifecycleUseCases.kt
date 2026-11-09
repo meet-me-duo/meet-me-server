@@ -1,5 +1,6 @@
 package com.meetme.server.meetingroom.application.port.input
 
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisContractSelection
 import com.meetme.server.meetingroom.domain.ClosureReason
 import com.meetme.server.meetingroom.domain.CollectionStatus
 import com.meetme.server.meetingroom.domain.MeetingMode
@@ -30,6 +31,7 @@ data class CloseRoomCommand(
     val inviteCode: String,
     val rawCredential: String?,
     val confirmEarly: Boolean,
+    val analysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
 )
 
 data class ViewerParticipation(

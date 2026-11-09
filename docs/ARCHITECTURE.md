@@ -426,7 +426,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 - Prompt는 원문 전체의 정정·부정과 표현 가능한 조건을 보존하고, 종료를 특정할 수 없는 모호성이나 flat schema로 표현할 수 없는 시간·장소 결합에는 미반영 사유를 반환하도록 요구한다. 구조적으로 유효한 모델 출력이 원문 조건을 누락했는지는 서버 구조 검증만으로 보장하지 못한다. 합성 provider fixture는 결과 보존과 결정론적 매칭 검증이며 실제 모델의 자연어 정확성 근거는 고정 기대값에 대한 별도 실제 평가로 보고한다.
 - 참가자 제출·수정에는 파싱 작업을 생성하지 않는다. 입력 수집 종료 시 고정한 방 전체 제출 배치에 자연어가 하나 이상 있을 때만 하나의 논리 파싱 작업을 생성한다. 자연어가 전혀 없으면 Gemini를 건너뛰고 정형 일정 입력으로 결정론적 매칭을 시작한다.
 - 신규 원문은 ECMAScript trim 후 필수 1~500 Unicode 코드포인트이고 방 합계는 10,000이다. legacy null은 복원 전용으로 Gemini에 전달하지 않으며 초과 원문은 자르지 않는다.
-- 논리 파싱 작업은 Gemini 최초 1회와 최대 3회 기술 재시도 뒤 OpenAI `gpt-6-luna` 폴백 1회로 제한한다. NETWORK/TIMEOUT/명시적 일시 RATE_LIMIT/SERVER만 재시도·폴백한다. typed 오류 code/status가 문자열보다 우선하며 단순 429/RESOURCE_EXHAUSTED는 quota로 보수적으로 구분한다. 인증·권한·결제·비일시 quota·잘못된 요청·설정·응답 검증 오류는 재시도하지 않는다. 성공한 PARTIAL/NO_MATCH/AMBIGUOUS는 기술 오류가 아니다.
+- 논리 파싱 작업은 Gemini 최초 1회와 최대 3회 기술 재시도, OpenAI `gpt-6-luna` 폴백 최대 1회로 제한한다. 2026-11-06 사용자 결정에 따라 Gemini TIMEOUT은 같은 Gemini 재시도·jitter·Retry-After 대기 없이 즉시 기존 Luna 폴백으로 전환한다. NETWORK/명시적 일시 RATE_LIMIT/SERVER는 기존 재시도·폴백을 유지하며 HTTP 503/529는 SERVER 분류를 유지한다. 두 등록 최종 분석 경로(legacy/명시 DSL)에 같은 규칙을 적용하고, 전체 deadline·완료 예약·소유권·논리 및 물리 호출 승인을 모두 만족해야만 Luna를 호출한다. 예산 소진은 새 실행 예산으로 우회하지 않는다. typed 오류 code/status가 문자열보다 우선하며 단순 429/RESOURCE_EXHAUSTED는 quota로 보수적으로 구분한다. 인증·권한·결제·비일시 quota·잘못된 요청·설정·응답 검증 오류는 재시도하지 않는다. 성공한 PARTIAL/NO_MATCH/AMBIGUOUS는 기술 오류가 아니다. 현재 등록 개인 사전검증은 선택적 Jev 분류→Luna 질문 생성이며 Gemini 경로가 아니다. 별도 미등록 Gemini 사전검증 adapter·독립 DSL worker·단발 SDK 진단에는 호환 Luna orchestration이 없으므로 이 변경으로 모든 직접 adapter 호출에 폴백이 생겼다고 해석하지 않는다.
 - 재시도는 Full Jitter 지수 백오프를 적용한다. `Retry-After`가 없으면 재시도 순서대로 `0~1초`, `0~2초`, `0~4초` 범위에서 지연하며, 유효한 `Retry-After`는 논리 작업에 남은 시간 안에서 우선한다. 호출별 timeout은 Gemini 최대 15초·Luna 최대 27초를 admission 뒤 실제 남은 예산으로 줄인다. Worker 진입 시 단일 monotonic 60초 deadline을 시작하며 Luna 27초·완료 3초를 먼저 예약해 Gemini 단계는 backoff/claim 대기를 포함해 최대 30초다. Application port의 AnalysisInvocationBudget을 processor와 두 adapter가 공유하고 durable Gemini admission도 같은 예약값을 사용한다. 시작 기준 Gemini admission 30초·공급자 완료 57초·최종 게시 60초 경계는 도달 시 거부한다. 4회×15초와 backoff를 모두 보장하지 않는다. 공급자 HTTP와 결과 게시 경계에서 deadline을 검사하며 SDK 중첩 retry와 연결 재전송을 끈다.
 - 응답은 자연어가 있어 요청에 포함된 불투명 참조값의 개수와 집합이 일치해야 하며 참가자별 항목을 독립적으로 검증한다. 배치 전체의 기술적 재시도가 소진되면 입력과 고정 배치를 보존하고 `ANALYSIS_DELAYED`로 전이하며 매칭하지 않는다.
 - 조건은 `TIME_WINDOW`, `SPECIFIC_PLACE`, `TRAVEL_CONSTRAINT`, `UNRESOLVED_PLACE` 유니온으로 저장한다. `SPECIFIC_PLACE`는 `query`, 배치 내부 `area_key`, 공통 `area_name`을 포함한다. 좌표는 스키마에 포함하지 않으며 조건 단위 검증 실패는 유효 조건과 분리해 미반영 사유로 보존한다.
@@ -615,6 +615,10 @@ PostgreSQL의 candidate/check/execution/idempotent-operation을 개인 제출 �
 
 새 release의 `runtime-auth-mode=oauth-rs256-required`는 renderer의 typed OAuth/서명 경로·Origin 및 optional 기본 OFF flag 전달을 요구한다. RSA/JWKS는 고정 `/run/meetme-auth` read-only bind이며 없는 호스트 경로는 생성하지 않는다. marker/renderer/Compose를 current17 guard catalog에 묶고 historical14은 읽기만 지원한다. 기존 guard 승인·migration/drain·부분 signing 거부 정책은 바꾸지 않는다. 실제 Secret/파일/권한·OAuth·DB/운영 전환은 별도 사용자 작업이다.
 
+2026-11-08 격리 개발 후보는 Luna 개인 질문 생성의 요청 한도 16KiB와 응답 전체 envelope 한도 64KiB를 구분한다. `Content-Length`와 최대 65,537바이트 읽기로 초과 응답을 파싱 전에 거부하고, 동일한 단일 `output_text`의 UTF-8 질문 JSON은 16KiB로 제한한다. 64KiB는 유한한 메타데이터 예산이며 모든 공급자 응답의 수용을 보장하지 않는다.
+
+한도 계약은 신뢰된 provider 객체가 선언하고 TwoStage는 generator의 계약을 전달한다. 응답의 provider/model 문자열로 더 큰 한도를 선택할 수 없으며 기본 계약은 기존 16KiB다. `responseBytes`와 저장 컬럼은 전체 decoded HTTP envelope 크기를 유지하고, 별도의 서버 계산 `responsePayloadBytes`는 음수·누락·역전·한도 초과를 worker에서 검증한다. 분류만 완료한 CLEAR에는 생성 응답 크기가 없을 수 있다. Luna 전용 reader는 깊이 64·토큰 32,768·문서 65,536바이트·문자열 65,536문자·숫자 길이 128·필드명 길이 1,024로 제한하며 기존 JSON 중복/후행 토큰·질문·인용 검증을 유지한다. 요청 serializer/native profile·시간 제한·재시도·기존 Gemini reader와 저장 이력은 바꾸지 않는다. 로컬 재생·회귀와 실제 모델/E2E·운영 배포 검증은 별도로 판정한다.
+
 ### 2단계 분류·생성 경계 (ADR-054)
 
 새 AmbiguityClassificationPort는 SDK와 독립인 원문/context→CLEAR/NEEDS_REVIEW/INDETERMINATE 계약이다. OpenAI Decisions 후보 adapter는 단일 holistic choice만 사용하며 자유 구간/질문·개인 구조화/AREA를 생성하지 않는다. standalone adapter의 자동 Spring 등록은 없고 TwoStagePreSubmissionCheckProvider가 명시 조합한다. 충분한 CLEAR만 통과하고 정상 유보·검토 필요는 기존 생성 검사로 재판정(CLEAR 가능), refusal/API 오류는 미완료다. 두 stage는 기존 provider 최대15초를 공유하고 기존 worker가 room/check/generation·owner/deadline 게시 fencing을 유지한다. 공개 API/SQL/web 구조는 확대하지 않는다.
@@ -772,12 +776,117 @@ V24 JSONB의 명시적 semantic/format 쌍(V1=1, IR2=2)을 별도 typed 저장�
 숫자 계산은 기존 `TimeRangeMatcher`의 정규화·교집합·차집합, `DeterministicCandidateMatcher`, `RecommendationProjector`를 재사용한다. AVAILABLE이 없으면 전 기간을 여는 legacy 복원 함수를 IR2에 사용하지 않는다. 결과의 정밀 후보 유무와 원래 의미 근거를 따로 보존한다. 시간 언어의 숫자 기본값, 조건부 후보 공개·주최자 확정 자격, 새로운 질문 UX 및 typed 장소·구간 mode는 이 경계에서 결정하지 않는다. 실제 provider의 IR2 출력 지침/요청 schema 등록, worker 연결, 공개 DTO·권한·만료 계약과 운영 활성화는 별도 검토가 남아 있다. 합성 응답의 통합 검증은 실모델 의미 정확도의 증거가 아니다.
 
 
+### 승인된 시간어·선호 의미의 명시 새 경로 (2026-11-05)
+
+미출시 request3/response3·semantic4·AST1 경계는 서버의 `ko-time-terms-1` 표와 typed source/revision/code-point 근거 참조를 사용한다. 오전·오후뿐 아니라 PRD에 기재한 전체11개 표와 심야/한밤중 alias를 적용한다. 표의 수치와 익일 경계는 서버가 결정하며 모델은 의미·날짜와 근거를 제시한다. 명시 숫자 구간이 우선하고 날짜만 있는 입력은 전일 가능으로 바꾸지 않는다. 비정밀 선언·검증된 표 적용 근거·정규화 계산 투영을 명시 wrapper에 함께 보존하며 원문을 중복 저장하지 않는다.
+
+새 의미는 명시 가용성 root, 선호 root, 기본 가능 범위 순서로 결정한다. 가용성 root가 있으면 해당 lower/upper를 유지하고 선호는 그 안에서만 가중치를 준다. 가용성 root 없이 선호 root만 있으면 선호의 lower/upper가 가능 범위이며 검색기간을 추가하지 않고 점수용 credit은 비운다. 원문 역할과 근거는 IR/AST에 보존하며, 최종 계산은 기존 ParticipantMatchInput의 가능 범위와 ParticipantPreferences의 추가 가중 범위를 분리한다. 불가 시간의 참가자는 후보에 없으므로 점수 적용 대상이 아니고, 가능한 후보의 추가 가중 없음은 기존 preferenceCount 0으로 표현한다. UNKNOWN·보류를 불가로 재분류하거나 nullable 점수용 새 저장/API 계약을 만들지 않는다. 두 root가 모두 없는 유효 프로그램에만 runtime·quarantine 검증 후 검색기간 기본 가용성을 적용한다. 명시 가용성 root의 계산 구간이 비거나 비정밀하다는 이유로 선호 또는 기본값으로 우회하지 않는다. 전역 불가·제외는 가용·선호 구간 모두에 적용하고 분기 안의 PREFER는 자신의 base 범위를 유지한다. 기존 legacy/C1/C2의 바이트·계산 의미는 유지하며 새 경로가 명시적으로 새로운 투영 함수를 선택한다. 추가 유료 호출은 보류 중이다. 구현·로컬 회귀·실제 서비스 등록·최종 전체 가드와 운영 반영은 각각 별도 완료 근거가 필요하다.
+
+같은 최종 구조화 요청에 원문·질문 문맥·전체 시간표를 넣는다. 모델은 문맥에 따른 숫자 범위 조정을 INFERRED/NON_PRECISE 선언으로 제안하며, 서버는 검증된 시간어·날짜 근거와 구간을 결속해 MODEL_CONTEXT 출처로 계산한다. 사용자 명시 숫자나 서버 표의 직접 적용과 구별하며 EXPLICIT 라벨을 사용자 확인으로 간주하지 않는다. 추정 정정만으로 기존 불가를 철회하지 않고, 보호할 불가의 영향 범위를 차감하면서 독립 AST의 가용성을 보존한다. 실패한 정정만으로 기본 검색기간을 열지 않는다.
+
+### 고정 계약 선택과 기존 실행 예산의 서비스 접합
+
+`FinalAnalysisRouteRegistry`는 run/batch/room·native context·계약·정책·mode를 고정한다. LEGACY/C2는 기존 식별·저장 구조를 유지하고, V27의 DSL_APPROVED_TERMS_V3 선택만 vocabulary 식별자를 추가한다. 선택은 물리 호출 권한이나 저장 성공을 뜻하지 않는다.
+
+`SelectedScheduleDslProcessingPersistenceService`는 기존 AnalysisInvocation과 실제 CoordinationAttempt를 사용한다. room→정확한 run 잠금 아래 소유권·입력·deadline을 확인하고, 완료된 attempt의 미완료 복사본이나 진행 중 attempt가 있는 추가 admission을 거부한다. 공급자 I/O는 이 짧은 트랜잭션 밖에서 수행한다. strict parser와 버전별 wrapper 게시·승자·MATCHING 전환은 한 트랜잭션이며 게시 이후에도 단조 시각 callback·wall deadline을 재검사한다. 원문·공급자 응답 본문은 새 진단 로그에 저장하지 않는다.
+
+선택된 경로의 조정기는 기존 bounded-luna-v1의 전체60초, Gemini 최대4회·각15초, Luna1회·27초와 완료3초 reserve를 유지한다. 503/529 서버 실패는 기존 재시도 예산 뒤 typed Luna fallback 대상이며 quota·billing·authentication 우선 분류는 유지한다. 중간 attempt 실패는 실행을 끝내지 않고, 마지막 실패만 ANALYSIS_DELAYED로 종결한다. typed transport·저장 결과 조회·등록 dispatcher/공개 API 접합은 로컬 합성으로 검증하며, 운영 라우팅의 기본값은 바꾸지 않는다. 로컬 합성 검증은 실모델 의미 정확도나 전체 CI 통과의 증거가 아니다.
+
+명시 구성된 `SelectedFinalAnalysisDispatchService`는 진입 deadline을 typed coordinator에 전달하고, MATCHING에서 저장된 승자와 원래 기한으로 최종 게시를 재개한다. `SelectedScheduleDslMatchingService`는 read-only REPEATABLE_READ로 복원한 계산을 기존 추천 writer에 전달하며, 실제 쓰기 전후의 입력·선택·소유권·기한 검사를 유지한다. 계산 커널을 다시 구현하지 않고 후보의 저장 매핑만 공통 함수로 분리한다. 완료된 실행의 재전달은 새 모델 호출이나 결과 교체를 하지 않는다.
+
+공개 조회는 기존 인증을 먼저 적용한다. 선택된 C2/C3/C4는 옛 flat row 부재를 구조화 실패로 간주하지 않고, 같은 native/버전 검증을 거친 저장 IR의 projection 진단을 읽는다. 진단 조회는 matcher/projector를 재실행하지 않으며 실제 미반영 부분에만 고정 reason을 반환하고 원문·보완답변을 추가 반환하지 않는다. selected route를 제공하는 구성에는 registry와 reader가 모두 필요하고, 인식한 typed route의 reader 부재·검증 실패를 legacy나 빈 진단으로 바꾸지 않는다. 현재 기본 선택은 LEGACY이며 명시 선택된 MATCHING 이벤트·bean 등록·실제 HTTP 경로를 로컬 합성으로 검증했다. 배포·실모델 품질·최종 CI 검증과 구분한다.
+
 ### 명시적 일정 DSL·AST 경계 (2026-11-05)
 
 새 응답 계약 schedule-dsl-response-1, IR 의미 schedule-ir-product-3, AST schedule-ast-1과 별도 matching policy version을 명시한다. 기존 LEGACY/V1/IR2의 wire·기본 요청 경로는 유지한다. DSL은 근거 있는 claim과 CLAIM_REF/ALL_OF/ANY_OF/EXCEPT/CHOICE/PREFER 그래프를 보존하며, 교집합·차집합·후보 점수는 기존 결정론 커널에서 계산한다. 정정 관계가 현재 선택된 ASSERTED·허용 해석의 AST 경로와 불일치하면 RELATION_SCOPE로 해당 program을 보류한다. 원 근거·의미와 독립 참여자 결과는 보존한다.
 
-ScheduleDslAnalysisService는 불변 run/batch/제출 버전·근거·계약/정책 결속과 트랜잭션을 기존 execution support로 검증한다. 새 JDBC codec은 기존 IR 테이블에 semantic3/format3을 저장하고 fresh restore에서 명시 버전을 검증한다. ScheduleDslAnalysisWorker는 frozen input → 단일 provider 응답 → strict parser/validator → 저장/복원 → AST 계산을 연결한다. Gemini adapter는 기본15초 한도 내 물리 요청1회이며 SDK/상위 재시도·Luna fallback을 호출하지 않는다. 동시 run의 단일 admission은 외부 ScheduleDslCallBudget 구현이 전역 cap과 logicalKey를 원자적으로 관리해야 하며 worker 자체의 exactly-once 보장은 아니다.
+ScheduleDslAnalysisService는 불변 run/batch/제출 버전·근거·계약/정책 결속과 트랜잭션을 기존 execution support로 검증한다. 새 JDBC codec은 기존 IR 테이블에 semantic3/format3을 저장하고 fresh restore에서 명시 버전을 검증한다. 독립 격리가 입증된 거부 장소 선호가 있으면 별도 witness를 storage format4에 저장하며 기존 format3의 필드 구조는 유지한다. 이 근거는 조건의 유효화나 사용자 확인을 뜻하지 않는다. 원문 중복 대신 기존 snapshot의 source/revision/span/hash에 대조하고 극성·정정·배타 관계와 모든 AST 참조 역할을 다시 검증한다. ScheduleDslAnalysisWorker는 frozen input → 단일 provider 응답 → strict parser/validator → 저장/복원 → AST 계산을 연결한다. Gemini adapter는 기본15초 한도 내 물리 요청1회이며 SDK/상위 재시도·Luna fallback을 호출하지 않는다. 동시 run의 단일 admission은 외부 ScheduleDslCallBudget 구현이 전역 cap과 logicalKey를 원자적으로 관리해야 하며 worker 자체의 exactly-once 보장은 아니다.
 
 DB 없는 ScheduleDslOfflineEntryPoint는 동일 제품 코드로 파일 기반 prepare/prepare-gemini/evaluate/evaluate-gemini를 수행한다. 네트워크·키 조회·DB는 없고 새 출력은0600으로 생성한다. 전달 source/JAR 지문과 검증 범위는 docs/verification/schedule-dsl-offline-runtime.json을 따른다. 이 CLI는 기존 Jev/필요 시 Luna·답변 재검사 state machine의 대체가 아니라 최종 배치 DSL 해석/계산의 재사용 경계다.
 
-새 service/worker/repository/provider는 운영 component scan·Outbox/controller에 등록하지 않았다. typed 장소/구간 mode가 없어 non-REMOTE는 REQUIRES_DECISION으로 의미와 준비 입력을 보존하고 최종 후보를 발명하지 않는다. 시간어·날짜만 입력의 숫자 기본값, 조건부 후보 공개/주최자 확정 자격, 인증·만료/최종 DTO 운영 접합은 미정 또는 미구현이며 이 경계의 mock·replay 성공으로 운영 준비나 모델 의미 정확도를 주장하지 않는다.
+이 절의 독립 `ScheduleDslAnalysisService`/`ScheduleDslAnalysisWorker` prototype은 운영 component scan·Outbox/controller에 등록하지 않았다. 아래 명시 `SelectedScheduleDsl` 서비스 graph와 구분한다. 장소를 언급하지 않은 입력은 기존 커널의 UNRESTRICTED·null 장소로 방의 IN_PERSON/REMOTE/EITHER를 유지해 시간 후보를 계산한다. 대면이라는 이유로 장소를 필수로 만들거나 자동 비대면 전환하지 않는다. 실제 장소 조건과 미해결 장소는 구분하며, typed 구간별 mode/place 전달과 기존 AREA_n·이동 미검증 의미의 공개 제품 접합은 아직 남아 있다. 초기 응답1에서 미정이던 시간어·날짜만 입력 정책은 아래 최신 명시 경로와 PRD의 사용자 결정으로 구분한다. 조건부 후보 공개/주최자 확정 자격과 실제 운영 접합은 별도이며 이 prototype의 mock·replay 성공으로 운영 준비나 모델 의미 정확도를 주장하지 않는다.
+
+### 질문·답변 문맥의 명시 DSL 계약2 (2026-11-05)
+
+schedule-dsl-request-2와 schedule-dsl-response-2는 기존 의미3·AST1·응답 schema를 유지하며, 불변 제출의 질문 prompt·질문/답변 식별자·원문 범위·답변 시각을 비증거 문맥으로 함께 전송한다. 애플리케이션이 native 제출로 재생성한 binding·source text를 frozen snapshot과 대조한다. 질문은 사용자 진술 또는 가용성 claim이 아니며 별도 evidence source로 만들지 않는다. 기존 response1 wire와 네 CLI 명령은 유지하고 context 명령 네 개에서만 response2를 선택한다. current-check·단일 HTTP attempt·버전별 예산 key·저장/복원·실제 방 mode를 보존하는 계산 커널은 공통 경계를 사용한다.
+
+accepted InputEvidence에는 전체 UI 선택지 정의가 없어 choice_definitions_available=false를 명시한다. 질문·답변 관계를 전달해도 누락된 선택지 의미를 추측하거나 모든 직접 답변을 해소했다고 주장하지 않는다. 새 경로는 운영 등록·기본값 전환 없이 검증하며 기존 질문 횟수·시간 정책·공개/확정 자격을 바꾸지 않는다.
+
+
+### 명시적 C3 최종 분석의 서비스 연결
+
+주최자의 종료 요청이 `analysis_contract=DSL_APPROVED_TERMS_V3`를 명시하면 기존 종료 트랜잭션 안에서 배치·실행·활성 참조와 분석 계약을 고정한 뒤 outbox를 기록한다. 생략한 요청과 기존 자동 종료는 LEGACY를 유지한다. 기본 운영 경로의 자동 전환은 이 연결에 포함하지 않는다.
+
+새 계약은 기존 이벤트 처리기에 연결되며, 모델 응답의 strict parser와 버전별 IR 저장·복원을 거쳐 동일한 서버 계산기와 추천 저장기에 도달한다. 저장된 입력 근거는 서버가 불변 제출 버전에서 다시 만들며 모델 라벨을 사용자 확인으로 간주하지 않는다. 입력 수정이나 강제 재분석에서는 계약·정책 식별자만 유지하고 새 실행·배치·입력 집합의 근거를 만든다. 변경 없는 결과 재사용은 원래 실행을 유지한다. 미지원 입력 조합과 새 입력 집합에 속하지 않는 대안 선택은 조용히 LEGACY로 전환하거나 오래된 IR을 복사하지 않고 분석 생성 트랜잭션을 거부한다.
+
+원래 MATCHING 전달은 기존 성공 호출의 버전 쌍과 원래 마감을 지킨다. 분석 지연 뒤 인증된 주최자가 명시적으로 MATCHING 재시도를 요청하면 기존 권한 검사·방/실행 잠금 안에서 별도 outbox 계산 권한을 기록한다. 실제 DB의 단일 PUBLISHED 이벤트 ID, 실행 버전, 배치, 성공 호출과 winner, 계약 지문을 검증하고 이벤트의 불변 발생 시각부터 최대 60초 동안 저장된 응답만 계산한다. 원래 모델 호출·소유권·마감·비용 이력은 변경하지 않는다. 재전달·재게시·lease 갱신으로 계산 마감을 초기화하지 않는다. 게시 전후에는 같은 이벤트와 현재 방·실행·입력 근거를 다시 검증하며, 게시 중 마감이 지나면 추천 저장을 롤백하고 기존 지연 상태로 전이한다.
+
+이 연결의 합성 PostgreSQL/JWT/HTTP 및 고정 응답 검증은 실제 모델 의미 정확도와 구분한다. 가족·예시의 최신 코드 재생과 최종 전체 gate·정확 HEAD 원격 CI가 확인되기 전 운영 활성화하지 않는다.
+
+
+### 명시 C4/IR5 문맥·구간 mode 서비스 경계 — 로컬 합성 검증
+
+2026-11-06 현재 C4 native provider/strict codec·IR5 format6 DB 왕복과 명시 선택된 등록 worker→추천 게시→인증 HTTP 조회를 로컬 합성 자료로 검증했다. `DSL_CONTEXT_MODE_V4`만 요청/응답4·semantic5·어휘1·정책1을 선택하며 기본 LEGACY 및 C3 wire는 유지한다. 이 상태는 실제 모델 의미 정확도, 무필터 전체 gate·정확 commit CI 또는 운영 활성화의 증거가 아니다.
+
+- 원문에 준비 시간어가 없어도 승인된 문맥 해석이 완전한 TIME 구간을 제안하면 별도 계산 projection에 반영한다. 원본 INFERRED/NON_PRECISE 선언·source/revision/코드포인트 근거와 MODEL_CONTEXT 파생 근거를 보존하며 EXPLICIT 또는 사용자 확인으로 바꾸지 않는다. 미해결 해석·불완전 끝점·정책/스냅샷 불일치는 정밀 시간을 발명하지 않는다.
+- hard mode 제약은 가용성 AST와 별개로 검증해 각 atomic REMOTE/IN_PERSON 입력에 적용한다. 넓은 ANY_OF 가용성이 화상 전용 조건을 지우지 않는다. 방 EITHER는 두 mode 계산을 조합하며 대면에 장소 입력을 새 필수로 요구하지 않는다. 미상 mode·시간 범위는 영향 범위의 정밀 권한을 제한한다.
+- 선택은 base AST/조건과 mode의 합친 registry에서 먼저 검증한다. 기존 numeric projection에는 mode merge 전 base registry의 (input,group)에 속한 선택만 전달해 mode-only 선택을 분리하되 기존 base witness-only·잘못된 선택 거부를 유지한다. 후보·추천의 선택 규칙은 기존 kernel을 재사용하고 모드별 근거를 평평한 시간 목록으로 합치지 않는다.
+- 기존 명시 가용성 우선·선호-only 범위·불가 우선과 추정 정정의 명시 불가 보호를 유지한다. provider/저장/worker/인증 조회에서 같은 의미를 잇는 로컬 합성 검증을 완료했고, 새 실행물 재생·최종 전체/CI·실모델 추출 품질은 별도로 확인한다. 코어 fixture 통과를 실제 모델 의미 정확도 또는 운영 활성화로 표시하지 않는다.
+- C4 wire는 offset 없는 지역 ISO datetime을 유지하며, 숫자 offset이 붙으면 방 ZoneRules의 해당 지역 시각에 유일하게 허용되는 offset과 일치할 때만 수용한다. 불일치·DST gap/overlap·bracket zone은 날짜를 이동하거나 offset을 버려 수용하지 않는다. 이 명시 호출 옵션은 C3/LEGACY에서는 기본 비활성이고 근거·효과·AST 검증을 변경하지 않는다. 함수 시그니처가 달라지므로 일부 class만 교체하지 않고 전체 관련 소스를 재컴파일한다.
+- C4 prompt 보강은 원래 source/revision의 정확한 decoded Unicode code-point 근거, 현재 평가 역할에 따른 CLAIM_REF, 도달성·정정 이력과 근거 없는 끝점 생성 금지를 전달한다. 날짜-only 가용 선언은 기존 승인 정책으로 해당 지역 날짜 전체를 문맥 추론하되 INFERRED/NON_PRECISE를 유지하며, 기존 UNRESOLVED를 서버가 자동 확정하지 않는다. 위치가 유일한 quote라도 자동 span 보정이나 의미 검증의 대체 근거로 사용하지 않는다.
+
+
+C4의 V28은 기존 route kind와 fingerprint를 보존하고 새 kind의 다섯 필드 selection shape만 추가한다. 선택 고정은 dispatch 권한을 부여하지 않는다. 동일 `SelectedScheduleDslHttpTransport`와 기존 invocation/attempt/물리 gate를 사용하고, 원문·보완 질문 문맥·시간표·room mode를 두 공급자의 같은 C4 schema에 전달한다. strict parser→format6 envelope 게시→승자/attempt 종료→MATCHING 전환은 기존 owner·native snapshot·기한 검사를 유지하는 하나의 트랜잭션이다. Gemini TIMEOUT은 primary 재시도를 종료하고 남은 기존 예산으로 Luna1회에 진입한다. 503/529·전체60초·15/27초·완료3초와 최대4+1은 그대로다.
+
+저장 조회는 읽기 전용 REPEATABLE_READ에서 선택·현재 run/batch·불변 제출·정책·mode를 검증하고 IR5를 다시 검증한다. 진단은 `ScheduleDslContextModeCalculator.prepare`의 모든 atomic mode를 검사하며 matcher/projector를 호출하지 않는다. 매칭은 같은 계산 결과의 모드별 후보와 추천을 사용한다. `ScheduleDslStoredCalculation.contextMode`가 실제 per-mode 근거를 유지하고 공통 `prepared`는 cohort ID 대조에만 사용하며 시간 권한을 합치지 않는다. 공개 DTO는 기존 mode·시간·PARTIAL과 고정 미반영 reason만 사용하며 원문/질문/답변·개인 미해결 사유를 추가 공개하지 않는다.
+
+입력 재분석은 새 불변 cohort에 C4 descriptor를 전파하고 오래된 IR을 재사용하지 않는다. 완료 재전달과 조회는 새 provider 호출을 만들지 않는다. 만료된 분석 후 HOST의 명시 매칭 재시도는 기존 승자와 검증된 새 매칭 이벤트만 재사용하며 provider 예산을 초기화하지 않는다. HTTP 접수 응답은 기존202다. 로컬 검증의 직접 dispatcher 호출은 Redis worker-thread 수명주기 검증과 구분한다.
+
+
+### 명시 구조 계약 C5 준비 경계 (2026-11-06)
+
+C5 생성 schema의 `conditions[].proofs`에서 `t:` ID를 쓰는 근거의 quote는 기존 승인 사전의 정확한 시간어 literal 12개(11개 ID, 심야/한밤중 별칭 포함)로 제한한다. `temporal.term_evidence`는 같은 조건의 `t:` ID를 참조한다. 조건·날짜·시각·graph 근거는 문맥을 보존하는 넓은 정확 인용을 사용할 수 있지만 시간어 근거에 날짜·조사·문장 전체를 넣지는 않는다. 동일 source에 시간어가 여러 번 나와 유일하게 결속할 수 없으면 첫 위치를 고르거나 인용을 자동 축약하지 않고 근거 불확실성을 보존한다. 단어의 존재만으로 가능·불가·선호, 화자나 날짜가 증명되지는 않으며 기존 native source/revision·조건 범위·극성/역할 검증은 유지한다. 이는 기존 C5 검증에 생성 제약을 맞추는 보강이며 C4/legacy 바이트, 저장 IR 계약, 정밀도·사용자 확인 의미를 바꾸지 않는다. 저장된 과거 응답의 잘못된 근거를 고쳐 성공으로 재생하지 않는다.
+
+
+현재 운영 계약을 바꾸지 않는 로컬 정상화 작업이다. 기존 C4/응답4·IR5와 숫자 offset 처리·policy/timeout은 보존한다. 새 C5/응답5·IR6은 인용의 source/revision/exact literal을 받고 서버가 유일한 native 위치·code-point span·digest를 도출하는 경계로 준비한다. 다중/불일치·다른 source·오래된 revision은 보정하지 않는다. 위치가 유효해도 모델의 의미 해석이나 사용자 확인을 증명하지 않는다.
+
+AFTER/BEFORE는 알려진 날짜·한쪽 시각의 선언을 따로 유지하며 모임 시간대에 따른 계산용 날짜 경계와 검색 교차는 SERVER_DATE_SCOPE 근거로 분리한다. 범위 밖 교차 없음과 범위 미상을 구분한다. 기존 C4의 nullable 완전 구간에 한쪽 끝을 가짜로 채워 원문 선언으로 저장하지 않는다. 두 날짜가 모두 가능하면 ANY_OF, 실제 배타 해석만 CHOICE를 사용하며 서버가 의미를 추측해 연산자를 바꾸지 않는다.
+
+순수 코어는 독립3그룹 RED→GREEN 및 기존 C4/legacy 포함61건·lint/assemble과 의도결함2개 탐지를 완료했다. 코어는 전달받은 trusted snapshot을 검증하며 전체 run/policy/timezone·불변 선언 결속을 대신하지 않는다. C5 파서·format7·명시 route/V29·전체 frozen-context 복원·공유 계산 경계·provider/등록 handler/API 접합을 구현하고 로컬 합성89개와 정식 lint/assemble 및 의도결함2개 탐지를 완료했다. 실제 모델 품질·Redis 큐 전달·마지막 전체 gate·정확 CI와 운영 반영은 아직 미완료다. 기존 r2 응답과 새 코드가 만든 구조를 섞어 실모델 성공으로 보고하지 않는다.
+
+
+C5 실제 진입은 기존 인증 HOST의 `POST /api/rooms/{inviteCode}/close`에 `analysis_contract=DSL_STRUCTURAL_V5`를 명시하는 경계다. 기존 마감·권한·기한 규칙을 유지하고 등록 handler가 실제 invocation/attempt와 payload/source fingerprint guard를 거쳐 Gemini→Luna를 실행한다. 실검증 전에는 별도 유료 원장과 입력·목적지 승인도 대조해야 하며 로컬 감사 snapshot을 실행 권한으로 취급하지 않는다. 유일하게 결속할 수 없는 literal은 첫 위치로 자동 선택하지 않고 격리한다.
+
+
+C5 잔여시간 실행 정책은 의미 계약과 별개의 `c5-residual-luna-v2`다. V30 적용 후 새 `DSL_STRUCTURAL_V5` invocation에만 고정하며 기존 `bounded-luna-v1` 기록과 LEGACY/C2–C4는 27초를 유지한다. 전체 마감 D는 최대60초, 완료 여유는3초다. 고정된 각 attempt 시작 A에서 Gemini는 min(D−30초,A_G+15초), C5 v2 Luna는 min(D−3초,A_L+40초)까지 허용한다. 40초를 전체60초에 더하지 않으며 준비·직렬화·admission 지연으로 deadline을 연장하지 않는다. 동일 상한을 요청 timeout·monotonic dispatch·실제 HTTP 취소·DB runtime guard에 전달하고 게시 트랜잭션의 기존 D 검사/롤백을 유지한다. Gemini timeout 즉시Luna와 503/529의 기존 최대4회 재시도는 그대로다. C5 Luna low 설정·프롬프트·근거·파서·계산은 이 실행 정책 때문에 바뀌지 않는다. V30은 정책 allowlist와 invocation/run/policy FK만 추가하고 기존 행을 새 정책으로 이관하지 않는다. 무료 합성 검증은 실제 모델 완료/정확도와 운영 적용의 증거가 아니다.
+
+### C5 명시적 Luna 직접 검증 경계 (2026-11-07)
+
+사용자의 직접 provider 시험을 위해 `admitLunaOnly`/`processLunaOnlyBounded`를 별도 명시 진입점으로 둔다. 기존 HTTP 선택과 등록 worker 기본 경로는 Gemini→Luna를 유지한다. 직접 경로는 C5/v2의 실제 OPENAI 첫 attempt와0G/1L을 기록하고 단 한 번 호출하며, Gemini 실패·소모를 가상으로 만들지 않는다. V31은 기존 순서 CHECK에 C5/v2의0G/1L만 추가하고 기존 행·정책을 이관하지 않는다. runtime guard는 C5 route·v2·유일 OPENAI attempt#1 및 기존 owner/run/source/context/마감 결속을 모두 요구한다. 따라서 이번 운영자 시험은 과거 attempt가 없는 새 로컬 run에 한정한다. 총60초와 완료3초, 고정 attempt 시작에서 최대40초·low·물리 one-shot 검증은 유지한다. 이는 기본 라우팅이나 운영 설정 변경이 아니며 V31 release catalog/정확 commit CI·배포는 별도 미완료다.
+
+
+### C5 Luna 지침·데이터 전달 계층 (2026-11-07)
+
+C5 OpenAI Responses 요청은 생성 계약의 기존 prompt 원문을 instructions로 전달하고 input에는 그 top-level 키만 제거한 동일 neutral JSON을 담는다. 원문·보완질문/답변·source/revision/reference·달력·schema는 데이터로 그대로 남는다. 모델이 제공한 중첩 원문을 instructions로 승격하지 않으며 정확한 최종 wire bytes를 만든 뒤 기존 physical admission/fingerprint/deadline을 적용한다. schema는 아직 input과text.format 양쪽에 동일하게 남아 있어 중복제거 효과를 이번 비교와 섞지 않는다. P9 전달 계층 변경에서는 C2–C4/OpenAI와 모든Gemini wrapper, C5 producer/parser/IR/저장/계산·low/temp미지정·60/40초를 변경하지 않았다. 이후 생성 계약 변경과 이 단일요소 비교를 구분한다.
+
+직접 Luna 실제 한 가족 비교에서 기대 Sat3식사 후보가 회복됐지만 누나의 negative가 ALLOW/BLOCK에 동시에 연결돼ROLE로보류된다. 이표본은전달계층변경의일반효과/전체모델품질증명이아니며roleguard완화/원응답보정을하지않는다. 최신후보의정상운영채택은가족전체·독립실평가·전체서비스·정확CI/운영gate와별개다.
+
+### C5 날짜·시간어 생성 구문과 typed 계산 경계 (2026-11-07)
+
+P9 기반 격리 후보는 `c5-owned-proof-choice-1`의 시간·근거·선택 소유 구문을 유지한다. 별도 보존된 P10 `c5-role-typed-1`은 미채택 실험이며 아래의 역할별 namespace·producer marker 설명은 해당 실험에만 적용된다. 각 조건은 효과와 비어 있지 않은 의미 근거 및 `temporal` 하나를 소유한다. 닫힌 다섯 형식은 WHOLE_DAY, APPROVED_TERM, BOUNDS, UNKNOWN, RAW_SCOPE다. 날짜와 시간 제한을 같은 조건 안에 두며 서로 독립인 조건과 실제 배타 선택은 기존 AST로 표현한다. 서버는 원응답의 ANY_OF를 ALL_OF로 바꾸거나 별도 전일 조건을 삭제하지 않는다. APPROVED_TERM은 한 날짜/시간어를 소유하므로 여러 날짜는 별도 조건이다. 생성 응답의 평평한 `approved_terms`와 `directional_times`는 빈 배열이며 소유 ID를 중복 생성하지 않는다.
+
+각 조건은 최대32개의 `proofs:[{id,source_id,revision,quote}]`를 한 번 선언한다. 일반 근거 ID는 `p:`, 시간어 literal은 `t:`를 사용한다. 의미 `evidence`와 날짜·시각 구성요소는 해당 조건 안의 ID만 참조한다. 중복 ID·고유한 미사용 근거·빈 의미 근거·다른 조건 참조·새/구 형식 혼합을 거부한다. 기존 owned bank reader는 같은 조건 안의 완전히 같은 source_id/revision/quote를 하나의 native witness로 취급한다. 실제 사용된 locator와 같은 미사용 별칭만 정보 없는 중복으로 허용하며, 서로 다른 출처·revision·인용이나 조건/참가자 소유 범위는 합치지 않는다. 모든 별칭의 닫힌 필드·ID·p/t namespace·시간어 literal을 먼저 검사하고 bank/참조 한도는 중복 제거 전에 적용한다. 이 reader 허용 규칙은 기존 owned 응답에도 적용되지만 원응답은 수정하지 않으며, 전후 처리 차이는 reader/JAR 지문과 원래 실패 증거로 구분한다. 의미·극성·시각·관계·추정/미상을 교정하는 규칙이 아니다. 새 어댑터가 선언을 정확한 기존3필드 locator로 확장한 뒤 기존 native 검증을 적용한다. 잘못된 출처를 실제 답변 출처로 찾아 바꾸지 않으며, 유효한 인용이라는 사실만으로 효과·관계의 의미가 증명되는 것은 아니다.
+
+생성 조건에는 `alternative_group/alternative`를 중복 선언하지 않는다. 실제 CHOICE의 각 `branches:[{label,condition_ids,expression}]`만 선택 관계를 소유하고, 명시된 구성원에 한해 기존 typed metadata로 컴파일한다. 같은 조건의 서로 다른 pair·가지 밖 참조·미도달 binding을 거부하며 가장 안쪽 가지를 임의 선택하지 않는다. 기존 표현 가능한 중첩 선택과 mode_restrictions의 독립 선택 metadata를 유지한다. schema는 CLAIM_REF의 자식0, ALL_OF/ANY_OF 2–32, EXCEPT/PREFER의 두 명명 피연산자, CHOICE 가지2–8을 각각 표현한다. 한 자식 ANY_OF를 자동으로 접거나 연산자를 바꾸지 않는다. 구형 응답은 이 새 변환을 거치지 않으므로 잘못된 기존 metadata도 그대로 거부한다.
+
+역할별 생성 schema는 조건 ID를 allow:(AVAILABLE/UNCONSTRAINED), block:(UNAVAILABLE/UNRESOLVED), prefer:(PREFERRED)로 결속하고 총64자 한도를 유지한다. 가용·제외·선호 루트는 해당 역할의 재귀 표현만 참조하며 ALL_OF/ANY_OF/CHOICE는 같은 역할을 유지한다. EXCEPT는 base/excluded를 사용하고 ALLOW·BLOCK·PREFER에서 각각 [ALLOW,BLOCK]·[BLOCK,ALLOW]·[PREFER,BLOCK]으로 기존 children에 무손실 컴파일한다. PREFER는 ALLOW에서만 base/preferred=[ALLOW,PREFER]를 허용한다. CHOICE의 명시 condition_ids는 이런 혼합 역할 피연산자를 소유할 수 있으며 root 역할 하나로 제한하지 않는다.
+
+새 응답의 명시 producer_schema_revision=c5-role-typed-1만 이 구문을 선택하고, 조건은 proofs/temporal을 포함한 정확한9필드여야 한다. marker 없는 기존 응답은 ID가 namespace처럼 보여도 그대로 이전 경로로 처리한다. ID·효과·원문·루트를 재명명/유도하거나 불가 노드를 옮기지 않으며 실제 FK/효과·ROLE·근거·도달성·history/supersedes·mode의 기존 검증을 최종 적용한다. schema 강화는 역할 불일치 공간을 줄일 뿐 원문의 부정/불가 판정이나 모델 의미 정확성을 보장하지 않는다. 운영 채택과 실제 가족/보류 평가 결과는 별도 gate다. 2026-11-07 P10 실제 가족 비교는 역할 오연결이 제거된 raw를 받았으나 중복 native proof로 전체 INVALID_RESPONSE이고 다른 날짜/시간 의미 회귀도 관측돼 출시 후보로 채택하지 않았다. 저장된 raw를 보정하거나 기존 검증을 완화하지 않는다.
+
+새 형식은 모델이 명시한 의미·날짜·시간어·시각 근거 묶음을 선언한다. 어댑터는 제공된 정확 locator만 합치고 중복을 제거하며, 기존 native 검증을 거친다. 먼저 의미 근거 1–32개를 요구하고 전체 묶음도 32개로 제한한다. 잘못된 구성 근거를 버리거나 다른 source의 답변을 원문에 옮기거나 더 넓은 인용을 만들지 않는다. canonical typed 문서는 모든 근거 span과 시간어/시각 파생 근거를 보존하지만 원 wire의 의미/시간 필드 분할까지 왕복 보존한다고 주장하지 않는다. 이 선언은 의미 정확성의 증명이 아니다.
+
+BOUNDS의 한쪽 경계는 NON_PRECISE와 알려진 날짜/시각을 기존 AFTER/BEFORE로 전달한다. 같은 날짜의 두 실제 경계는 제공된 EXPLICIT/PRECISE_INTERVAL, 두 문맥 추정 경계는 INFERRED/NON_PRECISE를 요구하며 metadata를 승격하지 않는다. 경계가 없으면 거부하고 임의의 끝점·익일 rollover를 만들지 않는다. DST gap/fold는 거부하며 복잡한 명시 숫자/자정 범위는 기존 RAW_SCOPE로 보존한다. UNKNOWN은 실제 미상 시각을 유지한다. 기존 `c5-temporal-atom-1`, `c5-condition-term-binding-1` 및 flat C5 응답의 엄격한 decoding, C4/legacy 바이트, typed IR·저장·계산 규칙은 유지하며 새/구 선언 혼합과 이중 파생을 거부한다.
+
+날짜 전용 TIME scope는 `start=YYYY-MM-DD,end:null`로 받고, 진짜 시각 미상 `scope:null`과 구별한다. 검증된 날짜만 `SERVER_CALENDAR_DAY/WHOLE_DAY` 계산 증거로 변환하며, 원 선언의 해석·NON_PRECISE·원문 근거와 clock 미기재는 보존한다. DST 경계는 고정된 모임 timezone을 따르고 사라진 civil day는 거부한다. 이 증거가 있는 문서만 format8로 저장하며 format7 바이트/읽기는 유지한다. 새 DB DDL은 없지만 구 바이너리의 format8 읽기 및 rolling rollback은 미검증이다. inline root는 서버가 ID를 부여할 뿐 누락 조건·잘못된 역할·배타 선택을 보정하지 않는다.
+
+2026-11-07 새 생성 구문의 직접 Luna 비교에서는 네 날짜별 식사·선호와 정확 출처, 프로그램4개의 구조 검증이 통과했으나 가족 의미 품질은 PARTIAL이다. 이미 확정된 날짜 전일과 문맥 시각을 모델이 UNKNOWN으로 출력하여 해당 참여자의 계산 가능한 범위가 비었다. WHOLE_DAY/BOUNDS 표현 능력과 실제 모델의 선택 정확성을 구분하며, 서버가 UNKNOWN을 전일·추정 시각으로 바꿔 성공을 만들지 않는다. 현재 실험 request는 frozen 검색기간·시간대와 각 source reference_at 외에 server-calendar-facts-1의 날짜/요일 목록과 end-exclusive 및 정렬/중복 제거된 reference 날짜를 제공한다. 이 정보는 달력 사실이지 가용 선언이나 native 근거가 아니며 출력 날짜를 제한하지 않는다. 원문 의미 해석과 WHOLE_DAY/BOUNDS/UNKNOWN 선택은 모델이 맡는다. C5 생성 지침은 먼저 진술된 효과와 그 제한을 해석한 뒤 시간 형식을 고르도록 한다. WHOLE_DAY는 그 효과가 해당 날짜 전체에 적용되는 선언이며, 다른 제한 없는 날짜만의 가용 답변은 그대로 전일 가용이다. 행사나 전후 경계가 미상인 경우에는 날짜가 알려져도 UNKNOWN과 완전한 날짜·행사 원문 근거를 보존한다. UNKNOWN의 닫힌 {kind} 형식에는 별도 날짜 필드가 없으므로 날짜는 원문 근거에만 남는 현재 한계를 구분한다. 서버의 원문 정규식 의미 판정이나 UNKNOWN 자동 복원, 과거 모델 응답의 전일 선언 보정은 추가하지 않는다. 앞선 달력-context 변경의 실제 단일 비교는 어머니 날짜 전일을 출력했지만 식사 결속/극성 퇴행과 미사용 근거의 전체 INVALID_RESPONSE가 발생했으므로 출시 후보나 품질 개선으로 채택하지 않는다. 실제 Jev·보완질문/답변·Flash 전과정, 기본 Gemini 폴백·Redis 큐·금전예산·정확 commit CI·전체 gate·배포 검증은 별개다.

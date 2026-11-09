@@ -1,0 +1,44 @@
+{
+  "workItem": "sdk-failure-evidence-retention",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Synthetic Standalone fixture failure evidence only. Actual annotation drives independent Jupiter lifecycle: old DEFAULT deletes failed report (behavior RED), ON_SUCCESS retains exact failed report and cleans successful temp. Full child stdout/stderr, retained files and byte-identical copy exclude known synthetic credential/body/prompt canaries. Existing9 are not rerun. Original full2 cause remains unresolved. External independent actors and raw logs preserved outside Git.",
+  "sourceFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/StandaloneGeminiOnceContractTest.kt",
+      "sha256": "6ae06da3ab3f9cfb1eb7b3b78eeff4c08c40f082e08dde9f776729ad117271ad"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/StandaloneGeminiOnceContractTest.kt",
+      "sha256": "6ae06da3ab3f9cfb1eb7b3b78eeff4c08c40f082e08dde9f776729ad117271ad"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "complete-output-canary",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/sdk-evidence-retention-tests/verify_probe.py",
+        "/workspace/schedule-diagnosis-evidence/sdk-retention-boundary/complete-output-canary/observer",
+        "/workspace/schedule-diagnosis-evidence/sdk-retention-boundary/green/probe.xml",
+        "/workspace/schedule-diagnosis-evidence/sdk-retention-boundary/complete-output-canary/complete-output.log"
+      ],
+      "detectedBy": "verify_probe.py PRIVATE_MARKER_DETECTED; read-only modified copies, zero extra SDK calls",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "retained-report-canary",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/sdk-evidence-retention-tests/verify_probe.py",
+        "/workspace/schedule-diagnosis-evidence/sdk-retention-boundary/retained-report-canary/observer",
+        "/workspace/schedule-diagnosis-evidence/sdk-retention-boundary/green/probe.xml",
+        "/workspace/schedule-diagnosis-evidence/sdk-retention-boundary/retained-report-canary/complete-output.log"
+      ],
+      "detectedBy": "verify_probe.py PRIVATE_MARKER_DETECTED; read-only modified copies, zero extra SDK calls",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-06T00:37:19.187248Z"
+}

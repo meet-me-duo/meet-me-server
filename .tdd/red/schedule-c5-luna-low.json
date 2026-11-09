@@ -1,0 +1,27 @@
+{
+  "workItem": "schedule-c5-luna-low",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5LunaReasoningWirePostgresTest.kt",
+      "sha256": "2a205d55f6cfa2a098ef08f53a4776c828177134d59c59098ec9a4c5dbbaa3fc"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.C5LunaReasoningWirePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.C5LunaReasoningWirePostgresTest.C5LOW01 actual C5 Luna adds only low reasoning and binds the complete native wire to one reservation"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T14:10:13.759640Z"
+}

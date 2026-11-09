@@ -5,6 +5,7 @@ import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProv
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
+import com.meetme.server.precheck.application.port.output.PrecheckResponseSizeContract
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpProviderStatusException
@@ -38,6 +39,7 @@ class LunaPreSubmissionCheckProvider private constructor(
     private val dispatchGate: AiHttpDispatchGate?,
     private val meterRegistry: MeterRegistry?,
 ) : PreSubmissionCheckProvider {
+    private val responseSizes = PrecheckResponseSizeContract.LUNA_64_KIB_ENVELOPE_16_KIB_PAYLOAD
     private val contract = PrecheckProviderContract(objectMapper)
     private val client =
         transport.client
@@ -57,6 +59,8 @@ class LunaPreSubmissionCheckProvider private constructor(
                 }
                 response
             }.build()
+
+    override fun responseSizeContract(): PrecheckResponseSizeContract = responseSizes
 
     override fun check(request: PrecheckProviderRequest): PrecheckProviderResult {
         var physical: GatedAiHttpExchange? = null
@@ -91,7 +95,7 @@ class LunaPreSubmissionCheckProvider private constructor(
                 fail("INVALID_REQUEST")
             }
             val payload = contract.lunaRequestBytes(request)
-            if (payload.size > BODY_BYTE_LIMIT) fail("INVALID_REQUEST")
+            if (payload.size > REQUEST_BYTE_LIMIT) fail("INVALID_REQUEST")
             if (dispatchGate?.properties?.enabled == true) {
                 validatePersonalDispatch(
                     request.dispatchContext,
@@ -115,7 +119,7 @@ class LunaPreSubmissionCheckProvider private constructor(
                         AiPhysicalOperation.PRECHECK_GENERATION,
                         1,
                         null,
-                        physicalProfile(AiPhysicalOperation.PRECHECK_GENERATION, properties.model, endpoint, BODY_BYTE_LIMIT),
+                        physicalProfile(AiPhysicalOperation.PRECHECK_GENERATION, properties.model, endpoint, REQUEST_BYTE_LIMIT),
                         payload,
                     )
                 val group = dispatchGate.prepareGroup(request.dispatchContext, listOf(prepared))
@@ -139,8 +143,9 @@ class LunaPreSubmissionCheckProvider private constructor(
                 call.execute().use { response ->
                     if (response.code != 200) fail(statusCode(response.code))
                     val body = response.body ?: fail("INVALID_RESPONSE")
-                    if (body.contentLength() > BODY_BYTE_LIMIT) fail("INVALID_RESPONSE")
-                    body.byteStream().readNBytes(BODY_BYTE_LIMIT + 1).also { if (it.size > BODY_BYTE_LIMIT) fail("INVALID_RESPONSE") }
+                    val limit = responseSizes.maximumEnvelopeBytes
+                    if (body.contentLength() > limit) fail("INVALID_RESPONSE")
+                    body.byteStream().readNBytes(limit + 1).also { if (it.size > limit) fail("INVALID_RESPONSE") }
                 }
             val observed = contract.observeLunaUsage(bytes)
             usage =
@@ -223,7 +228,7 @@ class LunaPreSubmissionCheckProvider private constructor(
         }
 
     companion object {
-        private const val BODY_BYTE_LIMIT = 16384
+        private const val REQUEST_BYTE_LIMIT = 16384
 
         fun runtime(
             properties: OpenAiProperties,

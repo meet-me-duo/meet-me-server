@@ -198,7 +198,8 @@ class RoomLifecycleController(
         @PathVariable inviteCode: String,
         @RequestBody request: CloseRoomRequest,
         @CookieValue(name = com.meetme.server.shared.adapter.input.web.GuestCookie.NAME, required = false) credential: String?,
-    ): RoomResponse = RoomResponse.from(closeRoom.close(CloseRoomCommand(inviteCode, credential, request.confirmEarly)))
+    ): RoomResponse =
+        RoomResponse.from(closeRoom.close(CloseRoomCommand(inviteCode, credential, request.confirmEarly, request.analysisContract)))
 
     private fun responseBuilder(
         status: HttpStatus,

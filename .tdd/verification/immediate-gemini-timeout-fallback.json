@@ -1,0 +1,118 @@
+{
+  "workItem": "immediate-gemini-timeout-fallback",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "TIMEOUT in both registered compatible Gemini final orchestrations switches to existing same-budget Luna without Gemini retry, jitter or Retry-After. 503/529 SERVER retries, total60s, call15/27s, completion3s, owner/admission/physical fences unchanged. Active precheck is optional Jev plus Luna, not Gemini. Standalone/one-shot adapters have no implicit new fallback. No paid execution/deploy.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessor.kt",
+      "sha256": "7c6094ce630ba6d2babaa8a302f0bc685bec3759afa22c619fd55ae5b3459a75"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/SelectedScheduleDslBatchProcessor.kt",
+      "sha256": "83f1412f7dd112ca1786d02185e71e07c02a5b40f4219427cddebdbea68d4a85"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "a2844af7a879089f65a9cf595a31a748ebc82b4f3ea29ee4d5cbeedfe339d49a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/SelectedScheduleDslBatchProcessorContractTest.kt",
+      "sha256": "889b1edf52a291f43c4833d996a8aba8e9c225077ebaf7d6b9ac4f3214066311"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorObservationTest.kt",
+      "sha256": "8addd87d047615f251e52361e0911b0cece2e2b0c61f70b77417c26d835af7a0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorTest.kt",
+      "sha256": "edfc61b9746dc0243f47e2f37aa28a69dc6fa03be4fe903ae5b034d009033a19"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
+      "sha256": "7bdad46c802b890ee0d795c8ebf971930087dd54872f90fb09f23289e9325a9e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/IntegratedRecommendationFallbackPostgresTest.kt",
+      "sha256": "421a5fa3c95497db8058332f06e2802aa2c7747e325d48edef06307433276939"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SelectedApprovedTermsProviderPostgresTest.kt",
+      "sha256": "64be17f8a99c868534a0b5c212f842b719e435f69cb54468e255b40750a6644a"
+    }
+  ],
+  "red": {
+    "tests": 4,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0,
+    "reason": "ITF01/03 repeat Gemini; ITF02 queries jitter after cutoff; ITF04 total-exhaustion control passes"
+  },
+  "green": {
+    "unit": {
+      "counts": {
+        "tests": 71,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "finishedAt": "2026-11-06T03:05:41.893394+00:00",
+      "lintAssembleExit": 0
+    },
+    "postgres": {
+      "tests": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "finishedAt": "2026-11-06T03:11:01.466933+00:00",
+      "combinedRunExit": 1,
+      "separateExpectedModeChoiceRedFailures": 2
+    },
+    "actualLoopbackHttp408504": {
+      "counts": {
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "finishedAt": "2026-11-06T03:18:10.672421+00:00",
+      "exit": 0,
+      "notProof": "Not actual provider or socket-stall timing proof"
+    }
+  },
+  "independentReview": {
+    "sha256": "848294e7390cacebbc81ff92f87cbf709527e474bbe5a057cf7130cfa30cf8ed",
+    "openFindings": "No new blocker in two-line change; standalone non-registration limitations documented"
+  },
+  "injections": [
+    {
+      "fault": "legacy-timeout-retry-restored",
+      "selector": "com.meetme.server.coordination.application.service.BoundedProviderFallbackContractTest#ITF01 legacy timeout ignores retry-after and goes directly to Luna with the same frozen request()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    },
+    {
+      "fault": "selected-timeout-retry-restored",
+      "selector": "com.meetme.server.coordination.application.service.SelectedScheduleDslBatchProcessorContractTest#ITF03 selected timeout has no Gemini readmission retry delay or jitter before existing Luna()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    }
+  ],
+  "originalAndCompiledClassesUnchanged": true,
+  "recordedAt": "2026-11-06T03:21:41.147705+00:00"
+}

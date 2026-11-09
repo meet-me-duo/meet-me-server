@@ -25,8 +25,6 @@ import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import tools.jackson.databind.json.JsonMapper
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.PosixFilePermission
@@ -176,12 +174,26 @@ class ScheduleDslOfflineEntryPointTest {
     }
 
     @Test
-    fun `DSLO04 nonremote capability is not silently calculated as REMOTE and retains prepared meaning`() {
+    fun `DSLO04 no-place IN_PERSON computes its own mode while retaining prepared meaning`() {
         val remote = ScheduleDslOfflinePipeline.evaluate(input(), w.json())
         val nonremote = ScheduleDslOfflinePipeline.evaluate(input().copy(meetingMode = MeetingMode.IN_PERSON), w.json())
-        assertEquals(IrCalculationStatus.REQUIRES_DECISION, nonremote.status)
-        assertTrue(nonremote.candidates.candidates.isEmpty())
-        assertTrue(nonremote.recommendations.options.isEmpty())
+        assertEquals(IrCalculationStatus.CALCULATED, nonremote.status)
+        val expectedWindow = InstantTimeRange(Instant.parse("2027-01-08T10:00:00Z"), Instant.parse("2027-01-08T12:00:00Z"))
+        assertEquals(listOf(expectedWindow), nonremote.recommendations.options.map { it.window })
+        assertTrue(nonremote.candidates.candidates.isNotEmpty())
+        for (candidate in nonremote.candidates.candidates) {
+            assertEquals(MeetingMode.IN_PERSON, candidate.meetingMode)
+            assertEquals(listOf(expectedWindow), candidate.timeRanges)
+            assertEquals(null, candidate.representativeArea)
+            assertEquals(null, candidate.representativePlace)
+            assertTrue(candidate.unverifiedPlaceParticipantIds.isEmpty())
+        }
+        for (variant in nonremote.recommendations.options.flatMap { it.variants }) {
+            assertEquals(MeetingMode.IN_PERSON, variant.meetingMode)
+            assertEquals(null, variant.representativeArea)
+            assertEquals(null, variant.representativePlace)
+            assertTrue(variant.unverifiedPlaceParticipantIds.isEmpty())
+        }
         assertEquals(remote.envelope, nonremote.envelope)
         assertEquals(remote.prepared, nonremote.prepared)
     }
@@ -238,7 +250,7 @@ class ScheduleDslOfflineEntryPointTest {
         val inputFile = directory.resolve("synthetic-input.json")
         val output = directory.resolve("request.json")
         Files.write(inputFile, mapper.writeValueAsBytes(manifest))
-        val observed = capture { ScheduleDslOfflineEntryPoint.run(arrayOf("prepare", inputFile.toString(), output.toString())) }
+        val observed = capture(arrayOf("prepare", inputFile.toString(), output.toString()))
         assertEquals(0, observed.first)
         assertContentEquals(ScheduleDslOfflinePipeline.prepare(manifest), Files.readAllBytes(output))
         assertEquals(setOf(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE), Files.getPosixFilePermissions(output))
@@ -256,7 +268,7 @@ class ScheduleDslOfflineEntryPointTest {
         Files.write(inputFile, mapper.writeValueAsBytes(manifest))
         Files.writeString(response, w.json())
         val observed =
-            capture { ScheduleDslOfflineEntryPoint.run(arrayOf("evaluate", inputFile.toString(), response.toString(), output.toString())) }
+            capture(arrayOf("evaluate", inputFile.toString(), response.toString(), output.toString()))
         assertEquals(0, observed.first)
         assertEquals(
             mapper.readTree(mapper.writeValueAsBytes(ScheduleDslOfflinePipeline.evaluate(manifest, w.json()))),
@@ -273,7 +285,7 @@ class ScheduleDslOfflineEntryPointTest {
         Files.write(inputFile, mapper.writeValueAsBytes(input()))
         val original = "synthetic existing output".toByteArray()
         Files.write(output, original)
-        val existing = capture { ScheduleDslOfflineEntryPoint.run(arrayOf("prepare", inputFile.toString(), output.toString())) }
+        val existing = capture(arrayOf("prepare", inputFile.toString(), output.toString()))
         assertEquals(2, existing.first)
         assertContentEquals(original, Files.readAllBytes(output))
         assertPrivateDiagnostic(existing.second)
@@ -281,7 +293,7 @@ class ScheduleDslOfflineEntryPointTest {
         val marker = "SYNTHETIC_PRIVATE_PARSE_ERROR_MARKER"
         Files.writeString(inputFile, "{\"$marker\":not valid JSON}")
         val absentOutput = directory.resolve("must-not-exist.json")
-        val malformed = capture { ScheduleDslOfflineEntryPoint.run(arrayOf("prepare", inputFile.toString(), absentOutput.toString())) }
+        val malformed = capture(arrayOf("prepare", inputFile.toString(), absentOutput.toString()))
         assertEquals(2, malformed.first)
         assertFalse(Files.exists(absentOutput))
         assertFalse(malformed.second.contains(marker))
@@ -295,23 +307,7 @@ class ScheduleDslOfflineEntryPointTest {
         assertFalse(text.contains("at com.meetme"))
     }
 
-    private fun capture(action: () -> Int): Pair<Int, String> {
-        val previousOut = System.out
-        val previousErr = System.err
-        val bytes = ByteArrayOutputStream()
-        val stream = PrintStream(bytes, true, Charsets.UTF_8)
-        return try {
-            System.setOut(stream)
-            System.setErr(stream)
-            val code = action()
-            stream.flush()
-            code to bytes.toString(Charsets.UTF_8)
-        } finally {
-            System.setOut(previousOut)
-            System.setErr(previousErr)
-            stream.close()
-        }
-    }
+    private fun capture(args: Array<String>): Pair<Int, String> = ScheduleDslNativeProcessCapture.run(args)
 
     companion object {
         private const val MANIFEST = "schedule-dsl-pilot-input-1"

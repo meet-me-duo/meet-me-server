@@ -49,6 +49,7 @@ class ScheduleDslProviderContract(
         snapshot: ScheduleEvidenceSnapshot,
         semanticVersion: String,
         astVersion: String,
+        acceptRoomZoneOffsets: Boolean = false,
     ): ScheduleDslEnvelope =
         try {
             require(semanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION && astVersion == SCHEDULE_AST_VERSION)
@@ -72,7 +73,7 @@ class ScheduleDslProviderContract(
                 val parsed =
                     rawClaims.mapNotNull { claim ->
                         try {
-                            condition(claim)
+                            condition(claim, snapshot.context.timeZone.takeIf { acceptRoomZoneOffsets })
                         } catch (_: RuntimeException) {
                             val conditionId = ((claim as? Map<*, *>)?.get("id") as? String)?.takeIf { it.matches(TOKEN) }
                             rejected += IrQuarantine(conditionId, IrProblem.SHAPE, null)
@@ -262,7 +263,10 @@ class ScheduleDslProviderContract(
         )
     }
 
-    private fun condition(value: Any?): ProposedIrV2Condition {
+    private fun condition(
+        value: Any?,
+        offsetRoomZone: String?,
+    ): ProposedIrV2Condition {
         val map =
             fields(
                 value,
@@ -286,8 +290,8 @@ class ScheduleDslProviderContract(
                 val raw = fields(it, setOf("dimension", "start", "end"))
                 IrScope(
                     IrDimension.valueOf(text(raw["dimension"])),
-                    optionalText(raw["start"])?.let(LocalDateTime::parse),
-                    optionalText(raw["end"])?.let(LocalDateTime::parse),
+                    optionalText(raw["start"])?.let { parseTime(it, offsetRoomZone) },
+                    optionalText(raw["end"])?.let { parseTime(it, offsetRoomZone) },
                 )
             }
         return ProposedIrV2Condition(
@@ -314,6 +318,11 @@ class ScheduleDslProviderContract(
             text(map["quote"]),
         )
     }
+
+    private fun parseTime(
+        value: String,
+        offsetRoomZone: String?,
+    ): LocalDateTime = if (offsetRoomZone == null) LocalDateTime.parse(value) else ScheduleDslRoomLocalTime.parse(value, offsetRoomZone)
 
     private fun fields(
         value: Any?,

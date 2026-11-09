@@ -1,0 +1,73 @@
+{
+  "reviewed_at_utc": "2026-11-06T11:07:48.927503+00:00",
+  "reviewer_role": "Independent test author; format-only review of exactly two owned files",
+  "result": "APPROVED_FORMAT_ONLY_REBASE_NO_SEMANTIC_TEST_CHANGES",
+  "files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralProviderContractTest.kt",
+      "actual_red_source_sha256": "aaebc51cd82a50f1bd45d5d5c741936ee9634435e78ca7da90d4e2ef641a731b",
+      "formatted_source_sha256": "6bbbf88f229e9660f57e4ea84c8c70e7a9e35f5006cc443c699555b7b39697c9",
+      "old_hash_verified_in_actual_red_source_manifest": true,
+      "actual_red_source_manifest": "/workspace/schedule-diagnosis-evidence/structural-adapter-first-red-source.json",
+      "actual_red_run": "/workspace/schedule-diagnosis-evidence/structural-adapter-first-red-run.json",
+      "historical_red_run_finished_at": "2026-11-06T10:23:28.431655+00:00",
+      "historical_relevant_leaf_failures": 8,
+      "historical_failure_types": [
+        "kotlin.NotImplementedError",
+        "org.opentest4j.AssertionFailedError"
+      ],
+      "test_names_unchanged": true,
+      "test_count": 8,
+      "imports_unchanged": true,
+      "ordered_literals_unchanged": true,
+      "token_comparison": "Lightweight static token comparison, not a Kotlin compiler or equivalence proof by itself",
+      "inserted_trailing_commas": 4,
+      "inserted_open_braces": 5,
+      "inserted_close_braces": 5,
+      "token_removals_replacements_or_other_insertions": 0,
+      "changes_manually_reviewed": [
+        "Member/call-chain line breaks and indentation",
+        "Trailing commas immediately before closing argument parentheses",
+        "SA07 existing if/else expression wraps unchanged result and result.copy expressions in braces",
+        "fixture text selector wraps unchanged CHOICE/UNKNOWN/FIRST branches in braces; same conditions and else association"
+      ],
+      "review_result": "FORMAT_ONLY; fixtures, assertions, oracle literals, test scope and control flow unchanged",
+      "fresh_final_byte_red_claimed": false
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralRejectedProofTest.kt",
+      "actual_red_source_sha256": "6babd94d828ed10ad30e892a1978626729e950826f7520f16528098fc2d87876",
+      "formatted_source_sha256": "96fcaacbe6e8b30531b468b9e6974f4e4c0ee3d9a45fe972f6a5d974df4b2f68",
+      "old_hash_verified_in_actual_red_source_manifest": true,
+      "actual_red_source_manifest": "/workspace/schedule-diagnosis-evidence/structural-service-proof-real-red-source.json",
+      "actual_red_run": "/workspace/schedule-diagnosis-evidence/structural-service-proof-real-red-run.json",
+      "historical_red_run_finished_at": "2026-11-06T10:53:31.486816+00:00",
+      "historical_relevant_leaf_failures": 1,
+      "historical_failure_types": [
+        "org.opentest4j.MultipleFailuresError"
+      ],
+      "test_names_unchanged": true,
+      "test_count": 1,
+      "imports_unchanged": true,
+      "ordered_literals_unchanged": true,
+      "token_comparison": "Lightweight static token comparison, not a Kotlin compiler or equivalence proof by itself",
+      "inserted_trailing_commas": 0,
+      "inserted_open_braces": 0,
+      "inserted_close_braces": 0,
+      "token_removals_replacements_or_other_insertions": 0,
+      "changes_manually_reviewed": [
+        "Member/call-chain line breaks and indentation",
+        "Trailing commas immediately before closing argument parentheses"
+      ],
+      "review_result": "FORMAT_ONLY; fixtures, assertions, oracle literals, test scope and control flow unchanged",
+      "fresh_final_byte_red_claimed": false
+    }
+  ],
+  "formatter_evidence": "/workspace/schedule-diagnosis-evidence/structural-connected-format/test-run.json",
+  "formatter_evidence_engine_exit": 1,
+  "formatter_exit_note": "Preserved actual formatter result; this review does not relabel it PASS or claim lint verification. Provider strict token comparison differs solely because of reviewed brace/trailing-comma insertions.",
+  "actual_red_preserved": "Adapter eight missing-behavior TODO failures and rejected-proof one leaf with three failed rejection assertions remain linked to their original hashes. Other preparation/service results are not reclassified here.",
+  "upcoming_verification": "Root owns actual GREEN of current final byte hashes; no fresh RED execution for formatted bytes is claimed.",
+  "core3": "Not edited/review scope excludes core3; parent and formatter manifest record unchanged hash.",
+  "review_execution": "Read-only source/diff/hash/token inspection plus this external JSON. No M/S edits, JVM, compiler, tests, model/network calls."
+}

@@ -8,6 +8,7 @@ import okhttp3.tls.HandshakeCertificates
 import okhttp3.tls.HeldCertificate
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Timeout
+import org.junit.jupiter.api.io.CleanupMode
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
@@ -25,7 +26,8 @@ import kotlin.test.assertTrue
 
 /** Free pinned-SDK tests; no production host, real credential or live-data fixture. */
 class StandaloneGeminiOnceContractTest {
-    @TempDir lateinit var temporary: Path
+    @TempDir(cleanup = CleanupMode.ON_SUCCESS)
+    lateinit var temporary: Path
 
     @Test
     fun `real TLS HTTP2 SDK preserves tiny configuration and strict response`() {

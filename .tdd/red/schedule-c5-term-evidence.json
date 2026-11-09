@@ -1,0 +1,32 @@
+{
+  "workItem": "schedule-c5-term-evidence",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralTermEvidenceContractTest.kt",
+      "sha256": "3e3297040c28a1ceeb02976c6dbc004907d812b1c5c4a4613bb984978df23170"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-term-evidence-contract-fix-20261107/format-test-before-red.init.gradle",
+    "runKtlintFormatOverTestSourceSet",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE03 producer distinguishes exact word term evidence from broad context and forbids widening an ambiguous repeated lexeme()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE05 C5 construction preserves C4 and legacy requests while only C5 term locators receive a vocabulary restriction()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE01 C5 term evidence quote admits exactly all twelve approved lexemes for the eleven term identifiers()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T01:49:27.864326+00:00"
+}

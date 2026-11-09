@@ -7,6 +7,8 @@ import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
 import com.sun.net.httpserver.HttpServer
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import okhttp3.Call
+import okhttp3.EventListener
 import okhttp3.OkHttpClient
 import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Test
@@ -31,6 +33,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -283,12 +286,40 @@ class PrecheckRuntimeInputGateTransportTest {
 
     @Test
     fun `RI13 count and generation share one deadline rather than receiving fresh stage timeouts`() {
-        Endpoint(countDelayMillis = 600, generationDelayMillis = 600).use { e ->
+        val deadlines = CopyOnWriteArrayList<Pair<String, Long?>>()
+        val listener =
+            object : EventListener() {
+                override fun callStart(call: Call) {
+                    val operation =
+                        when {
+                            call
+                                .request()
+                                .url.encodedPath
+                                .endsWith(":countTokens") -> "COUNT_TOKENS"
+                            call
+                                .request()
+                                .url.encodedPath
+                                .endsWith(":generateContent") -> "GENERATE_CONTENT"
+                            else -> "UNEXPECTED"
+                        }
+                    deadlines += operation to call.timeout().takeIf { it.hasDeadline() }?.deadlineNanoTime()
+                }
+            }
+        Endpoint(stallGeneration = true).use { e ->
             val started = System.nanoTime()
-            assertEquals("TIMEOUT", failure { e.adapter().check(input.copy(timeout = Duration.ofMillis(1000))) })
+            assertEquals(
+                "TIMEOUT",
+                failure { e.adapter(eventListener = listener).check(input.copy(timeout = Duration.ofMillis(1000))) },
+            )
             assertTrue(Duration.ofNanos(System.nanoTime() - started) < Duration.ofSeconds(3))
             e.assertAttempts(1, 1)
             listOf("INPUT", "CANDIDATE", "THOUGHT").forEach { e.assertUsage(it, null) }
+            assertEquals(0L, e.generationBodyStarted.count, "Generation response body must be held until the deadline")
+            assertEquals(2, deadlines.size)
+            assertEquals(listOf("COUNT_TOKENS", "GENERATE_CONTENT"), deadlines.map { it.first })
+            val countDeadline = assertNotNull(deadlines[0].second, "Count must have an absolute deadline before execution")
+            val generationDeadline = assertNotNull(deadlines[1].second, "Generation must have an absolute deadline before execution")
+            assertEquals(countDeadline, generationDeadline, "Count and generation must share the same absolute deadline")
         }
     }
 
@@ -371,10 +402,12 @@ class PrecheckRuntimeInputGateTransportTest {
         val generationDelayMillis: Long = 0,
         val stallCount: Boolean = false,
         val disconnectGeneration: Boolean = false,
+        val stallGeneration: Boolean = false,
     ) : AutoCloseable {
         val registry = SimpleMeterRegistry()
         val sent = CopyOnWriteArrayList<Sent>()
         val countBodyStarted = CountDownLatch(1)
+        val generationBodyStarted = CountDownLatch(1)
         private val release = CountDownLatch(1)
         private val executor = Executors.newCachedThreadPool()
         private val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
@@ -406,6 +439,11 @@ class PrecheckRuntimeInputGateTransportTest {
                         exchange.responseBody.flush()
                         countBodyStarted.countDown()
                         release.await(3, TimeUnit.SECONDS)
+                    } else if (!count && stallGeneration) {
+                        exchange.responseBody.write(bytes, 0, 1)
+                        exchange.responseBody.flush()
+                        generationBodyStarted.countDown()
+                        release.await(3, TimeUnit.SECONDS)
                     } else {
                         exchange.responseBody.write(bytes)
                     }
@@ -416,23 +454,26 @@ class PrecheckRuntimeInputGateTransportTest {
             server.start()
         }
 
-        fun adapter(permissiveClient: Boolean = false) =
-            GeminiPreSubmissionCheckProvider.runtime(
-                GeminiProperties(apiKey = "synthetic-runtime-key"),
-                mapper,
-                PrecheckProviderRuntimeProperties(enabled = true),
-                PrecheckProviderHttpTransport(
-                    OkHttpClient
-                        .Builder()
-                        .retryOnConnectionFailure(
-                            permissiveClient,
-                        ).followRedirects(permissiveClient)
-                        .followSslRedirects(permissiveClient)
-                        .build(),
-                ),
-                registry,
-                URI("http://127.0.0.1:${server.address.port}"),
-            )
+        fun adapter(
+            permissiveClient: Boolean = false,
+            eventListener: EventListener = EventListener.NONE,
+        ) = GeminiPreSubmissionCheckProvider.runtime(
+            GeminiProperties(apiKey = "synthetic-runtime-key"),
+            mapper,
+            PrecheckProviderRuntimeProperties(enabled = true),
+            PrecheckProviderHttpTransport(
+                OkHttpClient
+                    .Builder()
+                    .retryOnConnectionFailure(
+                        permissiveClient,
+                    ).followRedirects(permissiveClient)
+                    .followSslRedirects(permissiveClient)
+                    .eventListener(eventListener)
+                    .build(),
+            ),
+            registry,
+            URI("http://127.0.0.1:${server.address.port}"),
+        )
 
         fun assertAttempts(
             count: Int,

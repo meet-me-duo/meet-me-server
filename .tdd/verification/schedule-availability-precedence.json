@@ -1,0 +1,102 @@
+{
+  "workItem": "schedule-availability-precedence",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Latest user-approved explicit availability first; preference-only supplies its own availability; no roots uses validated default; exclusions win; preference credit clipped to final availability. Legacy and response1/context2 bytes unchanged. Synthetic native date x meal replay only; no recovery of omitted model meaning.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslInputPolicy.kt",
+      "sha256": "399abaf3ffe7a3cd8d2c2b2ba4eea2c74935a7bcf56a802345767d0f0bc12964"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslApprovedTermsProviderContract.kt",
+      "sha256": "5d30a54e29d0a3d0976ac340d7c0a5e4d1d8c949e1bf685505f48b1bea48fc19"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslPreferredAvailabilityCoreTest.kt",
+      "sha256": "f3e0c4c604ca432261dd3840019c53ed5208accb9022eb0cf4653713b805fcc1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslPreferredAvailabilityBoundaryTest.kt",
+      "sha256": "d9c2bcef4640f9e76d2c5d8371c91949c20c627fb413d437858f54bd1c0f0103"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslPreferredNegativeUnionTest.kt",
+      "sha256": "714d36a12a2f7896c6f8c1cbc91908287ded762ae37dfc0d48a73bd60559f027"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslDefaultAvailabilityGuardTest.kt",
+      "sha256": "f65b9252b4c7f2e57d09cb2d9f9cf7664e2302fe20f4dbbf6d3deb224a8dfdd2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslApprovedTermsValidatorTest.kt",
+      "sha256": "28dda0eb58cf9107b62be02b04d86847507a906a3180f67a1b056dca649e7995"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslApprovedTimeTermPreferenceTest.kt",
+      "sha256": "8d8e9212dd98727b6545656cd5dcddba9633499716ff0525796ee76bd81f427e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslApprovedTermsProviderContractTest.kt",
+      "sha256": "b3a7987426d205d8b50d1f2db24c5e818080e404e113f31e0a04c68421f8732a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslAvailabilityPrecedenceTest.kt",
+      "sha256": "fe3280ac39db37086ded941ed0568edece0176e54f2bd328a8b0bd8fef03c67f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslWeekendMealPrecedenceTest.kt",
+      "sha256": "f00596396f8e08db5a1d4ccd37395d5f8f2b388831811b94c7a7375927a70dfe"
+    }
+  ],
+  "red": {
+    "tests": 158,
+    "passed": 122,
+    "failed": 36,
+    "errors": 0,
+    "skipped": 0,
+    "finishedAt": "2026-11-06T00:45:48.471269+00:00"
+  },
+  "green": {
+    "counts": {
+      "tests": 158,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "finishedAt": "2026-11-06T00:56:05.485648+00:00",
+    "sourceUnchanged": true
+  },
+  "independentReview": "candidate review has no P1/P2; separately authored11 invocations plus existing7 oracle updates for the latest policy",
+  "injections": [
+    {
+      "fault": "restore-preference-only-search-default",
+      "selector": "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityCoreTest#PAV01 preference-only uses its exact interval as availability and preserves rank()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    },
+    {
+      "fault": "restore-explicit-plus-preference-union",
+      "selector": "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest#APR02 explicit availability bounds both lower and upper while a wider preference earns only inside credit()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    }
+  ],
+  "originalAndCompiledClassesUnchanged": true,
+  "recordedAt": "2026-11-06T01:09:25.365374+00:00"
+}

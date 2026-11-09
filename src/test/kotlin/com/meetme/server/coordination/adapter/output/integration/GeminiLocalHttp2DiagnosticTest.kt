@@ -310,6 +310,7 @@ class GeminiLocalHttp2DiagnosticTest {
         val server = MockWebServer()
         val protocols = mutableListOf<String>()
         private val snapshots = mutableListOf<ParserTransportDiagnosticSnapshot>()
+        private val ownedTransports = mutableListOf<OkHttpClient>()
         var elapsedNanos = 0L
             private set
 
@@ -329,6 +330,7 @@ class GeminiLocalHttp2DiagnosticTest {
                     protocols += assertNotNull(chain.connection()).protocol().toString()
                     chain.proceed(chain.request())
                 }.build()
+                .also { ownedTransports += it }
 
         fun parse(
             request: NaturalLanguageBatchRequest,
@@ -382,7 +384,31 @@ class GeminiLocalHttp2DiagnosticTest {
             assertEquals(listOf("h2"), protocols)
         }
 
-        override fun close() = server.shutdown()
+        override fun close() {
+            var cleanupFailure: Exception? = null
+
+            fun cleanup(action: () -> Unit) {
+                try {
+                    action()
+                } catch (failure: Exception) {
+                    val first = cleanupFailure
+                    if (first == null) {
+                        cleanupFailure = failure
+                    } else if (first !== failure) {
+                        first.addSuppressed(failure)
+                    }
+                }
+            }
+
+            // newBuilder derivatives share these resources; this endpoint owns their fixture lifecycle.
+            val dispatchers = ownedTransports.map { it.dispatcher }.distinct()
+            val pools = ownedTransports.map { it.connectionPool }.distinct()
+            dispatchers.forEach { dispatcher -> cleanup { dispatcher.cancelAll() } }
+            pools.forEach { pool -> cleanup { pool.evictAll() } }
+            dispatchers.forEach { dispatcher -> cleanup { dispatcher.executorService.shutdownNow() } }
+            cleanup { server.shutdown() }
+            cleanupFailure?.let { throw it }
+        }
     }
 
     companion object {

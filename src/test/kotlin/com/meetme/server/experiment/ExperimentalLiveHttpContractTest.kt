@@ -5,15 +5,18 @@ import com.meetme.server.account.adapter.output.security.Rs256AccessTokenAdapter
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.domain.AccountPrincipal
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.GenericContainer
@@ -47,9 +50,12 @@ import kotlin.test.assertTrue
         "meetme.anonymous.allowed-origins=http://localhost:18931", "meetme.anonymous.cookie-secure=false", "server.address=127.0.0.1",
     ],
 )
-@Import(ExperimentalLiveHttpContractTest.LocalSecurity::class)
+@Import(ExperimentalLiveHttpContractTest.LocalSecurity::class, C5EvaluationSelectedProviders::class)
+@ActiveProfiles("c5-http-evaluation")
 class ExperimentalLiveHttpContractTest {
     @LocalServerPort private var port: Int = 0
+
+    @Autowired private lateinit var context: ApplicationContext
 
     @Autowired private lateinit var jdbc: JdbcTemplate
 
@@ -58,8 +64,18 @@ class ExperimentalLiveHttpContractTest {
     @Autowired private lateinit var json: ObjectMapper
     private val client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build()
 
-    @Test
-    fun `actual HTTP routes accept evaluator commands and expose exact selection schemas without inference`() {
+    @ParameterizedTest
+    @ValueSource(ints = [2, 3, 4])
+    fun `actual HTTP routes accept evaluator commands and expose exact selection schemas without inference`(actors: Int) {
+        listOf("selectedScheduleDslGeminiProvider", "selectedScheduleDslLunaProvider").forEach {
+            assertEquals(C5EvaluationSelectedProvider::class.java.name, context.getBean(it).javaClass.name)
+        }
+        assertEquals(
+            "C5EvaluationStrictJsonBoundary",
+            context
+                .getBean(com.meetme.server.coordination.application.port.output.ScheduleDslStructuralResponseParser::class.java)
+                .javaClass.simpleName,
+        )
         val principal = AccountPrincipal(UUID.randomUUID(), "Synthetic dry host")
         jdbc.update("INSERT INTO account_users(id,display_name,created_at) VALUES (?,?,now())", principal.accountId, principal.displayName)
         val bearer = "Bearer ${tokens.issue(principal)}"
@@ -79,7 +95,7 @@ class ExperimentalLiveHttpContractTest {
             )
         assertEquals(201, created.status)
         val path = "/api/rooms/${created.body.path("invite_code").asText()}"
-        repeat(3) { index ->
+        repeat(actors) { index ->
             val joined = call("POST", "$path/participants", body = mapOf("display_name" to "Dry participant $index"))
             assertEquals(201, joined.status)
             val cookie = requireNotNull(joined.cookie)

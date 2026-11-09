@@ -2,16 +2,18 @@ package com.meetme.server.coordination.application.service
 
 import com.meetme.server.coordination.application.port.output.AnalysisInvocationRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
+import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.NormalizedPlace
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceRepository
 import com.meetme.server.coordination.application.port.output.NormalizedPlaceStatus
+import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.application.port.output.RecommendationRepository
-import com.meetme.server.coordination.domain.CandidatePlace
 import com.meetme.server.coordination.domain.CandidateQuality
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
-import com.meetme.server.coordination.domain.MeetingCandidate
 import com.meetme.server.coordination.domain.StoredRecommendationOption
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.coordination.domain.matching.CompatiblePlaceArea
 import com.meetme.server.coordination.domain.matching.DeterministicCandidateMatcher
 import com.meetme.server.coordination.domain.matching.OfflinePlaceAssessment
@@ -51,6 +53,7 @@ class MatchingProcessor(
     private val metrics: ApplicationMetricsPort? = null,
     private val clock: Clock = Clock.systemUTC(),
     private val recommendationRepository: RecommendationRepository? = null,
+    private val finalAnalysisRoutes: FinalAnalysisRouteRegistry? = null,
 ) {
     fun processBounded(
         batchId: SubmissionBatchId,
@@ -66,6 +69,14 @@ class MatchingProcessor(
     ) {
         val startedNanos = System.nanoTime()
         val initial = coordinationRunRepository.findByBatchId(batchId) ?: return
+        val selected = finalAnalysisRoutes?.find(initial.id.value)?.choice
+        if (selected is FinalAnalysisRouteChoice.DslContextV2 ||
+            selected is FinalAnalysisRouteChoice.DslApprovedTermsV3 ||
+            selected is FinalAnalysisRouteChoice.DslContextModeV4 ||
+            selected is FinalAnalysisRouteChoice.DslStructuralV5
+        ) {
+            throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+        }
         val run = persistence.start(initial) ?: return
         if (run.status != CoordinationStatus.MATCHING) return
         val room = persistence.room(run.roomId)
@@ -260,25 +271,7 @@ class MatchingProcessor(
         val total = inputs.size
         val candidates =
             generated.candidates.mapIndexed { index, candidate ->
-                MeetingCandidate(
-                    id = CandidateId(idGenerator.next()),
-                    rank = index + 1,
-                    timeRanges = candidate.timeRanges,
-                    planType = candidate.planType,
-                    meetingMode = candidate.meetingMode,
-                    participantIds = candidate.participantIds,
-                    totalParticipants = total,
-                    unverifiedPlaceParticipantIds = candidate.unverifiedPlaceParticipantIds,
-                    place =
-                        candidate.representativeArea?.let {
-                            CandidatePlace(displayName = it.displayName)
-                        } ?: candidate.representativePlace?.let {
-                            CandidatePlace(
-                                displayName = "공통 가능 지역",
-                                coordinate = it,
-                            )
-                        },
-                )
+                MatchingCandidateStorageMapper.map(candidate, CandidateId(idGenerator.next()), index + 1, total)
             }
         val completed = run.complete(if (hasUnappliedInput) CandidateQuality.PARTIAL else CandidateQuality.COMPLETE, candidates)
         if (canPublish == null) {

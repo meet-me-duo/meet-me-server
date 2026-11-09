@@ -1,0 +1,31 @@
+{
+  "workItem": "selected-host-matching-retry",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedHostMatchingRetryPostgresTest.kt",
+      "sha256": "33a1e7a710fa9026a7c4ef09d03ab05fc0afcaf3755b5c12b3d58fc29a1e0e52"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedHostMatchingRetryPostgresTest"
+  ],
+  "failedTests": [
+    "HMR01",
+    "HMR02",
+    "HMR03",
+    "HMR04",
+    "HMR05"
+  ],
+  "recordedAt": "2026-11-05T20:09:22.068218Z",
+  "expectedFailureCategory": "MISSING_BEHAVIOR"
+}

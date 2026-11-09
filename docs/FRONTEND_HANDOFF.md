@@ -146,3 +146,14 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - 캐시와 오래 열린 구 번들은 순서만으로 해결되지 않는다. 구 화면 잔존과 오류 문구를 별도로 확인한다.
 - 신 웹은 전송 전에 ECMAScript trim을 적용한다. 현 서버의 Kotlin trim과 다른 U+001C~001F 처리 등은 전환 중 호환 차이로 분리 보고하며 계약을 임의로 바꾸지 않는다.
 
+
+
+### 명시 C4 분석 계약 — 2026-11-06 로컬 통합 검증
+
+`POST /api/rooms/{inviteCode}/close`의 선택 필드 `analysis_contract`는 `DSL_CONTEXT_MODE_V4`를 지원한다. 생략하면 기존 `LEGACY`이며 클라이언트 기본값을 바꾸지 않았다. 명시 선택은 같은 HOST 권한/Origin/수집 마감 검사를 거치고 이미 고정된 실행의 계약을 idempotent close로 바꾸지 않는다. 입력 수정·force reparse는 새 실행에 선택을 전파한다.
+
+C4의 추천은 기존 DTO의 `meeting_mode`·시간 구간·`quality=PARTIAL`을 사용하며 구간별 mode 제약을 지킨다. 추론 구간이 계산에 쓰여도 사용자 확인으로 표시하지 않고, 장소를 언급하지 않은 대면 후보의 `place=null`은 정상이다. 원문/보완 질문·내부 근거를 새 응답에 추가하지 않는다. HOST의 `analysis/retry` 접수는 기존202이고 완료 여부는 기존 조회로 확인한다. 새로운 조건부 후보 노출·확정 자격이나 UI를 이 계약으로 추가하지 않는다.
+
+이 상태는 로컬 HTTP/JWT·실제 PostgreSQL·합성 provider 검증이며 운영 배포·실모델 의미 품질 통과가 아니다. C4 선택을 실제 웹 기본 흐름에 활성화하는 단계는 최종 gate/정확 commit CI·최신 입력 재생과 배포 조건을 확인한 뒤 진행한다.
+
+명시 `analysis_contract=DSL_STRUCTURAL_V5`는 응답 계약5·semantic6의 별도 구조화 경로를 선택한다. 생략 시 LEGACY와 기존 선택 값은 유지하며 원문/보완 답변·현재 mode·불변 cohort를 같은 경계에서 검증한다. 이 선택은 새 provider 예산이나 운영 활성화를 부여하지 않는다.

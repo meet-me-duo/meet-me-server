@@ -1,0 +1,116 @@
+{
+  "workItem": "schedule-availability-precedence",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslPreferredAvailabilityCoreTest.kt",
+      "sha256": "f3e0c4c604ca432261dd3840019c53ed5208accb9022eb0cf4653713b805fcc1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslPreferredAvailabilityBoundaryTest.kt",
+      "sha256": "d9c2bcef4640f9e76d2c5d8371c91949c20c627fb413d437858f54bd1c0f0103"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslPreferredNegativeUnionTest.kt",
+      "sha256": "714d36a12a2f7896c6f8c1cbc91908287ded762ae37dfc0d48a73bd60559f027"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslDefaultAvailabilityGuardTest.kt",
+      "sha256": "f65b9252b4c7f2e57d09cb2d9f9cf7664e2302fe20f4dbbf6d3deb224a8dfdd2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslApprovedTermsValidatorTest.kt",
+      "sha256": "28dda0eb58cf9107b62be02b04d86847507a906a3180f67a1b056dca649e7995"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslApprovedTimeTermPreferenceTest.kt",
+      "sha256": "8d8e9212dd98727b6545656cd5dcddba9633499716ff0525796ee76bd81f427e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslApprovedTermsProviderContractTest.kt",
+      "sha256": "b3a7987426d205d8b50d1f2db24c5e818080e404e113f31e0a04c68421f8732a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslAvailabilityPrecedenceTest.kt",
+      "sha256": "fe3280ac39db37086ded941ed0568edece0176e54f2bd328a8b0bd8fef03c67f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslWeekendMealPrecedenceTest.kt",
+      "sha256": "f00596396f8e08db5a1d4ccd37395d5f8f2b388831811b94c7a7375927a70dfe"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityCoreTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredNegativeUnionTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslDefaultAvailabilityGuardTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsValidatorTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTimeTermPreferenceTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsProviderContractTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslWeekendMealPrecedenceTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.FinalOutboundInputBoundaryTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicyTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslDefaultAvailabilityGuardTest#DAVG06 nonprecise preferred-only retains uncertainty without default availability or invented credit()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsProviderContractTest#AHC02 new request selects closed vocabulary while preserving native source and question bytes()",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsValidatorTest#AHT02 approved preference supplies new route candidates without rewriting effect or old route behavior()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest#[1] resolution = \"PRECISE_INTERVAL\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest#[2] resolution = \"NON_PRECISE\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest#APR02 explicit availability bounds both lower and upper while a wider preference earns only inside credit()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest#APR04 independent unknown-scope preference cannot reopen an explicit availability EXCEPT upper()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslAvailabilityPrecedenceTest#APR03 explicit global unavailability wins over preference-derived availability and credit()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#PAVB09 uncertain correction withholds only targeted preference while independent precise preference survives()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[1] label = \"INFERRED\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[2] label = \"UNRESOLVED\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#PAVB07 ineligible preference operator retains only bounded possible support without default fallback()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#PAVB13 unresolved negative blocks preference-derived precision without making its possible interval definitely forbidden()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#PAVB12 overlapping preference claims still contribute at most one point per participant()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[1] assertion = \"QUOTED_OTHER\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[2] assertion = \"RETRACTED\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#PAVB02 explicit availability bounds an independent preference EXCEPT while global exclusions remain dominant()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#PAVB08 asserted eligible correction replaces the old preference without resurrecting history()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[1] bounded = false",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[2] bounded = true",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[1] selected = \"missing\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[2] selected = \"left\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[3] selected = \"right\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[1] operator = \"ALL_OF\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityBoundaryTest#[2] operator = \"ANY_OF\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityCoreTest#PAV02 explicit availability excludes an outside preference from both candidates and credit()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityCoreTest#PAV03 explicit global unavailability subtracts from preference-derived availability and preferred credit()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredAvailabilityCoreTest#PAV01 preference-only uses its exact interval as availability and preserves rank()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredNegativeUnionTest#PAVN02 unknown-scope negative union prevents preference-derived precision while known negative still reduces possible upper()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslPreferredNegativeUnionTest#PAVN01 two ineligible global negatives retain both exclusions from preference-derived precision()",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTimeTermPreferenceTest#ATP01 preference only night yields new route candidates and rank but preserves old route behavior and effect()",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTimeTermPreferenceTest#ATP02 explicit exclusion takes priority over newly usable night preference()",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTimeTermPreferenceTest#ATP04 nonprecise preference retains meaning without default availability or invented numeric credit()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslWeekendMealPrecedenceTest#[2] mode = \"PREFERRED\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslWeekendMealPrecedenceTest#[3] mode = \"MIXED\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslWeekendMealPrecedenceTest#[4] mode = \"MIXED_WITH_BAN\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T00:45:48.471269Z"
+}
