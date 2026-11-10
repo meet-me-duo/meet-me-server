@@ -1,0 +1,49 @@
+{
+  "workItem": "issue222-native-participant-status-reader",
+  "sourceRevision": "8c772dd5d35a7973769fd597ef36e5a516d3a877",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslParticipantStatusReadTest.kt",
+      "sha256": "c05371cd66507d4b52f09a0ae39728e5c45d75d7ee54937ff412d85a17737947"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "--init-script",
+    "/tmp/issue222-native-tests.gradle",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*ScheduleDslParticipantStatusReadTest"
+  ],
+  "failedTests": [
+    "NPS05 a resolved empty weekly filter remains known and is not confused with unresolved personal time()",
+    "[1] defect = \"version\"",
+    "[2] defect = \"selection\"",
+    "[3] defect = \"source\"",
+    "[4] defect = \"mode\"",
+    "[5] defect = \"missing-native\"",
+    "[6] defect = \"bad-native\"",
+    "NPS01 verified weekly native input keeps complete cohort exact disjoint windows and both mode keys()",
+    "[1] problem = \"unknown\"",
+    "[2] problem = \"program\"",
+    "[3] problem = \"quarantine\"",
+    "NPS02 explicit remote restriction is a known unavailable in-person interval rather than an unknown input()",
+    "[1] origin = \"database\"",
+    "[2] origin = \"codec\"",
+    "NPS11 native exclusion inside weekly availability keeps the precise gap instead of a flattened envelope()",
+    "[1] defect = \"inactive\"",
+    "[2] defect = \"write\"",
+    "[3] defect = \"read-committed\"",
+    "[1] name = \"IN_PERSON\"",
+    "[2] name = \"REMOTE\"",
+    "NPS03 an individual unverified travel constraint preserves known time and is irrelevant to remote mode()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T12:34:49.213153+00:00",
+  "evidenceNote": "Corrected NPS11 fixture after initial implementation check exposed that exclusion=true had not been connected to source/condition/program. Test methods and expected values remain byte-identical; only the exclusion=true synthetic fixture now includes its explicit unavailability source, valid precise native gap condition, and exclusion_root. Before the TODO getter, independent fixture assertions verify canonical restoration, exact native UNAVAILABLE scope and root, and baseline pure projection of all three expected separated intervals. Fresh 22 compiled tests: all 21 missing-reader failures contain the TODO cause, one annotation control pass, zero errors/skips. New XML and corrected-red.log are retained separately from the initial RED. No production behavior change or paid call."
+}

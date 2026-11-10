@@ -14,15 +14,18 @@ import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeCalculato
 import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModePolicy
 import com.meetme.server.coordination.domain.dsl.ScheduleDslInputPolicy
 import com.meetme.server.coordination.domain.dsl.ScheduleDslNodeDisposition
+import com.meetme.server.coordination.domain.dsl.ScheduleDslParticipantEvidence
 import com.meetme.server.coordination.domain.dsl.ScheduleDslPreparedInputs
 import com.meetme.server.coordination.domain.dsl.ScheduleDslStoredCalculation
 import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralCalculator
 import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralMatchingPolicy
 import com.meetme.server.coordination.domain.matching.IrConditionDisposition
+import com.meetme.server.coordination.domain.matching.RecommendationParticipantEvidence
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.CollectionStatus
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.CoordinationRunId
+import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.submission.application.port.output.ScheduleDslApprovedTermsRepository
 import com.meetme.server.submission.application.port.output.ScheduleDslContextModeRepository
 import com.meetme.server.submission.application.port.output.ScheduleDslRepository
@@ -81,6 +84,22 @@ open class ScheduleDslStoredReadService(
         return ScheduleDslStoredCalculation(restored.route, restored.version, calculation, contextMode)
     }
 
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    open fun readParticipantStatusInputs(
+        runId: CoordinationRunId,
+        expectedCurrentRunVersion: Long,
+        expectedSelectionFingerprint: String,
+    ): Map<MeetingMode, Map<ParticipantId, RecommendationParticipantEvidence>> {
+        val restored = restore(runId, expectedCurrentRunVersion, expectedSelectionFingerprint)
+        return restored.project().mapValues { (_, prepared) ->
+            val inputs = prepared.participants.associateBy { it.participantId }
+            prepared.evidence.mapValues { (id, evidence) ->
+                val known = !incomplete(evidence, restored.quarantined)
+                RecommendationParticipantEvidence(inputs[id], known, known)
+            }
+        }
+    }
+
     /** Only opaque IDs and fixed reasons leave this boundary; no candidate generation or source text. */
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     open fun readInputDiagnostics(
@@ -90,15 +109,23 @@ open class ScheduleDslStoredReadService(
     ): Map<UUID, String> {
         val restored = restore(runId, expectedCurrentRunVersion, expectedSelectionFingerprint)
         val issues =
-            restored.project().flatMap { it.evidence.values }.filter { evidence ->
-                evidence.submissionVersionId in restored.quarantined ||
-                    evidence.unresolvedTime ||
-                    evidence.programProblems.isNotEmpty() ||
-                    evidence.conditions.any { it.disposition == IrConditionDisposition.WITHHELD } ||
-                    evidence.nodes.any { it.disposition == ScheduleDslNodeDisposition.WITHHELD }
-            }
+            restored
+                .project()
+                .values
+                .flatMap { it.evidence.values }
+                .filter { incomplete(it, restored.quarantined) }
         return restored.placeDiagnostics + issues.associate { it.submissionVersionId to "AMBIGUOUS_INPUT" }
     }
+
+    private fun incomplete(
+        evidence: ScheduleDslParticipantEvidence,
+        quarantined: Set<UUID>,
+    ): Boolean =
+        evidence.submissionVersionId in quarantined ||
+            evidence.unresolvedTime ||
+            evidence.programProblems.isNotEmpty() ||
+            evidence.conditions.any { it.disposition == IrConditionDisposition.WITHHELD } ||
+            evidence.nodes.any { it.disposition == ScheduleDslNodeDisposition.WITHHELD }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     open fun readPlaceDescriptions(
@@ -121,7 +148,7 @@ open class ScheduleDslStoredReadService(
         val route: FrozenFinalAnalysisRoute,
         val version: Long,
         val quarantined: Set<UUID>,
-        val project: () -> List<ScheduleDslPreparedInputs>,
+        val project: () -> Map<MeetingMode, ScheduleDslPreparedInputs>,
         val calculate: () -> Pair<ScheduleDslCalculation, ScheduleDslContextModeCalculation?>,
         val placeDescriptions: List<PublicPlaceConstraintDescription> = emptyList(),
         val placeDiagnostics: Map<UUID, String> = emptyMap(),
@@ -242,8 +269,7 @@ open class ScheduleDslStoredReadService(
                             snapshot,
                             structural.policy,
                             structural.meetingMode,
-                        ).preparedByMode.values
-                        .toList()
+                        ).preparedByMode
                 },
                 {
                     val calculation =
@@ -329,8 +355,7 @@ open class ScheduleDslStoredReadService(
                             snapshot,
                             contextual.policy,
                             contextual.meetingMode,
-                        ).preparedByMode.values
-                        .toList()
+                        ).preparedByMode
                 },
                 {
                     val calculation =
@@ -385,7 +410,12 @@ open class ScheduleDslStoredReadService(
                     .filter { it.quarantined.isNotEmpty() }
                     .map { it.submissionVersionId }
                     .toSet(),
-                { listOf(ScheduleDslInputPolicy.projectWithPreferredAvailability(validated.calculationProjection, approved.policy)) },
+                {
+                    atomicInputs(
+                        approved.meetingMode,
+                        ScheduleDslInputPolicy.projectWithPreferredAvailability(validated.calculationProjection, approved.policy),
+                    )
+                },
                 { ScheduleDslCalculator.calculateApprovedTerms(validated, snapshot, approved.policy, approved.meetingMode) to null },
             )
         }
@@ -416,8 +446,15 @@ open class ScheduleDslStoredReadService(
                 .filter { it.quarantined.isNotEmpty() }
                 .map { it.submissionVersionId }
                 .toSet(),
-            { listOf(ScheduleDslInputPolicy.project(validated, choice.policy)) },
+            { atomicInputs(choice.meetingMode, ScheduleDslInputPolicy.project(validated, choice.policy)) },
             { ScheduleDslCalculator.calculate(validated, choice.policy, choice.meetingMode) to null },
         )
     }
+
+    private fun atomicInputs(
+        mode: MeetingMode,
+        prepared: ScheduleDslPreparedInputs,
+    ): Map<MeetingMode, ScheduleDslPreparedInputs> =
+        (if (mode == MeetingMode.EITHER) listOf(MeetingMode.IN_PERSON, MeetingMode.REMOTE) else listOf(mode))
+            .associateWith { prepared }
 }
