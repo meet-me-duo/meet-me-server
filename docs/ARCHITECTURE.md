@@ -455,6 +455,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 
 ### 운영 환경
 
+- 상태 점검용 소스 묶음은 검증된 두 reader 파일의 원본 바이트를 압축 전달하고, manifest의 기존 별도 인수 계약을 유지한다. 명령은 UTF-8 60KiB, 확장된 소스 JSON은 128KiB를 넘기지 않으며 생산자와 수신자에서 모두 검사한다. 수신자는 압축·정확한 경로 집합·문자열 및 base64를 파일 작성 전에 검증하고 임시 소스만 복원한다. 기존 발행물·소스 지문 검증, 읽기 전용 상태 조회와 보호 승인 경계를 유지한다.
 - 신규 마감의 기본 계약은 `meetme.analysis.default-contract`로 선택한다. prod profile은 `DSL_STRUCTURAL_V5`와 가능/선호 합집합·서버 근거·검색 상대 날짜·월 달력·정수 선택·반복 원조건 옵션을 함께 켜며, 기본 V5에 옵션 하나라도 빠지면 시작을 거부한다. 다른 profile은 기존 LEGACY/OFF다. 생략/null 요청은 공통 수동·인원·기한 마감 경계에서 지원 가능한 자연어 cohort에 기본값을 적용하고, 명시 계약은 그대로 유지한다. 수동/혼합 입력과 native 기준 날짜를 지원하지 못하는 과거 V1 출처는 LEGACY를 유지하며 실제 미래 입력이나 DB 조회 오류를 이 fallback으로 숨기지 않는다.
 - `config/default-analysis-contract`는 선택 SSM String이며 `LEGACY` 또는 `DSL_STRUCTURAL_V5`만 허용한다. 정상 조회된 값만 `MEETME_ANALYSIS_DEFAULT_CONTRACT`로 전달하고, 미등록/조회 불가이면 키를 내보내지 않아 검토된 artifact 기본값을 사용한다. 성공 응답의 이름·타입·내용이 틀리면 기존 환경 파일을 보존하며 실패한다. 기존 Jev·보완답 출처·금전 정책의 별도 활성화 경계는 변경하지 않는다. 이미 닫힌 방·진행 중 실행·재시도·revision의 source 계약은 기본값 변경으로 재해석하지 않으며, 기본값을 LEGACY로 돌려도 format12 reader는 유지해야 한다.
 - V5 인계 통합의 현재 발행 SQL 목록은 정확한 V1–V31이다. 과거 완성 릴리스의 reader 계약을 유지하며 미발행 V24–V30 중간 목록은 완성 릴리스로 승인하지 않는다. V23에서의 전환은 기존 DB 이력·SQL checksum·guard 검증과 보호된 전환 승인을 거친다. 배포된 reader 지원과 신규 분석의 계약 선택·실험 옵션 활성화는 별도이며 기존 frozen 실행은 변경하지 않는다.

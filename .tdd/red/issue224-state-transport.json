@@ -1,0 +1,46 @@
+{
+  "workItem": "issue224-state-transport",
+  "sourceRevision": "76704a8c886bfaea120d0e9c79304dc5a02620b4",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue154_state_reader_transport.py",
+      "sha256": "33540f13b0a07eadb0dfa15922ee89e916c954c89f822264e497bba3f618aae7"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "deploy.tests.test_issue154_state_reader_transport",
+    "-v"
+  ],
+  "failedTests": [
+    "test_ST02_current_public_reader_and_public_catalog_fit_the_existing_command_boundary (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST02_current_public_reader_and_public_catalog_fit_the_existing_command_boundary)",
+    "test_ST03_large_repetitive_sources_are_transported_without_rewriting_or_truncation (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST03_large_repetitive_sources_are_transported_without_rewriting_or_truncation)",
+    "test_ST04_the_wire_is_gzip_base64_of_exactly_the_two_approved_source_paths (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST04_the_wire_is_gzip_base64_of_exactly_the_two_approved_source_paths)",
+    "test_ST08_host_accepts_exact_128kib_expanded_json_and_rejects_one_more_byte_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST08_host_accepts_exact_128kib_expanded_json_and_rejects_one_more_byte_before_staging) (expanded_bytes=131072)",
+    "test_ST08_host_accepts_exact_128kib_expanded_json_and_rejects_one_more_byte_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST08_host_accepts_exact_128kib_expanded_json_and_rejects_one_more_byte_before_staging) (expanded_bytes=131073)",
+    "test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging) (fault='crc')",
+    "test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging) (fault='truncated')",
+    "test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging) (fault='extra-document')",
+    "test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST09_gzip_crc_truncation_and_extra_json_documents_fail_before_staging) (fault='not-gzip')",
+    "test_ST10_invalid_wire_base64_is_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST10_invalid_wire_base64_is_rejected_before_staging) (fault=\"'%INVALID%'\")",
+    "test_ST10_invalid_wire_base64_is_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST10_invalid_wire_base64_is_rejected_before_staging) (fault=\"''\")",
+    "test_ST10_invalid_wire_base64_is_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST10_invalid_wire_base64_is_rejected_before_staging) (fault=\"'AA=\\\\nINJECTED'\")",
+    "test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging) (fault=0)",
+    "test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging) (fault=1)",
+    "test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging) (fault=2)",
+    "test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging) (fault=3)",
+    "test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST11_added_missing_absolute_and_traversing_paths_are_rejected_before_staging) (fault=4)",
+    "test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging) (fault=0)",
+    "test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging) (fault=1)",
+    "test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging) (fault=2)",
+    "test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging) (fault=3)",
+    "test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging) (fault=4)",
+    "test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST12_wrong_json_shapes_source_types_and_invalid_source_base64_fail_before_staging) (fault=5)",
+    "test_ST13_high_expansion_payload_within_wire_cap_is_rejected_before_staging (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST13_high_expansion_payload_within_wire_cap_is_rejected_before_staging)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T15:04:59.492715+00:00",
+  "evidenceNote": "Formal offline RED after final fixture/name freeze:13 methods,4 passing controls,9 failing methods with24 expected assertion/subtest failures,zero ERROR/skips. Current public state-reader source bytes plus public31 SQL catalog and valid synthetic12-digit release IDs exceed unchanged60KiB command cap; repetitive larger bounded source is also rejected before fake AWS. New gzip/base64 source wire and validate-before-staging are absent. Passing controls exercise actual small-source byte/manifest argv restoration, unchanged synthetic managed state, producer oversize refusal, incompressible cap refusal, exact60KiB UTF8 acceptance/+1byte rejection. Contract: UTF8 command<=60*1024, decoded source-map JSON<=128*1024, exact two approved relative paths with strict source base64 and helper manifest argv preserved. All AWS calls intercepted; actual Bash/Python bootstrap runs only in a fake temporary host; no /run or actual managed-host/DB writes. Public-test filename154 joins the existing CI family while work item remains224. Initial short-ID control/preparation output is preserved separately in .codex/tdd-evidence/issue224-transport-preparation.log and is not this formal RED. No production/old-test/source/manifest modifications by test designer. Raw log .codex/tdd-evidence/issue224-transport-red.log."
+}
