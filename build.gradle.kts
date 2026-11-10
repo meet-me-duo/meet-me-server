@@ -79,6 +79,23 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
+// Explicit local experiment only. The default test/runtime classpaths stay unchanged.
+tasks.register<Test>("c5HttpCandidateTest") {
+    description = "Runs the existing HTTP evaluator with the frozen C5 candidate on the test classpath"
+    testClassesDirs =
+        sourceSets.test
+            .get()
+            .output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    filter {
+        includeTestsMatching("com.meetme.server.experiment.C5CandidateRuntimeBindingTest")
+        includeTestsMatching("com.meetme.server.experiment.ExperimentalLiveHttpEvaluationTest")
+    }
+    systemProperty("meetme.experiment.c5-candidate", "true")
+    systemProperty("spring.profiles.active", "c5-http-evaluation")
+    outputs.upToDateWhen { false }
+}
+
 ktlint {
     filter {
         exclude { it.file.path.contains("generated") }

@@ -1,0 +1,29 @@
+{
+  "workItem": "schedule-dsl-structural-core",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslStructuralNormalizerTest.kt",
+      "sha256": "e2e62580a73967a2c1d0b5045974fd3e505222eaed6b4e9e4f48923d2cfff619"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest.SC03 known one-sided clocks retain declaration and civil-day derivation with exact optional search support()",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest.SC02 overlapping ambiguity foreign source stale revision and invalid Unicode never get repaired by locating()",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest.SC01 unique exact quotes derive Unicode positions and restore only against the same frozen evidence()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T09:56:59.619605+00:00"
+}

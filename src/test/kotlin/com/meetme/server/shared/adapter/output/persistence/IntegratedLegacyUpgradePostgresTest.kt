@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** Existing V8 rows survive exact V1..V23 integration without automatic linking or reanalysis. */
+/** V8 rows survive the historical V30 prefix and the scoped V31 constraint upgrade without rewriting. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -18,17 +18,17 @@ class IntegratedLegacyUpgradePostgresTest {
     }
 
     @Test
-    fun `blank PostgreSQL migrates exactly twenty-three versions and validates both independent legacy schemas`() {
-        assertEquals(23, flyway().migrate().migrationsExecuted)
-        flyway().validate()
+    fun `blank PostgreSQL migrates exactly thirty versions and validates both independent legacy schemas`() {
+        assertEquals(30, flyway("30").migrate().migrationsExecuted)
+        flyway("30").validate()
         assertEquals(
-            "23",
+            "30",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("23", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("30", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "6",
             scalar(
@@ -44,6 +44,7 @@ class IntegratedLegacyUpgradePostgresTest {
                     "AND table_name IN ('review_user_policies','review_prompts')",
             ),
         )
+        applyScopedV31()
     }
 
     @Test
@@ -54,8 +55,10 @@ class IntegratedLegacyUpgradePostgresTest {
         seedRoom("CONSUMED")
         val original = snapshots()
 
-        assertEquals(15, flyway().migrate().migrationsExecuted)
-        flyway().validate()
+        assertEquals(22, flyway("30").migrate().migrationsExecuted)
+        flyway("30").validate()
+        assertEquals(original, snapshots(), "Historical V30 prefix must preserve the original rows")
+        applyScopedV31()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
         assertEquals(
@@ -277,6 +280,33 @@ class IntegratedLegacyUpgradePostgresTest {
                 }
             }
         }
+
+    private fun applyScopedV31() {
+        val script = "V31__allow_explicit_c5_direct_luna.sql"
+        val bytes = checkNotNull(javaClass.getResourceAsStream("/db/migration/$script")).use { it.readBytes() }
+        val hash =
+            java.security.MessageDigest
+                .getInstance("SHA-256")
+                .digest(bytes)
+                .joinToString("") { "%02x".format(it) }
+        assertEquals("72b6e90537f5f05624445351b54980a97eccca794a7de3be91547d2f2ed9f1c0", hash)
+        assertEquals(1, flyway().migrate().migrationsExecuted)
+        flyway().validate()
+        assertEquals(
+            "31",
+            flyway()
+                .info()
+                .current()
+                .version.version,
+        )
+        assertEquals("31", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals(script, scalar("SELECT script FROM flyway_schema_history WHERE version='31' AND success"))
+        assertEquals(
+            "1",
+            scalar("SELECT count(*)::text FROM pg_constraint WHERE conname='ck_invocation_provider_order'"),
+        )
+        assertEquals("0", scalar("SELECT count(*)::text FROM pg_constraint WHERE conname='analysis_invocations_check3'"))
+    }
 
     private fun flyway(target: String? = null): Flyway {
         val config = Flyway.configure().dataSource(postgres.jdbcUrl, postgres.username, postgres.password)

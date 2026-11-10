@@ -74,6 +74,59 @@ object RecommendationProjector {
                 }
             }
         }
+        return finishWindows(windows, zone, checkCancellation)
+    }
+
+    /** Existing mode kernels supply windows and variants; ranking and primary selection remain shared. */
+    fun generateByMode(
+        participantsByMode: Map<MeetingMode, List<ParticipantMatchInput>>,
+        zone: ZoneId,
+        checkCancellation: () -> Unit = {},
+    ): RecommendationProjection {
+        require(participantsByMode.keys.all { it != MeetingMode.EITHER })
+        require(
+            participantsByMode.values
+                .map { list -> list.map { it.participantId }.toSet() }
+                .distinct()
+                .size <= 1,
+        )
+        val coverage = linkedMapOf<RecommendationVariant, MutableList<InstantTimeRange>>()
+        val windows = linkedSetOf<InstantTimeRange>()
+        for ((mode, participants) in participantsByMode.toSortedMap(compareBy { it.name })) {
+            for (option in generate(mode, participants, zone, checkCancellation).options) {
+                windows += option.window
+                option.variants.forEach { variant ->
+                    coverage.getOrPut(variant.copy(preferenceCount = 0)) { mutableListOf() } += option.window
+                }
+            }
+        }
+        val normalized = coverage.mapValues { TimeRangeMatcher.normalize(it.value) }
+        val inputs = participantsByMode.mapValues { (_, list) -> list.associateBy { it.participantId } }
+        val combined = linkedMapOf<InstantTimeRange, MutableList<RecommendationVariant>>()
+        for (window in windows) {
+            checkCancellation()
+            for ((variant, ranges) in normalized) {
+                checkCancellation()
+                if (ranges.any { it.startInclusive <= window.startInclusive && window.endExclusive <= it.endExclusive }) {
+                    val participants = inputs.getValue(variant.meetingMode)
+                    combined.getOrPut(window) { mutableListOf() } +=
+                        variant.copy(
+                            preferenceCount =
+                                variant.participantIds.count { id ->
+                                    matchesPreference(participants.getValue(id).explicitPreferences, window, variant)
+                                },
+                        )
+                }
+            }
+        }
+        return finishWindows(combined, zone, checkCancellation)
+    }
+
+    private fun finishWindows(
+        windows: Map<InstantTimeRange, List<RecommendationVariant>>,
+        zone: ZoneId,
+        checkCancellation: () -> Unit,
+    ): RecommendationProjection {
         checkCancellation()
         val options =
             windows

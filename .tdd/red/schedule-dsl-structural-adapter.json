@@ -1,0 +1,34 @@
+{
+  "workItem": "schedule-dsl-structural-adapter",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralProviderContractTest.kt",
+      "sha256": "6bbbf88f229e9660f57e4ea84c8c70e7a9e35f5006cc443c699555b7b39697c9"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA03 invalid or ambiguous condition locators quarantine evidence without default availability or peer loss()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA05 a positive unknown event without a directional declaration never invents a clock or default whole search()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA01 explicit C5 request retains native context while every provider evidence schema is a closed literal locator()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA08 C5 does not mutate C4 requests or teach the old strict decoder the new evidence and directional fields()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA04 malformed directional associations and mixed evidence shapes are closed document failures()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA06 independent ANY_OF windows stay united while genuine unselected AM PM CHOICE never becomes both definite()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA07 both preparation and calculation fully restore located evidence directional witnesses and numeric projection()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA02 known one-sided dates retain original declarations and reach the shared matcher as two separate windows()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T10:23:28.431655+00:00"
+}

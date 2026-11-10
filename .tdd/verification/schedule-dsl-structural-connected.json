@@ -1,0 +1,53 @@
+{
+  "workItem": "schedule-dsl-structural-connected",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "ktlintCheck",
+    "assemble",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralRejectedProofTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeProviderContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.FinalOutboundInputBoundaryTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeDateOnlyTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.cli.ScheduleDslApprovedTermsOfflineEntryPointTest"
+  ],
+  "counts": {
+    "tests": 89,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "exitCode": 0,
+  "finishedAt": "2026-11-06T11:12:55.964876+00:00",
+  "sourceUnchanged": true,
+  "faultsDetected": [
+    "SCF01_DUPLICATE_ACCEPTED",
+    "SCF02_DIRECTIONAL_PROJECTION_OMITTED"
+  ],
+  "originalSourceAndBinaryUnchanged": true,
+  "formatOnlyRedRebase": ".tdd/verification/schedule-dsl-structural-format-rebase.json",
+  "scope": "Synthetic actualHTTP/JWT close,registeredhandler invocation,actualPG andloopbackproviders; not realmodelquality orRedisqueue proof",
+  "paidCalls": 0
+}

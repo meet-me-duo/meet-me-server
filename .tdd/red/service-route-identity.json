@@ -1,0 +1,71 @@
+{
+  "workItem": "service-route-identity",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/analysis/FinalAnalysisRouteIdentityTest.kt",
+      "sha256": "4bcf3458fbdae545309082128649185ccf162dbf9d4ed7bdf5dfc46ed222ef83"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/FinalAnalysisRouteTestFixture.kt",
+      "sha256": "41f27ed353516da5bd0447d16bdc4618553024918315591501a9016f190dc29f"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStoredReadPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#FAR01 default legacy identity differs from explicitly selected DSL()",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#route run",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#route batch",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#route room",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#response contract",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#semantic contract",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#policy identity",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#meeting mode",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#policy version",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#eligible interpretations",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#unconstrained selection",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#context run",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#context batch",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#context room",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#zone",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#search start",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#search end",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#context policy",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#input membership",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#submission version",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#participant owner",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#submission revision",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#original revision",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#input content",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source membership",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source identity",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source kind",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source revision",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source length",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source digest",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source reference time",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source question",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source original start",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#source original end",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#FAR03 policy collections are canonical despite insertion order()",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#FAR02 selected time is immutable audit metadata outside identity()",
+    "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest#FAR04 adjacent policy strings cannot collide through concatenation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T10:41:36.776240+00:00"
+}

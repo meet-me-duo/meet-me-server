@@ -63,6 +63,29 @@ class LiveEvaluationSafety(
         }
     }
 
+    @Synchronized
+    fun requireCompletedSelection(
+        selectionStatus: Int?,
+        resultStatus: Int?,
+    ) {
+        checkpoint()
+        if (selectionStatus != 200 || resultStatus != 200) {
+            stop(
+                LiveEvaluationBarrier(
+                    "FINAL_SELECTION",
+                    "INCOMPLETE_SELECTION",
+                    if (selectionStatus !=
+                        200
+                    ) {
+                        selectionStatus
+                    } else {
+                        resultStatus
+                    },
+                ),
+            )
+        }
+    }
+
     private fun stop(reason: LiveEvaluationBarrier): Nothing {
         val current = firstBarrier ?: reason.also { firstBarrier = it }
         throw LiveEvaluationTechnicalStop(current)

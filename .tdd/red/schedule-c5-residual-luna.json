@@ -1,0 +1,47 @@
+{
+  "workItem": "schedule-c5-residual-luna",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/SelectedC5ResidualLunaBudgetTest.kt",
+      "sha256": "dceb1036ad6f717180086e21e32dea6c51823eb049ea88ca153622a9db7a9bbc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5ResidualLunaBoundaryPostgresTest.kt",
+      "sha256": "6297ca35473157679d982e04cbe710ce2f274c200404864ee9b57be1ad64a73e"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.application.service.SelectedC5ResidualLunaBudgetTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[1] kind = \"C5\", policy = \"V2\", attemptOffset = \"0\", expiryOffset = \"40\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[2] kind = \"C5\", policy = \"V2\", attemptOffset = \"25\", expiryOffset = \"57\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[1] kind = \"C5\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.CRB05 actual public Luna transport crosses old twenty seven cap only for v2 and preserves prepared budget()",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[1] fault = \"OWNER\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[2] fault = \"ATTEMPT_POLICY\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[3] fault = \"C4_ROUTE\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[4] fault = \"MISSING_ROUTE\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.[5] fault = \"UNKNOWN_CALLER_POLICY\"",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.CRB04 repository roundtrip retains policy and cannot rewrite admitted policy identity()",
+    "com.meetme.server.coordination.adapter.output.integration.C5ResidualLunaBoundaryPostgresTest.CRB06 V29 rows and checksums survive V30 while only the new closed policy is added()",
+    "com.meetme.server.coordination.application.service.SelectedC5ResidualLunaBudgetTest.CRB01 new C5 timeout immediately permits forty Luna seconds without extending total sixty()",
+    "com.meetme.server.coordination.application.service.SelectedC5ResidualLunaBudgetTest.CRB07 retryable server failures still stop at four primary attempts and one forty second fallback()",
+    "com.meetme.server.coordination.application.service.SelectedC5ResidualLunaBudgetTest.CRB05 response at fixed Luna cap is timed out without publication or a second fallback()",
+    "com.meetme.server.coordination.application.service.SelectedC5ResidualLunaBudgetTest.CRB02 delayed admission return and request preparation consume the fixed admitted Luna window()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T15:27:42.467934Z"
+}

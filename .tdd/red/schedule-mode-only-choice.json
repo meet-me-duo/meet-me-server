@@ -1,0 +1,70 @@
+{
+  "workItem": "schedule-mode-only-choice",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslModeOnlyChoiceTest.kt",
+      "sha256": "e886dbec3d56fedd5d9b879ea4f816f4dffacb1c236299c03e421dcf9798ce15"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.SelectedApprovedTermsProviderPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslModeOnlyChoiceTest"
+  ],
+  "failedTests": [
+    {
+      "test": "[1] selected = \"remote\"",
+      "type": "java.lang.IllegalArgumentException",
+      "reason": "java.lang.IllegalArgumentException: Failed requirement.",
+      "failureBoundary": "ScheduleIrMatchInputPolicy.projectNumeric:153, not a fixture/configuration failure"
+    },
+    {
+      "test": "[2] selected = \"inperson\"",
+      "type": "java.lang.IllegalArgumentException",
+      "reason": "java.lang.IllegalArgumentException: Failed requirement.",
+      "failureBoundary": "ScheduleIrMatchInputPolicy.projectNumeric:153, not a fixture/configuration failure"
+    }
+  ],
+  "recordedAt": "2026-11-06T03:11:01.466933+00:00",
+  "expectedFailureClassification": "Validated mode-only alternative forwarded to old numeric core, which requires base claim group; functional RED after fixtures pass",
+  "suiteCounts": {
+    "com.meetme.server.coordination.adapter.output.integration.SelectedApprovedTermsProviderPostgresTest": {
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "com.meetme.server.coordination.adapter.input.web.ApprovedProviderBudgetPostgresTest": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "com.meetme.server.coordination.adapter.input.web.IntegratedRecommendationFallbackPostgresTest": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslModeOnlyChoiceTest": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    }
+  }
+}

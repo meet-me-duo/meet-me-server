@@ -25,6 +25,7 @@ import java.time.ZoneOffset
 class CoordinationEventDispatcher(
     private val geminiBatchProcessor: GeminiBatchProcessor,
     private val matchingProcessor: MatchingProcessor,
+    private val selectedDispatcher: SelectedFinalAnalysisDispatchService? = null,
 ) : CoordinationEventProcessor {
     override fun process(
         eventType: String,
@@ -32,7 +33,9 @@ class CoordinationEventDispatcher(
     ) {
         when (eventType) {
             CollectionClosureService.STRUCTURING_REQUESTED -> geminiBatchProcessor.process(batchId)
-            CollectionClosureService.MATCHING_REQUESTED -> matchingProcessor.process(batchId)
+            CollectionClosureService.MATCHING_REQUESTED -> {
+                if (selectedDispatcher?.dispatchIfSelected(batchId) != true) matchingProcessor.process(batchId)
+            }
             else -> error("Unsupported coordination event type")
         }
     }

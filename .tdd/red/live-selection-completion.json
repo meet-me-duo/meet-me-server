@@ -1,0 +1,33 @@
+{
+  "workItem": "live-selection-completion",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/LiveEvaluationSelectionBoundaryContractTest.kt",
+      "sha256": "5fed7c492fde586ac50d56458f06e03a57cddb33a7b8a32039ba45588c1b175d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceSelectionSnapshotPostgresTest",
+    "--tests",
+    "*TravelPlaceSummaryHttpPostgresTest",
+    "--tests",
+    "*LiveEvaluationSelectionBoundaryContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.experiment.LiveEvaluationSelectionBoundaryContractTest.LSB04 omitted selection or final result status cannot masquerade as completed execution()",
+    "com.meetme.server.experiment.LiveEvaluationSelectionBoundaryContractTest.LSB02 failed selection takes priority over its missing final result and blocks further room calls()",
+    "com.meetme.server.experiment.LiveEvaluationSelectionBoundaryContractTest.LSB01 selection and final result both returned 200 allow the next room without semantic grading()",
+    "com.meetme.server.experiment.LiveEvaluationSelectionBoundaryContractTest.LSB06 an incomplete selection barrier remains latched even if later statuses and observations look successful()",
+    "com.meetme.server.experiment.LiveEvaluationSelectionBoundaryContractTest.LSB05 other 2xx statuses do not satisfy the exact completed selection and result contract()",
+    "com.meetme.server.experiment.LiveEvaluationSelectionBoundaryContractTest.LSB03 a successful selection without a successful final result blocks further room calls()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T16:39:10.002247+00:00",
+  "evidenceNote": "Incomplete final selection must stop the driver even after successful model analysis."
+}

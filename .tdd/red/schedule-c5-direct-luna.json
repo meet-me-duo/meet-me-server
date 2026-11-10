@@ -1,0 +1,33 @@
+{
+  "workItem": "schedule-c5-direct-luna",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SelectedDirectLunaPostgresTest.kt",
+      "sha256": "885ad288327f93fb3c5b104c407d7cdcf8e809cdbd0edea2fccaa0f9f03efba2"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "-I",
+    "/workspace/schedule-diagnosis-evidence/c5-direct-luna-20261107/format-test-before-red.init.gradle",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*SelectedDirectLunaPostgresTest"
+  ],
+  "failedTests": [
+    "DL04 direct selection refuses C4 while ordinary C5 admission keeps Gemini first and cannot be adopted by Luna()",
+    "DL02 owner native source forty second cap and completion reserve still reject direct Luna before HTTP()",
+    "DL01 explicit C5 Luna admission starts attempt one with zero Gemini and sends exactly one guarded native request()",
+    "DL03 retryable direct Luna failure ends one attempt without Gemini retry delay second Luna or redelivery dispatch()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T04:24:04.430628+00:00"
+}

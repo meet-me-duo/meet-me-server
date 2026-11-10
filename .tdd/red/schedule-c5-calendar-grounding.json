@@ -1,0 +1,30 @@
+{
+  "work_item": "schedule-c5-calendar-grounding",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslCalendarGroundingContractTest.kt",
+      "sha256": "a3a13449f86ba261f6ac8ecfd052726f483f5f1d17b2a762ada8b511deef8999"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslCalendarGroundingContractTest"
+  ],
+  "failed_tests": [
+    "CG02 reference days deduplicate and sort frozen source instants before converting across local midnight()",
+    "CG03 calendar metadata preserves native context vocabulary and response grammar without restricting output dates()",
+    "CG01 calendar facts cover 31 fixed local days across leap month boundaries with an exclusive end()",
+    "CG04 general temporal guidance does not turn a missing personal clock or calendar fact into native availability()"
+  ],
+  "expected_failure_classification": "Missing frozen request calendar facts and generic no-time-restriction versus unknown-clock guidance; no compile/setup failure",
+  "recorded_at": "2026-11-07T09:50:23.565441+00:00"
+}

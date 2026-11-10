@@ -1,0 +1,31 @@
+{
+  "workItem": "schedule-dsl-structural-proof-coverage",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralRejectedProofTest.kt",
+      "sha256": "96fcaacbe6e8b30531b468b9e6974f4e4c0ee3d9a45fe972f6a5d974df4b2f68"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralRejectedProofTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest.SC5HTTP*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralRejectedProofTest.SRP01 removing only the located proof of a retained rejected preference fails full restoration and both calculation entries()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T10:53:31.486816+00:00"
+}

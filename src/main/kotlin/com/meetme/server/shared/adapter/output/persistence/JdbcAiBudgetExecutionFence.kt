@@ -1,5 +1,7 @@
 package com.meetme.server.shared.adapter.output.persistence
 
+import com.meetme.server.coordination.application.port.output.AnalysisInvocation
+import com.meetme.server.coordination.application.port.output.AnalysisInvocationBudget
 import com.meetme.server.participant.application.port.output.ParticipantRepository
 import com.meetme.server.participant.domain.Participant
 import com.meetme.server.precheck.application.port.output.PrecheckOwnershipBindingPort
@@ -230,14 +232,18 @@ class JdbcAiBudgetExecutionFence(
         ) {
             return null
         }
+        // Match selected publication's room -> run -> route -> invocation -> attempt lock order.
+        // Legacy v1 executions may have no selected route; only residual C5 policy requires one.
+        val route = one("SELECT route_kind FROM final_analysis_routes WHERE run_id=? FOR UPDATE", runId)
         val invocation =
             one("SELECT * FROM analysis_invocations WHERE id=? AND coordination_run_id=? FOR UPDATE", execution.executionId, runId)
                 ?: return null
+        val policyVersion = invocation["policy_version"] as? String ?: return null
+        if (!AnalysisInvocationBudget.isAllowedPolicy(policyVersion, route?.get("route_kind") == "DSL_STRUCTURAL_V5")) return null
         if (invocation.number("run_version") != execution.version ||
             invocation.uuid("owner_token") != execution.ownerToken ||
             invocation["finished_at"] != null ||
-            invocation["winner_attempt_id"] != null ||
-            invocation["policy_version"] != "bounded-luna-v1"
+            invocation["winner_attempt_id"] != null
         ) {
             return null
         }
@@ -253,7 +259,7 @@ class JdbcAiBudgetExecutionFence(
         val model = if (primary) "gemini-3.8-flash" else "gpt-6-luna"
         if (attempt["provider"] != provider ||
             attempt["model"] != model ||
-            attempt["policy_version"] != "bounded-luna-v1" ||
+            attempt["policy_version"] != policyVersion ||
             attempt["finished_at"] != null
         ) {
             return null
@@ -266,11 +272,19 @@ class JdbcAiBudgetExecutionFence(
                 attempt.number("attempt_number"),
             )?.number("ordinal")
                 ?: return null
+        val directLuna =
+            !primary &&
+                policyVersion == AnalysisInvocation.C5_POLICY_VERSION &&
+                route?.get("route_kind") == "DSL_STRUCTURAL_V5" &&
+                invocation.number("gemini_attempts") == 0L &&
+                invocation.number("luna_attempts") == 1L &&
+                attempt.number("attempt_number") == 1L &&
+                one("SELECT count(*) total FROM coordination_attempts WHERE invocation_id=?", execution.executionId)?.number("total") == 1L
         val admitted = invocation.number(if (primary) "gemini_attempts" else "luna_attempts")
         if (ordinal != call.ordinal.toLong() ||
             admitted != ordinal ||
             (primary && invocation.number("luna_attempts") != 0L) ||
-            (!primary && (invocation.number("gemini_attempts") ?: 0L) < 1)
+            (!primary && !directLuna && (invocation.number("gemini_attempts") ?: 0L) < 1)
         ) {
             return null
         }
@@ -291,8 +305,12 @@ class JdbcAiBudgetExecutionFence(
         }
         val deadline =
             minOf(
-                invocation.instant("deadline_at")!!.minusSeconds(if (primary) 30 else 3),
-                attempt.instant("started_at")!!.plusSeconds(if (primary) 15 else 27),
+                invocation.instant("deadline_at")!!.minus(
+                    if (primary) AnalysisInvocationBudget.PRIMARY_PHASE_RESERVE else AnalysisInvocationBudget.COMPLETION_RESERVE,
+                ),
+                attempt.instant("started_at")!!.plus(
+                    if (primary) AnalysisInvocationBudget.GEMINI_CALL_TIMEOUT else AnalysisInvocationBudget.lunaCallTimeout(policyVersion),
+                ),
             )
         if (maxOf(at, clock.instant()) >= deadline) return null
         return CurrentDispatchExecution(deadline, invocation.instant("started_at") ?: return null)

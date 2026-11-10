@@ -1,0 +1,41 @@
+{
+  "workItem": "scoped-approved-term-evidence",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScopedTermEvidenceProviderContractTest.kt",
+      "sha256": "1738274f0b2a5f547361d7be7ccdb4a08763b88203254fb0a487c4b455ea9869"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ScopedTermEvidenceNormalizerTest.kt",
+      "sha256": "72ead86aee706eacfbfb9e7aade43154360ec82deab8ee267945be0b1c86ddfa"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScopedTermEvidenceTestFixture.kt",
+      "sha256": "6bec02f7e792c14198fc7e311f35fe4472b68dc93b017b583eeab85a6ecf3cb0"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ScopedTermEvidence*"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.ScopedTermEvidenceNormalizerTest.STN04 scoped lookup never borrows another input source revision or invented term()",
+    "com.meetme.server.submission.domain.dsl.ScopedTermEvidenceNormalizerTest.STN02 agreeing anchors choose the same shortest exact context independently of order()",
+    "com.meetme.server.submission.domain.dsl.ScopedTermEvidenceNormalizerTest.STN05 restore retains the specific occurrence and rejects forged spans context hashes and provenance()",
+    "com.meetme.server.submission.domain.dsl.ScopedTermEvidenceNormalizerTest.STN01 unique condition context resolves the middle approved word using Unicode code points()",
+    "com.meetme.server.submission.domain.dsl.ScopedTermEvidenceNormalizerTest.STN06 globally unique quotes retain legacy witness semantics without scoped provenance()",
+    "com.meetme.server.submission.domain.dsl.ScopedTermEvidenceNormalizerTest.STN03 no anchor ambiguous local word duplicated context and conflicting anchors remain rejected()",
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceProviderContractTest.STP03 scoped native position cannot be restored using an undeclared context from the same source()",
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceProviderContractTest.STP04 unique evidence retains the same legacy envelope and witness shape under reader opt in()",
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceProviderContractTest.STP01 default reader keeps prior quarantine while opt in recovers the exact declared term and real matching()",
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceProviderContractTest.STP02 conflicting ownership contexts stale source and broad term quotes retain failed condition safeguards()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T13:51:52.358047+00:00",
+  "evidenceNote": "Formatting-only test fingerprint refresh; original pre-implementation RED logs retained locally. Entry point restored to missing-behavior TODO for refresh, then exact implemented source bytes restored."
+}

@@ -6,6 +6,7 @@ import com.meetme.server.coordination.application.port.input.ReopenInputCommand
 import com.meetme.server.coordination.application.port.input.ReopenedInputView
 import com.meetme.server.coordination.application.port.input.RevisionAnalysisView
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
 import com.meetme.server.coordination.application.port.output.InputRevisionRoundRepository
 import com.meetme.server.coordination.application.port.output.OutboxEvent
 import com.meetme.server.coordination.application.port.output.OutboxRepository
@@ -16,6 +17,7 @@ import com.meetme.server.coordination.domain.InputRevisionRound
 import com.meetme.server.coordination.domain.RevisionAnalysisOutcome
 import com.meetme.server.coordination.domain.RevisionRoundStatus
 import com.meetme.server.coordination.domain.SubmissionBatch
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.meetingroom.application.port.input.GetRoomUseCase
 import com.meetme.server.meetingroom.application.port.input.RevisionRoundView
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
@@ -35,6 +37,7 @@ import com.meetme.server.submission.application.port.output.SubmissionRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
+import java.time.temporal.ChronoUnit
 
 @Service
 class InputRevisionService(
@@ -47,6 +50,8 @@ class InputRevisionService(
     private val getRoom: GetRoomUseCase,
     private val clock: Clock,
     private val ownership: ParticipantOwnershipResolver,
+    private val selection: FinalAnalysisRouteSelectionService? = null,
+    private val finalAnalysisRoutes: FinalAnalysisRouteRegistry? = null,
 ) : InputRevisionUseCase {
     @Transactional
     override fun reopen(command: ReopenInputCommand): ReopenedInputView {
@@ -134,11 +139,27 @@ class InputRevisionService(
                 mapOf("limit" to 3, "used" to room.correctionAnalysisCount, "remaining" to 0),
             )
         }
-        val batch = SubmissionBatch(SubmissionBatchId(ids.next()), room.id, current.map { it.latest.id }, now)
+        val sourceChoice = finalAnalysisRoutes?.find(source.id.value)?.choice
+        val selected =
+            sourceChoice is FinalAnalysisRouteChoice.DslContextV2 ||
+                sourceChoice is FinalAnalysisRouteChoice.DslApprovedTermsV3 ||
+                sourceChoice is FinalAnalysisRouteChoice.DslContextModeV4 ||
+                sourceChoice is FinalAnalysisRouteChoice.DslStructuralV5
+        if (selected) checkNotNull(selection) { "Selected successor requires route propagation" }
+        val fixedAt = if (selected) now.truncatedTo(ChronoUnit.MICROS) else now
+        val batch = SubmissionBatch(SubmissionBatchId(ids.next()), room.id, current.map { it.latest.id }, fixedAt)
         var run = CoordinationRun.queued(CoordinationRunId(ids.next()), batch)
         val natural = current.any { it.latest.rawText != null }
         if (!natural) run = run.startMatching()
         runs.insert(run)
+        val activeRoom =
+            room.transition(
+                activeRunId = run.id.value,
+                activeRevisionRoundId = null,
+                correctionAnalysisCount = room.correctionAnalysisCount + 1,
+            )
+        rooms.update(activeRoom)
+        selection?.propagate(source, run, activeRoom, current)
         val eventId = OutboxEventId(ids.next())
         outbox.insert(
             OutboxEvent(
@@ -152,13 +173,6 @@ class InputRevisionService(
         )
         val consumed = round.consume(command.requestId, command.forceReparse, run.id.value, RevisionAnalysisOutcome.QUEUED, now)
         rounds.update(consumed)
-        rooms.update(
-            room.transition(
-                activeRunId = run.id.value,
-                activeRevisionRoundId = null,
-                correctionAnalysisCount = room.correctionAnalysisCount + 1,
-            ),
-        )
         return result(consumed, command)
     }
 

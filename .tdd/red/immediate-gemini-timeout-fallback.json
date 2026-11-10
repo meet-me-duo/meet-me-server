@@ -1,0 +1,66 @@
+{
+  "workItem": "immediate-gemini-timeout-fallback",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/BoundedProviderFallbackContractTest.kt",
+      "sha256": "a2844af7a879089f65a9cf595a31a748ebc82b4f3ea29ee4d5cbeedfe339d49a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/SelectedScheduleDslBatchProcessorContractTest.kt",
+      "sha256": "889b1edf52a291f43c4833d996a8aba8e9c225077ebaf7d6b9ac4f3214066311"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorObservationTest.kt",
+      "sha256": "8addd87d047615f251e52361e0911b0cece2e2b0c61f70b77417c26d835af7a0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiBatchProcessorTest.kt",
+      "sha256": "edfc61b9746dc0243f47e2f37aa28a69dc6fa03be4fe903ae5b034d009033a19"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/GeminiTimeReferenceDateTest.kt",
+      "sha256": "7bdad46c802b890ee0d795c8ebf971930087dd54872f90fb09f23289e9325a9e"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/IntegratedRecommendationFallbackPostgresTest.kt",
+      "sha256": "421a5fa3c95497db8058332f06e2802aa2c7747e325d48edef06307433276939"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*BoundedProviderFallbackContractTest.ITF*",
+    "--tests",
+    "*SelectedScheduleDslBatchProcessorContractTest.ITF*"
+  ],
+  "failedTests": [
+    {
+      "test": "ITF03 selected timeout has no Gemini readmission retry delay or jitter before existing Luna()",
+      "reason": "org.opentest4j.AssertionFailedError: expected: <[GEMINI, OPENAI]> but was: <[GEMINI, GEMINI, GEMINI, GEMINI, OPENAI]>"
+    },
+    {
+      "test": "ITF02 legacy timeout at completion-safe cutoff cannot spend the reserve on a Luna call()",
+      "reason": "org.opentest4j.AssertionFailedError: Expected value to be true."
+    },
+    {
+      "test": "ITF01 legacy timeout ignores retry-after and goes directly to Luna with the same frozen request()",
+      "reason": "org.opentest4j.AssertionFailedError: expected: <[GEMINI, LUNA]> but was: <[GEMINI, GEMINI, GEMINI, GEMINI, LUNA]>"
+    }
+  ],
+  "recordedAt": "2026-11-06T02:58:50.368728+00:00",
+  "expectedFailureClassification": "Gemini retries/jitter remain on TIMEOUT instead of direct same-budget Luna; no compilation or fixture errors",
+  "counts": {
+    "tests": 4,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0
+  }
+}

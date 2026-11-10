@@ -1,0 +1,25 @@
+{
+  "workItem": "indexed-evidence-expansion",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/IndexedEvidenceExpansionBoundaryTest.kt",
+      "sha256": "5b9107506dc467de68936538be7222f8ce10081b9027aaf20fbc1cfa10fabc2b"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*IndexedEvidenceExpansionBoundaryTest"
+  ],
+  "failedTests": [
+    "IEB01 a small indexed response over the resolved identity budget reports the exact safe boundary code()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T06:41:54.376113+00:00",
+  "evidenceNote": "Three compiled tests: one missing resolved-identity budget diagnostic failed (CALENDAR_FACTS_RAW_BYTE_LIMIT instead of INDEXED_EVIDENCE_RESOLVED_BYTE_LIMIT); the small owned graph and exact raw byte boundary controls passed. Zero errors or skips. Full output remains in ignored indexed-evidence-expansion-red.log."
+}

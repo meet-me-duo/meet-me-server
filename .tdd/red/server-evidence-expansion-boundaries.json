@@ -1,0 +1,31 @@
+{
+  "workItem": "server-evidence-expansion-boundaries",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ServerEvidenceExpansionBoundaryTest.kt",
+      "sha256": "e82edff7e710d36ccf830190590bf819b7bc0dd5f11a52529ac8812194716975"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceClockBoundaryTest",
+    "--tests",
+    "*ServerEvidenceExpansionBoundaryTest",
+    "--tests",
+    "*ServerEvidenceStoredRouteBindingPostgresTest",
+    "--tests",
+    "*ServerEvidenceCatalogWorkloadTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceExpansionBoundaryTest.SEB02 the raw model response limit stays exact even when the additional bytes are legal JSON whitespace()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceExpansionBoundaryTest.SEB01 valid small reference response survives native quote expansion above the raw model byte limit()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:12:26.753440+00:00",
+  "evidenceNote": "Independent boundary expectations; actualPG source/route binding mismatches, invalidpartialclock tokens, and valid boundedinternal expansion rejected by legacybytecap."
+}

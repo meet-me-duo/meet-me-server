@@ -1,0 +1,122 @@
+{
+  "workItem": "schedule-c5-temporal-atom",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslAtomicTemporalContractTest.kt",
+      "sha256": "2eec72c600ef3066abf2f8971cee90f09f11ca904e088a38b0be6326112f18e1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslConditionTermBindingContractTest.kt",
+      "sha256": "d0591de214509bdf9ca5dc4679d7371ae425f3aed205f19565582719ea050a7f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslDateScopeInlineContractTest.kt",
+      "sha256": "a613a760f773f3aa2cf53c5ee9c52a85dcbfd07e70b07605ea0ac6942ce55f89"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralCompletionContractTest.kt",
+      "sha256": "f6a9996fe6eb2bccbc3a19d5b0619eb789a8e96312052055b1f5f30429a4cf46"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralTermEvidenceContractTest.kt",
+      "sha256": "d0d25ba85a0f0e7d6875e10b15f8bafa1aba3e2843caf717ec512cb2877a73bb"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-atomic-temporal-contract-20261107/final-contract-controls.init.gradle",
+    "ktlintCheck",
+    "assemble",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsValidatorTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeDateOnlyTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralRejectedProofTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.C5LunaReasoningWirePostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslDateScopeStoragePostgresTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslStructuralPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.SelectedDirectLunaPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslInferredNegativeCorrectionTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA06 missing meaning evidence invalid components hybrids and unsupported bounds never authorize availability()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA04 atomic compilation cannot turn an inferred correction into authority to erase a negative()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA03 genuine mutually exclusive dates keep CHOICE rather than an automatic union or intersection()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA01 supplied meaning date and term proofs form one bundle for four preference-only windows()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA05 unknown differs from a whole day while inferred clocks and raw scopes keep their provenance()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA02 owned date bounds refine each window while independently available dates remain alternatives()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA08 closed temporal union preserves complete vocabulary native context modes and legacy C4 bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB06 producer temporal union owns one term binding while preserving C4 and native inputs()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest.DI08 producer grammar exposes typed dates and inline roots without changing native context or C4 bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE03 producer distinguishes exact word term evidence from broad context and forbids widening an ambiguous repeated lexeme()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC02 C5 format descriptions keep derivations reachability and closed response shape()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC01 compact C5 instructions preserve meaning time program and server responsibilities()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T08:05:51.188266+00:00",
+  "redExecutions": [
+    {
+      "scope": "final frozen atomic tests with preserved previous provider/grammar classes",
+      "tests": 8,
+      "pass": 1,
+      "failures": 7,
+      "errors": 0,
+      "skipped": 0,
+      "timestamp": "2026-11-07T08:04:03.953Z"
+    },
+    {
+      "scope": "unchanged generation contract assertions in original 32-case RED",
+      "recordedAt": "2026-11-07T07:51:11.420989+00:00",
+      "final_test_hashes_match_original": true
+    }
+  ],
+  "guardMutation": {
+    "scope": "isolated compiled-class copy; production source/JAR unchanged",
+    "detectedBy": "TA06 empty-meaning assertion",
+    "tests": 1,
+    "expectedFailures": 1,
+    "xmlFailureType": "org.opentest4j.AssertionFailedError"
+  },
+  "green": {
+    "tests": 86,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "ktlintCheck": "PASS",
+    "assemble": "PASS",
+    "isUnfilteredGate": false
+  }
+}

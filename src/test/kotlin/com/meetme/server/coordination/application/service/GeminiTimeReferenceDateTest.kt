@@ -88,7 +88,7 @@ class GeminiTimeReferenceDateTest {
         fixture
             .processor { request ->
                 captured += request
-                if (captured.size == 1) throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
+                if (captured.size == 1) throw NaturalLanguageParserException(ParserFailureKind.SERVER)
                 fixture.parse(request)
             }.process(fixture.batch.id)
 

@@ -1,0 +1,24 @@
+{
+  "workItem": "weekly-correction-window-authority",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/WeeklyCorrectionWindowAuthorityTest.kt",
+      "sha256": "fae93df43f69d30475ce32a6f5a15d909de99cf507fdc9a2ddae339e26690eeb"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*WeeklyCorrectionWindowAuthorityTest"
+  ],
+  "failedTests": [
+    "WCWA01 an ineligible correction preserves every known weekly negative without blocking the whole search()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T07:28:21.342Z",
+  "evidenceNote": "Independent kernel authority test executes: one expected assertion failure, zero errors/skips. Isolated baseline replaced only correction influences=windows(target) with the old native scope-or-search singleton, so a null-scope weekly negative incorrectly blocks the whole search instead of preserving three residual windows around both known occurrences. Isolated cwd: /workspace/scratch/meet-me-weekly-mutations. Exact source SHA restoration: .codex/evaluation/local/weekly-correction-red/restoration.json. XML: .codex/evaluation/local/weekly-correction-red/; log: .codex/tdd-evidence/weekly-correction-red.log. Existing frozen graph tests and private actual heldout unchanged."
+}

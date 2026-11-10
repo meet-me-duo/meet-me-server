@@ -1,0 +1,36 @@
+{
+  "workItem": "weekly-evidence-route",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/WeeklyEvidenceRoutePostgresTest.kt",
+      "sha256": "23c677efba21c8d720c0bc38e99db69615db4624781b55c444903f8f39474aa1"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*WeeklyEvidenceRoutePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.WER03 enabling weekly rules cannot rewrite a previously frozen response4 contract()",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.[3] weekly = \"true\", foreignOutside = \"false\"",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.[4] weekly = \"true\", foreignOutside = \"true\"",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.WER09 unknown weekly boundary remains unresolved and never becomes full search availability()",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.WER07 resolved occurrences marker and derived bounds cannot be changed on stored restore()",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.[1] weeklyInRoute = false",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.[2] weeklyInRoute = true",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.WER04 a successor retains response5 when current selector flags are all disabled()",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.WER01 response5 identity and fingerprint remain frozen after selector flags change()",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.WER06 format12 restores original weekly rule occurrences and native unknown declaration()",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.[4] serverReferences = \"true\", scopedDates = \"true\", calendarFacts = \"true\", indexed = \"false\"",
+    "com.meetme.server.coordination.adapter.output.persistence.WeeklyEvidenceRoutePostgresTest.[5] serverReferences = \"false\", scopedDates = \"false\", calendarFacts = \"false\", indexed = \"false\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T07:06:08.542886+00:00",
+  "evidenceNote": "Independent synthetic native PostgreSQL tests: 18 compiled cases, 12 expected failures, 6 passed, no errors/skips. Missing response5 freeze/dependencies/marker binding and unsupported stored weekly declarations/derivations cause the failures. Fixture manually declares the expected weekly occurrence without calling the new expansion code. No compilation, SQL setup or provider failure; no real participant data or manufactured model result."
+}

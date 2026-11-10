@@ -1,0 +1,55 @@
+{
+  "workItem": "server-evidence-catalog",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ServerEvidenceCatalogTest.kt",
+      "sha256": "a9721ea17ee8f08ff6549b6106ae98aac9388a91397d1c001cef40a69ced2ef8"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceCatalogTest",
+    "--tests",
+    "*ServerEvidenceProviderContractTest",
+    "--tests",
+    "*ServerEvidenceCatalogPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[1] invalid = \"�\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[2] invalid = \"?\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC03 approved term entries are exact native lexemes with separate positions for repeated terms()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC01 every entry maps to an unchanged native Unicode interval and digest()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC02 whole context and separate lines retain conjunction negatives restrictions and decomposed characters()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[1] change = \"run\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[2] change = \"batch\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[3] change = \"room\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[4] change = \"zone\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[5] change = \"range\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[6] change = \"policy\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[7] change = \"input\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[8] change = \"participant\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[9] change = \"submission-revision\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[10] change = \"revision\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[11] change = \"digest\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC05 numeric clock and public place subspans stay exact and inside their native source()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC06 catalog creation and resolution are deterministic for the same frozen snapshot()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[1] change = \"digest\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[2] change = \"length\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[3] change = \"missing\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.[4] change = \"duplicate-source\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC09 unknown and foreign input references cannot be repaired with whole source text()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC14 source size bound fails explicitly rather than truncating the original()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC07 equal text from separate participants is never the same evidence reference()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC15 entry count bound fails explicitly rather than dropping repeated occurrences()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC08 original and linked supplement remain distinct even when their text is equal()",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCatalogTest.SEC04 repeated term IDs resolve their declared occurrence without choosing the first match()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T01:55:50.109329+00:00",
+  "evidenceNote": "Independent source ID/provenance and PG newformat tests; missing implemented catalog/provider/route behavior. No case-specific original or model output patched."
+}

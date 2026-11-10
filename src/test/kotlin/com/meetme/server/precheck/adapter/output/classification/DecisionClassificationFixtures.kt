@@ -3,7 +3,11 @@ package com.meetme.server.precheck.adapter.output.classification
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationRequest
 import com.sun.net.httpserver.HttpServer
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.json.JsonMapper
 import java.net.InetSocketAddress
 import java.net.URI
@@ -14,6 +18,7 @@ import java.time.ZoneId
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 /** Independent official Decisions wire fixtures. Every number below is synthetic, not a measurement. */
@@ -118,11 +123,13 @@ internal object DecisionClassificationFixtures {
             threshold: Double? = 0.8,
             key: String = KEY,
             permissiveClient: Boolean = false,
+            requestMapper: ObjectMapper = mapper,
+            client: OkHttpClient? = null,
         ) = OpenAiAmbiguityClassifier(
             key,
-            mapper,
+            requestMapper,
             AmbiguityClassifierOptions(endpoint, enabled, threshold),
-            OkHttpClient
+            client ?: OkHttpClient
                 .Builder()
                 .retryOnConnectionFailure(
                     permissiveClient,
@@ -131,6 +138,53 @@ internal object DecisionClassificationFixtures {
                 .build(),
             registry,
         )
+
+        /** One bounded non-HTTP initialization pass, never a measured provider request or retry. */
+        fun bodyDeadlineClassifier(
+            request: AmbiguityClassificationRequest,
+            requestMapper: ObjectMapper = mapper,
+            client: OkHttpClient? = null,
+        ): OpenAiAmbiguityClassifier {
+            val preparation =
+                Executors.newSingleThreadExecutor { action ->
+                    Thread(action, "decision-body-fixture-prepare").apply { isDaemon = true }
+                }
+            var initialization: Future<OpenAiAmbiguityClassifier>? = null
+            try {
+                val initialized =
+                    preparation.submit<OpenAiAmbiguityClassifier> {
+                        // Prime the same executor which will dispatch the sole measured server request.
+                        val ready = CountDownLatch(1)
+                        executor.execute { ready.countDown() }
+                        check(ready.await(1, TimeUnit.SECONDS)) { "Loopback executor did not become ready" }
+                        val preparedClient =
+                            client ?: OkHttpClient
+                                .Builder()
+                                .retryOnConnectionFailure(false)
+                                .followRedirects(false)
+                                .followSslRedirects(false)
+                                .build()
+                        val payload = AmbiguityClassificationContract(requestMapper).requestBytes(request)
+                        // Build, but never execute, a call with the same prepared client and exact payload shape.
+                        preparedClient.newCall(
+                            Request
+                                .Builder()
+                                .url(endpoint.toString())
+                                .post(payload.toRequestBody("application/json; charset=utf-8".toMediaType()))
+                                .build(),
+                        )
+                        classifier(requestMapper = requestMapper, client = preparedClient)
+                    }
+                initialization = initialized
+                val classifier = initialized.get(2, TimeUnit.SECONDS)
+                check(sent.isEmpty()) { "Preparation must never send HTTP" }
+                return classifier
+            } finally {
+                initialization?.cancel(true)
+                preparation.shutdownNow()
+                check(preparation.awaitTermination(2, TimeUnit.SECONDS)) { "Fixture preparation thread did not terminate" }
+            }
+        }
 
         override fun close() {
             release.countDown()

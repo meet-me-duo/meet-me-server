@@ -286,7 +286,7 @@ def _record():
                 tuple(map(str, range(1, 13))), tuple(map(str, range(1, 12))) + ('13',),
                 tuple(map(str, range(1, 11))) + ('14', '15'),
                 tuple(map(str, range(1, 12))) + ('14', '15'), tuple(map(str, range(1, 17))),
-                tuple(map(str, range(1, 18))), tuple(map(str, range(1, 19))), tuple(map(str, range(1, 20))), tuple(map(str, range(1, 21))), tuple(map(str, range(1, 22))), tuple(map(str, range(1, 23))), tuple(map(str, range(1, 24))))
+                tuple(map(str, range(1, 18))), tuple(map(str, range(1, 19))), tuple(map(str, range(1, 20))), tuple(map(str, range(1, 21))), tuple(map(str, range(1, 22))), tuple(map(str, range(1, 23))), tuple(map(str, range(1, 24))), tuple(map(str, range(1, 32))))
     _require(versions in catalogs)
     sparse = '14' in versions
     names = ('create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
@@ -305,6 +305,14 @@ def _record():
         '21': 'V21__add_submission_input_evidence.sql',
         '22': 'V22__preserve_unverified_candidate_place.sql',
         '23': 'V23__add_account_room_archive_hidden_at.sql',
+        '24': 'V24__add_versioned_schedule_ir.sql',
+        '25': 'V25__add_ir_execution_bindings.sql',
+        '26': 'V26__add_final_analysis_routes.sql',
+        '27': 'V27__add_approved_terms_final_analysis_route.sql',
+        '28': 'V28__add_context_mode_final_analysis_route.sql',
+        '29': 'V29__add_structural_final_analysis_route.sql',
+        '30': 'V30__add_c5_residual_luna_policy.sql',
+        '31': 'V31__allow_explicit_c5_direct_luna.sql',
     })
     for version, row in zip(versions, record['history']):
         _require(type(row) is dict and set(row) == {'version', 'script', 'checksum', 'success'})

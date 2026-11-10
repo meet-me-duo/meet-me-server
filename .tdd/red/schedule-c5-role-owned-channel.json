@@ -1,0 +1,29 @@
+{
+  "work_item": "schedule-c5-role-owned-channel",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslRoleTypedExpressionContractTest.kt",
+      "sha256": "19f178d379b4eb77442489f17121d627f2d5df2c6eb5ac035a2954028879576c"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-role-typed-expression-contract-20261107/role-controls.init.gradle",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslRoleTypedExpressionContractTest.RT07*"
+  ],
+  "failed_tests": [
+    "RT07 an explicit new marker rejects legacy condition channels while the markerless history stays valid()"
+  ],
+  "expected_failure_classification": "explicitnewmarker_legacychannel_unexpectedlyaccepted; original private logs and setup/collector issues preserved separately",
+  "recorded_at": "2026-11-07T11:36:19.802206+00:00"
+}

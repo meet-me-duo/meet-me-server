@@ -1,0 +1,82 @@
+{
+  "work_item": "schedule-c5-role-typed-expression",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslAtomicTemporalContractTest.kt",
+      "sha256": "650c57cf2fa3ccf0c6ff0c33fcf939dcb15993fa8b8c8661263ee969694133ef"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslConditionTermBindingContractTest.kt",
+      "sha256": "caf3a2bd6de927db12507372d114c1e689195ad75d8fda9484fcd06da7caa56a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslDateScopeInlineContractTest.kt",
+      "sha256": "55fc30a0172483598fcb72b1601c5a856a7fa439cbf3cfb589173af9cf461de0"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslOwnedProofChoiceContractTest.kt",
+      "sha256": "d181479d3c3897b2b07c707a5082368f3dfa3b9b6577d4722f9ea5c2b585270a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslRoleTypedExpressionContractTest.kt",
+      "sha256": "33f0d54bb5392b406274c624df8272417d4a352cab1d86e1d8b5fd4a9a1e80e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralCompletionContractTest.kt",
+      "sha256": "dbd261e127ea436ae8493773fd975227a84dd9853a2dc116f497a5a7af6c984d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralProviderContractTest.kt",
+      "sha256": "320012f2fbe6cab83b7315ac2b7444c7809a98beabe8b9cf4a0aaff052dd8ec7"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralTermEvidenceContractTest.kt",
+      "sha256": "77c2fb6b03e2ddb32ef63b459c7a44910ecd0199348f0b64bd03217dd0a32323"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-role-typed-expression-contract-20261107/role-controls.init.gradle",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslRoleTypedExpressionContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC08*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC02*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest.DI08*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA08*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB06*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE02*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA01*"
+  ],
+  "failed_tests": [
+    "SA01 explicit C5 request retains native context while every provider evidence schema is a closed literal locator()",
+    "RT03 unresolved blocks and inferred preferences retain unknown clocks and existing availability policy()",
+    "RT06 marker absent raws retain original IDs ROLE refusal history and supersedes without repair()",
+    "RT04 nested CHOICE keeps explicit ownership including operands with another role()",
+    "RT02 ANY ALL and named operands retain exact exclusion and preference roles()",
+    "RT01 schema couples declared effects and qualified IDs with recursive root roles()",
+    "TA08 closed temporal union preserves complete vocabulary native context modes and legacy C4 bytes()",
+    "CB06 producer temporal union owns one term binding while preserving C4 and native inputs()",
+    "DI08 producer grammar exposes typed dates and inline roots without changing native context or C4 bytes()",
+    "PC08 typed proof namespaces and six operator arms preserve native context C4 bytes and existing arity limits()",
+    "STE02 condition date clock and graph evidence retain broad closed native quote locators without new offsets or fields()",
+    "SC02 C5 format descriptions keep derivations reachability and closed response shape()"
+  ],
+  "expected_failure_classification": "initial13_new_schema_and_operands_missing; original private logs and setup/collector issues preserved separately",
+  "recorded_at": "2026-11-07T11:26:01.229529+00:00"
+}

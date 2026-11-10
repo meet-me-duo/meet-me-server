@@ -1,0 +1,30 @@
+{
+  "workItem": "schedule-c5-compact-prompt",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralCompletionContractTest.kt",
+      "sha256": "7026d12168cdb2d06528318dfd54f73ff24fb27667ced502fceab4132ec8d874"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckTemporalVocabularyParityTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC02 C5 format descriptions keep derivations reachability and closed response shape()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC01 compact C5 instructions preserve meaning time program and server responsibilities()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T05:33:36.514072+00:00"
+}

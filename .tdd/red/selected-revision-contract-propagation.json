@@ -1,0 +1,29 @@
+{
+  "workItem": "selected-revision-contract-propagation",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedRevisionRoutePropagationPostgresTest.kt",
+      "sha256": "c39377765a50b1962d846b51395e44da8138ac04e46d89e78da492dc93a01112"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedRevisionRoutePropagationPostgresTest"
+  ],
+  "failedTests": [
+    "SRP01 changed source loses selected contract",
+    "SRP02 force reparse loses selected contract",
+    "SRP03 unsupported selected cohort accepted instead of atomic rejection"
+  ],
+  "recordedAt": "2026-11-05T20:00:55.110544Z",
+  "expectedFailureCategory": "MISSING_BEHAVIOR"
+}

@@ -1,0 +1,25 @@
+{
+  "workItem": "schedule-product-ir-current-cycle",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrRelationComplexityTest.kt",
+      "sha256": "849fcaeccb21e9d8e99c4e8c3973bbba137f326b3254261cf044e68771311566"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrRelationComplexityTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.ir.ScheduleIrRelationComplexityTest.maximum dense acyclic corrections preserve every condition and finish within five seconds()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T18:18:07.603899Z"
+}

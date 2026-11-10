@@ -1,0 +1,33 @@
+{
+  "workItem": "schedule-product-ir-current-fields",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleIrProviderContractTest.kt",
+      "sha256": "bd5935a2ca3802e8fced64457e34705bf0c70456a72443a8a18a26a1b8ba6244"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrProviderContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.all malformed conditions produce unknown with retained diagnostics rather than unconstrained()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[1] defect = \"mode\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[2] defect = \"null_mode\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[3] defect = \"flat_available_times\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[3] defect = \"extra_root\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[4] defect = \"provider_registry\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[5] defect = \"flat_available_times\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[9] defect = \"extra_result_field\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[4] defect = \"extra_evidence_field\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T18:24:43.640474Z"
+}

@@ -1,0 +1,31 @@
+{
+  "workItem": "travel-place-duration-overflow",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TravelPlaceDurationOverflowTest.kt",
+      "sha256": "2f4eef313c21ff3d693bc0b9e3149e3549a47ef78ca1ff462a51d773797672d8"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceSummaryHttpPostgresTest",
+    "--tests",
+    "*TravelPlaceDurationOverflowTest",
+    "--tests",
+    "*TravelPlaceUnsupportedRouteTest",
+    "--tests",
+    "*TravelPlaceDurationTokenTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationOverflowTest.[1] duration = \"71582789\uc2dc\uac04\", forgedMinutes = \"44\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationOverflowTest.[2] duration = \"71582790\uc2dc\uac04\", forgedMinutes = \"104\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T15:27:54.585159+00:00",
+  "evidenceNote": "Independent native numeric/route boundary RED. HTTP fixture-only version repair rechecked against the original generic-only summary behavior; exact implemented renderer source restored immediately. Full local log: travel-place-added-valid-red.log."
+}

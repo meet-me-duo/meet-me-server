@@ -1,0 +1,28 @@
+{
+  "workItem": "relative-date-context",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5RelativeDateContextTest.kt",
+      "sha256": "1ba2e31e502e725020773e895420a585a881574fc3720ee377b9d7131770fce9"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*C5RelativeDateContextTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.C5RelativeDateContextTest.RDC06 opt in requires common V5 parity and cannot bypass the Gemini V2 early return()",
+    "com.meetme.server.coordination.adapter.output.integration.C5RelativeDateContextTest.RDC05 common V5 adds equal facts and instructions while preserving schema and native input()",
+    "com.meetme.server.coordination.adapter.output.integration.C5RelativeDateContextTest.RDC02 each source uses room timezone rather than UTC and a one day range excludes its end()",
+    "com.meetme.server.coordination.adapter.output.integration.C5RelativeDateContextTest.RDC01 per source frozen reference dates remain distinct across Seoul midnight and a month crossing range()",
+    "com.meetme.server.coordination.adapter.output.integration.C5RelativeDateContextTest.RDC03 source facts sort by input reference and source id independently of native registry order()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T00:00:24.952041+00:00",
+  "evidenceNote": "Synthetic request-only facts: missing timezone-local source/date projection and explicit common-V5 guard; no live model semantic assertion."
+}

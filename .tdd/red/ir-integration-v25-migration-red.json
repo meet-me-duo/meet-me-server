@@ -1,0 +1,66 @@
+{
+  "workItem": "ir-integration-v25-migration-red",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "af6b4dbe1a3eaeb66e9ba036f4dab74a3e07cf7f8e00b826c25e73906ff958d2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "8709089bba89ae5cd0ec25c51548dd57cb9f71416d6d5c4b30778f5c2bb1e0fb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+      "sha256": "5b86f98f2bbce1231d3b3bfbde2c333f0137b6d774f96b491327a9e4904f836b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "ebd34e40ff0f722be7f78cae51c15e1e33ada81dbfa67aea6fa7653f7c431b11"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "8facf2efb01e98a013f419d02c4c424657d5c330f6d3ccc9f2b070a36b35ff68"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrMatchInputPolicyTest",
+    "--tests",
+    "*ScheduleIrMatchSafetyBoundaryTest",
+    "--tests",
+    "*ScheduleIrMatchSafetyExtrasTest",
+    "--tests",
+    "*StrictScheduleIrResponseParserTest",
+    "--tests",
+    "*ScheduleIrIntegrationPostgresTest",
+    "--tests",
+    "*DatabaseMigrationRunnerTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest",
+    "--tests",
+    "*CorePersistenceIntegrationTest",
+    "--tests",
+    "*RecommendationPartialConfirmationMigrationPostgresTest",
+    "--tests",
+    "*ScheduleIrRepositoryPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.V23 legacy data upgrades through V24 into separate typed storage without rewriting existing rows()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest.PC06 V17 to V18 preserves previous confirmations and permits pending two of five selection()",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.blank PostgreSQL migrates exactly twenty-five versions and validates both independent legacy schemas()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T22:36:50.570964Z"
+}

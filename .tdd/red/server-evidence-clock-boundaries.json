@@ -1,0 +1,39 @@
+{
+  "workItem": "server-evidence-clock-boundaries",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ServerEvidenceClockBoundaryTest.kt",
+      "sha256": "4076f192631d1857f47f27a76ee67048c1da1f81647a0f76eeb62a655b6a898d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceClockBoundaryTest",
+    "--tests",
+    "*ServerEvidenceExpansionBoundaryTest",
+    "--tests",
+    "*ServerEvidenceStoredRouteBindingPostgresTest",
+    "--tests",
+    "*ServerEvidenceCatalogWorkloadTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[1] token = \"117:20\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[2] token = \"27:00\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[3] token = \"17:200\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[4] token = \"17:20:005\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[5] token = \"117시\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[6] token = \"7시300분\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[7] token = \"7시30분5\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[8] token = \"1시간\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.[9] token = \"오후 7시간\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceClockBoundaryTest.SECB04 one malformed token does not suppress another independent valid clock()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:12:26.752621+00:00",
+  "evidenceNote": "Independent boundary expectations; actualPG source/route binding mismatches, invalidpartialclock tokens, and valid boundedinternal expansion rejected by legacybytecap."
+}

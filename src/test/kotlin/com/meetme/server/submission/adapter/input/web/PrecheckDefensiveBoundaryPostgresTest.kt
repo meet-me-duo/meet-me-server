@@ -24,6 +24,7 @@ import com.meetme.server.shared.application.port.output.RateLimitDecision
 import com.meetme.server.shared.application.port.output.RateLimitPort
 import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
+import com.zaxxer.hikari.HikariDataSource
 import jakarta.servlet.http.Cookie
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.AfterAll
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.Primary
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.bean.override.mockito.MockitoBean
@@ -58,7 +60,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.postgresql.PostgreSQLContainer
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
+import java.nio.file.attribute.PosixFilePermissions
 import java.security.KeyPairGenerator
+import java.sql.Connection
+import java.sql.ResultSet
 import java.sql.Timestamp
 import java.time.Clock
 import java.time.Duration
@@ -70,6 +78,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -80,6 +89,7 @@ import kotlin.test.assertTrue
 @SpringBootTest(properties = ["meetme.reliability.enabled=false", "meetme.data-retention.enabled=false"])
 @AutoConfigureMockMvc
 @Import(PrecheckDefensiveBoundaryPostgresTest.IsolatedSecurity::class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class PrecheckDefensiveBoundaryPostgresTest {
     @Autowired private lateinit var mvc: MockMvc
 
@@ -288,6 +298,7 @@ class PrecheckDefensiveBoundaryPostgresTest {
         val checkId = UUID.fromString(queued.path("check").path("id").stringValue())
         val executor = Executors.newSingleThreadExecutor()
         val blocker = requireNotNull(jdbc.dataSource).connection
+        val diagnostics = Ps19Diagnostics(json, jdbc.dataSource as? HikariDataSource)
         var future: java.util.concurrent.Future<Boolean>? = null
         ACTION.set { PrecheckProviderResult(PrecheckVerdict.CLEAR, inputTokens = 7, outputTokens = 3, responseBytes = 20) }
         try {
@@ -299,7 +310,7 @@ class PrecheckDefensiveBoundaryPostgresTest {
             jdbc.execute(
                 "CREATE TRIGGER test_precheck_expiry_gate BEFORE INSERT ON submission_versions FOR EACH ROW EXECUTE FUNCTION test_precheck_expiry_gate()",
             )
-            future = executor.submit<Boolean> { worker.runOne() }
+            future = executor.submit<Boolean> { diagnostics.run { worker.runOne() } }
             val pollDeadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10)
             var reachedAcceptedWrite = false
             while (System.nanoTime() < pollDeadline) {
@@ -316,9 +327,19 @@ class PrecheckDefensiveBoundaryPostgresTest {
                 Thread.sleep(10)
             }
             assertTrue(reachedAcceptedWrite, "expiry must advance after the real accepted INSERT reaches the trigger barrier")
+            diagnostics.barrier(blocker)
             NOW.set(START.plusSeconds(2))
-            blocker.createStatement().use { it.execute("SELECT pg_advisory_unlock(19770407)") }
-            assertTrue(requireNotNull(future).get(10, TimeUnit.SECONDS))
+            blocker.createStatement().use {
+                it.execute("SELECT pg_advisory_unlock(19770407)")
+                diagnostics.unlocked(it.resultSet)
+            }
+            try {
+                assertTrue(requireNotNull(future).get(10, TimeUnit.SECONDS))
+            } catch (failure: TimeoutException) {
+                diagnostics.timeout(blocker)
+                throw failure
+            }
+            diagnostics.write("worker-observed")
             assertEquals(1, count("submission_heads"))
             assertEquals(1, count("submission_versions"))
             assertEquals(0, count("submission_batches"))
@@ -356,6 +377,7 @@ class PrecheckDefensiveBoundaryPostgresTest {
             executor.shutdownNow()
             jdbc.execute("DROP TRIGGER IF EXISTS test_precheck_expiry_gate ON submission_versions")
             jdbc.execute("DROP FUNCTION IF EXISTS test_precheck_expiry_gate()")
+            diagnostics.write("cleanup-completed")
         }
     }
 
@@ -539,6 +561,180 @@ class PrecheckDefensiveBoundaryPostgresTest {
         } finally {
             release.countDown()
             executor.shutdownNow()
+        }
+    }
+
+    /** PS19-only metadata; worker outcome is independent of Future cancellation. */
+    private class Ps19Diagnostics(
+        private val mapper: ObjectMapper,
+        private val source: HikariDataSource?,
+    ) {
+        private val started = System.nanoTime()
+        private val worker = AtomicReference<Thread?>()
+        private val outcome = AtomicReference<Map<String, Any>>(emptyMap())
+        private var barrierMetadata: Any = "not_observed"
+        private var unlockMetadata: Any = "not_observed"
+        private var blockerBackend = 0
+        private var workerBackend = 0
+
+        private fun stamp(): Map<String, Any> = mapOf("at" to Instant.now().toString(), "elapsed_nanos" to System.nanoTime() - started)
+
+        fun run(action: () -> Boolean): Boolean {
+            worker.set(Thread.currentThread())
+            outcome.set(mapOf("started" to stamp()))
+            try {
+                return action().also { result -> outcome.updateAndGet { it + mapOf("returned" to stamp(), "result" to result) } }
+            } catch (failure: Throwable) {
+                outcome.updateAndGet { it + mapOf("threw" to stamp(), "exception_type" to failure.javaClass.name) }
+                throw failure
+            } finally {
+                outcome.updateAndGet { it + ("finally_completed" to stamp()) }
+            }
+        }
+
+        fun barrier(connection: Connection) {
+            barrierMetadata =
+                runCatching {
+                    rows(
+                        connection,
+                        """SELECT pid,granted,pid=pg_backend_pid() AS blocker FROM pg_locks
+                        WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database())
+                        AND classid=0 AND objid=19770407 AND objsubid=1""",
+                        4,
+                    ) {
+                        val blocker = it.getBoolean("blocker")
+                        val granted = it.getBoolean("granted")
+                        if (blocker) blockerBackend = it.getInt("pid")
+                        if (!granted) workerBackend = it.getInt("pid")
+                        mapOf("blocker" to blocker, "granted" to granted)
+                    }
+                }.getOrElse { mapOf("exception_type" to it.javaClass.name) }
+        }
+
+        fun unlocked(result: ResultSet?) {
+            unlockMetadata =
+                runCatching { mapOf("at" to stamp(), "released" to (result?.let { it.next() && it.getBoolean(1) })) }
+                    .getOrElse { mapOf("exception_type" to it.javaClass.name) }
+        }
+
+        fun timeout(connection: Connection) {
+            runCatching {
+                val snapshot = snapshot("future-timeout")
+                // Query execution/rows are bounded; a failed socket can still outlast JDBC queryTimeout.
+                snapshot["postgres"] =
+                    runCatching {
+                        mapOf(
+                            "activity" to
+                                rows(
+                                    connection,
+                                    """SELECT pid,state,wait_event_type,wait_event,cardinality(pg_blocking_pids(pid)) AS blockers
+                                FROM pg_stat_activity WHERE datid=(SELECT oid FROM pg_database WHERE datname=current_database())
+                                AND backend_type='client backend' ORDER BY pid LIMIT 16""",
+                                    16,
+                                ) {
+                                    mapOf(
+                                        "role" to role(it.getInt("pid")),
+                                        "state" to it.getString("state"),
+                                        "wait_type" to it.getString("wait_event_type"),
+                                        "wait_event" to it.getString("wait_event"),
+                                        "blocking_backend_count" to it.getInt("blockers"),
+                                    )
+                                },
+                            "locks" to
+                                rows(
+                                    connection,
+                                    """SELECT pid,locktype,mode,granted,fastpath,
+                                (locktype='advisory' AND classid=0 AND objid=19770407 AND objsubid=1) AS fixture_gate
+                                FROM pg_locks WHERE pid IN ($blockerBackend,$workerBackend)
+                                ORDER BY pid,locktype,mode LIMIT 32""",
+                                    32,
+                                ) {
+                                    mapOf(
+                                        "role" to role(it.getInt("pid")),
+                                        "type" to it.getString("locktype"),
+                                        "mode" to it.getString("mode"),
+                                        "granted" to it.getBoolean("granted"),
+                                        "fastpath" to it.getBoolean("fastpath"),
+                                        "fixture_gate" to it.getBoolean("fixture_gate"),
+                                    )
+                                },
+                        )
+                    }.getOrElse { mapOf("exception_type" to it.javaClass.name) }
+                emit("future-timeout", snapshot)
+            }
+        }
+
+        private fun role(pid: Int): String =
+            when (pid) {
+                blockerBackend -> "blocker"
+                workerBackend -> "accepted_insert_waiter"
+                else -> "other"
+            }
+
+        private fun rows(
+            connection: Connection,
+            sql: String,
+            limit: Int,
+            read: (ResultSet) -> Map<String, Any?>,
+        ): List<Map<String, Any?>> =
+            connection.createStatement().use { statement ->
+                statement.queryTimeout = 1
+                statement.maxRows = limit
+                statement.executeQuery(sql).use { result -> buildList { while (size < limit && result.next()) add(read(result)) } }
+            }
+
+        fun write(stage: String) {
+            runCatching { emit(stage, snapshot(stage)) }
+        }
+
+        private fun snapshot(stage: String): MutableMap<String, Any?> =
+            linkedMapOf(
+                "case" to "PS19",
+                "stage" to stage,
+                "captured" to stamp(),
+                "worker" to outcome.get(),
+                "barrier" to barrierMetadata,
+                "unlock" to unlockMetadata,
+                "worker_thread" to
+                    worker.get()?.let { thread ->
+                        mapOf(
+                            "state" to thread.state.name,
+                            "alive" to thread.isAlive,
+                            "interrupted" to thread.isInterrupted,
+                            "stack" to thread.stackTrace.take(32).map { it.toString() },
+                        )
+                    },
+                "pool" to
+                    runCatching {
+                        source?.hikariPoolMXBean?.let {
+                            mapOf("active" to it.activeConnections, "idle" to it.idleConnections, "waiting" to it.threadsAwaitingConnection)
+                        }
+                    }.getOrElse { mapOf("exception_type" to it.javaClass.name) },
+            )
+
+        private fun emit(
+            stage: String,
+            snapshot: Map<String, Any?>,
+        ) {
+            // At most two daemon writes per PS19 invocation; none run inside the timed worker.
+            // Missing files never establish worker completion. No caller waits for filesystem I/O.
+            Thread({
+                runCatching {
+                    val bytes = mapper.writeValueAsBytes(snapshot)
+                    if (bytes.size > 32768) return@runCatching
+                    val directory = Path.of("build", "test-diagnostics", "ps19")
+                    Files.createDirectories(directory, PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------")))
+                    Files
+                        .newByteChannel(
+                            directory.resolve("$stage-${System.nanoTime()}.json"),
+                            setOf(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE),
+                            PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rw-------")),
+                        ).use { channel ->
+                            val buffer = java.nio.ByteBuffer.wrap(bytes)
+                            repeat(8) { if (buffer.hasRemaining()) channel.write(buffer) }
+                        }
+                }
+            }, "ps19-diagnostic-writer").apply { isDaemon = true }.start()
         }
     }
 

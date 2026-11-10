@@ -34,6 +34,18 @@ interface AiHttpExperimentWireHook {
 
     fun headersEmitted(call: AiHttpExperimentCall) {}
 
+    fun requestObserved(
+        call: AiHttpExperimentCall,
+        endpointIdentifier: String,
+        callTimeoutNanos: Long,
+    ) {}
+
+    fun responseObserved(
+        call: AiHttpExperimentCall,
+        httpStatus: Int,
+        requestIds: Map<String, String>,
+    ) {}
+
     fun callFinished(
         call: AiHttpExperimentCall,
         httpStatus: Int?,
@@ -41,7 +53,7 @@ interface AiHttpExperimentWireHook {
     ) {}
 }
 
-/** Opaque identities only. Never export requests, payload/profile fingerprints, URLs or credentials. */
+/** Opaque identities; explicit metadata callbacks exclude request bodies and credential headers. */
 data class AiHttpExperimentAdmission(
     val opaqueId: String,
     val operation: AiPhysicalOperation,
@@ -142,6 +154,22 @@ internal class AiHttpExperimentListenerFactory(
             ) {
                 original.requestHeadersEnd(call, request)
                 hook.headersEmitted(trace.metadata.get())
+                try {
+                    hook.requestObserved(
+                        trace.metadata.get(),
+                        request.url
+                            .newBuilder()
+                            .username("")
+                            .password("")
+                            .query(null)
+                            .fragment(null)
+                            .build()
+                            .toString(),
+                        call.timeout().timeoutNanos(),
+                    )
+                } catch (_: Exception) {
+                    // Test-only recording failure is audited separately; never replace the actual exchange.
+                }
             }
 
             override fun responseHeadersEnd(
@@ -150,6 +178,15 @@ internal class AiHttpExperimentListenerFactory(
             ) {
                 original.responseHeadersEnd(call, response)
                 trace.httpStatus = response.code.takeIf { it in 100..599 }
+                try {
+                    val ids =
+                        listOf("x-request-id", "x-goog-request-id", "request-id", "openai-request-id")
+                            .mapNotNull { name -> response.header(name)?.takeIf { it.length in 1..256 }?.let { name to it } }
+                            .toMap()
+                    hook.responseObserved(trace.metadata.get(), response.code, java.util.Collections.unmodifiableMap(ids))
+                } catch (_: Exception) {
+                    // Metadata is opt-in and cannot replace the HTTP result or trigger another request.
+                }
             }
 
             override fun callEnd(call: Call) {

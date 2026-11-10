@@ -20,6 +20,9 @@ __pycache__/
 /.codex/tdd-evidence/
 /.scratch/
 
+# Private experiment/session history only; keep reusable evaluation tools tracked.
+/.codex/evaluation/local/
+
 !gradle/wrapper/gradle-wrapper.jar
 
 # Local-only records for this unpublished change; existing tracked history is retained.

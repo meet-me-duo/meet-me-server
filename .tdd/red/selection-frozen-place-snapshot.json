@@ -1,0 +1,32 @@
+{
+  "workItem": "selection-frozen-place-snapshot",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/TravelPlaceSelectionSnapshotPostgresTest.kt",
+      "sha256": "35ca1a01bda212e9dc23976697b9b67964e724ff3ca74e097c0215acc304cf14"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceSelectionSnapshotPostgresTest",
+    "--tests",
+    "*TravelPlaceSummaryHttpPostgresTest",
+    "--tests",
+    "*LiveEvaluationSelectionBoundaryContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.TravelPlaceSelectionSnapshotPostgresTest.TPS05 selection snapshot pins the real route fingerprint and unchanged native source without publishing()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSelectionSnapshotPostgresTest.[1] isolation = 2",
+    "com.meetme.server.coordination.application.service.TravelPlaceSelectionSnapshotPostgresTest.[2] isolation = 4",
+    "com.meetme.server.coordination.application.service.TravelPlaceSelectionSnapshotPostgresTest.[1] isolation = 2",
+    "com.meetme.server.coordination.application.service.TravelPlaceSelectionSnapshotPostgresTest.[2] isolation = 4"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T16:39:10.000730+00:00",
+  "evidenceNote": "Actual PostgreSQL/AOP readonlyRR snapshots before writer changes; existing GET guards still pass. Real storage/reader responses are not stubbed."
+}

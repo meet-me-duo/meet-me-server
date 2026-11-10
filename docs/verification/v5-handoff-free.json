@@ -1,0 +1,65 @@
+{
+  "status": "VERIFIED_WIP_HANDOFF_PREPUBLICATION_SNAPSHOT",
+  "baseCommit": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "branchName": "handoff/v5-wip-20261109",
+  "scope": "V5_WIP_SOURCE_HANDOFF_NOT_NORMALIZATION_OR_DEPLOYMENT",
+  "verification": {
+    "compileMain": "PASS",
+    "compileTests": "PASS",
+    "assemble": "PASS",
+    "ktlintCheck": "PASS",
+    "suites": {
+      "c5HttpCandidateTest": {
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": "5.104",
+        "junitSha256": "086f0275c893b2da0864efc7702eeefb43f36fcb47267a9c73a7ec8325030f9b"
+      },
+      "test": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": "28.56",
+        "junitSha256": "dbd96e962304dbac5706366708654aa32029cca242e2ba4ae69624c5cdd55670"
+      }
+    },
+    "newProviderCalls": 0,
+    "newAdmissions": 0,
+    "newReservations": 0
+  },
+  "codeSourceSha256": "708d71294dd73a9df8c513ca83f00d16fd909530aa38745feb89e4f270b79c7b",
+  "codeHashAlgorithm": "sorted src files plus build.gradle.kts; for each relative UTF8 path,NUL,raw SHA256 digest; hash concatenation",
+  "localBuildJarSha256": {
+    "meet-me-server-0.0.1-SNAPSHOT-plain.jar": "74a691d8005ac6a9fea9bd58a40535796592f32ac3aa23395691b2bbc8039d22",
+    "meet-me-server-0.0.1-SNAPSHOT.jar": "5b3fe42bd519df5e2d206ca50ce3cd72285015fdcd8f647fb78ad92da21d9d04"
+  },
+  "publicFixtureSha256": "e5c93479db6af81f35ffa0e68b975e4e8507c1cc7bfec0505a08f1ad1e3af377",
+  "privacy": {
+    "includedPaths": 305,
+    "exactKnownPrivateInputMatches": 0,
+    "exactActiveSecretMatches": 0,
+    "independentSourceReview": "PASS",
+    "originalPrivateEvidenceIncluded": false,
+    "baseWasAlreadyOnRemote": true,
+    "qualification": "targeted scan and independent review, not a universal semantic PII proof"
+  },
+  "main401MatchesIsolatedCandidate": true,
+  "portabilityChanges": [
+    "public common schema/prompt classpath reference; no participant data",
+    "canonical current project build/classes origin fence with main/test distinction"
+  ],
+  "formatOnlyChanges": [
+    "split long boolean line",
+    "indent synthetic fixture map accessor"
+  ],
+  "lintCorrection": "Earlier low-level lint task completion was not aggregate ktlintCheck PASS; fresh checkout found two formatting issues, corrected here only; original evidence remains unchanged.",
+  "fullGatePassed": false,
+  "liveAPIQualityLatencyVerified": false,
+  "newBuildArtifactJarsIncluded": false,
+  "remoteWritesAtVerification": 0,
+  "newHandoffCommitCreatedAtVerification": false,
+  "publicationVerification": "Read the remote branch ref/commit; this file records the pre-publication verification snapshot."
+}

@@ -1,0 +1,68 @@
+{
+  "workItem": "v31-current-publication-regressions",
+  "sourceRevision": "80c819a060b07ff24bd6fa23cc29d774315fe1ef",
+  "testFiles": [
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "e14b6795a22f64a0efaf4a6f262223d777d34744a98a78f9a74cf25696d105c1"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "224e8dd43e56a207777589644627f6aba0582d3d72b672fd72635ed3384df42d"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "e7536dcc36d074e7091dbc72f40f2c82abd875057b14aa4b1c8e02ea48c3c4a1"
+    },
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "e7de9310072909acb8ccb2a4659e921bd71c866be4018cf9d6c19f38b8d5c499"
+    },
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "44e756d26bf538791dc784a6d6e2dd188cc9fa62d9bec1207f8e4ea57024db7c"
+    },
+    {
+      "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+      "sha256": "6c0a892a99be02c0d96e2a1af639ba0b839194e5dcbddcc96b2e8b53b18ee4e9"
+    },
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "913c9f96a7f97c6ccd9915be12d8f4cda761083f7d02226c21fad9bc7b8fd46c"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "9ce905ab699ea657b51999e139be961f98e60024081ae527b939c14cd9480240"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/v18-release-catalog.test.cjs",
+    ".github/scripts/v19-review-release-catalog.test.cjs",
+    ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+    ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+    ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+    ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+    ".github/scripts/ci-job-boundaries.test.cjs"
+  ],
+  "failedTests": [
+    "Issue178 Deployment Contracts preserves all 16 original checks and adds only the exact V23 and V31 catalog checks",
+    "Issue178 executes each original command exactly once with the boundary and additive V23 plus V31 checks",
+    "V18C01 current publisher advances to exact approved V31 while V18 reader fixtures remain frozen",
+    "V18C06 V18 SQL changes only its checksum and schema fingerprint while V1 through V17 stay immutable",
+    "V18C08 current source publishes exact real V31 without changing historical V18 reader fixtures",
+    "V19R01 current publisher retains V19 in the exact latest inventory with independent checksums and both fingerprints",
+    "V19R07 V19 bytes change only the new row and schema fingerprint while V1 through V18 and guard remain unchanged",
+    "V20R01 actual candidate publisher retains V20 in exact V31 and independently binds CRC SQL SHA and guard SHA",
+    "V20R07 changing only new migration bytes changes its CRC and schema fingerprint while historical bytes and guard stay fixed",
+    "V21C01 current publication retains V21 in all thirty-one real SQL files and exact independent checksums",
+    "V22C01 current publication retains V22 in all thirty-one actual SQL CRCs and independent schema SHA",
+    "V22C06 actual V22 bytes alter only its CRC and schema binding and stale packaged bytes are rejected",
+    "V23C01 current publication binds exactly all thirty-one actual SQL CRCs and independent schema SHA",
+    "V23C06 V31 publication changes only the mutated V23 CRC while historical V23 packages reject stale bytes"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T08:34:39.410215+00:00",
+  "evidenceNote": "Actual offline RED: 46 tests, 32 pass controls, 14 expected assertion failures, zero cancelled/skipped/todo. Current public source publication fixtures now require the exact named SQL inventory V1..V31; the old publisher rejects it. CI boundary expects one unconditional V31 test step directly after V23; the old workflow has only twenty steps/commands. V17..V23 historical release, reader, transition and package contracts and the frozen CI original fixture remain unchanged. Full local log: .codex/tdd-evidence/v31-current-publication-regressions.log. No production Python or workflow source edits by test designer."
+}

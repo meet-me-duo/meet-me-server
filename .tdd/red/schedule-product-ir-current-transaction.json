@@ -1,0 +1,25 @@
+{
+  "workItem": "schedule-product-ir-current-transaction",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "cea2fa9b50e34a4f818a787833c8f7fa4de689d2fd94fbae4acb68ecffa8db7b"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrRepositoryPostgresTest.failure while writing source references rolls back the envelope and all references*"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.failure while writing source references rolls back the envelope and all references()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T18:27:31.716328Z"
+}

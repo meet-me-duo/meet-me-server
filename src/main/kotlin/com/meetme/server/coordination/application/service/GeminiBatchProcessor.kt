@@ -7,6 +7,7 @@ import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
 import com.meetme.server.coordination.application.port.output.CoordinationAttemptRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
 import com.meetme.server.coordination.application.port.output.JitterPort
 import com.meetme.server.coordination.application.port.output.MonotonicTimePort
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchRequest
@@ -21,6 +22,7 @@ import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.RetryDelayPort
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.CoordinationStatus
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.shared.application.port.output.AiBudgetExecution
 import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
 import com.meetme.server.shared.application.port.output.AiDispatchFingerprints
@@ -65,8 +67,23 @@ class GeminiBatchProcessor(
     private val prechecks: com.meetme.server.precheck.application.port.output.PrecheckRepository? = null,
     private val transportObservations: ParserTransportObservationPort? = null,
     private val dispatchMode: AiDispatchModePort? = null,
+    private val selectedDispatcher: SelectedFinalAnalysisDispatchService? = null,
+    private val finalAnalysisRoutes: FinalAnalysisRouteRegistry? = null,
 ) {
     fun process(batchId: SubmissionBatchId) {
+        if (selectedDispatcher?.dispatchIfSelected(batchId) == true) return
+        val selected =
+            finalAnalysisRoutes
+                ?.let { registry ->
+                    coordinationRunRepository.findByBatchId(batchId)?.let { registry.find(it.id.value) }
+                }?.choice
+        if (selected is FinalAnalysisRouteChoice.DslContextV2 ||
+            selected is FinalAnalysisRouteChoice.DslApprovedTermsV3 ||
+            selected is FinalAnalysisRouteChoice.DslContextModeV4 ||
+            selected is FinalAnalysisRouteChoice.DslStructuralV5
+        ) {
+            throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)
+        }
         val physicalMode = dispatchMode?.isEnabled() == true
         if (physicalMode &&
             (invocationRepository == null || fallbackParser == null)
@@ -325,6 +342,7 @@ class GeminiBatchProcessor(
                 return
             }
             fallbackEligible = true
+            if (failure.kind == ParserFailureKind.TIMEOUT) break
             if (index == MAX_ATTEMPTS - 1) break
             val upper = 1_000L shl index
             val retryAfter = failure.retryAfterMillis?.takeIf { it >= 0 }
@@ -398,6 +416,7 @@ class GeminiProcessingPersistenceService(
     private val attemptRepository: CoordinationAttemptRepository,
     private val clock: Clock,
     private val invocationRepository: AnalysisInvocationRepository? = null,
+    private val finalAnalysisRoutes: com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry? = null,
 ) {
     @Transactional
     fun claimInvocation(
@@ -410,6 +429,7 @@ class GeminiProcessingPersistenceService(
         val deadlineAt = startedAt.plus(remaining.coerceAtMost(GeminiBatchProcessor.TOTAL_TIMEOUT))
         val (_, current) = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run) ?: return null
         if (current.version != run.version || current.status != CoordinationStatus.STRUCTURING) return null
+        if (!selectLegacyRoute(current)) return null
         val repository = requireNotNull(invocationRepository)
         val previous = repository.findByRunVersion(current.id, current.version)
         if (previous != null) {
@@ -553,11 +573,27 @@ class GeminiProcessingPersistenceService(
         ) {
             return null
         }
+        if (!selectLegacyRoute(current)) return null
         if (current.status == CoordinationStatus.STRUCTURING) return current
         val next = current.startStructuring()
         coordinationRunRepository.update(next)
         roomRepository.update(room.transition())
         return next
+    }
+
+    /** Caller already holds room -> run locks, so legacy admission races selection atomically. */
+    private fun selectLegacyRoute(run: CoordinationRun): Boolean {
+        val routes = finalAnalysisRoutes ?: return true
+        val selected = routes.find(run.id.value)
+        if (selected != null && selected.choice != com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice.Legacy) {
+            return false
+        }
+        return routes
+            .freeze(
+                run.id.value,
+                run.version,
+                com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice.Legacy,
+            ).choice == com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice.Legacy
     }
 
     @Transactional

@@ -41,7 +41,7 @@ internal object ProviderFailureClassifier {
             normalizedCode in RATE_CODES || normalizedType == "RATE_LIMIT_ERROR" -> ParserFailureKind.RATE_LIMIT
             httpStatus == 429 -> ParserFailureKind.QUOTA
             httpStatus == 408 || httpStatus == 504 -> ParserFailureKind.TIMEOUT
-            httpStatus in setOf(500, 502, 503) -> ParserFailureKind.SERVER
+            httpStatus in setOf(500, 502, 503, 529) -> ParserFailureKind.SERVER
             httpStatus in 500..599 -> ParserFailureKind.INVALID_REQUEST
             httpStatus in 400..499 -> ParserFailureKind.INVALID_REQUEST
             else -> ParserFailureKind.INVALID_RESPONSE

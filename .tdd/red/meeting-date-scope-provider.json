@@ -1,0 +1,33 @@
+{
+  "workItem": "meeting-date-scope-provider",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SearchScopedEvidenceProviderContractTest.kt",
+      "sha256": "1573761855a83511c0d893cfafe08a2631b5ec8cc01ff034570afc2882cf32a6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingDateScopePolicyTest",
+    "--tests",
+    "*SearchScopedEvidenceProviderContractTest"
+  ],
+  "failedTests": [
+    "SDP07 missing or unsupported date scope marker cannot select an unguarded legacy response reader()",
+    "SDP02 schema date definition bounds generation and survives the shared finite provider wire projection()",
+    "SDP06 own explicit numerical absolute date outside search is retained without calendar remapping()",
+    "SDP04 another participant explicit outside date cannot authorize relative only input in any scalar date atom()",
+    "SDP03 declared relative date within search is preserved instead of returning to the input reference month()",
+    "SDP08 archived reference generation one remains byte stable and retains its original date acceptance()",
+    "SDP01 new request anchors relative month context to search while preserving actual input dates and sources()",
+    "SDP05 RAW_SCOPE timestamps cannot bypass the per participant meeting date boundary()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T03:33:56.867857+00:00",
+  "evidenceNote": "Independent generic scope/ownership/provider schema tests compile; all fail on explicit missing behavior skeletons."
+}

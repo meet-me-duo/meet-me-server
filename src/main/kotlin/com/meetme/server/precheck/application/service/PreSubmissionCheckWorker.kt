@@ -6,6 +6,7 @@ import com.meetme.server.precheck.application.port.output.PrecheckProviderExcept
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
 import com.meetme.server.precheck.application.port.output.PrecheckRepository
+import com.meetme.server.precheck.application.port.output.PrecheckResponseSizeContract
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
 import com.meetme.server.shared.application.port.output.AiBudgetExecution
 import com.meetme.server.shared.application.port.output.AiBudgetExecutionKind
@@ -117,14 +118,25 @@ class PreSubmissionCheckWorker(
         fun size(text: String) = text.codePointCount(0, text.length)
 
         fun invalid(): Nothing = throw PrecheckProviderException("INVALID_RESPONSE")
+        val lunaSizes = provider.responseSizeContract() == PrecheckResponseSizeContract.LUNA_64_KIB_ENVELOPE_16_KIB_PAYLOAD
+        val sizes =
+            if (lunaSizes) {
+                PrecheckResponseSizeContract.LUNA_64_KIB_ENVELOPE_16_KIB_PAYLOAD
+            } else {
+                PrecheckResponseSizeContract.LEGACY_16_KIB
+            }
+        val envelopeBytes = result.responseBytes
+        val payloadBytes = result.responsePayloadBytes
         if (!evidenceProtocol && result.verdict == PrecheckVerdict.UNRESOLVED) invalid()
         if (result.unresolvedReason?.let { it.isBlank() || size(it) > 64 || it.contains('\u0000') } == true) invalid()
         if (result.inputTokens?.let { it < 0 } == true ||
             result.outputTokens?.let { it < 0 || it > 2048 } == true ||
-            result.responseBytes?.let { it < 0 || it > 16384 } == true
+            envelopeBytes?.let { it < 0 || it > sizes.maximumEnvelopeBytes } == true ||
+            payloadBytes?.let { it < 0 || it > sizes.maximumPayloadBytes || envelopeBytes == null || it > envelopeBytes } == true
         ) {
             invalid()
         }
+        if (lunaSizes && (envelopeBytes != null || result.verdict == PrecheckVerdict.NEEDS_CHOICE) && payloadBytes == null) invalid()
         if (result.verdict != PrecheckVerdict.NEEDS_CHOICE) {
             if (result.prompt != null || result.sourceExcerpt != null || result.choices.isNotEmpty()) invalid()
             return

@@ -1,0 +1,36 @@
+{
+  "workItem": "service-route-policy",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/FinalAnalysisRoutePolicyPostgresTest.kt",
+      "sha256": "64cd2539c7b20651ecbe3162f830cb3ecbe50f3ec4eedc3ba1086d99bf237401"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/FinalAnalysisRouteTestFixture.kt",
+      "sha256": "41f27ed353516da5bd0447d16bdc4618553024918315591501a9016f190dc29f"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest#FARP-P02 matching fingerprint does not make unsafe stored eligibility valid()",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest#[1] includeExplicit = false",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest#[2] includeExplicit = true",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest#[1] selection = \"EXPLICIT\"",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest#[2] selection = \"INFERRED\"",
+    "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest#[3] selection = \"EXPLICIT_AND_INFERRED\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T10:53:47.477926+00:00"
+}

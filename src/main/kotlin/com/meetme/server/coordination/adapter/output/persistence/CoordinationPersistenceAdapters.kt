@@ -332,6 +332,25 @@ class KomapperOutboxRepository(
                     .firstOrNull()
             }?.let(PersistenceMappers::toDomain)
 
+    override fun findSelectedMatchingRetryEvents(
+        runId: CoordinationRunId,
+        matchingRunVersion: Long,
+    ): List<OutboxEvent> {
+        val ids =
+            jdbcTemplate.query(
+                """
+                SELECT id FROM outbox_events WHERE aggregate_type = 'CoordinationRun' AND aggregate_id = ?
+                    AND event_type = 'SubmissionBatchMatchingRequested' AND payload->>'matching_run_version' = ?
+                ORDER BY id LIMIT 2
+                """.trimIndent(),
+                { rs, _ -> OutboxEventId(rs.getObject("id", UUID::class.java)) },
+                runId.value,
+                matchingRunVersion.toString(),
+            )
+        // A disappearing row is an integrity failure, never permission to select the remaining event.
+        return ids.map { checkNotNull(findById(it)) { "Matching retry event disappeared" } }
+    }
+
     override fun existsPending(
         aggregateId: UUID,
         eventType: String,
@@ -524,6 +543,39 @@ class KomapperOutboxRepository(
 class JdbcCoordinationAttemptRepository(
     private val jdbcTemplate: JdbcTemplate,
 ) : CoordinationAttemptRepository {
+    override fun findById(id: UUID): CoordinationAttempt? =
+        jdbcTemplate.query("SELECT * FROM coordination_attempts WHERE id = ?", attemptMapper, id).singleOrNull()
+
+    override fun findLatestByInvocation(invocationId: UUID): CoordinationAttempt? =
+        jdbcTemplate
+            .query(
+                "SELECT * FROM coordination_attempts WHERE invocation_id = ? ORDER BY attempt_number DESC LIMIT 1",
+                attemptMapper,
+                invocationId,
+            ).singleOrNull()
+
+    private val attemptMapper =
+        org.springframework.jdbc.core.RowMapper { rs, _ ->
+            CoordinationAttempt(
+                id = rs.getObject("id", UUID::class.java),
+                coordinationRunId = CoordinationRunId(rs.getObject("coordination_run_id", UUID::class.java)),
+                attemptNumber = rs.getInt("attempt_number"),
+                startedAt = rs.getTimestamp("started_at").toInstant(),
+                finishedAt = rs.getTimestamp("finished_at")?.toInstant(),
+                failureKind = rs.getString("failure_kind"),
+                inputTokens = rs.getObject("input_tokens", java.lang.Long::class.java)?.toLong(),
+                outputTokens = rs.getObject("output_tokens", java.lang.Long::class.java)?.toLong(),
+                responseBytes = rs.getObject("response_bytes", java.lang.Integer::class.java)?.toInt(),
+                estimatedCostUsd = rs.getBigDecimal("estimated_cost_usd"),
+                provider =
+                    com.meetme.server.coordination.application.port.output.AnalysisProvider
+                        .valueOf(rs.getString("provider")),
+                model = rs.getString("model"),
+                policyVersion = rs.getString("policy_version"),
+                invocationId = rs.getObject("invocation_id", UUID::class.java),
+            )
+        }
+
     override fun insert(attempt: CoordinationAttempt) {
         jdbcTemplate.update(
             """

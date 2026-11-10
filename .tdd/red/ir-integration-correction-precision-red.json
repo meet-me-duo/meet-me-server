@@ -1,0 +1,35 @@
+{
+  "workItem": "ir-integration-correction-precision-red",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/ScheduleIrCorrectionSafetyTest.kt",
+      "sha256": "f641248e542c99c465d4a26b803e1dddb856df8c4e0ef637836cd02bfb5f4355"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrIntegrationPostgresTest.kt",
+      "sha256": "e0b33a14cda81b7c8d2cebe38e37795ec1b18566390c651be848aade760f5a4e"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrCorrectionSafetyTest",
+    "--tests",
+    "*ScheduleIrIntegrationPostgresTest.prepared nanosecond identity*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.matching.ScheduleIrCorrectionSafetyTest.C02 withheld positive correction cannot reopen a superseded negative target through independent availability()",
+    "com.meetme.server.coordination.domain.matching.ScheduleIrCorrectionSafetyTest.C01 missing place branch protects its time correction target without erasing independent times()",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.prepared nanosecond identity survives JSON fresh reads and replay while SQL timestamp is explicitly truncated()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-11-04T22:52:36.535727Z"
+}

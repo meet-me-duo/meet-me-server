@@ -1,0 +1,33 @@
+{
+  "workItem": "evaluation-case-links",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": ".codex/evaluation/test_analysis_flow.py",
+      "sha256": "ffd3677000f622956ecb24bfbd4fcb75b7398cd8391af7cc956c0186a9c1d567"
+    }
+  ],
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    ".codex/evaluation",
+    "-p",
+    "test_analysis_flow.py",
+    "-v"
+  ],
+  "failedTests": [
+    "AnalysisFlowCaseLinksTest.test_valid_linked_v5_case_preserves_all_original_input_and_answer_text",
+    "AnalysisFlowCaseLinksTest.test_room_and_participant_ownership_must_match_exactly",
+    "AnalysisFlowCaseLinksTest.test_duplicate_or_multiple_rooms_and_duplicate_participant_ids_are_rejected",
+    "AnalysisFlowCaseLinksTest.test_one_explicit_v5_room_requires_nonblank_ids_and_raw_participant_input",
+    "AnalysisFlowCaseLinksTest.test_precommitted_single_question_policy_requires_two_nonblank_answer_fields",
+    "AnalysisFlowCaseLinksTest.test_generated_synthetic_host_display_name_accepts_50_characters_and_rejects_51",
+    "AnalysisFlowCaseLinksTest.test_prepare_rejects_mismatched_case_before_manifest_or_execution_metadata"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T03:04:38.987097+00:00",
+  "evidenceNote": "Independent synthetic preflight tests fail on missing validator and prepare allowing mismatched answer room; no provider calls or Kotlin runtime changes."
+}

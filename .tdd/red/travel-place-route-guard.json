@@ -1,0 +1,30 @@
+{
+  "workItem": "travel-place-route-guard",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TravelPlaceUnsupportedRouteTest.kt",
+      "sha256": "69b59237580d195a86658f69395e0bfbdbbddbe1915ddcf3dba352415994e548"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceSummaryHttpPostgresTest",
+    "--tests",
+    "*TravelPlaceDurationOverflowTest",
+    "--tests",
+    "*TravelPlaceUnsupportedRouteTest",
+    "--tests",
+    "*TravelPlaceDurationTokenTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.TravelPlaceUnsupportedRouteTest.TPW05 Gemini V2 works with flag off but rejects place candidate before legacy early return()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T15:27:54.585644+00:00",
+  "evidenceNote": "Independent native numeric/route boundary RED. HTTP fixture-only version repair rechecked against the original generic-only summary behavior; exact implemented renderer source restored immediately. Full local log: travel-place-added-valid-red.log."
+}

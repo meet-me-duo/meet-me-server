@@ -1,0 +1,20 @@
+{
+  "workItem": "schedule-dsl-quarantined-preference",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslQuarantinedPreferenceIsolationTest.kt",
+      "sha256": "c96d52d1371683be7b3b5d6a7c46479f766332f3e224d9fbccd976c2da3a9c67"
+    }
+  ],
+  "command": [
+    "python",
+    "/workspace/schedule-diagnosis-evidence/run-new-red.py"
+  ],
+  "failedTests": [
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslQuarantinedPreferenceIsolationTest', methodName = 'QP01 invalid PLACE preference stays quarantined without erasing verified independent REMOTE time', methodParameterTypes = 'java.lang.String']",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslQuarantinedPreferenceIsolationTest', methodName = 'QP03 preference isolation cannot union epistemic branches and must retain explicit branch selection', methodParameterTypes = 'java.lang.String']"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T05:52:58.734471Z"
+}

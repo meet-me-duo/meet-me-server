@@ -1,0 +1,63 @@
+{
+  "workItem": "ir2-extra-safety-red",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrV2MeaningPostgresTest.kt",
+      "sha256": "8f370f748d290b951120a7f25d516435df9e9b6f057e550c5ff9644949f43d02"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/ScheduleIrV2AlternativeCorrectionSafetyTest.kt",
+      "sha256": "7ff1cefa778cb0f8f8d68d610c602208be7f1fc3f150faaf329bc9adc167eb07"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/ScheduleIrV2IndependentPreferenceSafetyTest.kt",
+      "sha256": "e476dc48293223f18e51d2336a0530aa9045ebe8cd5adcaab0505e84932bd8c2"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrV2MeaningPostgresTest",
+    "--tests",
+    "*ScheduleIrV2AlternativeCorrectionSafetyTest",
+    "--tests",
+    "*ScheduleIrV2IndependentPreferenceSafetyTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.matching.ScheduleIrV2IndependentPreferenceSafetyTest.V2P01 uncertain correction of nonprecise preference cannot erase independent precise preference credit()",
+    "com.meetme.server.coordination.domain.matching.ScheduleIrV2IndependentPreferenceSafetyTest.V2P02 uncertain correction of precise preference withholds target credit but preserves independent coincident credit()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[1] defect = \"run_version\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[2] defect = \"source_revision\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[3] defect = \"response_contract\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[4] defect = \"full_policy\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G03 an eligible known positive correction is not withheld merely because numeric precision is absent()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G07 V1 and V2 coexist on separate runs and wrong semantic readers reject with matching context()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[1] field = \"semantic\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[2] field = \"format\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G06 same run context policy and selection cannot switch only semantic and response contract identities()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G10 failed source reference write cannot leave a V2 envelope or erase the prepared binding()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[1] name = \"AVAILABLE\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[2] name = \"PREFERRED\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[1] name = \"AVAILABLE\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.[2] name = \"PREFERRED\"",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G11 consume joins the caller transaction while independently prepared binding survives rollback()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G04 eligibility can withhold calculation but cannot rewrite stored effect interpretation or resolution()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G12 V1 prepared identity cannot switch to V2 with identical context policy and selection()",
+    "com.meetme.server.coordination.application.service.ScheduleIrV2MeaningPostgresTest.V2G09 failed calculation preserves prepared semantic selection and rolls back consumed IR2()",
+    "com.meetme.server.coordination.domain.matching.ScheduleIrV2AlternativeCorrectionSafetyTest.V2A02 unselected preference correction cannot cut hard availability at the preference target()",
+    "com.meetme.server.coordination.domain.matching.ScheduleIrV2AlternativeCorrectionSafetyTest.V2A01 unselected positive correction of nonprecise positive target cannot globally erase independent Friday()"
+  ],
+  "expectedFailureClassification": "Compiled synthetic fixtures reach missing IR2 behavior (kotlin.NotImplementedError), including wrapped assertion failures; no setup/compile/fixture failures.",
+  "recordedAt": "2026-11-05T00:11:37.327880+00:00",
+  "acceptedTests": 22,
+  "errors": 0,
+  "skipped": 0
+}

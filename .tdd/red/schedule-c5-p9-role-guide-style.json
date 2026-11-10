@@ -1,0 +1,26 @@
+{
+  "work_item": "schedule-c5-p9-role-guide-style",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f + preserved P9 dirty-source manifest",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslRoleGuideContractTest.kt",
+      "sha256": "3dcbec6f19603935e1f6ea38a649542fc69e3043d2f25c61e245ddd4adf33f62"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-p9-role-signatures-20261107/role-guide-valid-mutant.init.gradle",
+    "roleGuideMutation"
+  ],
+  "failed_tests": [
+    "RG01 program description explains recursive root effect and operand roles with compact signatures()"
+  ],
+  "expected_failure_classification": "Intentional wrong EXCEPT role instruction in isolated compiled overlay: RG01 assertion caught; final test style tokens/inputs/expectations identical to initial RED. Wrapper post-test XML collector failed, raw task/XML preserved.",
+  "recorded_at": "2026-11-07T13:27:41.583046+00:00"
+}

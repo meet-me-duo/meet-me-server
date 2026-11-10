@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.mock.web.MockHttpServletResponse
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
@@ -28,6 +29,7 @@ import java.util.UUID
 // Independent issue #92 public-contract fixtures. Only synthetic DB data; schedulers and paid parsing are disabled.
 @SpringBootTest
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 abstract class CorrectionRoundPostgresFixture {
     @Autowired protected lateinit var mvc: MockMvc
 

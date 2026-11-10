@@ -1,0 +1,47 @@
+{
+  "workItem": "schedule-dsl-preference-and-no-place",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslNoPlaceMeetingModeTest.kt",
+      "sha256": "375632ee51a8cdb6e76a01f1c09d9aefe5a065161d30b40d7c3725015a62479f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslOfflineEntryPointTest.kt",
+      "sha256": "84402e11c2a01659cda6837870e2dbf168b42561b499074f1b41f9b2ab2ba263"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslContextOfflineEntryPointTest.kt",
+      "sha256": "b595c04aa5cd19ca7692f6f2c88ec50dda8dd958dffc7ba1a80102bda6d0da13"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslNoPlaceWorkerPostgresTest.kt",
+      "sha256": "65f5f1e29125679c023118d1c72fd8fe8589d4614d0f6308925f82f33155e74d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslRejectedPreferenceStoragePostgresTest.kt",
+      "sha256": "fad92f0637cd0aba8fb2f7f5a99da3007f1b4d1cc7d146cf11f6afc05a1da8a9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslPreferenceIsolationProofControlTest.kt",
+      "sha256": "3609eae25a863b42d81349c459ecddf76ff4c68782a68dea4be3141a70a18629"
+    }
+  ],
+  "command": [
+    "python",
+    "/workspace/schedule-diagnosis-evidence/run-final-formatted-baseline-red.py"
+  ],
+  "failedTests": [
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextOfflineEntryPointTest', methodName = 'CTXC04 context no-place IN_PERSON computes its own mode without changing native meaning', methodParameterTypes = '']",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslNoPlaceMeetingModeTest', methodName = 'NPM01 time-only inputs recommend their actual meeting modes without invented place or unverified-place flags', methodParameterTypes = 'java.lang.String']",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslNoPlaceMeetingModeTest', methodName = 'NPM02 four synthetic in-person participants with no place statements retain full attendance time recommendation', methodParameterTypes = '']",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslNoPlaceMeetingModeTest', methodName = 'NPM03 enabling no-place in-person matching cannot promote nonprecise AVAILABLE to a numeric interval', methodParameterTypes = '']",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslNoPlaceMeetingModeTest', methodName = 'NPM04 missing place does not weaken conservative protection of an untrusted unavailable scope', methodParameterTypes = '']",
+    "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest', methodName = 'DSLO04 no-place IN_PERSON computes its own mode while retaining prepared meaning', methodParameterTypes = '']",
+    "MethodSource [className = 'com.meetme.server.coordination.application.service.ScheduleDslNoPlaceWorkerPostgresTest', methodName = 'NPMG01 actual context worker and PostgreSQL retain no-place meeting modes through both shared kernels', methodParameterTypes = 'java.lang.String']",
+    "MethodSource [className = 'com.meetme.server.coordination.application.service.ScheduleDslRejectedPreferenceStoragePostgresTest', methodName = 'RPS01 rejected preference proof uses explicit format4 and survives fresh repository projection and service replay', methodParameterTypes = 'java.lang.String']",
+    "MethodSource [className = 'com.meetme.server.coordination.application.service.ScheduleDslRejectedPreferenceStoragePostgresTest', methodName = 'RPS03 format4 witness edits violating polarity source evidence or closed shape are rejected', methodParameterTypes = 'java.lang.String']"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T07:16:40.325395Z"
+}
