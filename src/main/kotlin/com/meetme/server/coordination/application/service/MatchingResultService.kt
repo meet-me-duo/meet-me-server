@@ -12,6 +12,7 @@ import com.meetme.server.coordination.application.port.input.MatchingResultError
 import com.meetme.server.coordination.application.port.input.MatchingResultException
 import com.meetme.server.coordination.application.port.input.RecommendationListView
 import com.meetme.server.coordination.application.port.input.RecommendationOptionView
+import com.meetme.server.coordination.application.port.input.RecommendationParticipantStatusView
 import com.meetme.server.coordination.application.port.input.RecommendationUseCase
 import com.meetme.server.coordination.application.port.input.RecommendationVariantView
 import com.meetme.server.coordination.application.port.input.SelectRecommendationCommand
@@ -32,6 +33,8 @@ import com.meetme.server.coordination.domain.RecommendationSelection
 import com.meetme.server.coordination.domain.StoredRecommendationOption
 import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.coordination.domain.matching.PlanType
+import com.meetme.server.coordination.domain.matching.RecommendationParticipantEvidence
+import com.meetme.server.coordination.domain.matching.RecommendationParticipantStatusPolicy
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
@@ -48,10 +51,12 @@ import com.meetme.server.participant.domain.Participant
 import com.meetme.server.participant.domain.ParticipantRole
 import com.meetme.server.shared.domain.CandidateId
 import com.meetme.server.shared.domain.MeetingRoomId
+import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
 import com.meetme.server.submission.application.service.ClarificationService
+import com.meetme.server.submission.domain.Submission
 import com.meetme.server.submission.domain.dsl.PublicPlaceConstraintDescription
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
@@ -407,16 +412,19 @@ class MatchingResultService(
     ): RecommendationListView {
         check(analysis == null || analysis.roomId == room.id.value)
         val placeDescriptions = selectedPlaceDescriptions(run)
-        val partial = options.any { option -> option.option.variants.any { it.participantIds.size < run.batch.submissionVersionIds.size } }
-        val frozenCohort =
-            if (partial) {
-                FrozenSubmissionReader
-                    .read(
-                        submissionRepository,
-                        run.batch,
-                    ).map { it.participantId }
-            } else {
-                emptyList()
+        val submissions = if (options.isNotEmpty()) frozenSubmissions(run) else emptyList()
+        val frozenCohort = submissions.map { it.participantId }
+        val statusEvidence = participantStatusEvidence(run, room, submissions)
+        val knownPlaceKeys =
+            statusEvidence.mapValues { (_, values) ->
+                values.values
+                    .filter { it.interpretationComplete }
+                    .flatMap {
+                        it.input
+                            ?.offlineArea
+                            ?.alternatives
+                            .orEmpty()
+                    }.mapTo(mutableSetOf()) { it.key }
             }
         val publicNames =
             frozenCohort.associateWith { id ->
@@ -436,6 +444,7 @@ class MatchingResultService(
                     option.primaryRank,
                     option.option.window,
                     option.option.variants.mapIndexed { index, variant ->
+                        val modeEvidence = statusEvidence[variant.meetingMode].orEmpty()
                         RecommendationVariantView(
                             option.variantIds[index],
                             variant.meetingMode,
@@ -461,6 +470,26 @@ class MatchingResultService(
                                 variant.meetingMode,
                                 placeDescriptions,
                             ),
+                            availableParticipantNames = frozenCohort.filter { it in variant.participantIds }.map(publicNames::getValue),
+                            participantStatuses =
+                                frozenCohort.mapIndexed { memberIndex, id ->
+                                    val evidence = modeEvidence[id] ?: RecommendationParticipantEvidence(null, false, false)
+                                    val placeKnown =
+                                        variant.representativeArea?.key?.let {
+                                            it in knownPlaceKeys[variant.meetingMode].orEmpty()
+                                        } ?: true
+                                    RecommendationParticipantStatusView(
+                                        "p${memberIndex + 1}",
+                                        publicNames.getValue(id),
+                                        RecommendationParticipantStatusPolicy.assess(
+                                            id,
+                                            option.option.window,
+                                            variant,
+                                            evidence.copy(placeReferenceKnown = evidence.placeReferenceKnown && placeKnown),
+                                            room.mode,
+                                        ),
+                                    )
+                                },
                         )
                     },
                     renderWindow(option.option.window, room, locale),
@@ -469,6 +498,38 @@ class MatchingResultService(
             (analysis?.alternativeCount ?: 0) > 0,
             next,
         )
+    }
+
+    private fun participantStatusEvidence(
+        run: CoordinationRun,
+        room: MeetingRoom,
+        submissions: List<Submission>,
+    ): Map<MeetingMode, Map<ParticipantId, RecommendationParticipantEvidence>> {
+        if (submissions.isEmpty()) return emptyMap()
+        val route = finalRoutes?.find(run.id.value)
+        if (route != null && route.choice != FinalAnalysisRouteChoice.Legacy) {
+            return checkNotNull(storedDsl) { "Selected DSL result reader is not configured" }
+                .readParticipantStatusInputs(run.id, run.version, route.fingerprint())
+        }
+        val original = structuredSubmissionRepository.findByBatch(run.batch.id)
+        val placeFailures =
+            normalizedPlaceRepository
+                .findByBatch(run.batch.id)
+                .filter { it.status != NormalizedPlaceStatus.RESOLVED }
+                .mapTo(mutableSetOf()) { it.submissionVersionId }
+        // Only pure historical reconstruction is conservative; repository and native codec failures propagate.
+        val evidence =
+            try {
+                val reconstructed = FrozenMatchingInputPolicy.reconstruct(submissions, original)
+                val prepared = FrozenMatchingInputPolicy.prepare(room, submissions, reconstructed.results, run.batch.id)
+                FrozenMatchingInputPolicy.evidence(submissions, original, prepared, placeFailures)
+            } catch (_: IllegalArgumentException) {
+                emptyMap()
+            } catch (_: IllegalStateException) {
+                emptyMap()
+            }
+        val modes = if (room.mode == MeetingMode.EITHER) listOf(MeetingMode.IN_PERSON, MeetingMode.REMOTE) else listOf(room.mode)
+        return modes.associateWith { evidence }
     }
 
     private fun selectedResult(

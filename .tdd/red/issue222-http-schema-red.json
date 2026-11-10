@@ -1,0 +1,47 @@
+{
+  "workItem": "issue222-http-schema-red",
+  "sourceRevision": "8c772dd5d35a7973769fd597ef36e5a516d3a877",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialAttendanceHttpPostgresTest.kt",
+      "sha256": "8ae69fed7e3b5d2b9eb417478fe5f20d678b5cdaa64a7909b4b1bd2756059ca6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationOpenApiExportPostgresTest.kt",
+      "sha256": "6e392be6b17b951cc2a59023677d384ab739137fc0ddce42385fd415edd109f4"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*RecommendationPartialAttendanceHttpPostgresTest",
+    "--tests",
+    "*RecommendationOpenApiExportPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PN05 names are returned on every variant and alternative page for a verified guest()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS06 only the individually unverified attendee is unknown in a conditional variant()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PN02 full attendance exposes an empty excluded name list and one maximal remote variant()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PN03 later room membership never enlarges the frozen recommendation excluded cohort()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS08 conditional fallback is resolved for the whole frozen batch and missing peer evidence cannot activate a subset fallback()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS04 status uses the full recommendation window even after a shorter actual selection()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS07 each variant checks its own known place rather than treating all excluded people as time mismatches()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS03 rejected and missing interpretation is unknown without publishing reasons or changing saved membership()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS02 duplicate display names keep distinct stable public references()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PN01 two of five actual attendees expose exactly three excluded display names without raw input or IDs()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PN06 conditional attendance names identify time matches without claiming place verification()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PN04 distinct participants with identical names retain both entries by identity()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS01 each frozen person has one scoped public reference and a justified status()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS09 missing peer evidence cannot silently reuse reconstructed legacy area identities()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialAttendanceHttpPostgresTest PS05 historical frozen versions remain the status source after the current submission head changes()",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationOpenApiExportPostgresTest native OpenAPI documents real recommendation endpoints selection requiredness and nullable schemas()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T12:21:33.318533+00:00",
+  "evidenceNote": "Independent exact PR214 HTTP/schema test delta on latest develop, no test expectations altered. 16 tests fail at absent new participant_statuses/available_participant_names JSON/native schema fields. Source already contains unrelated validated status-policy body and unread native-reader TODO signature; DTO, view, controller and result mapping still baseline. No preparation/compile errors; actual PostgreSQL HTTP."
+}

@@ -1,0 +1,36 @@
+{
+  "workItem": "issue222-legacy-frozen-input",
+  "sourceRevision": "8c772dd5d35a7973769fd597ef36e5a516d3a877",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/Issue222FrozenMatchingInputPolicyTest.kt",
+      "sha256": "442109324f858d530e620e0c97252347243f97ece2bd683a5bc9ca53ed3f7f56"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "-I",
+    "/tmp/issue222-domain-selected.gradle",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "ktlintTestSourceSetCheck",
+    "test",
+    "--tests",
+    "*Issue222FrozenMatchingInputPolicyTest"
+  ],
+  "failedTests": [
+    "FMI05 missing peer evidence cannot enable a fallback for a surviving subset()",
+    "FMI03 unsafe time reasons suppress apparently valid time while a rejected partial input stays unknown()",
+    "FMI07 unverified travel and unresolved location preserve valid time with owned uncertainty witnesses()",
+    "FMI08 a per person place read failure never makes a verified peer unknown()",
+    "FMI02 plain precise time subtraction and preference windows match the frozen producer arithmetic()",
+    "FMI06 missing peer blocks inferred historical AREA identity but not explicit stable AREA identity()",
+    "FMI01 reconstruction never revives manual legacy evidence and labels missing frozen versions()",
+    "FMI04 conditional fallback is resolved for the entire cohort before any attendance subset()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T12:21:31.321Z",
+  "evidenceNote": "Independent public frozen legacy reconstruction contract: 8 tests compile and execute,8 NotImplementedError failures on FrozenMatchingInputPolicy reconstruct/prepare TODO skeletons,0errors/skips. Domain assess skeleton remains TODO; only signatures and four-field evidence match PR214. GRADLE_USER_HOME=/workspace/.gradle, detached clone8c772dd at /workspace/scratch/meet-me-issue222-domain-tests. External init selects exact copied8+original17 test sources; only8 executed; main/resources unchanged apart from TODO skeletons. Initial private-copy fixture compilation error was corrected using public Submission.restore API and is not counted as RED. Raw log .codex/tdd-evidence/issue222-legacy-frozen-input.log; XML .codex/evaluation/local/issue222-legacy-frozen-red/. Final test bytes include only a multiline-expression formatting correction; fresh RED confirms the same8 TODO failures and test-source ktlint check passes. Exact PR214 domain17 test bytes remain unchanged."
+}

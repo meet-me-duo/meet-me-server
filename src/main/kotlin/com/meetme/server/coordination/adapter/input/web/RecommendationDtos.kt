@@ -1,7 +1,9 @@
 package com.meetme.server.coordination.adapter.input.web
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.meetme.server.coordination.application.port.input.RecommendationParticipantStatusView
 import com.meetme.server.coordination.domain.CandidateQuality
+import com.meetme.server.coordination.domain.matching.RecommendationParticipantStatus
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.Instant
 import java.util.UUID
@@ -10,6 +12,46 @@ import java.util.UUID
 enum class RecommendationMeetingMode {
     IN_PERSON,
     REMOTE,
+}
+
+@Schema(description = "저장된 지원 조건 기준의 판정; 실제 출석 의사나 예약의 확정이 아님")
+enum class RecommendationParticipantStatusValue {
+    AVAILABLE,
+    UNAVAILABLE,
+    UNKNOWN,
+}
+
+@Schema(description = "고정 분석 배치의 한 참여자에 대한 전체 추천 시간 범위의 조건 판정")
+data class RecommendationParticipantStatusResponse(
+    @field:JsonProperty("participant_ref")
+    @field:Schema(
+        description = "동일 analysis의 variant와 대안 페이지에서만 안정적인 공개 참조; 인증·조회 키나 다른 분석의 개인 식별자가 아님",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        pattern = "p[1-9][0-9]*",
+        example = "p1",
+    )
+    val participantRef: String,
+    @field:JsonProperty("display_name")
+    @field:Schema(description = "공개 표시 이름; 동명이인은 서로 다른 participant_ref로 구분", requiredMode = Schema.RequiredMode.REQUIRED)
+    val displayName: String,
+    @field:Schema(
+        description = "AVAILABLE은 지원 조건 충족, UNAVAILABLE은 확인된 조건 불일치, UNKNOWN은 미검증·해석 실패·누락·미지원·근거 부족",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+    )
+    val status: RecommendationParticipantStatusValue,
+) {
+    companion object {
+        fun from(view: RecommendationParticipantStatusView) =
+            RecommendationParticipantStatusResponse(
+                view.participantRef,
+                view.displayName,
+                when (view.status) {
+                    RecommendationParticipantStatus.AVAILABLE -> RecommendationParticipantStatusValue.AVAILABLE
+                    RecommendationParticipantStatus.UNAVAILABLE -> RecommendationParticipantStatusValue.UNAVAILABLE
+                    RecommendationParticipantStatus.UNKNOWN -> RecommendationParticipantStatusValue.UNKNOWN
+                },
+            )
+    }
 }
 
 @Schema(description = "시간안의 방식·장소·참석 조합")
@@ -37,13 +79,30 @@ data class RecommendationVariantResponse(
     @field:Schema(description = "대면 대표 지역; 온라인은 null", requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
     val place: CandidatePlaceResponse?,
     @field:JsonProperty("excluded_participant_names")
-    @field:Schema(description = "고정 분석 배치에서 이 조합에 참석하지 않는 참여자의 공개 이름; 전원 참석은 빈 배열", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @field:Schema(
+        description = "고정 분석 배치에서 이 조합에 포함되지 않은 참여자의 공개 이름; 불참 확정이나 제외 사유를 뜻하지 않음; 전원 참석은 빈 배열",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+    )
     val excludedParticipantNames: List<String> = emptyList(),
     @field:JsonProperty("attendance_confirmed")
     @field:Schema(description = "false이면 시간만 일치하고 장소·이동 충족 및 실제 참석은 미확정; 주최자 확정 후에도 유지", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     val attendanceConfirmed: Boolean = true,
     @field:Schema(description = "확인된 시간과 미확인 장소·이동 조건을 함께 설명; 타인의 원문은 비공개", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     val summary: String = "",
+    @field:JsonProperty("available_participant_names")
+    @field:Schema(
+        description = "고정 분석 배치에서 이 조합에 포함된 참여자의 공개 이름; 동명이인은 각각 유지; attendance_confirmed=false이면 시간만 일치하고 실제 참석은 미확정",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+    )
+    val availableParticipantNames: List<String> = emptyList(),
+    @field:JsonProperty("participant_statuses")
+    @field:Schema(
+        description =
+            "고정 분석 배치 전체 참여자의 variant별 상태; option 전체 time_range 기준이며 짧게 선택한 실제 시간으로 재판정하지 않음; " +
+                "미제출자·배치 고정 이후 참여자는 미포함; 포함/제외 이름만으로 상태를 추정하지 않음; 구 서버에서는 필드 누락 가능",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+    )
+    val participantStatuses: List<RecommendationParticipantStatusResponse> = emptyList(),
 )
 
 @Schema(description = "실제로 가능한 하나의 연속 시간안")

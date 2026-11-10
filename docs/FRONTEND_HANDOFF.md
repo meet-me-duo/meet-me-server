@@ -101,6 +101,14 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - result의 typed `selection`과 실제 선택 구간을 표시한다. `candidate.plan_type`은 legacy 호환 의미이며 새 A/B/C 라벨로 사용하지 않는다. 자정 넘김은 양쪽 날짜를 보존한다.
 - 조건부 참석 의미를 표현하는 클라이언트는 candidates·추천 primary/alternatives·result GET과 두 confirmation POST에 `attendance_support=conditional-v1`을 보낸다. `attendance_confirmed=false`를 확정 참석으로 바꾸거나 숨기지 않는다. 미지원 요청의 `409 CLIENT_UPDATE_REQUIRED`는 새로고침/업데이트 안내로 처리한다.
 
+### 추천 variant별 참가자 상태
+
+- primary와 alternatives의 각 variant는 optional `participant_statuses` 배열을 제공한다. 원소는 `participant_ref`(동일 analysis 안에서 안정적인 `p1` 형태), `display_name`, `status`다. 내부 UUID가 아니며 인증·조회 키 또는 다른 analysis의 개인 식별자로 사용하지 않는다. 동명이인을 이름으로 합치지 않는다.
+- `AVAILABLE`은 지원되는 조건 충족 확인, `UNAVAILABLE`은 확인된 조건 불일치, `UNKNOWN`은 해석 실패·정보 부족·미지원·과거 근거 부족 또는 장소/이동 미검증이다. UNKNOWN을 일괄 “분석 실패”나 “참가 불가”로 표시하지 않는다. 대면 이동이 미검증인 사람만 UNKNOWN이어도 유효한 시간 후보와 다른 사람의 상태는 유지한다.
+- 상태는 고정 배치 전체 참가자와 option 전체 시간·해당 variant의 방식/장소 기준이다. 미제출·늦은 참가자는 포함하지 않고, 확정한 짧은 실제 시간으로 재판정하지 않는다. 선택 변경이나 대안 페이지에서도 같은 analysis의 참조를 유지한다.
+- optional `available_participant_names`는 저장된 포함 집합의 공개 이름이며 `excluded_participant_names`와 함께 호환용이다. 포함 이름만으로 조건 검증 완료, 제외 이름만으로 참가 불가를 추정하지 않는다. `attendance_confirmed=false`도 유지한다. 구 서버의 새 필드 누락을 처리해야 한다.
+- 상세 미반영 사유는 기존 HOST 전용 조회 권한을 따른다. 새 공개 상태 응답에는 원문·보완답·개인 실패 사유가 포함되지 않는다. Web 표시 구현·운영 반영은 이 백엔드 계약과 별도 작업이다.
+
 ### LEGACY 후보 호환
 
 - `READY` 또는 `READY_WITH_WARNINGS`에서 `GET /api/rooms/{inviteCode}/candidates`를 호출한다.

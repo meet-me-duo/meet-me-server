@@ -2,8 +2,12 @@
 
 ## 2026-11-10 현재 진행
 
+- 사용자 후속 승인: 추천안별 참가 여부 반환도 develop에 병합한다. Issue #222 / `feature/v5-recommendation-participant-statuses`에서 닫힌 미병합 PR #214의 관련 구현·테스트를 재사용하되, V5는 native 동결 결과의 방식별 입력을 검증·복원한다. 이번 범위는 백엔드와 develop 병합이며 Web 변경·운영 배포 완료와 구별한다.
+- [x] 독립 참가자 상태·native reader·실제 PostgreSQL HTTP/OpenAPI 기대와 RED를 고정하고 구현했다. 전체 option 시간·고정 batch·개별 장소 미검증·권한·원문/내부 ID 비공개·조회 부작용 없음·DB 오류 전파를 보존한다.
+- [ ] 신규/포트73개·기존 관련57개(합계130), ktlintCheck·assemble와 공개 API projection31개가 통과했다. 분리 검토에 차단 사항은 없고 결함9개를 모두 탐지·원본 복원 후 재통과했다. 전체 ktlintCheck·assemble·test는 535 suites·4,572 tests 중4,531 PASS/기존41 SKIP/실패·오류0으로 통과했다. 커밋 전 가드도 exit0으로 통과했다. 정확한 PR CI를 확인한 뒤 템플릿에 맞춰 develop에 병합한다. Commit/PR: 동일 커밋 예정.
+
 - Issue #216 / PR #217은 세 CI 검사 통과 후 develop `39deeb1`에 병합했다. 근거·반복 일정 정상화는 `80c819a`, 배포 목록 보완은 `d9f4f1a`다. 운영 배포는 아직 하지 않았다.
-- 현재 Issue #218 / `fix/default-v5-analysis`: 최신 develop을 pull한 뒤 생성했다. 사용자 확정에 따라 새로 마감하는 지원 가능한 자연어 모임에 V5를 기본 적용하고, 이미 완료된 결과·기존 실행·retry/revision의 frozen 계약은 유지한다. 원문 없는 수동/혼합 batch는 기존 경로를 유지한다. 명시 LEGACY 선택과 운영 기본값 override를 구별한다.
+- Issue #218 / PR #219는 세 CI 통과 후 develop `8c772dd`에 병합했다. main 릴리스 PR #221은 열려 있고 실제 배포는 아직 하지 않았다. `fix/default-v5-analysis`는 최신 develop을 pull한 뒤 생성했다. 사용자 확정에 따라 새로 마감하는 지원 가능한 자연어 모임에 V5를 기본 적용하고, 이미 완료된 결과·기존 실행·retry/revision의 frozen 계약은 유지한다. 원문 없는 수동/혼합 batch는 기존 경로를 유지한다. 명시 LEGACY 선택과 운영 기본값 override를 구별한다.
 - 운영 profile의 V5 및 여섯 정상화 옵션, 시작 전 검증, 선택 SSM enum 전달과 공통 마감 선택을 구현했다. 신규 V1 저장 시각을 기존 V2와 같은 DB 정밀도로 맞추고 기존 행·원문·제공된 기준 시각은 유지한다. 지원하지 못하는 과거 V1 기준 날짜는 기존 경로를 유지하며 미래/다른 방의 입력·DB 조회 오류는 fallback으로 숨기지 않는다.
 - 독립 RED 뒤 새 Kotlin 78개·기존 관련18개, 코드 스타일·assemble, runtime/CI36개와 기존 운영 설정90개가 통과했다. 분리된 검토와 결함 주입9개를 모두 통과했고 원본 복원 후에도 신규78개가 재통과했다. 동결 코드의 전체 ktlintCheck·assemble·test는 531 suites·4,503 tests 중4,462 PASS/기존41 SKIP/실패·오류0으로 통과했다. 추가 runtime·인증 소비자112개와 기존 운영 AI 정책8개도 통과했으며 운영 배포는 아직 하지 않았다. 실제 두 사례 재시험은 완료했지만 전체 의미 정상화를 뜻하지 않는다. 한 사례는 사전 부분 기대 후보를 유지하면서 미연결 미확정 조건으로 한 입력의 계산식이 거부됐고, 다른 사례는 시간 후보와 미검증 이동 설명을 유지했다. 실제 원문·보완답·원응답과 실패 근거는 비공개 기록에 보존했다.
 - 근거 정수 선택·반복 원선언/서버 전개·format12 복원과 기존 날짜/가능·선호/이동 조건 처리를 검증했다. 신규89개·관련141개 통과, 전체 ktlintCheck/assemble/test는 525 suites·4,425 tests 중4,384 PASS/기존41 SKIP/실패·오류0이다. 고위험 경계별 독립 검토와 결함 주입10개가 모두 탐지됐다.
@@ -11,7 +15,7 @@
 - 원문·실제 답·요청/응답·개인 이력은 저장소 밖, 로컬 검증 로그는 Git 제외 경계에 보존한다. 운영 기본 경로 전환·배포는 아직 하지 않았다. 현재 운영 Web의 생략된 마감 선택은 LEGACY이므로 Issue #218에서 실제 활성화까지 연결한다.
 - PR CI의 배포 계약에서 실제 V24–V31 SQL과 V23 발행 목록의 불일치를 확인했다. 정확한 V31 완성 목록만 추가하고 과거 reader·checksum·보호된 전환 승인·기존 CI 명령을 유지했다. 신규9개·기존 관련46개·운영 AI 발행8개와 배포 계약19단계, 분리된 결함 주입3개가 통과했다. 로컬 JDBC의 JAVA_HOME, 공개 Nginx 파일 권한과 컨테이너 localhost의 프록시 환경을 맞춰 재검증했으며 해당 검사·운영 설정 소스는 변경하지 않았다. `d9f4f1a`의 세 CI와 commit guard를 거쳐 PR #217에 통합했다.
 - PR #217 본문을 저장소 템플릿의 여섯 항목에 맞게 갱신했다. 후속 PR도 `.github/pull_request_template.md`를 먼저 확인한다.
-- 다음 순서: V5 기본 전환을 검증하고 백엔드를 먼저 배포한 뒤, 별도 feature 브랜치에서 추천 variant별 참여자 상태와 Web 표시를 연결한다. 닫힌 미병합 PR #214의 participant_statuses(AVAILABLE/UNAVAILABLE/UNKNOWN) 구현을 먼저 검토하고 재사용한다. 장소 미검증과 시간 분석 실패를 동일 라벨로 오인하지 않도록 한다.
+- 현재 사용자 추가 요청에 따라 추천 variant별 참가자 상태도 먼저 develop에 병합한다. Issue #222에서 닫힌 미병합 PR #214의 participant_statuses(AVAILABLE/UNAVAILABLE/UNKNOWN)와 이름 필드를 재사용하고 V5 native 방식별 입력과 연결한다. 열려 있는 main 릴리스 PR #221은 develop 변경 후 최종 범위·검증을 갱신해야 하며 운영 배포 완료와 구별한다. Web 표시는 후속이며 장소 미검증과 시간 분석 실패를 동일 라벨로 오인하지 않도록 한다.
 
 ## 분석 정상화 작업
 

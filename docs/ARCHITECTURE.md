@@ -5,6 +5,12 @@
 > **저장소:** `meet-me-duo/meet-me-server`  
 > **관련 문서:** `docs/PRD.md`, `docs/ADR.md`
 
+## 추천안별 참가자 상태 조회
+
+`RecommendationParticipantStatusPolicy`는 option 전체 시간과 variant의 포함 집합·방식·장소에 대해 확인된 조건 충족/불일치와 판단 부족을 구분하는 순수 정책이다. `MatchingResultService`는 고정 배치에서 안정적인 `p1` 형태의 공개 참조와 표시 이름을 연결하고 primary/alternatives에 같은 정책을 적용한다. 내부 참가자·제출 UUID와 원문·실패 사유는 공개하지 않는다.
+
+LEGACY 생산자와 조회는 `FrozenMatchingInputPolicy`의 전처리를 공유한다. 선택된 DSL 경로는 flat structured 결과로 fallback하지 않고 `ScheduleDslStoredReadService`의 검증된 native 동결 입력을 사용한다. 읽기 전용 REPEATABLE_READ에서 source·policy·run·batch·선택 지문·저장 문서를 검증하고 mode별 순수 projection을 유지한다. 개별 미확정/격리 근거는 보수적으로 UNKNOWN이며 서로 다른 mode의 시간을 합치지 않는다. 조회는 matcher/projector로 추천을 재생성하거나 모델·지도·게시 서비스를 호출하지 않는다. 기존 저장·권한·stale 경계와 DB/codec 오류 전파를 유지한다.
+
 ## 계정·소유권 경계
 
 사용자 승인 #109는 기존 익명 제출 모드에서 계정 HOST로 전환하는 후속 버전이다. account 영역의 application port 뒤에 Google/Kakao OIDC, RSA JWT, Redis 회전 세션, JDBC 영구 계정 저장을 둔다. Domain에는 공급자·HTTP·Redis 타입을 노출하지 않는다. 계정 생성은 provider+subject unique 및 transaction으로 보호하고 이메일 자동 연결을 하지 않는다. login-only 공급자 토큰은 검증 뒤 폐기하며 Calendar 지속 grant/암호화 저장은 별도 범위다.

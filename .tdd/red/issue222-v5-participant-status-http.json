@@ -1,0 +1,34 @@
+{
+  "workItem": "issue222-v5-participant-status-http",
+  "sourceRevision": "8c772dd5d35a7973769fd597ef36e5a516d3a877",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/V5RecommendationParticipantStatusPostgresTest.kt",
+      "sha256": "e9d382917176eab8cb90603f96eca4420598dc60b07cf8b36cd74fbcc7c1e8f1"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "-I",
+    "/tmp/issue222-status-tests.gradle",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*V5RecommendationParticipantStatusPostgresTest"
+  ],
+  "failedTests": [
+    "VPS05 unverified travel affects only its owner in person and preserves time options()",
+    "VPS06 selecting a shorter interval never changes statuses for the whole published option()",
+    "VPS01 native source distinguishes duplicate identities partial windows unknown time and mode()",
+    "VPS04 primary and alternatives keep full window mode and stable public references()",
+    "VPS07 repeated GETs never write regenerate recommendations parse or call maps()",
+    "VPS02 contradictory flat structured rows cannot replace a restored V5 native interpretation()",
+    "VPS03 late membership and a later source head preserve frozen batch statuses()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T12:34:34.710189+00:00",
+  "evidenceNote": "Independent actual PostgreSQL/MockMvc tests, all10 executed:7 expected missing participant_statuses field failures after strict native response5 parse, canonical format12 publish, fresh JDBC restore, actual V5 calculation/recommendation publication and authenticated HTTP200. Existing auth/stale and invalid native400/actualSQL-outage propagation controls3 pass, errors0/skips0. Five frozen synthetic owners include duplicate names, partial time, unknown time, remote-only mode and separately scoped unverified travel. Main sources unmodified; selected test source compilation only, full production compile retained. Prior invite-length/native-wire fixture setup errors and an overly narrow5xx assertion were fixed before freeze, preserved separately and excluded from RED evidence. Existing400 VALIDATION_FAILED is accepted without changing production error classification. No real-user inputs or provider/map/model/AWS calls."
+}
