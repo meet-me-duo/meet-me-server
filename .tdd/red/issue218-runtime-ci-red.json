@@ -1,0 +1,55 @@
+{
+  "workItem": "issue218-runtime-ci-red",
+  "sourceRevision": "39deeb11642fcc6f47a3f0584aa4dffc0502134b",
+  "testFiles": [
+    {
+      "path": "deploy/tests/default-analysis-runtime-env.test.cjs",
+      "sha256": "b32e3718362709b5b20729be759f27e856adcd71aef16064fde0da046834d0da"
+    },
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "193d4ac5da16da2253646c492e8aab3d3bed3aca1f37da0f9dadf0d6d8a110c6"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    "deploy/tests/default-analysis-runtime-env.test.cjs",
+    ".github/scripts/ci-job-boundaries.test.cjs"
+  ],
+  "failedTests": [
+    "Issue178 Deployment Contracts preserves all 16 original checks and adds only the exact V23 V31 and default analysis runtime checks",
+    "Issue178 executes each original command exactly once with the boundary and additive V23 V31 and default analysis runtime checks",
+    "DAR01 exact LEGACY override is passed unchanged without activating independent gates or new secrets",
+    "DAR01 exact DSL_STRUCTURAL_V5 override is passed unchanged without activating independent gates or new secrets",
+    "DAR02 unregistered omits the override so the V5 artifact default remains distinguishable",
+    "DAR02 upstream lookup failure even with malformed stdout omits the override so the V5 artifact default remains distinguishable",
+    "DAR03 successful typed lookup with foreign Name fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with wrong Type fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with missing Name fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with missing Value fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with malformed JSON fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with additional JSON document fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with raw NUL fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with escaped NUL in value fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with duplicate Value fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with oversized response fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum \"legacy\" fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum \"V5\" fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum \" DSL_STRUCTURAL_V5\" fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum \"LEGACY \" fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum \"\" fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum \"LEGACY\\nINJECTED=true\" fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum null fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum true fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum 31 fails atomically and never discloses raw data",
+    "DAR03 successful typed lookup with invalid enum [\"LEGACY\"] fails atomically and never discloses raw data",
+    "DAR05 existing precheck evidence unregistered stays OFF under an explicit legacy analysis override",
+    "DAR05 existing precheck evidence false stays OFF under an explicit legacy analysis override",
+    "DAR07 existing operator identity parser remains separate from the new analysis enum kind",
+    "DAR08 a final rename failure still preserves the old environment after a valid contract lookup"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T09:23:59.613072+00:00",
+  "evidenceNote": "Independent runtime/CI tests:36executed,30expected assertion failures,6controls pass,zero skip/cancel. Missing optional typed enum lookup/env forwarding and missing single unconditional CI step. Historical auth/no-lookup and old guards remain controls. No production edits or external services."
+}

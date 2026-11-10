@@ -9,12 +9,16 @@ import com.meetme.server.coordination.domain.SubmissionBatch
 import com.meetme.server.coordination.domain.analysis.FinalAnalysisContractSelection
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.ClosureReason
+import com.meetme.server.meetingroom.domain.CollectionStatus
 import com.meetme.server.meetingroom.domain.MeetingRoom
+import com.meetme.server.precheck.application.port.output.PrecheckRepository
 import com.meetme.server.shared.application.port.output.IdGenerator
 import com.meetme.server.shared.domain.CoordinationRunId
 import com.meetme.server.shared.domain.OutboxEventId
 import com.meetme.server.shared.domain.SubmissionBatchId
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.domain.Submission
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
@@ -28,6 +32,9 @@ class CollectionClosureService(
     private val outboxRepository: OutboxRepository,
     private val idGenerator: IdGenerator,
     private val finalAnalysisSelection: FinalAnalysisRouteSelectionService? = null,
+    @param:Value("\${meetme.analysis.default-contract:LEGACY}")
+    private val defaultAnalysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
+    private val prechecks: PrecheckRepository? = null,
 ) {
     @Transactional
     fun close(
@@ -35,17 +42,41 @@ class CollectionClosureService(
         reason: ClosureReason,
         submittedParticipants: Int,
         at: Instant,
-        analysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
+        analysisContract: FinalAnalysisContractSelection? = null,
     ): MeetingRoom {
+        if (room.collectionStatus == CollectionStatus.CLOSED) return room
+        val submissions =
+            if (submittedParticipants >= 2) {
+                submissionRepository.findLatestByRoom(room.id).sortedBy { it.participantId.value }
+            } else {
+                emptyList()
+            }
+        if (submittedParticipants >= 2) {
+            check(submissions.size == submittedParticipants) { "Submitted participant count changed while closing" }
+        }
+        val defaultV5 =
+            analysisContract == null &&
+                defaultAnalysisContract == FinalAnalysisContractSelection.DSL_STRUCTURAL_V5 &&
+                submissions.isNotEmpty() &&
+                submissions.all { it.latest.rawText != null }
+        if (defaultV5) {
+            // Unsupported historical anchors may retain Legacy; a genuinely future source must still fail.
+            val fixedAt = at.truncatedTo(ChronoUnit.MICROS)
+            require(submissions.all { it.roomId == room.id && it.latest.createdAt <= fixedAt })
+        }
+        val chosenContract =
+            analysisContract ?: if (defaultV5 && submissions.all { supportsNativeReferenceDate(it, room) }) {
+                FinalAnalysisContractSelection.DSL_STRUCTURAL_V5
+            } else {
+                FinalAnalysisContractSelection.LEGACY
+            }
         val recordedAt =
-            if (analysisContract != FinalAnalysisContractSelection.LEGACY) at.truncatedTo(ChronoUnit.MICROS) else at
+            if (chosenContract != FinalAnalysisContractSelection.LEGACY) at.truncatedTo(ChronoUnit.MICROS) else at
         val closed = room.close(reason, recordedAt, submittedParticipants)
         if (closed === room) return room
         roomRepository.update(closed)
         if (submittedParticipants < 2) return closed
 
-        val submissions = submissionRepository.findLatestByRoom(room.id).sortedBy { it.participantId.value }
-        check(submissions.size == submittedParticipants) { "Submitted participant count changed while closing" }
         val batch =
             SubmissionBatch(
                 SubmissionBatchId(idGenerator.next()),
@@ -59,9 +90,9 @@ class CollectionClosureService(
         coordinationRunRepository.insert(run)
         val active = closed.transition(activeRunId = run.id.value)
         roomRepository.update(active)
-        if (analysisContract != FinalAnalysisContractSelection.LEGACY) {
+        if (chosenContract != FinalAnalysisContractSelection.LEGACY) {
             checkNotNull(finalAnalysisSelection) { "Selected contract graph is not configured" }
-                .freeze(run, active, submissions, analysisContract)
+                .freeze(run, active, submissions, chosenContract)
         }
         val eventId = OutboxEventId(idGenerator.next())
         outboxRepository.insert(
@@ -75,6 +106,17 @@ class CollectionClosureService(
             ),
         )
         return active
+    }
+
+    private fun supportsNativeReferenceDate(
+        submission: Submission,
+        room: MeetingRoom,
+    ): Boolean {
+        val version = submission.latest
+        if (version.evidence != null) return true
+        val anchor = prechecks?.anchor(version.id.value) ?: return true
+        val zone = room.timeZone.value
+        return anchor.atZone(zone).toLocalDate() == version.createdAt.atZone(zone).toLocalDate()
     }
 
     companion object {

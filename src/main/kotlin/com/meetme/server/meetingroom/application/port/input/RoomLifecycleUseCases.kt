@@ -31,7 +31,7 @@ data class CloseRoomCommand(
     val inviteCode: String,
     val rawCredential: String?,
     val confirmEarly: Boolean,
-    val analysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
+    val analysisContract: FinalAnalysisContractSelection? = null,
 )
 
 data class ViewerParticipation(

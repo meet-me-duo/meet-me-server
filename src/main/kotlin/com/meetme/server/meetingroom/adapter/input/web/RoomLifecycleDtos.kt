@@ -73,8 +73,11 @@ data class CloseRoomRequest(
     @field:Schema(description = "자동 조건 충족 전 조기 마감을 재확인했는지 여부")
     val confirmEarly: Boolean = false,
     @field:JsonProperty("analysis_contract")
-    @field:Schema(description = "명시 분석 계약 선택(DSL_STRUCTURAL_V5 지원); 생략 시 기존 LEGACY", defaultValue = "LEGACY")
-    val analysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
+    @field:Schema(
+        description = "선택 분석 계약. 생략/null은 서버 기본 정책(운영의 지원 가능한 자연어 모임은 V5), 명시 LEGACY는 기존 경로",
+        nullable = true,
+    )
+    val analysisContract: FinalAnalysisContractSelection? = null,
 )
 
 @Schema(description = "현재 브라우저 세션의 방 참여 상태")

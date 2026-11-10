@@ -36,7 +36,7 @@ if short in scenario:
  sys.exit(row.get('status',0))
 values={'config/precheck-provider-enabled':'false','config/database-secret-arn':'synthetic-reference','config/database-url':'jdbc:postgresql://fixture.invalid/fixture','config/database-username':'synthetic_user','config/redis-host':'fixture.invalid','config/redis-port':'6379','config/redis-ssl-enabled':'true','config/allowed-origins':'https://app.fixture.invalid','secret/gemini-api-key':'synthetic-gemini'}
 if short not in values:
- if short=='config/precheck-evidence-enabled':sys.exit(78) # Optional parameter is unregistered in this independent operator fixture.
+ if short in ('config/precheck-evidence-enabled','config/default-analysis-contract'):sys.exit(78) # Optional parameters are unregistered in this independent operator fixture.
  if short.startswith('config/operations-') or short.startswith('secret/operations-'):sys.exit(78)
  if short.startswith('secret/') or short.startswith('config/'):values[short]='synthetic-auth-value'
  else:sys.exit(79)

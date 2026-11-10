@@ -28,6 +28,7 @@ import com.meetme.server.coordination.application.service.SelectedMatchingRetryP
 import com.meetme.server.coordination.application.service.SelectedScheduleDslBatchProcessor
 import com.meetme.server.coordination.application.service.SelectedScheduleDslMatchingService
 import com.meetme.server.coordination.application.service.SelectedScheduleDslProcessingPersistenceService
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisContractSelection
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.shared.adapter.output.aihttp.AiDispatchGateProperties
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
@@ -59,7 +60,7 @@ data class SelectedScheduleDslPhysicalAuthority(
     val gate: AiHttpDispatchGate,
 )
 
-/** Availability of this graph never changes the default per-run Legacy selection. */
+/** Provides frozen analysis routes and validates the configured default for new closures. */
 @AutoConfiguration
 @EnableConfigurationProperties(GeminiProperties::class, OpenAiProperties::class, AiDispatchGateProperties::class)
 class SelectedScheduleDslAutoConfiguration {
@@ -82,8 +83,25 @@ class SelectedScheduleDslAutoConfiguration {
         @Value("\${meetme.experiment.calendar-month-facts:false}") calendarMonthFacts: Boolean = false,
         @Value("\${meetme.experiment.indexed-evidence-selections:false}") indexedEvidenceSelections: Boolean = false,
         @Value("\${meetme.experiment.weekly-schedule-rules:false}") weeklyScheduleRules: Boolean = false,
-    ): FinalAnalysisRouteSelectionService =
-        FinalAnalysisRouteSelectionService(
+        @Value("\${meetme.analysis.default-contract:LEGACY}")
+        defaultAnalysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
+    ): FinalAnalysisRouteSelectionService {
+        require(
+            defaultAnalysisContract == FinalAnalysisContractSelection.LEGACY ||
+                defaultAnalysisContract == FinalAnalysisContractSelection.DSL_STRUCTURAL_V5,
+        ) { "Only LEGACY and normalized V5 are supported closure defaults" }
+        require(
+            defaultAnalysisContract != FinalAnalysisContractSelection.DSL_STRUCTURAL_V5 ||
+                (
+                    unionPreferredAvailability &&
+                        serverEvidenceReferences &&
+                        searchRelativeDates &&
+                        calendarMonthFacts &&
+                        indexedEvidenceSelections &&
+                        weeklyScheduleRules
+                ),
+        ) { "Default V5 requires all six normalization capabilities" }
+        return FinalAnalysisRouteSelectionService(
             runs,
             routes,
             unionPreferredAvailability,
@@ -93,6 +111,7 @@ class SelectedScheduleDslAutoConfiguration {
             indexedEvidenceSelections,
             weeklyScheduleRules,
         )
+    }
 
     @Bean
     @ConditionalOnMissingBean(ScheduleDslRepository::class)

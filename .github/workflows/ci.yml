@@ -116,6 +116,9 @@ jobs:
       - name: Verify exact versioned analysis release catalog
         run: node --test .github/scripts/v31-analysis-release-catalog.test.cjs
 
+      - name: Verify default analysis runtime configuration
+        run: node --test deploy/tests/default-analysis-runtime-env.test.cjs
+
   built-image:
     name: ARM64 Built Image
     runs-on: ubuntu-latest

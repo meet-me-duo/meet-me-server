@@ -4,7 +4,7 @@
 
 ## 실행 경로와 기준 고정
 
-- 기존 `ExperimentalLiveHttpEvaluationTest`를 `c5HttpCandidateTest`로 빌드·실행한다. 실제 HTTP·공급자·PostgreSQL/Redis를 쓰며 test-only V5 bean을 사용한다. 일반 `java -jar` 기본 LEGACY·브라우저 로그인·운영 배포와 구분한다.
+- 기존 `ExperimentalLiveHttpEvaluationTest`를 `c5HttpCandidateTest`로 빌드·실행한다. 실제 HTTP·공급자·PostgreSQL/Redis를 쓰며 test-only V5 bean과 명시 계약 선택을 사용한다. 일반 `java -jar`·브라우저 로그인·운영 배포와 구분한다. prod의 신규 기본 선택은 별도 공통 마감 HTTP 회귀에서 검증하며 이 하네스의 명시 선택 결과를 기본 선택 검증으로 바꾸어 보고하지 않는다.
 - 각 사례는 별도 JVM/DB/출력 디렉터리로 한 번 실행한다. 한 방의 실패 때문에 나머지 인원을 생략한 결과를 전체 성공으로 표시하지 않는다. 공통 인증·결제·통신 오류는 원인을 확인한 뒤 후속 송신을 결정한다.
 - 브랜치·분석 계약·접수 프로토콜·기준시각·검색기간·모임 방식·결과 선택 길이를 비공개 실행 명세에 고정한다. payload의 검색 종료일은 포함하며 API 종료일은 다음 날로 변환한다. 결과 선택 길이는 시험 설정이며 모델이 정할 값이 아니다.
 - 최신 인계 생성 후보를 시험하려면 `schema-coherence`, `provider-parity`, `common-finite-schema`를 true, `selected-choice-context`를 false로 고정한다. known-date/선택지 후보를 함께 켜지 않는다. 이 설정은 실모델 성공이 확인된 설정이라는 뜻이 아니다. 다른 설정은 별도 manifest와 비교 이유를 남긴다.
