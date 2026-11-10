@@ -21,6 +21,7 @@ import zlib
 REPOSITORY = "meet-me-duo/meet-me-server"
 BASE = Path(__file__).resolve().parent.parent
 MAX_ARCHIVE = 4 * 1024 * 1024
+MAX_STATE_SOURCE_JSON = 128 * 1024
 HISTORICAL_CONTRACT_FILES = tuple(sorted((
     "scripts/host-release-guard.sh", "scripts/install-host-release-guard.sh", "scripts/deploy-release.sh",
     "scripts/rollback-release.sh", "scripts/refresh-database-credential.sh", "compose.guard.yml",
@@ -320,20 +321,42 @@ def _host_state(instance, manifest):
     files = {}
     for relative in ("pipeline/host-approved-release.py", "pipeline/approved_release.py"):
         files[relative] = base64.b64encode((BASE / relative).read_bytes()).decode("ascii")
+    source_json = _canonical(files)
+    _require(len(source_json) <= MAX_STATE_SOURCE_JSON)
+    source_bundle = base64.b64encode(gzip.compress(source_json, mtime=0)).decode("ascii")
     # Reviewed source bytes only, in a root-owned /run directory; managed host state is untouched.
-    bootstrap = """import base64,json,pathlib,subprocess,tempfile,shutil,sys,os
+    bootstrap = f"""import base64,gzip,io,json,pathlib,subprocess,tempfile,shutil,sys,os
 os.umask(0o077)
-root=pathlib.Path(tempfile.mkdtemp(prefix='meet-me-read-state.',dir='/run'))
+root=None
 try:
- for relative,payload in json.loads(sys.argv[1]).items():
+ def unique(pairs):
+  result=dict()
+  for key,value in pairs:
+   if key in result:raise ValueError()
+   result[key]=value
+  return result
+ packed=base64.b64decode(sys.argv[1],validate=True)
+ with gzip.GzipFile(fileobj=io.BytesIO(packed)) as source:
+  raw=source.read({MAX_STATE_SOURCE_JSON + 1})
+ if len(raw)>{MAX_STATE_SOURCE_JSON}:raise ValueError()
+ files=json.loads(raw.decode('utf-8'),object_pairs_hook=unique)
+ if type(files) is not dict or set(files)!=set(('pipeline/host-approved-release.py','pipeline/approved_release.py')):raise ValueError()
+ decoded=dict()
+ for relative,payload in files.items():
+  if type(payload) is not str:raise ValueError()
+  decoded[relative]=base64.b64decode(payload,validate=True)
+ root=pathlib.Path(tempfile.mkdtemp(prefix='meet-me-read-state.',dir='/run'))
+ for relative,payload in decoded.items():
   target=root/relative;target.parent.mkdir(parents=True,exist_ok=True)
-  target.write_bytes(base64.b64decode(payload,validate=True));target.chmod(0o600)
+  target.write_bytes(payload);target.chmod(0o600)
  result=subprocess.run(['python3',str(root/'pipeline/host-approved-release.py'),'--read-state',sys.argv[2]],capture_output=True,text=True,timeout=55)
  if result.returncode or result.stderr.strip():sys.exit(2)
  sys.stdout.write(result.stdout)
-finally:shutil.rmtree(root)
+except Exception:sys.exit(2)
+finally:
+ if root is not None:shutil.rmtree(root)
 """
-    command = "set +x\numask 077\npython3 - " + shlex.quote(json.dumps(files)) + " " + _encoded(manifest) + " <<'MEETME_STATE_READER'\n" + bootstrap + "\nMEETME_STATE_READER"
+    command = "set +x\numask 077\npython3 - " + shlex.quote(source_bundle) + " " + _encoded(manifest) + " <<'MEETME_STATE_READER'\n" + bootstrap + "\nMEETME_STATE_READER"
     _require(len(command.encode("utf-8")) <= 60 * 1024)
     return _ssm(instance, command, _strict_state)
 
