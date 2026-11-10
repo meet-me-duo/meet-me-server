@@ -284,11 +284,11 @@ class PreSubmissionCheckService(
         }
         val now = clock.instant()
         val evidenceProtocol = repository.protocol(room.id.value) == "PRE_SUBMIT_V2"
-        // Bind JSON evidence and PostgreSQL timestamps to one precision without rounding across a date boundary.
+        // Capture new source timestamps at database precision without rounding across a date boundary.
         val recordedAt =
-            if (evidenceProtocol) (evidence?.supplement?.answeredAt ?: now).truncatedTo(ChronoUnit.MICROS) else now
+            (if (evidenceProtocol) evidence?.supplement?.answeredAt ?: now else now).truncatedTo(ChronoUnit.MICROS)
         val interpretationReferenceAt =
-            if (evidenceProtocol) (referenceAt ?: recordedAt).truncatedTo(ChronoUnit.MICROS) else referenceAt ?: now
+            if (evidenceProtocol) (referenceAt ?: recordedAt).truncatedTo(ChronoUnit.MICROS) else referenceAt ?: recordedAt
         val exhausted = repository.callCount(room.id.value, participant.id.value) >= MAX_CALLS
         val full = repository.queueSize() >= MAX_QUEUE
         val candidate =

@@ -1,0 +1,33 @@
+{
+  "workItem": "issue218-config-red",
+  "sourceRevision": "39deeb11642fcc6f47a3f0584aa4dffc0502134b",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/config/DefaultFinalAnalysisConfigurationTest.kt",
+      "sha256": "b10b19c89fc6006e89d08d4ec06dbb3b838967d522ae404f083ac424aab96750"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [1] contract = \"DSL_APPROVED_TERMS_V3\"",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [2] contract = \"DSL_CONTEXT_MODE_V4\"",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [3] contract = \"UNREVIEWED_CONTRACT\"",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [1] missingIndex = 0",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [2] missingIndex = 1",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [3] missingIndex = 2",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [4] missingIndex = 3",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [5] missingIndex = 4",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest [6] missingIndex = 5",
+    "com.meetme.server.config.DefaultFinalAnalysisConfigurationTest DFC02 actual prod profile starts with V5 and all six required capabilities()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T09:23:59.613072+00:00",
+  "evidenceNote": "Independent tests run against latest develop before implementation:27 tests,16 expected assertions,11controls pass,zero errors/skips. Actual prod properties/factory @Value and6capability defaults missing. No provider/DB/AWS calls; no production edits."
+}

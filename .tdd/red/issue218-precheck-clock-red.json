@@ -1,0 +1,25 @@
+{
+  "workItem": "issue218-precheck-clock-red",
+  "sourceRevision": "39deeb11642fcc6f47a3f0584aa4dffc0502134b",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/DefaultAnalysisPrecheckClockPostgresTest.kt",
+      "sha256": "7a26dff1c1983e9db252285d03685ac2e12df5740d7ba7567d2b6f2c573a6f4c"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisPrecheckClockPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisPrecheckClockPostgresTest [2] protocol = \"PRE_SUBMIT_V1\", nanos = \"123456501\"",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisPrecheckClockPostgresTest [3] protocol = \"PRE_SUBMIT_V1\", nanos = \"999999999\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T10:03:40.156185+00:00",
+  "evidenceNote": "6actual PostgreSQL V1/V2 CLEAR-admission/last-approval closure cases:V1 upper submicrosecond and second-boundary cases fail by source-before-batch guard; V1 lower-boundary and all3V2 controls pass. Zero errors/skips/provider calls. Root default-selection wiring implemented; both source producer files remain byte-identical to sourceRevision before this RED. Strict source guard unchanged. Original local-date/cohort/persisted reference equality are the oracle, no rounding formula expectation."
+}

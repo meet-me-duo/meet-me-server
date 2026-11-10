@@ -68,6 +68,7 @@ Swagger가 이 문서나 prototype과 다르면 임의로 맞추지 말고 백�
 
 - 자동 마감은 expected participants 또는 deadline 조건으로 서버가 수행한다.
 - 수동 마감은 HOST만 `POST /api/rooms/{inviteCode}/close`를 호출한다.
+- `analysis_contract`를 생략하거나 null로 보내면 서버의 신규 마감 기본 정책을 사용한다. 운영의 지원 가능한 자연어 모임은 V5를 사용하고, 명시 `LEGACY`는 기존 경로를 선택한다. 기존 Web 요청에 필드를 추가할 필요는 없다. 이미 닫힌 방의 재호출은 분석을 다시 만들거나 계약을 바꾸지 않는다.
 - `EARLY_CLOSE_CONFIRMATION_REQUIRED`이면 서버가 반환한 현재·목표 인원과 deadline을 보여주고 사용자 재확인 뒤
   `confirm_early=true`로 한 번 더 호출한다.
 
@@ -150,10 +151,10 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 
 ### 명시 C4 분석 계약 — 2026-11-06 로컬 통합 검증
 
-`POST /api/rooms/{inviteCode}/close`의 선택 필드 `analysis_contract`는 `DSL_CONTEXT_MODE_V4`를 지원한다. 생략하면 기존 `LEGACY`이며 클라이언트 기본값을 바꾸지 않았다. 명시 선택은 같은 HOST 권한/Origin/수집 마감 검사를 거치고 이미 고정된 실행의 계약을 idempotent close로 바꾸지 않는다. 입력 수정·force reparse는 새 실행에 선택을 전파한다.
+`POST /api/rooms/{inviteCode}/close`의 선택 필드 `analysis_contract`는 `DSL_CONTEXT_MODE_V4`를 지원한다. 생략 시 선택은 위 신규 마감 기본 정책을 따른다. 명시 선택은 같은 HOST 권한/Origin/수집 마감 검사를 거치고 이미 고정된 실행의 계약을 idempotent close로 바꾸지 않는다. 입력 수정·force reparse는 source 실행의 선택을 새 실행에 전파한다.
 
 C4의 추천은 기존 DTO의 `meeting_mode`·시간 구간·`quality=PARTIAL`을 사용하며 구간별 mode 제약을 지킨다. 추론 구간이 계산에 쓰여도 사용자 확인으로 표시하지 않고, 장소를 언급하지 않은 대면 후보의 `place=null`은 정상이다. 원문/보완 질문·내부 근거를 새 응답에 추가하지 않는다. HOST의 `analysis/retry` 접수는 기존202이고 완료 여부는 기존 조회로 확인한다. 새로운 조건부 후보 노출·확정 자격이나 UI를 이 계약으로 추가하지 않는다.
 
 이 상태는 로컬 HTTP/JWT·실제 PostgreSQL·합성 provider 검증이며 운영 배포·실모델 의미 품질 통과가 아니다. C4 선택을 실제 웹 기본 흐름에 활성화하는 단계는 최종 gate/정확 commit CI·최신 입력 재생과 배포 조건을 확인한 뒤 진행한다.
 
-명시 `analysis_contract=DSL_STRUCTURAL_V5`는 응답 계약5·semantic6의 별도 구조화 경로를 선택한다. 생략 시 LEGACY와 기존 선택 값은 유지하며 원문/보완 답변·현재 mode·불변 cohort를 같은 경계에서 검증한다. 이 선택은 새 provider 예산이나 운영 활성화를 부여하지 않는다.
+명시 `analysis_contract=DSL_STRUCTURAL_V5`는 응답 계약5·semantic6의 별도 구조화 경로를 선택한다. 생략 시 위 운영 기본 정책을 사용하며 원문/보완 답변·현재 mode·불변 cohort를 같은 경계에서 검증한다. 원문 없는 수동/혼합 입력과 native 출처 기준 날짜를 지원하지 못하는 과거 V1 입력은 기존 경로를 유지한다. 이 계약 선택은 새 금전 예산을 부여하지 않으며 운영 배포 완료 여부와 구분한다.

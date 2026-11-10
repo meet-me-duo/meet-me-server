@@ -10,6 +10,17 @@ spring:
       ssl:
         enabled: ${REDIS_SSL_ENABLED:true}
 
+meetme:
+  analysis:
+    default-contract: ${MEETME_ANALYSIS_DEFAULT_CONTRACT:DSL_STRUCTURAL_V5}
+  experiment:
+    union-preferred-availability: ${MEETME_EXPERIMENT_UNION_PREFERRED_AVAILABILITY:true}
+    server-evidence-references: ${MEETME_EXPERIMENT_SERVER_EVIDENCE_REFERENCES:true}
+    search-relative-dates: ${MEETME_EXPERIMENT_SEARCH_RELATIVE_DATES:true}
+    calendar-month-facts: ${MEETME_EXPERIMENT_CALENDAR_MONTH_FACTS:true}
+    indexed-evidence-selections: ${MEETME_EXPERIMENT_INDEXED_EVIDENCE_SELECTIONS:true}
+    weekly-schedule-rules: ${MEETME_EXPERIMENT_WEEKLY_SCHEDULE_RULES:true}
+
 management:
   server:
     port: ${MANAGEMENT_PORT:9090}

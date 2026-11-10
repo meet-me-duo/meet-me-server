@@ -1,0 +1,50 @@
+{
+  "workItem": "issue218-closure-red",
+  "sourceRevision": "39deeb11642fcc6f47a3f0584aa4dffc0502134b",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/application/service/DefaultAnalysisClosureTest.kt",
+      "sha256": "c99362eb9b48ee20bc4fa23c824c3247bffebb0588ea3e62c3d32955065abd99"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/DefaultAnalysisFrozenContinuationTest.kt",
+      "sha256": "6a1e7ba10ff612c18b15a392112c6597c6803dd482bb56ae643fbb30bf94a4fb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/DefaultAnalysisAutomaticClosePostgresTest.kt",
+      "sha256": "5df9e0a3970370e171f1167ee4ff34ab33cd3f05b6f3a24e3f79b41af209bd52"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest",
+    "--tests",
+    "com.meetme.server.coordination.application.service.DefaultAnalysisFrozenContinuationTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisAutomaticClosePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest DCL04 a historical fully structured cohort keeps matching without an AI contract()",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest DCL05 a mixed historical cohort stays Legacy without dropping the structured participant()",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest DCL08 a repeated selected close preserves its original frozen descriptor and one outbox event()",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest DCL07 an already closed Legacy room cannot be upgraded by an omitted repeated close()",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest DCL09 the real deadline scheduler reaches the same configured default selection()",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest [1] count = 0",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest [2] count = 1",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest [1] reason = EXPECTED_PARTICIPANTS",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest [2] reason = DEADLINE",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisClosureTest [3] reason = MANUAL",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisAutomaticClosePostgresTest [1] nanos = 123456499",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisAutomaticClosePostgresTest [2] nanos = 123456501",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisAutomaticClosePostgresTest [3] nanos = 999999999",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisAutomaticClosePostgresTest [1] kind = \"omitted\"",
+    "com.meetme.server.coordination.adapter.input.web.DefaultAnalysisAutomaticClosePostgresTest [2] kind = \"explicitLegacy\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T09:29:27.323170+00:00",
+  "evidenceNote": "31executed,17expected failures,14controls pass,zero errors/skips. Only allowed optional/nullable signatures and new-default TODO skeleton added before implementation; patch retained locally. Existing explicit V5 at submicrosecond boundaries independently rejects valid actual PostgreSQL sources(2cases); genuine future source rejection and10frozen retry/revision controls pass. No source guard changes or provider calls."
+}

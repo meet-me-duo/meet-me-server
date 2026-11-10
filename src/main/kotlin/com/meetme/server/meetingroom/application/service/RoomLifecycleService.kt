@@ -200,7 +200,7 @@ class RoomLifecycleService(
         val participant = ownership.resolve(room.id, command.rawCredential, OwnershipOperation.HOST_COMMAND)
         val submitted = submissionRepository.countSubmittedParticipants(room.id)
         if (room.collectionStatus == CollectionStatus.CLOSED) {
-            if (command.analysisContract != FinalAnalysisContractSelection.LEGACY) {
+            if (command.analysisContract != null && command.analysisContract != FinalAnalysisContractSelection.LEGACY) {
                 checkNotNull(finalAnalysisSelection) { "Selected contract graph is not configured" }
                     .requireExisting(room.activeRunId, command.analysisContract)
             }
