@@ -17,15 +17,20 @@ import com.meetme.server.coordination.domain.dsl.ScheduleDslNodeDisposition
 import com.meetme.server.coordination.domain.dsl.ScheduleDslPreparedInputs
 import com.meetme.server.coordination.domain.dsl.ScheduleDslStoredCalculation
 import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralCalculator
+import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralMatchingPolicy
 import com.meetme.server.coordination.domain.matching.IrConditionDisposition
 import com.meetme.server.meetingroom.application.port.output.MeetingRoomRepository
 import com.meetme.server.meetingroom.domain.CollectionStatus
+import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.CoordinationRunId
 import com.meetme.server.submission.application.port.output.ScheduleDslApprovedTermsRepository
 import com.meetme.server.submission.application.port.output.ScheduleDslContextModeRepository
 import com.meetme.server.submission.application.port.output.ScheduleDslRepository
 import com.meetme.server.submission.application.port.output.ScheduleDslStructuralRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.domain.dsl.ApprovedPublicPlaceNames
+import com.meetme.server.submission.domain.dsl.MeetingDateScopePolicy
+import com.meetme.server.submission.domain.dsl.PublicPlaceConstraintDescription
 import com.meetme.server.submission.domain.dsl.SCHEDULE_AST_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_APPROVED_TERMS_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_APPROVED_TERMS_SEMANTIC_VERSION
@@ -34,13 +39,21 @@ import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTI
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsValidator
 import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeValidator
+import com.meetme.server.submission.domain.dsl.ScheduleDslPlaceConstraintPolicy
 import com.meetme.server.submission.domain.dsl.ScheduleDslStructuralValidator
 import com.meetme.server.submission.domain.dsl.ScheduleDslValidator
+import com.meetme.server.submission.domain.dsl.SchedulePlaceConstraintKind
 import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.time.APPROVED_KOREAN_TIME_TERM_VERSION
 import org.springframework.transaction.annotation.Isolation
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.sql.Connection
@@ -84,8 +97,25 @@ open class ScheduleDslStoredReadService(
                     evidence.conditions.any { it.disposition == IrConditionDisposition.WITHHELD } ||
                     evidence.nodes.any { it.disposition == ScheduleDslNodeDisposition.WITHHELD }
             }
-        return issues.associate { it.submissionVersionId to "AMBIGUOUS_INPUT" }
+        return restored.placeDiagnostics + issues.associate { it.submissionVersionId to "AMBIGUOUS_INPUT" }
     }
+
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    open fun readPlaceDescriptions(
+        runId: CoordinationRunId,
+        expectedCurrentRunVersion: Long,
+        expectedSelectionFingerprint: String,
+    ): List<PublicPlaceConstraintDescription> =
+        restore(runId, expectedCurrentRunVersion, expectedSelectionFingerprint).placeDescriptions.toList()
+
+    /** Called before selection writes while the command holds the room and run locks. */
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ, propagation = Propagation.REQUIRES_NEW)
+    open fun readPlaceDescriptionsForSelection(
+        runId: CoordinationRunId,
+        expectedCurrentRunVersion: Long,
+        expectedSelectionFingerprint: String,
+    ): List<PublicPlaceConstraintDescription> =
+        restore(runId, expectedCurrentRunVersion, expectedSelectionFingerprint).placeDescriptions.toList()
 
     private data class Restored(
         val route: FrozenFinalAnalysisRoute,
@@ -93,6 +123,8 @@ open class ScheduleDslStoredReadService(
         val quarantined: Set<UUID>,
         val project: () -> List<ScheduleDslPreparedInputs>,
         val calculate: () -> Pair<ScheduleDslCalculation, ScheduleDslContextModeCalculation?>,
+        val placeDescriptions: List<PublicPlaceConstraintDescription> = emptyList(),
+        val placeDiagnostics: Map<UUID, String> = emptyMap(),
     )
 
     private fun restore(
@@ -121,14 +153,27 @@ open class ScheduleDslStoredReadService(
         require(route.selectedAt >= run.batch.fixedAt)
         val structural = route.choice as? FinalAnalysisRouteChoice.DslStructuralV5
         if (structural != null) {
-            require(structural.identity.responseContractVersion == SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT)
+            require(
+                structural.identity.responseContractVersion in
+                    setOf(
+                        SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT,
+                        SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                        SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                        SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                        SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                        SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                    ),
+            )
             require(structural.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION)
             require(structural.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION)
             require(
                 structural.identity.policyVersion == structural.policy.version &&
                     structural.context.policyVersion == structural.policy.version,
             )
-            require(structural.policy == ScheduleDslContextModePolicy.contextual(structural.policy.alternativeChoices))
+            require(
+                structural.policy ==
+                    ScheduleDslStructuralMatchingPolicy.forVersion(structural.policy.version, structural.policy.alternativeChoices),
+            )
             check(structural.meetingMode == room.mode) { "Changed stored structural meeting mode" }
             val snapshot =
                 ScheduleEvidenceSnapshotFactory().create(
@@ -145,6 +190,27 @@ open class ScheduleDslStoredReadService(
                     "Selected structural route has no stored result"
                 }
             require(
+                (envelope.evidenceCatalogVersion != null) ==
+                    (
+                        structural.identity.responseContractVersion in
+                            setOf(
+                                SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                            )
+                    ),
+            ) {
+                "Stored evidence generation contract mismatch"
+            }
+            require(
+                (envelope.weeklyRulesVersion != null) ==
+                    (structural.identity.responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT),
+            ) {
+                "Stored weekly generation contract mismatch"
+            }
+            require(
                 envelope.semanticVersion == structural.identity.irSemanticVersion &&
                     envelope.astVersion == SCHEDULE_AST_VERSION &&
                     envelope.base.base.vocabularyVersion == structural.vocabularyVersion,
@@ -152,6 +218,16 @@ open class ScheduleDslStoredReadService(
             require(envelope.context == structural.context) { "Stored structural context mismatch" }
             val validated = ScheduleDslStructuralValidator().validateRestored(envelope, snapshot)
             check(validated == envelope) { "Stored structural restoration mismatch" }
+            if (structural.identity.responseContractVersion in
+                setOf(
+                    SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                )
+            ) {
+                MeetingDateScopePolicy.create(snapshot).validate(validated)
+            }
             return Restored(
                 route,
                 run.version,
@@ -186,6 +262,25 @@ open class ScheduleDslStoredReadService(
                         calculation.precisionOutcome,
                     ) to calculation
                 },
+                placeDescriptions =
+                    ScheduleDslPlaceConstraintPolicy.descriptions(
+                        validated.placeConstraints,
+                        snapshot,
+                        ApprovedPublicPlaceNames.policy,
+                    ),
+                placeDiagnostics =
+                    if (structural.meetingMode == MeetingMode.REMOTE) {
+                        emptyMap()
+                    } else {
+                        validated.placeConstraints.associate {
+                            it.submissionVersionId to
+                                if (it.kind == SchedulePlaceConstraintKind.TRAVEL_TIME_LIMIT) {
+                                    PlaceConstraintDiagnostics.UNSUPPORTED_TRAVEL_CONSTRAINT
+                                } else {
+                                    "UNVERIFIED_PLACE_CONSTRAINT"
+                                }
+                        }
+                    },
             )
         }
         val contextual = route.choice as? FinalAnalysisRouteChoice.DslContextModeV4

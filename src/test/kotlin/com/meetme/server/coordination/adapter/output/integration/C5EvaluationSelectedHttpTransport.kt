@@ -11,6 +11,7 @@ import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.coordination.domain.dsl.SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT
 import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModePolicy
 import com.meetme.server.coordination.domain.dsl.ScheduleDslProviderInputCapsule
+import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralMatchingPolicy
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchException
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpProviderStatusException
@@ -30,6 +31,11 @@ import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTI
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.ir.IrEvidenceBindings
 import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.ir.IrSourceKind
@@ -61,6 +67,10 @@ internal class C5EvaluationSelectedHttpTransport(
     private val commonFiniteExpressionSchemaCandidate: Boolean = false,
     private val selectedChoiceContexts: C5SelectedChoiceContexts? = null,
     private val selectedChoiceContextResolver: ((ScheduleDslProviderInputCapsule) -> C5SelectedChoiceContexts?)? = null,
+    private val scopedTermEvidenceCandidate: Boolean = false,
+    private val placeConstraintsCandidate: Boolean = false,
+    private val relativeDateContextCandidate: Boolean = false,
+    private val responseDiagnosticsObserver: ((Map<String, Any>) -> Unit)? = null,
     private val responseObserver: ((ByteArray) -> Unit)? = null,
 ) {
     private val reader =
@@ -151,13 +161,9 @@ internal class C5EvaluationSelectedHttpTransport(
             val responseBytes =
                 call.execute().use { response ->
                     val responseBody = response.body ?: fail(ParserFailureKind.INVALID_RESPONSE)
-                    val limit = if (provider == AnalysisProvider.GEMINI) GEMINI_RESPONSE_LIMIT else DSL_LIMIT
-                    if (responseBody.contentLength() > limit) fail(ParserFailureKind.INVALID_RESPONSE)
-                    val received = responseBody.byteStream().use { it.readNBytes(limit + 1) }
-                    if (received.size > limit) fail(ParserFailureKind.INVALID_RESPONSE)
-                    received
+                    val limit = responseEnvelopeLimit(provider)
+                    C5BoundedResponseReader.read(responseBody, limit, responseObserver, responseDiagnosticsObserver)
                 }
-            runCatching { responseObserver?.invoke(responseBytes) } // Observation never replaces the actual provider bytes.
             if (deadline - System.nanoTime() <= 0) fail(ParserFailureKind.TIMEOUT)
             val root = reader.readValue<Map<*, *>>(responseBytes)
             usage = knownUsage(root, provider)
@@ -225,7 +231,17 @@ internal class C5EvaluationSelectedHttpTransport(
         val selectedContext =
             when (val selected = route.choice) {
                 is FinalAnalysisRouteChoice.DslStructuralV5 -> {
-                    require(selected.identity.responseContractVersion == SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT)
+                    require(
+                        selected.identity.responseContractVersion in
+                            setOf(
+                                SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                            ),
+                    )
                     require(selected.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION)
                     require(selected.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION)
                     require(
@@ -233,7 +249,10 @@ internal class C5EvaluationSelectedHttpTransport(
                             selected.policy.version == selected.context.policyVersion,
                     )
                     require(IrInterpretation.UNRESOLVED !in selected.policy.eligibleInterpretations)
-                    require(selected.policy == ScheduleDslContextModePolicy.contextual(selected.policy.alternativeChoices))
+                    require(
+                        selected.policy ==
+                            ScheduleDslStructuralMatchingPolicy.forVersion(selected.policy.version, selected.policy.alternativeChoices),
+                    )
                     selected.context
                 }
                 is FinalAnalysisRouteChoice.DslContextModeV4 -> {
@@ -367,15 +386,63 @@ internal class C5EvaluationSelectedHttpTransport(
         provider: AnalysisProvider,
         model: String,
     ): ByteArray {
+        require(
+            !relativeDateContextCandidate ||
+                (request.binding.route.choice is FinalAnalysisRouteChoice.DslStructuralV5 && providerParityCandidate),
+        ) { "RELATIVE_DATE_CONTEXT_REQUIRES_COMMON_V5" }
+        require(
+            !placeConstraintsCandidate ||
+                (request.binding.route.choice is FinalAnalysisRouteChoice.DslStructuralV5 && providerParityCandidate),
+        ) { "PLACE_CONSTRAINTS_REQUIRE_COMMON_V5" }
         if (provider == AnalysisProvider.GEMINI && request.binding.route.choice is FinalAnalysisRouteChoice.DslContextV2) {
             return ScheduleDslGeminiWire.requestContextBytes(mapper, request.inputCapsule, model)
         }
+        val serverReferences =
+            (request.binding.route.choice as? FinalAnalysisRouteChoice.DslStructuralV5)?.identity?.responseContractVersion in
+                setOf(
+                    SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                )
         val neutral: ByteArray
         val schema: Map<String, Any?>
         when (val selected = request.binding.route.choice) {
             is FinalAnalysisRouteChoice.DslStructuralV5 -> {
                 val contract = C5EvaluationStructuralProviderContract(mapper)
-                val original = contract.requestBytes(request.inputCapsule, selected.meetingMode)
+                val weekly =
+                    if (selected.identity.responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
+                        WeeklyEvidenceProviderContract(mapper, placeConstraintsCandidate)
+                    } else {
+                        null
+                    }
+                val indexed =
+                    if (selected.identity.responseContractVersion == SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT) {
+                        IndexedEvidenceProviderContract(mapper, placeConstraintsCandidate)
+                    } else {
+                        null
+                    }
+                val calendar =
+                    if (selected.identity.responseContractVersion == SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT) {
+                        CalendarFactsEvidenceProviderContract(mapper, placeConstraintsCandidate)
+                    } else {
+                        null
+                    }
+                val scoped =
+                    if (selected.identity.responseContractVersion == SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT) {
+                        SearchScopedEvidenceProviderContract(mapper, placeConstraintsCandidate)
+                    } else {
+                        null
+                    }
+                val referenced = if (serverReferences) ServerEvidenceProviderContract(mapper, placeConstraintsCandidate) else null
+                val original =
+                    weekly?.requestBytes(request.inputCapsule, selected.meetingMode)
+                        ?: indexed?.requestBytes(request.inputCapsule, selected.meetingMode)
+                        ?: calendar?.requestBytes(request.inputCapsule, selected.meetingMode)
+                        ?: scoped?.requestBytes(request.inputCapsule, selected.meetingMode)
+                        ?: referenced?.requestBytes(request.inputCapsule, selected.meetingMode)
+                        ?: contract.requestBytes(request.inputCapsule, selected.meetingMode)
                 neutral =
                     (selectedChoiceContexts ?: selectedChoiceContextResolver?.invoke(request.inputCapsule))?.let { contexts ->
                         val data = reader.readValue<Map<String, Any?>>(original)
@@ -387,7 +454,12 @@ internal class C5EvaluationSelectedHttpTransport(
                             mapper.writeValueAsBytes(enriched + ("prompt" to instructions))
                         }
                     } ?: original
-                schema = contract.responseSchema()
+                schema =
+                    weekly?.responseSchema(request.inputCapsule.snapshot) ?: indexed?.responseSchema(request.inputCapsule.snapshot)
+                        ?: calendar?.responseSchema(request.inputCapsule.snapshot)
+                        ?: scoped?.responseSchema(request.inputCapsule.snapshot)
+                        ?: referenced?.responseSchema()
+                        ?: contract.responseSchema()
             }
             is FinalAnalysisRouteChoice.DslContextModeV4 -> {
                 val contract = ScheduleDslContextModeProviderContract(mapper)
@@ -405,17 +477,52 @@ internal class C5EvaluationSelectedHttpTransport(
             }
             FinalAnalysisRouteChoice.Legacy -> error("CONFIGURATION")
         }
+        if (serverReferences) {
+            require(placeConstraintsCandidate && providerParityCandidate) { "SERVER_EVIDENCE_PROFILE_REQUIRES_COMMON_PLACE_CONTRACT" }
+            return ServerEvidenceWire.bytes(mapper, neutral, provider, model)
+        }
         val commonV5 =
             request.binding.route.choice is FinalAnalysisRouteChoice.DslStructuralV5 &&
                 (provider == AnalysisProvider.OPENAI || providerParityCandidate)
-        val commonData = if (commonV5) reader.readValue<Map<String, Any?>>(neutral).toMutableMap() else null
+        val commonData =
+            if (commonV5) {
+                reader.readValue<Map<String, Any?>>(neutral).toMutableMap().apply {
+                    if (relativeDateContextCandidate) putAll(C5RelativeDateContext.enrich(request.inputCapsule, this))
+                }
+            } else {
+                null
+            }
         val commonInstructions =
             commonData?.let { data ->
                 val instructions = data.remove("prompt")
                 require(instructions is String && instructions.isNotBlank())
                 require(data["schema"] == schema) { "DUPLICATE_INPUT_SCHEMA_MISMATCH" }
                 data.remove("schema")
-                if (scopedUnresolvedContextCandidate) C5DirectLocatorProducer.scopedUnresolvedInstructions(instructions) else instructions
+                val scopedUnresolved =
+                    if (scopedUnresolvedContextCandidate) {
+                        C5DirectLocatorProducer.scopedUnresolvedInstructions(
+                            instructions,
+                        )
+                    } else {
+                        instructions
+                    }
+                val scoped =
+                    if (scopedTermEvidenceCandidate && !serverReferences) {
+                        C5DirectLocatorProducer.scopedTermInstructions(
+                            scopedUnresolved,
+                        )
+                    } else {
+                        scopedUnresolved
+                    }
+                val place =
+                    if (placeConstraintsCandidate &&
+                        !serverReferences
+                    ) {
+                        scoped + "\n" + ScheduleDslPlaceProviderContract.INSTRUCTIONS.trim()
+                    } else {
+                        scoped
+                    }
+                if (relativeDateContextCandidate) place + "\n" + C5RelativeDateContext.INSTRUCTIONS else place
             }
         val selectedGenerationSchema =
             if (commonV5) {
@@ -428,12 +535,20 @@ internal class C5EvaluationSelectedHttpTransport(
             } else {
                 schema
             }
-        val generationSchema =
+        val timeGenerationSchema =
             if (commonFiniteExpressionSchemaCandidate) {
                 require(commonV5 && providerParityCandidate) { "FINITE_SCHEMA_REQUIRES_COMMON_V5" }
                 C5DirectLocatorProducer.finiteExpressionSchema(selectedGenerationSchema)
             } else {
                 selectedGenerationSchema
+            }
+        val generationSchema =
+            if (placeConstraintsCandidate && !serverReferences) {
+                ScheduleDslPlaceProviderContract.schema(
+                    timeGenerationSchema,
+                )
+            } else {
+                timeGenerationSchema
             }
         return mapper.writeValueAsBytes(
             if (provider == AnalysisProvider.GEMINI) {
@@ -503,7 +618,7 @@ internal class C5EvaluationSelectedHttpTransport(
         model: String,
     ): ScheduleDslProviderResponse {
         require(model == if (provider == AnalysisProvider.GEMINI) ScheduleDslGeminiWire.PINNED_MODEL else LUNA_MODEL)
-        val limit = if (provider == AnalysisProvider.GEMINI) GEMINI_RESPONSE_LIMIT else DSL_LIMIT
+        val limit = responseEnvelopeLimit(provider)
         require(bytes.isNotEmpty() && bytes.size <= limit)
         return decodeResponse(reader.readValue<Map<*, *>>(bytes), bytes, provider, model)
     }
@@ -518,6 +633,13 @@ internal class C5EvaluationSelectedHttpTransport(
             ScheduleDslGeminiWire.response(mapper, bytes)
         } else {
             lunaResponse(root, bytes.size, model)
+        }
+
+    private fun responseEnvelopeLimit(provider: AnalysisProvider): Int =
+        when {
+            provider == AnalysisProvider.GEMINI -> GEMINI_RESPONSE_LIMIT
+            placeConstraintsCandidate -> PLACE_ENVELOPE_LIMIT
+            else -> DSL_LIMIT
         }
 
     private fun lunaResponse(
@@ -623,5 +745,6 @@ internal class C5EvaluationSelectedHttpTransport(
         private const val PROFILE_CAPTURE_LIMIT = 32 * 1024 * 1024
         private const val DSL_LIMIT = 256 * 1024
         private const val GEMINI_RESPONSE_LIMIT = 1024 * 1024
+        private const val PLACE_ENVELOPE_LIMIT = 1024 * 1024
     }
 }

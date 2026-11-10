@@ -37,6 +37,7 @@ import java.util.UUID
 /** Explicit graph wire. Source text is data; no provider source registry or fallback decoder is accepted. */
 class ScheduleDslProviderContract(
     private val objectMapper: ObjectMapper,
+    private val trustedExpandedEvidence: Boolean = false,
 ) {
     private val reader =
         objectMapper
@@ -53,7 +54,7 @@ class ScheduleDslProviderContract(
     ): ScheduleDslEnvelope =
         try {
             require(semanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION && astVersion == SCHEDULE_AST_VERSION)
-            require(json.toByteArray(Charsets.UTF_8).size <= 262_144)
+            require(json.toByteArray(Charsets.UTF_8).size <= if (trustedExpandedEvidence) 4_194_304 else 262_144)
             val root = fields(reader.readValue<Map<*, *>>(json), setOf("semantic_version", "ast_version", "results"))
             require(root["semantic_version"] == semanticVersion && root["ast_version"] == astVersion)
             val results = list(root["results"])

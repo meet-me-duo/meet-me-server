@@ -17,6 +17,7 @@ const val SCHEDULE_DSL_CONTEXT_MODE_SEMANTIC_VERSION = "schedule-ir-product-5"
 const val SCHEDULE_DSL_CONTEXT_MODE_REQUEST_CONTRACT = "schedule-dsl-request-4"
 const val SCHEDULE_DSL_CONTEXT_MODE_RESPONSE_CONTRACT = "schedule-dsl-response-4"
 const val SCHEDULE_CONTEXT_MODE_POLICY_VERSION = "schedule-context-mode-1"
+const val SCHEDULE_STRUCTURAL_UNION_POLICY_VERSION = "schedule-structural-union-1"
 
 /** A hard per-input restriction, independent of the availability AST. EITHER is never an atomic permitted mode. */
 data class ProposedScheduleModeRestriction(
@@ -69,13 +70,18 @@ data class ScheduleDslContextModeEnvelope(
     val modeRestrictions: List<ScheduleModeRestriction>,
 )
 
-class ScheduleDslContextModeValidator {
+class ScheduleDslContextModeValidator(
+    private val allowStructuralUnionPolicy: Boolean = false,
+) {
     fun validateDeclaration(
         base: ScheduleDslApprovedTermsEnvelope,
         modeRestrictions: List<ProposedScheduleModeRestriction>,
         snapshot: ScheduleEvidenceSnapshot,
     ): ScheduleDslContextModeEnvelope {
-        require(snapshot.context.policyVersion == SCHEDULE_CONTEXT_MODE_POLICY_VERSION) { "Context-mode policy mismatch" }
+        require(
+            snapshot.context.policyVersion == SCHEDULE_CONTEXT_MODE_POLICY_VERSION ||
+                (allowStructuralUnionPolicy && snapshot.context.policyVersion == SCHEDULE_STRUCTURAL_UNION_POLICY_VERSION),
+        ) { "Context-mode policy mismatch" }
         require(base.declaration.context == snapshot.context) { "Context-mode snapshot mismatch" }
         val validated = ScheduleDslApprovedTermsValidator().validateRestored(base, snapshot)
         val inputs =

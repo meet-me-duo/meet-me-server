@@ -264,7 +264,7 @@ open class SelectedScheduleDslProcessingPersistenceService(
         when (val selected = binding.route.choice) {
             is FinalAnalysisRouteChoice.DslStructuralV5 -> {
                 val selectedParser = requireNotNull(structuralParser)
-                check(selectedParser.supportedResponseContractVersion == selected.identity.responseContractVersion)
+                check(selectedParser.supportsResponseContractVersion(selected.identity.responseContractVersion))
                 val envelope =
                     selectedParser.parse(
                         response.responseJson,

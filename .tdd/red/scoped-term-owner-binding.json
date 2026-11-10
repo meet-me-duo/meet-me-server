@@ -1,0 +1,26 @@
+{
+  "workItem": "scoped-term-owner-binding",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScopedTermEvidenceOwnershipTest.kt",
+      "sha256": "40908b3843f306068d1fce5cf2e0e6eddda07dcfb1b4d0beb3c351b191519af8"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ScopedTermEvidence*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceOwnershipTest.STO02 sibling application cannot borrow another owners witness for the same native term span()",
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceOwnershipTest.STO03 approved term witness cannot authorize an ambiguous graph proof outside its term owning role()",
+    "com.meetme.server.coordination.adapter.output.integration.ScopedTermEvidenceOwnershipTest.STO01 shared native occurrence remains valid when each term owner declares and records its own context()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T13:51:52.363707+00:00",
+  "evidenceNote": "Formatting-only test fingerprint refresh; original pre-implementation RED logs retained locally. Entry point restored to missing-behavior TODO for refresh, then exact implemented source bytes restored."
+}

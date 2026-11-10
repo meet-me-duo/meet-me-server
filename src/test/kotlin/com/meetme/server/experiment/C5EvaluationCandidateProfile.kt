@@ -31,7 +31,12 @@ internal class C5EvaluationSelectedProviders {
         C5SelectedChoiceContextRun(System.getProperty("meetme.experiment.selected-choice-context") == "true")
 
     @Bean
-    fun c5EvaluationStructuralParser(mapper: ObjectMapper): ScheduleDslStructuralResponseParser = C5EvaluationStrictJsonBoundary(mapper)
+    fun c5EvaluationStructuralParser(mapper: ObjectMapper): ScheduleDslStructuralResponseParser =
+        C5EvaluationStrictJsonBoundary(
+            mapper,
+            System.getProperty("meetme.experiment.scoped-term-evidence") == "true",
+            System.getProperty("meetme.experiment.place-constraints") == "true",
+        )
 
     @Bean("selectedScheduleDslGeminiProvider")
     fun c5EvaluationGeminiProvider(
@@ -49,6 +54,14 @@ internal class C5EvaluationSelectedProviders {
                 schemaCoherenceCandidate = System.getProperty("meetme.experiment.schema-coherence") == "true",
                 providerParityCandidate = System.getProperty("meetme.experiment.provider-parity") == "true",
                 commonFiniteExpressionSchemaCandidate = System.getProperty("meetme.experiment.common-finite-schema") == "true",
+                scopedTermEvidenceCandidate = System.getProperty("meetme.experiment.scoped-term-evidence") == "true",
+                placeConstraintsCandidate = System.getProperty("meetme.experiment.place-constraints") == "true",
+                relativeDateContextCandidate = System.getProperty("meetme.experiment.relative-date-context") == "true",
+                responseDiagnosticsObserver = { diagnostic ->
+                    journal.ifAvailable?.let { trace ->
+                        runCatching { trace.recordError(trace.currentCall(), diagnostic) }.onFailure { trace.observationFailure() }
+                    }
+                },
                 selectedChoiceContextResolver = contexts::resolve,
             ) { bytes ->
                 journal.ifAvailable?.let { trace ->
@@ -78,6 +91,14 @@ internal class C5EvaluationSelectedProviders {
                 schemaCoherenceCandidate = System.getProperty("meetme.experiment.schema-coherence") == "true",
                 providerParityCandidate = System.getProperty("meetme.experiment.provider-parity") == "true",
                 commonFiniteExpressionSchemaCandidate = System.getProperty("meetme.experiment.common-finite-schema") == "true",
+                scopedTermEvidenceCandidate = System.getProperty("meetme.experiment.scoped-term-evidence") == "true",
+                placeConstraintsCandidate = System.getProperty("meetme.experiment.place-constraints") == "true",
+                relativeDateContextCandidate = System.getProperty("meetme.experiment.relative-date-context") == "true",
+                responseDiagnosticsObserver = { diagnostic ->
+                    journal.ifAvailable?.let { trace ->
+                        runCatching { trace.recordError(trace.currentCall(), diagnostic) }.onFailure { trace.observationFailure() }
+                    }
+                },
                 selectedChoiceContextResolver = contexts::resolve,
             ) { bytes ->
                 journal.ifAvailable?.let { trace ->

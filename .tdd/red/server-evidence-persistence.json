@@ -1,0 +1,30 @@
+{
+  "workItem": "server-evidence-persistence",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/ServerEvidenceCatalogPostgresTest.kt",
+      "sha256": "4dc713899eb924d681cb99a1547d43908462b411e9ae188bad9993c9eee0eb65"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceCatalogPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG06 legacy formats keep existing readers and omit catalog fields()",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG03 format downgrade missing marker and unsupported catalog version are rejected()",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG05 unbound or foreign catalog witnesses cannot publish under the new or old marker()",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG04 changing a native source after publication invalidates fresh source bound references()",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG01 format11 retains the second repeated native context through independent restore and calculation()",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG07 opt in generation contract is frozen and survives disabling selector on reload()",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceCatalogPostgresTest.SEPG02 corrupted native span digest reference or owner cannot be restored or silently repaired()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T01:58:22.468978+00:00",
+  "evidenceNote": "Independent source ID/provenance and PG newformat tests; missing implemented catalog/provider/route behavior. No case-specific original or model output patched."
+}

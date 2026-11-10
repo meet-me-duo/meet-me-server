@@ -1,0 +1,49 @@
+{
+  "workItem": "travel-place-contract",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TravelPlaceProviderContractTest.kt",
+      "sha256": "bea64027368b5a7206c32dd11ed08cd80fa3cb24645d4e41f58f7ac50feac3e5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/TravelPlacePostgresTest.kt",
+      "sha256": "7c86214a6b97ee889409c62bc83d7f2fbe81b62dde0f5c9cffe1f518e6adb897"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TravelPlacePolicyTest.kt",
+      "sha256": "4a4f09a69c4a7f61fe987a24fc1325475bf741199f0afc914717bbb8433773f5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/TravelPlaceTestFixture.kt",
+      "sha256": "a18089b44a8e8199cd7af5da3232b950c01515441a20378693b221fb00658dc6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*TravelPlace*"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD01 source bound travel preserves absent mode and allows public display only through exact server aliases()",
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD04 positive bounded minutes valid kind combinations and metadata namespaces are enforced()",
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD05 unverified travel preserves exact time overlap and affects only that participant in person()",
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD07 one explicit duration expression supports unit conversion while independent durations cannot be silently chosen()",
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD03 source owner revision literal hash and containing expression are mandatory for travel evidence()",
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD02 registered label alone cannot disclose private unknown or unregistered native origins()",
+    "com.meetme.server.submission.domain.dsl.TravelPlacePolicyTest.TPD06 unresolved time link cannot promote affected participant time to confirmed in any mode()",
+    "com.meetme.server.coordination.application.service.TravelPlacePostgresTest.TPPG04 private origin remains internal across fresh restore and produces only generic public description()",
+    "com.meetme.server.coordination.application.service.TravelPlacePostgresTest.TPPG02 forged source hash owner position format or missing declaration marker fails without rewriting stored data()",
+    "com.meetme.server.coordination.application.service.TravelPlacePostgresTest.TPPG01 format10 restores exact source bound travel from independent connection and calculates unchanged overlap()",
+    "com.meetme.server.coordination.application.service.TravelPlacePostgresTest.TPPG03 format10 empty declaration remains explicit while old7 old8 and old9 keep their original shapes()",
+    "com.meetme.server.coordination.adapter.output.integration.TravelPlaceProviderContractTest.TPP01 default reader rejects new wire while opted reader preserves exact typed evidence without changing source bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.TravelPlaceProviderContractTest.TPP04 declared travel modes unresolved meaning and unresolved time link are preserved rather than guessed()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T14:54:14.963540+00:00",
+  "evidenceNote": "Valid RED after formatting; typed declarations unsupported, source policy/renderer are missing-behavior TODO, HTTP fixture completes and fails on missing public condition description. Raw log is local only."
+}

@@ -1,0 +1,31 @@
+{
+  "workItem": "indexed-evidence-route",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/IndexedEvidenceRoutePostgresTest.kt",
+      "sha256": "bac232ff69a93297624a609aa8d425bb7d8b86d003bb84889b984a325c447a27"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*IndexedEvidenceRoutePostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.[1] serverReferences = \"false\", scopedDates = \"false\", calendarFacts = \"false\"",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.[5] serverReferences = \"true\", scopedDates = \"false\", calendarFacts = \"false\"",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.[7] serverReferences = \"true\", scopedDates = \"true\", calendarFacts = \"false\"",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.IER01 response4 identity and fingerprint remain frozen after selector flags change()",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.IER03 enabling indexed evidence selections cannot rewrite a previously frozen response3 contract()",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.IER04 a successor retains response4 when current selector flags are all disabled()",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.[3] indexed = \"true\", foreignOutside = \"false\"",
+    "com.meetme.server.coordination.adapter.output.persistence.IndexedEvidenceRoutePostgresTest.[4] indexed = \"true\", foreignOutside = \"true\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T06:28:40.127693+00:00",
+  "evidenceNote": "Independent synthetic native PostgreSQL contracts: 14 compiled tests, 8 expected assertion failures, 6 passed, no errors/skips. Failures show missing new response4 selection (4), missing indexed-only prerequisite rejection (3), and absent old3/new4 freeze conflict (1). Offline execution with provider keys/live-evaluation variables unset; no provider calls. No real participant input or manufactured model response."
+}

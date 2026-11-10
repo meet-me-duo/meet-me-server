@@ -24,6 +24,7 @@ import java.util.UUID
 
 class ScheduleDslApprovedTermsProviderContract(
     private val mapper: ObjectMapper,
+    private val trustedExpandedEvidence: Boolean = false,
 ) {
     private val reader =
         mapper
@@ -117,7 +118,7 @@ class ScheduleDslApprovedTermsProviderContract(
                     astVersion == SCHEDULE_AST_VERSION &&
                     vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION,
             )
-            require(json.toByteArray(Charsets.UTF_8).size <= 262_144)
+            require(json.toByteArray(Charsets.UTF_8).size <= if (trustedExpandedEvidence) 4_194_304 else 262_144)
             val root = fields(reader.readValue<Map<*, *>>(json), setOf("semantic_version", "ast_version", "vocabulary_version", "results"))
             require(
                 root["semantic_version"] == semanticVersion &&
@@ -175,7 +176,7 @@ class ScheduleDslApprovedTermsProviderContract(
                     ),
                 )
             val declaration =
-                ScheduleDslProviderContract(mapper).parseProviderResponse(
+                ScheduleDslProviderContract(mapper, trustedExpandedEvidence).parseProviderResponse(
                     declarationJson,
                     snapshot,
                     SCHEDULE_DSL_SEMANTIC_VERSION,

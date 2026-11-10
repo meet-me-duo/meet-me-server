@@ -52,6 +52,7 @@ import com.meetme.server.shared.domain.time.InstantTimeRange
 import com.meetme.server.submission.application.port.output.StructuredSubmissionRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
 import com.meetme.server.submission.application.service.ClarificationService
+import com.meetme.server.submission.domain.dsl.PublicPlaceConstraintDescription
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -114,7 +115,19 @@ class MatchingResultService(
                 val reason = selected[submission.latest.id.value] ?: return@mapNotNull null
                 val owner = requireNotNull(participantRepository.findById(submission.participantId)) { "Frozen participant is missing" }
                 check(owner.roomId == room.id)
-                UnappliedInputView(owner.displayName.value, null, reason, null, "INPUT")
+                UnappliedInputView(
+                    owner.displayName.value,
+                    null,
+                    reason,
+                    null,
+                    if (reason in
+                        setOf(PlaceConstraintDiagnostics.UNSUPPORTED_TRAVEL_CONSTRAINT, "UNVERIFIED_PLACE_CONSTRAINT")
+                    ) {
+                        "PLACE"
+                    } else {
+                        "INPUT"
+                    },
+                )
             }
         }
         val structured = structuredSubmissionRepository.findByBatch(run.batch.id).associateBy { it.submissionVersionId }
@@ -198,8 +211,8 @@ class MatchingResultService(
         val candidate =
             run.candidates.firstOrNull { it.id == requested }
                 ?: fail(MatchingResultErrorCode.CANDIDATE_NOT_FOUND)
-        val candidateView = candidate.toView(room, locale)
-        requireAttendanceSupport(candidateView.attendanceConfirmed, supportsConditionalAttendance)
+        requireAttendanceSupport(candidate.unverifiedPlaceParticipantIds.isEmpty(), supportsConditionalAttendance)
+        val candidateView = candidate.toView(room, locale, selectedPlaceDescriptions(run, forSelection = true))
         val confirmed =
             if (existing == requested) {
                 run
@@ -229,7 +242,7 @@ class MatchingResultService(
         }
         val id = run.confirmedCandidateId ?: fail(MatchingResultErrorCode.RESULT_NOT_CONFIRMED)
         val candidate = run.candidates.firstOrNull { it.id == id } ?: fail(MatchingResultErrorCode.CANDIDATE_NOT_FOUND)
-        val view = candidate.toView(room, locale)
+        val view = candidate.toView(room, locale, selectedPlaceDescriptions(run))
         requireAttendanceSupport(view.attendanceConfirmed, supportsConditionalAttendance)
         return ConfirmedResultView(view, requireNotNull(run.confirmedAt))
     }
@@ -353,12 +366,15 @@ class MatchingResultService(
             ) {
                 fail(MatchingResultErrorCode.CANDIDATE_ALREADY_CONFIRMED)
             }
-            return selectedResult(run, room, existing, command.locale).also {
+            val selectedVariant = option.option.variants[option.variantIds.indexOf(command.variantId)]
+            requireAttendanceSupport(selectedVariant.unverifiedPlaceParticipantIds.isEmpty(), command.supportsConditionalAttendance)
+            return selectedResult(run, room, existing, command.locale, selectedPlaceDescriptions(run, forSelection = true)).also {
                 requireAttendanceSupport(it.candidate.attendanceConfirmed, command.supportsConditionalAttendance)
             }
         }
         val variant = option.option.variants[option.variantIds.indexOf(command.variantId)]
         requireAttendanceSupport(variant.unverifiedPlaceParticipantIds.isEmpty(), command.supportsConditionalAttendance)
+        val placeDescriptions = selectedPlaceDescriptions(run, forSelection = true)
         val selection =
             RecommendationSelection(
                 run.id.value,
@@ -371,7 +387,7 @@ class MatchingResultService(
         val confirmed = run.confirmSelection(selection)
         coordinationRunRepository.update(confirmed)
         roomRepository.update(room.transition())
-        return selectedResult(confirmed, room, selection, command.locale)
+        return selectedResult(confirmed, room, selection, command.locale, placeDescriptions)
     }
 
     private fun requireAttendanceSupport(
@@ -390,6 +406,7 @@ class MatchingResultService(
         locale: Locale,
     ): RecommendationListView {
         check(analysis == null || analysis.roomId == room.id.value)
+        val placeDescriptions = selectedPlaceDescriptions(run)
         val partial = options.any { option -> option.option.variants.any { it.participantIds.size < run.batch.submissionVersionIds.size } }
         val frozenCohort =
             if (partial) {
@@ -440,6 +457,9 @@ class MatchingResultService(
                                 variant.participantIds.size,
                                 variant.unverifiedPlaceParticipantIds.isNotEmpty(),
                                 locale,
+                                variant.participantIds,
+                                variant.meetingMode,
+                                placeDescriptions,
                             ),
                         )
                     },
@@ -456,6 +476,7 @@ class MatchingResultService(
         room: MeetingRoom,
         selection: RecommendationSelection,
         locale: Locale,
+        placeDescriptions: List<PublicPlaceConstraintDescription>? = null,
     ): ConfirmedResultView {
         val analysis = requireNotNull(recommendations?.find(run.id.value, RecommendationQuery(optionId = selection.optionId)))
         val option = analysis.options.first { it.id == selection.optionId }
@@ -485,6 +506,9 @@ class MatchingResultService(
                     variant.participantIds.size,
                     variant.unverifiedPlaceParticipantIds.isNotEmpty(),
                     locale,
+                    variant.participantIds,
+                    variant.meetingMode,
+                    placeDescriptions ?: selectedPlaceDescriptions(run),
                 ),
                 variant.unverifiedPlaceParticipantIds.isEmpty(),
             )
@@ -529,13 +553,14 @@ class MatchingResultService(
         locale: Locale,
     ): CandidateListView {
         val selected = selectedInputDiagnostics(run)
+        val placeDescriptions = selectedPlaceDescriptions(run)
         if (selected != null) {
             return CandidateListView(
                 quality = requireNotNull(run.quality),
                 appliedSubmissions = run.batch.submissionVersionIds.size - selected.size,
                 totalSubmissions = run.batch.submissionVersionIds.size,
                 unappliedInputs = selected.size,
-                candidates = run.candidates.map { it.toView(room, locale) },
+                candidates = run.candidates.map { it.toView(room, locale, placeDescriptions) },
                 analysisId = run.id.value,
                 stateVersion = room.version,
             )
@@ -557,7 +582,7 @@ class MatchingResultService(
             appliedSubmissions = run.batch.submissionVersionIds.size - rejected,
             totalSubmissions = run.batch.submissionVersionIds.size,
             unappliedInputs = rejected,
-            candidates = run.candidates.map { it.toView(room, locale) },
+            candidates = run.candidates.map { it.toView(room, locale, placeDescriptions) },
             analysisId = run.id.value,
             stateVersion = room.version,
         )
@@ -584,6 +609,7 @@ class MatchingResultService(
     private fun MeetingCandidate.toView(
         room: MeetingRoom,
         locale: Locale,
+        placeDescriptions: List<PublicPlaceConstraintDescription> = emptyList(),
     ): CandidateView =
         CandidateView(
             candidateId = id.value,
@@ -624,6 +650,9 @@ class MatchingResultService(
                     participantIds.size,
                     unverifiedPlaceParticipantIds.isNotEmpty(),
                     locale,
+                    participantIds,
+                    meetingMode,
+                    placeDescriptions,
                 ),
         )
 
@@ -632,7 +661,38 @@ class MatchingResultService(
         count: Int,
         pending: Boolean,
         locale: Locale,
-    ): String = if (pending) messageSource.getMessage("candidate.summary.unverified_place", arrayOf<Any>(time, count), locale) else time
+        participantIds: List<com.meetme.server.shared.domain.ParticipantId> = emptyList(),
+        meetingMode: MeetingMode = MeetingMode.IN_PERSON,
+        placeDescriptions: List<PublicPlaceConstraintDescription> = emptyList(),
+    ): String =
+        PlaceConstraintSummaryRenderer(messageSource).render(
+            if (pending) messageSource.getMessage("candidate.summary.unverified_place", arrayOf<Any>(time, count), locale) else time,
+            participantIds.map { it.value }.toSet(),
+            meetingMode,
+            placeDescriptions,
+            locale,
+        )
+
+    private fun selectedPlaceDescriptions(
+        run: CoordinationRun,
+        forSelection: Boolean = false,
+    ): List<PublicPlaceConstraintDescription> {
+        val route = finalRoutes?.find(run.id.value) ?: return emptyList()
+        val choice = route.choice as? FinalAnalysisRouteChoice.DslStructuralV5 ?: return emptyList()
+        val reader = checkNotNull(storedDsl)
+        val values =
+            if (forSelection) {
+                reader.readPlaceDescriptionsForSelection(run.id, run.version, route.fingerprint())
+            } else {
+                reader.readPlaceDescriptions(run.id, run.version, route.fingerprint())
+            }
+        check(
+            values.all { value ->
+                choice.context.inputs.any { it.participantId == value.participantId }
+            },
+        ) { "Foreign public place owner" }
+        return values
+    }
 
     private fun MeetingCandidate.inferredPattern(room: MeetingRoom): RecurringCandidatePattern? {
         val localRanges =

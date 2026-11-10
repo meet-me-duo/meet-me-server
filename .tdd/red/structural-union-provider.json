@@ -1,0 +1,33 @@
+{
+  "workItem": "structural-union-provider",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/StructuralUnionProviderContractTest.kt",
+      "sha256": "4e3d23c5c38fe30911d80e22ecc87508967bc8ac5b2d41d53a7e0ae4df3b83b9"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ScheduleDslUnionPreferredAvailabilityTest",
+    "--tests",
+    "*StructuralUnionProviderContractTest",
+    "--tests",
+    "*StructuralUnionPolicyBindingPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.StructuralUnionProviderContractTest.SUP03 unknown policy cannot silently inherit either known interpretation()",
+    "com.meetme.server.coordination.adapter.output.integration.StructuralUnionProviderContractTest.SUP02 new guidance replaces old precedence and communicates the generic union and day contract()",
+    "com.meetme.server.coordination.adapter.output.integration.StructuralUnionProviderContractTest.SUP01 old frozen policy preserves arbitrary prompt bytes without introducing new guidance()",
+    "com.meetme.server.coordination.adapter.output.integration.StructuralUnionProviderContractTest.SUP05 candidate V5 request chooses the same policy without changing producer or locator schema()",
+    "com.meetme.server.coordination.adapter.output.integration.StructuralUnionProviderContractTest.SUP04 main V5 request chooses frozen policy guidance while preserving native data and schema()",
+    "com.meetme.server.coordination.adapter.output.integration.StructuralUnionProviderContractTest.SUP06 new policy guidance contains no concrete date or weekday examples()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T00:42:34.017168+00:00",
+  "evidenceNote": "Independent synthetic contracts; compiled missing union policy/projection and deliberate rejection of currently unsupported version. No model output or user-case oracle manufactured."
+}

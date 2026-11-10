@@ -8,6 +8,7 @@ import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.coordination.domain.dsl.ApprovedScheduleDslMatchingPolicy
 import com.meetme.server.coordination.domain.dsl.SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT
 import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModePolicy
+import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralMatchingPolicy
 import com.meetme.server.coordination.domain.ir.IrExecutionIdentity
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleErrorCode
 import com.meetme.server.meetingroom.application.port.input.RoomLifecycleException
@@ -20,6 +21,11 @@ import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTI
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.time.APPROVED_KOREAN_TIME_TERM_VERSION
 import org.springframework.transaction.support.TransactionSynchronizationManager
 import java.util.UUID
@@ -28,6 +34,12 @@ import java.util.UUID
 class FinalAnalysisRouteSelectionService(
     private val runs: CoordinationRunRepository,
     private val routes: FinalAnalysisRouteRegistry,
+    private val unionPreferredAvailability: Boolean = false,
+    private val serverEvidenceReferences: Boolean = false,
+    private val searchRelativeDates: Boolean = false,
+    private val calendarMonthFacts: Boolean = false,
+    private val indexedEvidenceSelections: Boolean = false,
+    private val weeklyScheduleRules: Boolean = false,
 ) {
     fun freeze(
         run: CoordinationRun,
@@ -53,8 +65,35 @@ class FinalAnalysisRouteSelectionService(
                 actualIds.toSet() == expectedIds.toSet(),
         )
         val structural = selection == FinalAnalysisContractSelection.DSL_STRUCTURAL_V5
+        require(
+            !structural ||
+                !weeklyScheduleRules ||
+                (indexedEvidenceSelections && calendarMonthFacts && searchRelativeDates && serverEvidenceReferences),
+        ) {
+            "Weekly rules require indexed selections, calendar facts, scoped dates and server references"
+        }
+        require(
+            !structural ||
+                !indexedEvidenceSelections ||
+                (calendarMonthFacts && searchRelativeDates && serverEvidenceReferences),
+        ) {
+            "Indexed evidence selections require calendar facts, scoped dates and server references"
+        }
+        require(!structural || !calendarMonthFacts || (serverEvidenceReferences && searchRelativeDates)) {
+            "Month calendar facts require server evidence references and scoped dates"
+        }
+        require(
+            !structural || !searchRelativeDates || serverEvidenceReferences,
+        ) { "Search-relative dates require server evidence references" }
         val contextualMode = selection == FinalAnalysisContractSelection.DSL_CONTEXT_MODE_V4 || structural
-        val policy = if (contextualMode) ScheduleDslContextModePolicy.contextual() else ApprovedScheduleDslMatchingPolicy.contextual()
+        val policy =
+            if (structural && unionPreferredAvailability) {
+                ScheduleDslStructuralMatchingPolicy.union()
+            } else if (contextualMode) {
+                ScheduleDslContextModePolicy.contextual()
+            } else {
+                ApprovedScheduleDslMatchingPolicy.contextual()
+            }
         val snapshot =
             ScheduleEvidenceSnapshotFactory().create(
                 persisted,
@@ -68,7 +107,14 @@ class FinalAnalysisRouteSelectionService(
             if (structural) {
                 FinalAnalysisRouteChoice.DslStructuralV5(
                     IrExecutionIdentity(
-                        SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT,
+                        when {
+                            weeklyScheduleRules -> SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
+                            indexedEvidenceSelections -> SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
+                            calendarMonthFacts -> SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT
+                            searchRelativeDates -> SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+                            serverEvidenceReferences -> SERVER_EVIDENCE_RESPONSE_CONTRACT
+                            else -> SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT
+                        },
                         SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION,
                         policy.version,
                     ),
@@ -137,12 +183,23 @@ class FinalAnalysisRouteSelectionService(
             when (choice) {
                 is FinalAnalysisRouteChoice.DslStructuralV5 -> {
                     require(
-                        choice.identity.responseContractVersion == SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT &&
+                        choice.identity.responseContractVersion in
+                            setOf(
+                                SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                            ) &&
                             choice.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION &&
                             choice.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION,
                     )
                     require(choice.identity.policyVersion == choice.policy.version && choice.context.policyVersion == choice.policy.version)
-                    require(choice.policy == ScheduleDslContextModePolicy.contextual(choice.policy.alternativeChoices))
+                    require(
+                        choice.policy ==
+                            ScheduleDslStructuralMatchingPolicy.forVersion(choice.policy.version, choice.policy.alternativeChoices),
+                    )
                     choice.policy
                 }
                 is FinalAnalysisRouteChoice.DslContextModeV4 -> {
@@ -219,11 +276,19 @@ class FinalAnalysisRouteSelectionService(
                         choice.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION
                 FinalAnalysisContractSelection.DSL_STRUCTURAL_V5 ->
                     choice is FinalAnalysisRouteChoice.DslStructuralV5 &&
-                        choice.identity.responseContractVersion == SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT &&
+                        choice.identity.responseContractVersion in
+                        setOf(
+                            SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                        ) &&
                         choice.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION &&
                         choice.identity.policyVersion == choice.policy.version &&
                         choice.context.policyVersion == choice.policy.version &&
-                        choice.policy == ScheduleDslContextModePolicy.contextual() &&
+                        choice.policy == ScheduleDslStructuralMatchingPolicy.forVersion(choice.policy.version) &&
                         choice.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION
                 FinalAnalysisContractSelection.DSL_CONTEXT_MODE_V4 ->
                     choice is FinalAnalysisRouteChoice.DslContextModeV4 &&

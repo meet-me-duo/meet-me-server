@@ -44,6 +44,7 @@ import com.meetme.server.submission.application.port.output.ScheduleDslRepositor
 import com.meetme.server.submission.application.port.output.ScheduleDslStructuralRepository
 import com.meetme.server.submission.application.port.output.SubmissionRepository
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.AutoConfiguration
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -75,7 +76,23 @@ class SelectedScheduleDslAutoConfiguration {
     fun finalAnalysisRouteSelectionService(
         runs: CoordinationRunRepository,
         routes: FinalAnalysisRouteRegistry,
-    ): FinalAnalysisRouteSelectionService = FinalAnalysisRouteSelectionService(runs, routes)
+        @Value("\${meetme.experiment.union-preferred-availability:false}") unionPreferredAvailability: Boolean = false,
+        @Value("\${meetme.experiment.server-evidence-references:false}") serverEvidenceReferences: Boolean = false,
+        @Value("\${meetme.experiment.search-relative-dates:false}") searchRelativeDates: Boolean = false,
+        @Value("\${meetme.experiment.calendar-month-facts:false}") calendarMonthFacts: Boolean = false,
+        @Value("\${meetme.experiment.indexed-evidence-selections:false}") indexedEvidenceSelections: Boolean = false,
+        @Value("\${meetme.experiment.weekly-schedule-rules:false}") weeklyScheduleRules: Boolean = false,
+    ): FinalAnalysisRouteSelectionService =
+        FinalAnalysisRouteSelectionService(
+            runs,
+            routes,
+            unionPreferredAvailability,
+            serverEvidenceReferences,
+            searchRelativeDates,
+            calendarMonthFacts,
+            indexedEvidenceSelections,
+            weeklyScheduleRules,
+        )
 
     @Bean
     @ConditionalOnMissingBean(ScheduleDslRepository::class)

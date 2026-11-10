@@ -9,6 +9,7 @@ import com.meetme.server.coordination.adapter.output.integration.C5SelectedChoic
 import com.meetme.server.coordination.adapter.output.integration.GeminiResponseSchemaProjection
 import com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeProviderContract
 import com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoices
+import com.meetme.server.coordination.adapter.output.integration.ScheduleDslPlaceProviderContract
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.FinalAnalysisAttemptBinding
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
@@ -28,6 +29,7 @@ import com.meetme.server.shared.application.port.output.DurableAiBudgetPort
 import com.meetme.server.shared.domain.InputInterpretation
 import com.meetme.server.submission.adapter.output.persistence.JdbcScheduleDslApprovedTermsRepository.StoredDslDeclaration
 import com.meetme.server.submission.adapter.output.persistence.JdbcScheduleDslContextModeRepository.StoredContextModeEnvelope
+import com.meetme.server.submission.domain.dsl.SCHEDULE_PLACE_CONSTRAINT_VERSION
 import com.meetme.server.submission.domain.dsl.ScheduleDslProblem
 import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
 import com.meetme.server.submission.domain.ir.ScheduleIrContext
@@ -59,6 +61,263 @@ import kotlin.test.assertTrue
 @EnabledIfSystemProperty(named = "meetme.experiment.c5-candidate", matches = "true")
 class C5CandidateRuntimeBindingTest {
     private val mapper = JsonMapper.builder().findAndAddModules().build()
+
+    @Test
+    fun `TPW01 explicit place candidate false preserves both providers bytes with and without common provider parity`() {
+        val request = placeTransportRequest()
+        val budget = Mockito.mock(DurableAiBudgetPort::class.java)
+        val gate = AiHttpDispatchGate(AiDispatchGateProperties(enabled = true), budget, Clock.systemUTC())
+        for (parity in listOf(false, true)) {
+            val baseline = C5EvaluationSelectedHttpTransport(mapper, gate, providerParityCandidate = parity)
+            val explicit =
+                C5EvaluationSelectedHttpTransport(mapper, gate, providerParityCandidate = parity, placeConstraintsCandidate = false)
+            for ((provider, model) in listOf(AnalysisProvider.OPENAI to "gpt-6-luna", AnalysisProvider.GEMINI to "gemini-3.8-flash")) {
+                val before = baseline.body(request, provider, model)
+                assertContentEquals(before, explicit.body(request, provider, model))
+                assertFalse(before.toString(Charsets.UTF_8).contains("place_constraints"))
+                assertContentEquals(before, baseline.body(request, provider, model))
+            }
+        }
+        Mockito.verifyNoInteractions(budget)
+    }
+
+    @Test
+    fun `TPW02 opted common V5 transport delivers identical place schema and instructions to both providers without dispatch`() {
+        val request = placeTransportRequest()
+        val budget = Mockito.mock(DurableAiBudgetPort::class.java)
+        val gate = AiHttpDispatchGate(AiDispatchGateProperties(enabled = true), budget, Clock.systemUTC())
+        val baseline = C5EvaluationSelectedHttpTransport(mapper, gate, providerParityCandidate = true)
+        val candidate = C5EvaluationSelectedHttpTransport(mapper, gate, providerParityCandidate = true, placeConstraintsCandidate = true)
+        val oldOpenAi = baseline.body(request, AnalysisProvider.OPENAI, "gpt-6-luna")
+        val oldGemini = baseline.body(request, AnalysisProvider.GEMINI, "gemini-3.8-flash")
+        val openAi = mapper.readTree(candidate.body(request, AnalysisProvider.OPENAI, "gpt-6-luna"))
+        val gemini = mapper.readTree(candidate.body(request, AnalysisProvider.GEMINI, "gemini-3.8-flash"))
+        val expected = ScheduleDslPlaceProviderContract.schema(C5EvaluationStructuralProviderContract(mapper).responseSchema())
+        val schema = openAi.path("text").path("format").path("schema")
+        assertEquals(mapper.valueToTree<JsonNode>(expected), schema)
+        assertEquals(
+            mapper.valueToTree<JsonNode>(GeminiResponseSchemaProjection.project(expected)),
+            gemini.path("generationConfig").path("responseJsonSchema"),
+        )
+        assertEquals(
+            listOf(SCHEDULE_PLACE_CONSTRAINT_VERSION),
+            schema
+                .path("properties")
+                .path("place_constraints_version")
+                .path("enum")
+                .values()
+                .map { it.asText() },
+        )
+        assertTrue("place_constraints_version" in schema.path("required").values().map { it.asText() })
+        val resultSchema = schema.path("properties").path("results").path("items")
+        assertTrue("place_constraints" in resultSchema.path("required").values().map { it.asText() })
+        assertEquals(
+            "array",
+            resultSchema
+                .path("properties")
+                .path("place_constraints")
+                .path("type")
+                .asText(),
+        )
+        val openAiInstructions = openAi.path("instructions").asText()
+        val geminiInstructions =
+            gemini
+                .path("systemInstruction")
+                .path("parts")
+                .path(0)
+                .path("text")
+                .asText()
+        assertEquals(openAiInstructions, geminiInstructions)
+        assertTrue(openAiInstructions.contains(ScheduleDslPlaceProviderContract.INSTRUCTIONS.trim()))
+        assertEquals(
+            mapper.readTree(openAi.path("input").asText()),
+            mapper.readTree(
+                gemini
+                    .path("contents")
+                    .path(0)
+                    .path("parts")
+                    .path(0)
+                    .path("text")
+                    .asText(),
+            ),
+        )
+        assertContentEquals(oldOpenAi, baseline.body(request, AnalysisProvider.OPENAI, "gpt-6-luna"))
+        assertContentEquals(oldGemini, baseline.body(request, AnalysisProvider.GEMINI, "gemini-3.8-flash"))
+        Mockito.verifyNoInteractions(budget)
+    }
+
+    @Test
+    fun `TPW03 place candidate without explicit common provider parity fails before any dispatch`() {
+        val request = placeTransportRequest()
+        val budget = Mockito.mock(DurableAiBudgetPort::class.java)
+        val gate = AiHttpDispatchGate(AiDispatchGateProperties(enabled = true), budget, Clock.systemUTC())
+        val unsupported = C5EvaluationSelectedHttpTransport(mapper, gate, placeConstraintsCandidate = true)
+        for ((provider, model) in listOf(AnalysisProvider.OPENAI to "gpt-6-luna", AnalysisProvider.GEMINI to "gemini-3.8-flash")) {
+            assertFailsWith<IllegalArgumentException> { unsupported.body(request, provider, model) }
+        }
+        Mockito.verifyNoInteractions(budget)
+    }
+
+    @Test
+    fun `TPW04 place wire schema requires exact declaration fields permits only declared nulls and preserves original time schema`() {
+        val original = mapper.valueToTree<JsonNode>(C5EvaluationStructuralProviderContract(mapper).responseSchema())
+        val actual =
+            mapper.valueToTree<JsonNode>(
+                ScheduleDslPlaceProviderContract.schema(C5EvaluationStructuralProviderContract(mapper).responseSchema()),
+            )
+        assertEquals(
+            original
+                .path("required")
+                .values()
+                .map { it.asText() }
+                .toSet() + "place_constraints_version",
+            actual
+                .path("required")
+                .values()
+                .map { it.asText() }
+                .toSet(),
+        )
+        val originalResult = original.path("properties").path("results").path("items")
+        val result = actual.path("properties").path("results").path("items")
+        assertEquals(
+            originalResult
+                .path("required")
+                .values()
+                .map { it.asText() }
+                .toSet() + "place_constraints",
+            result
+                .path("required")
+                .values()
+                .map { it.asText() }
+                .toSet(),
+        )
+        val array = result.path("properties").path("place_constraints")
+        assertEquals("array", array.path("type").asText())
+        assertEquals(0, array.path("minItems").asInt())
+        assertEquals(32, array.path("maxItems").asInt())
+        val item = array.path("items")
+        val names = setOf("id", "kind", "reference_kind", "place_evidence", "evidence", "max_minutes", "travel_mode", "time_scope")
+        assertEquals(names, item.path("properties").propertyNames().toSet())
+        assertEquals(
+            names,
+            item
+                .path("required")
+                .values()
+                .map { it.asText() }
+                .toSet(),
+        )
+        assertEquals(false, item.path("additionalProperties").asBoolean())
+        val properties = item.path("properties")
+        for (name in listOf("id", "kind", "reference_kind", "time_scope")) {
+            assertEquals("string", properties.path(name).path("type").asText())
+            assertFalse(properties.path(name).has("anyOf"))
+        }
+        val locator = properties.path("evidence")
+        val locatorNames = setOf("source_id", "revision", "quote")
+        assertEquals(locatorNames, locator.path("properties").propertyNames().toSet())
+        assertEquals(
+            locatorNames,
+            locator
+                .path("required")
+                .values()
+                .map { it.asText() }
+                .toSet(),
+        )
+        assertEquals(false, locator.path("additionalProperties").asBoolean())
+        assertEquals(
+            "integer",
+            locator
+                .path("properties")
+                .path("revision")
+                .path("type")
+                .asText(),
+        )
+        assertFalse(locator.has("anyOf"))
+
+        fun nullable(name: String): JsonNode {
+            val branches =
+                properties
+                    .path(name)
+                    .path("anyOf")
+                    .values()
+                    .toList()
+            assertEquals(2, branches.size)
+            assertEquals(1, branches.count { it.path("type").asText() == "null" })
+            return branches.single { it.path("type").asText() != "null" }
+        }
+        assertEquals(locator, nullable("place_evidence"))
+        val minutes = nullable("max_minutes")
+        assertEquals("integer", minutes.path("type").asText())
+        assertEquals(1, minutes.path("minimum").asInt())
+        assertEquals(10080, minutes.path("maximum").asInt())
+        assertEquals(
+            setOf("WALK", "TRANSIT", "CAR", "BICYCLE"),
+            nullable("travel_mode")
+                .path("enum")
+                .values()
+                .map { it.asText() }
+                .toSet(),
+        )
+        assertEquals(
+            setOf("TRAVEL_TIME_LIMIT", "MEETING_PLACE", "UNRESOLVED"),
+            properties
+                .path("kind")
+                .path("enum")
+                .values()
+                .map {
+                    it.asText()
+                }.toSet(),
+        )
+        assertEquals(
+            setOf(
+                "PUBLIC_NAMED_PLACE",
+                "PRIVATE_REFERENCE",
+                "UNKNOWN",
+            ),
+            properties
+                .path("reference_kind")
+                .path("enum")
+                .values()
+                .map {
+                    it.asText()
+                }.toSet(),
+        )
+        assertEquals(
+            setOf("ALL_AVAILABLE_TIMES", "UNRESOLVED_TIME_LINK"),
+            properties
+                .path("time_scope")
+                .path("enum")
+                .values()
+                .map {
+                    it.asText()
+                }.toSet(),
+        )
+        val withoutPlaces = mapper.readTree(mapper.writeValueAsBytes(actual)) as ObjectNode
+        (withoutPlaces.path("properties") as ObjectNode).remove("place_constraints_version")
+        withoutPlaces.replace("required", original.path("required"))
+        val withoutResult = withoutPlaces.path("properties").path("results").path("items") as ObjectNode
+        (withoutResult.path("properties") as ObjectNode).remove("place_constraints")
+        withoutResult.replace("required", originalResult.path("required"))
+        assertEquals(original, withoutPlaces)
+    }
+
+    private fun placeTransportRequest(): SelectedScheduleDslProviderRequest {
+        val capsule = ScheduleDslContextModeNativeFixture.capsule()
+        val choice =
+            FinalAnalysisRouteChoice.DslStructuralV5(
+                IrExecutionIdentity("schedule-dsl-response-5", "schedule-ir-product-6", ScheduleDslContextModeNativeFixture.policy.version),
+                ScheduleDslContextModeNativeFixture.policy,
+                capsule.snapshot.context,
+                MeetingMode.EITHER,
+                "ko-time-terms-1",
+            )
+        return Mockito.mock(SelectedScheduleDslProviderRequest::class.java).also { request ->
+            Mockito.`when`(request.binding).thenReturn(
+                FinalAnalysisAttemptBinding(FinalAnalysisRouteTestFixture.route(choice), FinalAnalysisRouteTestFixture.invocation()),
+            )
+            Mockito.`when`(request.inputCapsule).thenReturn(capsule)
+        }
+    }
 
     @Test
     fun `HR07 actual Luna body keeps the frozen low native schema and removes only duplicate input schema without dispatch`() {

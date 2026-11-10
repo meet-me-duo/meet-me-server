@@ -16,6 +16,7 @@ import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import com.meetme.server.submission.domain.dsl.SCHEDULE_CONTEXT_MODE_POLICY_VERSION
+import com.meetme.server.submission.domain.dsl.SCHEDULE_STRUCTURAL_UNION_POLICY_VERSION
 import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeEnvelope
 import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeValidator
 import com.meetme.server.submission.domain.dsl.ScheduleModeRestriction
@@ -84,8 +85,16 @@ object ScheduleDslContextModeCalculator {
         snapshot: ScheduleEvidenceSnapshot,
         policy: IrMatchingPolicy,
         roomMode: MeetingMode,
+        structuralPolicy: Boolean = false,
+        knownWeeklyWindows: Map<Pair<UUID, String>, List<InstantTimeRange>> = emptyMap(),
     ): ScheduleDslContextModePreparation {
-        require(policy == ScheduleDslContextModePolicy.contextual(policy.alternativeChoices)) { "Context-mode policy mismatch" }
+        val expectedPolicy =
+            if (structuralPolicy) {
+                ScheduleDslStructuralMatchingPolicy.forVersion(policy.version, policy.alternativeChoices)
+            } else {
+                ScheduleDslContextModePolicy.contextual(policy.alternativeChoices)
+            }
+        require(policy == expectedPolicy) { "Context-mode policy mismatch" }
         require(policy.version == snapshot.context.policyVersion) { "Frozen policy mismatch" }
         require(
             policy.alternativeChoices
@@ -128,7 +137,12 @@ object ScheduleDslContextModeCalculator {
                 alternativeChoices =
                     policy.alternativeChoices.filter { (it.submissionVersionId to it.group) in baseAlternativeKeys },
             )
-        val prepared = ScheduleDslInputPolicy.projectWithPreferredAvailability(projection, basePolicy)
+        val prepared =
+            if (structuralPolicy && policy.version == SCHEDULE_STRUCTURAL_UNION_POLICY_VERSION) {
+                ScheduleDslInputPolicy.projectWithUnionPreferredAvailability(projection, basePolicy, knownWeeklyWindows)
+            } else {
+                ScheduleDslInputPolicy.projectWithPreferredAvailability(projection, basePolicy, knownWeeklyWindows)
+            }
         val zone = ZoneId.of(snapshot.context.timeZone)
         val search =
             InstantTimeRange(

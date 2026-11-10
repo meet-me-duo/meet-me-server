@@ -20,14 +20,23 @@ public final class C5EvaluationStrictJsonBoundary implements ScheduleDslStructur
     private final ObjectReader reader;
     private final StrictScheduleDslStructuralResponseParser previous;
     public C5EvaluationStrictJsonBoundary(ObjectMapper mapper) {
+        this(mapper, false);
+    }
+    public C5EvaluationStrictJsonBoundary(ObjectMapper mapper, boolean allowScopedTermEvidence) {
+        this(mapper, allowScopedTermEvidence, false);
+    }
+    public C5EvaluationStrictJsonBoundary(ObjectMapper mapper, boolean allowScopedTermEvidence, boolean allowPlaceConstraints) {
         this.mapper=mapper;
         reader=mapper.readerFor(Map.class).with(StreamReadFeature.STRICT_DUPLICATE_DETECTION).with(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
-        previous=new StrictScheduleDslStructuralResponseParser(mapper);
+        previous=new StrictScheduleDslStructuralResponseParser(mapper, allowScopedTermEvidence, allowPlaceConstraints);
+    }
+    @Override public boolean supportsResponseContractVersion(String version) {
+        return "schedule-dsl-response-5".equals(version) || "schedule-dsl-evidence-response-1".equals(version) || "schedule-dsl-evidence-response-2".equals(version) || "schedule-dsl-evidence-response-3".equals(version) || "schedule-dsl-evidence-response-4".equals(version) || "schedule-dsl-evidence-response-5".equals(version);
     }
     @Override public String getSupportedResponseContractVersion() { return "schedule-dsl-response-5"; }
     @Override public ScheduleDslStructuralEnvelope parse(String raw, ScheduleEvidenceSnapshot snapshot,
             String response, String semantic, String ast, String vocabulary) {
-        if (!"schedule-dsl-response-5".equals(response) || !"schedule-ir-product-6".equals(semantic) ||
+        if (!supportsResponseContractVersion(response) || !"schedule-ir-product-6".equals(semantic) ||
                 !"schedule-ast-1".equals(ast) || !"ko-time-terms-1".equals(vocabulary))
             throw new IllegalArgumentException("CANDIDATE_ROUTE_CONTRACT_MISMATCH");
         try {
@@ -36,6 +45,8 @@ public final class C5EvaluationStrictJsonBoundary implements ScheduleDslStructur
             if (frozen.length>262144) throw new IllegalArgumentException("RAW_RESPONSE_BYTE_LIMIT");
             Map<String,Object> decoded=reader.readValue(frozen);
             unicodeTree(decoded);
+            if ("schedule-dsl-evidence-response-1".equals(response) || "schedule-dsl-evidence-response-2".equals(response) || "schedule-dsl-evidence-response-3".equals(response) || "schedule-dsl-evidence-response-4".equals(response) || "schedule-dsl-evidence-response-5".equals(response))
+                return previous.parse(raw,snapshot,response,semantic,ast,vocabulary);
             Map<String,Object> compiled=C5DirectLocatorProducer.lower(decoded);
             String lowered=mapper.writeValueAsString(compiled);
             if (lowered.getBytes(StandardCharsets.UTF_8).length>262144) throw new IllegalArgumentException("LOWERED_RESPONSE_BYTE_LIMIT");

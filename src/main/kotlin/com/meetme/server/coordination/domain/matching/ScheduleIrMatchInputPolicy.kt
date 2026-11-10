@@ -73,6 +73,7 @@ internal data class IrNumericProjectionInput(
     val nonPreciseConditionIds: Set<String>,
     val availabilityUnknown: Boolean,
     val separatePreferenceInfluence: Boolean,
+    val knownWindows: Map<String, List<InstantTimeRange>> = emptyMap(),
 )
 
 internal data class IrCorrectionInfluence(
@@ -185,6 +186,18 @@ object ScheduleIrMatchInputPolicy {
                     .size == result.conditions.size,
         )
         require(result.quarantined.all { it.scope == null }) { "Untrusted quarantine scope" }
+        require(result.knownWindows.keys.all { id -> result.conditions.any { it.id == id } }) { "Unknown derived window owner" }
+        require(result.knownWindows.values.sumOf { it.size } <= 1024) { "Derived window limit" }
+        result.knownWindows.values.flatten().forEach {
+            require(
+                it.startInclusive >= search.startInclusive && it.endExclusive <= search.endExclusive,
+            ) { "Derived window outside search" }
+        }
+
+        fun windows(condition: IrCondition): List<InstantTimeRange> =
+            result.knownWindows[condition.id]
+                ?: listOf(condition.scope?.takeIf { it.start != null }?.let { interval(it, zone) } ?: search)
+
         result.conditions.forEach { condition ->
             require((condition.alternativeGroup == null) == (condition.alternative == null))
             val scope = condition.scope
@@ -193,9 +206,10 @@ object ScheduleIrMatchInputPolicy {
                 require(scope.start < requireNotNull(scope.end))
                 interval(scope, zone)
             }
-            val nonPrecise = condition.id in result.nonPreciseConditionIds
+            val nonPrecise = condition.id in result.nonPreciseConditionIds && condition.id !in result.knownWindows
             require(
                 condition.effect == IrEffect.UNRESOLVED ||
+                    (condition.id in result.knownWindows && scope == null) ||
                     (nonPrecise && scope == null) ||
                     (scope != null && scope.dimension == IrDimension.TIME && (nonPrecise || scope.start != null)),
             )
@@ -213,7 +227,7 @@ object ScheduleIrMatchInputPolicy {
         val superseded = asserted.filter(::selected).flatMap { it.supersedes }.toSet()
         val available = mutableListOf<InstantTimeRange>()
         val blocked = mutableListOf<InstantTimeRange>()
-        val preferred = linkedMapOf<String, InstantTimeRange>()
+        val preferred = linkedMapOf<String, List<InstantTimeRange>>()
         val uncertainPreferenceTargets = mutableSetOf<String>()
         val correctionInfluences = mutableListOf<IrCorrectionInfluence>()
         val unsupported = mutableSetOf<IrDimension>()
@@ -222,7 +236,7 @@ object ScheduleIrMatchInputPolicy {
 
         val evidence =
             result.conditions.map { condition ->
-                val nonPrecise = condition.id in result.nonPreciseConditionIds
+                val nonPrecise = condition.id in result.nonPreciseConditionIds && condition.id !in result.knownWindows
                 val groupMissing = condition.alternativeGroup != null && choice(condition) == null
                 val eligible = condition.interpretation in policy.eligibleInterpretations
                 val positiveAllowed = eligible && (condition.effect != IrEffect.UNCONSTRAINED || policy.allowExplicitUnconstrained)
@@ -251,14 +265,14 @@ object ScheduleIrMatchInputPolicy {
                     if (affectsTime) {
                         if (nonPrecise ||
                             groupMissing ||
-                            condition.alternativeGroup != null ||
+                            (condition.alternativeGroup != null && condition.id !in result.knownWindows) ||
                             condition.interpretation != IrInterpretation.EXPLICIT ||
                             !positiveAllowed ||
                             condition.effect == IrEffect.UNRESOLVED
                         ) {
                             unresolved = true
                         }
-                        val window = if (scope?.start == null) search else interval(scope, zone)
+                        val window = windows(condition)
                         when (condition.effect) {
                             IrEffect.UNAVAILABLE, IrEffect.UNRESOLVED -> blocked += window
                             IrEffect.AVAILABLE, IrEffect.UNCONSTRAINED ->
@@ -285,16 +299,17 @@ object ScheduleIrMatchInputPolicy {
                                     unsupported += requireNotNull(targetScope).dimension
                                 }
                                 if (targetScope?.dimension != IrDimension.PLACE) {
-                                    val influence = targetScope?.takeIf { it.start != null }?.let { interval(it, zone) } ?: search
+                                    val influences = windows(target)
                                     when {
                                         target.effect == IrEffect.PREFERRED && result.separatePreferenceInfluence ->
                                             uncertainPreferenceTargets +=
                                                 target.id
                                         target.effect in setOf(IrEffect.AVAILABLE, IrEffect.UNCONSTRAINED) &&
-                                            target.id in result.nonPreciseConditionIds -> Unit
+                                            target.id in result.nonPreciseConditionIds &&
+                                            target.id !in result.knownWindows -> Unit
                                         else -> {
-                                            blocked += influence
-                                            correctionInfluences += IrCorrectionInfluence(condition.id, target.id, influence)
+                                            blocked += influences
+                                            correctionInfluences += influences.map { IrCorrectionInfluence(condition.id, target.id, it) }
                                         }
                                     }
                                     unresolved = true
@@ -313,7 +328,7 @@ object ScheduleIrMatchInputPolicy {
                 )
             }
         val times = TimeRangeMatcher.subtract(TimeRangeMatcher.intersect(available, listOf(search)), blocked)
-        val preferences = TimeRangeMatcher.intersect(preferred.filterKeys { it !in uncertainPreferenceTargets }.values.toList(), times)
+        val preferences = TimeRangeMatcher.intersect(preferred.filterKeys { it !in uncertainPreferenceTargets }.values.flatten(), times)
         val participantId = ParticipantId(input.participantId)
         return ParticipantMatchInput(
             participantId,

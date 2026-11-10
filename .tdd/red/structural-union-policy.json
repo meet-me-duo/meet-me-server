@@ -1,0 +1,33 @@
+{
+  "workItem": "structural-union-policy",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/StructuralUnionPolicyBindingPostgresTest.kt",
+      "sha256": "98ee8caf9ad62e448f88d876e89361b02c2f3a82a6241e16cfe2b80fe5dcb49d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ScheduleDslUnionPreferredAvailabilityTest",
+    "--tests",
+    "*StructuralUnionProviderContractTest",
+    "--tests",
+    "*StructuralUnionPolicyBindingPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.persistence.StructuralUnionPolicyBindingPostgresTest.SUPB06 mismatched identity context policy or substituted native binding cannot freeze despite a valid union policy()",
+    "com.meetme.server.coordination.adapter.output.persistence.StructuralUnionPolicyBindingPostgresTest.SUPB08 fresh stored calculation uses each frozen policy after the selector flag changes without rewriting either document()",
+    "com.meetme.server.coordination.adapter.output.persistence.StructuralUnionPolicyBindingPostgresTest.SUPB02 opt in V5 freezes and reloads the union policy in identity context and route fingerprint()",
+    "com.meetme.server.coordination.adapter.output.persistence.StructuralUnionPolicyBindingPostgresTest.SUPB03 disabling the new selector preserves an already frozen union selection during closed room replay()",
+    "com.meetme.server.coordination.adapter.output.persistence.StructuralUnionPolicyBindingPostgresTest.SUPB05 unknown versions and noncanonical union policy parameters cannot acquire a source bound route()",
+    "com.meetme.server.coordination.adapter.output.persistence.StructuralUnionPolicyBindingPostgresTest.SUPB04 opting into V5 union leaves legacy untouched and V4 keeps its strict old policy boundary()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T00:42:34.017811+00:00",
+  "evidenceNote": "Independent synthetic contracts; compiled missing union policy/projection and deliberate rejection of currently unsupported version. No model output or user-case oracle manufactured."
+}

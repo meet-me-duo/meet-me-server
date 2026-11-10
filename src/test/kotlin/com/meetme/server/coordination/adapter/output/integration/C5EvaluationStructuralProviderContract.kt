@@ -36,7 +36,7 @@ import java.util.UUID
 internal class C5EvaluationStructuralProviderContract(
     private val mapper: ObjectMapper,
 ) {
-    private val previous = ScheduleDslContextModeProviderContract(mapper)
+    private val previous = ScheduleDslContextModeProviderContract(mapper, allowStructuralUnionPolicy = true)
     private val reader =
         mapper
             .readerFor(Map::class.java)
@@ -62,7 +62,15 @@ internal class C5EvaluationStructuralProviderContract(
                 .substringBefore("These are local calendar boundaries,")
         check(table.startsWith("ko-time-terms-1.") && "ALL_DAY=" in table)
         root["prompt"] = INSTRUCTIONS + "\n\nThe complete approved vocabulary is " + table.trim()
-        return mapper.writeValueAsBytes(projectProducer("projectRequest", root))
+        val projected = projectProducer("projectRequest", root)
+        val prompt = text(projected["prompt"])
+        val marker = "The complete approved vocabulary is "
+        val boundary = prompt.indexOf(marker)
+        require(boundary >= 0 && boundary == prompt.lastIndexOf(marker))
+        val prefix = prompt.substring(0, boundary)
+        val rules = ScheduleDslUnionAvailabilityInstructions.apply(prefix, capsule.snapshot.context.policyVersion)
+        val instructions = if (rules == prefix) prompt else rules + "\n\n" + prompt.substring(boundary)
+        return mapper.writeValueAsBytes(if (instructions == prompt) projected else projected + ("prompt" to instructions))
     }
 
     private fun calendarFacts(capsule: ScheduleDslProviderInputCapsule): Map<String, Any?> {

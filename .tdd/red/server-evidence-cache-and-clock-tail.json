@@ -1,0 +1,30 @@
+{
+  "workItem": "server-evidence-cache-and-clock-tail",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/ServerEvidenceCacheAndClockTailTest.kt",
+      "sha256": "2e819cd090a775a97ec268dc92b7d929e0a65bbca3aed89a2833bf7158985816"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceCacheAndClockTailTest",
+    "--tests",
+    "*ServerEvidenceNativeEnvelopeTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCacheAndClockTailTest.[1] token = \"7시 300분\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCacheAndClockTailTest.[2] token = \"7시 30분5\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCacheAndClockTailTest.[3] token = \"7시반5\"",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCacheAndClockTailTest.[1] changePeer = false",
+    "com.meetme.server.submission.domain.dsl.ServerEvidenceCacheAndClockTailTest.[2] changePeer = true"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:26:56.029360+00:00",
+  "evidenceNote": "Independent API snapshot identity/lexical-tail and actual localhost main HTTP envelope boundaries. Expected failure with old cache metadata equality, partialclock token, or old256KiB envelope cap."
+}

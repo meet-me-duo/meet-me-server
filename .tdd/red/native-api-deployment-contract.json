@@ -1,0 +1,24 @@
+{
+  "workItem": "native-api-deployment-contract",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/deployment/Issue154NativeApiContractPostgresTest.kt",
+      "sha256": "4d90ebc23e271822ab14f0566e617eea75849ace53098404eebd2a5d6511b4bc"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "failedTests": [
+    "com.meetme.server.deployment.Issue154NativeApiContractPostgresTest.I154 API deployment contract matches every native operation and schema property()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:20:44.713562+00:00",
+  "evidenceNote": "Previously reproduced baseline deployment contract omitted existing native CloseRoomRequest.analysis_contract. Only published property projection updated; unchanged independent native OpenAPI comparison test, no API behavior or assertion weakened."
+}

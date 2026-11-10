@@ -6,6 +6,8 @@ import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
 interface ScheduleDslStructuralResponseParser {
     val supportedResponseContractVersion: String
 
+    fun supportsResponseContractVersion(version: String): Boolean = version == supportedResponseContractVersion
+
     fun parse(
         responseJson: String,
         snapshot: ScheduleEvidenceSnapshot,

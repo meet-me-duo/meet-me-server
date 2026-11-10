@@ -1,0 +1,25 @@
+{
+  "workItem": "provider-envelope-vs-model-json-limit",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5ProviderEnvelopeLimitTest.kt",
+      "sha256": "0303cecabd50b1f867d650e2153469750e6fda252d804b138250f2c80a62b206"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*C5ProviderEnvelopeLimitTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.C5ProviderEnvelopeLimitTest.CEL04 explicit framing boundaries retain one MiB opt in and original 256 KiB prototype admission()",
+    "com.meetme.server.coordination.adapter.output.integration.C5ProviderEnvelopeLimitTest.CEL01 place candidate admits a larger schema echo envelope while preserving original small model JSON and usage()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T16:11:07.134301+00:00",
+  "evidenceNote": "Synthetic API schema echo needs separate opt-in1MiB envelope allowance; actual model JSON256KiB UTF8 cap remains. No provider call or model response rewrite."
+}

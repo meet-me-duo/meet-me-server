@@ -1,0 +1,38 @@
+{
+  "workItem": "weekly-schedule-calculation",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/WeeklyScheduleCalculationTest.kt",
+      "sha256": "abfd6b3f11d1763f6deecb17412a51517cb6201d37de48da32a940cbd9fc5977"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*WeeklyEvidenceProviderContractTest",
+    "--tests",
+    "*WeeklyScheduleCalculationTest"
+  ],
+  "failedTests": [
+    "WKC11 CHOICE selects a repeated branch once and never selects an unknown choice implicitly()",
+    "WKC14 mode preparation forwards the same weekly map into structural union projection()",
+    "WKC06 global dated negative subtracts only the affected repeated occurrence()",
+    "WKC03 ANY OF unions repeated windows and a separate dated alternative()",
+    "WKC13 inferred correction cannot erase resolved weekly negatives or poison independent base()",
+    "WKC02 missing weekly override stays unknown but present empty override is resolved empty()",
+    "WKC09 mixed independent preferred repeats retain every occurrence and one credit per person()",
+    "WKC08 preferred only repeats are eligible with zero preference bonus()",
+    "WKC05 local EXCEPT cannot become a global block on another alternative()",
+    "WKC04 ALL OF intersects each weekly occurrence against its local dated condition()",
+    "WKC07 repeated UNAVAILABLE removes only its known windows from a complete base()",
+    "WKC01 all known weekly occurrences become precise support without rewriting native scope()",
+    "WKC10 scoped PREFER cannot add support outside a weekly base()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T07:20:41.812Z",
+  "evidenceNote": "Corrected independent graph suite: 15 tests, 13 failures, zero errors/skips; existing explicit correction (WKC12) and direct projection 31-day-limit guard (WKC15) controls pass. Isolated RED cwd: /workspace/scratch/meet-me-weekly-mutations; projectWithUnion/Preferred public entry points intentionally did not forward knownWeeklyWindows; provider skeletons remained TODO. Exact source restoration SHA evidence: .codex/evaluation/local/weekly-corrected-red/restoration.json. XML: .codex/evaluation/local/weekly-corrected-red/; log: .codex/tdd-evidence/weekly-corrected-red.log. Historical .codex/evaluation/local/weekly-schedule-calculation-red/ is retained and invalid for the corrected suite: WKC15 previously failed during fixture setup; only WKC12 passed."
+}

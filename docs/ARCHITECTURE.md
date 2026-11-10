@@ -23,7 +23,7 @@ Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 
 
 새 분석의 application 매핑은 장소 제한 없음·미검증·기존 미해석 상태를 분리한다. Domain은 명시된 AREA/지역 제약의 교집합을 계속 검사하고, 미검증 참여자는 원래 시간 교집합 안의 잠정 대면 후보에만 포함한다. 순위와 최대3개 시간안 선택, 최소2명 및 방 방식은 유지한다. 미확인 참여자의 내부 식별자는 후보/variant와 함께 보존하고, V22는 기존 참여자 관계 테이블에 `place_unverified`만 추가한다. 선택은 그 불변 variant를 참조하므로 확정 후에도 검증 완료로 바뀌지 않는다. 기존 행은 false 기본값으로 과거 판정을 보존하며 재계산하지 않는다.
 
-HTTP는 `attendance_confirmed`와 variant의 `summary`를 추가한다. false는 참석 인원이 시간 조건 기준임을 나타낸다. 공개 설명은 시간과 일반적인 미검증 사유만 제공하고 타인의 원문·개별 제한은 기존 소유권 경계를 유지한다. UI는 기존 후보 설명·참석 문구를 사용하며 새 배지/경고 영역을 추가하지 않는다. 지도/API/도보 환산/운영 timeout은 변경하지 않는다. 실제 도보 충족과 실제 모델 정확성은 검증 범위 밖이다.
+HTTP는 `attendance_confirmed`와 variant의 `summary`를 추가한다. false는 참석 인원이 시간 조건 기준임을 나타낸다. 공개 설명은 시간과 일반적인 미검증 사유를 제공한다. 명시 기준점 확장 후보에서는 서버의 공개 명칭 사전과 해당 원문 근거가 일치한 공통 장소 조건을 함께 표시하되, 타인의 원문·사적 기준점은 기존 소유권 경계를 유지한다. UI는 기존 후보 설명·참석 문구를 사용하며 새 배지/경고 영역을 추가하지 않는다. 지도/API/도보 환산/운영 timeout은 변경하지 않는다. 실제 도보 충족과 실제 모델 정확성은 검증 범위 밖이다.
 
 ## 모임별 공유 HTML (2026-11-04 로컬 구현, 운영 전환 미적용)
 
@@ -780,7 +780,7 @@ V24 JSONB의 명시적 semantic/format 쌍(V1=1, IR2=2)을 별도 typed 저장�
 
 미출시 request3/response3·semantic4·AST1 경계는 서버의 `ko-time-terms-1` 표와 typed source/revision/code-point 근거 참조를 사용한다. 오전·오후뿐 아니라 PRD에 기재한 전체11개 표와 심야/한밤중 alias를 적용한다. 표의 수치와 익일 경계는 서버가 결정하며 모델은 의미·날짜와 근거를 제시한다. 명시 숫자 구간이 우선하고 날짜만 있는 입력은 전일 가능으로 바꾸지 않는다. 비정밀 선언·검증된 표 적용 근거·정규화 계산 투영을 명시 wrapper에 함께 보존하며 원문을 중복 저장하지 않는다.
 
-새 의미는 명시 가용성 root, 선호 root, 기본 가능 범위 순서로 결정한다. 가용성 root가 있으면 해당 lower/upper를 유지하고 선호는 그 안에서만 가중치를 준다. 가용성 root 없이 선호 root만 있으면 선호의 lower/upper가 가능 범위이며 검색기간을 추가하지 않고 점수용 credit은 비운다. 원문 역할과 근거는 IR/AST에 보존하며, 최종 계산은 기존 ParticipantMatchInput의 가능 범위와 ParticipantPreferences의 추가 가중 범위를 분리한다. 불가 시간의 참가자는 후보에 없으므로 점수 적용 대상이 아니고, 가능한 후보의 추가 가중 없음은 기존 preferenceCount 0으로 표현한다. UNKNOWN·보류를 불가로 재분류하거나 nullable 점수용 새 저장/API 계약을 만들지 않는다. 두 root가 모두 없는 유효 프로그램에만 runtime·quarantine 검증 후 검색기간 기본 가용성을 적용한다. 명시 가용성 root의 계산 구간이 비거나 비정밀하다는 이유로 선호 또는 기본값으로 우회하지 않는다. 전역 불가·제외는 가용·선호 구간 모두에 적용하고 분기 안의 PREFER는 자신의 base 범위를 유지한다. 기존 legacy/C1/C2의 바이트·계산 의미는 유지하며 새 경로가 명시적으로 새로운 투영 함수를 선택한다. 추가 유료 호출은 보류 중이다. 구현·로컬 회귀·실제 서비스 등록·최종 전체 가드와 운영 반영은 각각 별도 완료 근거가 필요하다.
+기존 schedule-context-mode-1 계열의 의미는 명시 가용성 root, 선호 root, 기본 가능 범위 순서로 결정한다. 가용성 root가 있으면 해당 lower/upper를 유지하고 선호는 그 안에서만 가중치를 준다. 가용성 root 없이 선호 root만 있으면 선호의 lower/upper가 가능 범위이며 검색기간을 추가하지 않고 점수용 credit은 비운다. 원문 역할과 근거는 IR/AST에 보존하며, 최종 계산은 기존 ParticipantMatchInput의 가능 범위와 ParticipantPreferences의 추가 가중 범위를 분리한다. 불가 시간의 참가자는 후보에 없으므로 점수 적용 대상이 아니고, 가능한 후보의 추가 가중 없음은 기존 preferenceCount 0으로 표현한다. UNKNOWN·보류를 불가로 재분류하거나 nullable 점수용 새 저장/API 계약을 만들지 않는다. 두 root가 모두 없는 유효 프로그램에만 runtime·quarantine 검증 후 검색기간 기본 가용성을 적용한다. 명시 가용성 root의 계산 구간이 비거나 비정밀하다는 이유로 선호 또는 기본값으로 우회하지 않는다. 전역 불가·제외는 가용·선호 구간 모두에 적용하고 분기 안의 PREFER는 자신의 base 범위를 유지한다. 기존 legacy/C1/C2의 바이트·계산 의미는 유지하며 새 경로가 명시적으로 새로운 투영 함수를 선택한다. 추가 유료 호출은 보류 중이다. 구현·로컬 회귀·실제 서비스 등록·최종 전체 가드와 운영 반영은 각각 별도 완료 근거가 필요하다.
 
 같은 최종 구조화 요청에 원문·질문 문맥·전체 시간표를 넣는다. 모델은 문맥에 따른 숫자 범위 조정을 INFERRED/NON_PRECISE 선언으로 제안하며, 서버는 검증된 시간어·날짜 근거와 구간을 결속해 MODEL_CONTEXT 출처로 계산한다. 사용자 명시 숫자나 서버 표의 직접 적용과 구별하며 EXPLICIT 라벨을 사용자 확인으로 간주하지 않는다. 추정 정정만으로 기존 불가를 철회하지 않고, 보호할 불가의 영향 범위를 차감하면서 독립 AST의 가용성을 보존한다. 실패한 정정만으로 기본 검색기간을 열지 않는다.
 
@@ -890,3 +890,79 @@ BOUNDS의 한쪽 경계는 NON_PRECISE와 알려진 날짜/시각을 기존 AFTE
 날짜 전용 TIME scope는 `start=YYYY-MM-DD,end:null`로 받고, 진짜 시각 미상 `scope:null`과 구별한다. 검증된 날짜만 `SERVER_CALENDAR_DAY/WHOLE_DAY` 계산 증거로 변환하며, 원 선언의 해석·NON_PRECISE·원문 근거와 clock 미기재는 보존한다. DST 경계는 고정된 모임 timezone을 따르고 사라진 civil day는 거부한다. 이 증거가 있는 문서만 format8로 저장하며 format7 바이트/읽기는 유지한다. 새 DB DDL은 없지만 구 바이너리의 format8 읽기 및 rolling rollback은 미검증이다. inline root는 서버가 ID를 부여할 뿐 누락 조건·잘못된 역할·배타 선택을 보정하지 않는다.
 
 2026-11-07 새 생성 구문의 직접 Luna 비교에서는 네 날짜별 식사·선호와 정확 출처, 프로그램4개의 구조 검증이 통과했으나 가족 의미 품질은 PARTIAL이다. 이미 확정된 날짜 전일과 문맥 시각을 모델이 UNKNOWN으로 출력하여 해당 참여자의 계산 가능한 범위가 비었다. WHOLE_DAY/BOUNDS 표현 능력과 실제 모델의 선택 정확성을 구분하며, 서버가 UNKNOWN을 전일·추정 시각으로 바꿔 성공을 만들지 않는다. 현재 실험 request는 frozen 검색기간·시간대와 각 source reference_at 외에 server-calendar-facts-1의 날짜/요일 목록과 end-exclusive 및 정렬/중복 제거된 reference 날짜를 제공한다. 이 정보는 달력 사실이지 가용 선언이나 native 근거가 아니며 출력 날짜를 제한하지 않는다. 원문 의미 해석과 WHOLE_DAY/BOUNDS/UNKNOWN 선택은 모델이 맡는다. C5 생성 지침은 먼저 진술된 효과와 그 제한을 해석한 뒤 시간 형식을 고르도록 한다. WHOLE_DAY는 그 효과가 해당 날짜 전체에 적용되는 선언이며, 다른 제한 없는 날짜만의 가용 답변은 그대로 전일 가용이다. 행사나 전후 경계가 미상인 경우에는 날짜가 알려져도 UNKNOWN과 완전한 날짜·행사 원문 근거를 보존한다. UNKNOWN의 닫힌 {kind} 형식에는 별도 날짜 필드가 없으므로 날짜는 원문 근거에만 남는 현재 한계를 구분한다. 서버의 원문 정규식 의미 판정이나 UNKNOWN 자동 복원, 과거 모델 응답의 전일 선언 보정은 추가하지 않는다. 앞선 달력-context 변경의 실제 단일 비교는 어머니 날짜 전일을 출력했지만 식사 결속/극성 퇴행과 미사용 근거의 전체 INVALID_RESPONSE가 발생했으므로 출시 후보나 품질 개선으로 채택하지 않는다. 실제 Jev·보완질문/답변·Flash 전과정, 기본 Gemini 폴백·Redis 큐·금전예산·정확 commit CI·전체 gate·배포 검증은 별개다.
+
+## 조건 문맥에 결속된 승인 시간어 근거 — 격리 후보
+
+`scoped-term-evidence`는 C5 시험 profile에서만 명시적으로 선택하는 후보이며 일반 parser/provider 기본값은 false다. 모델의 정확한3필드 locator와 시간 의미는 유지한다. 승인 시간어가 원문에서 반복될 때 해당 조건이 선언한 의미/날짜 인용 중 같은 source·revision에서 고유하게 찾을 수 있는 문맥을 이용한다. 문맥 안에서도 시간어가 한 번만 나타나야 하며, 하나의 위치를 식별하는 여러 문맥은 같은 코드포인트 위치에 동의해야 한다. 첫 전역 출현이나 다른 조건의 근거를 선택하지 않는다. 전역 유일 인용의 기존 검증은 유지한다.
+
+새 근거는 `SERVER_CONDITION_TERM_QUOTE`와 원래 source의 용어 span·문맥 `contextSpan`으로 보존한다. 문자열·개인 원문을 구조화 저장 문서에 추가하지 않는다. 복원 시 source hash·revision·정확 span/hash·고유 문맥·조건별 승인 시간어 연결을 다시 검증하며, 날짜/시각/그래프/모임 방식 근거의 권한으로 전용하지 않는다. 승인 시간어를 여러 조건이 공유하면 각 조건에 자신이 선언한 문맥의 witness가 있어야 한다.
+
+이 근거가 있는 구조화 문서는 format9를 사용하고, 기존 format7/8 문서는 `contextSpan` 없는 원래 JSON 형태와 읽기를 유지한다. format9를7/8로 표시하거나 문맥/위치를 변조하면 거부한다. 기존 DB의 양수 format version 계약을 사용하므로 새 DDL은 없다. 구 binary는 format9를 읽지 않으며 실제 운영 writer 활성화·rolling rollback·배포는 이 격리 후보 적용과 별개다. 시간어 기준값, 계산의 논리 연산, 가용/불가/선호, 기존 계약과 기본 LEGACY 경로는 이 변경으로 재해석하지 않는다.
+
+
+## 명시 기준 장소와 이동시간 제한 — 격리 후보
+
+`place-constraints`는 공통 V5 시험 profile에서 명시적으로 선택하며 기본 parser/provider는 OFF다. `schedule-place-constraints-1` marker와 입력별 필수 `place_constraints` 배열로 시간 선언과 별도 장소 선언을 결속한다. 각 선언은 이동 기준점/실제 모임 장소/미해결 의미, 원문 전체 표현과 포함된 장소 literal, 분 단위 상한, 명시 이동수단 또는 null, 시간과의 독립 여부를 보존한다. 시간 claim/node/mode ID를 재사용하지 않고 기존 조건 예산 안에 포함한다. 장소 선언은 시간 AST 참조나 가용성 권한이 되지 않는다.
+
+서버는 frozen source·revision·코드포인트·해시·같은 참가자·포함 관계를 검증하고, 명시 duration literal의 단위 변환과 선언 상한을 대조한다. 명시되지 않은 이동수단이나 경로·좌표를 만들지 않는다. 독립 장소 제약은 해당 참여자의 대면 상태만 UNVERIFIED로 두고 유효한 시간과 기존 장소 충돌 검사를 유지한다. 미해결 시간-장소 연결은 해당 참여자의 시간을 모드별로 가용하다고 가정하지 않는다. 장소 미검증은 PLACE 범위 진단으로 남기며 실제 시간/참조 오류는 기존 진단 우선순위를 유지한다.
+
+marker가 있으면 빈 배열도 format10으로 저장하며 기존7/8/9 문서는 새 키 없이 읽고 쓴다. format10의 marker/list 누락, 이전 형식으로의 표기 변경, 출처·수치·수단 변조는 복원 시 거부한다. 구조화 문서에는 원문이나 장소 인용을 복제하지 않고 native span/hash만 저장한다. DB DDL은 추가하지 않는다. 구 binary는 format10을 읽지 못하므로 운영 writer 활성화와 rollback은 별도 검증이다.
+
+기존 read-only repeatable-read 결과 경계가 같은 run/version/선택 fingerprint와 frozen source를 복원한 뒤 공개 설명용 값만 반환한다. `approved-public-place-names-1`의 닫힌 공개 명칭 사전 exact lookup과 PUBLIC_NAMED_PLACE 선언을 모두 만족해야 명칭·상한·수단을 설명에 포함한다. 미등록·사적·미해결 기준점은 내부 원문/제약을 보존하고 공개 설명은 generic으로 유지한다. 이 사전은 공개 표기 허용 목록이며 geocoding·행정구역·근접 그룹·지도 공급자나 경로 검증을 대신하지 않는다. 별칭 표기를 바꿀 때는 이 버전의 판정을 보존하는 호환 검토가 필요하다.
+
+선택 POST는 room/run 잠금과 현재 version·frozen fingerprint 검증을 유지하고, 쓰기 전에 별도 `REQUIRES_NEW` read-only repeatable-read 트랜잭션으로 공개 설명을 읽는다. 이 불변 설명 값을 확정 응답에 전달하므로 아직 commit되지 않은 새 version을 재조회하지 않는다. GET은 기존 read-only snapshot 경계를 사용한다. 중첩 조회는 외부 쓰기 트랜잭션과 별도 DB connection을 사용하므로 운영 활성화 전에 connection pool 용량과 동시 요청을 검증해야 한다.
+
+MatchingResultService는 frozen 후보/variant 참석 집합에 속한 공개 조건만 결정론적으로 정렬·중복 제거해 기존 summary에 붙인다. 실제 venue의 place 필드는 분리하고 개인 식별자·원문을 공개하지 않는다. primary/대안/candidates/선택·확정 조회에서 동일한 조건을 사용하며 시간 선택은 place_unverified를 해제하지 않는다. 기존 conditional-v1 지원 선언과 구 웹409 경계, locale별 기존 설명 영역을 재사용한다. 실제 모델 누락·오해석은 source proof로 자동 복구하지 않고 원응답과 기대값을 대조한다.
+
+
+## 명시 입력 날짜·검색 범위 — 요청 맥락 격리 후보
+
+공통 V5 시험 transport의 `relative-date-context`는 기본 OFF다. ON일 때 두 공급자에 동일한 `relative-date-context-1` 사실 묶음과 사용 지침을 보낸다. frozen source별 식별자·revision·기준시각·모임 timezone의 로컬 날짜를 보존하고, 검색 시작일 포함·종료일 미포함·마지막 포함일을 명시한다. 기존 source/calendar/context와 출력 schema는 그대로이며 새 필드에 원문을 복제하지 않는다. 입력 기준일과 모임 검색 범위의 역할을 구분하며 가용 선언이나 native 근거·목표 월을 만들어 주지 않는다. 실제 날짜 선택과 WHOLE_DAY/UNKNOWN의 의미 판정은 기존 모델 해석·서버 검증 경계를 따른다. 이 후보는 생산 코드·저장 형식·일반 기본 경로를 변경하지 않는다.
+
+
+## 독립 선호의 가능 범위 합집합 — 새 V5 정책
+
+`schedule-structural-union-1`은 명시 가능과 독립 선호의 평가된 lower/upper 구간을 각각 합친 뒤 기존 전역 exclusionRoot를 차감한다. AST를 평탄화하지 않아 ALL_OF·EXCEPT·CHOICE·철회·정정과 출처 결속은 유지된다. 범위 제한이 있는 선호는 기존 PREFER(base, preference) 안에 두어 base 밖으로 넓히지 않는다. 계산 가능한 available.lower가 없는 선호-only/시간미상 입력은 추가 선호 가점이 없고, 계산 가능한 가능 선언이 있는 혼합 입력은 제외 차감 후 가능한 선호 구간만 득점한다. 미상/오류를 전일이나 검색기간 기본 가능으로 보정하지 않는다.
+
+새 V5 run을 동결할 때 `meetme.experiment.union-preferred-availability=true`인 경우에만 이 버전을 identity·policy·context에 함께 기록한다. 기본 false와 V4·이전 V5는 기존 schedule-context-mode-1을 유지한다. 조회·정정 후속 run은 런타임 플래그가 아닌 frozen policy로 계산하므로 기존 결과를 재해석하지 않는다. 공통 V4 구성요소의 새 버전 허용은 V5 composition에서만 명시하고 일반 V4 validator/calculator/route는 이전 정책만 허용한다. 미지원 버전·정책 매개변수·identity/context 불일치는 복원/전송 전에 거부한다. JSON/AST/응답 schema와 DB DDL은 바꾸지 않지만 구 binary는 새 policy를 읽지 못한다.
+
+두 공급자의 V5 지침은 동일한 frozen policy에서 선택한다. 이전 버전의 요청 지침은 그대로이며 새 버전만 일반적인 모임 응답 기본 가능·독립 선호의 합집합·범위 제한·날짜 전일과 실제 미상 경계의 구분을 설명한다. 실제 사용자 원문·특정 이름·요일별 예외나 사례 정답을 지침에 삽입하지 않는다. 새 규칙 전달 검증과 실제 모델 의미 정확성은 구분하며, 실제 사례 외의 사전 고정 독립 평가도 결과를 수정하지 않고 기록한다.
+
+
+## 서버 발급 근거 ID — V5 격리 생성 계약
+
+승인된 변경은 frozen snapshot의 실제 원문·보완답 구간에 서버가 ID를 발급하고 모델이 그 ID를 선택하도록 한다. 문맥 구간과 정확 시간어·시각·장소 구간을 구별하며 문자 위치 식별만 수행한다. 가용/불가·추정·관계식 의미를 서버의 문자열 규칙으로 결정하지 않는다. ID는 run/batch/input/source/revision·원문 해시·구간에 결속되고 Unicode 코드포인트 위치를 보존한다. 동일 문자열의 다른 출현은 별개 ID다. 목록과 요청 크기는 제한하며 누락을 조용히 잘라 내지 않는다.
+
+새 request/response와 catalog 버전을 V5 실행에 명시적으로 동결한다. 새 출력에서 조건·날짜·시각·시간어·관계식·mode·장소/이동 근거는 ID만 참조하고, 서버 adapter가 원문 span/hash로 연결한다. 기존 역할·불가·정정·분기·출처/버전·부분구간 검증은 유지한다. ID 존재는 의미 정확성의 증명이 아니다. 잘못된 ID에 원문 전체를 자동 연결하거나 모델 원응답을 수정하지 않는다.
+
+catalog 근거는 새 파생 유형과 저장 format11로 구분하며 기존7/8/9/10의 형식·엄격한 복원을 유지한다. 새 문서는 catalog 규칙 버전과 ID/위치/해시의 관계를 frozen 원문에서 재검증한다. 양수 format version 컬럼을 사용하지만 실제 DB round-trip과 downgrade/변조 거부를 완료하기 전에는 저장 호환 검증 완료로 표시하지 않는다. 기본 OFF와 운영 활성화·배포·구 binary rollback은 별도 검증 범위다.
+
+### V5 모임 탐색 기준 상대 날짜 (2026-11-10)
+
+기본 OFF인 `meetme.experiment.search-relative-dates`는 서버 근거 참조가 선택된 신규 V5 run에 request2/response2를 동결한다. `SearchScopedEvidenceProviderContract`는 이전 계약의 원문·catalog를 보존하고, 입력일 기준의 광범위한 상대 날짜 지침을 모임 탐색 기준 지침으로 대체한다. `meeting_date_scope`는 탐색 시작 포함·종료 제외 및 입력별 허용 날짜를 데이터로 전달한다. schema는 `meeting_date` 정의를 참조하며 두 공급자의 공통 유한 생성 schema에도 이 정의를 유지한다. 과거 response1은 기존 의미를 유지한다.
+
+순수 Domain의 `MeetingDateScopePolicy`는 검증된 native source registry에서 탐색 날짜와 해당 입력의 명시 숫자 절대 날짜만 구성한다. 전체 schema 후보는 입력별 집합의 합집합이지만 응답 검증은 소유 입력별로 수행한다. 모든 선언/승인 용어/문맥/최종 계산 view, 방향·시간어 날짜와 파생 scope, mode 시간 범위를 검사해 RAW_SCOPE의 우회를 막는다. UNKNOWN은 그대로 남기며 날짜를 자동 수정하지 않는다. 저장 표현 format11은 유지하고, 실행에 동결된 response2를 기준으로 네 저장 조회 진입점의 공통 복원에서 재검증한다. 런타임 flag를 꺼도 이미 동결된 정책은 바뀌지 않는다.
+
+사전 검사에서 Jev 최초 CLEAR는 기존처럼 질문 없이 접수한다. NEEDS_REVIEW/판단 유보 뒤 Luna 재검토의 CLEAR와 최종 시간 미확정 간 불일치 개선은 별도 설계이며 날짜 계약 변경에 섞지 않는다.
+
+날짜 가드는 선언된 시작/종료 날짜의 출처별 권한을 검사한다. 양끝 날짜가 허용된 여러 날의 구간을 임의로 하루로 줄이거나 중간 날짜의 의미를 새로 판정하지 않는다. 날짜 후보와 근거 ID의 유효성은 모델의 전체 시간 의미가 정확하다는 증명이 아니다.
+
+### V5 월 전체 기준 달력 사실 보강 (2026-11-10)
+
+기본 OFF인 `meetme.experiment.calendar-month-facts`는 근거 참조·탐색 날짜 옵션과 함께 신규 V5의 request3/response3를 동결한다. 순수 Domain의 `MeetingMonthCalendarFacts`가 탐색 날짜별 전체 월 기준 같은 요일 순번·마지막 출현 여부·월 첫날 요일·월 길이를 계산한다. 탐색 구간이 월 중간에서 시작해도 순번을 다시 세지 않으며, 탐색 종료일을 월의 마지막 같은 요일로 취급하지 않는다. 월의 주차 규약이나 자유문장의 의미는 이 계산에 포함하지 않는다.
+
+`CalendarFactsEvidenceProviderContract`는 이전 생성 계약의 원문·catalog·날짜 권한을 보존하고 `calendar_context.search_days`의 사실 및 `server-calendar-facts-2` marker와 사용 설명을 추가한다. 같은 wire를 native/runtime·평가 및 두 공급자에 적용하며 모델 호출 횟수를 늘리지 않는다. 파서는 새 marker를 확인한 뒤 기존 날짜·근거 가드에 위임한다. 모델이 고른 날짜나 UNKNOWN을 자동 보정하지 않는다. 기존 response1/2는 기존 사실과 지침을 유지하고, response3의 저장 조회도 소유자별 날짜 검증을 계산 전에 수행한다. canonical format11과 API 응답 구조는 유지한다.
+
+Jev 최초 CLEAR의 접수 흐름은 그대로다. 개인 검사와 전체 분석은 이용 가능한 맥락이 다를 수 있으므로 두 판정의 차이 자체를 오류로 취급하지 않는다. 의미 실패는 실제 전체 입력·모델 원응답·동결된 기대값으로 평가한다. 이미 관측한 평가를 회귀로 유지하고, 후속 미사용 평가는 출력 전에 고정한다.
+
+### 격리 후보: 서버 발급 근거의 정수 선택
+
+신규 V5 opt-in `indexed-evidence-selections`는 선행 server-evidence-references/search-relative-dates/calendar-month-facts와 함께 request4/response4를 동결한다. `server-evidence-selection-1`은 frozen native catalog의 발급 순서에 정수 선택 번호를 부여하고 모델의 모든 근거 필드에 integer 범위 스키마를 적용한다. Outbound adapter가 번호를 원 native ID로 연결한 후 기존 소유권·출처·revision·원문 span/hash·조건 관계 검증을 수행한다. 도메인과 JDBC format11의 근거 형태는 바꾸지 않는다. 번호 자체는 요청 간 재생 방지 식별자가 아니며 기존 실행/배치/snapshot/dispatch 결속이 계속 경계다. 이전 계약은 이전 wire와 strict reader를 유지하고 새 실행을 과거 형식으로 표시하지 않는다. 원응답·중간 ID 문서·native 확장의 크기 제한을 보존하며, 실제 의미 정확성과 운영 활성화는 별도 검증한다.
+
+### 격리 후보: 주간 반복 원선언과 다중 구간 계산 (ADR-074)
+
+`weekly-schedule-rules`는 정수 선택을 포함한 선행 네 옵션이 켜진 신규 V5에서만 request5/response5와 `weekly-schedule-rule-1`을 동결한다. Outbound adapter는 WEEKLY의 요일·원문 근거·본인 anchor 필터·WHOLE_DAY/BOUNDS/TERM/UNKNOWN 시간을 typed 선언으로 변환한다. 원모델 JSON은 실행 증거로 유지하며, 기존 temporal atom compiler처럼 같은 조건의 의미 근거와 해당 atom에서 직접 선택된 근거만 native 번들에 통합한다. 선택하지 않은 근거를 추가하지 않는다. 시간어의 문맥 조정은 기존 정책대로 INFERRED 숫자와 선택된 native 문맥을 보존하고 개인 사건의 미확정 시각은 확정하지 않는다.
+
+순수 Domain은 원조건을 복제하지 않고 탐색 범위(+명시 익일 tail을 위한 전날 anchor)의 해당 요일을 전개한다. 월·시작/종료·anchor 제외 날짜는 본인 근거에만 결속한다. 원 지역 구간과 검색에 잘린 Instant 교집합을 구별하고 DST gap/overlap 끝점을 임의 offset으로 보정하지 않는다. Structural validator는 조건 소유권·근거 포함·파생 중복·window 한도와 재전개 동등성을 검사한다. 계산기는 원조건 ID별 known window vector를 numeric authority·정정 영향·AST 평가·보호된 불가에 함께 적용한다. 존재하는 빈 vector는 미확정과 다르며 모드 투영에도 같은 vector를 전달한다.
+
+JDBC format12는 weeklyRulesVersion과 weeklyApplications를 빈 목록도 포함해 저장한다. 이전 format7~11에는 두 필드를 넣지 않고 읽기에서도 혼합·다운그레이드를 거부한다. 새 native 결과는 기존 catalog1 span/hash를 유지하고 저장 조회 네 진입점에서 frozen response5와 weekly marker의 일치 및 기존 날짜 권한 검증을 계산 전에 확인한다. Jev 최초 CLEAR의 추가 질문·추가 모델 호출은 도입하지 않는다. 실제 모델/전체 HTTP 검증과 운영 최대 입력 비용·배포 활성화는 별도 결과로 관리한다.

@@ -1,0 +1,30 @@
+{
+  "workItem": "scoped-term-persistence",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScopedTermEvidencePostgresTest.kt",
+      "sha256": "ea4249a1824d85320d33a6f96d21dd77cc4a25f7202537e00259d487353d0466"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScopedTermEvidenceTestFixture.kt",
+      "sha256": "6bec02f7e792c14198fc7e311f35fe4472b68dc93b017b583eeab85a6ecf3cb0"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ScopedTermEvidence*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.ScopedTermEvidencePostgresTest.STPG01 format9 new connection preserves scoped occurrence and independently expected overlap without raw quotes()",
+    "com.meetme.server.coordination.application.service.ScopedTermEvidencePostgresTest.STPG02 fresh restore refuses altered native source context position and downgraded format without rewriting()",
+    "com.meetme.server.coordination.application.service.ScopedTermEvidencePostgresTest.STPG03 old format7 and8 retain old witness JSON without scoped fields and remain freshly readable()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T13:51:52.361112+00:00",
+  "evidenceNote": "Formatting-only test fingerprint refresh; original pre-implementation RED logs retained locally. Entry point restored to missing-behavior TODO for refresh, then exact implemented source bytes restored."
+}

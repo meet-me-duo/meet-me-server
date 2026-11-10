@@ -1,0 +1,40 @@
+{
+  "workItem": "bounded-provider-rejection-observation",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/C5BoundedResponseReaderTest.kt",
+      "sha256": "ae757d4822b8b90b712bc7756ce946883be421611f5e46f29893f00f1f00aa1a"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*C5BoundedResponseReaderTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] limit = -1",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] limit = 0",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[3] limit = 2097153",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[1] knownLength = true",
+    "com.meetme.server.coordination.adapter.output.integration.C5BoundedResponseReaderTest.[2] knownLength = false"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T15:50:16.071084+00:00",
+  "evidenceNote": "Independent synthetic-byte contract: separate observation ceiling, unchanged admission bound and immutable response bytes. All17 tests fail at missing-behavior TODO; no provider request."
+}

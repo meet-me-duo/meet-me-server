@@ -279,9 +279,9 @@ class ExperimentalLiveHttpEvaluationTest {
             result["productElapsedMs"] = (System.nanoTime() - started) / 1_000_000
             result["nativeFinal"] = jdbc.queryForMap("SELECT id,status,version,candidate_quality FROM coordination_runs WHERE id=?", runId)
             result["room"] = request("GET", path, bearer).body
-            result["candidates"] = request("GET", "$path/candidates", bearer).body
+            result["candidates"] = request("GET", "$path/candidates?attendance_support=conditional-v1", bearer).body
             result["unapplied"] = request("GET", "$path/candidates/unapplied-inputs", bearer).body
-            result["recommendations"] = request("GET", "$path/recommendations", bearer).body
+            result["recommendations"] = request("GET", "$path/recommendations?attendance_support=conditional-v1", bearer).body
             if (jdbc.queryForObject("SELECT count(*) FROM schedule_ir_envelopes WHERE run_id=?", Int::class.java, runId) == 1) {
                 val stored = jdbc.queryForMap("SELECT version FROM coordination_runs WHERE id=?", runId)
                 val route =
@@ -771,13 +771,25 @@ class ExperimentalLiveHttpEvaluationTest {
                         setOf("ANALYZING", "COLLECTING", "")
                 }.body
         }
-        val candidates = request("GET", "$path/candidates", host)
+        val candidates = request("GET", "$path/candidates?attendance_support=conditional-v1", host)
         result["candidatesStatus"] = candidates.status
         result["candidates"] = candidates.body
         result["unapplied"] = request("GET", "$path/candidates/unapplied-inputs", host).body
-        val recommendations = request("GET", "$path/recommendations", host)
+        val recommendations = request("GET", "$path/recommendations?attendance_support=conditional-v1", host)
         result["recommendationsStatus"] = recommendations.status
         result["recommendations"] = recommendations.body
+        if (recommendations.status == 200 && recommendations.body.path("protocol").asText() == "diverse-time-v1") {
+            val analysis = recommendations.body.path("analysis_id").asText()
+            val alternatives =
+                request(
+                    "GET",
+                    "$path/recommendations/alternatives?analysis_id=$analysis&limit=20&attendance_support=conditional-v1",
+                    host,
+                )
+            result["alternativesStatus"] = alternatives.status
+            result["alternatives"] = alternatives.body
+            check(alternatives.status == 200) { "Conditional-capable alternatives request failed" }
+        }
         val storedRun =
             jdbc.queryForMap(
                 "SELECT id,version FROM coordination_runs WHERE room_id=? ORDER BY created_at DESC LIMIT 1",
@@ -815,7 +827,7 @@ class ExperimentalLiveHttpEvaluationTest {
                 val selected =
                     request(
                         "POST",
-                        "$path/recommendations/${option.path("option_id").asText()}/confirmation",
+                        "$path/recommendations/${option.path("option_id").asText()}/confirmation?attendance_support=conditional-v1",
                         host,
                         body =
                             mapOf(
@@ -827,7 +839,10 @@ class ExperimentalLiveHttpEvaluationTest {
                     )
                 result["selectionStatus"] = selected.status
                 result["selection"] = selected.body
-                result["confirmedResult"] = request("GET", "$path/result", host).body
+                val confirmed = request("GET", "$path/result?attendance_support=conditional-v1", host)
+                result["confirmedResultStatus"] = confirmed.status
+                result["confirmedResult"] = confirmed.body
+                safety.requireCompletedSelection(selected.status, confirmed.status)
             } else {
                 result["selectionSkipped"] = "First observed recommendation does not fit the payload meeting duration"
             }

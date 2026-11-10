@@ -170,7 +170,10 @@ internal object ScheduleDslTemporalAtoms {
             it.forEach { item -> locator(item) }
         }
 
-    private fun locator(value: Any?): Map<String, Any?> = fields(map(value), locatorFields)
+    private fun locator(value: Any?): Map<String, Any?> {
+        val item = map(value)
+        return fields(item, if ("catalog_id" in item) locatorFields + "catalog_id" else locatorFields)
+    }
 
     private fun date(value: Any?): LocalDate = LocalDate.parse(value as String).also { require(it.toString() == value) }
 

@@ -60,11 +60,18 @@ data class ScheduleDslPreparedInputs(
 )
 
 object ScheduleDslInputPolicy {
+    fun projectWithUnionPreferredAvailability(
+        envelope: ScheduleDslEnvelope,
+        policy: IrMatchingPolicy,
+        knownWeeklyWindows: Map<Pair<UUID, String>, List<InstantTimeRange>> = emptyMap(),
+    ): ScheduleDslPreparedInputs = project(envelope, policy, true, true, knownWeeklyWindows)
+
     /** Explicit semantic4 defaults and preferred availability; frozen DSL projection stays compatible. */
     fun projectWithPreferredAvailability(
         envelope: ScheduleDslEnvelope,
         policy: IrMatchingPolicy,
-    ): ScheduleDslPreparedInputs = project(envelope, policy, true)
+        knownWeeklyWindows: Map<Pair<UUID, String>, List<InstantTimeRange>> = emptyMap(),
+    ): ScheduleDslPreparedInputs = project(envelope, policy, true, knownWeeklyWindows = knownWeeklyWindows)
 
     fun project(
         envelope: ScheduleDslEnvelope,
@@ -75,10 +82,20 @@ object ScheduleDslInputPolicy {
         envelope: ScheduleDslEnvelope,
         policy: IrMatchingPolicy,
         approvedAvailability: Boolean,
+        unionPreferredAvailability: Boolean = false,
+        knownWeeklyWindows: Map<Pair<UUID, String>, List<InstantTimeRange>> = emptyMap(),
     ): ScheduleDslPreparedInputs {
         require(envelope.semanticVersion == SCHEDULE_DSL_SEMANTIC_VERSION && envelope.astVersion == SCHEDULE_AST_VERSION)
         require(envelope.claims.semanticVersion == SCHEDULE_IR_V2_VERSION)
         val context = envelope.context
+        require(
+            knownWeeklyWindows.keys.all { key ->
+                envelope.claims.results.any { result ->
+                    result.submissionVersionId == key.first && result.conditions.any { it.id == key.second && it.scope == null }
+                }
+            },
+        ) { "Unknown weekly window owner" }
+
         val core =
             ScheduleIrMatchInputPolicy.projectNumeric(
                 context,
@@ -106,6 +123,7 @@ object ScheduleDslInputPolicy {
                             .toSet(),
                         false,
                         true,
+                        knownWeeklyWindows.filterKeys { it.first == result.submissionVersionId }.mapKeys { it.key.second },
                     )
                 },
                 policy,
@@ -223,8 +241,11 @@ object ScheduleDslInputPolicy {
                 val visiting = mutableSetOf<Pair<String, ScheduleDslRole>>()
                 val byId = program?.nodes?.associateBy { it.id }.orEmpty()
 
-                fun window(scope: IrScope?): List<InstantTimeRange> =
-                    if (scope?.dimension == IrDimension.PLACE) {
+                fun window(
+                    id: String,
+                    scope: IrScope?,
+                ): List<InstantTimeRange> =
+                    knownWeeklyWindows[authority.submissionVersionId to id] ?: if (scope?.dimension == IrDimension.PLACE) {
                         emptyList()
                     } else if (scope?.start == null) {
                         listOf(search)
@@ -258,7 +279,10 @@ object ScheduleDslInputPolicy {
                     return branchSelected &&
                         claim.interpretation in policy.eligibleInterpretations &&
                         claim.effect == IrEffect.UNAVAILABLE &&
-                        claim.temporalResolution == IrTemporalResolution.PRECISE_INTERVAL
+                        (
+                            claim.temporalResolution == IrTemporalResolution.PRECISE_INTERVAL ||
+                                (authority.submissionVersionId to claim.id) in knownWeeklyWindows
+                        )
                 }
 
                 fun eval(
@@ -285,7 +309,7 @@ object ScheduleDslInputPolicy {
                             val state =
                                 if (claim.id in withheldCorrections) IrConditionDisposition.WITHHELD else dispositions.getValue(claim.id)
                             val influence = authority.correctionInfluences.filter { it.targetConditionId == claim.id }.map { it.window }
-                            val bound = window(claim.scope)
+                            val bound = window(claim.id, claim.scope)
                             val definiteInactive =
                                 state in
                                     setOf(
@@ -294,7 +318,12 @@ object ScheduleDslInputPolicy {
                                         IrConditionDisposition.UNSELECTED_BRANCH,
                                     )
                             val eligible = state == IrConditionDisposition.APPLIED && node.interpretation in policy.eligibleInterpretations
-                            val exact = eligible && claim.temporalResolution == IrTemporalResolution.PRECISE_INTERVAL
+                            val exact =
+                                eligible &&
+                                    (
+                                        claim.temporalResolution == IrTemporalResolution.PRECISE_INTERVAL ||
+                                            (authority.submissionVersionId to claim.id) in knownWeeklyWindows
+                                    )
                             val raw =
                                 if (definiteInactive) {
                                     disposition =
@@ -455,8 +484,8 @@ object ScheduleDslInputPolicy {
                         val original = program.exclusionRoot?.let { eval(it, ScheduleDslRole.BLOCK) } ?: Bounds.EMPTY
                         Bounds(
                             original.lower +
-                                protectedNegatives.filter(::protectedNegativeIsDefinite).flatMap { window(claims.getValue(it).scope) },
-                            original.upper + protectedNegatives.flatMap { window(claims.getValue(it).scope) },
+                                protectedNegatives.filter(::protectedNegativeIsDefinite).flatMap { window(it, claims.getValue(it).scope) },
+                            original.upper + protectedNegatives.flatMap { window(it, claims.getValue(it).scope) },
                         )
                     } else {
                         Bounds.EMPTY
@@ -469,13 +498,15 @@ object ScheduleDslInputPolicy {
                     } else {
                         Bounds.EMPTY
                     }
-                val preferenceSuppliesAvailability = approvedAvailability && program?.availabilityRoot == null
+                val preferenceSuppliesAvailability =
+                    approvedAvailability && (unionPreferredAvailability || program?.availabilityRoot == null)
                 val lower = if (preferenceSuppliesAvailability) available.lower + preferred.lower else available.lower
                 val upper = if (preferenceSuppliesAvailability) available.upper + preferred.upper else available.upper
                 val precise = TimeRangeMatcher.subtract(lower, excluded.upper)
                 val possible = TimeRangeMatcher.subtract(upper, excluded.lower)
+                val noPreferenceBonus = if (unionPreferredAvailability) available.lower.isEmpty() else preferenceSuppliesAvailability
                 val credits =
-                    if (preferenceSuppliesAvailability) {
+                    if (noPreferenceBonus) {
                         emptyList()
                     } else {
                         mergeCredits(listOf(available, preferred), precise).values.flatten()

@@ -133,14 +133,18 @@ internal object ScheduleDslOwnedProofChoices {
             )
     }
 
-    fun results(values: List<Any?>): List<Map<String, Any?>> {
+    fun results(
+        values: List<Any?>,
+        allowServerReferences: Boolean = false,
+    ): List<Map<String, Any?>> {
         require(values.size in 2..50)
         val results = values.map(::map)
         val claims = results.flatMap { list(it["conditions"]).map(::map) }
-        if (claims.none { "proofs" in it }) return results
-        require(claims.all { it.keys == conditionKeys }) { "Mixed proof ownership syntax" }
+        val referenced = allowServerReferences && claims.none { "proofs" in it }
+        if (claims.none { "proofs" in it } && !referenced) return results
+        require(claims.all { it.keys == if (referenced) conditionKeys - "proofs" else conditionKeys }) { "Mixed proof ownership syntax" }
         return results.map { result ->
-            val expanded = list(result["conditions"]).map { expand(map(it)) }
+            val expanded = list(result["conditions"]).map { if (referenced) map(it) else expand(map(it)) }
             val ids = expanded.map { token(it["id"]) }
             require(ids.size <= 32 && ids.distinct().size == ids.size)
             val bindings = mutableMapOf<String, Pair<String, String>>()

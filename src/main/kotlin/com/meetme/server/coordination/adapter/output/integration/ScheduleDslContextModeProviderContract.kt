@@ -13,6 +13,7 @@ import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_APPROVED_TERMS_SEMAN
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_REQUEST_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SCHEDULE_STRUCTURAL_UNION_POLICY_VERSION
 import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeEnvelope
 import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeValidator
 import com.meetme.server.submission.domain.ir.IrAssertion
@@ -31,8 +32,10 @@ import java.util.UUID
 /** Explicit C4 composition; older request bytes and decoders remain unchanged. */
 class ScheduleDslContextModeProviderContract(
     private val mapper: ObjectMapper,
+    private val allowStructuralUnionPolicy: Boolean = false,
+    private val trustedExpandedEvidence: Boolean = false,
 ) {
-    private val approved = ScheduleDslApprovedTermsProviderContract(mapper)
+    private val approved = ScheduleDslApprovedTermsProviderContract(mapper, trustedExpandedEvidence)
     private val reader =
         mapper
             .readerFor(Map::class.java)
@@ -43,7 +46,10 @@ class ScheduleDslContextModeProviderContract(
         capsule: ScheduleDslProviderInputCapsule,
         meetingMode: MeetingMode,
     ): ByteArray {
-        require(capsule.snapshot.context.policyVersion == SCHEDULE_CONTEXT_MODE_POLICY_VERSION)
+        require(
+            capsule.snapshot.context.policyVersion == SCHEDULE_CONTEXT_MODE_POLICY_VERSION ||
+                (allowStructuralUnionPolicy && capsule.snapshot.context.policyVersion == SCHEDULE_STRUCTURAL_UNION_POLICY_VERSION),
+        )
         val root = map(mapper.readValue(approved.requestBytes(capsule, meetingMode), Map::class.java)).toMutableMap()
         root["request_contract_version"] = SCHEDULE_DSL_CONTEXT_MODE_REQUEST_CONTRACT
         root["response_contract_version"] = SCHEDULE_DSL_CONTEXT_MODE_RESPONSE_CONTRACT
@@ -134,7 +140,7 @@ class ScheduleDslContextModeProviderContract(
                     astVersion == SCHEDULE_AST_VERSION &&
                     vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION,
             )
-            require(json.toByteArray(Charsets.UTF_8).size <= 262_144)
+            require(json.toByteArray(Charsets.UTF_8).size <= if (trustedExpandedEvidence) 4_194_304 else 262_144)
             val root = fields(reader.readValue<Map<*, *>>(json), setOf("semantic_version", "ast_version", "vocabulary_version", "results"))
             require(
                 root["semantic_version"] == semanticVersion &&
@@ -171,7 +177,7 @@ class ScheduleDslContextModeProviderContract(
                     vocabularyVersion,
                     acceptRoomZoneOffsets = true,
                 )
-            ScheduleDslContextModeValidator().validateDeclaration(base, restrictions, snapshot)
+            ScheduleDslContextModeValidator(allowStructuralUnionPolicy).validateDeclaration(base, restrictions, snapshot)
         } catch (_: RuntimeException) {
             throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
         }

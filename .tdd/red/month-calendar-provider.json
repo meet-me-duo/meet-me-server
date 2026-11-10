@@ -1,0 +1,35 @@
+{
+  "workItem": "month-calendar-provider",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/CalendarFactsEvidenceProviderContractTest.kt",
+      "sha256": "045d9747ce2b8578e5af90125bd8c92ec2a779d1042033c08fc549a47cc37b59"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingMonthCalendarFactsTest",
+    "--tests",
+    "*CalendarFactsEvidenceProviderContractTest",
+    "--tests",
+    "*CalendarFactsRoutePostgresTest"
+  ],
+  "failedTests": [
+    "CFP05 archived generation two request bytes and response reading do not acquire the new calendar marker()",
+    "CFP06 calendar facts neither correct a model weekday choice nor turn unknown time into whole day()",
+    "CFP03 objective facts preserve native sources catalogue date authority and input reference facts()",
+    "CFP04 strict generation three requires its calendar marker and preserves the declared valid time()",
+    "CFP02 weekday occurrence is not a forced week row or an index inside the clipped search range()",
+    "CFP07 both provider wires share the objective facts instructions and date schema under the matched third contract()",
+    "CFP08 factual calendar rows never grant another input explicit outside date authority()",
+    "CFP01 clipped leap month rows describe the full calendar month and the following month independently()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T05:10:49.412583+00:00",
+  "evidenceNote": "Independent calendar facts and frozen new generation boundaries compiled; missing behavior failures. Five historical boundary controls already pass."
+}

@@ -58,6 +58,23 @@ public final class C5DirectLocatorProducer {
         for (var term : ApprovedKoreanTimeTerm.values()) TERMS.addAll(ApprovedKoreanTimeTermPolicy.INSTANCE.lexemes(term));
     }
 
+    /** Explicit scoped-term candidate; raw locators, schemas and semantic declarations are not rewritten. */
+    public static String scopedTermInstructions(String instructions) {
+        String original = "If an approved lexeme occurs more than once in the same source, do not broaden term_evidence.quote "
+                + "or choose the first occurrence; preserve the unresolved evidence failure instead. A lexeme alone does not establish an effect.";
+        String replacement = "When an approved lexeme repeats in the same source, keep term_evidence.quote as the exact approved lexeme. "
+                + "Provide an exact condition-owned meaning or date quotation that occurs once in that source and encloses the intended term occurrence once. "
+                + "The server locates the term inside this declared context; it never chooses the first global occurrence. "
+                + "Different identifying contexts for the same condition must agree on the occurrence and use the same native source and revision. "
+                + "If no declared context uniquely identifies the occurrence, retain the unresolved evidence failure. "
+                + "Do not invent context, broaden the term quote, emit character offsets or borrow another condition's evidence. "
+                + "A lexeme alone does not establish an effect.";
+        int at = instructions.indexOf(original);
+        if (at < 0 || instructions.indexOf(original, at + original.length()) >= 0)
+            throw fail("SCOPED_TERM_INSTRUCTION_MISMATCH");
+        return instructions.substring(0, at) + replacement + instructions.substring(at + original.length());
+    }
+
     /** Optional instruction-only alignment; never rewrites source data, declarations or calculation policy. */
     public static String scopedUnresolvedInstructions(String instructions) {
         var original = "Unknown personal event or before/after boundaries stay UNKNOWN even on a known date; "

@@ -9,6 +9,7 @@ import com.meetme.server.coordination.domain.analysis.FrozenFinalAnalysisRoute
 import com.meetme.server.coordination.domain.dsl.ApprovedScheduleDslMatchingPolicy
 import com.meetme.server.coordination.domain.dsl.SCHEDULE_DSL_CONTEXT_RESPONSE_CONTRACT
 import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModePolicy
+import com.meetme.server.coordination.domain.dsl.ScheduleDslStructuralMatchingPolicy
 import com.meetme.server.coordination.domain.ir.IrExecutionIdentity
 import com.meetme.server.coordination.domain.matching.IrMatchingPolicy
 import com.meetme.server.meetingroom.domain.MeetingMode
@@ -20,6 +21,11 @@ import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTI
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_SEMANTIC_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.ir.ProposedIrV2Result
 import com.meetme.server.submission.domain.ir.SCHEDULE_IR_V2_VERSION
@@ -397,12 +403,20 @@ class JdbcFinalAnalysisRouteRegistry(
                 context = choice.context
                 policy = choice.policy
                 require(
-                    identity.responseContractVersion == SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT &&
+                    identity.responseContractVersion in
+                        setOf(
+                            SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                        ) &&
                         identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION &&
                         choice.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION,
                 ) { "Unsupported context-mode final analysis contract" }
                 require(
-                    policy == ScheduleDslContextModePolicy.contextual(policy.alternativeChoices),
+                    policy == ScheduleDslStructuralMatchingPolicy.forVersion(policy.version, policy.alternativeChoices),
                 ) { "Unsupported context-mode service policy" }
             }
             is FinalAnalysisRouteChoice.DslContextModeV4 -> {

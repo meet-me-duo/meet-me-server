@@ -7,16 +7,20 @@ import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.time.SearchDateRange
 import com.meetme.server.submission.domain.dsl.DirectionalTimeApplication
 import com.meetme.server.submission.domain.dsl.DirectionalTimeDeclaration
+import com.meetme.server.submission.domain.dsl.EvidenceLocationDerivation
+import com.meetme.server.submission.domain.dsl.LocatedLiteralEvidence
 import com.meetme.server.submission.domain.dsl.ProposedLiteralQuoteLocator
 import com.meetme.server.submission.domain.dsl.SCHEDULE_AST_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_CONTEXT_MODE_SEMANTIC_VERSION
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_REQUEST_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION
+import com.meetme.server.submission.domain.dsl.SCHEDULE_PLACE_CONSTRAINT_VERSION
 import com.meetme.server.submission.domain.dsl.ScheduleDslLocatedEvidence
 import com.meetme.server.submission.domain.dsl.ScheduleDslStructuralEnvelope
 import com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizer
 import com.meetme.server.submission.domain.dsl.ScheduleDslStructuralValidator
+import com.meetme.server.submission.domain.dsl.ServerEvidenceCatalog
 import com.meetme.server.submission.domain.dsl.TemporalDirection
 import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.ir.IrTemporalResolution
@@ -35,8 +39,17 @@ import java.util.UUID
 /** Explicit quote-locator protocol. C4 bytes and strict evidence decoding remain unchanged. */
 class ScheduleDslStructuralProviderContract(
     private val mapper: ObjectMapper,
+    private val allowScopedTermEvidence: Boolean = false,
+    private val allowPlaceConstraints: Boolean = false,
+    private val serverCatalog: ServerEvidenceCatalog? = null,
 ) {
-    private val previous = ScheduleDslContextModeProviderContract(mapper)
+    private val previous =
+        ScheduleDslContextModeProviderContract(
+            mapper,
+            allowStructuralUnionPolicy = true,
+            trustedExpandedEvidence =
+                serverCatalog != null,
+        )
     private val reader =
         mapper
             .readerFor(Map::class.java)
@@ -61,7 +74,10 @@ class ScheduleDslStructuralProviderContract(
                 .substringBefore("These are local calendar boundaries.")
                 .substringBefore("These are local calendar boundaries,")
         check(table.startsWith("ko-time-terms-1.") && "ALL_DAY=" in table)
-        root["prompt"] = INSTRUCTIONS + "\n\nThe complete approved vocabulary is " + table.trim()
+        root["prompt"] =
+            ScheduleDslUnionAvailabilityInstructions.apply(INSTRUCTIONS, capsule.snapshot.context.policyVersion) +
+            "\n\nThe complete approved vocabulary is " +
+            table.trim()
         return mapper.writeValueAsBytes(root)
     }
 
@@ -164,7 +180,11 @@ class ScheduleDslStructuralProviderContract(
                         ),
                     ),
             )
-        return ScheduleDslOwnedProofChoices.schema(ScheduleDslTemporalAtoms.schema(ScheduleDslStructuralWireGrammar.schema(boundedSchema)))
+        val original =
+            ScheduleDslOwnedProofChoices.schema(
+                ScheduleDslTemporalAtoms.schema(ScheduleDslStructuralWireGrammar.schema(boundedSchema)),
+            )
+        return if (allowPlaceConstraints) ScheduleDslPlaceProviderContract.schema(original) else original
     }
 
     fun parseProviderResponse(
@@ -176,10 +196,15 @@ class ScheduleDslStructuralProviderContract(
     ): ScheduleDslStructuralEnvelope =
         try {
             require(semanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION && astVersion == SCHEDULE_AST_VERSION)
-            require(vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION && json.toByteArray(Charsets.UTF_8).size <= 262_144)
+            require(
+                vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION &&
+                    json.toByteArray(Charsets.UTF_8).size <= if (serverCatalog != null) 4_194_304 else 262_144,
+            )
+            val incoming = reader.readValue<Map<String, Any?>>(json)
+            val places = if (allowPlaceConstraints) ScheduleDslPlaceProviderContract.decode(incoming, snapshot, serverCatalog) else null
             val supplied =
-                fields(reader.readValue<Map<*, *>>(json), setOf("semantic_version", "ast_version", "vocabulary_version", "results"))
-            val root = supplied + ("results" to ScheduleDslOwnedProofChoices.results(list(supplied["results"])))
+                fields(places?.timeDocument ?: incoming, setOf("semantic_version", "ast_version", "vocabulary_version", "results"))
+            val root = supplied + ("results" to ScheduleDslOwnedProofChoices.results(list(supplied["results"]), serverCatalog != null))
             require(
                 root["semantic_version"] == semanticVersion &&
                     root["ast_version"] == astVersion &&
@@ -189,17 +214,40 @@ class ScheduleDslStructuralProviderContract(
             val witnesses = mutableListOf<ScheduleDslLocatedEvidence>()
             val applications = mutableListOf<DirectionalTimeApplication>()
 
+            fun locator(raw: Any?): ProposedLiteralQuoteLocator {
+                val value = fields(raw, if (serverCatalog == null) LOCATOR else LOCATOR + "catalog_id")
+                return ProposedLiteralQuoteLocator(text(value["source_id"]), integer(value["revision"]), text(value["quote"]))
+            }
+
             fun locate(
                 raw: Any?,
                 input: UUID,
-            ): com.meetme.server.submission.domain.dsl.LocatedLiteralEvidence {
-                val value = fields(raw, LOCATOR)
+                scoped: Map<ProposedLiteralQuoteLocator, LocatedLiteralEvidence> = emptyMap(),
+            ): LocatedLiteralEvidence {
+                val literal = locator(raw)
                 val proof =
-                    ScheduleDslStructuralNormalizer.locate(
-                        input,
-                        ProposedLiteralQuoteLocator(text(value["source_id"]), integer(value["revision"]), text(value["quote"])),
-                        snapshot,
-                    )
+                    if (serverCatalog != null) {
+                        val id = text(map(raw)["catalog_id"])
+                        serverCatalog.resolve(input, id).also { located ->
+                            val source = requireNotNull(snapshot.sourceText(input, located.span.sourceId))
+                            val native =
+                                source.substring(
+                                    source.offsetByCodePoints(0, located.span.startCodePoint),
+                                    source.offsetByCodePoints(0, located.span.endCodePoint),
+                                )
+                            require(
+                                literal.sourceId == located.span.sourceId &&
+                                    literal.revision == located.span.revision &&
+                                    literal.quote == native,
+                            )
+                        }
+                    } else {
+                        scoped[literal] ?: ScheduleDslStructuralNormalizer.locate(
+                            input,
+                            literal,
+                            snapshot,
+                        )
+                    }
                 witnesses += ScheduleDslLocatedEvidence(input, proof)
                 return proof
             }
@@ -207,16 +255,17 @@ class ScheduleDslStructuralProviderContract(
             fun translate(
                 value: Any?,
                 input: UUID,
+                scoped: Map<ProposedLiteralQuoteLocator, LocatedLiteralEvidence> = emptyMap(),
             ): Any? =
                 when (value) {
-                    is List<*> -> value.map { translate(it, input) }
+                    is List<*> -> value.map { translate(it, input, scoped) }
                     is Map<*, *> -> {
                         val item = map(value)
                         if ("quote" in item) {
-                            val span = locate(item, input).span
-                            item + mapOf("start_code_point" to span.startCodePoint, "end_code_point" to span.endCodePoint)
+                            val span = locate(item, input, scoped).span
+                            (item - "catalog_id") + mapOf("start_code_point" to span.startCodePoint, "end_code_point" to span.endCodePoint)
                         } else {
-                            item.mapValues { translate(it.value, input) }
+                            item.mapValues { translate(it.value, input, scoped) }
                         }
                     }
                     else -> value
@@ -292,6 +341,7 @@ class ScheduleDslStructuralProviderContract(
                                                         IrTemporalResolution.NON_PRECISE,
                                                     ),
                                                     snapshot,
+                                                    serverCatalog,
                                                 )
                                         }
                                         condition + ("scope" to null)
@@ -299,6 +349,7 @@ class ScheduleDslStructuralProviderContract(
                                 }
                             }
                         val byId = claims.associateBy { text(it["id"]) }
+                        val scopedTerms = mutableMapOf<String, Map<ProposedLiteralQuoteLocator, LocatedLiteralEvidence>>()
                         val sides = list(result["directional_times"])
                         require(sides.size <= 32)
                         val sideIds = mutableSetOf<String>()
@@ -345,7 +396,7 @@ class ScheduleDslStructuralProviderContract(
                                         IrInterpretation.valueOf(text(condition["interpretation"])),
                                         IrTemporalResolution.NON_PRECISE,
                                     )
-                                applications += ScheduleDslStructuralNormalizer.resolve(input, declaration, snapshot)
+                                applications += ScheduleDslStructuralNormalizer.resolve(input, declaration, snapshot, serverCatalog)
                             }
                         }
                         val terms =
@@ -354,7 +405,26 @@ class ScheduleDslStructuralProviderContract(
                                 val id = text(term["condition_id"])
                                 require(id in byId && id !in sideIds && id !in calendarIds)
                                 try {
-                                    translate(term, input)
+                                    val scoped =
+                                        if (allowScopedTermEvidence) {
+                                            val literal = locator(term["term_evidence"])
+                                            val contexts =
+                                                (list(byId.getValue(id)["evidence"]) + list(term["date_evidence"]))
+                                                    .map(::locator)
+                                                    .filter {
+                                                        it.sourceId == literal.sourceId &&
+                                                            it.revision == literal.revision &&
+                                                            it.quote != literal.quote
+                                                    }.distinct()
+                                            mapOf(
+                                                literal to
+                                                    ScheduleDslStructuralNormalizer.locateScopedTerm(input, literal, contexts, snapshot),
+                                            )
+                                        } else {
+                                            emptyMap()
+                                        }
+                                    scopedTerms[id] = scoped
+                                    translate(term, input, scoped)
                                 } catch (_: IllegalArgumentException) {
                                     invalid += id
                                     null
@@ -366,7 +436,7 @@ class ScheduleDslStructuralProviderContract(
                                     condition + ("evidence" to emptyList<Any>())
                                 } else {
                                     try {
-                                        translate(condition, input)
+                                        translate(condition, input, scopedTerms[text(condition["id"])].orEmpty())
                                     } catch (_: IllegalArgumentException) {
                                         // There is no validated evidence for this condition. Let the existing typed
                                         // validator retain EVIDENCE quarantine and the invalid-program safety guard.
@@ -407,11 +477,21 @@ class ScheduleDslStructuralProviderContract(
                     .flatMap { result ->
                         result.conditions.map { result.submissionVersionId to it.id }
                     }.toSet()
+            val retainedTermSpans =
+                base.base.termApplications
+                    .map { it.submissionVersionId to it.termEvidence }
+                    .toSet()
             ScheduleDslStructuralValidator().validateDeclaration(
                 base,
-                witnesses.distinct(),
+                witnesses.distinct().filter {
+                    it.evidence.derivation != EvidenceLocationDerivation.SERVER_CONDITION_TERM_QUOTE ||
+                        (it.submissionVersionId to it.evidence.span) in retainedTermSpans
+                },
                 applications.filter { (it.submissionVersionId to it.declaration.conditionId) in retained },
                 snapshot,
+                places?.constraints.orEmpty(),
+                if (places != null) SCHEDULE_PLACE_CONSTRAINT_VERSION else null,
+                if (serverCatalog != null) ServerEvidenceCatalog.VERSION else null,
             )
         } catch (_: RuntimeException) {
             throw NaturalLanguageParserException(ParserFailureKind.INVALID_RESPONSE)
@@ -442,10 +522,12 @@ class ScheduleDslStructuralProviderContract(
             is Map<*, *> -> {
                 val item = map(value)
                 if ("quote" in item) {
-                    fields(item, LOCATOR)
+                    fields(item, if (serverCatalog == null) LOCATOR else LOCATOR + "catalog_id")
                     text(item["source_id"])
                     integer(item["revision"])
-                    require(text(item["quote"]).length <= 1000)
+                    require(
+                        text(item["quote"]).length <= if (serverCatalog == null) 1000 else ServerEvidenceCatalog.MAX_SOURCE_CODE_POINTS * 2,
+                    )
                 } else {
                     item.values.forEach { locatorShapes(it, depth + 1) }
                 }

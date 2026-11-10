@@ -7,6 +7,8 @@ import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.ir.IrScope
 import com.meetme.server.submission.domain.ir.IrTemporalResolution
 import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
+import com.meetme.server.submission.domain.time.ApprovedKoreanTimeTerm
+import com.meetme.server.submission.domain.time.ApprovedKoreanTimeTermPolicy
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -25,11 +27,13 @@ data class ProposedLiteralQuoteLocator(
     override fun toString(): String = "ProposedLiteralQuoteLocator(sourceId=$sourceId, revision=$revision)"
 }
 
-enum class EvidenceLocationDerivation { SERVER_LITERAL_QUOTE }
+enum class EvidenceLocationDerivation { SERVER_LITERAL_QUOTE, SERVER_CONDITION_TERM_QUOTE, SERVER_CATALOG_REFERENCE }
 
 data class LocatedLiteralEvidence(
     val span: IrEvidenceSpan,
     val derivation: EvidenceLocationDerivation = EvidenceLocationDerivation.SERVER_LITERAL_QUOTE,
+    val contextSpan: IrEvidenceSpan? = null,
+    val catalogId: String? = null,
 )
 
 enum class TemporalDirection { AFTER, BEFORE, WHOLE_DAY }
@@ -58,6 +62,56 @@ data class DirectionalTimeApplication(
 )
 
 object ScheduleDslStructuralNormalizer {
+    fun locateScopedTerm(
+        inputId: UUID,
+        locator: ProposedLiteralQuoteLocator,
+        contextLocators: List<ProposedLiteralQuoteLocator>,
+        snapshot: ScheduleEvidenceSnapshot,
+    ): LocatedLiteralEvidence {
+        require(locator.quote in ApprovedKoreanTimeTerm.entries.flatMap(ApprovedKoreanTimeTermPolicy::lexemes)) {
+            "Scoped evidence must be an exact approved term"
+        }
+        require(contextLocators.size <= 32) { "Scoped context limit" }
+        val native = source(inputId, locator.sourceId, locator.revision, snapshot)
+        val first = native.indexOf(locator.quote)
+        require(first >= 0) { "Missing native approved term" }
+        if (native.indexOf(locator.quote, first + 1) < 0) return locate(inputId, locator, snapshot)
+        require(contextLocators.isNotEmpty()) { "Repeated term needs declared context" }
+        val candidates =
+            contextLocators.distinct().mapNotNull { context ->
+                require(context.sourceId == locator.sourceId && context.revision == locator.revision) {
+                    "Scoped context source mismatch"
+                }
+                val parent = locate(inputId, context, snapshot).span
+                val at = context.quote.indexOf(locator.quote)
+                if (at < 0 || context.quote.indexOf(locator.quote, at + 1) >= 0) {
+                    null
+                } else {
+                    val start = parent.startCodePoint + context.quote.codePointCount(0, at)
+                    LocatedLiteralEvidence(
+                        IrEvidenceSpan(
+                            locator.sourceId,
+                            locator.revision,
+                            start,
+                            start + locator.quote.codePointCount(0, locator.quote.length),
+                            IrEvidenceBindings.sha256(locator.quote),
+                        ),
+                        EvidenceLocationDerivation.SERVER_CONDITION_TERM_QUOTE,
+                        parent,
+                    )
+                }
+            }
+        require(candidates.isNotEmpty() && candidates.map { it.span }.distinct().size == 1) {
+            "Declared contexts do not identify one approved term occurrence"
+        }
+        return candidates.minWith(
+            compareBy(
+                { requireNotNull(it.contextSpan).endCodePoint - it.contextSpan.startCodePoint },
+                { requireNotNull(it.contextSpan).startCodePoint },
+            ),
+        )
+    }
+
     fun locate(
         inputId: UUID,
         locator: ProposedLiteralQuoteLocator,
@@ -82,13 +136,47 @@ object ScheduleDslStructuralNormalizer {
         inputId: UUID,
         evidence: LocatedLiteralEvidence,
         snapshot: ScheduleEvidenceSnapshot,
+        serverCatalog: ServerEvidenceCatalog? = null,
     ): LocatedLiteralEvidence {
+        require(evidence.derivation == EvidenceLocationDerivation.SERVER_CATALOG_REFERENCE || evidence.catalogId == null) {
+            "Legacy evidence cannot declare a catalog reference"
+        }
         val span = evidence.span
         val text = source(inputId, span.sourceId, span.revision, snapshot)
         require(span.startCodePoint >= 0 && span.endCodePoint > span.startCodePoint) { "Invalid literal evidence span" }
         require(span.endCodePoint <= text.codePointCount(0, text.length)) { "Invalid literal evidence span" }
         val quote = text.substring(text.offsetByCodePoints(0, span.startCodePoint), text.offsetByCodePoints(0, span.endCodePoint))
-        val restored = locate(inputId, ProposedLiteralQuoteLocator(span.sourceId, span.revision, quote), snapshot)
+        val locator = ProposedLiteralQuoteLocator(span.sourceId, span.revision, quote)
+        val restored =
+            when (evidence.derivation) {
+                EvidenceLocationDerivation.SERVER_CATALOG_REFERENCE -> {
+                    require(evidence.contextSpan == null) { "Catalog references cannot borrow scoped provenance" }
+                    (serverCatalog?.also { it.requireContext(snapshot) } ?: ServerEvidenceCatalog.create(snapshot))
+                        .resolve(inputId, requireNotNull(evidence.catalogId))
+                }
+                EvidenceLocationDerivation.SERVER_LITERAL_QUOTE -> {
+                    require(evidence.contextSpan == null) { "Literal evidence cannot have scoped provenance" }
+                    locate(inputId, locator, snapshot)
+                }
+                EvidenceLocationDerivation.SERVER_CONDITION_TERM_QUOTE -> {
+                    val context = requireNotNull(evidence.contextSpan) { "Missing scoped provenance" }
+                    require(context.sourceId == span.sourceId && context.revision == span.revision) {
+                        "Scoped provenance source mismatch"
+                    }
+                    restoreEvidence(inputId, LocatedLiteralEvidence(context), snapshot)
+                    val contextQuote =
+                        text.substring(
+                            text.offsetByCodePoints(0, context.startCodePoint),
+                            text.offsetByCodePoints(0, context.endCodePoint),
+                        )
+                    locateScopedTerm(
+                        inputId,
+                        locator,
+                        listOf(ProposedLiteralQuoteLocator(context.sourceId, context.revision, contextQuote)),
+                        snapshot,
+                    )
+                }
+            }
         require(restored == evidence) { "Literal evidence restore mismatch" }
         return restored
     }
@@ -97,6 +185,7 @@ object ScheduleDslStructuralNormalizer {
         inputId: UUID,
         declaration: DirectionalTimeDeclaration,
         snapshot: ScheduleEvidenceSnapshot,
+        serverCatalog: ServerEvidenceCatalog? = null,
     ): DirectionalTimeApplication {
         require(declaration.conditionId.matches(Regex("[A-Za-z0-9][A-Za-z0-9_:-]{0,63}"))) { "Invalid directional condition id" }
         require(declaration.interpretation != IrInterpretation.UNRESOLVED) { "Unresolved clock is not a directional declaration" }
@@ -110,7 +199,7 @@ object ScheduleDslStructuralNormalizer {
                 declaration.clock != null && declaration.clockEvidence.size in 1..32
             },
         ) { "Clock evidence does not match the temporal derivation" }
-        (declaration.dateEvidence + declaration.clockEvidence).forEach { restoreEvidence(inputId, it, snapshot) }
+        (declaration.dateEvidence + declaration.clockEvidence).forEach { restoreEvidence(inputId, it, snapshot, serverCatalog) }
         val context = snapshot.context
         require(context.searchStart < context.searchEnd) { "Invalid frozen search interval" }
         val zone = ZoneId.of(context.timeZone)
@@ -148,9 +237,10 @@ object ScheduleDslStructuralNormalizer {
         inputId: UUID,
         application: DirectionalTimeApplication,
         snapshot: ScheduleEvidenceSnapshot,
+        serverCatalog: ServerEvidenceCatalog? = null,
     ): DirectionalTimeApplication {
         require(application.submissionVersionId == inputId) { "Directional input mismatch" }
-        val restored = resolve(inputId, application.declaration, snapshot)
+        val restored = resolve(inputId, application.declaration, snapshot, serverCatalog)
         require(restored == application) { "Directional time restore mismatch" }
         return restored
     }
