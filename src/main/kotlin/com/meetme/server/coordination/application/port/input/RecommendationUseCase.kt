@@ -1,6 +1,7 @@
 package com.meetme.server.coordination.application.port.input
 
 import com.meetme.server.coordination.domain.CandidateQuality
+import com.meetme.server.coordination.domain.matching.RecommendationParticipantStatus
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.shared.domain.time.InstantTimeRange
 import java.time.Instant
@@ -17,6 +18,14 @@ data class RecommendationVariantView(
     val excludedParticipantNames: List<String> = emptyList(),
     val attendanceConfirmed: Boolean = true,
     val summary: String = "",
+    val availableParticipantNames: List<String> = emptyList(),
+    val participantStatuses: List<RecommendationParticipantStatusView> = emptyList(),
+)
+
+data class RecommendationParticipantStatusView(
+    val participantRef: String,
+    val displayName: String,
+    val status: RecommendationParticipantStatus,
 )
 
 data class RecommendationOptionView(

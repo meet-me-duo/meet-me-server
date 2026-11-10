@@ -1,0 +1,40 @@
+{
+  "workItem": "meeting-date-scope-domain",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/MeetingDateScopePolicyTest.kt",
+      "sha256": "ca3487b9403e8fe0b35b92ad7287feac1551a60ab2fbbeb707114564df052622"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingDateScopePolicyTest",
+    "--tests",
+    "*SearchScopedEvidenceProviderContractTest"
+  ],
+  "failedTests": [
+    "MDS03 missing years use original reference year and all years actually inside the search interval()",
+    "MDS12 changing any declaration or calculation layer cannot hide an unauthorized RAW_SCOPE date()",
+    "MDS08 relative outside known TIME declarations are rejected for both availability and unavailability()",
+    "MDS04 another participant's absolute date is in the global candidate set but grants no local authority()",
+    "MDS07 native digest corruption and forged original or supplemental source identities are rejected()",
+    "MDS14 366 search days and 400 total candidates are accepted and larger bounds fail without truncation()",
+    "MDS09 known inside times pass while unknown null and unknown date scopes remain unchanged()",
+    "MDS11 a daylight saving civil day is checked by its meeting dates rather than a fixed 24 hour duration()",
+    "MDS02 each supported explicit numeric date form authorizes its own outside date for positive and negative scopes()",
+    "MDS15 foreign input lookups and inverted or empty search intervals are rejected()",
+    "MDS13 unauthorized directional and approved term dates cannot bypass date authority through derived scopes()",
+    "MDS06 calendar-invalid numeric literals add no date authority and never become corrected dates()",
+    "MDS01 relative and bare weekday wording authorize only the inclusive exclusive meeting search dates()",
+    "MDS05 an actual linked supplemental answer may authorize an explicit date without rewriting the original()",
+    "MDS10 overnight end dates may extend one calendar day without authorizing that day as a start()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T03:33:56.865355+00:00",
+  "evidenceNote": "Independent generic scope/ownership/provider schema tests compile; all fail on explicit missing behavior skeletons."
+}

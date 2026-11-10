@@ -1,0 +1,27 @@
+{
+  "work_item": "schedule-c5-p9-role-guide",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f + preserved P9 dirty-source manifest",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslRoleGuideContractTest.kt",
+      "sha256": "f2ace1a332afc3c9191cebef0aed238397c0c19cc5bfd310bf8b8cf84852c753"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslRoleGuideContractTest"
+  ],
+  "failed_tests": [
+    "RG01 program description explains recursive root effect and operand roles with compact signatures()"
+  ],
+  "expected_failure_classification": "missing generic operand-role signatures, compilation/preparation and 3 safety controls passed",
+  "recorded_at": "2026-11-07T13:16:51.818010+00:00"
+}

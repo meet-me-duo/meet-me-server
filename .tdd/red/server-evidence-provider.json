@@ -1,0 +1,38 @@
+{
+  "workItem": "server-evidence-provider",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ServerEvidenceProviderContractTest.kt",
+      "sha256": "9b4716874d52d17cabb326751f843c2e6929025819352a80cfe605981b2350ec"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceCatalogTest",
+    "--tests",
+    "*ServerEvidenceProviderContractTest",
+    "--tests",
+    "*ServerEvidenceCatalogPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP02 schema uses server references for all evidence without model quotes offsets or a generated proof bank()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP08 unknown foreign and missing references fail without replacing them with whole original evidence()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP07 missing unknown or mixed legacy evidence markers cannot silently select the old reader()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP03 instructions ask for issued references and contain no legacy exact quotation copying requirement()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP10 a valid evidence ID does not bypass a missing claim or availability role mismatch()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP06 known one sided clock uses a referenced native clock while retaining its declared bound()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP09 same participant old source text references cannot authorize a changed native source()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP05 referenced repeated term identifies the selected occurrence rather than the first native match()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP04 inline relation evidence comes from server text with conjunctions preserved and both children retained()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP01 request preserves immutable sources and gives each catalogue entry its original owner and exact text()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceProviderContractTest.SEP11 place references retain native origin and duration without inventing a travel mode or confirmation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T01:55:50.110340+00:00",
+  "evidenceNote": "Independent source ID/provenance and PG newformat tests; missing implemented catalog/provider/route behavior. No case-specific original or model output patched."
+}

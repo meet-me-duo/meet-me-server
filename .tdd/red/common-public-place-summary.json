@@ -1,0 +1,34 @@
+{
+  "workItem": "common-public-place-summary",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/TravelPlaceSummaryRendererTest.kt",
+      "sha256": "a50f4baca1e3b37901e370c123c93fc6a92907b47459f386aedee9437413f942"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintTestSourceSetFormat",
+    "test",
+    "--tests",
+    "*TravelPlace*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS10 existing summaries remain byte identical when no selected participant has a publishable condition()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS09 public summary is stable under declaration order and repeated equivalent declarations()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS03 independent selected participant requirements remain together without becoming alternatives or an invented venue()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS04 private or unregistered origins do not disclose their individual duration or transport through the public summary()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS07 an explicitly supplied travel mode is retained in the public constraint()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS05 remote variants retain the original explanation without exposing offline conditions()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS08 unresolved place meaning retains generic pending text even if a public name is present()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS06 an explicit meeting place is not rewritten as a travel origin or a duration constraint()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS02 a partial attendance variant excludes absent participants constraints and deduplicates equivalent public conditions()",
+    "com.meetme.server.coordination.application.service.TravelPlaceSummaryRendererTest.TPS01 public origin and travel upper bound accompany the unchanged time and pending attendance explanation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T14:54:14.966641+00:00",
+  "evidenceNote": "Original renderer RED is unchanged. Corrected HTTP fixture RED is recorded separately in common-public-place-summary-http.json."
+}

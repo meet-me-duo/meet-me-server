@@ -1,0 +1,29 @@
+{
+  "workItem": "meeting-date-scope-stored-route",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/MeetingDateScopeStoredReadPostgresTest.kt",
+      "sha256": "32873c06575505a4a7cadd62b9eb853a48629fdb4f79ef725a1a1216ea22333b"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingDateScopeStoredReadPostgresTest",
+    "--tests",
+    "*SearchScopedEvidenceWireRouteTest"
+  ],
+  "failedTests": [
+    "[2] caseName = \"scoped-outside\"",
+    "[3] caseName = \"scoped-inside\"",
+    "[4] caseName = \"own-explicit-outside\"",
+    "[5] caseName = \"peer-explicit-outside\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T03:36:27.528887+00:00",
+  "evidenceNote": "Compiled independent boundary tests fail on missing generation2 wire/parser/frozen-route behavior; archived generation1 stored read already passes."
+}

@@ -1,0 +1,35 @@
+{
+  "workItem": "weekly-evidence-provider",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/WeeklyEvidenceProviderContractTest.kt",
+      "sha256": "6e55d53e3d85a530003a6b45ad260fd08895005187cb4c3227c5e587a9e18e78"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*WeeklyEvidenceProviderContractTest",
+    "--tests",
+    "*WeeklyScheduleCalculationTest"
+  ],
+  "failedTests": [
+    "WEP09 generation five also accepts existing date atoms without weekly applications and generation four stays strict()",
+    "WEP07 all new evidence positions reject numeric coercion bounds and foreign participant selections()",
+    "WEP03 an explicit owner month filter narrows anchors while a peer filter cannot grant authority()",
+    "WEP08 both provider wires preserve the finite old grammar and add a strict bounded weekly rule schema()",
+    "WEP04 weekly whole day and approved afternoon retain distinct native time declarations for every anchor()",
+    "WEP02 one owned weekly condition expands every Friday across the year without cloning the native condition or graph()",
+    "WEP10 date filters anchor exclusions and overnight offsets survive typed provider resolution unchanged()",
+    "WEP01 new request adds only weekly contract authority while retaining unchanged indexed native context()",
+    "WEP06 markers invalid weekdays mixed time fields and falsely precise weekly declarations are rejected()",
+    "WEP05 an unknown personal time remains unresolved while a known empty filter stays resolved and empty()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T07:22:38.526854+00:00",
+  "evidenceNote": "Corrected finite-schema assertion was rechecked against the isolated provider TODO baseline in /workspace/scratch/meet-me-weekly-mutations. All ten compiled provider tests failed from missing weekly behavior, with zero errors or skips. Original production files were restored after the run. Calculation tests have separate evidence. Full output remains in ignored weekly-corrected-red.log; original RED XML is retained."
+}

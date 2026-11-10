@@ -75,7 +75,7 @@ class BoundedProviderFallbackContractTest {
     }
 
     @Test
-    fun `timeouts exhaust Gemini 30 seconds then allow a valid twenty second Luna response within its 27 second budget`() {
+    fun `first timeout immediately allows a valid twenty second Luna response within its 27 second budget`() {
         val f = Fixture()
         f.geminiAction = { request ->
             f.advance(request.callTimeout)
@@ -88,10 +88,12 @@ class BoundedProviderFallbackContractTest {
 
         f.process()
 
-        assertEquals(listOf("GEMINI", "GEMINI", "LUNA"), f.calls.map { it.first })
-        assertEquals(listOf(15L, 15L, 27L), f.calls.map { it.second.callTimeout.seconds })
-        assertEquals(Duration.ofSeconds(50), f.elapsed)
+        assertEquals(listOf("GEMINI", "LUNA"), f.calls.map { it.first })
+        assertEquals(listOf(15L, 27L), f.calls.map { it.second.callTimeout.seconds })
+        assertEquals(Duration.ofSeconds(35), f.elapsed)
         assertEquals(1, f.published.size)
+        assertTrue(f.delays.isEmpty())
+        assertTrue(f.jitterBounds.isEmpty())
     }
 
     @Test
@@ -123,7 +125,7 @@ class BoundedProviderFallbackContractTest {
 
         f.process()
 
-        assertEquals(4, f.calls.count { it.first == "GEMINI" })
+        assertEquals(if (kind == ParserFailureKind.TIMEOUT) 1 else 4, f.calls.count { it.first == "GEMINI" })
         assertEquals(1, f.calls.count { it.first == "LUNA" })
     }
 
@@ -261,7 +263,7 @@ class BoundedProviderFallbackContractTest {
     }
 
     @Test
-    fun `slow Gemini timeout and jitter leave a fourteen second second attempt before the exact thirty second transition`() {
+    fun `slow Gemini timeout bypasses configured jitter and preserves the Luna call budget`() {
         val f = Fixture()
         f.jitterValue = 1_000
         f.geminiAction = { request ->
@@ -275,12 +277,13 @@ class BoundedProviderFallbackContractTest {
 
         f.process()
 
-        assertEquals(listOf("GEMINI", "GEMINI", "LUNA"), f.calls.map { it.first })
-        assertEquals(listOf(Duration.ofSeconds(15), Duration.ofSeconds(14), Duration.ofSeconds(27)), f.calls.map { it.second.callTimeout })
-        assertEquals(listOf(Duration.ZERO, Duration.ofSeconds(16), Duration.ofSeconds(30)), f.callStarts)
-        assertEquals(listOf(Duration.ofSeconds(1)), f.delays)
+        assertEquals(listOf("GEMINI", "LUNA"), f.calls.map { it.first })
+        assertEquals(listOf(Duration.ofSeconds(15), Duration.ofSeconds(27)), f.calls.map { it.second.callTimeout })
+        assertEquals(listOf(Duration.ZERO, Duration.ofSeconds(15)), f.callStarts)
+        assertEquals(emptyList(), f.delays)
         assertEquals(1, f.published.size)
-        assertEquals(Duration.ofSeconds(50), f.elapsed)
+        assertEquals(Duration.ofSeconds(35), f.elapsed)
+        assertTrue(f.jitterBounds.isEmpty())
     }
 
     @ParameterizedTest
@@ -337,6 +340,49 @@ class BoundedProviderFallbackContractTest {
         )
         assertEquals(Duration.ofMillis(completionMillis), f.elapsed)
         assertTrue(f.published.isEmpty())
+        verify(f.persistence).delay(f.run.startStructuring())
+    }
+
+    @Test
+    fun `ITF01 legacy timeout ignores retry-after and goes directly to Luna with the same frozen request`() {
+        val f = Fixture()
+        f.jitterValue = 900
+        f.geminiAction = {
+            f.advance(Duration.ofSeconds(1))
+            throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT, retryAfterMillis = 5_000)
+        }
+        f.process()
+        assertEquals(listOf("GEMINI", "LUNA"), f.calls.map { it.first })
+        assertEquals(listOf(Duration.ZERO, Duration.ofSeconds(1)), f.callStarts)
+        assertTrue(f.delays.isEmpty())
+        assertTrue(f.jitterBounds.isEmpty())
+        assertEquals(2, f.attempts.size)
+        assertEquals(1, f.published.size)
+        assertEquals(f.success().results, f.published.single())
+        assertEquals(
+            f.calls
+                .first()
+                .second
+                .copy(callTimeout = Duration.ofSeconds(27)),
+            f.calls.last().second,
+        )
+        verify(f.persistence, never()).delay(anyValue())
+    }
+
+    @Test
+    fun `ITF02 legacy timeout at completion-safe cutoff cannot spend the reserve on a Luna call`() {
+        val f = Fixture()
+        f.geminiAction = {
+            f.advance(Duration.ofSeconds(57))
+            throw NaturalLanguageParserException(ParserFailureKind.TIMEOUT)
+        }
+        f.process()
+        assertEquals(listOf("GEMINI"), f.calls.map { it.first })
+        assertEquals(1, f.attempts.size)
+        assertTrue(f.published.isEmpty())
+        assertTrue(f.delays.isEmpty())
+        assertTrue(f.jitterBounds.isEmpty())
+        assertEquals(Duration.ofSeconds(57), f.elapsed)
         verify(f.persistence).delay(f.run.startStructuring())
     }
 

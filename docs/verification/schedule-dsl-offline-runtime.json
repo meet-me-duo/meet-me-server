@@ -1,0 +1,273 @@
+{
+  "base_sha": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "semantic_version": "schedule-ir-product-3",
+  "ast_version": "schedule-ast-1",
+  "response_contract_version": "schedule-dsl-response-1",
+  "manifest_version": "schedule-dsl-pilot-input-1",
+  "main_class": "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPoint",
+  "target_jvm": 17,
+  "compiler_version": "2.3.21",
+  "dependencies": [
+    {
+      "artifact": "tools.jackson.core:jackson-databind:3.1.5",
+      "file": "jackson-databind-3.1.5.jar",
+      "bytes": 1944003,
+      "sha256": "3a2338d996fd3056791df8d335fa9ba8a62a706ed4245ecf81b3e583df37d08a"
+    },
+    {
+      "artifact": "tools.jackson.core:jackson-core:3.1.5",
+      "file": "jackson-core-3.1.5.jar",
+      "bytes": 598605,
+      "sha256": "9431b7fa2673bbb618c11d865fe15e13222fd182a214ff998cb7e56afd8f35d2"
+    },
+    {
+      "artifact": "tools.jackson.module:jackson-module-kotlin:3.1.5",
+      "file": "jackson-module-kotlin-3.1.5.jar",
+      "bytes": 219380,
+      "sha256": "e1dedb52b0f41a014056a40c8e91e27c46b38f867681d2d42f58880d206c7055"
+    },
+    {
+      "artifact": "org.jetbrains.kotlin:kotlin-reflect:2.3.21",
+      "file": "kotlin-reflect-2.3.21.jar",
+      "bytes": 3633922,
+      "sha256": "33e37d9dfa86c7a29ab34e975b5f4a1287b458878611051f3485652220c1a2cb"
+    },
+    {
+      "artifact": "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.3.21",
+      "file": "kotlin-stdlib-jdk8-2.3.21.jar",
+      "bytes": 951,
+      "sha256": "63091929246beba86b5fb2b020a6f5d06e01693a960b58a59959c8713667991c"
+    },
+    {
+      "artifact": "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.3.21",
+      "file": "kotlin-stdlib-jdk7-2.3.21.jar",
+      "bytes": 947,
+      "sha256": "e2243abac2bed6e0b47be18b2b7fe1c1b4cf6a431480353dcd49d1ed35f31199"
+    },
+    {
+      "artifact": "org.jetbrains.kotlin:kotlin-stdlib:2.3.21",
+      "file": "kotlin-stdlib-2.3.21.jar",
+      "bytes": 1804721,
+      "sha256": "6f64eac736db9434dd6925b4a518b9d1d17177652320c37916cf9ba3ce7d7d7a"
+    },
+    {
+      "artifact": "org.jetbrains:annotations:23.0.0",
+      "file": "annotations-23.0.0.jar",
+      "bytes": 29371,
+      "sha256": "7b0f19724082cbfcbc66e5abea2b9bc92cf08a1ea11e191933ed43801eb3cd05"
+    },
+    {
+      "artifact": "com.fasterxml.jackson.core:jackson-annotations:2.21",
+      "file": "jackson-annotations-2.21.jar",
+      "bytes": 82104,
+      "sha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslOfflineEntryPoint.kt",
+      "bytes": 14090,
+      "sha256": "f12d1fb3f3c2b72014a2a5a2349191f2d33d76c58c81df26d85232c3aa2e2c80"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslGeminiWire.kt",
+      "bytes": 4249,
+      "sha256": "81bff7abf817cd0b2add7f3bc4d7a3861657d40c2ef3f4308da8db3a5a5199dd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslProviderContract.kt",
+      "bytes": 20918,
+      "sha256": "70e56a4cbb05ad04b0522d78a63c3bda16f5f792275751861673b5bcfed2fc13"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/StrictScheduleDslResponseParser.kt",
+      "bytes": 1139,
+      "sha256": "45395ea1b42d30104a3b1a3d175beb1bd0375b0eb5a6cdfd79e692f35ca4c3f7"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/AnalysisInvocationRepository.kt",
+      "bytes": 1249,
+      "sha256": "a754c17fa4cf90196e096eecfabf701a13404acd5a5ecda89bd37870bb30431e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/NaturalLanguageParserPort.kt",
+      "bytes": 1838,
+      "sha256": "4766cfe61b753f5740536be2a5eba5b043091efb54258bbe85333ff46d86842f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/ParserTransportObservationPort.kt",
+      "bytes": 1057,
+      "sha256": "0166d4fc27066cc5e01595a13a822db528d07a7ae0b2a450baef98ac5bd8d583"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/ScheduleDslProviderPort.kt",
+      "bytes": 1221,
+      "sha256": "0f6a3014c6eb21bdf47c3238920f46856110bffd92c560472c32904d370abd4b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/port/output/ScheduleDslResponseParser.kt",
+      "bytes": 511,
+      "sha256": "f926de7ca68f27039a937807e173935d35dba49623ad642f041600ed33fcdd25"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslInputPolicy.kt",
+      "bytes": 24396,
+      "sha256": "6ed2ab2866f023b3a9d3a3957f2d735a94f021d22a50fd159c27fc8f3e1c776b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/ir/IrCalculationExecution.kt",
+      "bytes": 4102,
+      "sha256": "b2eaa46e1782425ac40246f79512593c037b447cbc9398ce5b0df9222b65d542"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/ir/IrV2CalculationExecution.kt",
+      "bytes": 811,
+      "sha256": "eeed404f649f213ff557dc0476199a72979434d4d6703a5d6b66136635d70d42"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/location/GeoCoordinate.kt",
+      "bytes": 885,
+      "sha256": "ff8a40832b7d8aeaa78f948dcd84dc44147ba893fc9d49aca465650e55cf10ab"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
+      "bytes": 8528,
+      "sha256": "b6c99c6abd9fe561edbd3cc280694cad1d8d70bc9de9c7840d0ec2b6b631dc16"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/GeoMatcher.kt",
+      "bytes": 8073,
+      "sha256": "e72513577942b6082f99d3eb71dd1a6333cea17153472295c84e23cd2045a940"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/OfflinePlacePolicy.kt",
+      "bytes": 2798,
+      "sha256": "93a4c1a573e5abde6a35f3171a62144716768ebe42a61e6cf45ea8cd1ba488b4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjector.kt",
+      "bytes": 15192,
+      "sha256": "8334184c2291c75a8f0e1dea23f6eb662d60fee1e73a9408ad12db92a57e85f3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/ScheduleIrMatchInputPolicy.kt",
+      "bytes": 16418,
+      "sha256": "b8182509438d891ba61ed445d0eb91af265f9b8edfdc4c0ff5f337d80d8c072e"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/ScheduleIrV2MatchInputPolicy.kt",
+      "bytes": 4289,
+      "sha256": "fbbae242a3402d0fb12469e948df4e638931b0b25328ce91048641209f5edbb6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/TimeRangeMatcher.kt",
+      "bytes": 6545,
+      "sha256": "b88fe817b0d283db7bb1c2ad033f3f3033f1248e7112435c92d262defdb719e3"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/domain/InviteCode.kt",
+      "bytes": 694,
+      "sha256": "86717649129bd68d497a82a7b1c7531e0a33aea21f9f33ef916148eeaa7525bd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/meetingroom/domain/MeetingRoom.kt",
+      "bytes": 6820,
+      "sha256": "d94a65ee7642d70ee02424ed59e72c770549e75e1a637d614b66618aadaa3958"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/AiProviderDispatchContext.kt",
+      "bytes": 352,
+      "sha256": "62aaba3881353b7b493eb6cdec8c4550b74aac713182ef9905bfab14fe5f2ea8"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/port/output/DurableAiBudgetPort.kt",
+      "bytes": 6436,
+      "sha256": "531ab8e5bd6073bbcdfbb1818e9cfc5f649141e03c047a33703d4d3a15148c19"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/DomainIds.kt",
+      "bytes": 633,
+      "sha256": "1e1fb70ffd0285c506f6cdae57ca9803eb92b2e4882c7d70d92b62d1847328c9"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/InputEvidence.kt",
+      "bytes": 4322,
+      "sha256": "4e334d018b25705125c55bdfd9c9ab25c6ae8e3f6710b1cb15ead6b73a4ec8f4"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/domain/time/TimeModels.kt",
+      "bytes": 4254,
+      "sha256": "5bdf62ebd0f76d41523c08f15fda6d37f13c226f58c0ec604229a2dbed954565"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ClarificationProposal.kt",
+      "bytes": 293,
+      "sha256": "7e9a2f7a40c80d7c4a5f835da85cdf97a0d1736606a7dd2ab1ecdb290bd22f24"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/StructuredCondition.kt",
+      "bytes": 3605,
+      "sha256": "e3f2405907c336faac1d50f27bb887690521ef6400a4ee499846b62f0773072f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/Submission.kt",
+      "bytes": 3700,
+      "sha256": "5377111296d278259223dd944e65d34718efe06cc69d71896b4b62e9256dc7db"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/SubmissionRules.kt",
+      "bytes": 3732,
+      "sha256": "a1d21e4de11eb396b6da04940457feea841c24d12ecde046e011a3280dbfecca"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDsl.kt",
+      "bytes": 17899,
+      "sha256": "94a9a99e66700fcd83b740b53783b19fd9792090b40d62a6010e0f60812aa56d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ir/IrEvidenceBindings.kt",
+      "bytes": 2869,
+      "sha256": "6ef23879e0586f7a04408e86522bc4eee48b8251fb30f76ef16aff6ece40692d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ir/ScheduleIr.kt",
+      "bytes": 4609,
+      "sha256": "37417f7a7bf4c10b1ad93851c2c2281d0a57083bffea9f4c4ed0e1681845fae6"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrV2.kt",
+      "bytes": 1824,
+      "sha256": "da93f5d30ab880e5838682e5d46b2179ce906551106abb67a773d486528d7297"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrV2Validator.kt",
+      "bytes": 5480,
+      "sha256": "cbb0d1d585498574ceff8d051d59477b119a5e94e45f246ded76b057b15165f5"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrValidator.kt",
+      "bytes": 13931,
+      "sha256": "739de6bc326a9c65237a23f92ce3d87ee40142121f75ec7bd07230f315a4bba0"
+    }
+  ],
+  "source_file_count": 37,
+  "source_bytes": 219762,
+  "source_only_compile_verified": true,
+  "all_four_cli_verbs_pass": true,
+  "jar_and_source_outputs_identical": true,
+  "model_calls_during_verification": 0,
+  "database_calls_during_cli_verification": 0,
+  "product_worker_tests": "16 loopback HTTP/PostgreSQL fixtures within focused158; operating routing remains unregistered",
+  "new_full_gate": {
+    "tests": 3258,
+    "passed": 3241,
+    "skipped": 17,
+    "failures": 0,
+    "errors": 0,
+    "source_files": 780,
+    "source_unchanged": true,
+    "ended_at": "2026-11-05T03:43:57.706356+00:00",
+    "scope": "frozen DSL1 source; not the following context2 implementation"
+  },
+  "known_clarification_limit": "DSL1 hashes the native question prompt but omits the readable prompt/choiceId/answeredAt in its provider request. Context2 is being implemented separately; DSL1 does not establish a complete clarification flow."
+}

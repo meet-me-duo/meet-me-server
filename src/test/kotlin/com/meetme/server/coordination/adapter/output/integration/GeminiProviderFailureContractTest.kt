@@ -40,8 +40,8 @@ class GeminiProviderFailureContractTest {
         "429,RESOURCE_EXHAUSTED,QUOTA",
         "429,RATE_LIMIT_EXCEEDED,RATE_LIMIT",
         "503,UNAVAILABLE,SERVER",
-        "529,UNAVAILABLE,INVALID_REQUEST",
-        "529,OVERLOADED,INVALID_REQUEST",
+        "529,UNAVAILABLE,SERVER",
+        "529,OVERLOADED,SERVER",
         "529,RATE_LIMIT_EXCEEDED,RATE_LIMIT",
     )
     fun `Gemini SDK typed code and status distinguish temporary failures from account and request errors`(

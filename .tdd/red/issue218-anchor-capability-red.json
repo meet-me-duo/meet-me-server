@@ -1,0 +1,26 @@
+{
+  "workItem": "issue218-anchor-capability-red",
+  "sourceRevision": "39deeb11642fcc6f47a3f0584aa4dffc0502134b",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/meetingroom/application/service/DefaultAnalysisAnchorCapabilityTest.kt",
+      "sha256": "441ce39d87988cc721426694f23fe09cf8ffa0844f286506b1f735b830fcdb55"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "com.meetme.server.meetingroom.application.service.DefaultAnalysisAnchorCapabilityTest"
+  ],
+  "failedTests": [
+    "DACAP01 a different local day V1 accepted anchor keeps the full cohort on Legacy()",
+    "DACAP10 anchor read infrastructure failures propagate instead of masquerading as absent anchors or Legacy fallback()",
+    "DACAP04 the same UTC date does not hide different local days at the room timezone boundary()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T10:14:15.370484+00:00",
+  "evidenceNote": "14executed,3expected assertions,11controls pass,zero errors/skips/provider calls. Only unread optional constructor repository field added before this RED. Missing default-only V1 local-day capability check and DB outage propagation. Native V2/evidence, explicit selections, closed runs, structured/mixed/insufficient cohorts and future-source rejection remain controls. Existing31+6test bytes unchanged."
+}

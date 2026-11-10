@@ -1,0 +1,25 @@
+import groovy.json.JsonSlurper
+
+// Local HTTP evaluation only; the ordinary runtime and test task are unchanged.
+allprojects { p ->
+    p.afterEvaluate {
+        p.tasks.named('c5HttpCandidateTest', Test).configure {
+            def configPath = System.getenv('MEETME_FLOW_CONFIG')
+            if (configPath) {
+                def config = new JsonSlurper().parse(new File(configPath))
+                def expected = ['schema-coherence', 'provider-parity', 'common-finite-schema', 'selected-choice-context'] as Set
+                def optional = ['scoped-term-evidence', 'place-constraints', 'relative-date-context', 'union-preferred-availability', 'server-evidence-references', 'search-relative-dates', 'calendar-month-facts', 'indexed-evidence-selections', 'weekly-schedule-rules'] as Set
+                if (!config.keySet().containsAll(expected) || !(config.keySet() - expected - optional).isEmpty()
+                        || config.values().any { !(it instanceof Boolean) }) {
+                    throw new GradleException('Invalid frozen analysis-flow configuration')
+                }
+                config.each { key, value -> systemProperty "meetme.experiment.${key}", value.toString() }
+            }
+            ['https.proxyHost', 'https.proxyPort', 'http.proxyHost', 'http.proxyPort',
+             'http.nonProxyHosts', 'javax.net.ssl.trustStore'].each { key ->
+                def value = System.getProperty(key)
+                if (value) systemProperty key, value
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "workItem": "common-public-place-summary-http",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/TravelPlaceSummaryHttpPostgresTest.kt",
+      "sha256": "cdd2ffafd53c55d118537a7dfae8e3c6c10fad500c7ba2bc3b88091962a32b3d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceSelectionSnapshotPostgresTest",
+    "--tests",
+    "*TravelPlaceSummaryHttpPostgresTest",
+    "--tests",
+    "*LiveEvaluationSelectionBoundaryContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.TravelPlaceSummaryHttpPostgresTest.TPSH02 actual time selection and repeated result reads preserve the public requirement and unverified attendance()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T16:39:10.001639+00:00",
+  "evidenceNote": "Fixture strengthens GET snapshot and pre-write selection boundaries without weakening output assertions. Current implementation calls GET reader inside writer and fails the correct boundary."
+}

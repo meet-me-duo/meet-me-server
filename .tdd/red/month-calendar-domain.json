@@ -1,0 +1,38 @@
+{
+  "workItem": "month-calendar-domain",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/MeetingMonthCalendarFactsTest.kt",
+      "sha256": "e00e426be181f2006a45340a46e1405e791a493510a259fe1d75d1287d35e1f6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingMonthCalendarFactsTest",
+    "--tests",
+    "*CalendarFactsEvidenceProviderContractTest",
+    "--tests",
+    "*CalendarFactsRoutePostgresTest"
+  ],
+  "failedTests": [
+    "MCF06 crossing December and January resets only the calendar month facts()",
+    "MCF02 a five occurrence weekday is counted over its complete month()",
+    "MCF04 weekday occurrence is not the calendar row or a product week number()",
+    "MCF09 empty and reversed ranges fail explicitly instead of returning a misleading calendar()",
+    "MCF11 one search day includes its start and excludes its end without calling itself the last monthly occurrence()",
+    "MCF08 Gregorian century rules distinguish 1900 and 2000 month lengths()",
+    "MCF01 calendar facts expose a version and objective first day attributes()",
+    "MCF07 leap February can contain a fifth last weekday while common February cannot()",
+    "MCF05 a truncated search range cannot restart monthly counts or create a false last occurrence()",
+    "MCF03 the last occurrence of each weekday includes weekends and need not be the month final day()",
+    "MCF10 the bounded range accepts 366 days and rejects 367 without silently truncating()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T05:10:49.410541+00:00",
+  "evidenceNote": "Independent calendar facts and frozen new generation boundaries compiled; missing behavior failures. Five historical boundary controls already pass."
+}

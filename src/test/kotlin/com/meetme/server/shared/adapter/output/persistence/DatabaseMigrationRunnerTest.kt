@@ -20,9 +20,9 @@ class DatabaseMigrationRunnerTest {
                 ),
             )
 
-        assertEquals(23, result.migrationsExecuted)
+        assertEquals(31, result.migrationsExecuted)
         assertEquals(
-            "23",
+            "31",
             Flyway
                 .configure()
                 .dataSource(postgres.jdbcUrl, postgres.username, postgres.password)

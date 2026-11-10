@@ -1,0 +1,117 @@
+{
+  "workItem": "schedule-context-mode-service",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Explicit C4 real HTTP/JWT loopback providers and PostgreSQL→IR5→mode-aware matcher/projector→authorized public read; same native/policy/default/owner/deadline protections. No paid actual model or production verification.",
+  "serviceGreen": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "./gradlew",
+      "--no-daemon",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "ktlintCheck",
+      "assemble",
+      "test",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeDateOnlyTest"
+    ],
+    "finished_at": "2026-11-06T05:02:52.641894+00:00",
+    "exit_code": 0,
+    "xml_counts": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_unchanged": true
+  },
+  "relatedGreen": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "./gradlew",
+      "--no-daemon",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "ktlintCheck",
+      "assemble",
+      "test",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.persistence.ApprovedTermsFinalAnalysisRoutePostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest",
+      "--tests",
+      "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest",
+      "--tests",
+      "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest",
+      "--tests",
+      "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest",
+      "--tests",
+      "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.web.SelectedOperatingHttpPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.web.SelectedRevisionRoutePropagationPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.web.SelectedHostMatchingRetryPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.web.SelectedOperatingGraphRegistrationTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.persistence.FinalAnalysisRoutePolicyPostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteIdentityTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.FinalOutboundInputBoundaryTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest"
+    ],
+    "finished_at": "2026-11-06T05:16:34.425156+00:00",
+    "exit_code": 0,
+    "xml_counts": {
+      "tests": 316,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_unchanged": true
+  },
+  "frozenTests": {
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedContextModeOperatingHttpPostgresTest.kt": "1f5c21789ed55a9b5e879b4323e68c037f9bb06258a15b8141209a2cf476713a",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/FinalAnalysisRoutePostgresTest.kt": "8d40c52a2c2a677a806878720b4f733fe94451e63bc908c4b05ab88c1da27726"
+  },
+  "datePolicyTest": {
+    "testFiles": [
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslContextModeDateOnlyTest.kt",
+        "sha256": "d5b24ba1a85458bc53c27ad96269cbe8f7f46b86e9ea8c4e03f159c8e5d4e443"
+      }
+    ],
+    "classification": "Confirmed product policy verification, no newly changed behavior or fabricated RED"
+  },
+  "independentReview": "71acaebbefc76267a8636e4e0469f921710e1ec8596ee7d660fb58c032dcda27",
+  "faultInjection": {
+    "finished_at": "2026-11-06T05:07:38.042700+00:00",
+    "all_detected": true,
+    "source_unchanged": true,
+    "compiled_classes_unchanged": true
+  },
+  "faultsDetected": [
+    "CMSFI01-hard-mode-ignored",
+    "CMSFI02-context-projection-omitted",
+    "CMSFI03-timeout-primary-retry"
+  ],
+  "testCorrection": "Existing analysis/retry publiccontract202, not200. Independently adjudicated, one exact expectation corrected, actual correctedretry control1PASS; exact preserved preimplementation selection overlay re-established6RED/1PASS. Productstatus/timeout/assertionsotherwiseunchanged.",
+  "migrationExpectations": "Exact V28 bookkeeping7files13assertions; V1..V27unchanged, oldtargets/timeouts preserved; relevant current tests pass in316.",
+  "artifactSha256": "ee6a159e93f681c3547b8885a8a6dc5cc9549a657c77bb5949a973ac2632be3c",
+  "remaining": "V28release catalog3fileclosedextension+current-publication tests, finalunfiltered gate/old4cause, exactcommitCI/ARM64, actualmodelmeaning withsingle assignednew20owner, protectedproductionpreflight/transition. No operational activation.",
+  "artifactDelivery": "Exact package is local; officialprepared Library replacement blocked before preparation by tools/list network error. v2 core identity verified separately."
+}

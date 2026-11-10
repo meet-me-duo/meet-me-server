@@ -115,7 +115,7 @@ class SubmissionService(
             )
         }
         val evidenceProtocol = prechecks?.protocol(room.id.value) == "PRE_SUBMIT_V2"
-        val recordedAt = if (evidenceProtocol) now.truncatedTo(ChronoUnit.MICROS) else now
+        val recordedAt = now.truncatedTo(ChronoUnit.MICROS)
         val submission =
             existing?.revise(
                 SubmissionVersionId(idGenerator.next()),

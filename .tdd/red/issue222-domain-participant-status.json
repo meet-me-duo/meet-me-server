@@ -1,0 +1,44 @@
+{
+  "workItem": "issue222-domain-participant-status",
+  "sourceRevision": "8c772dd5d35a7973769fd597ef36e5a516d3a877",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/matching/RecommendationParticipantStatusPolicyTest.kt",
+      "sha256": "868b263dd675f9eca24feea9f6b84f091ee3b9dfd322b504beff57917e9c2c7d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "-I",
+    "/tmp/issue222-domain-selected.gradle",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "test",
+    "--tests",
+    "*RecommendationParticipantStatusPolicyTest"
+  ],
+  "failedTests": [
+    "current matching area is checked rather than choosing a different compatible area()",
+    "inconsistent saved inclusion is not rewritten by newly restored conditions()",
+    "confirmed full-window time mismatch establishes unavailability for an excluded person()",
+    "included participant with complete supported conditions is available()",
+    "unverified travel or place does not become a confirmed feasible attendance()",
+    "excluded membership alone cannot establish unavailability()",
+    "missing rejected or unsupported time evidence remains unknown rather than unavailable()",
+    "known time conflict remains binding despite unverified place()",
+    "a shorter later actual selection must not replace the entire offered window()",
+    "another owner evidence or inconsistent room mode cannot establish availability()",
+    "known area conflict remains binding despite additional unverified travel()",
+    "a verified unrestricted person needs no legacy area to coordinate conversion()",
+    "unrestricted verified person does not inherit another persons missing place reference()",
+    "historical coordinate without a supported area conversion remains unknown()",
+    "confirmed current variant area mismatch establishes unavailability()",
+    "required area with an unspecified variant location remains unknown()",
+    "stored individual place uncertainty affects only that participant()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T12:13:11.670Z",
+  "evidenceNote": "Independent source8c772dd detached clone at /workspace/scratch/meet-me-issue222-domain-tests. Exact17 PR214 public-domain tests reused byte-for-byte, assess skeleton TODO only. Actual17tests17fail0error0skip; all failures are NotImplementedError in assess. GRADLE_USER_HOME=/workspace/.gradle. External init selects only the exact copied test source in /workspace/scratch/meet-me-issue222-selected-tests and disables test KSP/Java sources; production source set/resources unchanged. Initial unreadable default Gradle home attempt is not valid RED and excluded. Log .codex/tdd-evidence/issue222-domain-participant-status.log; archived XML .codex/evaluation/local/issue222-domain-status-red/."
+}

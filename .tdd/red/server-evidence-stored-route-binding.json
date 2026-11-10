@@ -1,0 +1,31 @@
+{
+  "workItem": "server-evidence-stored-route-binding",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/ServerEvidenceStoredRouteBindingPostgresTest.kt",
+      "sha256": "480d76c71b7dc768a8aad37c426dd0c88016830e9aafeecea8912a4d9d3b62bd"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceClockBoundaryTest",
+    "--tests",
+    "*ServerEvidenceExpansionBoundaryTest",
+    "--tests",
+    "*ServerEvidenceStoredRouteBindingPostgresTest",
+    "--tests",
+    "*ServerEvidenceCatalogWorkloadTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceStoredRouteBindingPostgresTest.[3] referencesInRoute = \"false\", referencesInDocument = \"true\"",
+    "com.meetme.server.coordination.adapter.output.persistence.ServerEvidenceStoredRouteBindingPostgresTest.[4] referencesInRoute = \"true\", referencesInDocument = \"false\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:12:26.754394+00:00",
+  "evidenceNote": "Independent boundary expectations; actualPG source/route binding mismatches, invalidpartialclock tokens, and valid boundedinternal expansion rejected by legacybytecap."
+}

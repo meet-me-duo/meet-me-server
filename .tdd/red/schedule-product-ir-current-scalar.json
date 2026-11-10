@@ -1,0 +1,37 @@
+{
+  "workItem": "schedule-product-ir-current-scalar",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "cea2fa9b50e34a4f818a787833c8f7fa4de689d2fd94fbae4acb68ecffa8db7b"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text*",
+    "--tests",
+    "*ScheduleIrRepositoryPostgresTest.reader rejects scalar corruption of frozen original revision without exposing answers*",
+    "--tests",
+    "*ScheduleIrRepositoryPostgresTest.publication rejects scalar corruption of frozen original revision without partial writes*"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text(String) > [1] defect = \"evidence_float\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text(String) > [2] defect = \"evidence_string\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text(String) > [3] defect = \"context_float\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text(String) > [4] defect = \"context_string\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.persisted envelope scalar corruption is rejected without exposing source text(String) > [6] defect = \"numeric_enum\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.reader rejects scalar corruption of frozen original revision without exposing answers(String) > [1] value = \"3.9\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.reader rejects scalar corruption of frozen original revision without exposing answers(String) > [2] value = \"\\\"3\\\"\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.publication rejects scalar corruption of frozen original revision without partial writes(String) > [1] value = \"3.9\"",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.publication rejects scalar corruption of frozen original revision without partial writes(String) > [2] value = \"\\\"3\\\"\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T18:32:04.348106Z"
+}

@@ -200,11 +200,12 @@ class OpenAiAmbiguityClassificationSafetyTest {
     @ValueSource(strings = ["STALL", "TRICKLE"])
     fun `DCS05 one absolute deadline includes the entire response body`(mode: String) {
         Endpoint(stall = mode == "STALL", slowChunks = mode == "TRICKLE").use { e ->
+            val classifier = e.bodyDeadlineClassifier(request)
             val started = System.nanoTime()
             assertEquals(
                 "TIMEOUT",
                 assertFailsWith<AmbiguityClassificationException> {
-                    e.classifier().classify(request.copy(timeout = Duration.ofMillis(250)))
+                    classifier.classify(request.copy(timeout = Duration.ofMillis(250)))
                 }.failureCode,
             )
             assertTrue(e.bodyStarted.count == 0L)

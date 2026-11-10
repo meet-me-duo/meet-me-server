@@ -179,7 +179,7 @@ object DeterministicCandidateMatcher {
         return common
     }
 
-    private fun candidateComparator(): Comparator<DeterministicCandidate> =
+    internal fun candidateComparator(): Comparator<DeterministicCandidate> =
         compareByDescending<DeterministicCandidate> { candidate ->
             candidate.timeRanges.sumOf { Duration.between(it.startInclusive, it.endExclusive).toMillis() }
         }.thenBy { it.timeRanges.first().startInclusive }

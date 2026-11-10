@@ -72,6 +72,12 @@ data class CoordinationAttempt(
 )
 
 interface CoordinationAttemptRepository {
+    /** Unsupported readers cannot admit overlapping selected attempts. */
+    fun findLatestByInvocation(invocationId: UUID): CoordinationAttempt? = null
+
+    /** Unsupported legacy readers fail closed in the explicitly selected path. */
+    fun findById(id: UUID): CoordinationAttempt? = null
+
     fun insert(attempt: CoordinationAttempt)
 
     fun update(attempt: CoordinationAttempt)
@@ -170,6 +176,12 @@ data class OutboxProcessingClaim(
 )
 
 interface OutboxRepository {
+    /** Empty denies; two rows are ambiguous authority, never latest-event-wins. */
+    fun findSelectedMatchingRetryEvents(
+        runId: CoordinationRunId,
+        matchingRunVersion: Long,
+    ): List<OutboxEvent> = emptyList()
+
     fun insert(event: OutboxEvent)
 
     fun findById(id: OutboxEventId): OutboxEvent?

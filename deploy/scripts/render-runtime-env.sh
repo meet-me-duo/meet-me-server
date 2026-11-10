@@ -71,6 +71,7 @@ validate_auth_destination() {
 if [[ "$auth_required" == true ]]; then validate_auth_destination; fi
 
 precheck_evidence_enabled=false
+default_analysis_contract=
 openai_api_key=
 typesafe_api_key=
 if [[ "$runtime_mode" == gemini-luna-required ]]; then
@@ -144,6 +145,8 @@ try:
     assert type(value) is str
     if kind=="enabled":
         assert value in ("true","false")
+    elif kind=="analysis_contract":
+        assert value in ("LEGACY","DSL_STRUCTURAL_V5")
     else:
         assert kind=="operator"
         identifiers=value.split(",")
@@ -159,6 +162,16 @@ except Exception:
 }
 
 if [[ "$auth_required" == true ]]; then
+  # An absent optional override leaves the reviewed application artifact's default in force.
+  if analysis_contract_parameter="$(read_operations_parameter config/default-analysis-contract String analysis_contract)"; then
+    default_analysis_contract="$analysis_contract_parameter"
+  else
+    analysis_contract_lookup_status="$?"
+    if [[ "$analysis_contract_lookup_status" != 71 ]]; then
+      runtime_fail 'Default analysis runtime configuration is invalid'
+    fi
+  fi
+  unset analysis_contract_parameter
   # Room protocol admission is independent of provider/model activation. Reuse
   # the existing exact-name typed optional-boolean boundary; unavailable is OFF,
   # malformed successful responses must preserve the previous environment.
@@ -354,6 +367,9 @@ trap 'rm -f "$temporary"' EXIT
     printf 'MEETME_PRECHECK_DECISIONROUTING_ENABLED=%s\n' "$precheck_provider_enabled"
     printf 'MEETME_PRECHECK_CLASSIFIER_ENABLED=%s\n' "$precheck_provider_enabled"
     printf 'MEETME_PRECHECK_EVIDENCE_ENABLED=%s\n' "$precheck_evidence_enabled"
+    if [[ -n "$default_analysis_contract" ]]; then
+      printf 'MEETME_ANALYSIS_DEFAULT_CONTRACT=%s\n' "$default_analysis_contract"
+    fi
     printf 'MEETME_AI_BUDGET_ENABLED=%s\n' "$financial_budget_enabled"
     printf 'MEETME_AI_BUDGET_POLICYPATH=/run/meetme-ai/runtime-ai-policy.json\n'
     printf 'MEETME_AI_BUDGET_POLICYSHA256=%s\n' "$policy_sha256"

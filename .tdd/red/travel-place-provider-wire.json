@@ -1,0 +1,25 @@
+{
+  "workItem": "travel-place-provider-wire",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/experiment/C5CandidateRuntimeBindingTest.kt",
+      "sha256": "13287049e39b08bcb26d03be6f9fb542c3d9d9d23a68a95c481b8538f6a05e10"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "c5HttpCandidateTest",
+    "--tests",
+    "*C5CandidateRuntimeBindingTest.TPW*"
+  ],
+  "failedTests": [
+    "com.meetme.server.experiment.C5CandidateRuntimeBindingTest.TPW02 opted common V5 transport delivers identical place schema and instructions to both providers without dispatch()",
+    "com.meetme.server.experiment.C5CandidateRuntimeBindingTest.TPW03 place candidate without explicit common provider parity fails before any dispatch()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T15:15:53.051180+00:00",
+  "evidenceNote": "Independent additional boundary tests: unsupported native duration was partially accepted, or opt-in provider body omitted the new schema/instructions and accepted unsupported parity. Existing complete-token/default contracts already pass."
+}

@@ -1,0 +1,27 @@
+{
+  "workItem": "selected-c3-close-precision",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedOperatingHttpPostgresTest.kt",
+      "sha256": "8829cbee3f8ebc774a2b6e532f1074d68a7ea537f424c685cd59ea5176117208"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedOperatingHttpPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.SelectedOperatingHttpPostgresTest#SOHTTP04 fractional close clock canonicalizes only C3 closure times and preserves native input bytes()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T19:43:27.559275Z"
+}

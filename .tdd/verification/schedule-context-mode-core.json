@@ -1,0 +1,125 @@
+{
+  "workItem": "schedule-context-mode-core",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Opt-in C4/IR5 core only, native provider/DB/worker/API not wired. Preserve original INFERRED/NON_PRECISE declaration and MODEL_CONTEXT witness, derive only complete supported temporal intervals, apply independent hard mode constraints per atomic mode, preserve explicit bans and preference precedence. Existing default LEGACY and C3 byte contracts unchanged.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDslContextMode.kt",
+      "sha256": "bd58bdd3b1d239a3381cf85eb16afbd72e9f2a97272fcfea9c5ba475fbebeff1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslContextModeCalculator.kt",
+      "sha256": "d41e755b724f1ea05c46b8966bb9a143406bac40b9074489aa5fcb4c37f298c1"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/RecommendationProjector.kt",
+      "sha256": "b434d8c4743c41a3d904bb85a2f52e907d8a1f604d73205f7a99d9602b324c21"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/matching/DeterministicCandidateMatcher.kt",
+      "sha256": "8dcab3bf98d2cd07fca5c57f2b6b4d505c955af230a062a4bc23c88761b64e9c"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslContextModeContractTest.kt",
+      "sha256": "0fc107e6dc3f3eac63db3821ccad588be83cdc62390e71b1f4189eefd6c25533"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslModeOnlyChoiceTest.kt",
+      "sha256": "e886dbec3d56fedd5d9b879ea4f816f4dffacb1c236299c03e421dcf9798ce15"
+    }
+  ],
+  "red": {
+    "originalCore": {
+      "tests": 12,
+      "failures": 10,
+      "errors": 0,
+      "skipped": 0,
+      "passedFrozenC3Bytes": 2
+    },
+    "modeOnlyChoice": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "boundary": "Valid mode-only choices rejected by old numeric claim registry"
+    }
+  },
+  "green": {
+    "counts": {
+      "tests": 109,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "finishedAt": "2026-11-06T03:14:11.704937+00:00",
+    "exit": 0,
+    "sourceUnchanged": true,
+    "included": "newC4ten+modechoice2, frozen46+bytes2, matcher/projector, immediateTIMEOUTfour"
+  },
+  "independentReview": {
+    "initialCore": "869839b3b6d19d8db98bde13409c19d275ffbc6ff59549a0b4e3fd6c404f2a95",
+    "choiceBoundaryCorrection": "50ec50bd28733e02082e93c477ff1d98cdba07c1bbf0c575ac0261f78b46709a",
+    "resolution": "Global combined choice validation retained. Copy base (input,group) registry before adding modes; forward only base keys, retaining old witness-only and same-group invalid-alternative numeric rejection."
+  },
+  "injections": [
+    {
+      "fault": "CM-FI1-use-C3-projection",
+      "selector": "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeContractTest#CM01 complete inferred context without a vocabulary word is calculable while original evidence remains unchanged()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    },
+    {
+      "fault": "CM-FI2-bypass-hard-mode-lower",
+      "selector": "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeContractTest#CM05 a Thursday remote-only hard predicate cannot be ORed away by broad availability in EITHER()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    },
+    {
+      "fault": "CM-FI3-drop-protected-negative",
+      "selector": "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeContractTest#CM04 contextual numeric projection cannot cancel an explicit negative and preserves independent valid availability()",
+      "result": "DETECTED",
+      "counts": {
+        "tests": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "aborted": 0,
+        "container_failures": 0
+      }
+    }
+  ],
+  "originalBefore": {
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "aborted": 0,
+    "container_failures": 0
+  },
+  "originalAfter": {
+    "tests": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "aborted": 0,
+    "container_failures": 0
+  },
+  "originalAndCompiledClassesUnchanged": true,
+  "recordedAt": "2026-11-06T03:21:41.147705+00:00"
+}

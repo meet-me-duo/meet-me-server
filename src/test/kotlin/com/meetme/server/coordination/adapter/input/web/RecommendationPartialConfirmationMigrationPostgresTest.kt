@@ -40,6 +40,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 /** FR-011 / ADR-060: upgrading the attendee floor preserves historical selected and legacy data. */
+@org.springframework.test.context.TestPropertySource(
+    properties = ["spring.autoconfigure.exclude=com.meetme.server.config.SelectedScheduleDslAutoConfiguration"],
+)
 @Import(RecommendationPartialConfirmationMigrationPostgresTest.HistoricalStoragePhase::class)
 class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPostgresFixture() {
     @Autowired private lateinit var historicalSubmissions: HistoricalSubmissionRepository
@@ -92,11 +95,11 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         verifyPendingSelection(pending, pendingOption)
         assertEquals(before, snapshot(), "The successful V18 guard probe is rolled back without creating a selection")
 
-        // Upgrade to the current V23 schema only after the historical V18 proof is complete.
+        // Upgrade to the current V31 schema only after the historical V18 proof is complete.
         val current = flyway()
         current.migrate()
         current.validate()
-        assertEquals("23", currentVersion())
+        assertEquals("31", currentVersion())
         historicalSubmissions.useCurrentSchema()
         historicalRecommendations.useCurrentSchema()
         historicalRuns.useCurrentSchema()

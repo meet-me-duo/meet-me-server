@@ -1,0 +1,286 @@
+{
+  "synthetic_only": true,
+  "search_start": "2027-01-04",
+  "search_end": "2027-01-11",
+  "zone": "Asia/Seoul",
+  "mode": "REMOTE",
+  "fixtures": [
+    {
+      "name": "explicit-remote",
+      "provider_file": "explicit-remote.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "utc_windows": [
+          [
+            "2027-01-08T10:00:00Z",
+            "2027-01-08T12:00:00Z"
+          ]
+        ],
+        "mode": "REMOTE",
+        "participant_refs": [
+          "00000000-0000-0000-0000-000000000101",
+          "00000000-0000-0000-0000-000000000102"
+        ]
+      },
+      "sha256": "4b004460ae210ccbf0ebf089f3ad740c862a59947668285ca687c6492eafca49"
+    },
+    {
+      "name": "bounded-saturday-unknown",
+      "provider_file": "bounded-saturday-unknown.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요. 토요일 시간은 아직 몰라요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요. 토요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "utc_windows": [
+          [
+            "2027-01-08T10:00:00Z",
+            "2027-01-08T12:00:00Z"
+          ]
+        ],
+        "mode": "REMOTE",
+        "participant_refs": [
+          "00000000-0000-0000-0000-000000000101",
+          "00000000-0000-0000-0000-000000000102"
+        ],
+        "not_certified_dates": [
+          "2027-01-09"
+        ]
+      },
+      "sha256": "2b6fb3bb4fbe71341027a1510ea475f0e9f858fb2decc95d0232bf36463b63d0"
+    },
+    {
+      "name": "invalid-negative-global-influence",
+      "provider_file": "invalid-negative-global-influence.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요. 토요일에는 못 와요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요. 토요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "quarantine_id": "bad-negative",
+        "quarantine_scope": null,
+        "safe_precise_windows": [],
+        "retain_independent_fri_fact": true
+      },
+      "sha256": "663b40f51e67f62f60928dbe1eb931148078e84b53689e44e60d9bb181aad656"
+    },
+    {
+      "name": "available-label-inferred",
+      "provider_file": "available-label-inferred.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "preserved_state": "KNOWN_WINDOWS",
+        "preserved_label": "INFERRED",
+        "requires_explicit_evaluation_policy": true
+      },
+      "sha256": "4b650355f0a71fdb6d137deefe6f41b6c688bc01ec14f64737d681a45e8b4108"
+    },
+    {
+      "name": "available-label-unresolved",
+      "provider_file": "available-label-unresolved.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "preserved_state": "KNOWN_WINDOWS",
+        "preserved_label": "UNRESOLVED",
+        "requires_explicit_evaluation_policy": true
+      },
+      "sha256": "942f4576a863e9d05fba03507744004d93779438b77a7492ce77ecd0b0a29338"
+    },
+    {
+      "name": "exclusive-am-pm",
+      "provider_file": "exclusive-am-pm.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "금요일은 오전 7시부터 8시 또는 오후 7시부터 8시 중 하나로 해석해 주세요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "금요일 오전 7시부터 8시와 오후 7시부터 8시 모두 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "selected_AM_utc": [
+          [
+            "2027-01-07T22:00:00Z",
+            "2027-01-07T23:00:00Z"
+          ]
+        ],
+        "selected_PM_utc": [
+          [
+            "2027-01-08T10:00:00Z",
+            "2027-01-08T11:00:00Z"
+          ]
+        ],
+        "simultaneously_certified_union_forbidden": true
+      },
+      "sha256": "de7701812a414802e548d53fc9a5f9822ec7bed8805a5d40adbe536d97cf30d5"
+    },
+    {
+      "name": "asserted-correction",
+      "provider_file": "asserted-correction.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "금요일 18시부터 20시 가능하다고 했지만 정정해서 20시부터 22시 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "금요일 18시부터 23시 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "utc_windows": [
+          [
+            "2027-01-08T11:00:00Z",
+            "2027-01-08T13:00:00Z"
+          ]
+        ],
+        "retained_ids": [
+          "old",
+          "corrected"
+        ]
+      },
+      "sha256": "1bffcb838f7e4c2f03efd1cf0330ed88ee07264386855203afd40fdd5f04e2b0"
+    },
+    {
+      "name": "assertion-retracted",
+      "provider_file": "assertion-retracted.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "safe_precise_windows": [],
+        "retained_assertion": "RETRACTED"
+      },
+      "sha256": "6d31efc76690e1186d6b2beca94a788cd90274b08e27c47cb90eb69c741343ce"
+    },
+    {
+      "name": "assertion-quoted_other",
+      "provider_file": "assertion-quoted_other.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "온라인 모임은 금요일 18시부터 21시까지 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "safe_precise_windows": [],
+        "retained_assertion": "QUOTED_OTHER"
+      },
+      "sha256": "560aedbbc2bbbdb87256dc06248ff9f61d30ab5d8906d6d717bccc322ae56450"
+    },
+    {
+      "name": "known-empty",
+      "provider_file": "known-empty.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "검색기간에는 전부 불가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "preserved_state": "EMPTY",
+        "utc_windows": []
+      },
+      "sha256": "56a5254055d9cd087ce6eda8442dd20e7f035db74d5e6bdc6da1a236c18ecfa9"
+    },
+    {
+      "name": "unrestricted",
+      "provider_file": "unrestricted.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "검색기간에는 아무 시간이나 가능해요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "preserved_state": "UNCONSTRAINED",
+        "utc_windows": [
+          [
+            "2027-01-08T10:00:00Z",
+            "2027-01-08T12:00:00Z"
+          ]
+        ]
+      },
+      "sha256": "30dd4511dc019984a177ed5b1acc54c05b36bbaacdb7fd1fa2f00f156db8fd44"
+    },
+    {
+      "name": "unknown-no-positive",
+      "provider_file": "unknown-no-positive.provider.json",
+      "sources": {
+        "00000000-0000-0000-0000-000000000101": {
+          "original": "일정은 아직 몰라요."
+        },
+        "00000000-0000-0000-0000-000000000102": {
+          "original": "온라인 모임은 금요일 19시부터 22시까지 가능해요."
+        }
+      },
+      "source_revision": 3,
+      "submission_revision": 7,
+      "expected": {
+        "preserved_state": "UNKNOWN",
+        "safe_precise_windows": []
+      },
+      "sha256": "0ab62c0ee9d4693a59a2ba5922293b7b38ad3d38122c767280343202d9ab380a"
+    }
+  ]
+}

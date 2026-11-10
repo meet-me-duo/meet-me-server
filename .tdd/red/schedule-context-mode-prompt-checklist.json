@@ -1,0 +1,27 @@
+{
+  "workItem": "schedule-context-mode-prompt-checklist",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModePromptChecklistTest.kt",
+      "sha256": "83e5ed43a2ded546a24cb7c9c22808c1a9db69665d1f9eb1a3934d43e60985a7"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModePromptChecklistTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModePromptChecklistTest.CMP01 approved evidence and AST safeguards reach only C4 without changing native payload or schema selection()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-06T07:56:53.012640+00:00"
+}

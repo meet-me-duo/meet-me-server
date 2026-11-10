@@ -1,0 +1,31 @@
+{
+  "work_item": "schedule-c5-proof-alias-identity",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f + preserved P9 isolated dirty manifest",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslOwnedProofChoiceContractTest.kt",
+      "sha256": "ac16807af9b9a877be1cde47e56af7fa68efd4b5ddd7b1e2bdcb6805e9124cbb"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PA*",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC02*"
+  ],
+  "failed_tests": [
+    "PA05 aliases retain native evidence failures participant isolation and genuine unresolved choice()",
+    "PA01 exact used and unused locator aliases preserve the complete canonical envelope()",
+    "PA02 term and general IDs may share an exact locator without bypassing the term namespace()"
+  ],
+  "expected_failure_classification": "PA01/02/05 legal exact locator aliases are rejected before native/effect/choice validation; three safety controls pass; no preparation errors",
+  "recorded_at": "2026-11-07T13:58:08.566621+00:00"
+}

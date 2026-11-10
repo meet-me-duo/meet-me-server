@@ -1,0 +1,87 @@
+{
+  "workItem": "schedule-dsl-preference-and-no-place",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "snapshot-bound rejected preference isolation, strict storage3/4 and actual meeting mode",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/dsl/ScheduleDsl.kt",
+      "sha256": "72ddd00057c6ca146ef79b214bea01871e5922ec0d4a659803cc282279b79924"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/dsl/RejectedPreferenceWitness.kt",
+      "sha256": "f1a0316b0d69b595a9661b7c046d6d9368dd636968990d610c1a77545186d820"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/adapter/output/persistence/JdbcScheduleDslRepository.kt",
+      "sha256": "85d10401fc43874361ef127328e154da1aca7364e1fb977c2f63b95d73a941f0"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslInputPolicy.kt",
+      "sha256": "8bbb1aab093307fd0a63c4de4cd217a8df3526ebdc64a1ee611cf61c86820334"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/ScheduleDslAnalysisService.kt",
+      "sha256": "ef8ddaeaeec661356f3206f6a8e6a1a08d95765e0b6e9f55be92e7219e0a6691"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslOfflineEntryPoint.kt",
+      "sha256": "c3f8c5c2b00681040302cc18aa9769c79574b1b45f5415a54219c65f8b73a438"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslNoPlaceMeetingModeTest.kt",
+      "sha256": "375632ee51a8cdb6e76a01f1c09d9aefe5a065161d30b40d7c3725015a62479f"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslOfflineEntryPointTest.kt",
+      "sha256": "84402e11c2a01659cda6837870e2dbf168b42561b499074f1b41f9b2ab2ba263"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslContextOfflineEntryPointTest.kt",
+      "sha256": "b595c04aa5cd19ca7692f6f2c88ec50dda8dd958dffc7ba1a80102bda6d0da13"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslNoPlaceWorkerPostgresTest.kt",
+      "sha256": "65f5f1e29125679c023118d1c72fd8fe8589d4614d0f6308925f82f33155e74d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslRejectedPreferenceStoragePostgresTest.kt",
+      "sha256": "fad92f0637cd0aba8fb2f7f5a99da3007f1b4d1cc7d146cf11f6afc05a1da8a9"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslPreferenceIsolationProofControlTest.kt",
+      "sha256": "3609eae25a863b42d81349c459ecddf76ff4c68782a68dea4be3141a70a18629"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "evidence-quote-bypass",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-isolation-faults.py"
+      ],
+      "detectedBy": "MethodSource [className = 'com.meetme.server.coordination.adapter.output.integration.ScheduleDslPreferenceIsolationProofControlTest', methodName = 'QPC01 primary SCOPE error cannot mask invalid source evidence when admitting a local preference proof', methodParameterTypes = '']",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "format4-open-shape",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-isolation-faults.py"
+      ],
+      "detectedBy": "MethodSource [className = 'com.meetme.server.coordination.application.service.ScheduleDslRejectedPreferenceStoragePostgresTest', methodName = 'RPS03 format4 witness edits violating polarity source evidence or closed shape are rejected', methodParameterTypes = 'java.lang.String']",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "mode-forced-remote",
+      "command": [
+        "python",
+        "/workspace/schedule-diagnosis-evidence/run-isolation-faults.py"
+      ],
+      "detectedBy": "MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslNoPlaceMeetingModeTest', methodName = 'NPM01 time-only inputs recommend their actual meeting modes without invented place or unverified-place flags', methodParameterTypes = 'java.lang.String']; MethodSource [className = 'com.meetme.server.coordination.adapter.input.cli.ScheduleDslNoPlaceMeetingModeTest', methodName = 'NPM02 four synthetic in-person participants with no place statements retain full attendance time recommendation', methodParameterTypes = '']",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-05T07:23:38.810409Z"
+}

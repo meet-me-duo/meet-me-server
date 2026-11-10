@@ -1,6 +1,7 @@
 package com.meetme.server.meetingroom.adapter.input.web
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.meetme.server.coordination.domain.analysis.FinalAnalysisContractSelection
 import com.meetme.server.meetingroom.application.port.input.InputDisclosurePolicy
 import com.meetme.server.meetingroom.application.port.input.PublicRoomStatus
 import com.meetme.server.meetingroom.application.port.input.RoomView
@@ -71,6 +72,12 @@ data class CloseRoomRequest(
     @field:JsonProperty("confirm_early")
     @field:Schema(description = "자동 조건 충족 전 조기 마감을 재확인했는지 여부")
     val confirmEarly: Boolean = false,
+    @field:JsonProperty("analysis_contract")
+    @field:Schema(
+        description = "선택 분석 계약. 생략/null은 서버 기본 정책(운영의 지원 가능한 자연어 모임은 V5), 명시 LEGACY는 기존 경로",
+        nullable = true,
+    )
+    val analysisContract: FinalAnalysisContractSelection? = null,
 )
 
 @Schema(description = "현재 브라우저 세션의 방 참여 상태")

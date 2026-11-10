@@ -1,0 +1,172 @@
+{
+  "workItem": "schedule-context-mode-native",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Strict opt-in C4 provider/parser and actual PostgreSQL IR5format6 restore. Registered worker/API integration is tracked separately.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModeProviderContractTest.kt",
+      "sha256": "07cc4fba616a4aa1fa0f3f5d5fbe31c85778a79f20ac503e8a0c7431526b899b"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslContextModePostgresTest.kt",
+      "sha256": "1dea085e7f75b935fd99516a09174fdafa2ba2524ad36ee8897cb64873fd84e2"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslContextModeNativeFixture.kt",
+      "sha256": "b71f76fb5e6acc06ef8d134273385cb5089b0586ec59595c0bba2e90cb6e7866"
+    }
+  ],
+  "red": {
+    "workItem": "schedule-context-mode-native",
+    "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+    "testFiles": [
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModeProviderContractTest.kt",
+        "sha256": "07cc4fba616a4aa1fa0f3f5d5fbe31c85778a79f20ac503e8a0c7431526b899b"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleDslContextModePostgresTest.kt",
+        "sha256": "1dea085e7f75b935fd99516a09174fdafa2ba2524ad36ee8897cb64873fd84e2"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/support/ScheduleDslContextModeNativeFixture.kt",
+        "sha256": "b71f76fb5e6acc06ef8d134273385cb5089b0586ec59595c0bba2e90cb6e7866"
+      }
+    ],
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "./gradlew",
+      "--no-daemon",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "test",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeProviderContractTest",
+      "--tests",
+      "com.meetme.server.coordination.application.service.ScheduleDslContextModePostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeContractTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest"
+    ],
+    "failedTests": [
+      {
+        "test": "CMP02 stale context and changed native source cannot be read or republished as the frozen IR5 winner()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "CMP03 unsupported stored identities and extra wrapper fields fail closed without repair or fallback()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "CMP01 format6 roundtrip preserves contextual and mode evidence without raw text or changing an idempotent winner()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[1] damage = \"missing-context-witness\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[2] damage = \"mode-digest\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "CMP05 valid IR5 cannot bypass stale attempt or late matching write fences()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "CMN03 selected versions never fallback and C3 still rejects added mode declarations()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "CMN02 strict C4 decoding preserves contextual declaration and hard mode through actual matching()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[1] damage = \"missing\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[2] damage = \"extra\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[3] damage = \"scalar\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[4] damage = \"duplicate\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[5] damage = \"empty\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[6] damage = \"revision\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "[7] damage = \"quote\"",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      },
+      {
+        "test": "CMN01 request preserves native question context vocabulary and frozen mode with a closed mode schema()",
+        "reason": "C4 native provider/strict codec or IR5 JDBC TODO missing; not compilation/configuration/fixture failure"
+      }
+    ],
+    "recordedAt": "2026-11-06T03:45:24.956459+00:00",
+    "counts": {
+      "tests": 28,
+      "failures": 16,
+      "errors": 0,
+      "skipped": 0
+    },
+    "passedControls": 12
+  },
+  "green": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "./gradlew",
+      "--no-daemon",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "ktlintCheck",
+      "assemble",
+      "test",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeProviderContractTest",
+      "--tests",
+      "com.meetme.server.coordination.application.service.ScheduleDslContextModePostgresTest",
+      "--tests",
+      "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeContractTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.output.integration.SelectedApprovedTermsProviderPostgresTest"
+    ],
+    "finished_at": "2026-11-06T03:55:53.257104+00:00",
+    "exit_code": 0,
+    "xml_counts": {
+      "tests": 43,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_unchanged": true
+  },
+  "verificationSourceSha256": "13a08ab7a024be17ac489c66a8c43015a425a3d4b023555e6779bca7c055c8f8",
+  "remaining": "Final integrated code still requires focused service regressions, independent review/FI, aggregate, exact commit CI and family/example comparison. Historical full4 failures remain unresolved. Paid0.",
+  "independentReviewSha256": "9154b6ec73e303151d6d5cf84d0e80382e8ead42106aaf60e571a6b61d68785a",
+  "faultInjection": {
+    "finished_at": "2026-11-06T03:58:56.770512+00:00",
+    "all_detected": true,
+    "source_unchanged": true,
+    "compiled_classes_unchanged": true
+  },
+  "detectedFaults": 2
+}

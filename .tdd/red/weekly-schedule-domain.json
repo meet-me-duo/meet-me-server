@@ -1,0 +1,46 @@
+{
+  "workItem": "weekly-schedule-domain",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/WeeklyScheduleRulesTest.kt",
+      "sha256": "41285a966d21b3c3adb05c9d661b1f8f1c07e9fb6f736281a60cbd79dcb2f711"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*WeeklyScheduleRulesTest",
+    "--tests",
+    "*WeeklyEvidenceProviderContractTest"
+  ],
+  "failedTests": [
+    "WKR04 search start is inclusive and search end is exclusive for weekly anchors()",
+    "WKR05 only the owner supplied month filter may narrow the owner's repeated weekdays()",
+    "WKR08 matching text from a different participant is not valid weekly or filter evidence()",
+    "WKR18 malformed temporal unions and implicit overnight rollover are rejected instead of normalized()",
+    "WKR02 a weekly Friday rule cannot silently stop at the December year boundary()",
+    "WKR15 weekly whole civil days follow daylight saving rather than fixed 24 hour durations()",
+    "WKR10 approved lunch afternoon and night baselines expand for every selected anchor()",
+    "WKR20 original search limits are retained and a resolved rule with no matching weekday stays empty()",
+    "WKR11 known one sided clocks keep the missing civil day boundary server derived()",
+    "WKR19 restoring reexpands the same original rule and rejects missing invented or moved occurrences()",
+    "WKR14 search clipping does not rewrite the stored original overnight interval()",
+    "WKR12 an explicitly overnight December anchor keeps its January tail under an anchor month filter()",
+    "WKR13 the previous day anchor contributes only its overlapping tail and filters still test that anchor()",
+    "WKR16 nonexistent or ambiguous daylight saving clock endpoints cannot acquire an invented offset()",
+    "WKR09 missing or stale evidence cannot authorize a weekly declaration or an active date filter()",
+    "WKR01 a weekly Friday rule preserves every matching date across a month boundary()",
+    "WKR17 unknown personal time remains unresolved rather than becoming a full day or full search()",
+    "WKR03 leap day is a real matching weekday occurrence with a complete civil day()",
+    "WKR06 date bounds and anchor exclusions can produce a resolved empty rule without default availability()",
+    "WKR07 a genuine linked supplemental filter belongs to the same participant and remains a separate source()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T06:59:16.296Z",
+  "evidenceNote": "Independent weekly calendar expansion tests compile and execute: 20 failures, zero errors and zero skips on explicit missing behavior skeleton. Combined provider tests also fail independently. Archived XML: .codex/evaluation/local/weekly-domain-provider-red/; log: .codex/tdd-evidence/weekly-domain-provider-red.log. Pure test bytes frozen before GREEN implementation."
+}

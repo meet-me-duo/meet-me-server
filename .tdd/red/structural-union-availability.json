@@ -1,0 +1,48 @@
+{
+  "workItem": "structural-union-availability",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslUnionPreferredAvailabilityTest.kt",
+      "sha256": "fad9399611bacbe46ccab2498a07319f6dc73dceead5f2521071590866d20c81"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ScheduleDslUnionPreferredAvailabilityTest",
+    "--tests",
+    "*StructuralUnionProviderContractTest",
+    "--tests",
+    "*StructuralUnionPolicyBindingPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[1] correction = false",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[2] correction = true",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA09 independent preference ALL OF remains an intersection rather than a flat claim union()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA02 overlap is normalized and global hard negatives subtract from both supports and all credit()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA05 unknown preference cannot provide definite availability or credit outside a known allow()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA07 mixed bonus depends on definite allow before global exclusion rather than a surviving allow window()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[1] unbounded = false",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[2] unbounded = true",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA13 claim and graph permutations and duplicate window declarations do not change eligibility or multiply bonus()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA15 present but entirely unknown roots never become default full search availability()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[1] date = \"2034-05-09\", zone = \"UTC\", aStart = \"07:20\", aEnd = \"08:05\", pStart = \"12:10\", pEnd = \"13:40\", source = \"Synthetic azure provenance.\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[2] date = \"2034-05-10\", zone = \"Asia/Tokyo\", aStart = \"20:15\", aEnd = \"22:45\", pStart = \"02:05\", pEnd = \"04:25\", source = \"Synthetic bronze provenance.\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[3] date = \"2034-05-11\", zone = \"UTC\", aStart = \"00:10\", aEnd = \"00:55\", pStart = \"23:00\", pEnd = \"23:50\", source = \"🙂 Synthetic quartz provenance.\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA03 preference only remains eligible with zero bonus and preserves declared preferred meaning()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA08 scoped PREFER remains base limited and is never flattened into an independent preference root()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA11 a preference choice adds only its selected branch and unresolved choice adds no definite support()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA04 unknown availability cannot expand known preference or manufacture a mixed bonus()",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[1] fault = \"root\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[2] fault = \"owner\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.[3] fault = \"revision\"",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslUnionPreferredAvailabilityTest.UPA10 local EXCEPT keeps local meaning while an exclusion root remains globally authoritative()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T00:42:34.016279+00:00",
+  "evidenceNote": "Independent synthetic contracts; compiled missing union policy/projection and deliberate rejection of currently unsupported version. No model output or user-case oracle manufactured."
+}

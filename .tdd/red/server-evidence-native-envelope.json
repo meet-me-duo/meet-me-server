@@ -1,0 +1,26 @@
+{
+  "workItem": "server-evidence-native-envelope",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ServerEvidenceNativeEnvelopeTest.kt",
+      "sha256": "b16bd4f0e850b59e3c6fcdea38824b254a037179eb71e7f003d5dd7646efda7f"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceCacheAndClockTailTest",
+    "--tests",
+    "*ServerEvidenceNativeEnvelopeTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceNativeEnvelopeTest.SNE01 native catalogue route admits a larger API envelope while preserving original small model JSON and usage()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:26:56.030509+00:00",
+  "evidenceNote": "Independent API snapshot identity/lexical-tail and actual localhost main HTTP envelope boundaries. Expected failure with old cache metadata equality, partialclock token, or old256KiB envelope cap."
+}

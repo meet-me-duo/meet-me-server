@@ -1,0 +1,32 @@
+{
+  "workItem": "indexed-evidence-provider",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/IndexedEvidenceProviderContractTest.kt",
+      "sha256": "bb9c61776ed5a44ac68669fbec41ae50dd97799b574317e675698a64dfa43097"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*IndexedEvidenceProviderContractTest"
+  ],
+  "failedTests": [
+    "IEP03 integer condition date clock and relation references resolve to exactly the unchanged native declaration()",
+    "IEP02 response schema bounds every evidence position to actual issued selections and requires its version()",
+    "IEP07 required markers mixed syntax and native source mutation remain fail closed()",
+    "IEP01 request issues exact zero based selections and both wires retain their bounds without exposing native IDs()",
+    "IEP06 invalid numeric types bounds and foreign ownership cannot be repaired with another native entry()",
+    "IEP08 archived generation three remains unchanged and never accepts numeric evidence as long native IDs()",
+    "IEP05 place and mode evidence use numeric selections while keeping duration ownership and unverified travel()",
+    "IEP04 repeated approved terms select an exact position rather than the first matching native word()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T06:33:39.236596+00:00",
+  "evidenceNote": "Eight independent provider/wire/typed ownership tests compiled and failed from indexed contract TODOs: six direct NotImplementedError and two expected-exception assertions wrapping the same missing parser implementation. No setup failures, errors, or skipped tests. Full output remains in ignored indexed-evidence-provider-red.log."
+}

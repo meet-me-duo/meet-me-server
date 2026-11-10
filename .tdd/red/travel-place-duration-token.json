@@ -1,0 +1,32 @@
+{
+  "workItem": "travel-place-duration-token",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TravelPlaceDurationTokenTest.kt",
+      "sha256": "2803dd0eee8471b259bcbeb3ebc446e571982c9ea6704e5c224a56f6880f95c6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceSummaryHttpPostgresTest",
+    "--tests",
+    "*TravelPlaceDurationOverflowTest",
+    "--tests",
+    "*TravelPlaceUnsupportedRouteTest",
+    "--tests",
+    "*TravelPlaceDurationTokenTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationTokenTest.[1] duration = \"1,045\ubd84\", forgedMinutes = \"45\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationTokenTest.[2] duration = \"1 345\ubd84\", forgedMinutes = \"345\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationTokenTest.[3] duration = \"\uc2a4\ubb3c \ud55c\uc2dc\uac04\", forgedMinutes = \"60\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T15:27:54.585471+00:00",
+  "evidenceNote": "Independent native numeric/route boundary RED. HTTP fixture-only version repair rechecked against the original generic-only summary behavior; exact implemented renderer source restored immediately. Full local log: travel-place-added-valid-red.log."
+}

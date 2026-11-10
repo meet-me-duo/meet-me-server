@@ -1,0 +1,91 @@
+{
+  "workItem": "schedule-context-mode-v28-catalog",
+  "state": "IMPLEMENTED_FOCUSED_PASS_FULL_AFFECTED_TWO_LOCAL_EXEC_FAILURES_UNRESOLVED",
+  "reason": "Existing red-evidence schema explicitly covers Kotlin test paths; Node catalog evidence retained in generic verification summary without changing that schema.",
+  "red": {
+    "workItem": "schedule-context-mode-v28-catalog",
+    "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+    "testFiles": [
+      {
+        "path": ".github/scripts/v28-context-mode-release-catalog.test.cjs",
+        "sha256": "73aaf95a76d22421a11b851264657fe448f2b5483ddb2f00d30f9beee9f81904"
+      }
+    ],
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "node",
+      "--test",
+      "--test-concurrency=1",
+      ".github/scripts/v28-context-mode-release-catalog.test.cjs"
+    ],
+    "failedTests": [
+      {
+        "test": "V28C01",
+        "reason": "Full28 current publisher/reader catalog unsupported by unchangedV23 declarations; valid assertionRED."
+      },
+      {
+        "test": "V28C02",
+        "reason": "Full28 current publisher/reader catalog unsupported by unchangedV23 declarations; valid assertionRED."
+      },
+      {
+        "test": "V28C06",
+        "reason": "Full28 current publisher/reader catalog unsupported by unchangedV23 declarations; valid assertionRED."
+      },
+      {
+        "test": "V28C07",
+        "reason": "Full28 current publisher/reader catalog unsupported by unchangedV23 declarations; valid assertionRED."
+      },
+      {
+        "test": "V28C08",
+        "reason": "Full28 current publisher/reader catalog unsupported by unchangedV23 declarations; valid assertionRED."
+      }
+    ],
+    "expectedFailureClassification": "Current publication28 and complete-reader28 unsupported by oldV23 catalog declarations; ordinary assertion failures, no setup/import/syntax failure.",
+    "recordedAt": "2026-11-06T05:43:53.270337+00:00"
+  },
+  "updatedAt": "2026-11-06T06:06:47.668078+00:00",
+  "newEight": {
+    "counts": {
+      "tests": 8,
+      "pass": 8,
+      "fail": 0,
+      "skip": 0
+    },
+    "finishedAt": "2026-11-06T05:57:52.972176+00:00"
+  },
+  "affected": {
+    "tests": 140,
+    "pass": 138,
+    "fail": 2,
+    "skip": 0,
+    "exit": 1,
+    "finishedAt": "2026-11-06T06:02:54.379337+00:00"
+  },
+  "OA01": {
+    "tests": 8,
+    "fail": 0,
+    "error": 0,
+    "skip": 0,
+    "exit": 0,
+    "finishedAt": "2026-11-06T06:03:59.369510+00:00"
+  },
+  "onePredeclaredDiagnostic": {
+    "tests": 2,
+    "pass": 2,
+    "originalTwoCause": "UNRESOLVED",
+    "scope": "Same original5secondtimeout. Childstatus0all29, max213.915ms. Doesnotreplacefailed140run."
+  },
+  "faults": {
+    "detected": 2,
+    "scope": "Isolated external copies, M/Sunchanged. FI01metadata parser correction frompreservedobjectdiff, nomutant/test rerun.",
+    "finishedAt": "2026-11-06T06:05:59.910818+00:00"
+  },
+  "independentReview": {
+    "P1P2": 0,
+    "reportSHA256": "deeff0ee4b7760c34c769d2cb0c4565539bdcef53148e3678cdf70d56baf0381"
+  },
+  "remoteWrites": 0,
+  "paidCalls": 0,
+  "operatingState": "Notdeployed; exactcommitCIandoperatingauthorityunverified"
+}

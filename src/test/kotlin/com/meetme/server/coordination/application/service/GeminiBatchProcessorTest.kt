@@ -3,6 +3,7 @@ package com.meetme.server.coordination.application.service
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
 import com.meetme.server.coordination.application.port.output.CoordinationAttemptRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
 import com.meetme.server.coordination.application.port.output.JitterPort
 import com.meetme.server.coordination.application.port.output.MonotonicTimePort
 import com.meetme.server.coordination.application.port.output.NaturalLanguageBatchResult
@@ -46,6 +47,7 @@ import java.time.ZoneOffset
 import java.util.Locale
 import java.util.UUID
 import kotlin.test.assertEquals
+import com.meetme.server.support.FinalAnalysisRouteTestFixture as F
 
 class GeminiBatchProcessorTest {
     @Test
@@ -79,7 +81,7 @@ class GeminiBatchProcessorTest {
         `when`(parser.parse(anyValue()))
             .thenThrow(
                 NaturalLanguageParserException(ParserFailureKind.RATE_LIMIT, retryAfterMillis = 750),
-                NaturalLanguageParserException(ParserFailureKind.TIMEOUT),
+                NaturalLanguageParserException(ParserFailureKind.NETWORK),
                 NaturalLanguageParserException(ParserFailureKind.SERVER),
             ).thenReturn(
                 NaturalLanguageBatchResult(
@@ -200,6 +202,50 @@ class GeminiBatchProcessorTest {
 
         verify(parser, times(4)).parse(anyValue())
         verify(persistence).delay(fixture.run.startStructuring())
+    }
+
+    @Test
+    fun `선택된 typed 경로는 실제 dispatcher를 거쳐 typed processor에 한 번 전달한다`() {
+        val batch =
+            SubmissionBatch(
+                SubmissionBatchId(F.ir.batch),
+                MeetingRoomId(F.ir.room),
+                listOf(SubmissionVersionId(F.ir.first), SubmissionVersionId(F.ir.second)),
+                F.selectedAt,
+            )
+        val run = CoordinationRun.queued(CoordinationRunId(F.ir.run), batch)
+        val runs = mock(CoordinationRunRepository::class.java)
+        val routes = mock(FinalAnalysisRouteRegistry::class.java)
+        val typed = mock(SelectedScheduleDslBatchProcessor::class.java)
+        val parser = mock(NaturalLanguageParserPort::class.java)
+        val attempts = mock(CoordinationAttemptRepository::class.java)
+        val legacyPersistence = mock(GeminiProcessingPersistenceService::class.java)
+        val submissions = mock(SubmissionRepository::class.java)
+        val structured = mock(StructuredSubmissionRepository::class.java)
+        `when`(runs.findByBatchId(batch.id)).thenReturn(run)
+        `when`(routes.find(run.id.value)).thenReturn(F.route())
+        val dispatcher = SelectedFinalAnalysisDispatchService(runs, routes, typed, monotonicTime = MonotonicTimePort { 0 })
+        val processor =
+            GeminiBatchProcessor(
+                runs,
+                submissions,
+                structured,
+                attempts,
+                parser,
+                IdGenerator { error("selected route must not allocate a legacy attempt") },
+                RetryDelayPort { error("selected route must not enter legacy retry") },
+                JitterPort { error("selected route must not enter legacy jitter") },
+                MonotonicTimePort { 0 },
+                Clock.fixed(F.selectedAt, ZoneOffset.UTC),
+                legacyPersistence,
+                selectedDispatcher = dispatcher,
+            )
+
+        processor.process(batch.id)
+
+        verify(typed, times(1)).processBounded(batch.id, Duration.ofSeconds(60).toNanos())
+        Mockito.verifyNoMoreInteractions(typed)
+        Mockito.verifyNoInteractions(parser, attempts, legacyPersistence, submissions, structured)
     }
 
     private fun fixture(): Fixture {

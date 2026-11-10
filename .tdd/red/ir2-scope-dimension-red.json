@@ -1,0 +1,34 @@
+{
+  "workItem": "ir2-scope-dimension-red",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleIrV2ScopeDimensionBoundaryTest.kt",
+      "sha256": "9a48e24d3b7b17b2c259bab186d3bfbc3154af406b8ea8698cfa430694dc84d2"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrV2*Test"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[1] effect = \"AVAILABLE\", dimension = \"PLACE\", bounds = \"bounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[2] effect = \"AVAILABLE\", dimension = \"ALL\", bounds = \"bounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[3] effect = \"PREFERRED\", dimension = \"PLACE\", bounds = \"bounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[4] effect = \"PREFERRED\", dimension = \"ALL\", bounds = \"bounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[5] effect = \"UNAVAILABLE\", dimension = \"PLACE\", bounds = \"bounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[6] effect = \"UNAVAILABLE\", dimension = \"ALL\", bounds = \"bounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[7] effect = \"AVAILABLE\", dimension = \"PLACE\", bounds = \"unbounded\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrV2ScopeDimensionBoundaryTest.[8] effect = \"PREFERRED\", dimension = \"ALL\", bounds = \"unbounded\""
+  ],
+  "expectedFailureClassification": "Actual implemented IR2 proof projection admits known NON_PRECISE PLACE/ALL semantic effects that the explicit TIME-only contract forbids. Eight assertion failures; two valid UNRESOLVED controls pass. Remaining62 integration cases pass. No setup, compile, error or skip.",
+  "recordedAt": "2026-11-05T00:22:25.453843+00:00"
+}

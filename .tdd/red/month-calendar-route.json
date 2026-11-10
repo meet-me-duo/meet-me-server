@@ -1,0 +1,32 @@
+{
+  "workItem": "month-calendar-route",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/CalendarFactsRoutePostgresTest.kt",
+      "sha256": "7f2ebb97dd0cdaa3947798e713a19a4b18683c0093f6f6498bff6f93f8408796"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingMonthCalendarFactsTest",
+    "--tests",
+    "*CalendarFactsEvidenceProviderContractTest",
+    "--tests",
+    "*CalendarFactsRoutePostgresTest"
+  ],
+  "failedTests": [
+    "[1] serverReferences = \"false\", scopedDates = \"false\"",
+    "[3] serverReferences = \"true\", scopedDates = \"false\"",
+    "CFR03 enabling month facts cannot rewrite a previously frozen response2 contract()",
+    "CFR04 a successor retains response3 when current selector flags are all disabled()",
+    "CFR01 enabled month facts freeze response3 in identity and fingerprint while flags cannot relabel that selection()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T05:10:49.414805+00:00",
+  "evidenceNote": "Independent calendar facts and frozen new generation boundaries compiled; missing behavior failures. Five historical boundary controls already pass."
+}

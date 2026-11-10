@@ -1,0 +1,28 @@
+{
+  "workItem": "meeting-date-scope-wire-route",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/SearchScopedEvidenceWireRouteTest.kt",
+      "sha256": "4d8f66c715655e1c746646c5c14e91c7637ff91e8dc54b83e1bfe5474e529da9"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*MeetingDateScopeStoredReadPostgresTest",
+    "--tests",
+    "*SearchScopedEvidenceWireRouteTest"
+  ],
+  "failedTests": [
+    "SDW01 shared wire accepts matched generation two contract pairs and rejects cross generation mixtures()",
+    "SDW02 strict reader selects guarded dates only for the new frozen response version and rejects marker mismatch()",
+    "SDW03 both effective finite schemas keep the shared calendar definition and every scalar date reference()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T03:36:27.532852+00:00",
+  "evidenceNote": "Compiled independent boundary tests fail on missing generation2 wire/parser/frozen-route behavior; archived generation1 stored read already passes."
+}

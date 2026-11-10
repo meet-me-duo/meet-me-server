@@ -1,0 +1,126 @@
+{
+  "workItem": "schedule-c5-owned-proof-choice",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslOwnedProofChoiceContractTest.kt",
+      "sha256": "65e985d9ce4c89d375ad297dc4ffc306f598abda74fa6783b697f05708888c66"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslAtomicTemporalContractTest.kt",
+      "sha256": "7ddac4c0d5b0fd87ff097ce1ab61a65d08e90ce1c8cfe69ea714c1dd07ad3fc6"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslConditionTermBindingContractTest.kt",
+      "sha256": "ce82ee3dfd3d5480dd4ba3e66084b28aca28b7a3dd1587da097a8290520ef77c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslDateScopeInlineContractTest.kt",
+      "sha256": "6fb4d4d85537c1db1ef61d9dfc6b0250c1dd31ffe9c62d4e0a27ca10e6e62333"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralCompletionContractTest.kt",
+      "sha256": "3ccceaab0da62a267bcfbbb855ceb2996189a6628b7bdca34b6d457ca6407089"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralTermEvidenceContractTest.kt",
+      "sha256": "0d1738968cff56e28e49f3d0cc6a2004a2799653cdce2a6edca9a89160b1f327"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslStructuralProviderContractTest.kt",
+      "sha256": "7f08c9c9517c9bc55c9c2868a38193d82e993e8f7a96d37376c22e83ac0f92a4"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslAtomicTemporalContractTest.TA08 closed temporal union preserves complete vocabulary native context modes and legacy C4 bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslConditionTermBindingContractTest.CB06 producer temporal union owns one term binding while preserving C4 and native inputs()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslDateScopeInlineContractTest.DI08 producer grammar exposes typed dates and inline roots without changing native context or C4 bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC01 four synthetic participants intersect only in a preferred meal with scoped QA and inferred clock()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC08 typed proof namespaces and six operator arms preserve native context C4 bytes and existing arity limits()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC07 owned proof expansion preserves negative precedence and an unknown exclusion cannot become a default()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC03 invalid native proof or term association withholds its participant and preserves independent peers()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslOwnedProofChoiceContractTest.PC04 explicit branch ownership retains genuine and nested choices without guessing an innermost pair()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE03 producer distinguishes exact word term evidence from broad context and forbids widening an ambiguous repeated lexeme()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest.STE02 condition date clock and graph evidence retain broad closed native quote locators without new offsets or fields()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest.SC02 C5 format descriptions keep derivations reachability and closed response shape()",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest.SA01 explicit C5 request retains native context while every provider evidence schema is a closed literal locator()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T09:13:02.108856+00:00",
+  "redExecutions": [
+    {
+      "scope": "initial six test classes including owned proof/choice8; final hashes unchanged",
+      "tests": 40,
+      "pass": 29,
+      "failures": 11,
+      "errors": 0,
+      "skipped": 0,
+      "at": "2026-11-07T08:52:50.760315+00:00"
+    },
+    {
+      "scope": "final SA01 hash against preserved P6 provider classes; missing-bank assertion",
+      "tests": 1,
+      "pass": 0,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "command": [
+        "python3",
+        "/workspace/schedule-gradle-tools/run-clean.py",
+        "./gradlew",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Dorg.gradle.jvmargs=-Xmx2g",
+        "-Pkotlin.daemon.jvmargs=-Xmx2g",
+        "--init-script",
+        "/workspace/schedule-diagnosis-evidence/c5-owned-proof-choice-contract-20261107/schema-formatted-controls.init.gradle",
+        "ktlintCheck",
+        "assemble",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest"
+      ],
+      "xmlFailureType": "org.opentest4j.AssertionFailedError"
+    }
+  ],
+  "green": {
+    "singleExecution": false,
+    "uniqueRelatedTests": 96,
+    "composition": "Original96=95PASS/1old-schema-expectationFAIL; same main code after precise SA01 alignment schema class8/8 PASS. Overlap not summed.",
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "ktlintCheck": "PASS",
+    "assemble": "PASS",
+    "unfilteredGate": false
+  },
+  "mutation": {
+    "tests": 1,
+    "expectedFailures": 1,
+    "type": "org.opentest4j.AssertionFailedError",
+    "scope": "Isolated compiled helper: unused-proof equality forced true; no production/build modification"
+  },
+  "independentReview": "Separate test designer reviewed public contract, new source, and exact-path SA01 expectation alignment; no remaining source blocker."
+}

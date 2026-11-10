@@ -1,0 +1,27 @@
+{
+  "workItem": "selected-operating-registration",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedOperatingGraphRegistrationTest.kt",
+      "sha256": "9501d24804f4e2115e290709da0572e891261bb9867097174970de2acbe0db47"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedOperatingGraphRegistrationTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.SelectedOperatingGraphRegistrationTest#selected production graph is discoverable by Boot auto configuration imports()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-05T18:46:50.956865Z"
+}

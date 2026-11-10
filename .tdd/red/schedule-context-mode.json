@@ -1,0 +1,68 @@
+{
+  "workItem": "schedule-context-mode",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/domain/dsl/ScheduleDslContextModeContractTest.kt",
+      "sha256": "0fc107e6dc3f3eac63db3821ccad588be83cdc62390e71b1f4189eefd6c25533"
+    }
+  ],
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest"
+  ],
+  "failedTests": [
+    {
+      "test": "CM10 restored contextual witness and mode evidence must replay against the frozen declaration()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM06 category and existing candidate subset policy are distinct from per-mode recommendation groups()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM02 the old C3 control retains its own frozen policy nonprecise support and unchanged request bytes()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM09 native source revision quote and frozen context mismatches fail closed rather than become an unrestricted mode()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM01 complete inferred context without a vocabulary word is calculable while original evidence remains unchanged()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM04 contextual numeric projection cannot cancel an explicit negative and preserves independent valid availability()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM07 quoted and retracted mode declarations preserve history without constraining either mode()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM08 unknown mode and unknown time scope cannot authorize an otherwise forbidden precise mode()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM05 a Thursday remote-only hard predicate cannot be ORed away by broad availability in EITHER()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    },
+    {
+      "test": "CM03 unresolved interpretation and missing endpoint never acquire a complete interval from context or search bounds()",
+      "reason": "Missing new context-mode declaration validation; genuine TODO, not compilation/configuration or fixture failure"
+    }
+  ],
+  "expectedFailureCategory": "FUNCTIONAL_RED_CONTEXT_MODE_UNIMPLEMENTED",
+  "recordedAt": "2026-11-06T02:25:12.098244+00:00"
+}

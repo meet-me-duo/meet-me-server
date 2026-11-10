@@ -10,6 +10,7 @@ import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProv
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
+import com.meetme.server.precheck.application.port.output.PrecheckResponseSizeContract
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
 import com.meetme.server.shared.adapter.output.budget.DefaultDenyAiCallBudget
@@ -32,6 +33,8 @@ class TwoStagePreSubmissionCheckProvider(
     private val nanoTime: LongSupplier = LongSupplier(System::nanoTime),
     private val physicalDispatch: AiHttpDispatchGate? = null,
 ) : PreSubmissionCheckProvider {
+    override fun responseSizeContract(): PrecheckResponseSizeContract = generator.responseSizeContract()
+
     override fun check(request: PrecheckProviderRequest): PrecheckProviderResult {
         if (physicalDispatch?.properties?.enabled == true) return checkPhysical(request)
         val started = nanoTime.asLong

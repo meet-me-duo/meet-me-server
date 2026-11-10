@@ -68,6 +68,7 @@ Swagger가 이 문서나 prototype과 다르면 임의로 맞추지 말고 백�
 
 - 자동 마감은 expected participants 또는 deadline 조건으로 서버가 수행한다.
 - 수동 마감은 HOST만 `POST /api/rooms/{inviteCode}/close`를 호출한다.
+- `analysis_contract`를 생략하거나 null로 보내면 서버의 신규 마감 기본 정책을 사용한다. 운영의 지원 가능한 자연어 모임은 V5를 사용하고, 명시 `LEGACY`는 기존 경로를 선택한다. 기존 Web 요청에 필드를 추가할 필요는 없다. 이미 닫힌 방의 재호출은 분석을 다시 만들거나 계약을 바꾸지 않는다.
 - `EARLY_CLOSE_CONFIRMATION_REQUIRED`이면 서버가 반환한 현재·목표 인원과 deadline을 보여주고 사용자 재확인 뒤
   `confirm_early=true`로 한 번 더 호출한다.
 
@@ -99,6 +100,14 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - HOST는 `/recommendations/{optionId}/confirmation`에 조회한 `analysis_id`, `variant_id`와 창 안에서 고른 실제 `start_at`, `end_at`을 보낸다. 시작은 포함·끝은 배타적이며 PostgreSQL 마이크로초 정밀도까지만 허용한다. 같은 전체 선택만 멱등이고 다른 확정은 충돌이다. 신규 분석을 legacy candidate 확정 URL로 보내지 않는다.
 - result의 typed `selection`과 실제 선택 구간을 표시한다. `candidate.plan_type`은 legacy 호환 의미이며 새 A/B/C 라벨로 사용하지 않는다. 자정 넘김은 양쪽 날짜를 보존한다.
 - 조건부 참석 의미를 표현하는 클라이언트는 candidates·추천 primary/alternatives·result GET과 두 confirmation POST에 `attendance_support=conditional-v1`을 보낸다. `attendance_confirmed=false`를 확정 참석으로 바꾸거나 숨기지 않는다. 미지원 요청의 `409 CLIENT_UPDATE_REQUIRED`는 새로고침/업데이트 안내로 처리한다.
+
+### 추천 variant별 참가자 상태
+
+- primary와 alternatives의 각 variant는 optional `participant_statuses` 배열을 제공한다. 원소는 `participant_ref`(동일 analysis 안에서 안정적인 `p1` 형태), `display_name`, `status`다. 내부 UUID가 아니며 인증·조회 키 또는 다른 analysis의 개인 식별자로 사용하지 않는다. 동명이인을 이름으로 합치지 않는다.
+- `AVAILABLE`은 지원되는 조건 충족 확인, `UNAVAILABLE`은 확인된 조건 불일치, `UNKNOWN`은 해석 실패·정보 부족·미지원·과거 근거 부족 또는 장소/이동 미검증이다. UNKNOWN을 일괄 “분석 실패”나 “참가 불가”로 표시하지 않는다. 대면 이동이 미검증인 사람만 UNKNOWN이어도 유효한 시간 후보와 다른 사람의 상태는 유지한다.
+- 상태는 고정 배치 전체 참가자와 option 전체 시간·해당 variant의 방식/장소 기준이다. 미제출·늦은 참가자는 포함하지 않고, 확정한 짧은 실제 시간으로 재판정하지 않는다. 선택 변경이나 대안 페이지에서도 같은 analysis의 참조를 유지한다.
+- optional `available_participant_names`는 저장된 포함 집합의 공개 이름이며 `excluded_participant_names`와 함께 호환용이다. 포함 이름만으로 조건 검증 완료, 제외 이름만으로 참가 불가를 추정하지 않는다. `attendance_confirmed=false`도 유지한다. 구 서버의 새 필드 누락을 처리해야 한다.
+- 상세 미반영 사유는 기존 HOST 전용 조회 권한을 따른다. 새 공개 상태 응답에는 원문·보완답·개인 실패 사유가 포함되지 않는다. Web 표시 구현·운영 반영은 이 백엔드 계약과 별도 작업이다.
 
 ### LEGACY 후보 호환
 
@@ -146,3 +155,14 @@ HOST의 재분석은 `POST /api/rooms/{inviteCode}/analysis/retry`이며 `202` �
 - 캐시와 오래 열린 구 번들은 순서만으로 해결되지 않는다. 구 화면 잔존과 오류 문구를 별도로 확인한다.
 - 신 웹은 전송 전에 ECMAScript trim을 적용한다. 현 서버의 Kotlin trim과 다른 U+001C~001F 처리 등은 전환 중 호환 차이로 분리 보고하며 계약을 임의로 바꾸지 않는다.
 
+
+
+### 명시 C4 분석 계약 — 2026-11-06 로컬 통합 검증
+
+`POST /api/rooms/{inviteCode}/close`의 선택 필드 `analysis_contract`는 `DSL_CONTEXT_MODE_V4`를 지원한다. 생략 시 선택은 위 신규 마감 기본 정책을 따른다. 명시 선택은 같은 HOST 권한/Origin/수집 마감 검사를 거치고 이미 고정된 실행의 계약을 idempotent close로 바꾸지 않는다. 입력 수정·force reparse는 source 실행의 선택을 새 실행에 전파한다.
+
+C4의 추천은 기존 DTO의 `meeting_mode`·시간 구간·`quality=PARTIAL`을 사용하며 구간별 mode 제약을 지킨다. 추론 구간이 계산에 쓰여도 사용자 확인으로 표시하지 않고, 장소를 언급하지 않은 대면 후보의 `place=null`은 정상이다. 원문/보완 질문·내부 근거를 새 응답에 추가하지 않는다. HOST의 `analysis/retry` 접수는 기존202이고 완료 여부는 기존 조회로 확인한다. 새로운 조건부 후보 노출·확정 자격이나 UI를 이 계약으로 추가하지 않는다.
+
+이 상태는 로컬 HTTP/JWT·실제 PostgreSQL·합성 provider 검증이며 운영 배포·실모델 의미 품질 통과가 아니다. C4 선택을 실제 웹 기본 흐름에 활성화하는 단계는 최종 gate/정확 commit CI·최신 입력 재생과 배포 조건을 확인한 뒤 진행한다.
+
+명시 `analysis_contract=DSL_STRUCTURAL_V5`는 응답 계약5·semantic6의 별도 구조화 경로를 선택한다. 생략 시 위 운영 기본 정책을 사용하며 원문/보완 답변·현재 mode·불변 cohort를 같은 경계에서 검증한다. 원문 없는 수동/혼합 입력과 native 출처 기준 날짜를 지원하지 못하는 과거 V1 입력은 기존 경로를 유지한다. 이 계약 선택은 새 금전 예산을 부여하지 않으며 운영 배포 완료 여부와 구분한다.

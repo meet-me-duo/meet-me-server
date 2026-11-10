@@ -1,0 +1,28 @@
+{
+  "workItem": "server-evidence-wire",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ServerEvidenceWireTest.kt",
+      "sha256": "867bd84c0b48098fdca67b457efc6f1056ae791cf1c29f04ff3470632f31cc6c"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ServerEvidenceWireTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceWireTest.SEW02 both providers retain low reasoning and the fixed output budget with strict OpenAI structured output()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceWireTest.SEW05 unknown or incomplete neutral evidence contracts cannot fall back to another wire format()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceWireTest.SEW01 both providers receive the same native catalogue data and instruction text in their instruction channels()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceWireTest.SEW04 wire construction is deterministic and does not mutate the frozen neutral request bytes()",
+    "com.meetme.server.coordination.adapter.output.integration.ServerEvidenceWireTest.SEW03 effective provider schemas preserve reference only evidence and a finite acyclic logical expression graph()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T02:14:48.885218+00:00",
+  "evidenceNote": "Missing shared provider wire builder; independent data/instructions/schema/LOW/resource/frozencontract checks."
+}

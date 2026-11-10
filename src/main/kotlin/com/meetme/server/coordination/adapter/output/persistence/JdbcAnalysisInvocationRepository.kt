@@ -77,7 +77,7 @@ class JdbcAnalysisInvocationRepository(
             invocation.lunaAttempts,
             invocation.finishedAt?.atOffset(ZoneOffset.UTC),
             invocation.winnerAttemptId,
-            AnalysisInvocation.POLICY_VERSION,
+            invocation.policyVersion,
         )
     }
 
@@ -87,6 +87,7 @@ class JdbcAnalysisInvocationRepository(
                 """
                 UPDATE analysis_invocations SET gemini_attempts = ?, luna_attempts = ?, finished_at = ?, winner_attempt_id = ?
                 WHERE id = ? AND coordination_run_id = ? AND run_version = ? AND owner_token = ?
+                    AND started_at = ? AND deadline_at = ? AND policy_version = ?
                 """.trimIndent(),
                 invocation.geminiAttempts,
                 invocation.lunaAttempts,
@@ -96,6 +97,9 @@ class JdbcAnalysisInvocationRepository(
                 invocation.runId.value,
                 invocation.runVersion,
                 invocation.ownerToken,
+                invocation.startedAt.atOffset(ZoneOffset.UTC),
+                invocation.deadlineAt.atOffset(ZoneOffset.UTC),
+                invocation.policyVersion,
             )
         check(updated == 1) { "Analysis invocation ownership changed" }
     }
@@ -113,6 +117,7 @@ class JdbcAnalysisInvocationRepository(
                 rs.getInt("luna_attempts"),
                 rs.getTimestamp("finished_at")?.toInstant(),
                 rs.getObject("winner_attempt_id", UUID::class.java),
+                rs.getString("policy_version"),
             )
         }
 }

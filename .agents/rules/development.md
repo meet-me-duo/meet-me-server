@@ -34,6 +34,7 @@
 - Issue와 PR 제목은 `<type>: <summary>` 형식을 사용한다. `type`은 변경 목적에 맞는 `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `ci`, `perf`, `revert` 중 하나를 소문자로 사용한다. `summary`는 마침표 없이 변경 결과를 설명하고 `한다`, `이다` 같은 서술형 종결이 아닌 명사형 한국어로 끝낸다. 예: `feat: ko-KR locale 기반 추가`.
 - 기능 Issue 템플릿의 기본 제목은 `feat: `, 오류 Issue 템플릿은 `fix: `로 유지한다. `[Feature]`, `[Bug]`, `[FEAT]` 같은 대괄호 접두사를 새 제목에 사용하지 않는다.
 - PR 본문은 사람이 빠르게 이해하고 검토할 수 있는 자연스러운 문장으로 작성한다. `파괴적인`, `뒤집기`처럼 번역투이거나 실제 영향을 모호하게 만드는 표현은 사용하지 않고 `기존 API와 호환되지 않음`, `데이터 마이그레이션 필요`처럼 변경 결과를 구체적으로 설명한다.
+- PR 생성·갱신 전에 `.github/pull_request_template.md`를 읽고 변경 목적·변경 내용·검증·리뷰 요청·영향 범위와 주의사항·관련 이슈 항목을 유지한다. 사용자에게 보여주는 초안도 같은 템플릿을 따른다.
 - PR의 `관련 이슈`에는 실제 이슈 번호를 독립된 `Closes #<issue-number>` 행으로 적는다. 프로젝트 GitHub Action은 이 형식과 열린 Issue 참조를 병합 전에 검증하고 `develop` 병합 시 작업 Issue를 `completed`로 자동 종료한다. GitHub 기본 closing keyword는 기본 브랜치인 `main` 대상 PR에만 적용된다. 자리표시자나 이슈 번호가 없는 PR을 생성하지 않는다.
 
 ## 위험도 기반 TDD

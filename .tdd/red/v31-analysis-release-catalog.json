@@ -1,0 +1,25 @@
+{
+  "workItem": "v31-analysis-release-catalog",
+  "sourceRevision": "80c819a060b07ff24bd6fa23cc29d774315fe1ef",
+  "testFiles": [
+    {
+      "path": ".github/scripts/v31-analysis-release-catalog.test.cjs",
+      "sha256": "5d327d1dbea8f576aad10d1bc5a3c8ccd888796ea12c25e311f8c6e5177690fb"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/v31-analysis-release-catalog.test.cjs"
+  ],
+  "failedTests": [
+    "V31C02 current publisher binds all thirty-one actual SQL CRCs and schema SHA independently",
+    "V31C03 publication reader admits exact V31 and retains every previously published complete catalog",
+    "V31C04 host automatic contract reader restores exact V31 and all historical complete catalogs",
+    "V31C08 V23 to V31 requires explicit guarded transition and exact complete checksum history",
+    "V31C09 packaged V31 binds every new SQL byte and preserves historical V23 archive reading"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T08:34:29.801644+00:00",
+  "evidenceNote": "Independent offline release-boundary tests: 9 executed, 5 expected assertion failures, 4 controls passed, 0 skipped/cancelled. Real SQL inventory and all 31 immutable SQL hashes pass; package CRC/schema/guard and historical V23 archive verification execute successfully. Missing current publisher V31 allowlist, pipeline complete catalog V31, host automatic record V31 and resulting V23-to-V31 transition cause the failures. No syntax/import/fixture errors, external service calls, migration or production edits."
+}

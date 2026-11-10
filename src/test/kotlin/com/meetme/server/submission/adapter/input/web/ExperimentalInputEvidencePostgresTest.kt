@@ -3,6 +3,7 @@ package com.meetme.server.submission.adapter.input.web
 import com.meetme.server.account.adapter.output.security.Rs256AccessTokenAdapter
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.domain.AccountPrincipal
+import com.meetme.server.coordination.adapter.output.integration.C5SelectedChoiceContexts
 import com.meetme.server.participant.application.port.output.GuestCredentialPort
 import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProvider
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
@@ -18,6 +19,7 @@ import com.meetme.server.shared.domain.MeetingRoomId
 import com.meetme.server.shared.domain.ParticipantId
 import com.meetme.server.shared.domain.SubmissionVersionId
 import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.domain.Submission
 import jakarta.servlet.http.Cookie
 import org.hamcrest.Matchers.containsString
 import org.junit.jupiter.api.AfterAll
@@ -60,6 +62,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
@@ -327,6 +330,270 @@ class ExperimentalInputEvidencePostgresTest {
         assertEquals(1, checks.questionCount(room.id, guest.id))
         assertNotEquals("CLEAR", current(room, guest).path("check").path("status").stringValue())
         assertNull(submissions.findByParticipant(ParticipantId(guest.id)))
+    }
+
+    @Test
+    fun `EX-PROVENANCE click and direct answers retain distinct exact literals anchors and historical questions`() {
+        for (mode in listOf("click", "direct")) {
+            val room = room()
+            val guest = join(room)
+            val originalAnchor = NOW.get()
+            ACTION.set { question() }
+            create(room, guest, RAW)
+            assertTrue(worker.runOne())
+            val before = current(room, guest)
+            val original = assertNotNull(checks.current(guest.id))
+            val historicalQuestion = assertNotNull(original.question)
+            val originalCheckId = original.id
+            NOW.set(originalAnchor.plusSeconds(60))
+            val extra =
+                if (mode == "click") {
+                    mapOf("question_id" to historicalQuestion.id.toString(), "choice_id" to "PM")
+                } else {
+                    mapOf("question_id" to historicalQuestion.id.toString(), "direct_text" to "  오후 7시입니다  ")
+                }
+            mutate(room, guest, before, "answer", extra)
+            val derived = assertNotNull(checks.current(guest.id)).candidate
+            assertEquals(2, derived.revision)
+            assertEquals(original.candidate.id, derived.sourceCandidateId)
+            assertEquals(historicalQuestion.id, derived.sourceQuestionId)
+            assertEquals(if (mode == "click") "PM" else null, derived.selectedChoiceId)
+            assertEquals("SUPERSEDED", assertNotNull(checks.find(originalCheckId)).status.name)
+            assertEquals(historicalQuestion, assertNotNull(checks.find(originalCheckId)).question)
+            ACTION.set { PrecheckProviderResult(PrecheckVerdict.CLEAR) }
+            assertTrue(worker.runOne())
+
+            val accepted = assertNotNull(submissions.findByParticipant(ParticipantId(guest.id))).latest
+            val evidence = assertNotNull(accepted.evidence)
+            val supplement = assertNotNull(evidence.supplement)
+            val expectedAnswer = if (mode == "click") "오후" else "오후 7시입니다"
+            assertEquals(RAW, accepted.rawText)
+            assertEquals(1, evidence.originalRevision)
+            assertEquals(originalAnchor, evidence.referenceAt)
+            assertEquals(InputInterpretation.CONFIRMED, evidence.interpretation)
+            assertEquals(expectedAnswer, supplement.answerText)
+            assertEquals(if (mode == "click") "PM" else null, supplement.choiceId)
+            assertEquals(if (mode == "click") originalAnchor else NOW.get(), supplement.referenceAt)
+            assertEquals(NOW.get(), supplement.answeredAt)
+            assertEquals(historicalQuestion.id, supplement.questionId)
+            assertEquals(historicalQuestion.prompt, supplement.prompt)
+            assertEquals(historicalQuestion.sourceExcerpt, supplement.sourceExcerpt)
+            assertEquals(historicalQuestion.sourceStartCodePoint, supplement.sourceStartCodePoint)
+            assertEquals(1, supplement.sourceRevision)
+            assertEquals(RAW, REQUESTS.last().rawText)
+            assertEquals(supplement, REQUESTS.last().evidence?.supplement)
+            assertEquals(historicalQuestion, assertNotNull(checks.find(originalCheckId)).question)
+            val queried = current(room, guest)
+            assertEquals(queried, current(room, guest))
+            assertEquals(accepted, assertNotNull(submissions.findByParticipant(ParticipantId(guest.id))).latest)
+            assertEquals(1, checks.questionCount(room.id, guest.id))
+        }
+    }
+
+    @Test
+    fun `EX-PROVENANCE invalid choice and stale revision reject while label proposal conflict remains an observed semantic gap`() {
+        val room = room()
+        val guest = join(room)
+        // The mismatch is intentionally synthetic. Current acceptance below is a forwarding gap, not semantic correctness.
+        ACTION.set {
+            question().copy(
+                choices = listOf(PrecheckChoice("AM", "오전", "오후"), PrecheckChoice("PM", "오후", "오전")),
+            )
+        }
+        create(room, guest, RAW)
+        assertTrue(worker.runOne())
+        val before = current(room, guest)
+        val original = assertNotNull(checks.current(guest.id))
+        val historicalQuestion = assertNotNull(original.question)
+        val selected = historicalQuestion.choices.single { it.id == "PM" }
+        assertEquals("오후", selected.label)
+        assertEquals("오전", selected.proposedText)
+        val answer = mapOf("question_id" to historicalQuestion.id.toString(), "choice_id" to "PM")
+        assertEquals(409, mutateResult(room, guest, before, "answer", answer + ("choice_id" to "missing")).response.status)
+        assertEquals(409, mutateResult(room, guest, before, "answer", answer + ("expected_revision" to 0)).response.status)
+        assertEquals(400, mutateResult(room, guest, before, "answer", answer + ("direct_text" to "오후")).response.status)
+        assertEquals(original, checks.current(guest.id))
+        assertEquals(1, current(room, guest).path("candidate").path("revision").intValue())
+        assertEquals(
+            1,
+            jdbc.queryForObject("SELECT count(*) FROM precheck_candidates WHERE participant_id=?", Int::class.java, guest.id),
+        )
+        assertEquals(1, REQUESTS.size)
+        assertEquals(historicalQuestion, assertNotNull(checks.find(original.id)).question)
+        NOW.set(START.plusSeconds(60))
+        mutate(room, guest, before, "answer", answer)
+        // Synthetic CLEAR exercises current receipt persistence; it does not validate the conflicting option's meaning.
+        ACTION.set { PrecheckProviderResult(PrecheckVerdict.CLEAR) }
+        assertTrue(worker.runOne())
+        val accepted = assertNotNull(submissions.findByParticipant(ParticipantId(guest.id))).latest
+        val supplement = assertNotNull(accepted.evidence?.supplement)
+        assertEquals(RAW, accepted.rawText)
+        assertEquals(selected.proposedText, supplement.answerText)
+        assertNotEquals(selected.label, supplement.answerText)
+        assertEquals("PM", supplement.choiceId)
+        assertEquals(START, supplement.referenceAt)
+        assertEquals(historicalQuestion.id, supplement.questionId)
+        assertEquals(historicalQuestion, assertNotNull(checks.find(original.id)).question)
+        assertEquals("SUPERSEDED", assertNotNull(checks.find(original.id)).status.name)
+        assertEquals(supplement, REQUESTS.last().evidence?.supplement)
+        val queried = current(room, guest)
+        assertEquals(queried, current(room, guest))
+        assertEquals(accepted, assertNotNull(submissions.findByParticipant(ParticipantId(guest.id))).latest)
+    }
+
+    @Test
+    fun `EX-SELECTED prospective click binds the actual accepted receipt while direct text has no selection context`() {
+        for (click in listOf(true, false)) {
+            val room = room()
+            val guest = join(room)
+            ACTION.set { question() }
+            create(room, guest, RAW)
+            assertTrue(worker.runOne())
+            val before = current(room, guest)
+            val source = assertNotNull(checks.current(guest.id))
+            val sourceQuestion = assertNotNull(source.question)
+            val originalCanonical = assertNotNull(source.candidate.evidence).canonical()
+            val pending =
+                C5SelectedChoiceContexts.prepare(
+                    source,
+                    source.candidate.revision,
+                    source.version,
+                    sourceQuestion.id,
+                    if (click) "PM" else null,
+                    if (click) null else "  오후 7시입니다  ",
+                    NOW.get(),
+                )
+            if (click) assertNotNull(pending) else assertNull(pending)
+            NOW.set(NOW.get().plusSeconds(1))
+            val fields =
+                if (click) {
+                    mapOf("question_id" to sourceQuestion.id.toString(), "choice_id" to "PM")
+                } else {
+                    mapOf("question_id" to sourceQuestion.id.toString(), "direct_text" to "  오후 7시입니다  ")
+                }
+            mutate(room, guest, before, "answer", fields)
+            ACTION.set { PrecheckProviderResult(PrecheckVerdict.CLEAR) }
+            assertTrue(worker.runOne())
+            val derived = assertNotNull(checks.current(guest.id))
+            val accepted = assertNotNull(submissions.findByParticipant(ParticipantId(guest.id)))
+            val canonical = assertNotNull(accepted.latest.evidence).canonical()
+            if (click) {
+                assertNotNull(assertNotNull(pending).bind(derived, accepted))
+                assertFailsWith<IllegalArgumentException> {
+                    pending.bind(
+                        derived,
+                        Submission.restore(accepted.id, accepted.roomId, ParticipantId(UUID.randomUUID()), accepted.latest),
+                    )
+                }
+                assertFailsWith<IllegalArgumentException> {
+                    pending.bind(
+                        derived,
+                        Submission.restore(accepted.id, MeetingRoomId(UUID.randomUUID()), accepted.participantId, accepted.latest),
+                    )
+                }
+                assertFailsWith<IllegalArgumentException> {
+                    pending.bind(
+                        derived,
+                        Submission.restore(
+                            accepted.id,
+                            accepted.roomId,
+                            accepted.participantId,
+                            accepted.latest.copy(id = SubmissionVersionId(UUID.randomUUID())),
+                        ),
+                    )
+                }
+            }
+            assertEquals(canonical, assertNotNull(accepted.latest.evidence).canonical())
+            assertEquals(originalCanonical, assertNotNull(source.candidate.evidence).canonical())
+            assertEquals(RAW, accepted.latest.rawText)
+            assertEquals(
+                if (click) "오후" else "오후 7시입니다",
+                accepted.latest.evidence
+                    ?.supplement
+                    ?.answerText,
+            )
+            assertEquals(
+                if (click) "PM" else null,
+                accepted.latest.evidence
+                    ?.supplement
+                    ?.choiceId,
+            )
+            assertEquals(accepted, submissions.findByParticipant(ParticipantId(guest.id)))
+        }
+    }
+
+    @Test
+    fun `EX-SELECTED stale or historical capture fails and conflicting selected definitions are copied before mutation`() {
+        val room = room()
+        val guest = join(room)
+        ACTION.set {
+            question().copy(choices = listOf(PrecheckChoice("AM", "오전", "오후"), PrecheckChoice("PM", "오후", "오전")))
+        }
+        create(room, guest, RAW)
+        assertTrue(worker.runOne())
+        val before = current(room, guest)
+        val source = assertNotNull(checks.current(guest.id))
+        val sourceQuestion = assertNotNull(source.question)
+
+        fun prepare(
+            revision: Int = source.candidate.revision,
+            version: Long = source.version,
+            questionId: UUID = sourceQuestion.id,
+            choiceId: String? = "PM",
+            directText: String? = null,
+        ) = C5SelectedChoiceContexts.prepare(source, revision, version, questionId, choiceId, directText, NOW.get())
+        assertFailsWith<IllegalArgumentException> { prepare(revision = source.candidate.revision - 1) }
+        assertFailsWith<IllegalArgumentException> { prepare(version = source.version + 1) }
+        assertFailsWith<IllegalArgumentException> { prepare(questionId = UUID.randomUUID()) }
+        assertFailsWith<IllegalArgumentException> { prepare(choiceId = "missing") }
+        assertFailsWith<IllegalArgumentException> { prepare(directText = "오후") }
+        val mutableChoices = sourceQuestion.choices.toMutableList()
+        val captured =
+            assertNotNull(
+                C5SelectedChoiceContexts.prepare(
+                    source.copy(question = sourceQuestion.copy(choices = mutableChoices)),
+                    source.candidate.revision,
+                    source.version,
+                    sourceQuestion.id,
+                    "PM",
+                    null,
+                    NOW.get(),
+                ),
+            )
+        mutableChoices[1] = PrecheckChoice("PM", "mutated label", "mutated answer")
+        NOW.set(NOW.get().plusSeconds(1))
+        mutate(room, guest, before, "answer", mapOf("question_id" to sourceQuestion.id.toString(), "choice_id" to "PM"))
+        ACTION.set { PrecheckProviderResult(PrecheckVerdict.CLEAR) }
+        assertTrue(worker.runOne())
+        val derived = assertNotNull(checks.current(guest.id))
+        val accepted = assertNotNull(submissions.findByParticipant(ParticipantId(guest.id)))
+        assertNotNull(captured.bind(derived, accepted))
+        assertEquals(
+            "오전",
+            accepted.latest.evidence
+                ?.supplement
+                ?.answerText,
+        )
+        assertEquals("오후", sourceQuestion.choices.single { it.id == "PM" }.label)
+        assertFailsWith<IllegalArgumentException> {
+            C5SelectedChoiceContexts.prepare(
+                assertNotNull(checks.find(source.id)),
+                source.candidate.revision,
+                source.version + 1,
+                sourceQuestion.id,
+                "PM",
+                null,
+                NOW.get(),
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            captured.bind(derived.copy(candidate = derived.candidate.copy(sourceQuestionId = UUID.randomUUID())), accepted)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            captured.bind(derived.copy(candidate = derived.candidate.copy(ownerBinding = "foreign-owner")), accepted)
+        }
+        assertEquals(sourceQuestion, assertNotNull(checks.find(source.id)).question)
+        assertEquals(accepted, submissions.findByParticipant(ParticipantId(guest.id)))
     }
 
     private fun answer(

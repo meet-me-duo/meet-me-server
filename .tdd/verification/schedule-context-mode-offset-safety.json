@@ -1,0 +1,67 @@
+{
+  "verified_at": "2026-11-06T08:17:47.862241+00:00",
+  "base_sha": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "source_fingerprints": {
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslApprovedTermsProviderContract.kt": "7930ef4a09cbec6d397a89d80fd595ac6ec595241134562f3228dae0474feb93",
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModeProviderContract.kt": "6edf4976324a7c8a1047404d07feabb7292ba3f041494f67c2b27d0bc6248327",
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslProviderContract.kt": "c672f4c2237c6cfe1244c6e0f5aeaaa25e6b8f6ae92e0bfd4678dc252db2e248",
+    "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslRoomLocalTime.kt": "5a3a89a0f12cfb0c67edab619c15619468d34733bbdfab4c57f1e279df328be2",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModeOffsetContractTest.kt": "6a97fb3357a763dbf3638ef7bd8c91c28505186b2edd956c615abad565ff5bbc",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslContextModePromptChecklistTest.kt": "83e5ed43a2ded546a24cb7c9c22808c1a9db69665d1f9eb1a3934d43e60985a7",
+    "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslApprovedTermsOfflineEntryPointTest.kt": "52c3343bd59ce7eaebb4fc6bd290e1eb99afdb7c36507cb5c5c97ce60b1c5fdb"
+  },
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "ktlintCheck",
+    "assemble",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeOffsetContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModePromptChecklistTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslContextModeProviderContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.FinalOutboundInputBoundaryTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.cli.ScheduleDslApprovedTermsOfflineEntryPointTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.SelectedContextModeOperatingHttpPostgresTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeDateOnlyTest",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleDslContextModePostgresTest"
+  ],
+  "finished_at": "2026-11-06T08:03:27.093303+00:00",
+  "exit_code": 0,
+  "counts": {
+    "tests": 87,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "main_lint_assemble_passed": true,
+  "separate_fault_campaigns": {
+    "privacy_output_channels": 3,
+    "prompt_and_room_zone_guards": 2,
+    "all_detected": true
+  },
+  "legacy_byte_oracles_unchanged": true,
+  "automatic_evidence_or_AST_correction": false,
+  "model_quality_validated": false,
+  "whole_gate_success": false,
+  "previous_whole_counts": {
+    "tests": 3749,
+    "passed": 3730,
+    "failed": 2,
+    "skipped": 17
+  },
+  "new_paid_calls_here": 0,
+  "remote_writes_or_deploy": 0
+}

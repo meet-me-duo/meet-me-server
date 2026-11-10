@@ -1,0 +1,58 @@
+{
+  "workItem": "schedule-precheck-approved-terms-parity",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckTemporalVocabularyParityTest.kt",
+      "sha256": "8ad849239f1210f9c4851d2735aa0b156be7a43cde4daab216969c1bfe3363df"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-compact-prompt-contract-20261107/final-contract-verification-formatted.init.gradle",
+    "ktlintCheck",
+    "assemble",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralProviderContractTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsValidatorTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslApprovedTermsLegacyByteTest",
+    "--tests",
+    "com.meetme.server.submission.domain.dsl.ScheduleDslStructuralNormalizerTest",
+    "--tests",
+    "com.meetme.server.coordination.domain.dsl.ScheduleDslContextModeDateOnlyTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralRejectedProofTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralTermEvidenceContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleDslStructuralCompletionContractTest",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.integration.C5LunaReasoningWirePostgresTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckTemporalVocabularyParityTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.provider.EvidencePrecheckContractTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.provider.V2LabelRoutingContractTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.provider.TwoStagePrecheckCompositionTest",
+    "--tests",
+    "com.meetme.server.precheck.adapter.output.classification.JevAmbiguityClassificationTransportTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckTemporalVocabularyParityTest.PV01 Jev and Luna V2 share the complete approved eleven term baseline and twelve native lexemes()",
+    "com.meetme.server.precheck.adapter.output.provider.PrecheckTemporalVocabularyParityTest.PV02 V2 baseline keeps context explicit bounds unknown private facts and immutable scoped evidence separate()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-07T05:45:41.855736+00:00"
+}

@@ -1,0 +1,82 @@
+{
+  "workItem": "schedule-context-mode-cli",
+  "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "boundary": "Real private subprocess native CLI prepare/evaluate C4 and oldCLI compatibility; packaged fivefixture parity. No provider calls, DB or worker proof.",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslContextModeOfflineEntryPointTest.kt",
+      "sha256": "cdc662a5a4d453865c35faf66dbbcb2ce0041918f57daeae7ac3468d8bc395d8"
+    }
+  ],
+  "red": {
+    "workItem": "schedule-context-mode-cli",
+    "sourceRevision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+    "testFiles": [
+      {
+        "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/cli/ScheduleDslContextModeOfflineEntryPointTest.kt",
+        "sha256": "cdc662a5a4d453865c35faf66dbbcb2ce0041918f57daeae7ac3468d8bc395d8"
+      }
+    ],
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "./gradlew",
+      "--no-daemon",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "test",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextModeOfflineEntryPointTest"
+    ],
+    "failedTests": [
+      {
+        "test": "CMCLI01 actual prepare command preserves native sources questions vocabulary and explicit C4 identity()",
+        "reason": "org.opentest4j.AssertionFailedError: expected: <0> but was: <2>"
+      },
+      {
+        "test": "CMCLI02 actual evaluate command preserves contextual provenance and hard modes without disclosing native text()",
+        "reason": "org.opentest4j.AssertionFailedError: expected: <0> but was: <2>"
+      }
+    ],
+    "expectedFailureClassification": "Newly specified C4 CLI verbs are not registered and exit2; no syntax, configuration or fixture error",
+    "recordedAt": "2026-11-06T04:03:52.210082+00:00"
+  },
+  "green": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "/workspace/schedule-gradle-tools/run-clean.py",
+      "./gradlew",
+      "--no-daemon",
+      "--max-workers=2",
+      "-Dorg.gradle.jvmargs=-Xmx2g",
+      "-Pkotlin.daemon.jvmargs=-Xmx2g",
+      "ktlintCheck",
+      "assemble",
+      "test",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextModeOfflineEntryPointTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.cli.ScheduleDslOfflineEntryPointTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.cli.ScheduleDslContextOfflineEntryPointTest",
+      "--tests",
+      "com.meetme.server.coordination.adapter.input.cli.ScheduleDslApprovedTermsOfflineEntryPointTest"
+    ],
+    "finished_at": "2026-11-06T04:10:21.098648+00:00",
+    "exit_code": 0,
+    "xml_counts": {
+      "tests": 28,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "source_unchanged": true
+  },
+  "verificationSourceSha256": "5ef51dface8540b4f91804c64347e9aba28f989418070ab8e884487376cacb0d",
+  "remaining": "Final integrated code still requires focused service regressions, independent review/FI, aggregate, exact commit CI and family/example comparison. Historical full4 failures remain unresolved. Paid0.",
+  "independentTestDesign": "Separate native CLI test designer; unchanged subprocess full-output capture.",
+  "independentPackageReviewSha256": "59b3afdee805fb1e29d30ec5f71b9c7e12b0ba8d2c665d5083b60bf384dd17e9",
+  "packagedParityCases": 5,
+  "artifactSha256": "97ae9e5a71a755285686f75797dd3734f3270b6385a44b37d93d9f7826ff7bf3"
+}

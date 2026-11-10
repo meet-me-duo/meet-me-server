@@ -1,0 +1,38 @@
+{
+  "work_item": "schedule-c5-role-final-style",
+  "source_revision": "074f6d239ff92eb4917a46b30d0cba6ccf96ae5f",
+  "test_files": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslCalendarGroundingContractTest.kt",
+      "sha256": "6a60d6cd0462556b16ac8f33f6d649aa5bebdf26d4ec532425bb924c684fa05d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleDslRoleTypedExpressionContractTest.kt",
+      "sha256": "88003669bb833c85e48549a418517ba1ddd798cc12d3cf525645c31cf4ab6475"
+    }
+  ],
+  "command": [
+    "python3",
+    "/workspace/schedule-gradle-tools/run-clean.py",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "--init-script",
+    "/workspace/schedule-diagnosis-evidence/c5-role-typed-expression-contract-20261107/role-style-controls.init.gradle",
+    "roleFinalStyleBaseline",
+    "ktlintCheck",
+    "assemble"
+  ],
+  "failed_tests": [
+    "RT03 unresolved blocks and inferred preferences retain unknown clocks and existing availability policy()",
+    "RT06 marker absent raws retain original IDs ROLE refusal history and supersedes without repair()",
+    "RT04 nested CHOICE keeps explicit ownership including operands with another role()",
+    "RT02 ANY ALL and named operands retain exact exclusion and preference roles()",
+    "RT01 schema couples declared effects and qualified IDs with recursive root roles()",
+    "CG03 calendar metadata preserves native context vocabulary and response grammar without restricting output dates()"
+  ],
+  "expected_failure_classification": "preservedP9provider_finalstyle8cases6expectedFAIL2controlsPASS; original private logs and setup/collector issues preserved separately",
+  "recorded_at": "2026-11-07T11:56:42.272345+00:00"
+}

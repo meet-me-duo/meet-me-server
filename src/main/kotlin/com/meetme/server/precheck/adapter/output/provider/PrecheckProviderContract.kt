@@ -4,12 +4,17 @@ import com.meetme.server.precheck.adapter.output.classification.TemporalClarific
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
+import com.meetme.server.precheck.application.port.output.PrecheckResponseSizeContract
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
 import com.meetme.server.precheck.domain.PrecheckChoice
 import com.meetme.server.shared.adapter.output.aihttp.toProviderEvidence
+import tools.jackson.core.StreamReadConstraints
+import tools.jackson.core.json.JsonFactory
 import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.ObjectReader
+import tools.jackson.databind.json.JsonMapper
 import tools.jackson.databind.node.ObjectNode
 import java.util.Base64
 
@@ -19,6 +24,26 @@ internal class PrecheckProviderContract(
 ) {
     private val reader =
         mapper
+            .readerFor(JsonNode::class.java)
+            .with(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+    private val lunaSizes = PrecheckResponseSizeContract.LUNA_64_KIB_ENVELOPE_16_KIB_PAYLOAD
+    private val lunaReader =
+        JsonMapper
+            .builder(
+                JsonFactory
+                    .builder()
+                    .streamReadConstraints(
+                        StreamReadConstraints
+                            .builder()
+                            .maxNestingDepth(64)
+                            .maxTokenCount(32_768)
+                            .maxDocumentLength(lunaSizes.maximumEnvelopeBytes.toLong())
+                            .maxStringLength(lunaSizes.maximumEnvelopeBytes)
+                            .maxNumberLength(128)
+                            .maxNameLength(1024)
+                            .build(),
+                    ).build(),
+            ).build()
             .readerFor(JsonNode::class.java)
             .with(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY, DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
 
@@ -58,7 +83,8 @@ internal class PrecheckProviderContract(
 
     fun observeLunaUsage(bytes: ByteArray): UsageObservation =
         try {
-            val root: JsonNode = reader.readValue(bytes)
+            if (bytes.size > lunaSizes.maximumEnvelopeBytes) invalid()
+            val root: JsonNode = lunaReader.readValue(bytes)
             if (!root.isObject) invalid()
             val usage = root.path("usage")
             if (!nullOrMissing(usage) && !usage.isObject) invalid()
@@ -88,7 +114,8 @@ internal class PrecheckProviderContract(
         request: PrecheckProviderRequest,
     ): PrecheckProviderResult =
         try {
-            val root: JsonNode = reader.readValue(bytes)
+            if (bytes.size > lunaSizes.maximumEnvelopeBytes) invalid()
+            val root: JsonNode = lunaReader.readValue(bytes)
             if (!root.isObject || root.path("status").asText() != "completed") invalid()
             val output = root.path("output")
             if (!output.isArray) invalid()
@@ -108,6 +135,8 @@ internal class PrecheckProviderContract(
                 }
             }
             if (texts.size != 1) invalid()
+            val payloadBytes = texts.single().toByteArray(Charsets.UTF_8).size
+            if (payloadBytes > lunaSizes.maximumPayloadBytes) invalid()
             val usage = observeLunaUsage(bytes)
             val input = usage.tokens["INPUT"]
             val outputTokens = usage.tokens["OUTPUT"]
@@ -138,7 +167,14 @@ internal class PrecheckProviderContract(
             parse(
                 validationEnvelope,
                 request,
-            ).copy(outputTokens = outputTokens, responseBytes = bytes.size, provider = "OPENAI", model = "gpt-6-luna")
+                lunaReader,
+            ).copy(
+                outputTokens = outputTokens,
+                responseBytes = bytes.size,
+                provider = "OPENAI",
+                model = "gpt-6-luna",
+                responsePayloadBytes = payloadBytes,
+            )
         } catch (exception: PrecheckProviderException) {
             throw exception
         } catch (_: RuntimeException) {
@@ -231,9 +267,15 @@ internal class PrecheckProviderContract(
     fun parse(
         bytes: ByteArray,
         request: PrecheckProviderRequest,
+    ): PrecheckProviderResult = parse(bytes, request, reader)
+
+    private fun parse(
+        bytes: ByteArray,
+        request: PrecheckProviderRequest,
+        responseReader: ObjectReader,
     ): PrecheckProviderResult =
         try {
-            val envelope: JsonNode = reader.readValue(bytes)
+            val envelope: JsonNode = responseReader.readValue(bytes)
             val candidates = envelope.path("candidates")
             if (!envelope.isObject || !candidates.isArray || candidates.size() != 1) invalid()
             val candidate = candidates.get(0)
@@ -243,7 +285,7 @@ internal class PrecheckProviderContract(
             val part = parts.get(0)
             if (!part.isObject || part.propertyNames().toSet() !in setOf(setOf("text"), setOf("text", "thoughtSignature"))) invalid()
             validateThoughtSignature(part.path("thoughtSignature"))
-            val payload: JsonNode = reader.readValue(text(part.path("text")))
+            val payload: JsonNode = responseReader.readValue(text(part.path("text")))
             if (!payload.isObject || !payload.propertyNames().all { it in PAYLOAD_KEYS }) invalid()
             if (request.evidence != null && payload.propertyNames().toSet() != PAYLOAD_KEYS) invalid()
             val verdict = PrecheckVerdict.valueOf(text(payload.path("verdict")))

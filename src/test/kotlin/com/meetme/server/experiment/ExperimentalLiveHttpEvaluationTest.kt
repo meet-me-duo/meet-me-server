@@ -4,20 +4,27 @@ import com.meetme.server.MeetMeServerApplication
 import com.meetme.server.account.adapter.output.security.Rs256AccessTokenAdapter
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.domain.AccountPrincipal
+import com.meetme.server.coordination.adapter.output.integration.C5SelectedChoiceContextRun
+import com.meetme.server.coordination.adapter.output.integration.C5SelectedChoiceContexts
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserPort
 import com.meetme.server.precheck.adapter.output.provider.PrecheckProviderHttpTransport
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationPort
+import com.meetme.server.precheck.application.port.output.PrecheckRepository
 import com.meetme.server.shared.adapter.output.aihttp.AiHttpProviderStatusException
 import com.meetme.server.shared.adapter.output.persistence.JdbcAiBudgetExecutionFence
 import com.meetme.server.shared.application.port.output.AiBudgetReserveRequest
 import com.meetme.server.shared.application.port.output.AiRuntimeDispatchGuardPort
+import com.meetme.server.shared.domain.ParticipantId
+import com.meetme.server.submission.application.port.output.SubmissionRepository
+import com.meetme.server.submission.domain.SubmissionRules
 import okhttp3.Call
 import okhttp3.EventListener
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +36,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.GenericContainer
@@ -50,14 +58,14 @@ import java.time.Clock
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.CopyOnWriteArrayList
 
 /** Explicitly gated, test-classpath-only live experiment. No normal test starts a container or provider call. */
 @EnabledIfEnvironmentVariable(named = "MEETME_LIVE_EVAL", matches = "true")
 @SpringBootTest(classes = [MeetMeServerApplication::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(ExperimentalLiveHttpEvaluationTest.LiveFixtures::class)
+@Import(ExperimentalLiveHttpEvaluationTest.LiveFixtures::class, C5EvaluationSelectedProviders::class)
+@ActiveProfiles("c5-http-evaluation")
 class ExperimentalLiveHttpEvaluationTest {
     @LocalServerPort private var port: Int = 0
 
@@ -71,15 +79,380 @@ class ExperimentalLiveHttpEvaluationTest {
     private val roomResults = mutableListOf<Map<String, Any?>>()
     private var infrastructureBlock: Map<String, Any?>? = null
 
+    @Autowired private lateinit var application: org.springframework.context.ApplicationContext
+
+    @Autowired private lateinit var journal: C5HttpWireJournal
+
+    @Autowired private lateinit var nativeGate: com.meetme.server.shared.adapter.output.aihttp.AiHttpDispatchGate
+
+    @Autowired private lateinit var selectedAuthority: com.meetme.server.config.SelectedScheduleDslPhysicalAuthority
+
+    @Autowired private lateinit var originalRuntime: AiRuntimeDispatchGuardPort
+
     @Autowired private lateinit var safety: LiveEvaluationSafety
 
+    @Autowired private lateinit var selectedChoiceContextRun: C5SelectedChoiceContextRun
+
     @Test
+    @EnabledIfEnvironmentVariable(named = "MEETME_NATIVE_SCHEMA_COMPARE", matches = "true")
+    fun `accepted family final schema comparison uses one native Luna attempt`() {
+        val output = Path.of(required("MEETME_LIVE_OUTPUT"))
+        val source = Path.of(required("MEETME_NATIVE_ACCEPTED_RESULTS"))
+        val coherent = System.getProperty("meetme.experiment.schema-coherence") == "true"
+        require(cap == 1 && (coherent xor (System.getProperty("meetme.experiment.term-precision-schema") == "true")))
+        val manifest = json.readTree(Files.readAllBytes(Path.of(required("MEETME_LIVE_MANIFEST"))))
+        val remaining = requireNotNull(System.getProperty("meetme.experiment.new-remaining")).toInt()
+        require(remaining in 1..20 && remaining == manifest.path("globalRemainingBefore").asInt())
+        require(!selectedChoiceContextRun.enabled)
+        if (coherent) {
+            require(manifest.path("schemaCandidate").asText() == "COHERENT_TEMPORAL")
+            require(System.getProperty("meetme.experiment.provider-parity") == "true")
+            val expected = requireNotNull(System.getProperty("meetme.experiment.schema-coherence-expected"))
+            require(expected == manifest.path("expectedRequest").asText())
+            require(sha(Files.readAllBytes(Path.of(expected))) == manifest.path("expectedRequestSha256").asText())
+            require(
+                System.getProperty("meetme.experiment.schema-coherence-expected-sha") == manifest.path("expectedRequestSha256").asText(),
+            )
+        }
+        val baseline = Path.of(requireNotNull(System.getProperty("meetme.experiment.term-schema-baseline")))
+        LiveEvaluationCasePolicy.requireRecipientApproval(manifest, sha(Files.readAllBytes(baseline)), setOf("OpenAI"))
+        require(manifest.path("maximumPhysicalCalls").asInt() == 1)
+        require(manifest.path("acceptedResultsSha256").asText() == sha(Files.readAllBytes(source)))
+        val old = json.readTree(Files.readAllBytes(source)).path("database")
+        val room = old.path("meeting_rooms").single()
+        val roomId = UUID.fromString(room.path("id").asText())
+        val sourceVersions = old.path("submission_versions").values().toList()
+        require(sourceVersions.size == 4 && old.path("submission_heads").size() == 4)
+        journal.install(nativeGate)
+        journal.install(selectedAuthority.gate)
+        C5EvaluationCandidateProfile.requireLiveBindings(journal)
+        check(!application.containsBean("org.springframework.context.annotation.internalScheduledAnnotationProcessor"))
+        journal.arm(roomId)
+        val host = old.path("participants").single { it.path("role").asText() == "HOST" }
+        val hostAccount = UUID.fromString(host.path("user_id").asText())
+
+        fun timestamp(
+            node: JsonNode,
+            key: String,
+        ): java.sql.Timestamp = java.sql.Timestamp.valueOf(node.path(key).asText())
+        val transaction =
+            org.springframework.transaction.support.TransactionTemplate(
+                application.getBean(org.springframework.transaction.PlatformTransactionManager::class.java),
+            )
+        transaction.executeWithoutResult {
+            check(jdbc.queryForObject("SELECT count(*) FROM meeting_rooms", Int::class.java) == 0)
+            jdbc.update(
+                """INSERT INTO meeting_rooms(id,invite_code,purpose,meeting_mode,time_zone_id,search_start_date,search_end_date,
+                search_range_source,manual_only,collection_status,created_at,submission_protocol) VALUES (?,?,?,?,?,?,?,'HOST_SPECIFIED',true,'COLLECTING',?,'PRE_SUBMIT_V2')""",
+                roomId,
+                room.path("invite_code").asText(),
+                room.path("purpose").asText(),
+                room.path("meeting_mode").asText(),
+                room.path("time_zone_id").asText(),
+                java.sql.Date.valueOf(room.path("search_start_date").asText()),
+                java.sql.Date.valueOf(room.path("search_end_date").asText()),
+                timestamp(room, "created_at"),
+            )
+            old.path("participants").values().forEachIndexed { index, participant ->
+                val account =
+                    if (participant
+                            .path(
+                                "user_id",
+                            ).isString
+                    ) {
+                        UUID.fromString(participant.path("user_id").asText())
+                    } else {
+                        UUID.randomUUID()
+                    }
+                jdbc.update(
+                    "INSERT INTO account_users(id,display_name,created_at) VALUES (?,?,?)",
+                    account,
+                    "native-comparison-$index",
+                    timestamp(participant, "joined_at"),
+                )
+                jdbc.update(
+                    "INSERT INTO participants(id,room_id,user_id,role,display_name,joined_at) VALUES (?,?,?,?,?,?)",
+                    UUID.fromString(participant.path("id").asText()),
+                    roomId,
+                    account,
+                    participant.path("role").asText(),
+                    "native-comparison-$index",
+                    timestamp(participant, "joined_at"),
+                )
+            }
+            old.path("submission_heads").values().forEach { head ->
+                jdbc.update(
+                    "INSERT INTO submission_heads(id,room_id,participant_id) VALUES (?,?,?)",
+                    UUID.fromString(head.path("id").asText()),
+                    roomId,
+                    UUID.fromString(head.path("participant_id").asText()),
+                )
+            }
+            sourceVersions.forEach { version ->
+                jdbc.update(
+                    "INSERT INTO submission_versions(id,submission_id,revision,raw_text,locale,created_at,input_evidence) VALUES (?,?,?,?,?,?,CAST(? AS jsonb))",
+                    UUID.fromString(version.path("id").asText()),
+                    UUID.fromString(version.path("submission_id").asText()),
+                    version.path("revision").asInt(),
+                    version.path("raw_text").asText(),
+                    version.path("locale").asText(),
+                    timestamp(version, "created_at"),
+                    json.writeValueAsString(version.path("input_evidence")),
+                )
+            }
+            old.path("submission_heads").values().forEach { head ->
+                jdbc.update(
+                    "UPDATE submission_heads SET latest_version_id=? WHERE id=?",
+                    UUID.fromString(head.path("latest_version_id").asText()),
+                    UUID.fromString(head.path("id").asText()),
+                )
+            }
+        }
+        val bearer = "Bearer ${tokens.issue(AccountPrincipal(hostAccount, "native-comparison-host"))}"
+        val path = "/api/rooms/${room.path("invite_code").asText()}"
+        var failureClass: String? = null
+        val result =
+            linkedMapOf<String, Any?>(
+                "scope" to "DIRECT_FINAL_NATIVE_COMPARISON_NOT_NEW_E2E",
+                "skipped" to listOf("Jev", "question", "answer POST/recheck"),
+            )
+        try {
+            val closed = request("POST", "$path/close", bearer, body = mapOf("analysis_contract" to "DSL_STRUCTURAL_V5"))
+            result["closeStatus"] = closed.status
+            require(closed.status == 200)
+            val queued = jdbc.queryForMap("SELECT id,batch_id,status,version FROM coordination_runs WHERE room_id=?", roomId)
+            require(queued["status"] == "QUEUED")
+            val runId = queued.getValue("id") as UUID
+            val run =
+                com.meetme.server.shared.domain
+                    .CoordinationRunId(runId)
+            val started = System.nanoTime()
+            val deadline = started + Duration.ofSeconds(60).toNanos()
+            Files.writeString(
+                output.resolve("native-dispatch-start.json"),
+                json.writeValueAsString(
+                    mapOf(
+                        "at" to Instant.now().toString(),
+                        "runId" to runId,
+                        "batchId" to queued["batch_id"],
+                        "maximumPhysical" to 1,
+                    ),
+                ),
+                StandardOpenOption.CREATE_NEW,
+            )
+            application
+                .getBean(com.meetme.server.coordination.application.service.SelectedScheduleDslBatchProcessor::class.java)
+                .processLunaOnlyBounded(
+                    com.meetme.server.shared.domain
+                        .SubmissionBatchId(queued.getValue("batch_id") as UUID),
+                    deadline,
+                )
+            val state = jdbc.queryForMap("SELECT status,version FROM coordination_runs WHERE id=?", runId)
+            result["afterFinal"] = state
+            if (state["status"] == "MATCHING") {
+                val invocation =
+                    requireNotNull(
+                        application
+                            .getBean(
+                                com.meetme.server.coordination.application.port.output.AnalysisInvocationRepository::class.java,
+                            ).findLatestByRun(run),
+                    )
+                val route =
+                    requireNotNull(
+                        application
+                            .getBean(
+                                com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry::class.java,
+                            ).find(runId),
+                    )
+                result["matched"] =
+                    application
+                        .getBean(
+                            com.meetme.server.coordination.application.service.SelectedScheduleDslMatchingService::class.java,
+                        ).processBounded(
+                            com.meetme.server.coordination.application.port.output
+                                .FinalAnalysisAttemptBinding(route, invocation),
+                            requireNotNull(invocation.winnerAttemptId),
+                            (state.getValue("version") as Number).toLong(),
+                            { System.nanoTime() < deadline },
+                        )
+            }
+            result["productElapsedMs"] = (System.nanoTime() - started) / 1_000_000
+            result["nativeFinal"] = jdbc.queryForMap("SELECT id,status,version,candidate_quality FROM coordination_runs WHERE id=?", runId)
+            result["room"] = request("GET", path, bearer).body
+            result["candidates"] = request("GET", "$path/candidates?attendance_support=conditional-v1", bearer).body
+            result["unapplied"] = request("GET", "$path/candidates/unapplied-inputs", bearer).body
+            result["recommendations"] = request("GET", "$path/recommendations?attendance_support=conditional-v1", bearer).body
+            if (jdbc.queryForObject("SELECT count(*) FROM schedule_ir_envelopes WHERE run_id=?", Int::class.java, runId) == 1) {
+                val stored = jdbc.queryForMap("SELECT version FROM coordination_runs WHERE id=?", runId)
+                val route =
+                    requireNotNull(
+                        application
+                            .getBean(
+                                com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry::class.java,
+                            ).find(runId),
+                    )
+                result["storedReadRecalculation"] =
+                    application
+                        .getBean(
+                            com.meetme.server.coordination.application.service.ScheduleDslStoredReadService::class.java,
+                        ).readStored(run, (stored.getValue("version") as Number).toLong(), route.fingerprint())
+            }
+        } catch (failure: Throwable) {
+            failureClass = failure.javaClass.simpleName
+            throw AssertionError("Native final comparison stopped; inspect protected results ($failureClass)")
+        } finally {
+            Files.writeString(
+                output.resolve("results.json"),
+                redact(
+                    json.writerWithDefaultPrettyPrinter().writeValueAsString(
+                        mapOf(
+                            "result" to result,
+                            "failureClass" to failureClass,
+                            "httpEvents" to events,
+                            "database" to databaseEvidence(),
+                            "nativePhysicalJournal" to journal.snapshot(),
+                        ),
+                    ),
+                ),
+                StandardOpenOption.CREATE_NEW,
+            )
+        }
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "MEETME_LOCAL_FIRST_POST_DIAG", matches = "true")
+    fun `local first room POST collects in-flight evidence without provider access`() {
+        check(localFirstPostDiagnostic)
+        check(listOf("TYPESAFE_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY").all { System.getenv(it).isNullOrBlank() })
+        check(selectedAuthority.gate.properties.enabled)
+        check(
+            listOf("provider", "decision-routing", "classifier").all {
+                application.environment.getProperty("meetme.precheck.$it.enabled") == "false"
+            },
+        )
+        val output = Path.of(required("MEETME_LIVE_OUTPUT")).toAbsolutePath()
+        require(output.startsWith(Path.of("/workspace/scratch/live-eval")))
+        val samples = CopyOnWriteArrayList<Map<String, Any?>>()
+        val start = System.nanoTime()
+
+        fun sample(phase: String) {
+            val stacks =
+                Thread
+                    .getAllStackTraces()
+                    .entries
+                    .filter { it.key.name.contains("exec-") || it.key.name == "Test worker" }
+                    .associate { it.key.name to it.value.take(22).map(StackTraceElement::toString) }
+            val database =
+                runCatching {
+                    jdbc
+                        .queryForList(
+                            """
+                            SELECT pid, state, wait_event_type, wait_event, query_start, xact_start,
+                              pg_blocking_pids(pid)::text AS blocking_pids, left(query, 500) AS query
+                            FROM pg_stat_activity
+                            WHERE datname=current_database() AND pid<>pg_backend_pid()
+                            ORDER BY pid
+                            """.trimIndent(),
+                        ).map { row -> row.mapValues { (_, value) -> value?.toString() } }
+                }.getOrElse { listOf(mapOf("sampleFailureClass" to it.javaClass.simpleName)) }
+            samples +=
+                mapOf(
+                    "phase" to phase,
+                    "at" to Instant.now().toString(),
+                    "elapsedMsSinceDiagnosticStart" to (System.nanoTime() - start) / 1_000_000,
+                    "threadStacks" to stacks,
+                    "database" to database,
+                )
+        }
+        val principal = AccountPrincipal(UUID.randomUUID(), "Synthetic local diagnostic host")
+        jdbc.update(
+            "INSERT INTO account_users(id,display_name,created_at) VALUES (?,?,?)",
+            principal.accountId,
+            principal.displayName,
+            java.sql.Timestamp.from(referenceAt),
+        )
+        val host = "Bearer ${tokens.issue(principal)}"
+        val scheduler =
+            java.util.concurrent.Executors
+                .newSingleThreadScheduledExecutor()
+        var status: Int? = null
+        var failureClass: String? = null
+        val requestStart = System.nanoTime()
+        val tasks =
+            listOf(2L, 5L, 8L).map { delay ->
+                scheduler.schedule({ sample("IN_FLIGHT_${delay}s") }, delay, java.util.concurrent.TimeUnit.SECONDS)
+            }
+        try {
+            val room = payload.path("rooms").get(0)
+            val range = room.path("host").path("dateSearchRange")
+            val created =
+                request(
+                    "POST",
+                    "/api/rooms",
+                    host,
+                    body =
+                        mapOf(
+                            "purpose" to "Synthetic local first POST diagnosis",
+                            "meeting_mode" to "IN_PERSON",
+                            "manual_only" to true,
+                            "search_start_date" to range.path("startDate").asText(),
+                            "search_end_date" to LocalDate.parse(range.path("endDate").asText()).plusDays(1).toString(),
+                        ),
+                )
+            status = created.status
+            check(status == 201)
+        } catch (failure: Throwable) {
+            failureClass = failure.javaClass.simpleName
+            throw failure
+        } finally {
+            val clientElapsedMs = (System.nanoTime() - requestStart) / 1_000_000
+            tasks.forEach { it.cancel(false) }
+            scheduler.shutdown()
+            sample("CLIENT_END_BEFORE_FIXTURE_CLEANUP")
+            val report =
+                mapOf(
+                    "request" to "POST /api/rooms",
+                    "localTimeoutSeconds" to 10,
+                    "requestElapsedMs" to clientElapsedMs,
+                    "requestStartAfterDiagnosticStartMs" to (requestStart - start) / 1_000_000,
+                    "returnedStatus" to status,
+                    "failureClass" to failureClass,
+                    "providerKeysAbsent" to true,
+                    "providerFlagsDisabled" to true,
+                    "selectedNativeGuardUnchangedEnabled" to selectedAuthority.gate.properties.enabled,
+                    "nativePhysicalJournal" to journal.snapshot(),
+                    "httpEvents" to events,
+                    "visibleRoomCount" to jdbc.queryForObject("SELECT count(*) FROM meeting_rooms", Int::class.java),
+                    "samples" to samples.toList(),
+                )
+            Files.writeString(
+                output.resolve("local-first-post-diagnosis.json"),
+                json.writerWithDefaultPrettyPrinter().writeValueAsString(report),
+                StandardOpenOption.CREATE_NEW,
+            )
+        }
+    }
+
+    @Test
+    @DisabledIfEnvironmentVariable(named = "MEETME_LOCAL_FIRST_POST_DIAG", matches = "true")
     fun `explicitly approved blind payload traverses actual HTTP workers and providers once`() {
         val output = Path.of(required("MEETME_LIVE_OUTPUT")).toAbsolutePath()
         require(output.startsWith(Path.of("/workspace/scratch/live-eval")))
         Files.createDirectories(output)
+        Files.setPosixFilePermissions(
+            output,
+            java.nio.file.attribute.PosixFilePermissions
+                .fromString("rwx------"),
+        )
         Files.writeString(output.resolve("started"), Instant.now().toString(), StandardOpenOption.CREATE_NEW)
         val manifest = mapper.readTree(Files.readAllBytes(Path.of(required("MEETME_LIVE_MANIFEST"))))
+        LiveEvaluationCasePolicy.requireRecipientApproval(manifest, sha(payloadBytes), setOf("TypeSafeAI", "OpenAI", "GoogleGemini"))
+        payload.path("rooms").values().forEach(LiveEvaluationCasePolicy::roomSettings)
+        C5EvaluationCandidateProfile.verify()
+        require(payload.path("rooms").size() == 1 && cap <= 17) { "One approved family case, at most seventeen physical calls" }
+        journal.install(nativeGate)
+        journal.install(selectedAuthority.gate)
+        C5EvaluationCandidateProfile.requireLiveBindings(journal)
         require(manifest.path("approved").asBoolean(false))
         require(manifest.path("payloadSha256").asText() == sha(payloadBytes))
         require(manifest.path("maximumPhysicalCalls").asInt() == cap)
@@ -134,7 +507,7 @@ class ExperimentalLiveHttpEvaluationTest {
                     "notes" to
                         listOf(
                             "Classifier minimum confidence 0.8 is a fixed experimental setting, not a validated threshold.",
-                            "No answer is invented. Only an exact precommitted participant answer may be sent once.",
+                            "Answers are either exact precommitted oracle text or explicitly marked TEST_SYNTHETIC branches with expectations frozen before POST.",
                             "Host input is room purpose; host is not an additional availability respondent.",
                             "Payload inclusive search end is converted to the API exclusive end by adding one day.",
                             "Admission identities are an upper-bound guard, not proof that HTTP was sent.",
@@ -151,6 +524,7 @@ class ExperimentalLiveHttpEvaluationTest {
                     "parserResults" to parserResults.toList(),
                     "parserFailureEvents" to parserFailureEvents.toList(),
                     "physicalStageCounts" to physicalStageCounts(),
+                    "nativePhysicalJournal" to journal.snapshot(),
                     "database" to databaseEvidence(),
                 )
             Files.writeString(output.resolve("results.json"), redact(json.writerWithDefaultPrettyPrinter().writeValueAsString(report)))
@@ -212,7 +586,19 @@ class ExperimentalLiveHttpEvaluationTest {
         room: JsonNode,
         answers: JsonNode?,
     ) {
-        require(room.path("participants").size() in 3..4)
+        try {
+            runRoomWithChoiceContext(room, answers)
+        } finally {
+            selectedChoiceContextRun.clear()
+        }
+    }
+
+    private fun runRoomWithChoiceContext(
+        room: JsonNode,
+        answers: JsonNode?,
+    ) {
+        val settings = LiveEvaluationCasePolicy.roomSettings(room)
+        require(!selectedChoiceContextRun.enabled || settings.analysisContract == "DSL_STRUCTURAL_V5")
         val name = room.path("roomId").asText()
         val principal = AccountPrincipal(UUID.randomUUID(), "Synthetic live host $name")
         jdbc.update(
@@ -232,7 +618,7 @@ class ExperimentalLiveHttpEvaluationTest {
                 body =
                     mapOf(
                         "purpose" to sourceHost.path("input").asText(),
-                        "meeting_mode" to "EITHER",
+                        "meeting_mode" to settings.meetingMode,
                         "manual_only" to true,
                         "search_start_date" to range.path("startDate").asText(),
                         "search_end_date" to LocalDate.parse(range.path("endDate").asText()).plusDays(1).toString(),
@@ -241,6 +627,9 @@ class ExperimentalLiveHttpEvaluationTest {
         require(created.status == 201)
         val invite = created.body.path("invite_code").asText()
         require(invite.matches(Regex("[A-Za-z0-9_-]{22}")))
+        val actualRoomId = jdbc.queryForObject("SELECT id FROM meeting_rooms WHERE invite_code=?", UUID::class.java, invite)!!
+        selectedChoiceContextRun.begin(actualRoomId)
+        journal.arm(actualRoomId)
         val path = "/api/rooms/$invite"
         val result = linkedMapOf<String, Any?>("sourceRoomId" to name, "inviteCode" to invite, "created" to created.body)
         roomResults += result
@@ -292,6 +681,7 @@ class ExperimentalLiveHttpEvaluationTest {
             var answered = false
             if (answer != null) {
                 val current = snapshot.body
+                val pendingChoice = captureChoiceContext(actualRoomId, current, answer)
                 snapshot =
                     safety.guard {
                         val answeredResponse =
@@ -310,8 +700,7 @@ class ExperimentalLiveHttpEvaluationTest {
                                                 .path("question")
                                                 .path("id")
                                                 .asText(),
-                                        "direct_text" to answer,
-                                    ),
+                                    ) + answer.bodyFields(),
                             )
                         require(answeredResponse.status == 202)
                         answered = true
@@ -322,6 +711,30 @@ class ExperimentalLiveHttpEvaluationTest {
                                 .asText() !in setOf("QUEUED", "CHECKING", "")
                         }
                     }
+                if (pendingChoice != null) {
+                    val derived =
+                        requireNotNull(
+                            application
+                                .getBean(
+                                    PrecheckRepository::class.java,
+                                ).find(
+                                    UUID.fromString(
+                                        snapshot.body
+                                            .path("check")
+                                            .path("id")
+                                            .asText(),
+                                    ),
+                                ),
+                        )
+                    val accepted =
+                        requireNotNull(
+                            application
+                                .getBean(
+                                    SubmissionRepository::class.java,
+                                ).findByParticipant(ParticipantId(derived.candidate.participantId)),
+                        )
+                    selectedChoiceContextRun.record(pendingChoice.bind(derived, accepted))
+                }
             }
             participantResults +=
                 mapOf(
@@ -331,10 +744,24 @@ class ExperimentalLiveHttpEvaluationTest {
                     "finalSnapshot" to snapshot.body,
                 )
             stopAfterInfrastructureBarrier()
+            require(
+                snapshot.body
+                    .path("check")
+                    .path("status")
+                    .asText() in setOf("CLEAR", "RECEIVED"),
+            ) {
+                "Participant remains unresolved; do not close a partial cohort as a whole-family success"
+            }
         }
+        selectedChoiceContextRun.seal(actualRoomId)
         safety.guard {
             result["closed"] =
-                request("POST", "$path/close", host, body = mapOf("confirm_early" to true)).let {
+                request(
+                    "POST",
+                    "$path/close",
+                    host,
+                    body = LiveEvaluationCasePolicy.closeCommand(room),
+                ).let {
                     require(it.status == 200)
                     it.body
                 }
@@ -344,13 +771,44 @@ class ExperimentalLiveHttpEvaluationTest {
                         setOf("ANALYZING", "COLLECTING", "")
                 }.body
         }
-        val candidates = request("GET", "$path/candidates", host)
+        val candidates = request("GET", "$path/candidates?attendance_support=conditional-v1", host)
         result["candidatesStatus"] = candidates.status
         result["candidates"] = candidates.body
         result["unapplied"] = request("GET", "$path/candidates/unapplied-inputs", host).body
-        val recommendations = request("GET", "$path/recommendations", host)
+        val recommendations = request("GET", "$path/recommendations?attendance_support=conditional-v1", host)
         result["recommendationsStatus"] = recommendations.status
         result["recommendations"] = recommendations.body
+        if (recommendations.status == 200 && recommendations.body.path("protocol").asText() == "diverse-time-v1") {
+            val analysis = recommendations.body.path("analysis_id").asText()
+            val alternatives =
+                request(
+                    "GET",
+                    "$path/recommendations/alternatives?analysis_id=$analysis&limit=20&attendance_support=conditional-v1",
+                    host,
+                )
+            result["alternativesStatus"] = alternatives.status
+            result["alternatives"] = alternatives.body
+            check(alternatives.status == 200) { "Conditional-capable alternatives request failed" }
+        }
+        val storedRun =
+            jdbc.queryForMap(
+                "SELECT id,version FROM coordination_runs WHERE room_id=? ORDER BY created_at DESC LIMIT 1",
+                actualRoomId,
+            )
+        val storedRunId = storedRun.getValue("id") as UUID
+        val storedRoutes =
+            application.getBean(
+                com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry::class.java,
+            )
+        val storedRoute = requireNotNull(storedRoutes.find(storedRunId))
+        val stored = application.getBean(com.meetme.server.coordination.application.service.ScheduleDslStoredReadService::class.java)
+        result["freshJdbcRestoreAndRecalculation"] =
+            stored.readStored(
+                com.meetme.server.shared.domain
+                    .CoordinationRunId(storedRunId),
+                (storedRun.getValue("version") as Number).toLong(),
+                storedRoute.fingerprint(),
+            )
         safety.requireCompletedAnalysis(
             (result["roomAfterAnalysis"] as? JsonNode)?.path("public_status")?.asText(),
             candidates.status,
@@ -369,7 +827,7 @@ class ExperimentalLiveHttpEvaluationTest {
                 val selected =
                     request(
                         "POST",
-                        "$path/recommendations/${option.path("option_id").asText()}/confirmation",
+                        "$path/recommendations/${option.path("option_id").asText()}/confirmation?attendance_support=conditional-v1",
                         host,
                         body =
                             mapOf(
@@ -381,7 +839,10 @@ class ExperimentalLiveHttpEvaluationTest {
                     )
                 result["selectionStatus"] = selected.status
                 result["selection"] = selected.body
-                result["confirmedResult"] = request("GET", "$path/result", host).body
+                val confirmed = request("GET", "$path/result?attendance_support=conditional-v1", host)
+                result["confirmedResultStatus"] = confirmed.status
+                result["confirmedResult"] = confirmed.body
+                safety.requireCompletedSelection(selected.status, confirmed.status)
             } else {
                 result["selectionSkipped"] = "First observed recommendation does not fit the payload meeting duration"
             }
@@ -393,6 +854,40 @@ class ExperimentalLiveHttpEvaluationTest {
 
     private fun stopAfterInfrastructureBarrier() = safety.checkpoint()
 
+    private fun captureChoiceContext(
+        roomId: UUID,
+        snapshot: JsonNode,
+        answer: LiveEvaluationSyntheticAnswer,
+    ): C5SelectedChoiceContexts.Pending? {
+        if (!selectedChoiceContextRun.enabled || answer.choiceId == null) return null
+        val state = snapshot.path("check")
+        val source = requireNotNull(application.getBean(PrecheckRepository::class.java).find(UUID.fromString(state.path("id").asText())))
+        require(source.candidate.roomId == roomId && source.candidate.rawText == snapshot.path("candidate").path("raw_text").asText())
+        val pending =
+            requireNotNull(
+                C5SelectedChoiceContexts.prepare(
+                    source,
+                    snapshot.path("candidate").path("revision").asInt(),
+                    state.path("version").asLong(),
+                    UUID.fromString(state.path("question").path("id").asText()),
+                    answer.choiceId,
+                    null,
+                    application.getBean(Clock::class.java).instant(),
+                ),
+            )
+        val option =
+            state
+                .path("question")
+                .path("options")
+                .values()
+                .single { it.path("id").asText() == answer.choiceId }
+        require(pending.source.question?.prompt == state.path("question").path("text").asText())
+        require(pending.selected.label == option.path("text").asText())
+        require(pending.selected.proposedText == option.path("proposed_text").asText())
+        require(SubmissionRules.trimRawText(pending.selected.proposedText) == answer.answer)
+        return pending
+    }
+
     private fun answerOracle(
         answers: JsonNode?,
         roomId: String,
@@ -400,6 +895,9 @@ class ExperimentalLiveHttpEvaluationTest {
     ): JsonNode? {
         if (answers == null) return null
         require(answers.path("answerPolicy").path("maximumQuestionsPerParticipant").asInt() == 1)
+        if (answers.path("answerPolicy").path("mode").asText() == "TEST_SYNTHETIC") {
+            return json.createObjectNode().put("mode", "TEST_SYNTHETIC")
+        }
         val rooms = answers.path("rooms")
         require(rooms.isArray)
         val room = rooms.values().single { it.path("roomId").asText() == roomId }
@@ -416,7 +914,7 @@ class ExperimentalLiveHttpEvaluationTest {
         participantId: String,
         snapshot: JsonNode,
         oracle: JsonNode,
-    ): String? {
+    ): LiveEvaluationSyntheticAnswer? {
         val question = snapshot.path("check").path("question")
         val questionId = UUID.fromString(question.path("id").asText()).toString()
         val routing = Path.of(required("MEETME_LIVE_OUTPUT")).resolve("question-routing")
@@ -435,10 +933,44 @@ class ExperimentalLiveHttpEvaluationTest {
                 "question" to question,
                 "originalInput" to snapshot.path("candidate").path("raw_text"),
                 "oracleFileSha256" to oracleSha,
-                "allowedDecisionFields" to listOf("directAnswer", "offTopicResponse"),
-                "policy" to "A question about submitted date/time/boundaries/availability/preferences/location is relevant; " +
-                    "unrelated or undisclosed facts, new availability or constraints are off topic. " +
-                    "Choose one exact oracle field; never rewrite.",
+                "allowedDecisionFields" to
+                    if (oracle.path("mode").asText() == "TEST_SYNTHETIC") {
+                        listOf(
+                            "mode",
+                            "questionId",
+                            "questionSha256",
+                            "sourceSha256",
+                            "revision",
+                            "checkVersion",
+                            "questionConsistent",
+                            "answer",
+                            "expectedOutcome",
+                        ) + if (selectedChoiceContextRun.enabled) listOf("submissionPath", "choiceId") else emptyList()
+                    } else {
+                        listOf("directAnswer", "offTopicResponse")
+                    },
+                "syntheticAnswerMode" to (oracle.path("mode").asText() == "TEST_SYNTHETIC"),
+                "questionSha256" to sha(mapper.writeValueAsBytes(question)),
+                "sourceSha256" to
+                    sha(
+                        snapshot
+                            .path("candidate")
+                            .path("raw_text")
+                            .asText()
+                            .toByteArray(Charsets.UTF_8),
+                    ),
+                "revision" to snapshot.path("candidate").path("revision").asLong(),
+                "checkVersion" to snapshot.path("check").path("version").asLong(),
+                "policy" to
+                    if (oracle.path("mode").asText() == "TEST_SYNTHETIC") {
+                        "Read the actual input and question; stop on contradictions. " +
+                            "Prepare a test-only answer and expected outcome before POST. " +
+                            "This is not a participant fact. Keep every question/source hash and revision exact."
+                    } else {
+                        "A question about submitted date/time/boundaries/availability/preferences/location is relevant; " +
+                            "unrelated or undisclosed facts, new availability or constraints are off topic. " +
+                            "Choose one exact oracle field; never rewrite."
+                    },
             )
         Files.writeString(pending, json.writerWithDefaultPrettyPrinter().writeValueAsString(description), StandardOpenOption.CREATE_NEW)
         val cutoff = System.nanoTime() + Duration.ofSeconds(120).toNanos()
@@ -457,8 +989,38 @@ class ExperimentalLiveHttpEvaluationTest {
             Thread.sleep(250)
         }
         val decisionBytes = Files.readAllBytes(decisionFile)
-        require(decisionBytes.size <= 1024)
+        require(decisionBytes.size <= if (oracle.path("mode").asText() == "TEST_SYNTHETIC") 32768 else 1024)
         val decision = json.readTree(decisionBytes)
+        if (oracle.path("mode").asText() == "TEST_SYNTHETIC") {
+            require(sha(Files.readAllBytes(oracleFile)) == oracleSha)
+            val synthetic =
+                LiveEvaluationCasePolicy.syntheticAnswer(
+                    decision,
+                    snapshot,
+                    snapshot.path("candidate").path("raw_text").asText(),
+                    allowChoice = selectedChoiceContextRun.enabled,
+                )
+            val frozen =
+                mapOf(
+                    "questionId" to questionId,
+                    "mode" to "TEST_SYNTHETIC_NOT_PARTICIPANT_FACT",
+                    "decisionSha256" to sha(decisionBytes),
+                    "sourceSha256" to decision.path("sourceSha256").asText(),
+                    "revision" to decision.path("revision").asLong(),
+                    "checkVersion" to decision.path("checkVersion").asLong(),
+                    "answerSha256" to sha(synthetic.answer.toByteArray(Charsets.UTF_8)),
+                    "submissionPath" to if (synthetic.choiceId == null) "direct_text" else "choice_id",
+                    "expectedOutcome" to synthetic.expectedOutcome,
+                    "frozenBeforeAnswerPostAt" to Instant.now().toString(),
+                ) + (synthetic.choiceId?.let { mapOf("choiceId" to it) } ?: emptyMap())
+            Files.writeString(
+                routing.resolve("$questionId.expected-before-post.json"),
+                json.writerWithDefaultPrettyPrinter().writeValueAsString(frozen),
+                StandardOpenOption.CREATE_NEW,
+            )
+            answerRouting += frozen + mapOf("roomId" to roomId, "participantId" to participantId, "decision" to "TEST_SYNTHETIC")
+            return synthetic
+        }
         require(decision.isObject && decision.propertyNames().toSet() == setOf("questionId", "field"))
         require(decision.path("questionId").asText() == questionId)
         val field = decision.path("field").asText()
@@ -475,7 +1037,7 @@ class ExperimentalLiveHttpEvaluationTest {
                 "decisionFileSha256" to sha(decisionBytes),
                 "responseTextSha256" to sha(text.toByteArray(Charsets.UTF_8)),
             )
-        return text
+        return LiveEvaluationSyntheticAnswer(text, "PRECOMMITTED_ORACLE:$field")
     }
 
     private data class Response(
@@ -560,6 +1122,12 @@ class ExperimentalLiveHttpEvaluationTest {
     private fun databaseEvidence(): Map<String, Any?> =
         listOf(
             "meeting_rooms",
+            "participants",
+            "submission_heads",
+            "schedule_ir_envelopes",
+            "schedule_ir_inputs",
+            "schedule_ir_execution_bindings",
+            "final_analysis_routes",
             "precheck_candidates",
             "precheck_checks",
             "precheck_executions",
@@ -603,13 +1171,34 @@ class ExperimentalLiveHttpEvaluationTest {
         private val dispatchAdmission: (AiBudgetReserveRequest) -> Boolean = ::admit,
     ) {
         @Bean
+        fun nativeComparisonBackgroundStop(): org.springframework.beans.factory.config.BeanFactoryPostProcessor =
+            org.springframework.beans.factory.config.BeanFactoryPostProcessor { factory ->
+                if (System.getenv("MEETME_NATIVE_SCHEMA_COMPARE") == "true") {
+                    val registry = factory as org.springframework.beans.factory.support.BeanDefinitionRegistry
+                    val name = "org.springframework.context.annotation.internalScheduledAnnotationProcessor"
+                    if (registry.containsBeanDefinition(name)) registry.removeBeanDefinition(name)
+                }
+            }
+
+        @Bean
         fun liveEvaluationSafety(jdbc: JdbcTemplate): LiveEvaluationSafety = LiveEvaluationSafety { safetySignals(jdbc) }
+
+        @Bean
+        fun familyCaseWireJournal(): C5HttpWireJournal =
+            C5HttpWireJournal(
+                Path.of(required("MEETME_LIVE_OUTPUT")),
+                maximumPhysicalCalls = cap,
+                carriedRemaining = 0,
+                newRemaining = System.getProperty("meetme.experiment.new-remaining", "20").toInt(),
+                priorJevUpperBound = java.math.BigDecimal("0.04072887"),
+                secretValues = listOf("TYPESAFE_API_KEY", "OPENAI_API_KEY", "GEMINI_API_KEY").mapNotNull(System::getenv),
+            )
 
         @Bean
         fun liveEvaluationAdmission(safety: LiveEvaluationSafety): LiveEvaluationAdmission = LiveEvaluationAdmission(safety)
 
         @Bean @Primary
-        fun liveReferenceClock(): Clock = Clock.fixed(referenceAt, ZoneOffset.UTC)
+        fun liveReferenceClock(): Clock = LiveEvaluationCasePolicy.progressingClock(referenceAt, Clock.systemUTC())
 
         @Bean @Primary
         fun liveSyntheticTokens(clock: Clock): AccessTokenPort =
@@ -628,13 +1217,31 @@ class ExperimentalLiveHttpEvaluationTest {
         fun boundedActualDispatch(
             delegate: JdbcAiBudgetExecutionFence,
             admission: LiveEvaluationAdmission,
-        ): AiRuntimeDispatchGuardPort =
-            AiRuntimeDispatchGuardPort { request, at ->
-                admission.authorize({ delegate.authorize(request, at) }) { dispatchAdmission(request) }
+            journal: C5HttpWireJournal? = null,
+        ): AiRuntimeDispatchGuardPort {
+            journal?.sourceFenceConnected()
+            return AiRuntimeDispatchGuardPort { request, at ->
+                val original = delegate.authorize(request, at)
+                if (original == null) {
+                    null
+                } else {
+                    journal?.registerOriginalGrant(request)
+                    if (journal != null &&
+                        request.execution.kind ==
+                        com.meetme.server.shared.application.port.output.AiBudgetExecutionKind.FINAL_ANALYSIS
+                    ) {
+                        // Only the current native final operation owns its bounded retries/fallback.
+                        // The original fence and physical caps still authorize every child request.
+                        if (dispatchAdmission(request)) original else null
+                    } else {
+                        admission.authorize({ original }) { dispatchAdmission(request) }
+                    }
+                }
             }
+        }
 
         @Bean
-        fun observedActualPrecheckTransport(): PrecheckProviderHttpTransport =
+        fun observedActualPrecheckTransport(journal: C5HttpWireJournal? = null): PrecheckProviderHttpTransport =
             PrecheckProviderHttpTransport(
                 OkHttpClient
                     .Builder()
@@ -676,7 +1283,12 @@ class ExperimentalLiveHttpEvaluationTest {
                         val stage = wireStage(chain.request().url.host, chain.request().url.encodedPath)
                         val event = requireNotNull(precheckCalls[chain.call()])
                         try {
+                            if (journal != null) {
+                                val bytes = okio.Buffer().also { chain.request().body!!.writeTo(it) }.readByteArray()
+                                journal.captureRequest(journal.currentCall(), bytes)
+                            }
                             val response = chain.proceed(chain.request())
+                            journal?.let { it.captureResponse(it.currentCall(), response.peekBody(262145).bytes()) }
                             event["httpStatus"] = response.code
                             // Successful bounded response only; never retain error bodies or credentials.
                             if (response.code == 200) {
@@ -694,6 +1306,9 @@ class ExperimentalLiveHttpEvaluationTest {
                             response
                         } catch (failure: Exception) {
                             event["failureKind"] = failure.javaClass.simpleName
+                            if (failure is AiHttpProviderStatusException) {
+                                journal?.let { it.captureResponse(it.currentCall(), failure.responseBytes) }
+                            }
                             throw failure
                         }
                     }.build(),
@@ -775,21 +1390,32 @@ class ExperimentalLiveHttpEvaluationTest {
                     ).forEach { row ->
                         add(LiveEvaluationSignal("PRECHECK", parserFailureCode = row["failure_code"] as? String))
                     }
+                val recoveredFinal =
+                    jdbc.queryForObject(
+                        "SELECT count(*) FROM coordination_runs r JOIN analysis_invocations i ON i.coordination_run_id=r.id " +
+                            "WHERE r.status='COMPLETED' AND i.winner_attempt_id IS NOT NULL",
+                        Int::class.java,
+                    )!! > 0
                 jdbc
                     .queryForList(
                         "SELECT a.provider,a.failure_code,c.http_status FROM coordination_attempts a " +
                             "LEFT JOIN parser_transport_client_calls c ON c.attempt_id=a.id ORDER BY a.started_at,a.attempt_number",
                     ).forEach { row ->
-                        add(
-                            LiveEvaluationSignal(
-                                if (row["provider"] == "OPENAI") "FINAL_FALLBACK" else "FINAL_PRIMARY",
-                                httpStatus = row["http_status"] as? Int,
-                                parserFailureCode = row["failure_code"] as? String,
-                            ),
-                        )
+                        // Errors remain in the journal/database; a completed bounded operation has recovered.
+                        // An unsuccessful operation still blocks the next driver step.
+                        if (!recoveredFinal) {
+                            add(
+                                LiveEvaluationSignal(
+                                    if (row["provider"] == "OPENAI") "FINAL_FALLBACK" else "FINAL_PRIMARY",
+                                    httpStatus = row["http_status"] as? Int,
+                                    parserFailureCode = row["failure_code"] as? String,
+                                ),
+                            )
+                        }
                     }
             }
 
+        private val localFirstPostDiagnostic = System.getenv("MEETME_LOCAL_FIRST_POST_DIAG") == "true"
         private const val ORIGIN = "http://localhost:18931"
         private val mapper = JsonMapper.builder().build()
         private val keys by lazy { KeyPairGenerator.getInstance("RSA").apply { initialize(2048) }.generateKeyPair() }
@@ -888,9 +1514,9 @@ class ExperimentalLiveHttpEvaluationTest {
                 "meetme.reliability.enabled" to "true",
                 "meetme.rate-limit.enabled" to "false",
                 "meetme.data-retention.enabled" to "false",
-                "meetme.precheck.provider.enabled" to "true",
-                "meetme.precheck.decision-routing.enabled" to "true",
-                "meetme.precheck.classifier.enabled" to "true",
+                "meetme.precheck.provider.enabled" to (!localFirstPostDiagnostic).toString(),
+                "meetme.precheck.decision-routing.enabled" to (!localFirstPostDiagnostic).toString(),
+                "meetme.precheck.classifier.enabled" to (!localFirstPostDiagnostic).toString(),
                 "meetme.precheck.classifier.minimum-confidence" to "0.8",
                 "meetme.ai.budget.enabled" to "false",
                 "meetme.precheck.evidence-enabled" to "true",
@@ -901,7 +1527,7 @@ class ExperimentalLiveHttpEvaluationTest {
                 "openai" to "OPENAI_API_KEY",
                 "typesafe" to "TYPESAFE_API_KEY",
             ).forEach { (provider, env) ->
-                registry.add("meetme.$provider.api-key") { required(env) }
+                registry.add("meetme.$provider.api-key") { if (localFirstPostDiagnostic) "" else required(env) }
             }
         }
 

@@ -1,0 +1,29 @@
+{
+  "workItem": "travel-place-duration-boundaries",
+  "sourceRevision": "d6412c1df50445b44408f3286d5b32e43e5ee4b8",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TravelPlaceDurationBoundaryTest.kt",
+      "sha256": "5b82c3c629f5bd2fdcdf039648925cd79222bc5c12c694128482bf68c75188dc"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TravelPlaceDurationBoundaryTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationBoundaryTest.[1] duration = \"-45\ubd84\", proposedMinutes = \"45\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationBoundaryTest.[2] duration = \"+45\ubd84\", proposedMinutes = \"45\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationBoundaryTest.[4] duration = \"\uc2a4\ubb3c\ud55c\uc2dc\uac04\", proposedMinutes = \"60\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationBoundaryTest.[5] duration = \"\ub9c8\ud754\ud55c\uc2dc\uac04\", proposedMinutes = \"60\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationBoundaryTest.[6] duration = \"45\ubd8430\ucd08\", proposedMinutes = \"45\"",
+    "com.meetme.server.submission.domain.dsl.TravelPlaceDurationBoundaryTest.[7] duration = \"1\uc2dc\uac0430\ucd08\", proposedMinutes = \"60\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-09T15:15:53.047979+00:00",
+  "evidenceNote": "Independent additional boundary tests: unsupported native duration was partially accepted, or opt-in provider body omitted the new schema/instructions and accepted unsupported parity. Existing complete-token/default contracts already pass."
+}

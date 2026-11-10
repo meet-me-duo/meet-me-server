@@ -1,0 +1,40 @@
+{
+  "workItem": "schedule-product-ir-current-quote",
+  "sourceRevision": "856cdad8adee1cf0b97ece1ab7686af9c2b9e8de",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrValidationBoundaryTest.kt",
+      "sha256": "9e8e2b69d15a17980a93af15973bb37b9c054bb58dc4f56074e4e3f96873c8bb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/ir/ScheduleIrValidatorTest.kt",
+      "sha256": "cc0a7332cb0bec2ec5d90353f7db0fd35595b6caea25a601625d66fcc5c4cc07"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ScheduleIrProviderContractTest.kt",
+      "sha256": "bd5935a2ca3802e8fced64457e34705bf0c70456a72443a8a18a26a1b8ba6244"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Dorg.gradle.jvmargs=-Xmx2g",
+    "-Pkotlin.daemon.jvmargs=-Xmx2g",
+    "test",
+    "--tests",
+    "*ScheduleIrValidatorTest",
+    "--tests",
+    "*ScheduleIrValidationBoundaryTest",
+    "--tests",
+    "*ScheduleIrProviderContractTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.submission.domain.ir.ScheduleIrValidationBoundaryTest.server generated availability diagnosis does not consume provider condition budget on restoration()",
+    "com.meetme.server.submission.domain.ir.ScheduleIrValidatorTest.[1] defect = \"wrong_quote\"",
+    "com.meetme.server.submission.domain.ir.ScheduleIrValidatorTest.[7] defect = \"utf16_offset\"",
+    "com.meetme.server.coordination.adapter.output.integration.ScheduleIrProviderContractTest.[1] defect = \"quote\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-04T18:22:53.539869Z"
+}
