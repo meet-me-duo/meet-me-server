@@ -11,7 +11,15 @@ const script19 = 'V19__add_confirmed_result_reviews.sql';
 const script20 = 'V20__add_account_room_history_index.sql';
 const scripts = [...f.scripts, script18, script19, script20];
 assert.equal(scripts.length, 20);
-const currentScripts = [...scripts, 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql'];
+const currentScripts = [...scripts, 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql',
+  'V24__add_versioned_schedule_ir.sql',
+  'V25__add_ir_execution_bindings.sql',
+  'V26__add_final_analysis_routes.sql',
+  'V27__add_approved_terms_final_analysis_route.sql',
+  'V28__add_context_mode_final_analysis_route.sql',
+  'V29__add_structural_final_analysis_route.sql',
+  'V30__add_c5_residual_luna_policy.sql',
+  'V31__allow_explicit_c5_direct_luna.sql'];
 
 function release(version = 20) {
   const result = f.manifest();
@@ -29,7 +37,7 @@ function fixture() {
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
   return value;
 }
-function schema(value, version = 23) {
+function schema(value, version = 31) {
   return currentScripts.slice(0, version).map((script, i) => ({ version: String(i + 1), script,
     sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
 }
@@ -64,10 +72,10 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V20R01 actual candidate publisher retains V20 in exact V23 and independently binds CRC SQL SHA and guard SHA', () => {
+test('V20R01 actual candidate publisher retains V20 in exact V31 and independently binds CRC SQL SHA and guard SHA', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V23 candidate publication must be supported');
+    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V31 candidate publication must be supported');
     assert.deepEqual(built.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value))));

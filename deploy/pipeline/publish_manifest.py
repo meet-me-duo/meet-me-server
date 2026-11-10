@@ -42,6 +42,14 @@ MIGRATION_SCRIPTS = (
     'V21__add_submission_input_evidence.sql',
     'V22__preserve_unverified_candidate_place.sql',
     'V23__add_account_room_archive_hidden_at.sql',
+    'V24__add_versioned_schedule_ir.sql',
+    'V25__add_ir_execution_bindings.sql',
+    'V26__add_final_analysis_routes.sql',
+    'V27__add_approved_terms_final_analysis_route.sql',
+    'V28__add_context_mode_final_analysis_route.sql',
+    'V29__add_structural_final_analysis_route.sql',
+    'V30__add_c5_residual_luna_policy.sql',
+    'V31__allow_explicit_c5_direct_luna.sql',
 )
 
 

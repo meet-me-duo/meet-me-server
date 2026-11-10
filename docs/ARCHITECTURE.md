@@ -449,6 +449,7 @@ Google Calendar에서 수집한 일정과 자연어에서 구조화한 장소 �
 
 ### 운영 환경
 
+- V5 인계 통합의 현재 발행 SQL 목록은 정확한 V1–V31이다. 과거 완성 릴리스의 reader 계약을 유지하며 미발행 V24–V30 중간 목록은 완성 릴리스로 승인하지 않는다. V23에서의 전환은 기존 DB 이력·SQL checksum·guard 검증과 보호된 전환 승인을 거친다. 배포된 reader 지원과 신규 분석의 계약 선택·실험 옵션 활성화는 별도이며 기존 frozen 실행은 변경하지 않는다.
 - PostgreSQL은 Amazon RDS for PostgreSQL을 사용한다.
 - AWS 인프라는 Terraform으로 생성하고 변경한다.
 - 운영 domain은 `meet-me.co.kr`이며 프론트엔드는 `https://app.meet-me.co.kr`, API는 `https://api.meet-me.co.kr`를 사용한다. 루트 domain은 프론트엔드로 연결한다.

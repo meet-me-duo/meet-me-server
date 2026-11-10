@@ -113,6 +113,9 @@ jobs:
       - name: Verify exact personal room archive release catalog
         run: node --test .github/scripts/v23-account-room-hide-release-catalog.test.cjs
 
+      - name: Verify exact versioned analysis release catalog
+        run: node --test .github/scripts/v31-analysis-release-catalog.test.cjs
+
   built-image:
     name: ARM64 Built Image
     runs-on: ubuntu-latest

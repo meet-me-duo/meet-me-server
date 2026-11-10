@@ -1,4 +1,4 @@
-"""OA01 production AI activation: immutable V1-V20 history and approved V21/V22/V23 integration.
+"""OA01 production AI activation: immutable V1-V18 history and exact approved V31 integration.
 
 Only local temporary files and a fake aws executable are used; no credential,
 SSM, provider, deployment, configuration activation or Gradle process is called.
@@ -69,8 +69,8 @@ HISTORICAL_SHA256 = {
 }
 
 # Accepted review release inventory, fixed independently of production catalogs.
-# V1-V20 remain immutable history; reviewed V21/V22/V23 preserve input evidence, place uncertainty and personal archive visibility.
-# See docs/verification/confirmed-review-release-20261028.md and ADR-062.
+# Historical V1-V18 hashes remain fixed; the approved current inventory includes reviewed analysis migrations through V31.
+# V24-V31 names and immutable SQL hashes are independently fixed by the reviewed V31 release contract.
 CURRENT_SUPPORTED_SHA256 = {
     **HISTORICAL_SHA256,
     "V19__add_confirmed_result_reviews.sql": "b5e55df55f97f754239653252862e6631c570f1a724b05b063d8320826d5109f",
@@ -78,6 +78,14 @@ CURRENT_SUPPORTED_SHA256 = {
     "V21__add_submission_input_evidence.sql": "e641594b3637bb1979030da05336ae1aa3307e3d7a6f6f813fde7673bd34f3ed",
     "V22__preserve_unverified_candidate_place.sql": "2e2aa1711a33676ea41801b64f93c0ed2d946105797724a288399097ffc6fcd6",
     "V23__add_account_room_archive_hidden_at.sql": "b7f80b12785446d8241f7c42ca73acb0599ea3f874e1d1293097ee929c6d9e31",
+    "V24__add_versioned_schedule_ir.sql": "a0a6ddd539a11d6aa6270735c42cde27e9b5212b960fbc6207e306f497da2535",
+    "V25__add_ir_execution_bindings.sql": "f327bfc4db87298549f21f89760832ca0207a3c2eebd9acb459655ec5d93ef04",
+    "V26__add_final_analysis_routes.sql": "aa724525bce54432fc41142ddc10a1c249c2af3fc3b9e40644042449ab9265d8",
+    "V27__add_approved_terms_final_analysis_route.sql": "d9a42f418db962d7c88830274344b6720104dc9b8ae4e88c0f78043ce125e8b2",
+    "V28__add_context_mode_final_analysis_route.sql": "faaad0d8a20fc30e85f06f16494ad258d336346e63a9b27ea8b55db5bb53b4a7",
+    "V29__add_structural_final_analysis_route.sql": "df28c55c09940de630df153715a96419d9ef99ae2ea3ed0d577162e5d9aa70c2",
+    "V30__add_c5_residual_luna_policy.sql": "d9c23577e2b4503743fd9419f833ff8082a7879bcd325ca3b8154517d286b636",
+    "V31__allow_explicit_c5_direct_luna.sql": "72b6e90537f5f05624445351b54980a97eccca794a7de3be91547d2f2ed9f1c0",
 }
 
 AWS_FIXTURE = '''#!/usr/bin/env python3
@@ -250,17 +258,17 @@ class Issue144ProductionRendererTests(unittest.TestCase):
 
 
 class Issue144ProductionPublicationTests(unittest.TestCase):
-    def test_OA01_artifact_remains_unconfigured_and_current_v23_preserves_v18_history(self):
+    def test_OA01_artifact_remains_unconfigured_and_current_v31_preserves_v18_history(self):
         self.assertEqual(SENTINEL, json.loads((DEPLOY / "runtime-ai-policy.json").read_bytes()))
         directory = ROOT / "src/main/resources/db/migration"
         self.assertEqual(set(CURRENT_SUPPORTED_SHA256), {p.name for p in directory.iterdir()})
         self.assertEqual(18, len(HISTORICAL_SHA256))
-        self.assertEqual(23, len(CURRENT_SUPPORTED_SHA256))
+        self.assertEqual(31, len(CURRENT_SUPPORTED_SHA256))
         for name, fingerprint in CURRENT_SUPPORTED_SHA256.items():
             with self.subTest(script=name):
                 self.assertEqual(fingerprint, digest((directory / name).read_bytes().replace(b"\r\n", b"\n")))
 
-    def test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v23(self):
+    def test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v31(self):
         environment = {"SOURCE_SHA": "a" * 40, "BUILD_RUN_ID": "144", "BUILD_RUN_ATTEMPT": "1",
                        "ECR_REPOSITORY_URL": "123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/meet-me/server",
                        "IMAGE_DIGEST": "sha256:" + "b" * 64, "CI_RUN_ID": "143", "CI_SHA": "a" * 40}
@@ -295,9 +303,9 @@ class Issue144ProductionPublicationTests(unittest.TestCase):
                 try:
                     artifact = PUBLISHER.build_manifest(root, archive, environment)
                 except ValueError as error:
-                    self.fail("Approved exact V23 publication must accept either policy: " + str(error))
+                    self.fail("Approved exact V31 publication must accept either policy: " + str(error))
                 self.assertEqual(list(CURRENT_SUPPORTED_SHA256), [row["script"] for row in artifact["migrations"]])
-                self.assertEqual([str(n) for n in range(1, 24)], [row["version"] for row in artifact["migrations"]])
+                self.assertEqual([str(n) for n in range(1, 32)], [row["version"] for row in artifact["migrations"]])
                 expected_catalog = []
                 for row, (name, fingerprint) in zip(artifact["migrations"], CURRENT_SUPPORTED_SHA256.items()):
                     body = files["migrations/" + name]

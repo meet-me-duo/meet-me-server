@@ -1,0 +1,24 @@
+{
+  "workItem": "issue144-current-v31-catalog",
+  "sourceRevision": "80c819a060b07ff24bd6fa23cc29d774315fe1ef",
+  "testFiles": [
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "147673e6c8886b7a9a8527a8ffb5e8cb45bc329a6aab33539e85bd64accf70fa"
+    }
+  ],
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionPublicationTests",
+    "-v"
+  ],
+  "failedTests": [
+    "test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v31 (state=UNCONFIGURED)",
+    "test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v31 (state=CONFIGURED)"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-10T08:42:41.184670+00:00",
+  "evidenceNote": "Actual isolated RED in /workspace/scratch/meet-me-issue144-catalog-red: 2 test methods, immutable V1..V31 SQL/hash control passes; both CONFIGURED and UNCONFIGURED publication subtests fail by expected assertion because original V23-only publisher rejects exact V31 inventory with UNTRUSTED_RELEASE. No syntax/setup/import failures, zero errors/skips. Only isolated publisher restored from80c819a; current main production SHA hashes remain unchanged. Isolation/SHA proof: .codex/evaluation/local/issue144-current-catalog/isolated-red.json. Raw RED: .codex/tdd-evidence/issue144-current-catalog-red.log. Earlier three failures caused by old V23 oracle are preserved separately at .codex/tdd-evidence/issue144-current-catalog-original-oracle-failure.log and are not valid RED for the new tests. Historical18 hashes, policy ON/OFF, package CRC/schema/guard and refusal assertions unchanged."
+}
