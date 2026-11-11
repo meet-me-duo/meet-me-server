@@ -7,6 +7,7 @@ import com.meetme.server.account.adapter.output.persistence.JdbcAccountRepositor
 import com.meetme.server.account.adapter.output.redis.RedisOAuthStateAdapter
 import com.meetme.server.account.adapter.output.redis.RedisRefreshSessionAdapter
 import com.meetme.server.account.adapter.output.security.Rs256AccessTokenAdapter
+import com.meetme.server.account.application.port.input.AccountProfileUseCase
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.application.port.output.AccountRepository
 import com.meetme.server.account.application.port.output.CurrentAccountPort
@@ -14,6 +15,7 @@ import com.meetme.server.account.application.port.output.OAuthProviderPort
 import com.meetme.server.account.application.port.output.OAuthStatePort
 import com.meetme.server.account.application.port.output.RefreshSessionPort
 import com.meetme.server.account.application.service.AccountIdentityService
+import com.meetme.server.account.application.service.AccountProfileService
 import com.meetme.server.account.application.service.OAuthLoginService
 import com.meetme.server.account.domain.AccountPrincipal
 import com.meetme.server.account.domain.AuthFailure
@@ -66,6 +68,12 @@ data class OAuthClientProperties(
 @Configuration
 @EnableConfigurationProperties(AccountAuthProperties::class)
 class AccountAuthConfiguration {
+    @Bean
+    fun accountProfileUseCase(
+        jdbc: JdbcTemplate,
+        clock: Clock,
+    ): AccountProfileUseCase = AccountProfileService(JdbcAccountRepository(jdbc, clock))
+
     @Bean
     fun accountRepository(
         jdbc: JdbcTemplate,

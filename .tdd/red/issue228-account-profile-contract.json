@@ -1,0 +1,56 @@
+{
+  "workItem": "issue228-account-profile-contract",
+  "sourceRevision": "5309d83621ae54e766849cfbceb9ba988793dff0",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AccountProfileHttpSecurityContractTest.kt",
+      "sha256": "f8f398a199d4d2cc19eb7c334a9600cb50b29e546781e2ee86456c99fb3af857"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/application/service/AccountProfileServiceContractTest.kt",
+      "sha256": "cf7e69d9e17b52d2290912b8968e18471621c172cc454e11d2dec13dd48869ef"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/domain/AccountDisplayNameContractTest.kt",
+      "sha256": "acd3ed213c15c8f6a0f911f1665c3b8fe25ca38dbea575ce1ce794dbc777a38a"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "test",
+    "--tests",
+    "*AccountDisplayNameContractTest",
+    "--tests",
+    "*AccountProfileServiceContractTest",
+    "--tests",
+    "*AccountProfileHttpSecurityContractTest",
+    "--no-daemon"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.domain.AccountDisplayNameContractTest.DN04 rejects control characters anywhere including surrounding input()",
+    "com.meetme.server.account.domain.AccountDisplayNameContractTest.DN02 limits count Unicode code points rather than UTF16 code units()",
+    "com.meetme.server.account.domain.AccountDisplayNameContractTest.DN01 trims surrounding spaces and preserves inner spaces and Unicode()",
+    "com.meetme.server.account.domain.AccountDisplayNameContractTest.DN03 rejects empty and whitespace-only names()",
+    "com.meetme.server.account.application.service.AccountProfileServiceContractTest.PS05 repository outage is not converted into success or a cached account()",
+    "com.meetme.server.account.application.service.AccountProfileServiceContractTest.PS04 missing account is unauthorized for both reads and writes and never upserted()",
+    "com.meetme.server.account.application.service.AccountProfileServiceContractTest.PS02 updates only the specified account using normalized name and permits duplicates()",
+    "com.meetme.server.account.application.service.AccountProfileServiceContractTest.PS03 validation precedes persistence and rejected input cannot change either account()",
+    "com.meetme.server.account.application.service.AccountProfileServiceContractTest.PS06 repeated same-name update keeps identity and result stable()",
+    "com.meetme.server.account.application.service.AccountProfileServiceContractTest.PS01 reads the requested persisted profile without synthesizing or caching a name()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH09 profile storage failures are 503 and do not expose a stale bearer name or pretend rename success()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH10 normal refresh resolves latest stored profile for rotated session identity rather than bearer identity()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH11 refresh never issues token from cached profile if persisted account is missing or unavailable()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH04 exact single Origin is required before profile mutation()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH07 caller identity controls target even when a different account is supplied in query()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH01 valid rename returns only latest safe account fields and cannot extend a session()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH03 missing cookie-only malformed duplicate expired and forged bearer cannot rename()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH05 malformed absent null non-string blank overlong and control inputs fail without persisting or echoing()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH12 choosing an operator-like display name cannot grant operator capability()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH02 get ignores stale signed-token name and observes later persisted names()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH06 Unicode boundary and same-name retries preserve account and do not require unique names()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpSecurityContractTest.PH08 a missing persisted account cannot be read renamed or re-created from its old token()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-11T01:44:56.980285+00:00",
+  "evidenceNote": "Independent frozen22 methods compile and execute:22 expected missing behavior failures, errors0/skips0. Domain/service/new PUT fail at explicit TDD RED skeleton; existing GET/refresh fail stale-name/missing-row/storage-error assertions. No test expectations changed. Raw root log .codex/tdd-evidence/issue228-contract-red.log; independently reproduced in designer clone. Existing constructor-only auth fixture adaptations separately passed19/19 before new test run."
+}
