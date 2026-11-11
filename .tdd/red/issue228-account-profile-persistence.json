@@ -1,0 +1,41 @@
+{
+  "workItem": "issue228-account-profile-persistence",
+  "sourceRevision": "5309d83621ae54e766849cfbceb9ba988793dff0",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/output/persistence/AccountProfilePersistenceTest.kt",
+      "sha256": "4c04717ef69c9cc9737f18d13a4e934923c4aedd8c7192c33dde455637c547c5"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/account/adapter/input/web/AccountProfileHttpPostgresTest.kt",
+      "sha256": "eb87af4b9eea89276dde391cd12744da0fd0b81fd8b3d46d7eec861f185c538f"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "test",
+    "--tests",
+    "*AccountProfilePersistenceTest",
+    "--tests",
+    "*AccountProfileHttpPostgresTest",
+    "--no-daemon"
+  ],
+  "failedTests": [
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG12 existing service instances observe later committed profile changes()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG02 committed name survives a fresh connection and a new service context()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG07 invalid names never alter any stored profile()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG08 database update failure preserves names and later retry can succeed()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG06 renaming an absent profile fails closed without inserting a replacement()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG11 read failure must not return a previously observed cached name()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG10 concurrent renames preserve response ownership and do not affect another account()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG04 trimmed fifty-codepoint Unicode names and equal names remain valid()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG09 caller transaction rollback also rolls back the profile mutation()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG03 subsequent provider login retains the manually renamed account()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG01 rename changes only the selected account name and preserves ownership snapshots()",
+    "com.meetme.server.account.adapter.output.persistence.AccountProfilePersistenceTest.P228-PG05 reading an absent profile fails closed without creating an account()",
+    "com.meetme.server.account.adapter.input.web.AccountProfileHttpPostgresTest.P228-C01 old JWT and existing Redis sessions resolve latest profile after authenticated rename()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-11T01:47:50.965573+00:00",
+  "evidenceNote": "Independent frozen actual PostgreSQL/Redis/Flyway/MVC14 methods reproduced on root:13 explicit TDD RED TODO behavior failures, native OpenAPI and exact Origin CORS control1PASS, errors0/skips0. Raw root log .codex/tdd-evidence/issue228-persistence-red.log. Initial designer media-type assumption was a test preparation defect, archived separately, corrected and refrozen before this valid RED. No user identity or provider credentials used."
+}

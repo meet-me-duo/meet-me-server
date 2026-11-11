@@ -1,6 +1,7 @@
 package com.meetme.server.shared.operations
 
 import com.meetme.server.account.adapter.input.web.AuthController
+import com.meetme.server.account.application.port.input.AccountProfileUseCase
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.account.application.port.output.RefreshSessionPort
@@ -106,7 +107,19 @@ class OperatorCapabilitySpringWiringTest {
                 .withBean(RefreshSessionPort::class.java, Supplier { mock(RefreshSessionPort::class.java) })
                 .withBean(AccessTokenPort::class.java, Supplier { mock(AccessTokenPort::class.java) })
                 .withBean(CurrentAccountPort::class.java, Supplier { CurrentAccountPort { AccountPrincipal(actor, "Synthetic") } })
-                .withBean(AccountAuthProperties::class.java, Supplier { AccountAuthProperties() })
+                .withBean(
+                    AccountProfileUseCase::class.java,
+                    Supplier {
+                        object : AccountProfileUseCase {
+                            override fun get(accountId: UUID): AccountPrincipal = AccountPrincipal(accountId, "Synthetic")
+
+                            override fun updateDisplayName(
+                                accountId: UUID,
+                                displayName: String,
+                            ): AccountPrincipal = error("not used by operator wiring")
+                        }
+                    },
+                ).withBean(AccountAuthProperties::class.java, Supplier { AccountAuthProperties() })
                 .withBean(AnonymousAccessProperties::class.java, Supplier { AnonymousAccessProperties() })
                 .withBean(Clock::class.java, Supplier { Clock.systemUTC() })
                 .withBean(OperatorIdentityPort::class.java, Supplier { OperatorIdentityPort { actor } })

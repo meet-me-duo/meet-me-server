@@ -23,6 +23,10 @@ Issue161의 계정 목록 접근 경로는 `participants(user_id, room_id) WHERE
 
 Auth start/callback은 browser-bound single-use state·PKCE S256·OIDC nonce를 사용한다. provider issuer/audience/kid/signature/time 검증 뒤 서비스 Refresh를 cookie로만 발급하고 fixed frontend callback으로 돌아간다. Redis 회전·가족 폐기는 atomic script로 처리하며 실패 시 갱신을 허용하지 않는다. 서비스 RS256 private key는 mount된 외부 secret file, 검증 current/previous public key는 JWKS로 주입한다. 설정 없는 환경에서 임시 운영키를 만들지 않는다. 실제 앱/키/배포 및 운영 로그인은 별도 검증이다.
 
+계정 표시 이름의 영구 기준은 `account_users.display_name`이다. `AccountProfileUseCase`와 `AccountProfileRepository` 경계에서 본인 이름 조회·변경을 수행하고 변경 트랜잭션은 application service가 소유한다. `PUT /api/auth/me`는 Bearer의 accountId만 대상 식별자로 사용하고 기존 정확 Origin 검증을 적용하며, 기존 CORS의 PUT 허용 범위를 사용한다. 이름은 공백 정리 후 Unicode code point 1~50자로 검증하며 제어문자·잘못된 JSON 타입을 거부한다. 갱신은 대상 계정의 이름만 원자 변경하고 중복 이름을 허용한다. GET me와 정상 Refresh 응답은 저장소에서 최신 프로필을 읽어 이전 JWT/Redis의 이름 스냅샷으로 되돌아가지 않게 하며, 저장소 오류에서 과거 이름으로 fallback하지 않는다. 이미 발급된 JWT의 name claim은 갱신 전까지 발급 당시 스냅샷이고 인증 검증 경계와 수명은 유지한다. 이름 변경 API는 최신 AccountResponse만 반환하고 토큰·쿠키를 발급하거나 Refresh 수명을 연장하지 않는다. `participants.display_name`과 동결된 분석 결과는 계정 이름의 실시간 참조가 아니며 이번 변경에서 덮어쓰지 않는다.
+
+현재 방 생성·계정 참여는 Bearer principal의 이름을 복사하므로, 후속 Web 이름 편집 흐름은 저장 응답으로 계정 화면을 갱신한 뒤 기존 정상 Refresh를 호출해야 새로 만드는 참가자에도 변경 이름을 즉시 사용할 수 있다. Refresh의 기존 회전 뒤 프로필 조회가 실패하면 최신 이름을 확인하지 못한 토큰을 발급하지 않고 오류로 종료한다. 이 경우 회전된 쿠키를 받지 못해 재로그인이 필요할 수 있으며 PostgreSQL·Redis 간 분산 롤백은 이 API의 범위가 아니다.
+
 계정·소유권은 ADR-051과 위 계약을 기준으로 하며 아래 익명 제출 MVP 구조보다 우선한다. 외부 설정은 [운영 안내](USER_INTERVENTION.md)를 따른다.
 
 ## 격리 실험: 장소 미검증 시간 후보 (ADR-066)

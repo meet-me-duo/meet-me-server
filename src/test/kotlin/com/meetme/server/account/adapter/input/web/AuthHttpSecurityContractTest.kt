@@ -1,5 +1,6 @@
 package com.meetme.server.account.adapter.input.web
 
+import com.meetme.server.account.application.port.input.AccountProfileUseCase
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.application.port.output.AccountRepository
 import com.meetme.server.account.application.port.output.CurrentAccountPort
@@ -142,6 +143,14 @@ class AuthHttpSecurityContractTest {
                 AccountAuthProperties(),
                 AnonymousAccessProperties(allowedOrigins = listOf(ORIGIN)),
                 clock,
+                object : AccountProfileUseCase {
+                    override fun get(accountId: UUID): AccountPrincipal = principal
+
+                    override fun updateDisplayName(
+                        accountId: UUID,
+                        displayName: String,
+                    ): AccountPrincipal = error("not used")
+                },
             )
     }
 

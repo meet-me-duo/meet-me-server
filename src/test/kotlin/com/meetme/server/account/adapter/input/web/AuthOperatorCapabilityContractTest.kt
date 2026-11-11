@@ -1,6 +1,7 @@
 package com.meetme.server.account.adapter.input.web
 
 import com.meetme.server.account.adapter.output.security.Rs256AccessTokenAdapter
+import com.meetme.server.account.application.port.input.AccountProfileUseCase
 import com.meetme.server.account.application.port.output.AccountRepository
 import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.account.application.port.output.OAuthProviderPort
@@ -222,6 +223,7 @@ class AuthOperatorCapabilityContractTest {
                     AccountAuthProperties(),
                     AnonymousAccessProperties(allowedOrigins = listOf(ORIGIN)),
                     CLOCK,
+                    profiles(),
                 )
             } else {
                 AuthController(
@@ -232,9 +234,21 @@ class AuthOperatorCapabilityContractTest {
                     AccountAuthProperties(),
                     AnonymousAccessProperties(allowedOrigins = listOf(ORIGIN)),
                     CLOCK,
+                    profiles(),
                     OperatorAccessPolicy(configuration),
                 )
             }
+
+        private fun profiles(): AccountProfileUseCase =
+            object : AccountProfileUseCase {
+                override fun get(accountId: UUID): AccountPrincipal = AccountPrincipal(accountId, "Synthetic operator")
+
+                override fun updateDisplayName(
+                    accountId: UUID,
+                    displayName: String,
+                ): AccountPrincipal = error("not used")
+            }
+
         val mvc = MockMvcBuilders.standaloneSetup(controller).setControllerAdvice(AuthExceptionHandler(StaticMessageSource())).build()
 
         fun me() = mvc.perform(get("/api/auth/me")).andReturn().response
