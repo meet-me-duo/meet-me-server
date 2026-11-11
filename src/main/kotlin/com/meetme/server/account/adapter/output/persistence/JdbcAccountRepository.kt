@@ -1,6 +1,8 @@
 package com.meetme.server.account.adapter.output.persistence
 
+import com.meetme.server.account.application.port.output.AccountProfileRepository
 import com.meetme.server.account.application.port.output.AccountRepository
+import com.meetme.server.account.domain.AccountDisplayName
 import com.meetme.server.account.domain.AccountPrincipal
 import com.meetme.server.account.domain.AuthFailure
 import com.meetme.server.account.domain.OAuthProvider
@@ -16,7 +18,41 @@ import java.util.UUID
 class JdbcAccountRepository(
     private val jdbc: JdbcTemplate,
     private val clock: Clock,
-) : AccountRepository {
+) : AccountRepository,
+    AccountProfileRepository {
+    override fun findById(accountId: UUID): AccountPrincipal? =
+        profileStorage {
+            jdbc
+                .query(
+                    "SELECT id,display_name FROM account_users WHERE id=?",
+                    { row, _ -> AccountPrincipal(row.getObject("id", UUID::class.java), row.getString("display_name")) },
+                    accountId,
+                ).singleOrNull()
+        }
+
+    override fun updateDisplayName(
+        accountId: UUID,
+        displayName: AccountDisplayName,
+    ): AccountPrincipal? {
+        if (!TransactionSynchronizationManager.isActualTransactionActive()) throw AuthFailure("AUTH_UNAVAILABLE")
+        return profileStorage {
+            jdbc
+                .query(
+                    "UPDATE account_users SET display_name=? WHERE id=? RETURNING id,display_name",
+                    { row, _ -> AccountPrincipal(row.getObject("id", UUID::class.java), row.getString("display_name")) },
+                    displayName.value,
+                    accountId,
+                ).singleOrNull()
+        }
+    }
+
+    private fun <T> profileStorage(action: () -> T): T =
+        try {
+            action()
+        } catch (_: DataAccessException) {
+            throw AuthFailure("AUTH_UNAVAILABLE")
+        }
+
     override fun findOrCreateIdentity(
         provider: OAuthProvider,
         subject: String,

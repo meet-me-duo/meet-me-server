@@ -1,5 +1,6 @@
 package com.meetme.server.account.adapter.input.web
 
+import com.meetme.server.account.application.port.input.AccountProfileUseCase
 import com.meetme.server.account.application.port.output.AccessTokenPort
 import com.meetme.server.account.application.port.output.CurrentAccountPort
 import com.meetme.server.account.application.port.output.RefreshSessionPort
@@ -28,9 +29,12 @@ import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import tools.jackson.databind.annotation.JsonDeserialize
 import java.net.URI
 import java.time.Clock
 import java.time.Duration
@@ -59,6 +63,13 @@ data class AccountResponse(
     }
 }
 
+@Schema(description = "본인 계정의 표시 이름 변경. 모임별 이름과 저장된 분석 결과는 별도 유지")
+data class UpdateAccountDisplayNameRequest(
+    @field:Schema(description = "앞뒤 공백 제거 후 Unicode code point 1~50자. 공백만 또는 제어문자 입력 불가", example = "모임친구")
+    @field:JsonDeserialize(using = AccountDisplayNameDeserializer::class)
+    val displayName: String,
+)
+
 @Schema(description = "15분 Access Token. 브라우저 메모리에만 보관한다")
 data class AuthResponse(
     @field:Schema(description = "RS256 Bearer Access Token") val accessToken: String,
@@ -76,8 +87,44 @@ class AuthController(
     private val properties: AccountAuthProperties,
     private val origins: AnonymousAccessProperties,
     private val clock: Clock,
+    private val profiles: AccountProfileUseCase,
     private val operatorAccess: OperatorAccessPolicy = OperatorAccessPolicy(OperatorQueryProperties()),
 ) {
+    @PutMapping("/me")
+    @Operation(summary = "현재 로그인 계정의 표시 이름 변경")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "최신 계정 정보. 인증 토큰은 새로 발급하지 않음"),
+        ApiResponse(
+            responseCode = "400",
+            description = "올바르지 않은 표시 이름 또는 요청",
+            content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "401",
+            description = "유효한 본인 계정 인증 없음",
+            content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "403",
+            description = "정확한 Origin 불일치",
+            content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
+        ),
+        ApiResponse(
+            responseCode = "503",
+            description = "계정 저장소 사용 불가",
+            content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
+        ),
+    )
+    fun updateMe(
+        @RequestBody body: UpdateAccountDisplayNameRequest,
+        request: HttpServletRequest,
+    ): ResponseEntity<AccountResponse> {
+        origin(request)
+        val account = current.currentAccount() ?: throw AuthFailure("AUTH_ACCESS_REQUIRED")
+        val updated = profiles.updateDisplayName(account.accountId, body.displayName)
+        return headers(HttpStatus.OK).body(AccountResponse.from(updated, operatorAccess.canViewOperations(updated.accountId)))
+    }
+
     @GetMapping("/{provider}/start")
     @Operation(summary = "Google 또는 Kakao 로그인 시작")
     @ApiResponses(
@@ -157,14 +204,15 @@ class AuthController(
         origin(request)
         val token = credential(request) ?: throw AuthFailure("AUTH_REFRESH_INVALID")
         val session = refresh.rotate(token)
-        val accessToken = access.issue(session.principal)
+        val principal = profiles.get(session.principal.accountId)
+        val accessToken = access.issue(principal)
         return headers(HttpStatus.OK)
             .header(HttpHeaders.SET_COOKIE, refreshCookie(session))
             .body(
                 AuthResponse(
                     accessToken,
                     clock.instant().truncatedTo(ChronoUnit.SECONDS).plusSeconds(900),
-                    AccountResponse.from(session.principal, operatorAccess.canViewOperations(session.principal.accountId)),
+                    AccountResponse.from(principal, operatorAccess.canViewOperations(principal.accountId)),
                 ),
             )
     }
@@ -180,12 +228,13 @@ class AuthController(
         ),
         ApiResponse(
             responseCode = "503",
-            description = "검증 키 사용 불가",
+            description = "계정 저장소 또는 검증 키 사용 불가",
             content = [Content(schema = Schema(implementation = ApiProblemSchema::class))],
         ),
     )
     fun me(): ResponseEntity<AccountResponse> {
-        val principal = current.currentAccount() ?: throw AuthFailure("AUTH_ACCESS_REQUIRED")
+        val authenticated = current.currentAccount() ?: throw AuthFailure("AUTH_ACCESS_REQUIRED")
+        val principal = profiles.get(authenticated.accountId)
         return headers(HttpStatus.OK).body(
             AccountResponse.from(principal, operatorAccess.canViewOperations(principal.accountId)),
         )
