@@ -12,7 +12,7 @@ import sys
 REPO = Path(__file__).resolve().parents[2]
 RECIPIENTS = {"TypeSafeAI", "OpenAI", "GoogleGemini"}
 CONFIG_KEYS = {"schema-coherence", "provider-parity", "common-finite-schema", "selected-choice-context"}
-OPTIONAL_CONFIG_KEYS = {"scoped-term-evidence", "place-constraints", "relative-date-context", "union-preferred-availability", "server-evidence-references", "search-relative-dates", "calendar-month-facts", "indexed-evidence-selections", "weekly-schedule-rules"}
+OPTIONAL_CONFIG_KEYS = {"scoped-term-evidence", "place-constraints", "relative-date-context", "union-preferred-availability", "server-evidence-references", "search-relative-dates", "calendar-month-facts", "indexed-evidence-selections", "weekly-schedule-rules", "temporal-range-admission"}
 
 
 def read(path):

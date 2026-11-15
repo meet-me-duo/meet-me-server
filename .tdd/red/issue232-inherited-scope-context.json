@@ -1,0 +1,26 @@
+{
+  "workItem": "issue232-inherited-scope-context",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeScopeContextTest.kt",
+      "sha256": "d28793d2258e40d183bc29fe3b12835f5cb32b9be6ced916651b41a7237771b1"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TemporalRangeScopeContextTest"
+  ],
+  "failedTests": [
+    "TRS02 an owned whole context containing a separate date qualifier is inconclusive rather than demonstrably dateless()",
+    "[1] qualifier = \"2036-04-16에만 가능합니다.\", date = \"2036-04-16\"",
+    "[2] qualifier = \"검색 기간의 마지막 날에만 가능합니다.\", date = \"2036-04-20\"",
+    "TRS03 a separately owned weekday qualifier preserves its recurring weekday and both clocks()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-15T15:48:43.494043Z"
+}

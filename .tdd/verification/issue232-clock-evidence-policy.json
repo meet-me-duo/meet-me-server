@@ -1,0 +1,35 @@
+{
+  "workItem": "issue232-clock-evidence-policy",
+  "sourceRevision": "b22a17f0c8da9f0a03437531a32466a72bf47f3c823c9b949b947e6e3b4eb11e",
+  "boundary": "Final request-only clock capability and unchanged old5 neutral/native wire contract; restored10 tests PASS.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeEvidenceProviderContract.kt",
+      "sha256": "843a4ee3d9d44016b4eb10f051c9e8da4b5e6c2827d02d46f67dd28119d244e3"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClockEvidencePolicyContractTest.kt",
+      "sha256": "d3681c21ae7b8dbaef2a4fc5020cc22496488893e135ffd8c5f549ab1e930073"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Omit request-only clock evidence capability map",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.integration.ClockEvidencePolicyContractTest"
+      ],
+      "detectedBy": "CEP02 both provider wires receive the same policy and instructions while output schema and budgets remain unchanged(); CEP01 generation six declares the static clock evidence capability without changing native inputs or response schema()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-15T17:43:27.750475Z"
+}

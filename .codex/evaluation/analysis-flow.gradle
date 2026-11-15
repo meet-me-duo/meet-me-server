@@ -8,7 +8,7 @@ allprojects { p ->
             if (configPath) {
                 def config = new JsonSlurper().parse(new File(configPath))
                 def expected = ['schema-coherence', 'provider-parity', 'common-finite-schema', 'selected-choice-context'] as Set
-                def optional = ['scoped-term-evidence', 'place-constraints', 'relative-date-context', 'union-preferred-availability', 'server-evidence-references', 'search-relative-dates', 'calendar-month-facts', 'indexed-evidence-selections', 'weekly-schedule-rules'] as Set
+                def optional = ['scoped-term-evidence', 'place-constraints', 'relative-date-context', 'union-preferred-availability', 'server-evidence-references', 'search-relative-dates', 'calendar-month-facts', 'indexed-evidence-selections', 'weekly-schedule-rules', 'temporal-range-admission'] as Set
                 if (!config.keySet().containsAll(expected) || !(config.keySet() - expected - optional).isEmpty()
                         || config.values().any { !(it instanceof Boolean) }) {
                     throw new GradleException('Invalid frozen analysis-flow configuration')

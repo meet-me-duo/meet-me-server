@@ -25,6 +25,7 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.ir.IrInterpretation
 import com.meetme.server.submission.domain.ir.ProposedIrV2Result
@@ -411,6 +412,7 @@ class JdbcFinalAnalysisRouteRegistry(
                             SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                             SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                             SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                         ) &&
                         identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION &&
                         choice.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION,

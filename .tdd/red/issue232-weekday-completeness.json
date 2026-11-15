@@ -1,0 +1,53 @@
+{
+  "workItem": "issue232-weekday-completeness",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeWeekdayCompletenessTest.kt",
+      "sha256": "856c568d2eadb9a9ed3d91eea987218fe77bbe0d0cd57104d8811dc30db1a806"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*TemporalRangeWeekdayCompletenessTest"
+  ],
+  "failedTests": [
+    "[1] fault = \"subset\"",
+    "[2] fault = \"superset\"",
+    "[3] fault = \"all-seven\"",
+    "[4] fault = \"missing-upper\"",
+    "[5] fault = \"wrong-lower\"",
+    "[6] fault = \"wrong-upper\"",
+    "[7] fault = \"missing-proof\"",
+    "[8] fault = \"filter\"",
+    "[9] fault = \"single-date\"",
+    "[10] fault = \"split\"",
+    "WDL12 old five retains a subset declaration while new six must reject it and old neutral bytes remain frozen()",
+    "[1] style = \"full\"",
+    "[2] style = \"aliases\"",
+    "[3] style = \"permuted\"",
+    "[1] separator = \" \"",
+    "[2] separator = \", \"",
+    "[3] separator = \"/\"",
+    "[4] separator = \"와 \"",
+    "[5] separator = \"과 \"",
+    "[6] separator = \" 및 \"",
+    "[7] separator = \"하고 \"",
+    "[1] weekday = \"수요일\"",
+    "[2] weekday = \"수욜\"",
+    "[1] effect = \"AVAILABLE\"",
+    "[2] effect = \"PREFERRED\"",
+    "[3] effect = \"UNAVAILABLE\"",
+    "[1] interpretation = \"EXPLICIT\"",
+    "[2] interpretation = \"INFERRED\"",
+    "WDL13 generic completeness instructions are identical on both native wires without source examples or schema changes()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-15T18:35:19.402361Z"
+}

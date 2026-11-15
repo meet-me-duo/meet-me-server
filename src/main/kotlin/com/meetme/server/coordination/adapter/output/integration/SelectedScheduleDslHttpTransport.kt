@@ -34,6 +34,7 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.ir.IrEvidenceBindings
 import com.meetme.server.submission.domain.ir.IrInterpretation
@@ -156,6 +157,7 @@ internal class SelectedScheduleDslHttpTransport(
                                 SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                             )
                     val limit = if (provider == AnalysisProvider.GEMINI || catalogRoute) GEMINI_RESPONSE_LIMIT else DSL_LIMIT
                     if (responseBody.contentLength() > limit) fail(ParserFailureKind.INVALID_RESPONSE)
@@ -243,6 +245,7 @@ internal class SelectedScheduleDslHttpTransport(
                                 SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                             ),
                     )
                     require(selected.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION)
@@ -396,7 +399,11 @@ internal class SelectedScheduleDslHttpTransport(
         val schema: Map<String, Any?>
         when (val selected = request.binding.route.choice) {
             is FinalAnalysisRouteChoice.DslStructuralV5 -> {
-                if (selected.identity.responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
+                if (selected.identity.responseContractVersion == SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT) {
+                    val contract = TemporalRangeEvidenceProviderContract(mapper, allowPlaceConstraints = true)
+                    neutral = contract.requestBytes(request.inputCapsule, selected.meetingMode)
+                    schema = contract.responseSchema(request.inputCapsule.snapshot)
+                } else if (selected.identity.responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
                     val contract = WeeklyEvidenceProviderContract(mapper, allowPlaceConstraints = true)
                     neutral = contract.requestBytes(request.inputCapsule, selected.meetingMode)
                     schema = contract.responseSchema(request.inputCapsule.snapshot)
@@ -445,6 +452,7 @@ internal class SelectedScheduleDslHttpTransport(
                 SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                 SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                 SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
             )
         ) {
             return ServerEvidenceWire.bytes(mapper, neutral, provider, model)

@@ -1,0 +1,66 @@
+{
+  "workItem": "issue232-native-temporal-order-faults",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "boundary": "Generation6-only native condition property presentation; frozen code 88407e51c48f3fa8cf6263f44510cdb637a2ccd814d51dda98426cc05659bac9. Preserve exact constraints, required arrays, neutral schema, native input/instructions and both historical provider body digests.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ServerEvidenceWire.kt",
+      "sha256": "78da0911f4abbcb391c9548f418b3c213c135c685f3bd342d3ba5d35e0b2edd5"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeNativePropertyOrderTest.kt",
+      "sha256": "fffb092619be7e06bb5248414210e3f0d2958ccd7d57f4d5e3c35da339dc8369"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeRawScopeSyntaxTest.kt",
+      "sha256": "fd8a11062c600e42b0e23d6c977c491629d0e10302a3a57e7ab5ac8df0dae948"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClockEvidencePolicyContractTest.kt",
+      "sha256": "d3681c21ae7b8dbaef2a4fc5020cc22496488893e135ffd8c5f549ab1e930073"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeWeekdayCompletenessTest.kt",
+      "sha256": "856c568d2eadb9a9ed3d91eea987218fe77bbe0d0cd57104d8811dc30db1a806"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/TemporalRangeAdmissionTestFixture.kt",
+      "sha256": "24e6c21fe3b9e4f0988a89f24c0f80e5badcd5dba4a07b42e8e8379156a2c1a3"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Omit the response6-only temporal-before-precision presentation transform",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*TemporalRangeNativePropertyOrderTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.TemporalRangeNativePropertyOrderTest#NPO01 every native six condition branch chooses temporal immediately before precision with other fields stable; [1] provider = GEMINI",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Apply the presentation transform to historical response5 as well as response6",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*TemporalRangeNativePropertyOrderTest"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.integration.TemporalRangeNativePropertyOrderTest#NPO04 old five neutral and each provider native body retain their absolute preimplementation digests; [1] provider = GEMINI",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-15T19:44:53.461304Z"
+}

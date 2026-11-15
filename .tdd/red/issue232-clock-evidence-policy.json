@@ -1,0 +1,24 @@
+{
+  "workItem": "issue232-clock-evidence-policy",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClockEvidencePolicyContractTest.kt",
+      "sha256": "d3681c21ae7b8dbaef2a4fc5020cc22496488893e135ffd8c5f549ab1e930073"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*ClockEvidencePolicyContractTest"
+  ],
+  "failedTests": [
+    "CEP02 both provider wires receive the same policy and instructions while output schema and budgets remain unchanged()",
+    "CEP01 generation six declares the static clock evidence capability without changing native inputs or response schema()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-15T17:21:17.213343Z"
+}

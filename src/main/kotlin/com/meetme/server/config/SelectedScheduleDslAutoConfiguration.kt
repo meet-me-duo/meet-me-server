@@ -85,6 +85,7 @@ class SelectedScheduleDslAutoConfiguration {
         @Value("\${meetme.experiment.weekly-schedule-rules:false}") weeklyScheduleRules: Boolean = false,
         @Value("\${meetme.analysis.default-contract:LEGACY}")
         defaultAnalysisContract: FinalAnalysisContractSelection = FinalAnalysisContractSelection.LEGACY,
+        @Value("\${meetme.experiment.temporal-range-admission:false}") temporalRangeAdmission: Boolean = false,
     ): FinalAnalysisRouteSelectionService {
         require(
             defaultAnalysisContract == FinalAnalysisContractSelection.LEGACY ||
@@ -101,6 +102,7 @@ class SelectedScheduleDslAutoConfiguration {
                         weeklyScheduleRules
                 ),
         ) { "Default V5 requires all six normalization capabilities" }
+        require(!temporalRangeAdmission || weeklyScheduleRules) { "Temporal range admission requires weekly rules" }
         return FinalAnalysisRouteSelectionService(
             runs,
             routes,
@@ -110,6 +112,7 @@ class SelectedScheduleDslAutoConfiguration {
             calendarMonthFacts,
             indexedEvidenceSelections,
             weeklyScheduleRules,
+            temporalRangeAdmission,
         )
     }
 
