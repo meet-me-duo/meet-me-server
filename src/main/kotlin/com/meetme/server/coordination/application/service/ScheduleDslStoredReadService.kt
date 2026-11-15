@@ -46,6 +46,7 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.ScheduleDslApprovedTermsValidator
 import com.meetme.server.submission.domain.dsl.ScheduleDslContextModeValidator
@@ -189,6 +190,7 @@ open class ScheduleDslStoredReadService(
                         SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                         SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                         SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                        SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                     ),
             )
             require(structural.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION)
@@ -226,6 +228,7 @@ open class ScheduleDslStoredReadService(
                                 SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                             )
                     ),
             ) {
@@ -233,7 +236,10 @@ open class ScheduleDslStoredReadService(
             }
             require(
                 (envelope.weeklyRulesVersion != null) ==
-                    (structural.identity.responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT),
+                    (
+                        structural.identity.responseContractVersion in
+                            setOf(SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT, SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT)
+                    ),
             ) {
                 "Stored weekly generation contract mismatch"
             }
@@ -245,12 +251,17 @@ open class ScheduleDslStoredReadService(
             require(envelope.context == structural.context) { "Stored structural context mismatch" }
             val validated = ScheduleDslStructuralValidator().validateRestored(envelope, snapshot)
             check(validated == envelope) { "Stored structural restoration mismatch" }
+            if (structural.identity.responseContractVersion == SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT) {
+                com.meetme.server.submission.domain.dsl.TemporalRangeAdmission
+                    .validate(validated, snapshot)
+            }
             if (structural.identity.responseContractVersion in
                 setOf(
                     SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                 )
             ) {
                 MeetingDateScopePolicy.create(snapshot).validate(validated)

@@ -25,6 +25,7 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.time.APPROVED_KOREAN_TIME_TERM_VERSION
 import org.springframework.transaction.support.TransactionSynchronizationManager
@@ -40,6 +41,7 @@ class FinalAnalysisRouteSelectionService(
     private val calendarMonthFacts: Boolean = false,
     private val indexedEvidenceSelections: Boolean = false,
     private val weeklyScheduleRules: Boolean = false,
+    private val temporalRangeAdmission: Boolean = false,
 ) {
     fun freeze(
         run: CoordinationRun,
@@ -65,6 +67,9 @@ class FinalAnalysisRouteSelectionService(
                 actualIds.toSet() == expectedIds.toSet(),
         )
         val structural = selection == FinalAnalysisContractSelection.DSL_STRUCTURAL_V5
+        require(!structural || !temporalRangeAdmission || weeklyScheduleRules) {
+            "Temporal range admission requires weekly rules"
+        }
         require(
             !structural ||
                 !weeklyScheduleRules ||
@@ -108,6 +113,7 @@ class FinalAnalysisRouteSelectionService(
                 FinalAnalysisRouteChoice.DslStructuralV5(
                     IrExecutionIdentity(
                         when {
+                            temporalRangeAdmission -> SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
                             weeklyScheduleRules -> SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
                             indexedEvidenceSelections -> SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
                             calendarMonthFacts -> SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT
@@ -191,6 +197,7 @@ class FinalAnalysisRouteSelectionService(
                                 SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                             ) &&
                             choice.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION &&
                             choice.vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION,
@@ -284,6 +291,7 @@ class FinalAnalysisRouteSelectionService(
                             SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                             SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                             SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                            SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                         ) &&
                         choice.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION &&
                         choice.identity.policyVersion == choice.policy.version &&

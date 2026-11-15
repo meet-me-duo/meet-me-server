@@ -8,6 +8,7 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.ScheduleDslStructuralEnvelope
 import com.meetme.server.submission.domain.ir.ScheduleEvidenceSnapshot
@@ -32,6 +33,7 @@ class StrictScheduleDslStructuralResponseParser
                     SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                 )
 
         override fun parse(
@@ -45,6 +47,15 @@ class StrictScheduleDslStructuralResponseParser
             require(supportsResponseContractVersion(responseContractVersion))
             require(semanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION && astVersion == SCHEDULE_AST_VERSION)
             require(vocabularyVersion == APPROVED_KOREAN_TIME_TERM_VERSION)
+            if (responseContractVersion == SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT) {
+                return TemporalRangeEvidenceProviderContract(mapper, allowPlaceConstraints = true).parseProviderResponse(
+                    responseJson,
+                    snapshot,
+                    semanticVersion,
+                    astVersion,
+                    vocabularyVersion,
+                )
+            }
             if (responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
                 return WeeklyEvidenceProviderContract(mapper, allowPlaceConstraints = true).parseProviderResponse(
                     responseJson,

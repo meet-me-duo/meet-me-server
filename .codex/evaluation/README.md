@@ -173,4 +173,14 @@ TASK_EVAL_SHA=$(git rev-parse HEAD)
 
 `weekly-schedule-rules=true`는 server-evidence-references/search-relative-dates/calendar-month-facts/indexed-evidence-selections와 함께 신규 V5 request5/response5 및 `weekly_rules_version=weekly-schedule-rule-1`을 선택한다. 기본 OFF, 과거 실행의 계약·정책은 유지한다. 반복 요일은 원조건 하나의 WEEKLY atom과 native 근거·본인 anchor 필터·시간 선언으로 전달하고 서버가 모든 해당 날짜를 전개한다. 단일 날짜·월의 마지막/순번 요일을 일반 반복으로 바꾸지 않는다. 다른 참가자 날짜에 맞춘 개별 가능 시간 가지치기와 조건 복제를 하지 않는다.
 
+`temporal-range-admission=true`는 위 주간 반복과 선행 옵션이 켜진 신규 V5의 request6/response6 및 `temporal_range_admission_version=temporal-range-admission-1`을 선택한다. 일반 설정은 기본 OFF이며 운영 profile의 새 마감 기본은 별도 검증한다. 날짜 없는 독립 숫자 범위는 all7/빈 필터와 두 끝점·원자 CLOCK 근거를 보존하도록 지시하고, 그 조건의 실제 scope 근거로 증명되는 제한된 범위만 코드로 검사한다. 넓은 문맥·별도 날짜 상속·보완/정정과 역할이 소실된 완전 BOUNDS/RAW_SCOPE는 검사 미확인으로 구별한다. parser의 checkedConditions/unclassifiedConditions 로그는 일반 의미 정확도나 모델 성공률이 아니다. 기존5 및 format12 복원은 유지하고, 신규6 저장 조회에만 같은 검사를 적용한다. 실제 원문 사례와 독립 날짜 상속·사건·한쪽 경계 회귀를 모두 별도 고정하며, 실제 provider 원응답을 수정하거나 성공할 때까지 반복하지 않는다.
+
+동일 신규 요청의 `clock_evidence_policy`는 끝점별 발급 CLOCK을 우선하되, 발급되지 않은 명확한 한글 시각·지속시간은 본인의 CONTEXT 근거로 선언할 수 있음을 명시한다. UNKNOWN·INFERRED는 원래 의미대로 유지한다. 응답 schema·기존5 요청·catalog·숫자 범위 검증은 변경하지 않는다. 문맥 기반 선언을 받아들이는 계약 시험과 실제 모델의 시각 해석 시험을 구별하며, 관측 후 수정한 입력은 회귀 사례로 다루고 추가 미사용 사례는 다음 출력 전에 따로 고정한다.
+
+RAW_SCOPE TIME의 non-null timestamp 문법·달력/offset은 신규6에서 이전 decoder보다 먼저 검증한다. 새6 native wire에서만 완전한 timestamp 패턴을 적용하고 중립 schema·비시간/null·다른 atom·old5는 유지한다. malformed 응답이 조건 제거·관계식 참조 실패를 거쳐 정상 시간까지 없애는 회귀를 별도로 확인한다. raw scope가 유효하다는 사실만으로 날짜의 의미나 교집합 정답까지 통과한 것으로 기록하지 않는다.
+
 새 canonical format12의 weeklyApplications에는 원선언·anchor별 원 지역 구간·검색 교집합·resolved/version이 있으며, 기존 base의 UNKNOWN/NON_PRECISE 원조건은 보존한다. 모델이 선택한 atom 근거를 같은 조건의 native bundle에 통합하는 구문 컴파일과 임의 근거 추가를 구분한다. 조회 시 파생 결과를 다시 계산해 대조한다. 실제 평가에서는 참가자별 전체 가용성뿐 아니라 날짜별 전원/부분 인원 후보, 불가·예외·선호 점수·장소 표시·선택/최종 조회를 대조한다. 단일 재시험 통과를 보편 정확성으로 표시하지 않으며 실제 질문·보완답 분기가 달라진 실행의 인과 비교도 제한한다.
+
+신규6의 제한적 명시 요일 목록 검증은 정식 요일명/욜 표기와 지원 구분자로 구성된 단독 숫자 범위에 적용한다. 원문 전체 요일 집합과 하나의 WEEKLY·빈 필터·양끝 시각/원자 근거를 대조하며, 부분집합·초과집합·단일 날짜/날짜별 분할로 바꾸지 않는다. 실제 조건이나 응답을 복구하는 기능이 아니며, 상대/주차/범위/선택·별도 날짜 상속·넓은 문맥·보완/정정·UNKNOWN은 판별 불가 경계를 유지한다. 기존5 요청/저장 복원은 그대로다. 같은 원문이 한 번 성공했더라도 사전 고정 반복 중 누락된 실행은 실패로 보존한다.
+
+신규6 native 생성 schema는 `temporal`을 `temporal_resolution`보다 먼저 배치해 반복 구조 선택 전 정밀도 값이 분기를 제한하는 순서를 피한다. 제약·required 배열·중립 schema·입력·지침은 그대로이며, 이전5 두 native 요청은 고정 바이트 digest로 대조한다. 같은 원문·설정으로 출력 순서만 바꾼 회귀에서도 모델의 비결정성과 표현 순서의 인과를 구분해 보고한다. 기존 INFERRED 경고를 숨기기 위한 라벨 변경이나 결과·사전 기대 수정은 하지 않는다.

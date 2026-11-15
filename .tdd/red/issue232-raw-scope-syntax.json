@@ -1,0 +1,44 @@
+{
+  "workItem": "issue232-raw-scope-syntax",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeRawScopeSyntaxTest.kt",
+      "sha256": "fd8a11062c600e42b0e23d6c977c491629d0e10302a3a57e7ab5ac8df0dae948"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TemporalRangeRawScopeSyntaxTest"
+  ],
+  "failedTests": [
+    "[1] start = \"2036-04-16T\"",
+    "[2] start = \"2036-19-12T18:25\"",
+    "[3] start = \"2036-04-00T18:25\"",
+    "[4] start = \"2036-02-30T18:25\"",
+    "[5] start = \"2035-02-29T18:25\"",
+    "[6] start = \"2036-04-16T24:00\"",
+    "[7] start = \"2036-04-16T18:60\"",
+    "[8] start = \"2036-04-16T18:25:60\"",
+    "[9] start = \"2036-04-16T18:25:12.\"",
+    "[10] start = \"2036-04-16T18:25:12.1234567890\"",
+    "[11] start = \"2036-04-16t18:25\"",
+    "[12] start = \"+2036-04-16T18:25\"",
+    "[13] start = \"+1000000000-04-16T18:25\"",
+    "[14] start = \"2036-04-16T18:25+08:00\"",
+    "[15] start = \"2036-04-16T18:25+19:00\"",
+    "[17] start = \"18:25\"",
+    "[18] start = \"2036-04-16 18:25\"",
+    "RSS03 nonstring nonnull TIME endpoints cannot be coerced to absent or unresolved boundaries()",
+    "[1] end = \"2036-04-16T\"",
+    "[2] end = \"2036-02-30T20:15\"",
+    "[3] end = \"2036-04-16T20:15+08:00\"",
+    "RSS08 native six alone narrows RAW_SCOPE TIME strings to anchored ISO shapes and preserves other temporal schemas()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-15T17:57:10.264997Z"
+}

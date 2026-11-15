@@ -9,3 +9,5 @@ object IndexedEvidenceSelection {
 
 const val SERVER_EVIDENCE_WEEKLY_REQUEST_CONTRACT = "schedule-dsl-evidence-request-5"
 const val SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT = "schedule-dsl-evidence-response-5"
+const val SERVER_EVIDENCE_TEMPORAL_RANGE_REQUEST_CONTRACT = "schedule-dsl-evidence-request-6"
+const val SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT = "schedule-dsl-evidence-response-6"

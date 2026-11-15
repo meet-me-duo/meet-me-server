@@ -35,6 +35,7 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_CALENDAR_RESPONSE
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.ir.IrEvidenceBindings
 import com.meetme.server.submission.domain.ir.IrInterpretation
@@ -240,6 +241,7 @@ internal class C5EvaluationSelectedHttpTransport(
                                 SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                                 SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                                SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                             ),
                     )
                     require(selected.identity.irSemanticVersion == SCHEDULE_DSL_STRUCTURAL_SEMANTIC_VERSION)
@@ -405,12 +407,19 @@ internal class C5EvaluationSelectedHttpTransport(
                     SERVER_EVIDENCE_CALENDAR_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_INDEXED_RESPONSE_CONTRACT,
                     SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT,
+                    SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT,
                 )
         val neutral: ByteArray
         val schema: Map<String, Any?>
         when (val selected = request.binding.route.choice) {
             is FinalAnalysisRouteChoice.DslStructuralV5 -> {
                 val contract = C5EvaluationStructuralProviderContract(mapper)
+                val admitted =
+                    if (selected.identity.responseContractVersion == SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT) {
+                        TemporalRangeEvidenceProviderContract(mapper, placeConstraintsCandidate)
+                    } else {
+                        null
+                    }
                 val weekly =
                     if (selected.identity.responseContractVersion == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
                         WeeklyEvidenceProviderContract(mapper, placeConstraintsCandidate)
@@ -437,7 +446,8 @@ internal class C5EvaluationSelectedHttpTransport(
                     }
                 val referenced = if (serverReferences) ServerEvidenceProviderContract(mapper, placeConstraintsCandidate) else null
                 val original =
-                    weekly?.requestBytes(request.inputCapsule, selected.meetingMode)
+                    admitted?.requestBytes(request.inputCapsule, selected.meetingMode)
+                        ?: weekly?.requestBytes(request.inputCapsule, selected.meetingMode)
                         ?: indexed?.requestBytes(request.inputCapsule, selected.meetingMode)
                         ?: calendar?.requestBytes(request.inputCapsule, selected.meetingMode)
                         ?: scoped?.requestBytes(request.inputCapsule, selected.meetingMode)
@@ -455,7 +465,8 @@ internal class C5EvaluationSelectedHttpTransport(
                         }
                     } ?: original
                 schema =
-                    weekly?.responseSchema(request.inputCapsule.snapshot) ?: indexed?.responseSchema(request.inputCapsule.snapshot)
+                    admitted?.responseSchema(request.inputCapsule.snapshot)
+                        ?: weekly?.responseSchema(request.inputCapsule.snapshot) ?: indexed?.responseSchema(request.inputCapsule.snapshot)
                         ?: calendar?.responseSchema(request.inputCapsule.snapshot)
                         ?: scoped?.responseSchema(request.inputCapsule.snapshot)
                         ?: referenced?.responseSchema()

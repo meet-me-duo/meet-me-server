@@ -1,0 +1,244 @@
+{
+  "workItem": "issue232-temporal-range-admission",
+  "sourceRevision": "ae71cecc2b8798443142b4f5f6cbe05b21ecdf4c851befd83caad6031ed07fd1",
+  "boundary": "Native scope/endpoint admission, frozen producer routing, PostgreSQL restoration and configuration. This cycle precedes the request-only clock evidence policy cycle; prior version fingerprints are preserved.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/config/SelectedScheduleDslAutoConfiguration.kt",
+      "sha256": "c3874f6a784a3a9208d90cd9e0a6cee67cd001e229bf6ef8250254bc5704b861"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/persistence/JdbcFinalAnalysisRouteRegistry.kt",
+      "sha256": "d117e3145c5839b6695e9138129dc64940fc70686ce90a946dbf31859e76322c"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/FinalAnalysisRouteSelectionService.kt",
+      "sha256": "430b3f24799990f65bc9507cfc2a76f08d9c72df635eaf74481f3b2bd4d9cc46"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/ScheduleDslStoredReadService.kt",
+      "sha256": "dcd0fc997f0aa0427e2c8b6fc4343383399115fb172260ca4573352ad3a1a746"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeAdmission.kt",
+      "sha256": "f89eb6be8dece098397341bd3ab7e2f3e3edd18ba9c8c45f8726423428e4cabc"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/config/TemporalRangeConfigurationTest.kt",
+      "sha256": "5694839751b018189c3b3ed67751c43e542e97ce605b6150212f7a470d613add"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/TemporalRangeAdmissionTestFixture.kt",
+      "sha256": "24e6c21fe3b9e4f0988a89f24c0f80e5badcd5dba4a07b42e8e8379156a2c1a3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeEvidenceProviderContractTest.kt",
+      "sha256": "173880b2cc3c2be317c6b20d52ad115fddd0d9aad01150bca0b43901c5afeafd"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/TemporalRangeEvidenceRoutePostgresTest.kt",
+      "sha256": "16adf2f4da3ec71320dd8146691b10c9da2cc64e181414fda7fb6f3a5c6f5776"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeScopeContextTest.kt",
+      "sha256": "d28793d2258e40d183bc29fe3b12835f5cb32b9be6ced916651b41a7237771b1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeAdmissionTest.kt",
+      "sha256": "7435a7c1965648dae3fb0164d3e0f2fca4760e8ad72d9ba7dd0e35f4203c4dc4"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "M01-missing-upper-scalar",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest.[4] fault = \"upper-value\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "M02-missing-all-seven",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest.TRA13 a separate weekday exception keeps its own root while the standalone base retains all seven days()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "M03-scope-role-replaced-with-meaning",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest.TRA15 broad meaning cannot replace a directional date role that selected only the clock clause()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "M04-ignore-broad-and-separate-scope",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest.[1] qualifier = \"2036-04-16에만 가능합니다.\", date = \"2036-04-16\"; com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest.[2] qualifier = \"검색 기간의 마지막 날에만 가능합니다.\", date = \"2036-04-20\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Ignore the enabled producer selection and freeze old5",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP01, TRP03, TRP09",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Re-select successor identity using current runtime flags instead of source frozen identity",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP03",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Skip semantic admission for new6 stored reads",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP07",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Retroactively apply new semantic admission to historical5 stored reads",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP06",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove the new capability weekly prerequisite at both configuration and freeze boundaries",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRC04, TRP04",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Deny response6 in registry whitelist, reproducing incompatible old-reader behavior",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP01, TRP03, TRP05, TRP09",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Check only the lower atomic clock proof and accept an upper mentioned only in general evidence",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP07",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit forwarding the configured admission flag into the actual selector bean",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "test",
+        "--tests",
+        "*TemporalRangeEvidenceRoutePostgresTest",
+        "--tests",
+        "*TemporalRangeConfigurationTest"
+      ],
+      "detectedBy": "TRP09",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-15T17:43:27.749215Z"
+}

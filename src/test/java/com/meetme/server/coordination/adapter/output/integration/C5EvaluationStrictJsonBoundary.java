@@ -31,7 +31,7 @@ public final class C5EvaluationStrictJsonBoundary implements ScheduleDslStructur
         previous=new StrictScheduleDslStructuralResponseParser(mapper, allowScopedTermEvidence, allowPlaceConstraints);
     }
     @Override public boolean supportsResponseContractVersion(String version) {
-        return "schedule-dsl-response-5".equals(version) || "schedule-dsl-evidence-response-1".equals(version) || "schedule-dsl-evidence-response-2".equals(version) || "schedule-dsl-evidence-response-3".equals(version) || "schedule-dsl-evidence-response-4".equals(version) || "schedule-dsl-evidence-response-5".equals(version);
+        return "schedule-dsl-response-5".equals(version) || "schedule-dsl-evidence-response-1".equals(version) || "schedule-dsl-evidence-response-2".equals(version) || "schedule-dsl-evidence-response-3".equals(version) || "schedule-dsl-evidence-response-4".equals(version) || "schedule-dsl-evidence-response-5".equals(version) || "schedule-dsl-evidence-response-6".equals(version);
     }
     @Override public String getSupportedResponseContractVersion() { return "schedule-dsl-response-5"; }
     @Override public ScheduleDslStructuralEnvelope parse(String raw, ScheduleEvidenceSnapshot snapshot,
@@ -45,7 +45,7 @@ public final class C5EvaluationStrictJsonBoundary implements ScheduleDslStructur
             if (frozen.length>262144) throw new IllegalArgumentException("RAW_RESPONSE_BYTE_LIMIT");
             Map<String,Object> decoded=reader.readValue(frozen);
             unicodeTree(decoded);
-            if ("schedule-dsl-evidence-response-1".equals(response) || "schedule-dsl-evidence-response-2".equals(response) || "schedule-dsl-evidence-response-3".equals(response) || "schedule-dsl-evidence-response-4".equals(response) || "schedule-dsl-evidence-response-5".equals(response))
+            if ("schedule-dsl-evidence-response-1".equals(response) || "schedule-dsl-evidence-response-2".equals(response) || "schedule-dsl-evidence-response-3".equals(response) || "schedule-dsl-evidence-response-4".equals(response) || "schedule-dsl-evidence-response-5".equals(response) || "schedule-dsl-evidence-response-6".equals(response))
                 return previous.parse(raw,snapshot,response,semantic,ast,vocabulary);
             Map<String,Object> compiled=C5DirectLocatorProducer.lower(decoded);
             String lowered=mapper.writeValueAsString(compiled);
