@@ -1,0 +1,26 @@
+{
+  "workItem": "issue232-native-temporal-order",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeNativePropertyOrderTest.kt",
+      "sha256": "fffb092619be7e06bb5248414210e3f0d2958ccd7d57f4d5e3c35da339dc8369"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*TemporalRangeNativePropertyOrderTest"
+  ],
+  "failedTests": [
+    "[1] provider = GEMINI",
+    "[2] provider = OPENAI"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-15T19:21:11.791694Z"
+}

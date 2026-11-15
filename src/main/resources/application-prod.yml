@@ -20,6 +20,7 @@ meetme:
     calendar-month-facts: ${MEETME_EXPERIMENT_CALENDAR_MONTH_FACTS:true}
     indexed-evidence-selections: ${MEETME_EXPERIMENT_INDEXED_EVIDENCE_SELECTIONS:true}
     weekly-schedule-rules: ${MEETME_EXPERIMENT_WEEKLY_SCHEDULE_RULES:true}
+    temporal-range-admission: ${MEETME_EXPERIMENT_TEMPORAL_RANGE_ADMISSION:true}
 
 management:
   server:

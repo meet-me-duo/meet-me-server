@@ -1,0 +1,106 @@
+{
+  "workItem": "issue232-temporal-range-admission",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/TemporalRangeAdmissionTestFixture.kt",
+      "sha256": "24e6c21fe3b9e4f0988a89f24c0f80e5badcd5dba4a07b42e8e8379156a2c1a3"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeAdmissionTest.kt",
+      "sha256": "7435a7c1965648dae3fb0164d3e0f2fca4760e8ad72d9ba7dd0e35f4203c4dc4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeEvidenceProviderContractTest.kt",
+      "sha256": "173880b2cc3c2be317c6b20d52ad115fddd0d9aad01150bca0b43901c5afeafd"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/config/TemporalRangeConfigurationTest.kt",
+      "sha256": "5694839751b018189c3b3ed67751c43e542e97ce605b6150212f7a470d613add"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/TemporalRangeEvidenceRoutePostgresTest.kt",
+      "sha256": "16adf2f4da3ec71320dd8146691b10c9da2cc64e181414fda7fb6f3a5c6f5776"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeScopeContextTest.kt",
+      "sha256": "d28793d2258e40d183bc29fe3b12835f5cb32b9be6ced916651b41a7237771b1"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "test",
+    "--tests",
+    "*TemporalRangeAdmissionTest",
+    "--tests",
+    "*TemporalRangeScopeContextTest",
+    "--tests",
+    "*TemporalRangeEvidenceProviderContractTest",
+    "--tests",
+    "*TemporalRangeEvidenceRoutePostgresTest",
+    "--tests",
+    "*TemporalRangeConfigurationTest"
+  ],
+  "failedTests": [
+    "TRA05 an upper endpoint appearing only as general meaning evidence is not an effective clock role()",
+    "[1] raw = \"오후 4시 20분부터 8시 40분까지 가능합니다.\", lower = \"16:20\", upper = \"20:40\", lowerText = \"오후 4시 20분\", upperText = \"8시 40분\"",
+    "[2] raw = \"16:35~20:55 가능.\", lower = \"16:35\", upper = \"20:55\", lowerText = \"16:35\", upperText = \"20:55\"",
+    "[3] raw = \"오전 9시 반부터 11시 20분까지 가능합니다.\", lower = \"09:30\", upper = \"11:20\", lowerText = \"오전 9시 반\", upperText = \"11시 20분\"",
+    "[4] raw = \"오후 4시 20분 이후부터 8시 40분까지 가능합니다.\", lower = \"16:20\", upper = \"20:40\", lowerText = \"오후 4시 20분\", upperText = \"8시 40분\"",
+    "[1] kind = \"WHOLE_DAY\"",
+    "[2] kind = \"APPROVED_TERM\"",
+    "[3] kind = \"RAW_SCOPE\"",
+    "TRA10 an actually linked upper correction must not be forced back to the old standalone original upper()",
+    "TRA13 a separate weekday exception keeps its own root while the standalone base retains all seven days()",
+    "[1] raw = \"오후 4시 20분 이후에 가능합니다.\", lower = \"16:20\", proof = \"오후 4시 20분\"",
+    "[2] raw = \"오후 2시 5분부터 4시 10분까지 수업이 있고 오후 5시 25분 이후 가능합니다.\", lower = \"17:25\", proof = \"오후 5시 25분\"",
+    "[3] raw = \"오후 2시부터 4시까지 가능하다는 말은 철회합니다. 정정하면 오후 5시 25분 이후 가능합니다.\", lower = \"17:25\", proof = \"오후 5시 25분\"",
+    "[1] raw = \"16:35부터 20:55까지가 좋아요.\", lower = \"16:35\", upper = \"20:55\", lowerText = \"16:35\", upperText = \"20:55\", effect = \"PREFERRED\"",
+    "[2] raw = \"오전 9시 반부터 11시 20분까지 불가능합니다.\", lower = \"09:30\", upper = \"11:20\", lowerText = \"오전 9시 반\", upperText = \"11시 20분\", effect = \"UNAVAILABLE\"",
+    "TRA09 explicit date and bare weekday scope are outside standalone dateless coverage and are not broadened()",
+    "[1] upperOnly = false",
+    "[2] upperOnly = true",
+    "TRA14 broad scope context with a separate weekday qualifier remains inconclusive and unchanged()",
+    "[1] kind = \"after\"",
+    "[2] kind = \"before\"",
+    "[3] kind = \"two-bounds\"",
+    "TRA07 UNKNOWN remains unresolved and admission never fills missing clocks()",
+    "TRA15 broad meaning cannot replace a directional date role that selected only the clock clause()",
+    "[1] fault = \"weekdays\"",
+    "[2] fault = \"filter\"",
+    "[3] fault = \"lower-value\"",
+    "[4] fault = \"upper-value\"",
+    "[5] fault = \"missing-upper-proof\"",
+    "[6] fault = \"broad-proof\"",
+    "TRP06 old response five parsing and restoration keep original one sided semantics without new admission()",
+    "TRP01 new request freezes admission identity while preserving native context catalog and old weekly bytes()",
+    "TRP08 linked correction and genuine UNKNOWN keep native old behavior without guessed endpoint repair()",
+    "[1] fault = \"absent\"",
+    "[2] fault = \"null\"",
+    "[3] fault = \"wrong\"",
+    "[4] fault = \"number\"",
+    "TRP03 valid generation six has the same format12 domain shape and leaves original response and sources untouched()",
+    "TRP07 generation six preserves existing catalog ownership rejection()",
+    "[1] fault = \"single-date\"",
+    "[2] fault = \"missing-upper\"",
+    "[3] fault = \"wrong-upper\"",
+    "[4] fault = \"meaning-only-upper\"",
+    "[5] fault = \"broad-clock-proof\"",
+    "TRP02 response schema adds only the required exact admission marker and both wires retain identical native data()",
+    "TRS04 node context alone cannot lend another sentence to a clock only condition date role()",
+    "TRS02 an owned whole context containing a separate date qualifier is inconclusive rather than demonstrably dateless()",
+    "[1] qualifier = \"2036-04-16에만 가능합니다.\", date = \"2036-04-16\"",
+    "[2] qualifier = \"검색 기간의 마지막 날에만 가능합니다.\", date = \"2036-04-20\"",
+    "TRS03 a separately owned weekday qualifier preserves its recurring weekday and both clocks()",
+    "TRP09 actual configured selector bean forwards the enabled generation capability()",
+    "[1] shape = \"ONE_DAY\"",
+    "[2] shape = \"MISSING_UPPER\"",
+    "[3] shape = \"MISSING_NATIVE_UPPER\"",
+    "[4] shape = \"DAY_FILTER\"",
+    "[2] admission = true"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-15T15:52:06.307906Z"
+}

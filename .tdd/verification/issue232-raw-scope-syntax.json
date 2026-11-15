@@ -1,0 +1,62 @@
+{
+  "workItem": "issue232-raw-scope-syntax",
+  "sourceRevision": "10edd3372f54741bd59d6f5a30107caa4633810c4eaf9d6058a8333b01c7479d",
+  "boundary": "New6-only RAW_SCOPE TIME syntax/calendar/room-offset admission and native-only generation schema narrowing. Restored44 tests passed, original629 tests and old5 contract retained.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeRawScopeSyntax.kt",
+      "sha256": "b13be849bc4c6c13902c05c1cf5bf868150b1ed20a07221fe29bb6f08e93fc78"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeEvidenceProviderContract.kt",
+      "sha256": "a5c46a78b17fbd401b4ab26220d68cbe020bbd794e2c28d9cff90b0e6e286d62"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/ServerEvidenceWire.kt",
+      "sha256": "2dfdad96acfd091f946ff96284189b7e76c515daf5efb48ca25c73fc2f5f4ff4"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeRawScopeSyntaxTest.kt",
+      "sha256": "fd8a11062c600e42b0e23d6c977c491629d0e10302a3a57e7ab5ac8df0dae948"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClockEvidencePolicyContractTest.kt",
+      "sha256": "d3681c21ae7b8dbaef2a4fc5020cc22496488893e135ffd8c5f549ab1e930073"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "M01-predelegate-validation-omitted",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*TemporalRangeRawScopeSyntaxTest"
+      ],
+      "detectedBy": "RSS01/RSS02/RSS03 malformed endpoints (21 assertions)",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "M02-native-schema-narrowing-omitted",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*TemporalRangeRawScopeSyntaxTest"
+      ],
+      "detectedBy": "RSS08 native generation schema preservation and narrowing",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-15T18:09:05.851760Z"
+}

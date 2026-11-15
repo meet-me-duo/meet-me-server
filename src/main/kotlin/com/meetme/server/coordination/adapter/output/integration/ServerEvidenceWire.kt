@@ -12,9 +12,12 @@ import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_REQUEST_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_REQUEST_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_REQUEST_CONTRACT
+import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_REQUEST_CONTRACT
 import com.meetme.server.submission.domain.dsl.SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT
 import com.meetme.server.submission.domain.dsl.ServerEvidenceCatalog
+import com.meetme.server.submission.domain.dsl.TemporalRangeAdmission
 import com.meetme.server.submission.domain.dsl.WeeklyScheduleRules
 import tools.jackson.core.StreamReadFeature
 import tools.jackson.databind.DeserializationFeature
@@ -37,7 +40,14 @@ object ServerEvidenceWire {
                 .toMutableMap()
         val scoped = data["response_contract_version"] == SERVER_EVIDENCE_SCOPED_RESPONSE_CONTRACT
         require(
-            if (data["response_contract_version"] == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
+            if (data["response_contract_version"] == SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT) {
+                data["request_contract_version"] == SERVER_EVIDENCE_TEMPORAL_RANGE_REQUEST_CONTRACT &&
+                    data["date_scope_version"] == MeetingDateScopePolicy.VERSION &&
+                    data["calendar_facts_version"] == MeetingMonthCalendarFacts.VERSION &&
+                    data["evidence_selection_version"] == IndexedEvidenceSelection.VERSION &&
+                    data["weekly_rules_version"] == WeeklyScheduleRules.VERSION &&
+                    data["temporal_range_admission_version"] == TemporalRangeAdmission.VERSION
+            } else if (data["response_contract_version"] == SERVER_EVIDENCE_WEEKLY_RESPONSE_CONTRACT) {
                 data["request_contract_version"] == SERVER_EVIDENCE_WEEKLY_REQUEST_CONTRACT &&
                     data["date_scope_version"] == MeetingDateScopePolicy.VERSION &&
                     data["calendar_facts_version"] == MeetingMonthCalendarFacts.VERSION &&
@@ -64,10 +74,16 @@ object ServerEvidenceWire {
         val instructions = data.remove("prompt") as? String ?: throw IllegalArgumentException("Missing evidence instructions")
         require(instructions.isNotBlank())
         @Suppress("UNCHECKED_CAST")
-        val schema =
+        val generationSchema =
             ServerEvidenceGenerationSchema.create(
                 data.remove("schema") as? Map<String, Any?> ?: throw IllegalArgumentException("Missing evidence schema"),
             )
+        val schema =
+            if (data["response_contract_version"] == SERVER_EVIDENCE_TEMPORAL_RANGE_RESPONSE_CONTRACT) {
+                ServerEvidenceGenerationSchema.temporalBeforePrecision(TemporalRangeRawScopeSyntax.generationSchema(generationSchema))
+            } else {
+                generationSchema
+            }
         val input = mapper.writeValueAsString(data)
         val root =
             if (provider == AnalysisProvider.GEMINI) {
@@ -108,6 +124,33 @@ object ServerEvidenceWire {
 
 /** Existing temporal precision and eight-level expression bounds, applied identically for both providers. */
 internal object ServerEvidenceGenerationSchema {
+    /** Validation is unchanged; select the temporal atom before its constrained native precision. */
+    fun temporalBeforePrecision(schema: Map<String, Any?>): Map<String, Any?> = map(orderTemporalBeforePrecision(schema))
+
+    private fun orderTemporalBeforePrecision(value: Any?): Any? =
+        when (value) {
+            is List<*> -> value.map(::orderTemporalBeforePrecision)
+            is Map<*, *> -> {
+                val node = map(value).mapValues { (_, child) -> orderTemporalBeforePrecision(child) }
+                val fields = node["properties"] as? Map<*, *>
+                if (node["type"] == "object" &&
+                    fields != null &&
+                    fields.keys ==
+                    setOf("id", "effect", "interpretation", "temporal_resolution", "evidence", "assertion", "supersedes", "temporal")
+                ) {
+                    val ordered = linkedMapOf<String, Any?>()
+                    fields.forEach { (key, child) ->
+                        if (key == "temporal_resolution") ordered["temporal"] = fields["temporal"]
+                        if (key != "temporal") ordered[key as String] = child
+                    }
+                    node + ("properties" to ordered)
+                } else {
+                    node
+                }
+            }
+            else -> value
+        }
+
     private fun map(value: Any?): Map<String, Any?> =
         (value as? Map<*, *>)?.entries?.associate { (it.key as String) to it.value }
             ?: throw IllegalArgumentException("Expected evidence schema object")

@@ -1,0 +1,143 @@
+{
+  "workItem": "issue232-final-weekday-domain-faults",
+  "sourceRevision": "2f871356b831f93f7250b351b19cf4e7d90e4a95",
+  "boundary": "New generation6 finite weekday-list admission and preserved standalone scope/endpoints. Final frozen code 9b8a870599bc7202de573630ce667e3416531d6c6026f1580bcf2c4d826f64e1. Five executions comprise four prior-fault reverifications and one new recognition fault.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeAdmission.kt",
+      "sha256": "e03d382ed861a501cafd1383a935d162c22877ade96cab08078b971cafcce137"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeEvidenceProviderContract.kt",
+      "sha256": "eae6b87a4408834695bc2adc853f66188f83fed6cf3e0978de01dcb938bce5c1"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeAdmissionTest.kt",
+      "sha256": "7435a7c1965648dae3fb0164d3e0f2fca4760e8ad72d9ba7dd0e35f4203c4dc4"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeScopeContextTest.kt",
+      "sha256": "d28793d2258e40d183bc29fe3b12835f5cb32b9be6ced916651b41a7237771b1"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/domain/dsl/TemporalRangeWeekdayCompletenessTest.kt",
+      "sha256": "856c568d2eadb9a9ed3d91eea987218fe77bbe0d0cd57104d8811dc30db1a806"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeEvidenceProviderContractTest.kt",
+      "sha256": "173880b2cc3c2be317c6b20d52ad115fddd0d9aad01150bca0b43901c5afeafd"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/ClockEvidencePolicyContractTest.kt",
+      "sha256": "d3681c21ae7b8dbaef2a4fc5020cc22496488893e135ffd8c5f549ab1e930073"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/integration/TemporalRangeRawScopeSyntaxTest.kt",
+      "sha256": "fd8a11062c600e42b0e23d6c977c491629d0e10302a3a57e7ab5ac8df0dae948"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/support/TemporalRangeAdmissionTestFixture.kt",
+      "sha256": "24e6c21fe3b9e4f0988a89f24c0f80e5badcd5dba4a07b42e8e8379156a2c1a3"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Reverification of prior upper-scalar omission on the final source",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeWeekdayCompletenessTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest#TRA04 the effective scope values and distinct atomic endpoint witnesses all remain mandatory; case [4] fault = \"upper-value\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Reverification of prior all-seven scope protection through the generalized exact-day-set comparison",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeWeekdayCompletenessTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest#TRA13 a separate weekday exception keeps its own root while the standalone base retains all seven days; case TRA13 a separate weekday exception keeps its own root while the standalone base retains all seven days()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Reverification of prior scope-role authorization failure using merged meaning evidence",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeWeekdayCompletenessTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest#TRA15 broad meaning cannot replace a directional date role that selected only the clock clause; case TRA15 broad meaning cannot replace a directional date role that selected only the clock clause()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Reverification of prior inherited-context false-positive protection with containment ignored",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeWeekdayCompletenessTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest#TRS01 independently selected date and time sentences preserve an inherited specific date without widening; case [1] qualifier = \"2036-04-16에만 가능합니다.\", date = \"2036-04-16\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "New fault: disable positively supported explicit weekday-list recognition",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=2",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeAdmissionTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeScopeContextTest",
+        "--tests",
+        "com.meetme.server.submission.domain.dsl.TemporalRangeWeekdayCompletenessTest"
+      ],
+      "detectedBy": "com.meetme.server.submission.domain.dsl.TemporalRangeWeekdayCompletenessTest#WDL01 a complete three day rule is positively checked with exact native clocks and no rewritten evidence; case [1] style = \"full\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-15T18:46:12.363547Z"
+}
