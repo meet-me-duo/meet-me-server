@@ -23,6 +23,7 @@ data class PrecheckProviderRequest(
     val executionGeneration: Int? = null,
     val dispatchContext: AiProviderDispatchContext? = null,
     val evidence: InputEvidence? = null,
+    val classificationCapture: PrecheckClassificationCapture? = null,
 )
 
 enum class PrecheckVerdict { CLEAR, NEEDS_CHOICE, NEEDS_EDIT, UNRESOLVED }

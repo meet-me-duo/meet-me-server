@@ -1,0 +1,57 @@
+{
+  "workItem": "issue241-current-migrations",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "6d361fc0b6a693fe652fb85df1f4f2b28514303860e467597f8204ae765bd35d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "adf0ce3408740efc8d7ba907c52fe1a1b03d837cf0996f659fba4550d6d4c2ce"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "1546bfe24e1644315326634145a383d6abf260095ae9fcc4e4ea4edf6d376ecb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/ApprovedTermsFinalAnalysisRoutePostgresTest.kt",
+      "sha256": "894a3ee0d3f9a1e483446939c90fce50241e2c73795ed2d69305ff5454da9a18"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+      "sha256": "bc70f6e7f304a81096306e705201ad0d5beb83ea97c787f2b198177333283d4d"
+    }
+  ],
+  "command": [
+    "env",
+    "JAVA_HOME=/workspace/.toolchains/jdk-17.0.21+9",
+    "GRADLE_USER_HOME=/workspace/.gradle",
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*DatabaseMigrationRunnerTest",
+    "--tests",
+    "*IntegratedLegacyUpgradePostgresTest",
+    "--tests",
+    "*ScheduleIrRepositoryPostgresTest",
+    "--tests",
+    "*ApprovedTermsFinalAnalysisRoutePostgresTest",
+    "--tests",
+    "*RecommendationPartialConfirmationMigrationPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest.PC06 V17 to V18 preserves previous confirmations and permits pending two of five selection()",
+    "com.meetme.server.coordination.adapter.output.persistence.ApprovedTermsFinalAnalysisRoutePostgresTest.AV3R01 V27 is applied while existing route shape constraints remain strict()",
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.blank PostgreSQL migrates exactly thirty versions and validates both independent legacy schemas()",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.V23 legacy data upgrades through V24 into separate typed storage without rewriting existing rows()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T07:02:00.028650Z"
+}

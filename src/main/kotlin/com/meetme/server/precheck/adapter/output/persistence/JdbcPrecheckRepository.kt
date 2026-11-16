@@ -247,6 +247,32 @@ class JdbcPrecheckRepository(
         )
     }
 
+    override fun finishAttempt(
+        check: PrecheckExecution,
+        result: PrecheckProviderResult?,
+        at: Instant,
+        classification: com.meetme.server.precheck.application.port.output.PrecheckClassificationSnapshot?,
+    ) {
+        jdbc.update(
+            """UPDATE precheck_executions SET finished_at=COALESCE(finished_at,?),input_tokens=COALESCE(input_tokens,?),
+            output_tokens=COALESCE(output_tokens,?),response_bytes=COALESCE(response_bytes,?),failure_code=COALESCE(failure_code,?),
+            provider=COALESCE(provider,?),model=COALESCE(model,?),
+            classification_snapshot=COALESCE(classification_snapshot,CAST(? AS jsonb))
+            WHERE check_id=? AND generation=? AND owner_token=? AND started_at IS NOT NULL""",
+            Timestamp.from(at),
+            result?.inputTokens,
+            result?.outputTokens,
+            result?.responseBytes,
+            check.failureCode,
+            result?.provider,
+            result?.model,
+            classification?.let(mapper::writeValueAsString),
+            check.id,
+            check.generation,
+            check.ownerToken,
+        )
+    }
+
     override fun anchor(versionId: UUID): Instant? =
         jdbc
             .query(

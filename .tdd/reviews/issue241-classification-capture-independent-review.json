@@ -1,0 +1,117 @@
+{
+  "issue": 241,
+  "result": "NO_BLOCKING_FINDINGS",
+  "reviewerRole": "independent test designer and reviewer; not production implementer",
+  "scope": "Frozen classifier capture/TwoStage/worker/processing forwarding; source review of added nullable persistence column and original completion write. No claim of independently running PostgreSQL/operator-security fault verification in this suite.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckClassificationCapture.kt",
+      "sha256": "1c641b842b2b7014610646e941965466e8cbf4b1c309275efad674333b53316d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PreSubmissionCheckProvider.kt",
+      "sha256": "f718a5071d8e90ce4c1876146b348856134392313bdc01a53575f23014ebebbd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt",
+      "sha256": "be8299f2cd31951dba89b3caa367a666e1b456816663e63c0a97aec9c642de5b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "3e7f12563fcb6220cf82d8e2e07b824b66b3a10f49c45fae5d0d612056b08613"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "fd1ff7ba1023439ee681ea5371dcbcd641f9238cecb7c0bcf68cd58ad40aa02f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckClassificationCaptureTest.kt",
+      "sha256": "f159758e3b84da28097cccf8496a506a7392e26cb171fafe9db2ec0c698ec514"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/application/service/PrecheckClassificationWorkerTest.kt",
+      "sha256": "9ecd3eee48dc8957165f4f91ba1774d34d0ee09da592b9abc59ecd3d926725ac"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckTerminalUsageWorkerTest.kt",
+      "sha256": "61340a32714f46bb62b39c48e3a565cc980f14394153cf39f69fbc8f8a53db4c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckRoutingTest.kt",
+      "sha256": "2a14d28feae413fe587ab5ac1116a511ca1c5d28e7720c73586871ea7fc5690a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckBudgetTest.kt",
+      "sha256": "3a813a63c7d159ff0eaeb6544e8ac53b429ea9b90cbc23814f1c500b36d69831"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckDeadlineTest.kt",
+      "sha256": "ddc8af8fa9b3fcbd2aa12179eb430ef7730fc75382936b7593ca98cc19e8d7f5"
+    }
+  ],
+  "frozenPublicFiles": 457,
+  "frozenMainFiles": 444,
+  "frozenAggregateSha256": "03ba033d1baa6c662cfde9241a19c8f7d98982d661f0d4593d95f2356fffb0cf",
+  "findings": [],
+  "confirmed": [
+    "Valid returned first result is recorded after the original validate and before existing post-return deadline checks in both modes. Effective assessment is recorded only by the existing routing evaluation; first normalized and semantic values remain distinct.",
+    "Capture is request/attempt-local, bounded, immutable and defensive; invalid optional metadata drops diagnostic only. Generator result/exception meaning and identity are unchanged. Source, prompt and response body are absent from the snapshot shape.",
+    "Worker forwards known snapshot independently from the terminal result, including generator/provider/worker validation failures and publication-expired fallback. Original result/output caps, stage usage, budget observations and failure codes remain covered by the frozen TS08 and66 controls.",
+    "No new model/provider transport, reservation, diagnostic database I/O or monotonic read is introduced in the provider deadline. Diagnostic serialization occurs in the existing completion transaction. The existing owner/generation/started fence and COALESCE first-write preservation remain in the source.",
+    "V33 adds a nullable bounded version1 JSONB snapshot without historical backfill. Missing snapshots cannot be inferred from final precheck status."
+  ],
+  "execution": {
+    "baselineTests": 109,
+    "baselineFailures": 0,
+    "finalRestoredTests": 109,
+    "finalRestoredFailures": 0,
+    "uniqueFaultsDetected": 5,
+    "allRunsErrors": 0,
+    "allRunsSkipped": 0,
+    "rootProductionOrTestWrites": 0,
+    "testExpectationWrites": 0,
+    "externalProviderModelOrAwsCalls": 0,
+    "rootFullGuardUntouched": true,
+    "sourceAndTestRestoration": "Exact bytes and all457 copied-file fingerprints after every mutation and final positive"
+  },
+  "mutationResults": [
+    {
+      "fault": "normalized-semantic-confusion",
+      "tests": 25,
+      "assertionFailures": 7,
+      "result": "DETECTED"
+    },
+    {
+      "fault": "premature-route",
+      "tests": 25,
+      "assertionFailures": 6,
+      "result": "DETECTED"
+    },
+    {
+      "fault": "drop-diagnostic-on-failure",
+      "tests": 18,
+      "assertionFailures": 10,
+      "result": "DETECTED"
+    },
+    {
+      "fault": "extra-monotonic-read",
+      "tests": 25,
+      "assertionFailures": 2,
+      "result": "DETECTED"
+    },
+    {
+      "fault": "mutable-first-probabilities",
+      "tests": 25,
+      "assertionFailures": 1,
+      "result": "DETECTED"
+    }
+  ],
+  "artifacts": {
+    "verificationCandidate": "/workspace/scratch/issue241-provider-mutation-artifacts/issue241-classification-capture-faults.json",
+    "summary": "/workspace/scratch/issue241-provider-mutation-artifacts/summary.json",
+    "rawLogsAndXml": "/workspace/scratch/issue241-provider-mutation-artifacts"
+  },
+  "recordedAt": "2026-11-16T07:52:39Z"
+}

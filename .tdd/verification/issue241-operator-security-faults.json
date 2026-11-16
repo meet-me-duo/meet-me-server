@@ -1,0 +1,124 @@
+{
+  "workItem": "issue241-operator-security-faults",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "boundary": "Verified operator authorization, durable audit before protected release, and presentation-only name/contact masking with preserved schedule text",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "sha256": "495c35eafe62f031955ea66162ad2c5c5b20e748d3d3af190213b73ac921fc83"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorViewMasker.kt",
+      "sha256": "648ca8bfe02c0ccb8b14a9d222bcc59d88b12cd9b0d957bfecc6a9cd56a1016f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsAuthorizationTest.kt",
+      "sha256": "0b29886237b89c4802217af3518d5656a696f357ffd20a6a6780fa8f6223d837"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsHttpSecurityTest.kt",
+      "sha256": "fd930b4af1f66921403edcf66d1500ee3606566d1a6a1cf5a3ec9d630128b6be"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorViewMaskerTest.kt",
+      "sha256": "9bde3a95dedde80abecae785eaf45cea17baf6578f2221b6cc59ec19ac77b835"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorInternationalContactMaskingTest.kt",
+      "sha256": "4967558f06401421f442afd8bcb3cfb8e112967a651146fd095d7d26be5af52d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTrailingDateContactMaskingTest.kt",
+      "sha256": "095be60746163813ec12e2206ac5865e990f19f6536ccb21df703826b3afdb7c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRangeContactMaskingTest.kt",
+      "sha256": "8c9a02eb65ee59a2258a5341d0093206cfef9c4badec5fd937f62dd488e3bb29"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Skip the explicit operator allowlist and enabled-capability gate for diagnostic reads",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-independent-security-faults/selected-tests.init.gradle",
+        "test",
+        "--tests",
+        "*OperatorDiagnosticsAuthorizationTest"
+      ],
+      "detectedBy": "OperatorDiagnosticsAuthorizationTest.every read verifies identity again and cannot reuse previous operator authorization [1] read = HISTORY",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Swallow durable audit append failures and allow protected responses to proceed",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-independent-security-faults/selected-tests.init.gradle",
+        "test",
+        "--tests",
+        "*OperatorDiagnosticsAuthorizationTest",
+        "--tests",
+        "*OperatorDiagnosticsHttpSecurityTest"
+      ],
+      "detectedBy": "OperatorDiagnosticsAuthorizationTest.audit outage prevents release of an otherwise successful protected view [1] read = HISTORY",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Return email-redacted text without applying any phone redaction",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-independent-security-faults/selected-tests.init.gradle",
+        "test",
+        "--tests",
+        "*OperatorViewMaskerTest",
+        "--tests",
+        "*OperatorInternationalContactMaskingTest",
+        "--tests",
+        "*OperatorTrailingDateContactMaskingTest",
+        "--tests",
+        "*OperatorRangeContactMaskingTest"
+      ],
+      "detectedBy": "OperatorInternationalContactMaskingTest.international contact redaction preserves following date timezone and clock exactly [1] input = \"\uc804\ud654 +82 2 1234 5678 19:30 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 19:30 \uac00\ub2a5\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Return the full structured participant name after trimming",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-independent-security-faults/selected-tests.init.gradle",
+        "test",
+        "--tests",
+        "*OperatorViewMaskerTest"
+      ],
+      "detectedBy": "OperatorViewMaskerTest.OVM01 name fields trim and retain exactly the first Unicode code point [5] input = \"\uac00\ub098\ub2e4\", expected = \"\uac00**\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T08:55:54.313270Z"
+}

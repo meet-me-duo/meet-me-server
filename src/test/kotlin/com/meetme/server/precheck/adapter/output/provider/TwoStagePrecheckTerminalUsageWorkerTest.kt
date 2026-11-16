@@ -4,8 +4,10 @@ import com.meetme.server.meetingroom.domain.ClosurePolicy
 import com.meetme.server.meetingroom.domain.InviteCode
 import com.meetme.server.meetingroom.domain.MeetingMode
 import com.meetme.server.meetingroom.domain.MeetingRoom
+import com.meetme.server.precheck.application.port.output.AmbiguityAssessment
 import com.meetme.server.precheck.application.port.output.AmbiguityClassificationPort
 import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProvider
+import com.meetme.server.precheck.application.port.output.PrecheckClassificationSnapshot
 import com.meetme.server.precheck.application.port.output.PrecheckProviderResult
 import com.meetme.server.precheck.application.port.output.PrecheckRepository
 import com.meetme.server.precheck.application.port.output.PrecheckVerdict
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.mockingDetails
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import java.time.Clock
@@ -57,9 +60,12 @@ class TwoStagePrecheckTerminalUsageWorkerTest {
                 provider = "OPENAI_DECISIONS",
                 model = "gpt-6-luna",
             )
-        val harness = harness(provider, expected)
+        val classification = expectedClassification(AmbiguityAssessment.CLEAR)
+        val harness = harness(provider, expected, classification)
         assertTrue(harness.worker.runOne())
-        verify(harness.processing).publish(harness.claim, expected, null)
+        val recorded = recordedClassification(harness.processing)
+        verify(harness.processing).publish(harness.claim, expected, null, recorded)
+        assertEquals(classification, recorded)
         assertEquals(0, generators)
         val (reservation, observation) = budget.observations.single()
         assertEquals(AiCallStage.CLASSIFICATION, reservation.request.stage)
@@ -125,9 +131,17 @@ class TwoStagePrecheckTerminalUsageWorkerTest {
                 budget,
             )
         val allowed = output == 2048L
-        val harness = harness(provider, if (allowed) terminal else null)
+        val classification = expectedClassification(AmbiguityAssessment.NEEDS_REVIEW)
+        val harness = harness(provider, if (allowed) terminal else null, classification)
         assertTrue(harness.worker.runOne())
-        verify(harness.processing).publish(harness.claim, if (allowed) terminal else null, if (allowed) null else "INVALID_RESPONSE")
+        val recorded = recordedClassification(harness.processing)
+        verify(harness.processing).publish(
+            harness.claim,
+            if (allowed) terminal else null,
+            if (allowed) null else "INVALID_RESPONSE",
+            recorded,
+        )
+        assertEquals(classification, recorded)
         assertEquals(1, generators)
         assertEquals(2, budget.observations.size)
         assertEquals(2049L, budget.observations[0].second.outputTokens)
@@ -142,9 +156,28 @@ class TwoStagePrecheckTerminalUsageWorkerTest {
         assertEquals(3, budget.held(TwoStageFixtures.roomId))
     }
 
+    private fun recordedClassification(processing: PrecheckProcessingService): PrecheckClassificationSnapshot? {
+        val published = mockingDetails(processing).invocations.filter { it.method.name == "publish" }
+        assertEquals(1, published.size)
+        return published.single().getArgument(3)
+    }
+
+    private fun expectedClassification(assessment: AmbiguityAssessment) =
+        PrecheckClassificationSnapshot(
+            assessment = assessment,
+            reason = null,
+            confidence = 0.99,
+            semanticAssessment = null,
+            probabilities = emptyMap(),
+            provider = "OPENAI_DECISIONS",
+            model = "gpt-6-luna",
+            effectiveAssessment = assessment,
+        )
+
     private fun harness(
         provider: PreSubmissionCheckProvider,
         expected: PrecheckProviderResult?,
+        classification: PrecheckClassificationSnapshot? = null,
     ): Harness {
         val repository = mock(PrecheckRepository::class.java)
         val processing = mock(PrecheckProcessingService::class.java)
@@ -187,8 +220,8 @@ class TwoStagePrecheckTerminalUsageWorkerTest {
         `when`(repository.unfinishedCheckIds(128)).thenReturn(emptyList())
         `when`(repository.queuedCheckIds(128)).thenReturn(listOf(check.id))
         `when`(processing.claim(check.id)).thenReturn(claim)
-        if (expected != null) `when`(processing.publish(claim, expected, null)).thenReturn(PrecheckStatus.CLEAR)
-        `when`(processing.publish(claim, null, "INVALID_RESPONSE")).thenReturn(PrecheckStatus.FAILED)
+        if (expected != null) `when`(processing.publish(claim, expected, null, classification)).thenReturn(PrecheckStatus.CLEAR)
+        `when`(processing.publish(claim, null, "INVALID_RESPONSE", classification)).thenReturn(PrecheckStatus.FAILED)
         return Harness(
             PreSubmissionCheckWorker(repository, processing, provider, Clock.fixed(TwoStageFixtures.anchor, ZoneOffset.UTC)),
             processing,

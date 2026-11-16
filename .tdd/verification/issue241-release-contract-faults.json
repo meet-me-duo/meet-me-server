@@ -1,0 +1,158 @@
+{
+  "workItem": "issue241-release-contract-faults",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "boundary": "Independent V33 release boundary: exact publisher, two historically compatible catalog readers, unconditional additive CI gate and protected schema transition. Six release sources are frozen by digest; the five faults are run only in an isolated copy with no root production mutation. This does not claim whole backend quality or production deployment success.",
+  "sourceFiles": [
+    {
+      "path": "src/main/resources/db/migration/V33__record_precheck_classifications.sql",
+      "sha256": "49340c550cf250d1b6895225dfb60614cef00ea2685618cd4ff795596e6ea8de"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "922678112bffe130b89fe7a5c4dfa4beea976a06b6a71e98133abad722a88d65"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "1282879580415668d0d43fbbc3b67909538f444652df5e4656a40fe83dafb78e"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "f5e21be7ea88ed5c2c93a1848a24b86d8b0e22914a9a199f8532a70b956c28c9"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "3af257d04b4974f445dccfaba8de3d9efac0da3e90bb8a972438d9af8a0818c3"
+    },
+    {
+      "path": "deploy/public-api-contract.json",
+      "sha256": "dec2782b9d5f428f5f331b60e6640931c49b1c4245b38dd92ffda542317d2adb"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/v33-precheck-classification-release-catalog.test.cjs",
+      "sha256": "5d7b97b77c1a654fa9ed278d5b8a32a58a565e636ced99d37e44cf9609e08c1b"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "4c2898ab6a2034348fbee635a14ce2671f34611f12c57f8909683f720fc0a6b5"
+    },
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "426eefd3fa904590ce3bfb422ad7b4888a6e8f04d4ebec0abf4279438de7b4b4"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "538c8ad3c04e6db13b00ce7c7ddbc4d163e130ac31cbdf8e8827e553878ba977"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "59946caad232035f1df2ac90b139c3f54634595759b1274a6fe48a0f46fce94a"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "991cc521ac1003c905e84477412c55f1692329b9dd25acef6fc57a183a836d85"
+    },
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "0bdda6a0ea72443d73c1b711e1efe6d7274f3f6c15986065ef2f48203ba4ef6f"
+    },
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "a183237004a63e3a8e73fc34c51fec26c627b23a969c7e36bf90eaead54e3639"
+    },
+    {
+      "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+      "sha256": "b7205ce5dda951325b8f163eba3433e9a9b026fc47d99fa6fa0491762d793270"
+    },
+    {
+      "path": ".github/scripts/v31-analysis-release-catalog.test.cjs",
+      "sha256": "ad6f828850f98179a61f55349174d4d87c4fb24a2d874297e63691bbcad5f3ba"
+    },
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "c4b52b186e8e6f264041172b18f02964cef1a6555e8ae7e9d89946c5644aa5aa"
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "ff5fe640b01cca579cf718c2947d71fff53c09421b793f734eefaeca705a83e6"
+    },
+    {
+      "path": "deploy/tests/test_issue154_state_reader_transport.py",
+      "sha256": "39ce20d3fa5960d58496d94e951ced22eb350bfeb8c441c1b41fe93814d34599"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Publisher omits the required current V33 migration",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V33C02",
+        ".github/scripts/v33-precheck-classification-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V33C02 actual publisher binds all thirty-three SQL checksums schema bytes and operational guards",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Publication reader omits the newly published complete V33 catalog",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V33C03",
+        ".github/scripts/v33-precheck-classification-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V33C03 both readers admit the new V33 catalog and preserve complete historical catalogs including V32",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Host reader omits the newly published complete V33 history",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V33C03",
+        ".github/scripts/v33-precheck-classification-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V33C03 both readers admit the new V33 catalog and preserve complete historical catalogs including V32",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Make the new precheck classification release CI gate conditional on false",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V33C10",
+        ".github/scripts/v33-precheck-classification-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V33C10 the additive V33 gate preserves every prior CI command job boundary and protected production entry",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow automatic deployment of a changed V32-to-V33 contract without protected transition",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V33C09",
+        ".github/scripts/v33-precheck-classification-release-catalog.test.cjs"
+      ],
+      "detectedBy": "V33C09 V32 to V33 requires protected transition and intact already published migration history",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T07:55:41.646849Z"
+}

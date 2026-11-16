@@ -1,0 +1,36 @@
+{
+  "workItem": "issue241-current-migrations-extra",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "268cfabe492630e9a23322b784450aec2f3a79bf66dcf3bbdb2a905c3dcf09bc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrIntegrationPostgresTest.kt",
+      "sha256": "c5ea67d51de001e9a9c97a513ba1e174ba868794c7f2448a5a1304ac02d4fac1"
+    }
+  ],
+  "command": [
+    "env",
+    "JAVA_HOME=/workspace/.toolchains/jdk-17.0.21+9",
+    "GRADLE_USER_HOME=/workspace/.gradle",
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=2",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*CorePersistenceIntegrationTest.Flyway*",
+    "--tests",
+    "*ScheduleIrIntegrationPostgresTest.I36*"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.I36 V24 upgrades add a separate empty choice table without inventing identity or rewriting existing data()",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.I36 upgrading existing V24 typed IR does not backfill a run identity or rewrite stored evidence()",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T07:04:07.737249Z"
+}

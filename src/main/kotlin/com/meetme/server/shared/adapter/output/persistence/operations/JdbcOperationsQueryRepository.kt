@@ -14,6 +14,7 @@ import com.meetme.server.shared.application.port.input.operations.RevisionCounts
 import com.meetme.server.shared.application.port.input.operations.RoomDetail
 import com.meetme.server.shared.application.port.input.operations.RoomSummary
 import com.meetme.server.shared.application.port.output.operations.OperationsQueryRepository
+import com.meetme.server.shared.application.service.operations.OperatorViewMasker
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -32,6 +33,8 @@ import java.util.UUID
 class JdbcOperationsQueryRepository(
     private val jdbc: JdbcTemplate,
 ) : OperationsQueryRepository {
+    private val masker = OperatorViewMasker()
+
     override fun listRooms(
         limit: Int,
         cursor: OperationsCursor?,
@@ -112,7 +115,7 @@ class JdbcOperationsQueryRepository(
         val attempts =
             rows.map { attempt ->
                 val role =
-                    if (attempt.provider == "OPENAI") {
+                    if (attempt.provider == "OPENAI" && invocation.summary.geminiAdmittedAttempts > 0) {
                         "FALLBACK"
                     } else if (geminiCount++ == 0) {
                         "INITIAL"
@@ -222,6 +225,7 @@ class JdbcOperationsQueryRepository(
                 stateVersion = rs.getLong("state_version"),
                 currentAnalysisConfirmed = rs.getBoolean("current_analysis_confirmed"),
                 hasOpenRevisionRound = rs.getBoolean("has_open_revision_round"),
+                title = masker.text(rs.getString("purpose")),
             )
         }
 
@@ -300,11 +304,12 @@ class JdbcOperationsQueryRepository(
 
         private val roomProjection =
             """
-            SELECT m.id, m.created_at, m.meeting_mode, m.time_zone_id, m.search_start_date, m.search_end_date,
+            SELECT m.id, m.purpose, m.created_at, m.meeting_mode, m.time_zone_id, m.search_start_date, m.search_end_date,
                 m.expected_participants, m.submission_deadline, m.manual_only, m.collection_status,
                 m.closure_reason, m.closed_at, r.status AS current_run_status,
                 m.active_run_id AS active_analysis_id, m.version AS state_version,
-                (m.active_revision_round_id IS NOT NULL) AS has_open_revision_round,
+                (m.active_revision_round_id IS NOT NULL OR EXISTS(
+                    SELECT 1 FROM input_revision_rounds x WHERE x.room_id=m.id AND x.status='OPEN')) AS has_open_revision_round,
                 (EXISTS(SELECT 1 FROM final_confirmations f WHERE f.coordination_run_id = m.active_run_id)
                  OR EXISTS(SELECT 1 FROM recommendation_selections s WHERE s.coordination_run_id = m.active_run_id))
                     AS current_analysis_confirmed,

@@ -1,0 +1,29 @@
+{
+  "workItem": "issue241-final-input-anchor",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorFinalInputAnchorPostgresTest.kt",
+      "sha256": "2626a8bba1d925ff58ba71dd8a0ccde083c6181fd34584eb074e35412e90c022"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-I",
+    "/workspace/artifacts/meet-me-issue241-input-anchor/anchor-source.gradle",
+    "test",
+    "--tests",
+    "*OperatorFinalInputAnchorPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.shared.operations.OperatorFinalInputAnchorPostgresTest#FIA02 legacy frozen inputs without native evidence have an unknown final anchor()",
+    "com.meetme.server.shared.operations.OperatorFinalInputAnchorPostgresTest#FIA03 current collection cannot claim a final anchor from candidate reference or input creation()",
+    "com.meetme.server.shared.operations.OperatorFinalInputAnchorPostgresTest#FIA04 selected native DSL binds evidence-less original input to immutable version creation()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T07:22:02.773021Z"
+}

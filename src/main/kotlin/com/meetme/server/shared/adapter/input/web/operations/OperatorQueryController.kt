@@ -104,6 +104,46 @@ class OperatorQueryController(
             )
         }
 
+    @GetMapping("/rooms/{roomId}/analyses")
+    @Operation(summary = "운영자용 모임 분석 이력 페이지 조회")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "실제 run 기준 이력. 호출 전 실행도 포함"),
+        ApiResponse(
+            responseCode = "404",
+            description = "모임 없음",
+            content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = OperatorProblemResponse::class))],
+        ),
+    )
+    fun analyses(
+        @PathVariable roomId: String,
+        @RequestParam(required = false) limit: String?,
+        @RequestParam(required = false) cursor: String?,
+        request: HttpServletRequest,
+    ): OperatorAnalysisPageResponse =
+        audited(request) {
+            val page = service.analyses(roomId, limit, cursor)
+            OperatorAnalysisPageResponse(page.items.map(OperatorAnalysisResponse::from), page.nextCursor)
+        }
+
+    @GetMapping("/rooms/{roomId}/diagnostics")
+    @Operation(summary = "운영자용 입력·Jev·보완·분석 기록 조회")
+    @ApiResponses(
+        ApiResponse(responseCode = "200", description = "가림 처리된 실제 저장 기록. 누락 판정은 null"),
+        ApiResponse(
+            responseCode = "404",
+            description = "해당 모임 또는 해당 모임의 분석 없음",
+            content = [Content(mediaType = "application/problem+json", schema = Schema(implementation = OperatorProblemResponse::class))],
+        ),
+    )
+    fun diagnostics(
+        @PathVariable roomId: String,
+        @RequestParam(name = "analysis_id", required = false) analysisId: String?,
+        request: HttpServletRequest,
+    ): OperatorRoomDiagnosticsResponse =
+        audited(request) {
+            OperatorRoomDiagnosticsResponse.from(service.diagnostics(roomId, analysisId))
+        }
+
     private fun <T> audited(
         request: HttpServletRequest,
         action: () -> T,

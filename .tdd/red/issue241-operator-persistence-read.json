@@ -1,0 +1,72 @@
+{
+  "workItem": "issue241-operator-persistence-read",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/persistence/PrecheckClassificationSnapshotPostgresTest.kt",
+      "sha256": "c70fc6e7f82b6954b75a964655049bfcbe668bfec14ec1e2b8a1410694c92a30"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsPostgresTest.kt",
+      "sha256": "060cdb83ba8dfd72a47d8d9ff553ac853a954fa4d8cdb4e1bdab44879b26cc42"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*PrecheckClassificationSnapshotPostgresTest",
+    "--tests",
+    "*OperatorDiagnosticsPostgresTest"
+  ],
+  "failedTests": [
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP08 a late first snapshot may fill a null decision without changing previously stored generator facts()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP05 retry generations retain independent first decisions()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP02 all actual classification facts and effective routing survive a fresh JDBC reader()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP07 old three argument completions remain compatible and null capture cannot invent a verdict()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP01 additive migration keeps every old execution field and leaves its decision unknown()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP10 the 4096 byte JSONB boundary is inclusive and 4097 bytes is rejected()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP03 a terminal failure preserves classification without inventing missing routing evidence()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[1] invalid = \"[]\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[2] invalid = \"1\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[3] invalid = \"{}\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[4] invalid = \"{\\\"version\\\":2}\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[5] invalid = \"oversize\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP06 duplicate completion keeps the first nonnull decision and original execution metadata()",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[1] kind = \"wrong_owner\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[2] kind = \"null_owner\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[3] kind = \"wrong_generation\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[4] kind = \"wrong_check\"",
+    "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[5] kind = \"not_started\"",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP01 missing rooms and foreign analyses never fall back to current collection()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP22 room list and detail expose the redacted operational title without altering the stored purpose()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP08 V1 parent question is joined by scoped ancestry and actual choice without replacing consumed input()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP20 a strictly stored C5 declaration remains visible after its analysis becomes inactive without recalculation()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP02 run history includes an execution with no model invocation and pages equal timestamps without duplication()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP07 same version text from another owner cannot attach a foreign accepted check()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP23 long acyclic ancestry is explicitly capped at eight checked inputs()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP05 exact V2 supplement preserves consumed answer and original reference while redacting only the view()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP21 an OPEN revision row remains visible even when its active room pointer is absent()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP09 an ancestry pointer cannot read another participant question()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP04 historical selection uses frozen versions while explicit null selects current collection()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP17 explicit OpenAI first invocation is an initial choice rather than an invented Gemini fallback()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP12 participant overflow is explicit and does not omit the cap indicator()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP15 completed no match and queued execution remain different durable states()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#[1] limit = -1",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#[2] limit = 0",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#[3] limit = 101",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP10 cycles are bounded and cannot duplicate input history()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP14 stored result windows are capped without hiding further alternatives()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP16 repeated diagnostic reads preserve input history results budgets and outbox byte values()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP13 recommendations return only positively stored members and preserve pending place verification()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP11 execution attempts expose their bounded limit and retain unknown classification()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP06 mutable superseded check state cannot replace frozen interpretation or invent a historical Jev decision()",
+    "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP19 a legacy answer linked by saved version is consumed while its original remains explicit()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T06:54:02.336630Z"
+}

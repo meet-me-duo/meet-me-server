@@ -122,6 +122,9 @@ jobs:
       - name: Verify operator reanalysis release catalog
         run: node --test .github/scripts/v32-operator-reanalysis-release-catalog.test.cjs
 
+      - name: Verify precheck classification release catalog
+        run: node --test .github/scripts/v33-precheck-classification-release-catalog.test.cjs
+
   built-image:
     name: ARM64 Built Image
     runs-on: ubuntu-latest

@@ -35,6 +35,7 @@ data class RoomSummary(
     val stateVersion: Long = 0,
     val currentAnalysisConfirmed: Boolean = false,
     val hasOpenRevisionRound: Boolean = false,
+    val title: String = "",
 )
 
 data class InvocationSummary(

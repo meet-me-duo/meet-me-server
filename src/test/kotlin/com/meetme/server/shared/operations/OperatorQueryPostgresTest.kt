@@ -573,6 +573,13 @@ class OperatorQueryPostgresTest {
     }
 
     private fun assertNoSecrets(response: MockHttpServletResponse) {
+        // Only the approved room-title property may contain this unchanged synthetic title fixture.
+        val protectedContent =
+            if (response.status == 200) {
+                response.contentAsString.replace("\"title\":\"synthetic-private-purpose\"", "\"title\":\"approved-room-title\"")
+            } else {
+                response.contentAsString
+            }
         listOf(
             "synthetic-private",
             "owner_token",
@@ -583,7 +590,7 @@ class OperatorQueryPostgresTest {
             "credential_digest",
             "guest_session_id",
         ).forEach { forbidden ->
-            assertFalse(response.contentAsString.contains(forbidden), "Response leaked $forbidden")
+            assertFalse(protectedContent.contains(forbidden), "Response leaked $forbidden")
         }
     }
 
@@ -647,6 +654,7 @@ class OperatorQueryPostgresTest {
         private val postgres = PostgreSQLContainer("postgres:18-alpine").apply { start() }
         private val ROOM_FIELDS =
             setOf(
+                "title",
                 "id",
                 "created_at",
                 "meeting_mode",

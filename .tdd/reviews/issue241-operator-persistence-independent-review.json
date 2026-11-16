@@ -1,0 +1,132 @@
+{
+  "baseline": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "restoredOldBaseline": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "composedBaseline": {
+    "tests": 47,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "detectedFaultCount": 8,
+  "causeReview": [
+    {
+      "name": "M01-owner-fence",
+      "fault": "Ignore execution owner fencing while retaining check and generation identity",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: expected: <{\"model\": null, \"purpose\": \"PRE_SUBMIT_CHECK\", \"check_id\": \"00000000-0000-0000-0000-000000000389\", \"provider\": null, \"queued_at\": \"2027-01-04T00:00:00+00:00\", \"generation\": 1, \"started_at\": \"2027-01-04T00:00:01+00:00\", \"deadline_at\": \"2027-01-04T00:00:30+00:00\", \"finished_at\": null, \"owner_token\": \"00000000-0000-0000-0000-00000000038a\", \"failure_code\": null, \"input_tokens\": null, \"output_tokens\": null, \"prompt_version\": \"precheck-v1\", \"response_bytes\": null, \"schema_version\": \"precheck-v1\"}> but was: <{\"model\": \"synthetic-generator\", \"purpose\": \"PRE_SUBMIT_CHECK\", \"check_id\": \"00000000-0000-0000-0000-000000000389\", \"provider\": \"GEMINI\", \"queued_at\": \"2027-01-04T00:00:00+00:00\", \"generation\": 1, \"started_at\": \"2027-01-04T00:00:01+00:00\", \"deadline_at\": \"2027-01-04T00:00:30+00:00\", \"finished_at\": \"2027-01-04T00:00:02+00:00\", \"owner_token\": \"00000000-0000-0000-0000-00000000038a\", \"failure_code\": null, \"input_tokens\": 17, \"output_tokens\": 3, \"prompt_version\": \"precheck-v1\", \"response_bytes\": null, \"schema_version\": \"precheck-v1\"}>",
+        "org.opentest4j.AssertionFailedError: expected: <{\"model\": null, \"purpose\": \"PRE_SUBMIT_CHECK\", \"check_id\": \"00000000-0000-0000-0000-000000000389\", \"provider\": null, \"queued_at\": \"2027-01-04T00:00:00+00:00\", \"generation\": 1, \"started_at\": \"2027-01-04T00:00:01+00:00\", \"deadline_at\": \"2027-01-04T00:00:30+00:00\", \"finished_at\": null, \"owner_token\": \"00000000-0000-0000-0000-00000000038a\", \"failure_code\": null, \"input_tokens\": null, \"output_tokens\": null, \"prompt_version\": \"precheck-v1\", \"response_bytes\": null, \"schema_version\": \"precheck-v1\"}> but was: <{\"model\": \"synthetic-generator\", \"purpose\": \"PRE_SUBMIT_CHECK\", \"check_id\": \"00000000-0000-0000-0000-000000000389\", \"provider\": \"GEMINI\", \"queued_at\": \"2027-01-04T00:00:00+00:00\", \"generation\": 1, \"started_at\": \"2027-01-04T00:00:01+00:00\", \"deadline_at\": \"2027-01-04T00:00:30+00:00\", \"finished_at\": \"2027-01-04T00:00:02+00:00\", \"owner_token\": \"00000000-0000-0000-0000-00000000038a\", \"failure_code\": null, \"input_tokens\": 17, \"output_tokens\": 3, \"prompt_version\": \"precheck-v1\", \"response_bytes\": null, \"schema_version\": \"precheck-v1\"}>"
+      ]
+    },
+    {
+      "name": "M02-overwrite-first-snapshot",
+      "fault": "Overwrite the first durable classifier decision during duplicate completion",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: expected: <{\"model\": \"synthetic-generator\", \"purpose\": \"PRE_SUBMIT_CHECK\", \"check_id\": \"00000000-0000-0000-0000-000000000389\", \"provider\": \"GEMINI\", \"queued_at\": \"2027-01-04T00:00:00+00:00\", \"generation\": 1, \"started_at\": \"2027-01-04T00:00:01+00:00\", \"deadline_at\": \"2027-01-04T00:00:30+00:00\", \"finished_at\": \"2027-01-04T00:00:02+00:00\", \"owner_token\": \"00000000-0000-0000-0000-00000000038a\", \"failure_code\": null, \"input_tokens\": 17, \"output_tokens\": 3, \"prompt_version\": \"precheck-v1\", \"response_bytes\": null, \"schema_version\": \"precheck-v1\", \"classification_snapshot\": {\"model\": \"synthetic-classifier\", \"reason\": \"LOW_CONFIDENCE\", \"version\": 1, \"provider\": \"JEV\", \"assessment\": \"INDETERMINATE\", \"confidence\": 0.51, \"probabilities\": {\"CLEAR\": 0.49, \"NEEDS_REVIEW\": 0.51}, \"semanticAssessment\": \"NEEDS_REVIEW\", \"effectiveAssessment\": \"NEEDS_REVIEW\"}}> but was: <{\"model\": \"synthetic-generator\", \"purpose\": \"PRE_SUBMIT_CHECK\", \"check_id\": \"00000000-0000-0000-0000-000000000389\", \"provider\": \"GEMINI\", \"queued_at\": \"2027-01-04T00:00:00+00:00\", \"generation\": 1, \"started_at\": \"2027-01-04T00:00:01+00:00\", \"deadline_at\": \"2027-01-04T00:00:30+00:00\", \"finished_at\": \"2027-01-04T00:00:02+00:00\", \"owner_token\": \"00000000-0000-0000-0000-00000000038a\", \"failure_code\": null, \"input_tokens\": 17, \"output_tokens\": 3, \"prompt_version\": \"precheck-v1\", \"response_bytes\": null, \"schema_version\": \"precheck-v1\", \"classification_snapshot\": {\"model\": \"synthetic-classifier\", \"reason\": null, \"version\": 1, \"provider\": \"JEV\", \"assessment\": \"CLEAR\", \"confidence\": 1.0, \"probabilities\": {\"CLEAR\": 1.0}, \"semanticAssessment\": \"CLEAR\", \"effectiveAssessment\": \"CLEAR\"}}>"
+      ]
+    },
+    {
+      "name": "M03-provider-metadata-confusion",
+      "fault": "Write classifier identity into generator provider and model metadata",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: expected: <GEMINI> but was: <JEV>"
+      ]
+    },
+    {
+      "name": "M04-latest-head-replaces-frozen",
+      "fault": "Read mutable latest heads instead of exact selected historical batch versions",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: expected: <[old input 1, old input 2]> but was: <[newer accepted first, newer accepted second]>"
+      ]
+    },
+    {
+      "name": "M05-candidate-ownership-omitted",
+      "fault": "Remove room and participant ownership from accepted-candidate provenance lookup",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: Expected value to be true."
+      ]
+    },
+    {
+      "name": "M06-legacy-answer-consumed",
+      "fault": "Claim that a later legacy answer was consumed by the original historical analysis",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: Expected value to be false."
+      ]
+    },
+    {
+      "name": "M07-ancestry-depth-cap",
+      "fault": "Remove the eight-record ancestry bound while keeping cycle protection",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: expected: <8> but was: <9>"
+      ]
+    },
+    {
+      "name": "M08-jsonb-byte-bound",
+      "fault": "Remove the database 4096-byte classification snapshot storage bound",
+      "actual": [
+        "org.opentest4j.AssertionFailedError: Expected an exception of class org.springframework.dao.DataIntegrityViolationException to be thrown, but was completed successfully with the result: <1>."
+      ]
+    }
+  ],
+  "composition": {
+    "initialSourceSha256": "8f7a32e5410cbe34de6f69aadb15d8b13762161597a4478278c34484484a88e3",
+    "composedCloneSourceSha256": "13b9026f17b49e122bc087e38454215b76ac1d969728d822b8fe30c5042598be",
+    "rootCurrentSourceSha256": "77032d764c5cc87b57ca9b6b8053ad03dfb765e9d1b7e5419de11c7ec06ee69a",
+    "rootAndCloneMainSourceSha256": "11da76352a57d6448b6e3e3597934dda3f740af8d44031a3f8b081baa83581e6",
+    "syncedOnly": {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorViewMasker.kt",
+      "before": "6c3051c357c14a335b21ef312e5b42e3eb5e701ae69bf3f2e824016cad0a6cb6",
+      "after": "648ca8bfe02c0ccb8b14a9d222bcc59d88b12cd9b0d957bfecc6a9cd56a1016f"
+    },
+    "parentAuthorizedRootDelta": [
+      {
+        "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorViewMasker.kt",
+        "before": "6c3051c357c14a335b21ef312e5b42e3eb5e701ae69bf3f2e824016cad0a6cb6",
+        "after": "648ca8bfe02c0ccb8b14a9d222bcc59d88b12cd9b0d957bfecc6a9cd56a1016f"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRangeContactMaskingTest.kt",
+        "before": null,
+        "after": "8c9a02eb65ee59a2258a5341d0093206cfef9c4badec5fd937f62dd488e3bb29"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTransportQueryPostgresTest.kt",
+        "before": "bbb531597468c5ad722feb6d59c45d5a9d0719b3de22d3a4a290b62d226a862d",
+        "after": "66169386e0885d9dc3866a63cd1709bdf02cc46d9d184205cdd5202f3bf0c5d6"
+      }
+    ],
+    "criticalFilesUnchanged": [
+      "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/operations/JdbcOperatorDiagnosticsRepository.kt",
+      "src/main/resources/db/migration/V33__record_precheck_classifications.sql"
+    ],
+    "testFiles": [
+      {
+        "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/persistence/PrecheckClassificationSnapshotPostgresTest.kt",
+        "sha256": "c70fc6e7f82b6954b75a964655049bfcbe668bfec14ec1e2b8a1410694c92a30"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsPostgresTest.kt",
+        "sha256": "060cdb83ba8dfd72a47d8d9ff553ac853a954fa4d8cdb4e1bdab44879b26cc42"
+      },
+      {
+        "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorFinalInputAnchorPostgresTest.kt",
+        "sha256": "2626a8bba1d925ff58ba71dd8a0ccde083c6181fd34584eb074e35412e90c022"
+      }
+    ],
+    "rootWrites": false
+  },
+  "orchestrationQualification": "Whole-root fingerprint assertion after successful restored47 observed independently authorized transport schema-test change. All eight intended mutation tests and both positive47 runs had completed and all isolated mutation bytes restored. Parent requested a later composed Masker-only final positive phase.",
+  "noPaidCalls": true,
+  "noRootWrites": true,
+  "recordedAt": "2026-11-16T08:43:25.843152Z"
+}

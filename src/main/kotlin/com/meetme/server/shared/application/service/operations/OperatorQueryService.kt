@@ -29,6 +29,7 @@ class OperatorQueryService(
     private val clock: Clock,
     private val identity: OperatorIdentityPort? = null,
     private val operatorAccess: OperatorAccessPolicy = OperatorAccessPolicy(properties),
+    private val diagnostics: com.meetme.server.shared.application.port.output.operations.OperatorDiagnosticsRepository? = null,
 ) {
     fun listRooms(
         limit: String? = null,
@@ -46,6 +47,30 @@ class OperatorQueryService(
 
     fun invocationDetail(invocationId: String): InvocationDetail =
         access(AuditRoute.INVOCATION_DETAIL, invocationId) { query.invocationDetail(target(invocationId)) }
+
+    fun analyses(
+        roomId: String,
+        limit: String? = null,
+        cursor: String? = null,
+    ): OperationsPage<com.meetme.server.shared.application.port.input.operations.OperatorAnalysis> =
+        access(AuditRoute.ROOM_DETAIL, roomId) {
+            val id = target(roomId)
+            val size = pageSize(limit)
+            val boundary = pageCursor(cursor)
+            val reader = diagnostics ?: throw OperatorQueryException(OperatorQueryError.OPERATOR_UNAVAILABLE)
+            reader.analyses(id, size, boundary)
+        }
+
+    fun diagnostics(
+        roomId: String,
+        analysisId: String? = null,
+    ): com.meetme.server.shared.application.port.input.operations.OperatorRoomDiagnostics =
+        access(AuditRoute.ROOM_DETAIL, roomId) {
+            val id = target(roomId)
+            val selected = analysisId?.let(::target)
+            val reader = diagnostics ?: throw OperatorQueryException(OperatorQueryError.OPERATOR_UNAVAILABLE)
+            reader.diagnostics(id, selected)
+        }
 
     private fun <T : Any> access(
         route: AuditRoute,
