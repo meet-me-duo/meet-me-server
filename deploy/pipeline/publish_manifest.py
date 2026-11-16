@@ -51,6 +51,7 @@ MIGRATION_SCRIPTS = (
     'V30__add_c5_residual_luna_policy.sql',
     'V31__allow_explicit_c5_direct_luna.sql',
     'V32__add_operator_room_reanalysis.sql',
+    'V33__record_precheck_classifications.sql',
 )
 
 

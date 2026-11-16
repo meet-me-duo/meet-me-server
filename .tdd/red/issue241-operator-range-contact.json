@@ -1,0 +1,31 @@
+{
+  "workItem": "issue241-operator-range-contact",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRangeContactMaskingTest.kt",
+      "sha256": "8c9a02eb65ee59a2258a5341d0093206cfef9c4badec5fd937f62dd488e3bb29"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-I",
+    "/tmp/issue241-security-followup.gradle",
+    "test",
+    "--tests",
+    "*OperatorRangeContactMaskingTest",
+    "--tests",
+    "*OperatorTransportQueryPostgresTest.OpenAPI exposes only bounded local client call fields and nullable transport facts"
+  ],
+  "failedTests": [
+    "OperatorRangeContactMaskingTest.[1] input = \"\uc804\ud654 +49 30 1234 5678 20-30\ubd84 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 20-30\ubd84 \uac00\ub2a5\"",
+    "OperatorRangeContactMaskingTest.[2] input = \"\uc804\ud654 +49 30 1234 5678 1-2\uc2dc\uac04 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 1-2\uc2dc\uac04 \uac00\ub2a5\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T08:30:27.471269Z"
+}

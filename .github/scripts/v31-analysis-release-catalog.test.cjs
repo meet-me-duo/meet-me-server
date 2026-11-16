@@ -23,7 +23,7 @@ const scripts = [...f.scripts,
   'V31__allow_explicit_c5_direct_luna.sql'];
 assert.equal(scripts.length, 31);
 // Current publication advances once; historical release()/pack() fixtures remain exact V31.
-const currentScripts = [...scripts, 'V32__add_operator_room_reanalysis.sql'];
+const currentScripts = [...scripts, 'V32__add_operator_room_reanalysis.sql', 'V33__record_precheck_classifications.sql'];
 
 function release(count = 31) {
   const result = f.manifest();
@@ -111,9 +111,9 @@ test('V31C01 the exact reviewed SQL inventory retains every historical migration
   assert.deepEqual(scripts.map(script => hash(fs.readFileSync(path.join(root, 'src/main/resources/db/migration', script)))), reviewedSqlHashes);
 });
 
-test('V31C02 current publisher binds all thirty-two actual SQL CRCs and schema SHA independently', () => {
+test('V31C02 current publisher binds all thirty-three actual SQL CRCs and schema SHA independently', () => {
   const value = fixture(); try {
-    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V32 publication must be admitted');
+    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V33 publication must be admitted');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,
@@ -146,12 +146,13 @@ test('V31C05 neither reader invents unpublished complete V24 through V30 catalog
 });
 
 test('V31C06 publisher rejects every omitted new SQL and unknown renamed duplicate linked or nonfile entries', () => {
-  for (const fault of [...range(8).map(i => `missing-${23 + i}`), 'unknown32', 'rename31', 'duplicate31', 'leadingZero31', 'directory31', 'symlink31', 'unknown33']) {
+  for (const fault of [...range(8).map(i => `missing-${23 + i}`), 'unknown32', 'rename31', 'duplicate31', 'leadingZero31', 'directory31', 'symlink31', 'unknown33', 'unknown34']) {
     const value = fixture(); try {
       const latest = path.join(value.migrations, scripts[30]);
       if (fault.startsWith('missing-')) fs.unlinkSync(path.join(value.migrations, scripts[Number(fault.slice(8)) - 1]));
       if (fault === 'unknown32') fs.copyFileSync(latest, path.join(value.migrations, 'V32__unknown.sql'));
       if (fault === 'unknown33') fs.copyFileSync(latest, path.join(value.migrations, 'V33__unknown.sql'));
+      if (fault === 'unknown34') fs.copyFileSync(latest, path.join(value.migrations, 'V34__unknown.sql'));
       if (fault === 'rename31') fs.renameSync(latest, path.join(value.migrations, 'V31__unapproved.sql'));
       if (fault === 'duplicate31') fs.copyFileSync(latest, path.join(value.migrations, 'V31__duplicate.sql'));
       if (fault === 'leadingZero31') fs.renameSync(latest, path.join(value.migrations, 'V031__allow_explicit_c5_direct_luna.sql'));
@@ -163,7 +164,7 @@ test('V31C06 publisher rejects every omitted new SQL and unknown renamed duplica
 });
 
 test('V31C07 both readers reject malformed new names versions rows and checksum types', () => {
-  const faults = [...range(8).map(i => `rename-${23 + i}`), 'gap30', 'duplicate31', 'reverse', 'unknown32', 'leadingZero31', 'booleanChecksum', 'overflowChecksum', 'stringChecksum', 'extraField', 'unknown33'];
+  const faults = [...range(8).map(i => `rename-${23 + i}`), 'gap30', 'duplicate31', 'reverse', 'unknown32', 'leadingZero31', 'booleanChecksum', 'overflowChecksum', 'stringChecksum', 'extraField', 'unknown33', 'unknown34'];
   for (const fault of faults) {
     const manifest = release(); const last = manifest.migrations.at(-1);
     if (fault.startsWith('rename-')) manifest.migrations[Number(fault.slice(7)) - 1].script = `V${fault.slice(7)}__unapproved.sql`;
@@ -172,6 +173,7 @@ test('V31C07 both readers reject malformed new names versions rows and checksum 
     if (fault === 'reverse') manifest.migrations.reverse();
     if (fault === 'unknown32') manifest.migrations.push({ version: '32', script: 'V32__unknown.sql', checksum: 123 });
     if (fault === 'unknown33') manifest.migrations.push({ version: '33', script: 'V33__unknown.sql', checksum: 123 });
+    if (fault === 'unknown34') manifest.migrations.push({ version: '34', script: 'V34__unknown.sql', checksum: 123 });
     if (fault === 'leadingZero31') last.version = '031';
     if (fault === 'booleanChecksum') last.checksum = true;
     if (fault === 'overflowChecksum') last.checksum = 2 ** 31;
@@ -216,7 +218,7 @@ test('V31C09 packaged V31 binds every new SQL byte and preserves historical V23 
     fs.appendFileSync(path.join(value.migrations, scripts[30]), '\n-- synthetic test-only checksum probe\n');
     const after = f.publish(value); assert.equal(after.ok, true);
     assert.deepEqual(after.result.migrations.slice(0, 30), before.result.migrations.slice(0, 30));
-    assert.deepEqual(after.result.migrations.slice(31), before.result.migrations.slice(31), 'Current V32 is unchanged by a V31 byte probe');
+    assert.deepEqual(after.result.migrations.slice(31), before.result.migrations.slice(31), 'Published V32 and current V33 are unchanged by a V31 byte probe');
     assert.notEqual(after.result.migrations[30].checksum, before.result.migrations[30].checksum);
     assert.notEqual(after.result.schemaFingerprint, before.result.schemaFingerprint);
     assert.equal(after.result.guardFingerprint, before.result.guardFingerprint);

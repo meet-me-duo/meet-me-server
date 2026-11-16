@@ -1,6 +1,7 @@
 package com.meetme.server.precheck.application.service
 
 import com.meetme.server.precheck.application.port.output.PreSubmissionCheckProvider
+import com.meetme.server.precheck.application.port.output.PrecheckClassificationCapture
 import com.meetme.server.precheck.application.port.output.PrecheckMetricsPort
 import com.meetme.server.precheck.application.port.output.PrecheckProviderException
 import com.meetme.server.precheck.application.port.output.PrecheckProviderRequest
@@ -39,6 +40,7 @@ class PreSubmissionCheckWorker(
             val started = System.nanoTime()
             var result: PrecheckProviderResult? = null
             var failure: String? = null
+            val classification = PrecheckClassificationCapture()
             try {
                 if (physicalMode) {
                     val claimedAt = check.claimedAt ?: throw PrecheckProviderException("CONFIGURATION")
@@ -82,6 +84,7 @@ class PreSubmissionCheckWorker(
                                 null
                             },
                         evidence = check.candidate.evidence,
+                        classificationCapture = classification,
                     )
                 result = provider.check(request)
                 validate(result, check.candidate.rawText, check.candidate.evidence != null)
@@ -94,9 +97,9 @@ class PreSubmissionCheckWorker(
             }
             val status =
                 try {
-                    processing.publish(claim, result, failure)
+                    processing.publish(claim, result, failure, classification.snapshot())
                 } catch (_: PrecheckPublicationExpired) {
-                    processing.rejectPublication(claim, result, failure)
+                    processing.rejectPublication(claim, result, failure, classification.snapshot())
                 }
             metrics?.completed(
                 status.name,

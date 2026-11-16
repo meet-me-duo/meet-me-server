@@ -120,6 +120,7 @@ class TwoStagePreSubmissionCheckProvider(
                         ).also {
                             classified = it
                             validate(it)
+                            request.classificationCapture?.classified(it)
                         }
                 },
                 observation = { failure ->
@@ -196,6 +197,7 @@ class TwoStagePreSubmissionCheckProvider(
                     ),
                 )
             validate(first)
+            request.classificationCapture?.classified(first)
             remaining()
             if (decision(request, first) ==
                 AmbiguityAssessment.CLEAR
@@ -240,7 +242,11 @@ class TwoStagePreSubmissionCheckProvider(
     private fun decision(
         request: PrecheckProviderRequest,
         result: AmbiguityClassificationResult,
-    ): AmbiguityAssessment = if (request.evidence != null) result.semanticAssessment ?: result.assessment else result.assessment
+    ): AmbiguityAssessment {
+        val effective = if (request.evidence != null) result.semanticAssessment ?: result.assessment else result.assessment
+        request.classificationCapture?.routed(effective)
+        return effective
+    }
 
     private fun <T> invoke(
         reservation: AiCallBudgetReservation,

@@ -1,0 +1,194 @@
+{
+  "workItem": "issue241-release-contract-independent-review",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "reviewerRole": "Independent release test designer, separate from production implementation",
+  "result": "PASS_RELEASE_BOUNDARY_AND_EXACT_DEPLOYMENT_CONTRACT_REPLAY_WITH_RECORDED_CLOUD_LOOPBACK_ENVIRONMENT_ADAPTATION",
+  "sourceFiles": [
+    {
+      "path": "src/main/resources/db/migration/V33__record_precheck_classifications.sql",
+      "sha256": "49340c550cf250d1b6895225dfb60614cef00ea2685618cd4ff795596e6ea8de"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "922678112bffe130b89fe7a5c4dfa4beea976a06b6a71e98133abad722a88d65"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "1282879580415668d0d43fbbc3b67909538f444652df5e4656a40fe83dafb78e"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "f5e21be7ea88ed5c2c93a1848a24b86d8b0e22914a9a199f8532a70b956c28c9"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "3af257d04b4974f445dccfaba8de3d9efac0da3e90bb8a972438d9af8a0818c3"
+    },
+    {
+      "path": "deploy/public-api-contract.json",
+      "sha256": "dec2782b9d5f428f5f331b60e6640931c49b1c4245b38dd92ffda542317d2adb"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/v33-precheck-classification-release-catalog.test.cjs",
+      "sha256": "5d7b97b77c1a654fa9ed278d5b8a32a58a565e636ced99d37e44cf9609e08c1b"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "4c2898ab6a2034348fbee635a14ce2671f34611f12c57f8909683f720fc0a6b5"
+    },
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "426eefd3fa904590ce3bfb422ad7b4888a6e8f04d4ebec0abf4279438de7b4b4"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "538c8ad3c04e6db13b00ce7c7ddbc4d163e130ac31cbdf8e8827e553878ba977"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "59946caad232035f1df2ac90b139c3f54634595759b1274a6fe48a0f46fce94a"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "991cc521ac1003c905e84477412c55f1692329b9dd25acef6fc57a183a836d85"
+    },
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "0bdda6a0ea72443d73c1b711e1efe6d7274f3f6c15986065ef2f48203ba4ef6f"
+    },
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "a183237004a63e3a8e73fc34c51fec26c627b23a969c7e36bf90eaead54e3639"
+    },
+    {
+      "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+      "sha256": "b7205ce5dda951325b8f163eba3433e9a9b026fc47d99fa6fa0491762d793270"
+    },
+    {
+      "path": ".github/scripts/v31-analysis-release-catalog.test.cjs",
+      "sha256": "ad6f828850f98179a61f55349174d4d87c4fb24a2d874297e63691bbcad5f3ba"
+    },
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "c4b52b186e8e6f264041172b18f02964cef1a6555e8ae7e9d89946c5644aa5aa"
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "ff5fe640b01cca579cf718c2947d71fff53c09421b793f734eefaeca705a83e6"
+    },
+    {
+      "path": "deploy/tests/test_issue154_state_reader_transport.py",
+      "sha256": "39ce20d3fa5960d58496d94e951ced22eb350bfeb8c441c1b41fe93814d34599"
+    }
+  ],
+  "currentMigrationKotlinTestFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "6d361fc0b6a693fe652fb85df1f4f2b28514303860e467597f8204ae765bd35d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "adf0ce3408740efc8d7ba907c52fe1a1b03d837cf0996f659fba4550d6d4c2ce"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "1546bfe24e1644315326634145a383d6abf260095ae9fcc4e4ea4edf6d376ecb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/ApprovedTermsFinalAnalysisRoutePostgresTest.kt",
+      "sha256": "894a3ee0d3f9a1e483446939c90fce50241e2c73795ed2d69305ff5454da9a18"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+      "sha256": "bc70f6e7f304a81096306e705201ad0d5beb83ea97c787f2b198177333283d4d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "268cfabe492630e9a23322b784450aec2f3a79bf66dcf3bbdb2a905c3dcf09bc"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrIntegrationPostgresTest.kt",
+      "sha256": "c5ea67d51de001e9a9c97a513ba1e174ba868794c7f2448a5a1304ac02d4fac1"
+    }
+  ],
+  "findings": [
+    "Historical SQL1 through32 remains byte-exact; already published32 is pinned by a fixed historical digest.",
+    "Current publisher binds exactly1 through33 SQL inventory, actual CRC, schema fingerprint and guard bytes; two readers preserve complete previously published catalogs and reject unpublished intermediate and unknown future catalogs.",
+    "V33 adds only nullable classification JSONB with object/version1/4096-byte checks; historical rows stay NULL with no inference or backfill. SQL semantics are independently covered by the separate PostgreSQL designer.",
+    "CI preserves all prior commands, jobs, authority and timeout values and appends one unconditional blocking V33 check.",
+    "Actual native OpenAPI projection matches stored contract; all43 previous operations and all previous schema properties remain present. Exactly two GET operations and12 new DTO property lists are added, with title added to the previous room summary. This projection proves presence, not response types or security semantics.",
+    "Five isolated intended faults were detected by assertion failures; every restoration passed its independent target, all10 boundary tests passed before and after, and root production/test hashes remained unchanged."
+  ],
+  "nativeProjection": {
+    "matchesActualNative": true,
+    "paths": 42,
+    "operations": 45,
+    "schemaComponents": 84,
+    "oldOperationsAllPreserved": true,
+    "oldSchemaPropertiesAllPreserved": true
+  },
+  "faults": {
+    "injected": 5,
+    "detected": 5,
+    "restoredTargetsPassed": 5,
+    "baselineTestsPassed": 10,
+    "finalRestoredTestsPassed": 10,
+    "rootMutated": false,
+    "evidence": ".tdd/verification/issue241-release-contract-faults.json"
+  },
+  "rolloutConstraints": [
+    "Changed schema/API/guard fingerprints require the existing protected transition and its exact run/attempt/image approval; no automatic bypass or new authority is introduced.",
+    "Migration33 is additive and historical first classifications stay unknown.",
+    "Rollback must keep33-compatible catalog readers and immutable Flyway history; do not delete33 or use an old32-only guard as an automatic rollback."
+  ],
+  "scopeLimits": [
+    "No production/AWS/model requests, production deployment, runtime semantic model evaluation or full backend quality result is asserted here.",
+    "Actual user inputs and raw logs remain outside Git; tracked evidence contains only synthetic contract facts and digests."
+  ],
+  "recordedAt": "2026-11-16T08:41:51.166587Z",
+  "ciExactReplay": {
+    "ciSteps": 24,
+    "runBlocks": 22,
+    "shellCommands": 25,
+    "passedRunBlocks": 22,
+    "passedNodeTests": 446,
+    "passedPythonTests": 420,
+    "allPassed": true,
+    "commandsTimeLimitsUnchanged": true,
+    "environmentAdaptation": "Only the existing synthetic127.0.0.1 /healthz wget process had its proxy environment cleared through a narrow argv Docker forwarding wrapper. Actual Docker CLI and actual HTTP response were used; other Docker calls and external proxy settings were preserved.",
+    "fullBackendQualityOrProductionDeploymentClaimed": false
+  },
+  "preservedInitialFailures": [
+    {
+      "scope": "auth runtime",
+      "passed": 79,
+      "failed": 3,
+      "failure": "Existing20-second synthetic process deadlines under competing Gradle workloads. Unchanged serial replay without live Java passed82/82 and added no CPU throttling. Timeouts were not increased."
+    },
+    {
+      "scope": "syntheticNginx health",
+      "failure": "Cloud Docker proxy injection sent BusyBox loopback health traffic to an external proxy returning403 despite existing noProxy entries. A strictly loopback-process environment adjustment allowed the original command to use the actual local server and pass. Original failure and diagnostics remain private."
+    }
+  ],
+  "finalFixtureVerification": {
+    "auth": {
+      "passed": 82,
+      "failed": 0,
+      "elapsedSeconds": 106.233,
+      "withoutLiveJava": true,
+      "subprocessTimeoutMillisecondsUnchanged": 20000
+    },
+    "nginx": {
+      "exitCode": 0,
+      "elapsedSeconds": 3.587,
+      "actualDockerAndHttp": true,
+      "loopbackProcessAdjustmentCount": 1,
+      "globalDockerConfigOrDaemonChanged": false,
+      "registryCredentialsCopied": false,
+      "sourceAndTimeoutUnchanged": true,
+      "recordedAt": "2026-11-16T08:40:22.663783Z"
+    }
+  }
+}

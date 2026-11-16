@@ -130,12 +130,13 @@ class PrecheckProcessingService(
         claim: ClaimedPrecheck,
         result: PrecheckProviderResult?,
         failureCode: String?,
+        classification: com.meetme.server.precheck.application.port.output.PrecheckClassificationSnapshot? = null,
     ): PrecheckStatus {
         val original = claim.check
         val room = rooms.findByIdForUpdate(MeetingRoomId(original.candidate.roomId)) ?: return PrecheckStatus.SUPERSEDED
         val current = repository.find(original.id) ?: return PrecheckStatus.SUPERSEDED
         val now = clock.instant()
-        repository.finishAttempt(original.copy(failureCode = failureCode), result, now)
+        repository.finishAttempt(original.copy(failureCode = failureCode), result, now, classification)
         if (current.version != original.version ||
             current.generation != original.generation ||
             current.ownerToken != original.ownerToken ||
@@ -278,12 +279,13 @@ class PrecheckProcessingService(
         claim: ClaimedPrecheck,
         result: PrecheckProviderResult?,
         failureCode: String?,
+        classification: com.meetme.server.precheck.application.port.output.PrecheckClassificationSnapshot? = null,
     ): PrecheckStatus {
         val original = claim.check
         val room = rooms.findByIdForUpdate(MeetingRoomId(original.candidate.roomId)) ?: return PrecheckStatus.SUPERSEDED
         val current = repository.find(original.id) ?: return PrecheckStatus.SUPERSEDED
         val now = clock.instant()
-        repository.finishAttempt(original.copy(failureCode = failureCode), result, now)
+        repository.finishAttempt(original.copy(failureCode = failureCode), result, now, classification)
         if (current.version != original.version ||
             current.generation != original.generation ||
             current.ownerToken != original.ownerToken ||

@@ -1,0 +1,35 @@
+{
+  "workItem": "issue241-operator-trailing-date",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTrailingDateContactMaskingTest.kt",
+      "sha256": "095be60746163813ec12e2206ac5865e990f19f6536ccb21df703826b3afdb7c"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-I",
+    "/tmp/issue241-security-followup.gradle",
+    "test",
+    "--tests",
+    "*OperatorTrailingDateContactMaskingTest",
+    "--tests",
+    "*OperatorQueryPostgresTest.OpenAPI documents all operator response errors and only safe DTO fields"
+  ],
+  "failedTests": [
+    "OperatorTrailingDateContactMaskingTest.[1] input = \"\uc804\ud654 +49 30 1234 5678 2044-02-29 19:30 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 2044-02-29 19:30 \uac00\ub2a5\"",
+    "OperatorTrailingDateContactMaskingTest.[2] input = \"\uc804\ud654 +49 30 1234 5678 2044/02/29 19:30 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 2044/02/29 19:30 \uac00\ub2a5\"",
+    "OperatorTrailingDateContactMaskingTest.[3] input = \"\uc804\ud654 +49 30 1234 5678 2044.02.29 19:30 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 2044.02.29 19:30 \uac00\ub2a5\"",
+    "OperatorTrailingDateContactMaskingTest.[4] input = \"\uc804\ud654 +49 30 1234 5678 2044\ub144 2\uc6d4 29\uc77c 19\uc2dc \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 2044\ub144 2\uc6d4 29\uc77c 19\uc2dc \uac00\ub2a5\"",
+    "OperatorTrailingDateContactMaskingTest.[5] input = \"\uc804\ud654 +33 1 23 45 67 89 02/29 19:30 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 02/29 19:30 \uac00\ub2a5\"",
+    "OperatorTrailingDateContactMaskingTest.[6] input = \"\uc804\ud654 +49 30 1234 5678 2044-02-29T19:30:00+09:00 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 2044-02-29T19:30:00+09:00 \uac00\ub2a5\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T07:14:09.533213Z"
+}

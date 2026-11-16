@@ -1,0 +1,30 @@
+{
+  "workItem": "issue241-operator-title-contract",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryPostgresTest.kt",
+      "sha256": "9dcc4136efa446950e4f38162e415348377e26ef1a267d0bde2172399f78823d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-I",
+    "/tmp/issue241-security-followup.gradle",
+    "test",
+    "--tests",
+    "*OperatorTrailingDateContactMaskingTest",
+    "--tests",
+    "*OperatorQueryPostgresTest.OpenAPI documents all operator response errors and only safe DTO fields"
+  ],
+  "failedTests": [
+    "OperatorQueryPostgresTest.OpenAPI documents all operator response errors and only safe DTO fields()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T07:14:09.540377Z"
+}

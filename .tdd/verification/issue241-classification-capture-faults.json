@@ -1,0 +1,143 @@
+{
+  "workItem": "issue241-classification-capture-faults",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "boundary": "First-classifier observation preserves the actual normalized and semantic labels, records only reached server routing, survives later failures, remains immutable, and adds no monotonic reads or external calls.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PrecheckClassificationCapture.kt",
+      "sha256": "1c641b842b2b7014610646e941965466e8cbf4b1c309275efad674333b53316d"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/port/output/PreSubmissionCheckProvider.kt",
+      "sha256": "f718a5071d8e90ce4c1876146b348856134392313bdc01a53575f23014ebebbd"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePreSubmissionCheckProvider.kt",
+      "sha256": "be8299f2cd31951dba89b3caa367a666e1b456816663e63c0a97aec9c642de5b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PreSubmissionCheckWorker.kt",
+      "sha256": "3e7f12563fcb6220cf82d8e2e07b824b66b3a10f49c45fae5d0d612056b08613"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/application/service/PrecheckProcessingService.kt",
+      "sha256": "fd1ff7ba1023439ee681ea5371dcbcd641f9238cecb7c0bcf68cd58ad40aa02f"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/PrecheckClassificationCaptureTest.kt",
+      "sha256": "f159758e3b84da28097cccf8496a506a7392e26cb171fafe9db2ec0c698ec514"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/application/service/PrecheckClassificationWorkerTest.kt",
+      "sha256": "9ecd3eee48dc8957165f4f91ba1774d34d0ee09da592b9abc59ecd3d926725ac"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckTerminalUsageWorkerTest.kt",
+      "sha256": "61340a32714f46bb62b39c48e3a565cc980f14394153cf39f69fbc8f8a53db4c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckRoutingTest.kt",
+      "sha256": "2a14d28feae413fe587ab5ac1116a511ca1c5d28e7720c73586871ea7fc5690a"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckBudgetTest.kt",
+      "sha256": "3a813a63c7d159ff0eaeb6544e8ac53b429ea9b90cbc23814f1c500b36d69831"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckDeadlineTest.kt",
+      "sha256": "ddc8af8fa9b3fcbd2aa12179eb430ef7730fc75382936b7593ca98cc19e8d7f5"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Recorded normalized first assessment incorrectly replaced by semanticAssessment",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "--init-script",
+        "/tmp/issue241-provider-mutations.gradle",
+        "test",
+        "--tests",
+        "*PrecheckClassificationCaptureTest"
+      ],
+      "detectedBy": "PrecheckClassificationCaptureTest.PCD05 V1 normalized assessment and V2 semantic routing remain distinct while terminal results stay unchanged | [1] physical = false",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Effective route recorded at classification before actual decision/deadline completion",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "--init-script",
+        "/tmp/issue241-provider-mutations.gradle",
+        "test",
+        "--tests",
+        "*PrecheckClassificationCaptureTest"
+      ],
+      "detectedBy": "PrecheckClassificationCaptureTest.PCD08 a valid late first result is recorded but never claims a route was evaluated or accepts late clear | [1] physical = false",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Worker discards valid first classification whenever terminal result was cleared",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "--init-script",
+        "/tmp/issue241-provider-mutations.gradle",
+        "test",
+        "--tests",
+        "*PrecheckClassificationWorkerTest",
+        "--tests",
+        "*TwoStagePrecheckTerminalUsageWorkerTest"
+      ],
+      "detectedBy": "PrecheckClassificationWorkerTest.PCW03 worker response validation may discard the terminal result but never its known first-stage diagnostic | PCW03 worker response validation may discard the terminal result but never its known first-stage diagnostic()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Diagnostic routing reads monotonic time again and changes the existing deadline observation schedule",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "--init-script",
+        "/tmp/issue241-provider-mutations.gradle",
+        "test",
+        "--tests",
+        "*PrecheckClassificationCaptureTest"
+      ],
+      "detectedBy": "PrecheckClassificationCaptureTest.PCD11 diagnostics add no monotonic reads and preserve one shared timeout and original stage call counts | [1] physical = false",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "First diagnostic keeps mutable caller-owned probability map",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "--init-script",
+        "/tmp/issue241-provider-mutations.gradle",
+        "test",
+        "--tests",
+        "*PrecheckClassificationCaptureTest"
+      ],
+      "detectedBy": "PrecheckClassificationCaptureTest.PCD02 first classification and first route are immutable and probability maps are defensive | PCD02 first classification and first route are immutable and probability maps are defensive()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T07:52:39Z"
+}

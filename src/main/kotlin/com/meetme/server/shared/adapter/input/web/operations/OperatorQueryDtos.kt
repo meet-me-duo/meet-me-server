@@ -74,6 +74,8 @@ data class RoomSummaryResponse(
     @field:JsonProperty("has_open_revision_round")
     @field:Schema(description = "참가자 입력 수정 라운드가 열려 있는지 여부")
     val hasOpenRevisionRound: Boolean = false,
+    @field:Schema(description = "연락처를 가린 모임 제목")
+    val title: String = "",
 ) {
     companion object {
         fun from(value: RoomSummary) =
@@ -98,6 +100,7 @@ data class RoomSummaryResponse(
                 value.stateVersion,
                 value.currentAnalysisConfirmed,
                 value.hasOpenRevisionRound,
+                value.title,
             )
     }
 }

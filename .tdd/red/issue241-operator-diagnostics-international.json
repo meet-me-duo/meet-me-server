@@ -1,0 +1,40 @@
+{
+  "workItem": "issue241-operator-diagnostics-international",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorInternationalContactMaskingTest.kt",
+      "sha256": "4967558f06401421f442afd8bcb3cfb8e112967a651146fd095d7d26be5af52d"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "*OperatorDiagnosticsAuthorizationTest",
+    "--tests",
+    "*OperatorDiagnosticsHttpSecurityTest",
+    "--tests",
+    "*OperatorInternationalContactMaskingTest"
+  ],
+  "failedTests": [
+    "OperatorInternationalContactMaskingTest.international contact redaction preserves following date timezone and clock exactly [1] input = \"\uc804\ud654 +82 2 1234 5678 19:30 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 19:30 \uac00\ub2a5\"",
+    "OperatorInternationalContactMaskingTest.international contact redaction preserves following date timezone and clock exactly [2] input = \"\uc804\ud654 +49 30 1234 5678 19\uc2dc \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 19\uc2dc \uac00\ub2a5\"",
+    "OperatorInternationalContactMaskingTest.international contact redaction preserves following date timezone and clock exactly [3] input = \"\uc804\ud654 +33 1 23 45 67 89 19:30-21:00 \uac00\ub2a5\", expected = \"\uc804\ud654 [\uc804\ud654\ubc88\ud638 \uc228\uae40] 19:30-21:00 \uac00\ub2a5\"",
+    "OperatorInternationalContactMaskingTest.international contact redaction preserves following date timezone and clock exactly [4] input = \"2044-02-29 +49 30 1234 5678 UTC+09:00\", expected = \"2044-02-29 [\uc804\ud654\ubc88\ud638 \uc228\uae40] UTC+09:00\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [1] input = \"+82 2 1234 5678\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [2] input = \"+82-2-1234-5678\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [3] input = \"+49 30 1234 5678\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [4] input = \"+49-30-1234-5678\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [5] input = \"+33 1 23 45 67 89\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [6] input = \"+33-1-23-45-67-89\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\"",
+    "OperatorInternationalContactMaskingTest.explicit international phone with separated country code is hidden [7] input = \"+81 3 1234 5678\", expected = \"[\uc804\ud654\ubc88\ud638 \uc228\uae40]\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T06:45:31.829982Z"
+}

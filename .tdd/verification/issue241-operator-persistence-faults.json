@@ -1,0 +1,172 @@
+{
+  "workItem": "issue241-operator-persistence-faults",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "boundary": "Eight isolated persistence/read faults detected against frozen public source 8f7a32e5410cbe34de6f69aadb15d8b13762161597a4478278c34484484a88e3. Initial and byte-restored 47-test PostgreSQL baselines passed. After parent-authorized presentation-only Masker change, only that helper was copied into the isolated project and composed 47 tests passed; root and clone complete main source fingerprints agree (11da76352a57d6448b6e3e3597934dda3f740af8d44031a3f8b081baa83581e6); composed isolated source fingerprint 13b9026f17b49e122bc087e38454215b76ac1d969728d822b8fe30c5042598be. Three critical persistence sources and three PG test fingerprints remained unchanged. Parent transport/schema-test edits are explicitly outside this mutation boundary; no whole-root unchanged claim, no root writes or provider calls.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/precheck/adapter/output/persistence/JdbcPrecheckRepository.kt",
+      "sha256": "63c58cdb0bd2be074fe717e1490ae58c9222ce46c9bb4d3b19e5e5c7bfb51e48"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/operations/JdbcOperatorDiagnosticsRepository.kt",
+      "sha256": "ad38d891c466d3fda9c8b628b5b6f5c0ad76bf1ce2073bfa363d6e4ffc47cf7a"
+    },
+    {
+      "path": "src/main/resources/db/migration/V33__record_precheck_classifications.sql",
+      "sha256": "49340c550cf250d1b6895225dfb60614cef00ea2685618cd4ff795596e6ea8de"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/persistence/PrecheckClassificationSnapshotPostgresTest.kt",
+      "sha256": "c70fc6e7f82b6954b75a964655049bfcbe668bfec14ec1e2b8a1410694c92a30"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsPostgresTest.kt",
+      "sha256": "060cdb83ba8dfd72a47d8d9ff553ac853a954fa4d8cdb4e1bdab44879b26cc42"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorFinalInputAnchorPostgresTest.kt",
+      "sha256": "2626a8bba1d925ff58ba71dd8a0ccde083c6181fd34584eb074e35412e90c022"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Ignore execution owner fencing while retaining check and generation identity",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest.CSP04 an unmatched or unstarted attempt cannot change any execution field"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[1] kind = \"wrong_owner\"; com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#[2] kind = \"null_owner\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Overwrite the first durable classifier decision during duplicate completion",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest.CSP06 duplicate completion keeps the first nonnull decision and original execution metadata"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP06 duplicate completion keeps the first nonnull decision and original execution metadata()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Write classifier identity into generator provider and model metadata",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest.CSP02 all actual classification facts and effective routing survive a fresh JDBC reader"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP02 all actual classification facts and effective routing survive a fresh JDBC reader()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Read mutable latest heads instead of exact selected historical batch versions",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest.ODP04 historical selection uses frozen versions while explicit null selects current collection"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP04 historical selection uses frozen versions while explicit null selects current collection()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove room and participant ownership from accepted-candidate provenance lookup",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest.ODP07 same version text from another owner cannot attach a foreign accepted check"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP07 same version text from another owner cannot attach a foreign accepted check()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Claim that a later legacy answer was consumed by the original historical analysis",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest.ODP19 a legacy answer linked by saved version is consumed while its original remains explicit"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP19 a legacy answer linked by saved version is consumed while its original remains explicit()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove the eight-record ancestry bound while keeping cycle protection",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest.ODP23 long acyclic ancestry is explicitly capped at eight checked inputs"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorDiagnosticsPostgresTest#ODP23 long acyclic ancestry is explicitly capped at eight checked inputs()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove the database 4096-byte classification snapshot storage bound",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "-I",
+        "/workspace/artifacts/meet-me-issue241-persistence-final-mutations/test-source.gradle",
+        "test",
+        "--tests",
+        "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest.CSP10 the 4096 byte JSONB boundary is inclusive and 4097 bytes is rejected"
+      ],
+      "detectedBy": "com.meetme.server.precheck.adapter.output.persistence.PrecheckClassificationSnapshotPostgresTest#CSP10 the 4096 byte JSONB boundary is inclusive and 4097 bytes is rejected()",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T08:43:25.843152Z"
+}

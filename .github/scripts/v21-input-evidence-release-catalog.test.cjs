@@ -18,7 +18,8 @@ const currentScripts = [...scripts, 'V22__preserve_unverified_candidate_place.sq
   'V29__add_structural_final_analysis_route.sql',
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
-  'V32__add_operator_room_reanalysis.sql'];
+  'V32__add_operator_room_reanalysis.sql',
+  'V33__record_precheck_classifications.sql'];
 
 function fixture() {
   const value = f.currentFixture();
@@ -30,12 +31,12 @@ function fixture() {
   return value;
 }
 
-test('V21C01 current publication retains V21 in all thirty-two real SQL files and exact independent checksums', () => {
+test('V21C01 current publication retains V21 in all thirty-three real SQL files and exact independent checksums', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture();
   try {
     const actual = f.publish(value);
-    assert.equal(actual.ok, true, 'The exact additive V32 catalog must be recognized');
+    assert.equal(actual.ok, true, 'The exact additive V33 catalog must be recognized');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     const schema = currentScripts.map((script, i) => ({ version: String(i + 1), script,
