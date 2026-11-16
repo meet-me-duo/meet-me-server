@@ -1,0 +1,124 @@
+{
+  "workItem": "issue236-operator-security-faults",
+  "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+  "boundary": "Verified operator authorization, durable admission before writes, strict command JSON, legacy GET status privacy, and actual servlet-bound audit identity after CORS rejection. Frozen public source f4e56b30f0cfae397cd73b47a64d31a35bc88497391458989d909b3fd4e24120. All mutations isolated; exact restoration and four-class 91-test positive verification; no model calls.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/OperatorReanalysisService.kt",
+      "sha256": "4a2cd68910728913479205202d4f0ae124951dfb9a6db6321c3374a1ea72ccfa"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorReanalysisController.kt",
+      "sha256": "b8d623655bb2c0e907eee06341dfbc82ef1f2d6777e314640059f0882b39820b"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorNoStoreFilter.kt",
+      "sha256": "acca5b1858f303e15c9d949a0654a5fab0a18dbd4c38fc0e89e2686bd81fb321"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorReanalysisExceptionHandler.kt",
+      "sha256": "6f216d0496f21ef468853ae02e9df5d33590b64b2e6812cacb171c3016895fea"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorReanalysisAuthorizationTest.kt",
+      "sha256": "def0b9b7c7a967690d98e085d985a111114bc35f68bf1ac39318f93252bc9304"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorReanalysisHttpSecurityTest.kt",
+      "sha256": "8deabe9e6180fa3a4cb411043e1a477cb3c95dccc9d566b73d0ff919efee5907"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorQueryPostgresTest.kt",
+      "sha256": "d1a263db5d15513047113130ed80ba9ab399369df6502632417be0c56966dadb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTransportQueryPostgresTest.kt",
+      "sha256": "bbb531597468c5ad722feb6d59c45d5a9d0719b3de22d3a4a290b62d226a862d"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Bypass the verified-account operator allowlist while retaining authentication",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*OperatorReanalysisAuthorizationTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorReanalysisAuthorizationTest#ORA03 unlisted member cannot validate malformed target or lazy body()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove durable ALLOWED access admission before command dispatch",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*OperatorReanalysisAuthorizationTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorReanalysisAuthorizationTest#ORA07 authorized valid request writes its one durable admission audit before command lookup()",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Accept extra JSON properties including caller-supplied actor and contract overrides",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*OperatorReanalysisHttpSecurityTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorReanalysisHttpSecurityTest#[7] kind = \"unknown\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow command-only 409 and 429 statuses through historical GET error sanitizing",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*OperatorReanalysisAuthorizationTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorReanalysisAuthorizationTest#[1] untrustedStatus = 409",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit actual ServletRequest binding when resolving the verified audit actor after pre-controller CORS rejection",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Dorg.gradle.jvmargs=-Xmx1536m",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "*OperatorReanalysisHttpSecurityTest"
+      ],
+      "detectedBy": "com.meetme.server.shared.operations.OperatorReanalysisHttpSecurityTest#[4] kind = \"unapproved\"",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T02:10:53.389819Z"
+}

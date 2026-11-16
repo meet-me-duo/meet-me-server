@@ -1,0 +1,226 @@
+{
+  "format": "node-python-red-review-1",
+  "workItem": "issue236-release-contract-red",
+  "evidenceKind": "NON_KOTLIN_RED_REVIEW",
+  "notKotlinRedSchema": true,
+  "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+  "scope": "Independent V32 exact release catalog, historical V1-V31 bytes/readers, current-only expectation advancement, native API publication metadata and additive CI gate.",
+  "testFiles": [
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "fbe08276127c404b6f201fe58d835e8e3d4c30df725b89442f0e5ba6b3e77894"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "5df76ca7df44cd14930a007eb2add3201b0a69011490adf8db95786ac88c7d8e"
+    },
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "4b199945baf9dbb59054b1367282b5fb1883089c512db9af409fc093eb33eef5"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "16fffa249faa55996dd1413d59c5e2b9519b08caa041a80399334c4839e2d5c0"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "ab6d1972eb94cdf09e47bac0b862fb3a9cb672789cc2a5565660988be56cab07"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "be23b6c17aab5ff586b169029628db36427692084caf66960de30ad2a76feb2b"
+    },
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "e85bb6a24efef0e3c0a6e65816bf1d5ae7ae11a43433481dea6181fac9b4e6b9"
+    },
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "55dff9f1abddc004c4fcd759229a81ddce686471787b2c15363e9ad56c3dbf25"
+    },
+    {
+      "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+      "sha256": "33a30998035a4c95d4c95fe23d1342c5a013e59f758357d1cdd1c101ab282eb5"
+    },
+    {
+      "path": ".github/scripts/v31-analysis-release-catalog.test.cjs",
+      "sha256": "837a88f7d4c0ec48f58e3f26fcac542bef4cd676313b14d799090cf046eabf73"
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "873d2905da50decfba77c4cc9b87fa042730c3075f885ef6e90e624b64a3f91c"
+    },
+    {
+      "path": "deploy/tests/test_issue154_state_reader_transport.py",
+      "sha256": "9b5edaf9153adfc125c81fafb0e2c769f7c53eaa5920ac0b2de52bdf1fa8703a"
+    }
+  ],
+  "runs": [
+    {
+      "workItem": "issue236-release-v32-red",
+      "command": [
+        "node",
+        "--test",
+        ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs"
+      ],
+      "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+      "exitCode": 1,
+      "recordedAt": "2026-11-16T00:43:16.165156Z",
+      "counts": {
+        "tests": 11,
+        "pass": 3,
+        "fail": 8,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failedTests": [
+        "V32C01 exact additive SQL inventory preserves all thirty-one reviewed migration bytes",
+        "V32C02 actual publisher binds every current SQL CRC, SQL SHA and operational guard SHA independently",
+        "V32C03 both metadata readers admit V32 and preserve every historically published complete catalog",
+        "V32C05 publisher rejects V31-only sources and missing, renamed, duplicate, linked, nonfile or future SQL",
+        "V32C08 changed V32 SQL changes only its CRC and schema digest and cannot reuse stale archive authorization",
+        "V32C09 V31 to V32 requires guarded explicit transition and intact prior history",
+        "V32C10 publication data advertises the one operator POST and complete typed request receipt and room CAS metadata",
+        "V32C11 additive catalog gate preserves original commands three jobs authority and protected deployment entry"
+      ],
+      "rawLogSha256": "7f1911de774de7b6e1f9004d4f45f6c4646fbea48f171a24f0d59eb287584acc",
+      "executedTestFiles": [
+        {
+          "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+          "sha256": "fbe08276127c404b6f201fe58d835e8e3d4c30df725b89442f0e5ba6b3e77894"
+        },
+        {
+          "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+          "sha256": "5df76ca7df44cd14930a007eb2add3201b0a69011490adf8db95786ac88c7d8e"
+        }
+      ],
+      "rawLogReference": ".codex/tdd-evidence/issue236-release-v32-red.log",
+      "expectedFailureCategory": "MISSING_BEHAVIOR"
+    },
+    {
+      "workItem": "issue236-release-current-node-red",
+      "command": [
+        "node",
+        "--test",
+        "--test-name-pattern",
+        "^(V18C01|V18C08|V19R01|V20R01|V21C01|V22C01|V23C01|V31C01|V31C02|Issue178 Deployment Contracts|Issue178 executes)",
+        ".github/scripts/ci-job-boundaries.test.cjs",
+        ".github/scripts/v18-release-catalog.test.cjs",
+        ".github/scripts/v19-review-release-catalog.test.cjs",
+        ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+        ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+        ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+        ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+        ".github/scripts/v31-analysis-release-catalog.test.cjs"
+      ],
+      "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+      "exitCode": 1,
+      "recordedAt": "2026-11-16T00:44:55.517750Z",
+      "counts": {
+        "tests": 11,
+        "pass": 0,
+        "fail": 11,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failedTests": [
+        "Issue178 Deployment Contracts preserves all 16 original checks and the exact V23 V31 default analysis and V32 checks",
+        "Issue178 executes each original command exactly once with the boundary V23 V31 default analysis and additive V32 checks",
+        "V18C01 current publisher advances to exact approved V32 while V18 reader fixtures remain frozen",
+        "V18C08 current source publishes exact real V32 without changing historical V18 reader fixtures",
+        "V19R01 current publisher retains V19 in the exact latest inventory with independent checksums and both fingerprints",
+        "V20R01 actual candidate publisher retains V20 in exact V32 and independently binds CRC SQL SHA and guard SHA",
+        "V21C01 current publication retains V21 in all thirty-two real SQL files and exact independent checksums",
+        "V22C01 current publication retains V22 in all thirty-two actual SQL CRCs and independent schema SHA",
+        "V23C01 current publication binds exactly all thirty-two actual SQL CRCs and independent schema SHA",
+        "V31C01 the exact reviewed SQL inventory retains every historical migration byte",
+        "V31C02 current publisher binds all thirty-two actual SQL CRCs and schema SHA independently"
+      ],
+      "rawLogSha256": "f03cb1bf45712f3fc18ac5af7fb8c65af390acc32a74bc80d8678086b0dd49be",
+      "executedTestFiles": [
+        {
+          "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+          "sha256": "5df76ca7df44cd14930a007eb2add3201b0a69011490adf8db95786ac88c7d8e"
+        },
+        {
+          "path": ".github/scripts/ci-job-boundaries.test.cjs",
+          "sha256": "4b199945baf9dbb59054b1367282b5fb1883089c512db9af409fc093eb33eef5"
+        },
+        {
+          "path": ".github/scripts/v18-release-catalog.test.cjs",
+          "sha256": "16fffa249faa55996dd1413d59c5e2b9519b08caa041a80399334c4839e2d5c0"
+        },
+        {
+          "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+          "sha256": "ab6d1972eb94cdf09e47bac0b862fb3a9cb672789cc2a5565660988be56cab07"
+        },
+        {
+          "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+          "sha256": "be23b6c17aab5ff586b169029628db36427692084caf66960de30ad2a76feb2b"
+        },
+        {
+          "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+          "sha256": "e85bb6a24efef0e3c0a6e65816bf1d5ae7ae11a43433481dea6181fac9b4e6b9"
+        },
+        {
+          "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+          "sha256": "55dff9f1abddc004c4fcd759229a81ddce686471787b2c15363e9ad56c3dbf25"
+        },
+        {
+          "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+          "sha256": "33a30998035a4c95d4c95fe23d1342c5a013e59f758357d1cdd1c101ab282eb5"
+        },
+        {
+          "path": ".github/scripts/v31-analysis-release-catalog.test.cjs",
+          "sha256": "837a88f7d4c0ec48f58e3f26fcac542bef4cd676313b14d799090cf046eabf73"
+        }
+      ],
+      "rawLogReference": ".codex/tdd-evidence/issue236-release-current-node-red.log",
+      "expectedFailureCategory": "MISSING_BEHAVIOR"
+    },
+    {
+      "workItem": "issue236-release-current-python-red",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionPublicationTests.test_OA01_artifact_remains_unconfigured_and_current_v32_preserves_v18_history",
+        "deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST02_current_public_reader_and_public_catalog_fit_the_existing_command_boundary"
+      ],
+      "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+      "exitCode": 1,
+      "recordedAt": "2026-11-16T00:44:19.895779Z",
+      "counts": {
+        "tests": 2,
+        "fail": 2,
+        "errors": 0,
+        "pass": 0
+      },
+      "failedTests": [
+        "test_OA01_artifact_remains_unconfigured_and_current_v32_preserves_v18_history (deploy.tests.test_issue144_production_ai_deployment.Issue144ProductionPublicationTests.test_OA01_artifact_remains_unconfigured_and_current_v32_preserves_v18_history)",
+        "test_ST02_current_public_reader_and_public_catalog_fit_the_existing_command_boundary (deploy.tests.test_issue154_state_reader_transport.Issue224StateReaderTransportTests.test_ST02_current_public_reader_and_public_catalog_fit_the_existing_command_boundary)"
+      ],
+      "rawLogSha256": "ab5b18a40151d842d33f80444330025da8595b3f26d5d4b91d8339b2a3ec5b9d",
+      "executedTestFiles": [
+        {
+          "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+          "sha256": "873d2905da50decfba77c4cc9b87fa042730c3075f885ef6e90e624b64a3f91c"
+        },
+        {
+          "path": "deploy/tests/test_issue154_state_reader_transport.py",
+          "sha256": "9b5edaf9153adfc125c81fafb0e2c769f7c53eaa5920ac0b2de52bdf1fa8703a"
+        }
+      ],
+      "rawLogReference": ".codex/tdd-evidence/issue236-release-current-python-red.log",
+      "expectedFailureCategory": "MISSING_BEHAVIOR"
+    }
+  ],
+  "historicalSqlV1ThroughV31DigestsUnchanged": true,
+  "productionCatalogAndWorkflowUnchangedDuringRed": true,
+  "newSqlAbsentDuringRed": true,
+  "modelOrAwsCalls": 0,
+  "limitations": "Targeted current Node/Python runs cover the changed current inventory assertions. Historical full fixture suites await authored V32 SQL and GREEN; their passing status is not claimed here.",
+  "collectorNote": "Node24 default spec reporter was parsed from original bytes after a collector assumed TAP. Only a stale V18 test title was corrected; its affected targeted RED was re-executed with prior raw log retained outside Git. No assertion, input or production source was changed to make RED pass."
+}

@@ -1,0 +1,129 @@
+{
+  "workItem": "issue236-operator-persistence-faults",
+  "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+  "boundary": "Verified immutable original versions, current enabled contract, typed stale-state conflict, actor-bound idempotency, transactional rollback, same-room provenance, and persisted OPEN revision protection. Frozen public source f4e56b30f0cfae397cd73b47a64d31a35bc88497391458989d909b3fd4e24120. Seven faults isolated and restored byte-for-byte; initial and restored PostgreSQL 40-test baselines pass with no errors or skips. The stale-state mutation is stopped by the database constraint but loses the application 409 contract. No model calls.",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/coordination/application/service/OperatorReanalysisEnqueueService.kt",
+      "sha256": "ac342b3152a644777c0157e8c0fbb9a21dfa25e8e92abbad751cebedcfd262d5"
+    },
+    {
+      "path": "src/main/resources/db/migration/V32__add_operator_room_reanalysis.sql",
+      "sha256": "7af43aaf9ec949255f3fc4f653d7574bc8550a262475e15eeec4c723b1d2f939"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/OperatorReanalysisPostgresTest.kt",
+      "sha256": "e424b5bcf0eef81c4468107245842edcd4a1b8663beaab6c51bdc70f07b8b68b"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Read mutable latest heads instead of the requested immutable frozen source versions",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.readsHistoricalVersionsWhenHeadsHaveAdvanced"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#readsHistoricalVersionsWhenHeadsHaveAdvanced — ORP02 newer participant heads cannot replace the immutable requested source cohort",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Propagate the historical generation5 descriptor instead of freezing the currently enabled generation6",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.createsActiveCurrentContractWithHistoryPreserved"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#createsActiveCurrentContractWithHistoryPreserved — ORP01 current contract creates one active new execution while preserving original source result and accounting",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Omit the observed room-state compare-and-set check; typed stale-state conflict must survive DB defense",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.rejectsStaleCommandPreconditions"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#rejectsStaleCommandPreconditions — [2] kind = \"VERSION\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow another authenticated operator to reuse an accepted command key belonging to the first operator",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.rejectsIdempotencyKeyRebinding"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#rejectsIdempotencyKeyRebinding — [1] field = \"ACTOR\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove the single command transaction and permit partial accepted-run writes when later stages fail",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.failedAcceptanceCannotLeavePartialWrites"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#failedAcceptanceCannotLeavePartialWrites — [1] table = \"outbox_events\"; [2] table = \"final_analysis_routes\"; [3] table = \"operations_reanalysis_commands\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Remove the source-run same-room foreign key and permit cross-room command lineage",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.lineageCannotBeForgedInStorage"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#lineageCannotBeForgedInStorage — [2] fault = \"FOREIGN_SOURCE\"",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Ignore a persisted OPEN revision round when its active room pointer is missing",
+      "command": [
+        "./gradlew",
+        "--offline",
+        "--no-daemon",
+        "--max-workers=1",
+        "-Pkotlin.compiler.execution.strategy=in-process",
+        "test",
+        "--tests",
+        "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest.persistedOpenRoundBlocksReanalysisWithoutActivePointer"
+      ],
+      "detectedBy": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest#persistedOpenRoundBlocksReanalysisWithoutActivePointer — ORP22 any persisted OPEN revision protects edits even when its active pointer is missing",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T02:20:04.065129Z"
+}

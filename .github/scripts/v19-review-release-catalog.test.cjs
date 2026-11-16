@@ -5,7 +5,7 @@ const f = require('./fixtures/integrated-release-catalog.cjs');
 const { fs, path, root, range, hash, canonical, clone, crc } = f;
 
 // Approved public inventory, independent of every production Python catalog constant.
-// Historical V17/V18/V19 manifests remain reader contracts; current publication requires the reviewed inventory through V31.
+// Historical V17/V18/V19 manifests remain reader contracts; current publication requires the reviewed inventory through V32.
 const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const script19 = 'V19__add_confirmed_result_reviews.sql';
 const scripts = [...f.scripts, script18, script19];
@@ -18,7 +18,8 @@ const currentScripts = [...scripts, 'V20__add_account_room_history_index.sql', '
   'V28__add_context_mode_final_analysis_route.sql',
   'V29__add_structural_final_analysis_route.sql',
   'V30__add_c5_residual_luna_policy.sql',
-  'V31__allow_explicit_c5_direct_luna.sql'];
+  'V31__allow_explicit_c5_direct_luna.sql',
+  'V32__add_operator_room_reanalysis.sql'];
 const historicalGuard18 = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
@@ -138,10 +139,10 @@ test('V19R01 current publisher retains V19 in the exact latest inventory with in
   assert.deepEqual(fs.readdirSync(directory).sort(), [...currentScripts].sort());
   const value = fixture(); try {
     const built = f.publish(value);
-    assert.equal(built.ok, true, 'The complete current candidate publication through V31 is supported');
+    assert.equal(built.ok, true, 'The complete current candidate publication through V32 is supported');
     assert.deepEqual(built.result.migrations, currentScripts.map((script, index) => ({ version: String(index + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value, 31))));
+    assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value, 32))));
     assert.equal(built.result.guardFingerprint, hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
     const actual = f.python('build_manifest', [root, value.archive, f.environment], 'publish_manifest.py');

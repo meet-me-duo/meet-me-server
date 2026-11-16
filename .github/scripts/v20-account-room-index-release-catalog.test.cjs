@@ -19,7 +19,8 @@ const currentScripts = [...scripts, 'V21__add_submission_input_evidence.sql', 'V
   'V28__add_context_mode_final_analysis_route.sql',
   'V29__add_structural_final_analysis_route.sql',
   'V30__add_c5_residual_luna_policy.sql',
-  'V31__allow_explicit_c5_direct_luna.sql'];
+  'V31__allow_explicit_c5_direct_luna.sql',
+  'V32__add_operator_room_reanalysis.sql'];
 
 function release(version = 20) {
   const result = f.manifest();
@@ -37,7 +38,7 @@ function fixture() {
   fs.copyFileSync(path.join(root, 'deploy/runtime-ai-policy.json'), path.join(value.directory, 'deploy/runtime-ai-policy.json'));
   return value;
 }
-function schema(value, version = 31) {
+function schema(value, version = 32) {
   return currentScripts.slice(0, version).map((script, i) => ({ version: String(i + 1), script,
     sha256: hash(fs.readFileSync(path.join(value.migrations, script))) }));
 }
@@ -72,10 +73,10 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V20R01 actual candidate publisher retains V20 in exact V31 and independently binds CRC SQL SHA and guard SHA', () => {
+test('V20R01 actual candidate publisher retains V20 in exact V32 and independently binds CRC SQL SHA and guard SHA', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V31 candidate publication must be supported');
+    const built = f.publish(value); assert.equal(built.ok, true, 'Current exact V32 candidate publication must be supported');
     assert.deepEqual(built.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(built.result.schemaFingerprint, hash(canonical(schema(value))));
