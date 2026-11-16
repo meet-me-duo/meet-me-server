@@ -119,6 +119,9 @@ jobs:
       - name: Verify default analysis runtime configuration
         run: node --test deploy/tests/default-analysis-runtime-env.test.cjs
 
+      - name: Verify operator reanalysis release catalog
+        run: node --test .github/scripts/v32-operator-reanalysis-release-catalog.test.cjs
+
   built-image:
     name: ARM64 Built Image
     runs-on: ubuntu-latest

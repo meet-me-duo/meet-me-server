@@ -31,6 +31,10 @@ data class RoomSummary(
     val submittedParticipantCount: Long,
     val hostSubmitted: Boolean,
     val currentRunStatus: String?,
+    val activeAnalysisId: UUID? = null,
+    val stateVersion: Long = 0,
+    val currentAnalysisConfirmed: Boolean = false,
+    val hasOpenRevisionRound: Boolean = false,
 )
 
 data class InvocationSummary(
@@ -123,8 +127,12 @@ enum class OperatorQueryError(
     OPERATOR_NOT_FOUND(404),
     OPERATOR_INVALID_QUERY(400),
     OPERATOR_UNAVAILABLE(503),
+    OPERATOR_REANALYSIS_CONFLICT(409),
+    OPERATOR_REANALYSIS_UNSUPPORTED_INPUT(409),
+    OPERATOR_REANALYSIS_RATE_LIMITED(429),
 }
 
 class OperatorQueryException(
     val code: OperatorQueryError,
+    val retryAfterSeconds: Long? = null,
 ) : RuntimeException(code.name)

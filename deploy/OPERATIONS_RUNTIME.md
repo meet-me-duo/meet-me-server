@@ -21,7 +21,7 @@ timestamp+UUID 내림차순 keyset과 불투명 cursor를 사용한다. cursor�
 감사의 필드는 서버 생성 id·시각, 검증된 actor/target UUID 또는 null, 고정 route·outcome뿐이다.
 방·계정 FK로 기존 삭제를 막지 않는다. `audit-retention-days=30`, `audit-cleanup-batch-size=100`,
 `cleanup-enabled=true`, 정리 주기 `PT1H`를 기본으로 하며 cutoff보다 엄격히 이전인 행만 제한 삭제한다.
-운영 조회에는 방·제출·시도·Outbox 수정·재분석·삭제 명령을 추가하지 않는다.
+기존 GET 운영 조회는 방·제출·시도·Outbox를 수정하거나 재분석·삭제하지 않는다. 별도로 승인된 재분석 POST만 아래 쓰기 계약을 따른다.
 
 미확인은 null, 알려진 사용량은 소계로 표시한다. V10 승인 기록이나 V15 parser dispatch·local call 관측은
 공급자 수신·청구·실제 HTTP 건수·exactly-once 증명이 아니다. `RECORDED_ADMISSIONS` 분모,
@@ -43,16 +43,27 @@ timestamp+UUID 내림차순 keyset과 불투명 cursor를 사용한다. cursor�
 
 원자 교체·0600 파일 권한·실패 시 임시 파일 제거와 로그 비노출을 유지한다. OAuth 필수 release에만 새 설정을 적용하며 marker 없는 역사 release의 동작은 보존한다. 비활성화는 `operations-enabled=false`를 정상 전달하는 방식으로 수행한다. 활성화 상태에서 UUID만 제거하면 렌더링이 실패하여 기존 파일과 실행 중 설정이 남을 수 있으므로, 그것을 권한 회수 완료로 간주하지 않는다.
 
-## 적용 전 확인과 공식 배포
+## 기존 조회 설정 전달의 적용 절차
 
 - `[SHARED]` PC 담당이 승인된 각 계정의 공급자 identity와 내부 account UUID 대응을 확인한다. renderer는 Google 계정 소유권을 판단하지 않으며 UUID 값은 채팅·공개 증거에 복사하지 않는다.
 - `[USER/SHARED]` 기존 인증·승인 범위에서 위 두 parameter를 설정한다. UUID는 기존 SecureString 보호 경로로 입력하며 이 작업은 키 생성·새 IAM 권한 부여를 포함하지 않는다. Cloud는 실제 parameter를 읽거나 변경하지 않는다.
 - `[AGENT]` 정확한 diff 확인 후 기존 이슈·PR 템플릿 및 develop/main CI 절차를 따른다. 현재 단계는 코드 준비와 합성 검증이며 원격 게시·실제 parameter 변경·배포를 완료했다고 표시하지 않는다.
 - renderer는 기존 guard catalog에 포함되어 있다. 실행 파일 추가 없이 renderer 내용만 바뀌어도 guard 지문이 달라지므로 기존 계약과의 최초 비교는 `TRANSITION_REQUIRED` 대상이다. 기존 `production-transition-approval`에서 해당 실행을 실제 승인한 뒤 pipeline이 규칙 중지·전환·host/전체 DB/API 검증·규칙 복원을 수행한다. 보호 검사를 제거하거나 임의로 AUTO_READY를 만들지 않는다.
-- 이 변경은 새 SQL migration이 없고 현재 V1–V20을 보존한다. 새 immutable release의 성공을 확인한 뒤 승인 계정의 운영 API 접근, 비허용 계정 거부, no-store와 감사 기록을 검증한다. 실제 계정·세션 검증은 로컬 합성 검사와 별개다.
+- 기존 조회 설정 전달 변경에는 새 SQL migration이 없었고 당시 V1–V20을 보존했다. 아래 재분석 API는 별도로 V32를 추가한다. 새 immutable release의 성공을 확인한 뒤 승인 계정의 운영 API 접근, 비허용 계정 거부, no-store와 감사 기록을 검증한다. 실제 계정·세션 검증은 로컬 합성 검사와 별개다.
 
 ## 운영자 메뉴 capability
 
 `GET /api/auth/me`는 `capabilities.canViewOperations`, `POST /api/auth/refresh`는 `account.capabilities.canViewOperations`에 기존 활성화 flag와 현재 인증 계정의 허용 목록 소속 여부를 반환한다. 응답에는 허용 목록·다른 계정 UUID를 추가하지 않고 JWT claim과 DB Role은 변경하지 않는다. 이 boolean은 메뉴 표시용 권한 정보이며 실제 운영 조회의 인가·감사 검사를 대체하지 않는다. 웹은 명시적 true만 메뉴를 표시하고 누락·false·로그아웃·계정 전환 시 이전 권한을 유지하지 않아야 한다.
 
 두 값 설정은 단일 값만 처리하는 구 renderer가 실행 가능한 상태에서 먼저 등록하지 않는다. 기존 한 계정 설정으로 호환 renderer 배포를 검증한 뒤 PC 담당이 승인된 두 UUID를 안전하게 등록하고 공식 설정 반영 절차를 조율한다. 새 릴리스의 원격 CI·배포 완료와 실제 두 번째 계정 등록은 각각 근거를 확인하고 기록한다. 설정 저장만으로 실행 중 애플리케이션에 반영됐다고 간주하지 않는다.
+
+
+## 운영자 최신 로직 재분석
+
+POST `/api/operations/rooms/{roomId}/analyses`는 실제 Bearer 인증의 기존 운영자 allowlist와 정확한 단일 Origin을 요구한다. roomId는 운영자 조회의 내부 UUID이며 초대 코드가 아니다. 공유 링크·HOST·요청에 쓴 계정 ID는 권한을 주지 않는다. 본문은 request_id/source_analysis_id/expected_state_version으로 제한한다. 현재 운영자 room 요약의 active_analysis_id/state_version으로 대상을 결속한다. 확정된 모임은 거부하며, 새 분석은 즉시 현재 결과로 활성화되어 비동기로 처리된다. 과거 결과와 정확한 입력/해석 기준은 보존한다. 원문 수정·조회 권한은 추가하지 않는다.
+
+새 요청은 입력 마감 후 현재 분석이 COMPLETED/ANALYSIS_DELAYED/DEAD_LETTERED인 경우에만 받는다. 열린 수정 라운드가 없어야 하며, 지원하는 자연어 입력의 원래 고정 버전을 최소 두 명분 읽어 현재 활성 V5 계약으로 새로 동결한다. 최신 제출 head로 바꾸거나 기존 계약을 그대로 상속하지 않는다. 수동/혼합 입력과 기준시각을 보존할 수 없는 과거 입력은 OPERATOR_REANALYSIS_UNSUPPORTED_INPUT(409)으로 남긴다. 이 요청은 Jev·보완질문을 새로 실행하지 않으며 기존 Outbox·Redis Stream·분석 worker 경로를 사용한다.
+
+202 응답은 최초 접수의 request_id/source_analysis_id/analysis_id/accepted_state_version/accepted_at/analysis_contract_version만 포함한다. 같은 요청 재전송은 동일 응답을 반환하므로 새 UUID를 만들어 반복 호출하지 않는다. 409는 새 상태를 조회해 운영자의 의도를 다시 확인하고,429는 Retry-After 뒤에 재시도한다. 확인되지 않은 응답 유실은 동일 request_id를 사용해 접수를 확인한다. 503은 인가·감사·요청 제한 또는 저장 장애일 수 있으며 실제 접수 여부는 멱등 재요청으로 확인한다. 비용 원장이나 주최자 수정 한도는 초기화하지 않는다.
+
+ROOM_REANALYSIS의 ALLOWED 접근 감사와 실제 명령 접수 행은 별개다. 전자는 요청의 접근 허용을, 후자는 분석/run/활성 pointer/Outbox와 원자적으로 접수됐음을 뜻한다. 감사·명령·응답·일반 로그에는 원문·보완답·모델 응답·토큰을 넣지 않는다. 운영 실행에는 정당한 운영자 로그인으로 얻은 인증만 사용하며 서비스 키를 가져와 임의 JWT를 만들지 않는다.

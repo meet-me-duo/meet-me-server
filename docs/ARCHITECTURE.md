@@ -1000,3 +1000,16 @@ JDBC format12는 weeklyRulesVersion과 weeklyApplications를 빈 목록도 포�
 개인 사건·철회·정정·선택 관계·연결된 보완답·지원하지 않는 문법의 의미는 이 검사의 판별 불가 영역이다. 별도 날짜·요일 문맥을 실제로 선택했거나 scope 근거가 넓은 문맥이면 날짜 제한 없음을 증명했다고 간주하지 않는다. 특히 format12의 완전 BOUNDS/RAW_SCOPE는 별도 날짜 역할이 조건의 일반 근거에 합쳐져 있으므로, 넓은 자기 문맥이 있으면 보수적으로 미확인으로 남긴다. 전체 WEEKLY scope를 선택한 경우도 같은 한계가 있다. 더 넓은 역할 검증을 보장하려면 새로 역할을 보존하는 저장 계약이 필요하며 이번 변경에는 포함하지 않는다. 기존 근거·관계·정밀도 검증을 유지하며, 새 검사 대상이 아니었다는 사실을 의미 검증 통과와 구분한다. 새 parser는 검사된 조건 수와 미분류 조건 수만 기록하고 원문·개인 식별자를 로그에 추가하지 않는다. UNKNOWN은 미확정으로 보존한다. 명백한 위반은 기존 INVALID_RESPONSE 및 분석 지연 경로로 처리하며 추가 모델 호출·숨은 재시도를 도입하지 않는다. 신규 계약의 저장 조회에도 같은 검사를 적용하지만 과거 계약에는 소급하지 않는다. 독립 반례·실제 PostgreSQL 복원·실제 모델의 기존 사례 회귀와 운영 반영은 각각 검증한 뒤 완료로 기록한다.
 
 기존 binary는 format12를 읽더라도 새 response6 route를 지원하지 않는다. 배포 후 이전 image로 단순 복귀하면 새 실행을 읽지 못하므로, 중단이 필요하면 response6 reader를 유지한 채 신규 생성 기본값만 false로 한 호환 빌드를 기존 파이프라인으로 배포한다. 환경변수 override는 Spring 설정에서 지원하지만 현재 runtime renderer는 새 SSM 토글을 게시하지 않는다. 이를 운영에서 즉시 사용할 수 있는 제어로 간주하지 않는다.
+
+
+### 운영자 명시 재분석 명령 (2026-11-16)
+
+`POST /api/operations/rooms/{roomId}/analyses`는 기존 운영자 allowlist로 검증된 현재 회원만 호출한다. request_id/source_analysis_id/expected_state_version 이외의 입력이나 actor·계약 선택은 받지 않는다. 인증 후에만 lazy 요청 decoder가 정확한 Origin·8KiB JSON·UUID/정수 필드를 검증한다. 운영자 GET은 기존 읽기 전용 계약을 유지한다. 응답은 원문·보완답·프롬프트·초대 코드·인증정보를 포함하지 않는 최초 접수 메타데이터이며 비동기 실행의 현재 상태와 구별한다.
+
+ROOM_REANALYSIS의 별도 내구 접근 감사는 비즈니스 접근 전에 커밋한다. ALLOWED는 인가된 요청 시도를 뜻하며 접수 성공이나 분석 성공을 뜻하지 않는다. 실제 접수는 V32 operations_reanalysis_commands의 actor/room/request/payload 결속 행과 새 batch/run·현재 V5 route·active_run_id·Outbox의 한 트랜잭션으로 증명한다. 방→대상 run 잠금 순서와 읽은 상태/현재 분석 CAS를 적용한다. 동일 요청은 원래 접수 결과를 반환하며 현재 활성 분석을 되돌리지 않는다. Redis 장애 중에도 이미 접수된 동일 요청은 재생할 수 있고, 신규 요청의 actor+room 제한은 항상 fail closed다. 기존 host-command limit/window 기본5회/분을 사용하며 별도 주최자 수정 횟수를 차감하지 않는다.
+
+고정 원본 버전은 FrozenSubmissionReader로 읽고 최신 head로 대체하지 않는다. 원래 evidence/referenceAt·보완 출처·입력 hash/locale·모임 설정을 유지한다. 새 batch.fixedAt만 현재 마이크로초 시각으로 기록하고 현재 활성 기능의 V5 계약을 새로 freeze한다. 기존 propagate나 저장 해석을 재사용하지 않는다. 과거 V1의 기준 날짜가 native 표현과 호환되지 않거나 수동/혼합/불완전 cohort는 명시적으로 거부한다. 기존 retry/revision은 계속 원래 계약을 상속한다.
+
+수집 중·진행 중 실행·열린 수정 라운드·확정·낡은 대상/상태는409다. 미확정 COMPLETED/ANALYSIS_DELAYED/DEAD_LETTERED만 새 실행을 만들 수 있다. 새 active pointer가 즉시 분석 중으로 보이며 일반 Outbox relay→Redis Stream→선택된 분석 worker가 처리한다. 기존 worker/선택은 활성 pointer 검사를 유지한다. 요청 안에서 모델을 호출하거나 Jev 접수·참가자 질문/답변을 생성하지 않는다. 같은 room의 비용 원장/epoch·공급자 admission·deadline과 retention은 유지하며 초기화하지 않는다.
+
+V32는 명령 lineage의 source/created run을 같은 방 composite FK로 결속하고 자기 참조를 거부한다. 삭제 연쇄로 기존 방 보존 정리를 막지 않는다. 이전 migration과31 reader는 유지하고 새 완성 catalog32 및 공개 API 계약을 추가한다. schema/guard 변경의 실제 운영 전환은 기존 보호 승인에 따르며, 코드/로컬 검증·실제 운영 인증 요청·운영 반영을 구분한다.

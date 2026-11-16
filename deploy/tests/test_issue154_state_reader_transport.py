@@ -273,7 +273,7 @@ class Issue224StateReaderTransportTests(unittest.TestCase):
     def test_ST02_current_public_reader_and_public_catalog_fit_the_existing_command_boundary(self):
         sources = {name: (DEPLOY / name).read_bytes() for name in PATHS}
         value = self.fixture(sources)
-        self.assertEqual([str(n) for n in range(1, 32)], [r["version"] for r in value.manifest["migrations"]])
+        self.assertEqual([str(n) for n in range(1, 33)], [r["version"] for r in value.manifest["migrations"]])
         self.assertLess(len(bundle(sources)), BUNDLE_LIMIT)
         self.accepted(value)
 

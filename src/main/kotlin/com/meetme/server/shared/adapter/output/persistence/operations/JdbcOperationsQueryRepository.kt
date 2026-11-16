@@ -218,6 +218,10 @@ class JdbcOperationsQueryRepository(
                 submittedParticipantCount = rs.getLong("submitted_participant_count"),
                 hostSubmitted = rs.getBoolean("host_submitted"),
                 currentRunStatus = rs.getString("current_run_status"),
+                activeAnalysisId = rs.getObject("active_analysis_id", UUID::class.java),
+                stateVersion = rs.getLong("state_version"),
+                currentAnalysisConfirmed = rs.getBoolean("current_analysis_confirmed"),
+                hasOpenRevisionRound = rs.getBoolean("has_open_revision_round"),
             )
         }
 
@@ -299,6 +303,11 @@ class JdbcOperationsQueryRepository(
             SELECT m.id, m.created_at, m.meeting_mode, m.time_zone_id, m.search_start_date, m.search_end_date,
                 m.expected_participants, m.submission_deadline, m.manual_only, m.collection_status,
                 m.closure_reason, m.closed_at, r.status AS current_run_status,
+                m.active_run_id AS active_analysis_id, m.version AS state_version,
+                (m.active_revision_round_id IS NOT NULL) AS has_open_revision_round,
+                (EXISTS(SELECT 1 FROM final_confirmations f WHERE f.coordination_run_id = m.active_run_id)
+                 OR EXISTS(SELECT 1 FROM recommendation_selections s WHERE s.coordination_run_id = m.active_run_id))
+                    AS current_analysis_confirmed,
                 (SELECT count(*) FROM participants p WHERE p.room_id = m.id) AS participant_count,
                 (SELECT count(*) FROM submission_heads h JOIN participants p ON p.id = h.participant_id
                     WHERE h.room_id = m.id AND p.room_id = m.id AND h.latest_version_id IS NOT NULL) AS submitted_participant_count,

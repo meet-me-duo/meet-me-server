@@ -17,7 +17,7 @@ const scripts = [
   'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
   'V17__add_durable_ai_room_budgets.sql',
 ];
-// Current publication includes the reviewed V31 inventory; scripts/manifest keep historical V17 defaults.
+// Current publication includes the reviewed V32 inventory; scripts/manifest keep historical V17 defaults.
 const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql', 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql',
   'V24__add_versioned_schedule_ir.sql',
   'V25__add_ir_execution_bindings.sql',
@@ -26,7 +26,8 @@ const currentScripts = [...scripts, 'V18__align_recommendation_selection_attenda
   'V28__add_context_mode_final_analysis_route.sql',
   'V29__add_structural_final_analysis_route.sql',
   'V30__add_c5_residual_luna_policy.sql',
-  'V31__allow_explicit_c5_direct_luna.sql'];
+  'V31__allow_explicit_c5_direct_luna.sql',
+  'V32__add_operator_room_reanalysis.sql'];
 const guardFiles = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
@@ -125,7 +126,10 @@ function currentFixture() {
   for (const name of currentScripts.slice(17)) {
     const source = path.join(root, 'src/main/resources/db/migration', name);
     if (fs.existsSync(source)) fs.copyFileSync(source, path.join(value.migrations, name));
-    else {
+    else if (name === 'V32__add_operator_room_reanalysis.sql') {
+      // Only the unreleased V32 may be synthetic inside this isolated fixture.
+      fs.writeFileSync(path.join(value.migrations, name), '-- synthetic test-only V32\nSELECT 32;\n');
+    } else {
       assert.equal(name, currentScripts[17], 'Approved V19 must use the real review migration');
       fs.writeFileSync(path.join(value.migrations, name), '-- synthetic test-only V18\nSELECT 18;\n');
     }

@@ -1,6 +1,7 @@
 package com.meetme.server.shared.adapter.input.web.operations
 
 import com.meetme.server.shared.application.port.input.operations.OperationsCursorCodec
+import com.meetme.server.shared.application.port.input.operations.OperatorQueryError
 import com.meetme.server.shared.application.port.output.operations.AuditOutcome
 import com.meetme.server.shared.application.port.output.operations.AuditRoute
 import com.meetme.server.shared.application.port.output.operations.OperatorAccessAudit
@@ -12,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
+import org.springframework.web.context.request.RequestContextHolder
+import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.ContentCachingResponseWrapper
@@ -28,6 +31,7 @@ class OperatorNoStoreFilter(
 ) : OncePerRequestFilter() {
     companion object {
         const val AUDIT_HANDLED_ATTRIBUTE = "meetme.operations.auditHandled"
+        private val REANALYSIS = Regex("^/api/operations/rooms/[^/]+/analyses$")
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean = !path(request).startsWith("/api/operations/")
@@ -46,6 +50,7 @@ class OperatorNoStoreFilter(
             return
         }
         val buffered = ContentCachingResponseWrapper(response)
+        val reanalysis = request.method == "POST" && REANALYSIS.matches(path(request))
         try {
             filterChain.doFilter(request, buffered)
         } catch (_: Exception) {
@@ -58,7 +63,16 @@ class OperatorNoStoreFilter(
             val route =
                 when (location.firstOrNull()) {
                     "invocations" -> AuditRoute.INVOCATION_DETAIL
-                    "rooms" -> if (location.size > 1) AuditRoute.ROOM_DETAIL else AuditRoute.ROOM_LIST
+                    "rooms" ->
+                        if (reanalysis) {
+                            AuditRoute.ROOM_REANALYSIS
+                        } else if (location.size >
+                            1
+                        ) {
+                            AuditRoute.ROOM_DETAIL
+                        } else {
+                            AuditRoute.ROOM_LIST
+                        }
                     else -> AuditRoute.ROOM_LIST
                 }
             val target = OperationsCursorCodec.uuidOrNull(location.getOrNull(1))
@@ -70,7 +84,12 @@ class OperatorNoStoreFilter(
                     404 -> AuditOutcome.NOT_FOUND
                     else -> AuditOutcome.UNAVAILABLE
                 }
-            val actor = runCatching { identity?.currentUserId() }.getOrNull()
+            val actor =
+                when {
+                    reanalysis && request.getAttribute(OperatorReanalysisProblems.AUTHENTICATION_FAILED_ATTRIBUTE) == true -> null
+                    reanalysis -> verifiedFallbackActor(request)
+                    else -> runCatching { identity?.currentUserId() }.getOrNull()
+                }
             try {
                 audit.append(OperatorAccessAudit(UUID.randomUUID(), clock.instant(), actor, route, target, outcome))
             } catch (_: Exception) {
@@ -78,15 +97,32 @@ class OperatorNoStoreFilter(
             }
         }
         if (buffered.status >= 400) {
-            val status = buffered.status.takeIf { it in setOf(400, 401, 403, 404, 405) } ?: 503
+            val trusted =
+                (request.getAttribute(OperatorReanalysisProblems.ERROR_ATTRIBUTE) as? OperatorQueryError)
+                    ?.takeIf { reanalysis && it.status == buffered.status }
+            val status = trusted?.status ?: buffered.status.takeIf { it in setOf(400, 401, 403, 404, 405) } ?: 503
             buffered.resetBuffer()
             buffered.status = status
             buffered.characterEncoding = "UTF-8"
             buffered.contentType = "application/problem+json"
-            buffered.writer.write(OperatorProblems.json(status))
+            buffered.writer.write(if (trusted == null) OperatorProblems.json(status) else OperatorReanalysisProblems.json(trusted))
         }
         buffered.copyBodyToResponse()
     }
 
     private fun path(request: HttpServletRequest): String = request.requestURI.removePrefix(request.contextPath)
+
+    /** MVC may reject CORS before binding its request context; verify the real Bearer through the existing adapter. */
+    private fun verifiedFallbackActor(request: HttpServletRequest): UUID? {
+        val previous = RequestContextHolder.getRequestAttributes()
+        if (previous != null) return runCatching { identity?.currentUserId() }.getOrNull()
+        val attributes = ServletRequestAttributes(request)
+        return try {
+            RequestContextHolder.setRequestAttributes(attributes)
+            runCatching { identity?.currentUserId() }.getOrNull()
+        } finally {
+            RequestContextHolder.resetRequestAttributes()
+            attributes.requestCompleted()
+        }
+    }
 }

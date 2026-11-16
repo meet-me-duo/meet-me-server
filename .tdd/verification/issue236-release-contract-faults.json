@@ -1,0 +1,118 @@
+{
+  "workItem": "issue236-release-contract-faults",
+  "sourceRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+  "boundary": "Independent V32 release boundary: exact publisher, both historically compatible catalog readers, unconditional CI gate and protected V31-to-V32 transition. Six release source files are frozen by digest; this does not claim the whole backend source was frozen.",
+  "sourceFiles": [
+    {
+      "path": "src/main/resources/db/migration/V32__add_operator_room_reanalysis.sql",
+      "sha256": "7af43aaf9ec949255f3fc4f653d7574bc8550a262475e15eeec4c723b1d2f939"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "fc21d4ea2cf272677b42997db387c73d64e683f90a05409290478680cd129e08"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "526e6be409364dc92c92a753c5d43a635f6cb05e766c92fe6364a168f88caaff"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "dabca0d51f3c90925ec21b775eabd2a35903369bc8e58139b03a49a861a6d70d"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "688f7c87ef741ba140cbdf3f970cf7ee268e2d90c04611bf8d669f8b179b6352"
+    },
+    {
+      "path": "deploy/public-api-contract.json",
+      "sha256": "11391598c697828bb157169121518b0fde6e0dc65042bcd4a0309ed24048e2a2"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "fbe08276127c404b6f201fe58d835e8e3d4c30df725b89442f0e5ba6b3e77894"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "5df76ca7df44cd14930a007eb2add3201b0a69011490adf8db95786ac88c7d8e"
+    },
+    {
+      "path": ".github/scripts/fixtures/ci-original-checks.json",
+      "sha256": "8129fbf885d29863a33b27e746ae37482ae1f8d8448275e3853ceec1b6126eff"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "Publisher omits the required current V32 migration",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V32C02",
+        ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs"
+      ],
+      "detectedBy": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs#V32C02 actual publisher binds every current SQL CRC, SQL SHA and operational guard SHA independently",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Publication reader omits the newly published complete V32 catalog",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V32C03",
+        ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs"
+      ],
+      "detectedBy": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs#V32C03 both metadata readers admit V32 and preserve every historically published complete catalog",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Host reader omits the newly published complete V32 history",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V32C03",
+        ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs"
+      ],
+      "detectedBy": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs#V32C03 both metadata readers admit V32 and preserve every historically published complete catalog",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Make the new operator release CI gate conditional on false",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V32C11",
+        ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs"
+      ],
+      "detectedBy": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs#V32C11 additive catalog gate preserves original commands three jobs authority and protected deployment entry",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Allow automatic deployment of a changed V31-to-V32 contract without protected transition",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^V32C09",
+        ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs"
+      ],
+      "detectedBy": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs#V32C09 V31 to V32 requires guarded explicit transition and intact prior history",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T01:34:18.996397Z"
+}
