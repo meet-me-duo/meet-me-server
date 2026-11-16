@@ -28,7 +28,7 @@ interface OperationsQueryRepository {
     fun invocationDetail(invocationId: UUID): InvocationDetail?
 }
 
-enum class AuditRoute { ROOM_LIST, ROOM_DETAIL, INVOCATION_DETAIL }
+enum class AuditRoute { ROOM_LIST, ROOM_DETAIL, INVOCATION_DETAIL, ROOM_REANALYSIS }
 
 enum class AuditOutcome { ALLOWED, DENIED, NOT_FOUND, INVALID_QUERY, UNAVAILABLE }
 

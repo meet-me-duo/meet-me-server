@@ -3,6 +3,7 @@ package com.meetme.server.coordination.adapter.input.web
 import com.meetme.server.coordination.adapter.output.persistence.HistoricalCoordinationRunRepository
 import com.meetme.server.coordination.adapter.output.persistence.HistoricalRecommendationRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.OperatorReanalysisCommandPort
 import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.shared.domain.CoordinationRunId
 import com.meetme.server.submission.adapter.output.persistence.HistoricalSubmissionRepository
@@ -15,6 +16,7 @@ import org.flywaydb.core.Flyway
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.komapper.jdbc.JdbcDatabase
+import org.mockito.Mockito.verifyNoInteractions
 import org.postgresql.util.PSQLException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -28,6 +30,7 @@ import org.springframework.jdbc.core.ConnectionCallback
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.testcontainers.postgresql.PostgreSQLContainer
@@ -45,6 +48,10 @@ import kotlin.test.assertFailsWith
 )
 @Import(RecommendationPartialConfirmationMigrationPostgresTest.HistoricalStoragePhase::class)
 class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPostgresFixture() {
+    // This V17/V18 fixture intentionally excludes the selected engine and never uses the current-only operator command.
+    @MockitoBean(enforceOverride = true)
+    private lateinit var operatorCommands: OperatorReanalysisCommandPort
+
     @Autowired private lateinit var historicalSubmissions: HistoricalSubmissionRepository
 
     @Autowired private lateinit var historicalRuns: HistoricalCoordinationRunRepository
@@ -95,11 +102,11 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         verifyPendingSelection(pending, pendingOption)
         assertEquals(before, snapshot(), "The successful V18 guard probe is rolled back without creating a selection")
 
-        // Upgrade to the current V31 schema only after the historical V18 proof is complete.
+        // Upgrade to the current V32 schema only after the historical V18 proof is complete.
         val current = flyway()
         current.migrate()
         current.validate()
-        assertEquals("31", currentVersion())
+        assertEquals("32", currentVersion())
         historicalSubmissions.useCurrentSchema()
         historicalRecommendations.useCurrentSchema()
         historicalRuns.useCurrentSchema()
@@ -132,6 +139,7 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         )
         assertEquals(2, jdbc.queryForObject("SELECT count(*) FROM recommendation_selections", Int::class.java))
         assertEquals(1, jdbc.queryForObject("SELECT count(*) FROM final_confirmations", Int::class.java))
+        verifyNoInteractions(operatorCommands)
     }
 
     private fun verifyPendingSelection(

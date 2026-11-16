@@ -62,6 +62,18 @@ data class RoomSummaryResponse(
     @field:JsonProperty("current_run_status")
     @field:Schema(description = "현재 활성 run 상태. 과거 실행 결과가 아님", nullable = true)
     val currentRunStatus: String?,
+    @field:JsonProperty("active_analysis_id")
+    @field:Schema(description = "현재 활성 분석 UUID. 분석 전이면 null", format = "uuid", nullable = true)
+    val activeAnalysisId: UUID? = null,
+    @field:JsonProperty("state_version")
+    @field:Schema(description = "명령 요청에 사용할 현재 모임 상태 버전", minimum = "0", format = "int64")
+    val stateVersion: Long = 0,
+    @field:JsonProperty("current_analysis_confirmed")
+    @field:Schema(description = "현재 분석의 최종 결과 확정 여부")
+    val currentAnalysisConfirmed: Boolean = false,
+    @field:JsonProperty("has_open_revision_round")
+    @field:Schema(description = "참가자 입력 수정 라운드가 열려 있는지 여부")
+    val hasOpenRevisionRound: Boolean = false,
 ) {
     companion object {
         fun from(value: RoomSummary) =
@@ -82,6 +94,10 @@ data class RoomSummaryResponse(
                 value.submittedParticipantCount,
                 value.hostSubmitted,
                 value.currentRunStatus,
+                value.activeAnalysisId,
+                value.stateVersion,
+                value.currentAnalysisConfirmed,
+                value.hasOpenRevisionRound,
             )
     }
 }

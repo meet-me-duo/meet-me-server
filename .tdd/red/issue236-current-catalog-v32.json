@@ -1,0 +1,73 @@
+{
+  "workItem": "issue236-current-catalog-v32",
+  "sourceRevision": "95c19a352b4bcb573e68d82fe8fedbfcde9121c6d7accff3f9f4868a42318d03",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "5f9227e2bf7e9f92f0dc2b458b693d13fcd2884b6b416dafe77150d5ce832acf"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "sha256": "2b38c3fd2ef6ff6ce1c35238a45ea728dea212fd6663f888d2a0ce2b57a916b8"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "sha256": "cf471ea4323876da1f8eac2183c8e323be63bf67eb6838d48e38a63eb92a34ff"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/ApprovedTermsFinalAnalysisRoutePostgresTest.kt",
+      "sha256": "07359b7db13035cc03e66770217732c40d4acab7e584a9ad9db4a02ad2c2fd22"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrIntegrationPostgresTest.kt",
+      "sha256": "0f1b18a7462892c95bc8542d49a41733797f52fdc9055ddabc39b4ca3d1d5aba"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "e1f390b5ed616569a7ab6f5f3ae31c9cd3b6278433692d2a1111914146fbe4fb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/RecommendationPartialConfirmationMigrationPostgresTest.kt",
+      "sha256": "70d59ca91f6a409c0dcae70bf3a5f5c541859152e2b2f7ff5aa9141094e20500"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "test",
+    "--tests",
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest.PC06 V17 to V18 preserves previous confirmations and permits pending two of five selection",
+    "--tests",
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest.운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다",
+    "--tests",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest.V23 legacy data upgrades through V24 into separate typed storage without rewriting existing rows",
+    "--tests",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest.Flyway 최초 마이그레이션을 적용하고 검증한다",
+    "--tests",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states",
+    "--tests",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest.blank PostgreSQL migrates exactly thirty versions and validates both independent legacy schemas",
+    "--tests",
+    "com.meetme.server.coordination.adapter.output.persistence.ApprovedTermsFinalAnalysisRoutePostgresTest.AV3R01 V27 is applied while existing route shape constraints remain strict",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.I36 V24 upgrades add a separate empty choice table without inventing identity or rewriting existing data",
+    "--tests",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest.I36 upgrading existing V24 typed IR does not backfill a run identity or rewrite stored evidence"
+  ],
+  "failedTests": [
+    "com.meetme.server.coordination.adapter.input.web.RecommendationPartialConfirmationMigrationPostgresTest#PC06 V17 to V18 preserves previous confirmations and permits pending two of five selection()",
+    "com.meetme.server.shared.adapter.output.persistence.DatabaseMigrationRunnerTest#운영 migration 진입점이 빈 PostgreSQL에 전체 Flyway migration을 적용한다()",
+    "com.meetme.server.submission.adapter.output.persistence.ScheduleIrRepositoryPostgresTest#V23 legacy data upgrades through V24 into separate typed storage without rewriting existing rows()",
+    "com.meetme.server.shared.adapter.output.persistence.CorePersistenceIntegrationTest#Flyway 최초 마이그레이션을 적용하고 검증한다()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest#V8 upgrade preserves raw created frozen cohort legacy attempts confirmation and both revision round states()",
+    "com.meetme.server.shared.adapter.output.persistence.IntegratedLegacyUpgradePostgresTest#blank PostgreSQL migrates exactly thirty versions and validates both independent legacy schemas()",
+    "com.meetme.server.coordination.adapter.output.persistence.ApprovedTermsFinalAnalysisRoutePostgresTest#AV3R01 V27 is applied while existing route shape constraints remain strict()",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest#I36 V24 upgrades add a separate empty choice table without inventing identity or rewriting existing data()",
+    "com.meetme.server.coordination.application.service.ScheduleIrIntegrationPostgresTest#I36 upgrading existing V24 typed IR does not backfill a run identity or rewrite stored evidence()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T02:36:30.838346Z"
+}

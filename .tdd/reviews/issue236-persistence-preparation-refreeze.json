@@ -1,0 +1,28 @@
+{
+  "workItem": "issue236-persistence-preparation-refreeze",
+  "scope": "Initial combined RED remains valid for four unchanged security/current API test files; corrected PG fixture and new orphan OPEN test have their own final hash and isolated base009+public TODO declaration RED, not a claim that the old command ran the new hash.",
+  "initialCombinedRaw": ".codex/tdd-evidence/issue236-operator-reanalysis.log",
+  "initialPgHash": "e3e8a273fe48d2058cc4ae8825c56609e4e07ab4fdd1639a05306069840d0057",
+  "finalPgHash": "e424b5bcf0eef81c4468107245842edcd4a1b8663beaab6c51bdc70f07b8b68b",
+  "prepCorrections": [
+    "Truncate unreferenced Outbox rows between test cases",
+    "Construct valid foreign room and native cohort before testing lineage constraints"
+  ],
+  "addedBehavior": "Reject any OPEN revision row even if active pointer is absent",
+  "expectationsWeakened": false,
+  "isolatedComposition": {
+    "baselineGitRevision": "0090869441ba8046b94e6f3c9f13cfd70e4ba546",
+    "composition": "Base009 source unchanged; four original-public-contract compiler skeletons with explicit TODO bodies, plus independently corrected40-case PG test. This is a new isolated MISSING_BEHAVIOR replay, not a rollback or fabricated model response. No V32 SQL, no actual GREEN implementation, no controller/auth source from root.",
+    "counts": {
+      "name": "com.meetme.server.coordination.adapter.output.persistence.OperatorReanalysisPostgresTest",
+      "tests": "40",
+      "skipped": "0",
+      "failures": "40",
+      "errors": "0",
+      "timestamp": "2026-11-16T01:27:57.084Z",
+      "hostname": "8aab2decb642",
+      "time": "19.316"
+    }
+  },
+  "recordedAt": "2026-11-16T01:32:40.150529+00:00"
+}

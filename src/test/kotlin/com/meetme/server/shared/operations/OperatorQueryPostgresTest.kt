@@ -145,6 +145,9 @@ class OperatorQueryPostgresTest {
         assertEquals(1L, number(summary, "submitted_participant_count"))
         assertEquals(true, summary["host_submitted"])
         assertEquals("ANALYSIS_DELAYED", summary["current_run_status"])
+        assertEquals(run.toString(), summary["active_analysis_id"])
+        assertEquals(0L, number(summary, "state_version"))
+        assertEquals(false, summary["current_analysis_confirmed"])
         assertEquals("2026-10-20", summary["search_end_date"])
         assertEquals(mapOf("open" to 1, "queued" to 1, "reused" to 1), child(first, "revision_counts"))
         assertEquals(1L, number(first, "legacy_attempt_count"))
@@ -183,6 +186,10 @@ class OperatorQueryPostgresTest {
         assertEquals("Asia/Seoul", summary["time_zone_id"])
         assertEquals("REMOTE", summary["meeting_mode"])
         assertNull(summary["current_run_status"])
+        assertNull(summary["active_analysis_id"])
+        assertEquals(0L, number(summary, "state_version"))
+        assertEquals(false, summary["current_analysis_confirmed"])
+        assertEquals(false, summary["has_open_revision_round"])
     }
 
     @Test
@@ -656,6 +663,10 @@ class OperatorQueryPostgresTest {
                 "submitted_participant_count",
                 "host_submitted",
                 "current_run_status",
+                "active_analysis_id",
+                "state_version",
+                "current_analysis_confirmed",
+                "has_open_revision_round",
             )
         private val INVOCATION_FIELDS =
             setOf(

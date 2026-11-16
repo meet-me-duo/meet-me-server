@@ -141,12 +141,20 @@ class OperatorTransportQueryPostgresTest {
         val document = read("/v3/api-docs")
         val paths = obj(document, "paths").filterKeys { it.startsWith("/api/operations") }
         assertEquals(
-            setOf("/api/operations/rooms", "/api/operations/rooms/{roomId}", "/api/operations/invocations/{invocationId}"),
+            setOf(
+                "/api/operations/rooms",
+                "/api/operations/rooms/{roomId}",
+                "/api/operations/invocations/{invocationId}",
+                "/api/operations/rooms/{roomId}/analyses",
+            ),
             paths.keys,
         )
-        paths.values.forEach { path ->
+        paths.forEach { (name, path) ->
             @Suppress("UNCHECKED_CAST")
-            assertEquals(setOf("get"), (path as Map<String, Any?>).keys)
+            assertEquals(
+                if (name == "/api/operations/rooms/{roomId}/analyses") setOf("post") else setOf("get"),
+                (path as Map<String, Any?>).keys,
+            )
         }
         val schemas = obj(obj(document, "components"), "schemas")
         val invocationFields = obj(obj(schemas, "InvocationSummaryResponse"), "properties")
