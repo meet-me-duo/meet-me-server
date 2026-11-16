@@ -289,7 +289,7 @@ test('V32C11 additive catalog gate preserves original commands three jobs author
   const ci = workflow(fs.readFileSync(path.join(root, '.github/workflows/ci.yml'), 'utf8'));
   assert.equal(ci.rootSource, frozen.rootSource);
   assert.deepEqual([...ci.jobs.keys()].sort(), ['built-image', 'deployment-contracts', 'quality']);
-  assert.equal(job(ci, 'quality').header, frozen.qualityHeader);
+  assert.equal(job(ci, 'quality').header, frozen.qualityHeader.replace('    timeout-minutes: 30', '    timeout-minutes: 40'));
   assert.deepEqual(job(ci, 'quality').steps, [...frozen.setupSteps, frozen.qualityRunSteps[0]]);
   assert.equal(ci.jobs.get('built-image'), frozen.arm64JobSource);
   const contracts = job(ci, 'deployment-contracts');

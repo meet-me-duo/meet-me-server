@@ -1,0 +1,72 @@
+{
+  "workItem": "issue245-quality-gate-execution-budget",
+  "reviewerRole": "Independent test designer and final reviewer; implementation performed by coordinator",
+  "reviewedAt": "2026-11-16T12:37:58.709253Z",
+  "scope": "Current adopted root working tree, separate from unchanged earlier proposal-only history. Read/hash inspection only; no new test or performance run.",
+  "baseRevision": "d5facaf8b70faf85f6dd42773a967ac5659e460f",
+  "baseTree": "e4b2e6870033aecec9cfe4bc63c9b9d97d8d2097",
+  "result": "PASS_NO_P1_OR_P2_FINDINGS",
+  "findings": {
+    "P1": [],
+    "P2": []
+  },
+  "coreFilesExactlyMatchIndependentlyTestedCandidate": [
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "5507a2164af310ef7f97132ca3a25fe13f2ea73d9f8cee5eeddd3b7b029b786a"
+    },
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "8d310f5a2b8af2fbc161b10178cb5732f7f5049e308c6ea0ee9798b7a89d9cd3"
+    },
+    {
+      "path": ".github/scripts/v33-precheck-classification-release-catalog.test.cjs",
+      "sha256": "700aaaeb33741ca21e09096698a97fb1d6a85ecfc6a8e8a41bf6b00ea87887f4"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "02565112e21ab8e475f7f988d65c4541caae5b7066b5a59b3a1a4873cd8c5917"
+    }
+  ],
+  "historicalFixture": {
+    "path": ".github/scripts/fixtures/ci-original-checks.json",
+    "sha256": "8129fbf885d29863a33b27e746ae37482ae1f8d8448275e3853ceec1b6126eff",
+    "matchesOriginalHeadBytes": true,
+    "preserved": true
+  },
+  "preservedBoundaries": {
+    "onlyWorkflowDifference": "quality.timeout-minutes30to40; replacing that scalar back recovers the entire original workflow byte-for-byte.",
+    "otherTwoJobTimeoutsRemain30": true,
+    "allOriginalCommandsAndOrderingPreserved": true,
+    "qualityGradleTasks": "ktlintCheck assemble test",
+    "qualityMaxWorkers": 2,
+    "qualityGradleHeap": "2g",
+    "qualityKotlinHeap": "2g",
+    "individualTestAndRequestTimeoutChanges": false,
+    "applicationKotlinBuildAndTestInputsChanged": false,
+    "originalCommitGuardChanged": false,
+    "ciTriggersConcurrencyThreeJobsAndReadAuthorityPreserved": true,
+    "deploymentWorkflowByteExact": true,
+    "deploymentWorkflowSha256": "f1f0c94a7519a7a691cec582e57f758f7f68f7b49bf38cf83266052fd8046152",
+    "wholeSuccessfulMainCiGateAndProtectedTransitionPreserved": true,
+    "exactHeaderAssertionsRetained": true,
+    "historicalFixtureNotRewrittenToAdoptCurrent40": true
+  },
+  "evidenceHonesty": "The CI-only RED summary correctly uses .tdd/reviews rather than the Kotlin-only RED schema. GREEN explicitly distinguishes unchanged-input UP-TO-DATE guard reuse from the prior fresh5094-case run. The first environment-path preparation failure and corrected successful guard run remain separately archived by the coordinator. Documentation does not claim the new feature is deployed or that the performance root cause is solved.",
+  "limitations": [
+    "Increasing the aggregate job budget does not prove40minutes is sufficient or improve runtime; worst-case cancellation feedback may be delayed10minutes.",
+    "This review does not replace normal exact-head three-job CI or imply merge, publication or production deployment success.",
+    "No fresh Gradle, Docker, Node test, model, operations or GitHub call was performed during this final review."
+  ],
+  "faultsDetectedAndRestored": 5,
+  "rootRed": {
+    "tests": 27,
+    "pass": 24,
+    "expectedFailures": 3
+  },
+  "rootGreen": {
+    "tests": 27,
+    "pass": 27
+  },
+  "reviewerModifiedSource": false
+}
