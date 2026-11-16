@@ -1,0 +1,33 @@
+{
+  "workItem": "issue245-quality-budget",
+  "sourceRevision": "d5facaf8b70faf85f6dd42773a967ac5659e460f",
+  "guard": {
+    "exitCode": 0,
+    "tasks": [
+      "ktlintCheck",
+      "assemble",
+      "test"
+    ],
+    "unfiltered": true,
+    "unchangedInputsReusedUpToDate": true,
+    "sourceTestFingerprint": "77032d764c5cc87b57ca9b6b8053ad03dfb765e9d1b7e5419de11c7ec06ee69a",
+    "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+    "priorFullRun": {
+      "tests": 5094,
+      "pass": 5053,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 41,
+      "suites": 563
+    },
+    "note": "The current hook passed on unchanged Kotlin/build/test inputs, reusing Gradle UP-TO-DATE; prior full JUnit results are retained, not claimed as freshly executed5094 cases."
+  },
+  "rootContractTests": {
+    "tests": 27,
+    "pass": 27,
+    "fail": 0,
+    "skipped": 0
+  },
+  "modelCalls": 0,
+  "recordedAt": "2026-11-16T12:35:34.659870Z"
+}

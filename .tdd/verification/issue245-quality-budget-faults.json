@@ -1,0 +1,98 @@
+{
+  "workItem": "issue245-quality-budget-faults",
+  "sourceRevision": "02d879cfd1cac1be4773e08e1e9d09262b23665e",
+  "boundary": "Independent isolated candidate verification before root adoption: only aggregate quality job30to40, exact other commands jobs authority and protected full-main-CI deployment entry. Same final workflow/test digests verified in root; five faults detected, each restored and final27 passed. No performance root-cause or production completion claim.",
+  "sourceFiles": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "02565112e21ab8e475f7f988d65c4541caae5b7066b5a59b3a1a4873cd8c5917"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "5507a2164af310ef7f97132ca3a25fe13f2ea73d9f8cee5eeddd3b7b029b786a"
+    },
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "8d310f5a2b8af2fbc161b10178cb5732f7f5049e308c6ea0ee9798b7a89d9cd3"
+    },
+    {
+      "path": ".github/scripts/v33-precheck-classification-release-catalog.test.cjs",
+      "sha256": "700aaaeb33741ca21e09096698a97fb1d6a85ecfc6a8e8a41bf6b00ea87887f4"
+    }
+  ],
+  "injections": [
+    {
+      "fault": "The proposed current40 budget must reject the old30 value",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^Issue178 Quality Gate retains",
+        ".github/scripts/ci-job-boundaries.test.cjs"
+      ],
+      "detectedBy": "Issue178 Quality Gate retains Java17, the exact Gradle command and current 40 minute boundary",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "The proposed current40 budget must reject an unapproved45 value",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^Issue178 Quality Gate retains",
+        ".github/scripts/ci-job-boundaries.test.cjs"
+      ],
+      "detectedBy": "Issue178 Quality Gate retains Java17, the exact Gradle command and current 40 minute boundary",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Other Deployment Contracts job must retain its original30-minute cap",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^Issue178 Deployment Contracts preserves",
+        ".github/scripts/ci-job-boundaries.test.cjs"
+      ],
+      "detectedBy": "Issue178 Deployment Contracts preserves all 16 original checks and the exact V23 V31 default analysis V32 and V33 checks",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Other ARM64 job must retain its original30-minute cap",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^Issue178 preserves the complete isolated ARM64",
+        ".github/scripts/ci-job-boundaries.test.cjs"
+      ],
+      "detectedBy": "Issue178 preserves the complete isolated ARM64 job and successful whole main CI publication gate",
+      "result": "DETECTED"
+    },
+    {
+      "fault": "Dropping the complete test task must still fail the unchanged exact command assertion",
+      "command": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "--test-reporter=tap",
+        "--test-name-pattern",
+        "^Issue178 Quality Gate retains",
+        ".github/scripts/ci-job-boundaries.test.cjs"
+      ],
+      "detectedBy": "Issue178 Quality Gate retains Java17, the exact Gradle command and current 40 minute boundary",
+      "result": "DETECTED"
+    }
+  ],
+  "recordedAt": "2026-11-16T12:14:56.444710Z"
+}
