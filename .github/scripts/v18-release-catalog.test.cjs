@@ -6,7 +6,7 @@ const { fs, path, root, range, hash, canonical, clone, crc } = f;
 // Public additive contract; historical fixtures intentionally retain their V17 defaults.
 const script18 = 'V18__align_recommendation_selection_attendance.sql';
 const scripts = [...f.scripts, script18];
-// V17/V18 reader/transition/package cases below remain historical. Only current publication advances to the approved V32 inventory.
+// V17/V18 reader/transition/package cases below remain historical. Only current publication advances to the approved V33 inventory.
 const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql',
   'V24__add_versioned_schedule_ir.sql',
   'V25__add_ir_execution_bindings.sql',
@@ -16,7 +16,8 @@ const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql', 'V20
   'V29__add_structural_final_analysis_route.sql',
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
-  'V32__add_operator_room_reanalysis.sql'];
+  'V32__add_operator_room_reanalysis.sql',
+  'V33__record_precheck_classifications.sql'];
 function release(version = 18) {
   const value = f.manifest(range(Math.min(version, 17)));
   if (version === 18) value.migrations.push({ version: '18', script: script18, checksum: 18 * 37 });
@@ -58,7 +59,7 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V18C01 current publisher advances to exact approved V32 while V18 reader fixtures remain frozen', () => {
+test('V18C01 current publisher advances to the exact approved inventory while V18 reader fixtures remain frozen', () => {
   assert.deepEqual(f.currentScripts, latestScripts);
   const value = f.currentFixture(); try {
     const result = f.publish(value); assert.equal(result.ok, true);
@@ -162,7 +163,7 @@ test('V18C07 offline packages preserve V17 support and verify V18 checksum schem
   } finally { value.remove(); }
 });
 
-test('V18C08 current source publishes exact real V32 without changing historical V18 reader fixtures', () => {
+test('V18C08 current source publishes exact real V33 without changing historical V18 reader fixtures', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
   assert.deepEqual(fs.readdirSync(directory).sort(), [...latestScripts].sort());
   const value = f.currentFixture(); try {

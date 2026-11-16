@@ -146,17 +146,20 @@ class OperatorTransportQueryPostgresTest {
                 "/api/operations/rooms/{roomId}",
                 "/api/operations/invocations/{invocationId}",
                 "/api/operations/rooms/{roomId}/analyses",
+                "/api/operations/rooms/{roomId}/diagnostics",
             ),
             paths.keys,
         )
         paths.forEach { (name, path) ->
             @Suppress("UNCHECKED_CAST")
             assertEquals(
-                if (name == "/api/operations/rooms/{roomId}/analyses") setOf("post") else setOf("get"),
+                if (name == "/api/operations/rooms/{roomId}/analyses") setOf("get", "post") else setOf("get"),
                 (path as Map<String, Any?>).keys,
             )
         }
         val schemas = obj(obj(document, "components"), "schemas")
+        val roomFields = obj(obj(schemas, "RoomSummaryResponse"), "properties")
+        assertEquals("string", obj(roomFields, "title")["type"])
         val invocationFields = obj(obj(schemas, "InvocationSummaryResponse"), "properties")
         assertEquals(
             setOf(
@@ -257,7 +260,9 @@ class OperatorTransportQueryPostgresTest {
         val response = mvc.perform(get(path)).andReturn().response
         assertEquals(200, response.status)
         if (path.startsWith("/api/operations")) assertEquals("no-store", response.getHeader("Cache-Control"))
-        assertFalse(response.contentAsString.contains("synthetic-private"))
+        // The existing room-title fixture is now an explicitly approved public property.
+        val protectedContent = response.contentAsString.replace("\"title\":\"synthetic-private\"", "\"title\":\"approved-room-title\"")
+        assertFalse(protectedContent.contains("synthetic-private"))
         return mapper.readValue(response.contentAsString, Map::class.java) as Map<String, Any?>
     }
 

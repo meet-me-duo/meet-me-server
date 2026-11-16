@@ -1013,3 +1013,11 @@ ROOM_REANALYSIS의 별도 내구 접근 감사는 비즈니스 접근 전에 커
 수집 중·진행 중 실행·열린 수정 라운드·확정·낡은 대상/상태는409다. 미확정 COMPLETED/ANALYSIS_DELAYED/DEAD_LETTERED만 새 실행을 만들 수 있다. 새 active pointer가 즉시 분석 중으로 보이며 일반 Outbox relay→Redis Stream→선택된 분석 worker가 처리한다. 기존 worker/선택은 활성 pointer 검사를 유지한다. 요청 안에서 모델을 호출하거나 Jev 접수·참가자 질문/답변을 생성하지 않는다. 같은 room의 비용 원장/epoch·공급자 admission·deadline과 retention은 유지하며 초기화하지 않는다.
 
 V32는 명령 lineage의 source/created run을 같은 방 composite FK로 결속하고 자기 참조를 거부한다. 삭제 연쇄로 기존 방 보존 정리를 막지 않는다. 이전 migration과31 reader는 유지하고 새 완성 catalog32 및 공개 API 계약을 추가한다. schema/guard 변경의 실제 운영 전환은 기존 보호 승인에 따르며, 코드/로컬 검증·실제 운영 인증 요청·운영 반영을 구분한다.
+
+### 2026-11-16 운영자 진단 조회와 첫 분류 기록
+
+운영자 진단은 기존 인증·allowlist·내구 감사·no-store 경계를 공유한다. 일반 방 요약에는 원문을 붙이지 않고 명시적 room diagnostics 조회에서 현재 수집 또는 지정된 run→batch→version을 읽는다. 별도 read-only REPEATABLE_READ 투영으로 과거 실행을 조회하며 기존 이용자용 DSL active-run 검증을 완화하지 않는다. 참가자·계보·실행·결과는 상한과 생략 표시를 두고, 출력 자유 텍스트에만 연락처 가림을 적용한다. 방 범위의 새 GET은 기존 ROOM_DETAIL 감사 분류를 사용한다.
+
+첫 분류 메타데이터는 claimed precheck attempt별 순수 메모리 capture에서 수집한다. 검증된 classifier 반환 assessment/reason/confidence/semanticAssessment/probabilities와 실제 provider/model, 실제 분기 effectiveAssessment를 분리한다. 새로운 시계 읽기·모델 호출·IO를 provider 마감 구간에 추가하지 않는다. 생성 실패·worker 응답 검증 실패에도 알려진 첫 결과는 기존 finishAttempt의 generation/owner fencing과 함께 nullable version1 JSONB로 기록한다. 기존 최종 provider/model과 결과·예외 의미는 유지한다. 기존 데이터는 null이며 최종 mutable status로 최초 판정을 채우지 않는다.
+
+운영 진단의 입력 기준 시각은 명시 InputEvidence.referenceAt을 우선하고, 선택된 native DSL 경로에만 IrEvidenceBindings의 version.createdAt 기준 정책을 적용한다. 개인 검사에 저장된 candidate referenceAt은 checks에 별도로 표시하며, 근거 없는 과거 LEGACY·현재 수집본의 최종 분석 기준 시각을 개인 검사 시각으로 채우지 않는다.

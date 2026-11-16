@@ -1,0 +1,40 @@
+{
+  "workItem": "issue241-terminal-classification-forwarding",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/provider/TwoStagePrecheckTerminalUsageWorkerTest.kt",
+      "sha256": "61340a32714f46bb62b39c48e3a565cc980f14394153cf39f69fbc8f8a53db4c"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "--init-script",
+    "/tmp/issue241-terminal-usage-red.gradle",
+    "runKtlintFormatOverTestSourceSet",
+    "runKtlintCheckOverTestSourceSet",
+    "test",
+    "--tests",
+    "*TwoStagePrecheckTerminalUsageWorkerTest",
+    "--tests",
+    "*TwoStagePrecheckRoutingTest",
+    "--tests",
+    "*TwoStagePrecheckBudgetTest",
+    "--tests",
+    "*TwoStagePrecheckDeadlineTest"
+  ],
+  "failedTests": [
+    "[1] output = 4",
+    "[2] output = 2049",
+    "[1] output = -1",
+    "[2] output = 2048",
+    "[3] output = 2049"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T07:18:22.494049+00:00",
+  "evidenceNote": "New expected fourth publish argument is verified separately, with every old result/cap/token/usage/call-count assertion and fixture value preserved. Initial current-GREEN 6tests5fail XML expected null diagnostic incorrectly; it is preserved as old-oracle preparation, not RED. First matcher adaptation produced Kotlin non-null Mockito setup errors and is separately archived, not RED. This valid isolated pre-change baseeca0 run with the published capture type/optional request field and processing four-argument signature has exactly6 terminal-usage tests:5 expected assertion failures because actual diagnostic is null,1 negative-classifier-usage control pass; all66 original routing/budget/deadline controls pass. Total72/5fail/0error/0skip. Capture/provider/worker original pre-RED source SHA match; root GREEN production was not rolled back. Only this owned test was formatted and scoped style checked. Log red.log and XML valid-red/ retained outside repo; no real model/HTTP calls."
+}

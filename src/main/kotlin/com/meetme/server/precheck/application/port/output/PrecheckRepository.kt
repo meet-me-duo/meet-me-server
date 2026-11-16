@@ -74,6 +74,13 @@ interface PrecheckRepository {
         at: Instant,
     )
 
+    fun finishAttempt(
+        check: PrecheckExecution,
+        result: PrecheckProviderResult?,
+        at: Instant,
+        classification: PrecheckClassificationSnapshot?,
+    ) = finishAttempt(check, result, at)
+
     fun anchor(versionId: UUID): Instant?
 
     fun bindAccepted(

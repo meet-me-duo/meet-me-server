@@ -1,0 +1,27 @@
+{
+  "tests": 5094,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 41,
+  "exitCode": 0,
+  "elapsedSeconds": 2799.993139266968,
+  "suites": 563,
+  "beforeSourceTestFingerprint": "77032d764c5cc87b57ca9b6b8053ad03dfb765e9d1b7e5419de11c7ec06ee69a",
+  "afterSourceTestFingerprint": "77032d764c5cc87b57ca9b6b8053ad03dfb765e9d1b7e5419de11c7ec06ee69a",
+  "guardSha256": "07c4f974ec7d09b6ff3ca4e3d9e9dfd365bfccb6c10420ff6dbc0b5314473b79",
+  "unfiltered": true,
+  "workItem": "issue241-operator-room-diagnostics",
+  "recordedAt": "2026-11-16T09:27:44Z",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "command": [
+    "python3",
+    ".codex/hooks/tdd_guard.py"
+  ],
+  "tasks": [
+    "ktlintCheck",
+    "assemble",
+    "test"
+  ],
+  "passed": 5053,
+  "rawEvidence": "Git-excluded workspace artifacts; no private input or execution payload is included"
+}

@@ -1,0 +1,30 @@
+{
+  "workItem": "issue241-operator-transport-current-contract",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTransportQueryPostgresTest.kt",
+      "sha256": "66169386e0885d9dc3866a63cd1709bdf02cc46d9d184205cdd5202f3bf0c5d6"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "--offline",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1536m",
+    "-Pkotlin.compiler.execution.strategy=in-process",
+    "-I",
+    "/tmp/issue241-security-followup.gradle",
+    "test",
+    "--tests",
+    "*OperatorRangeContactMaskingTest",
+    "--tests",
+    "*OperatorTransportQueryPostgresTest.OpenAPI exposes only bounded local client call fields and nullable transport facts"
+  ],
+  "failedTests": [
+    "OperatorTransportQueryPostgresTest.OpenAPI exposes only bounded local client call fields and nullable transport facts()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-16T08:30:27.484207Z"
+}

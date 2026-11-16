@@ -102,11 +102,11 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         verifyPendingSelection(pending, pendingOption)
         assertEquals(before, snapshot(), "The successful V18 guard probe is rolled back without creating a selection")
 
-        // Upgrade to the current V32 schema only after the historical V18 proof is complete.
+        // Upgrade to the current V33 schema only after the historical V18 proof is complete.
         val current = flyway()
         current.migrate()
         current.validate()
-        assertEquals("32", currentVersion())
+        assertEquals("33", currentVersion())
         historicalSubmissions.useCurrentSchema()
         historicalRecommendations.useCurrentSchema()
         historicalRuns.useCurrentSchema()

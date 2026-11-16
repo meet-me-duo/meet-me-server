@@ -1,0 +1,150 @@
+{
+  "workItem": "issue241-operator-security-independent-review",
+  "sourceRevision": "eca0e664b76a93970d67f2287cf63a3156a5f715",
+  "reviewerRole": "Independent security/privacy test designer, separate from production implementation",
+  "result": "AUTH_PRIVACY_BOUNDARY_PASS",
+  "sourceFiles": [
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorQueryService.kt",
+      "sha256": "495c35eafe62f031955ea66162ad2c5c5b20e748d3d3af190213b73ac921fc83"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/application/service/operations/OperatorViewMasker.kt",
+      "sha256": "648ca8bfe02c0ccb8b14a9d222bcc59d88b12cd9b0d957bfecc6a9cd56a1016f"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/operations/JdbcOperatorDiagnosticsRepository.kt",
+      "sha256": "ad38d891c466d3fda9c8b628b5b6f5c0ad76bf1ce2073bfa363d6e4ffc47cf7a"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/output/persistence/operations/JdbcOperationsQueryRepository.kt",
+      "sha256": "eda9d44bbd78738bbc18693ce72b7741741c9f18cb3f4fc353892d7273d55142"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorQueryController.kt",
+      "sha256": "98541695e17a23e12958c7c0e8c223230aa9b0a19d8a3dfef95ff8c63fbe6588"
+    },
+    {
+      "path": "src/main/kotlin/com/meetme/server/shared/adapter/input/web/operations/OperatorDiagnosticsDtos.kt",
+      "sha256": "2ad5d872296f7d41fbdf1239977380ab6d3f640c2d8d4eedd9f1c58a92f35049"
+    },
+    {
+      "path": "src/main/resources/db/migration/V10__add_bounded_analysis_invocations.sql",
+      "sha256": "694940de9100b58bc4a1ca2889d5d44fbd86221dead6805082b2c7999ee002ab"
+    },
+    {
+      "path": "src/main/resources/db/migration/V30__add_c5_residual_luna_policy.sql",
+      "sha256": "d9c23577e2b4503743fd9419f833ff8082a7879bcd325ca3b8154517d286b636"
+    },
+    {
+      "path": "src/main/resources/db/migration/V31__allow_explicit_c5_direct_luna.sql",
+      "sha256": "72b6e90537f5f05624445351b54980a97eccca794a7de3be91547d2f2ed9f1c0"
+    }
+  ],
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsAuthorizationTest.kt",
+      "sha256": "0b29886237b89c4802217af3518d5656a696f357ffd20a6a6780fa8f6223d837"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorDiagnosticsHttpSecurityTest.kt",
+      "sha256": "fd930b4af1f66921403edcf66d1500ee3606566d1a6a1cf5a3ec9d630128b6be"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorViewMaskerTest.kt",
+      "sha256": "9bde3a95dedde80abecae785eaf45cea17baf6578f2221b6cc59ec19ac77b835"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorInternationalContactMaskingTest.kt",
+      "sha256": "4967558f06401421f442afd8bcb3cfb8e112967a651146fd095d7d26be5af52d"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorTrailingDateContactMaskingTest.kt",
+      "sha256": "095be60746163813ec12e2206ac5865e990f19f6536ccb21df703826b3afdb7c"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/operations/OperatorRangeContactMaskingTest.kt",
+      "sha256": "8c9a02eb65ee59a2258a5341d0093206cfef9c4badec5fd937f62dd488e3bb29"
+    }
+  ],
+  "findings": [],
+  "reviewedBoundaries": [
+    "Real verified identity and explicit operator policy precede invalid target/query errors and protected lookups.",
+    "The new reads reuse one ROOM_DETAIL audit; audit failure blocks release and fixed errors omit protected input and arbitrary exception data.",
+    "Explicit analysis selection is forwarded unchanged; omission means CURRENT_COLLECTION, with no latest-run or legacy-query fallback.",
+    "DTOs export bounded recorded facts; historical missing classifier facts are not fabricated. Final input anchor provenance is separately covered by the independent PG suite.",
+    "Structured names retain only the first Unicode code point. Free-form source names remain unchanged; recognized contact spans alone are redacted.",
+    "Country-separated contacts are masked while adjacent dates, clocks, zones and duration ranges remain exact. Aliases are stable room-local display pseudonyms, not credentials.",
+    "Recorded questions, excerpts, choices, answers, reasons, titles and places pass presentation masking; storage and analysis inputs remain unchanged.",
+    "Stored interpretation exports bounded enum/temporal projections rather than raw provider responses, full prompts or full envelopes."
+  ],
+  "resolvedIndependentFindings": [
+    "International separated phone coverage: separate frozen RED12, including eleven missing-behavior failures and one negative control, followed by GREEN.",
+    "Trailing dates: separate frozen RED6 reproduced contact leakage/month consumption; fixed under the general schedule boundary and independently retained.",
+    "Trailing ASCII duration ranges: separate frozen RED4 reproduced two numeric losses while two existing separators passed as controls; fixed without case-specific dates/country branches.",
+    "Unknown final input anchors: route/evidence-only nullable contract accepted, separate independent PG anchor4 covers the correction.",
+    "Initial concern about raw final-provider model/policy metadata was withdrawn before test freeze/run: DB CHECK/composite FK constraints restrict those fields to known safe identifiers. No invalid-schema fixture or constraint weakening was used."
+  ],
+  "mutationVerification": {
+    "distinctFaults": 4,
+    "allDetected": true,
+    "actualRuns": [
+      {
+        "label": "baseline-positive",
+        "tests": 123,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "label": "allowlist-bypass",
+        "tests": 36,
+        "failures": 6,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "label": "audit-failure-fail-open",
+        "tests": 53,
+        "failures": 6,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "label": "phone-redaction-bypass",
+        "tests": 70,
+        "failures": 36,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "label": "full-name-disclosure",
+        "tests": 48,
+        "failures": 11,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "label": "restored-positive",
+        "tests": 123,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ],
+    "baselinePositive": 123,
+    "restoredPositive": 123,
+    "restoredByteExact": true,
+    "copiedPublicSourceFiles": 450,
+    "originalSourceAndSelectedTestsUnchanged": true,
+    "credentialsOrPrivateFixturesCopied": false,
+    "liveProviderOrOperatorDataCalls": false
+  },
+  "contractOracleChanges": [
+    "OperatorQueryPostgresTest: add approved title property to exact schema; exempt only its exact unchanged successful synthetic title fixture. All old raw/credential exclusions remain.",
+    "OperatorTransportQueryPostgresTest: add diagnostics GET and analyses GET+POST, require title string schema, and exempt only its exact unchanged successful title fixture. Old transport coverage/privacy assertions remain."
+  ],
+  "verificationLimits": "This report verifies the targeted authorization/privacy boundary. Unfiltered repository guard and independent persistence/provider/release verification are reported by their owners.",
+  "evidence": ".tdd/verification/issue241-operator-security-faults.json",
+  "recordedAt": "2026-11-16T08:55:54.313270Z"
+}
