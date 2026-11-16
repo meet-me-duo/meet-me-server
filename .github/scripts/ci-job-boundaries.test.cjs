@@ -78,9 +78,9 @@ test('Issue178 keeps CI identity, triggers, concurrency, read authority and exac
   assert.deepEqual([...ci.jobs.keys()].sort(), ['built-image', 'deployment-contracts', 'quality']);
 });
 
-test('Issue178 Quality Gate retains Java17, the exact Gradle command and its 30 minute boundary', () => {
+test('Issue178 Quality Gate retains Java17, the exact Gradle command and current 40 minute boundary', () => {
   const quality = job(workflow(read('.github/workflows/ci.yml')), 'quality');
-  assert.equal(quality.header, frozen.qualityHeader, 'Quality Gate stays unconditional, independent and without extra authority');
+  assert.equal(quality.header, frozen.qualityHeader.replace('    timeout-minutes: 30', '    timeout-minutes: 40'), 'Only the current Quality Gate job budget changes; authority and all other header fields stay exact');
   assert.deepEqual(quality.steps, [...frozen.setupSteps, frozen.qualityRunSteps[0]], 'Only the existing checkout, Java17 and Gradle quality gate remain in this job');
 });
 

@@ -1,0 +1,46 @@
+{
+  "workItem": "issue245-quality-budget",
+  "sourceRevision": "d5facaf8b70faf85f6dd42773a967ac5659e460f",
+  "boundary": "CI-only current Quality Gate aggregate budget; separate from Kotlin RED schema and historical fixture",
+  "testFiles": [
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "5507a2164af310ef7f97132ca3a25fe13f2ea73d9f8cee5eeddd3b7b029b786a"
+    },
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "8d310f5a2b8af2fbc161b10178cb5732f7f5049e308c6ea0ee9798b7a89d9cd3"
+    },
+    {
+      "path": ".github/scripts/v33-precheck-classification-release-catalog.test.cjs",
+      "sha256": "700aaaeb33741ca21e09096698a97fb1d6a85ecfc6a8e8a41bf6b00ea87887f4"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/ci-job-boundaries.test.cjs",
+    ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+    ".github/scripts/v33-precheck-classification-release-catalog.test.cjs"
+  ],
+  "rootRed": {
+    "tests": 27,
+    "pass": 24,
+    "fail": 3,
+    "skipped": 0,
+    "failureClassification": "EXPECTED_ASSERTION_FAILURE",
+    "failedTests": [
+      "Issue178 Quality Gate retains Java17, the exact Gradle command and current 40 minute boundary",
+      "V32C11 additive catalog gate preserves original commands three jobs authority and protected deployment entry",
+      "V33C10 the additive V33 gate preserves every prior CI command job boundary and protected production entry"
+    ]
+  },
+  "rootGreen": {
+    "tests": 27,
+    "pass": 27,
+    "fail": 0,
+    "skipped": 0
+  },
+  "historicalFixtureSha256Unchanged": "8129fbf885d29863a33b27e746ae37482ae1f8d8448275e3853ceec1b6126eff",
+  "recordedAt": "2026-11-16T12:35:34.659870Z"
+}
