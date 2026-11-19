@@ -79,6 +79,10 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
+tasks.test {
+    maxHeapSize = "1g"
+}
+
 // Explicit local experiment only. The default test/runtime classpaths stay unchanged.
 tasks.register<Test>("c5HttpCandidateTest") {
     description = "Runs the existing HTTP evaluator with the frozen C5 candidate on the test classpath"

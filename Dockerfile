@@ -8,7 +8,8 @@ COPY settings.gradle.kts build.gradle.kts ./
 RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon dependencies >/dev/null
 
 COPY src src
-RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon bootJar
+RUN --mount=type=cache,target=/root/.gradle ./gradlew --no-daemon --max-workers=2 \
+    -Pkotlin.daemon.jvmargs=-Xmx2g bootJar
 
 FROM eclipse-temurin:17-jre-jammy AS runtime
 
