@@ -17,7 +17,7 @@ const latestScripts = [...scripts, 'V19__add_confirmed_result_reviews.sql', 'V20
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql',
-  'V33__record_precheck_classifications.sql'];
+  'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 function release(version = 18) {
   const value = f.manifest(range(Math.min(version, 17)));
   if (version === 18) value.migrations.push({ version: '18', script: script18, checksum: 18 * 37 });
@@ -163,7 +163,7 @@ test('V18C07 offline packages preserve V17 support and verify V18 checksum schem
   } finally { value.remove(); }
 });
 
-test('V18C08 current source publishes exact real V33 without changing historical V18 reader fixtures', () => {
+test('V18C08 current source publishes exact real V34 without changing historical V18 reader fixtures', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
   assert.deepEqual(fs.readdirSync(directory).sort(), [...latestScripts].sort());
   const value = f.currentFixture(); try {

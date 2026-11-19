@@ -547,7 +547,7 @@ class GeminiProcessingPersistenceService(
         val matching =
             current.status == CoordinationStatus.MATCHING && current.version == owned.runVersion + 1 && owned.winnerAttemptId != null
         if (!structuring && !matching) return
-        repository.update(owned.copy(finishedAt = owned.finishedAt ?: clock.instant()))
+        repository.update(owned.copy(finishedAt = owned.finishedAt ?: clock.instant(), nextAttemptAt = null, nextProvider = null))
         coordinationRunRepository.update(current.delayAnalysis())
         roomRepository.update(room.transition())
     }

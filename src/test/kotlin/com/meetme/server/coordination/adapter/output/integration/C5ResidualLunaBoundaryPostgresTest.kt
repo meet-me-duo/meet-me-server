@@ -316,12 +316,57 @@ class C5ResidualLunaBoundaryPostgresTest {
                 .defaultSchema(schema)
                 .target(target)
                 .load()
+
+        // This probe deliberately runs V29/V30, before the V34 retry columns exist.
+        // Historical SQL is independent of the current binary's expanded persistence adapter.
+        fun insertHistorical(invocation: AnalysisInvocation) {
+            local.update(
+                """
+                INSERT INTO analysis_invocations(id,coordination_run_id,run_version,started_at,deadline_at,owner_token,
+                    gemini_attempts,luna_attempts,finished_at,winner_attempt_id,policy_version)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                """.trimIndent(),
+                invocation.id,
+                invocation.runId.value,
+                invocation.runVersion,
+                invocation.startedAt.atOffset(ZoneOffset.UTC),
+                invocation.deadlineAt.atOffset(ZoneOffset.UTC),
+                invocation.ownerToken,
+                invocation.geminiAttempts,
+                invocation.lunaAttempts,
+                invocation.finishedAt?.atOffset(ZoneOffset.UTC),
+                invocation.winnerAttemptId,
+                invocation.policyVersion,
+            )
+        }
+
+        fun historicalInvocation(runVersion: Long): AnalysisInvocation? =
+            local
+                .query(
+                    "SELECT * FROM analysis_invocations WHERE coordination_run_id=? AND run_version=?",
+                    { rs, _ ->
+                        AnalysisInvocation(
+                            rs.getObject("id", UUID::class.java),
+                            CoordinationRunId(rs.getObject("coordination_run_id", UUID::class.java)),
+                            rs.getLong("run_version"),
+                            rs.getTimestamp("started_at").toInstant(),
+                            rs.getTimestamp("deadline_at").toInstant(),
+                            rs.getObject("owner_token", UUID::class.java),
+                            rs.getInt("gemini_attempts"),
+                            rs.getInt("luna_attempts"),
+                            rs.getTimestamp("finished_at")?.toInstant(),
+                            rs.getObject("winner_attempt_id", UUID::class.java),
+                            rs.getString("policy_version"),
+                        )
+                    },
+                    F.ir.run,
+                    runVersion,
+                ).singleOrNull()
         try {
             migration("29").migrate()
             F.seed(local, mapper)
             val old = F.invocation().copy(geminiAttempts = 1)
-            val repo = JdbcAnalysisInvocationRepository(local)
-            repo.insert(old)
+            insertHistorical(old)
             val oldAttempt =
                 CoordinationAttempt(
                     UUID(0, 9891),
@@ -370,10 +415,10 @@ class C5ResidualLunaBoundaryPostgresTest {
                 ),
             )
             assertEquals(before, tables.associateWith { F.rows(local, it) })
-            assertEquals(V1, assertNotNull(repo.findByRunVersion(old.runId, old.runVersion)).policyVersion)
+            assertEquals(V1, assertNotNull(historicalInvocation(old.runVersion)).policyVersion)
             val added = old.copy(id = UUID(0, 9892), runVersion = 2, policyVersion = V2)
-            repo.insert(added)
-            assertEquals(added, repo.findByRunVersion(added.runId, 2))
+            insertHistorical(added)
+            assertEquals(added, historicalInvocation(2))
             val addedAttempt = oldAttempt.copy(id = UUID(0, 9893), attemptNumber = 2, policyVersion = V2, invocationId = added.id)
             localAttempts.insert(addedAttempt)
             assertEquals(addedAttempt, localAttempts.findById(addedAttempt.id))

@@ -9,7 +9,7 @@ import java.sql.DriverManager
 import java.util.UUID
 import kotlin.test.assertEquals
 
-/** V8 rows survive the historical V30/V31 phases and the current V33 upgrade without rewriting. */
+/** V8 rows survive the historical V30/V31 phases and the current V34 upgrade without rewriting. */
 class IntegratedLegacyUpgradePostgresTest {
     @BeforeEach
     fun resetSchema() {
@@ -45,7 +45,7 @@ class IntegratedLegacyUpgradePostgresTest {
             ),
         )
         applyScopedV31()
-        applyCurrentV33()
+        applyCurrentV34()
     }
 
     @Test
@@ -61,7 +61,7 @@ class IntegratedLegacyUpgradePostgresTest {
         assertEquals(original, snapshots(), "Historical V30 prefix must preserve the original rows")
         applyScopedV31()
         assertEquals(original, snapshots(), "Scoped V31 must preserve the original rows")
-        applyCurrentV33()
+        applyCurrentV34()
 
         assertEquals(original, snapshots(), "Every preexisting business column must survive upgrade without reanalysis or backfill")
         assertEquals(
@@ -311,18 +311,18 @@ class IntegratedLegacyUpgradePostgresTest {
         assertEquals("0", scalar("SELECT count(*)::text FROM pg_constraint WHERE conname='analysis_invocations_check3'"))
     }
 
-    private fun applyCurrentV33() {
+    private fun applyCurrentV34() {
         val original = snapshots()
-        assertEquals(2, flyway().migrate().migrationsExecuted)
+        assertEquals(3, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "33",
+            "34",
             flyway()
                 .info()
                 .current()
                 .version.version,
         )
-        assertEquals("33", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
+        assertEquals("34", scalar("SELECT count(*)::text FROM flyway_schema_history WHERE success AND version IS NOT NULL"))
         assertEquals(
             "V32__add_operator_room_reanalysis.sql",
             scalar("SELECT script FROM flyway_schema_history WHERE version='32' AND success"),
@@ -331,7 +331,11 @@ class IntegratedLegacyUpgradePostgresTest {
             "V33__record_precheck_classifications.sql",
             scalar("SELECT script FROM flyway_schema_history WHERE version='33' AND success"),
         )
-        assertEquals(original, snapshots(), "V32 and V33 must preserve every legacy business row without reanalysis or backfill")
+        assertEquals(
+            "V34__add_stream_analysis_retry_schedule.sql",
+            scalar("SELECT script FROM flyway_schema_history WHERE version='34' AND success"),
+        )
+        assertEquals(original, snapshots(), "V32 through V34 must preserve every legacy business row without reanalysis or backfill")
         assertEquals("0", scalar("SELECT count(*)::text FROM operations_reanalysis_commands"))
     }
 

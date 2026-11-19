@@ -69,7 +69,7 @@ HISTORICAL_SHA256 = {
 }
 
 # Accepted review release inventory, fixed independently of production catalogs.
-# Historical V1-V18 hashes remain fixed; the approved current inventory adds precheck classification capture V33.
+# Historical V1-V18 hashes remain fixed; the approved current inventory adds stream retry schedule V34.
 # V24-V31 names and immutable SQL hashes are independently fixed by the reviewed V31 release contract.
 CURRENT_SUPPORTED_SHA256 = {
     **HISTORICAL_SHA256,
@@ -87,10 +87,11 @@ CURRENT_SUPPORTED_SHA256 = {
     "V30__add_c5_residual_luna_policy.sql": "d9c23577e2b4503743fd9419f833ff8082a7879bcd325ca3b8154517d286b636",
     "V31__allow_explicit_c5_direct_luna.sql": "72b6e90537f5f05624445351b54980a97eccca794a7de3be91547d2f2ed9f1c0",
     "V32__add_operator_room_reanalysis.sql": "7af43aaf9ec949255f3fc4f653d7574bc8550a262475e15eeec4c723b1d2f939",
+    "V33__record_precheck_classifications.sql": "49340c550cf250d1b6895225dfb60614cef00ea2685618cd4ff795596e6ea8de",
 }
 
-# Preserve every reviewed historical digest through V32; V33 is the new not-yet-released SQL.
-CURRENT_PUBLISHED_SCRIPTS = (*CURRENT_SUPPORTED_SHA256, "V33__record_precheck_classifications.sql")
+# Preserve every reviewed historical digest through V33; V34 is the new not-yet-released SQL.
+CURRENT_PUBLISHED_SCRIPTS = (*CURRENT_SUPPORTED_SHA256, "V34__add_stream_analysis_retry_schedule.sql")
 
 AWS_FIXTURE = '''#!/usr/bin/env python3
 import json,os,sys
@@ -262,18 +263,18 @@ class Issue144ProductionRendererTests(unittest.TestCase):
 
 
 class Issue144ProductionPublicationTests(unittest.TestCase):
-    def test_OA01_artifact_remains_unconfigured_and_current_v33_preserves_v18_history(self):
+    def test_OA01_artifact_remains_unconfigured_and_current_v34_preserves_v18_history(self):
         self.assertEqual(SENTINEL, json.loads((DEPLOY / "runtime-ai-policy.json").read_bytes()))
         directory = ROOT / "src/main/resources/db/migration"
         self.assertEqual(set(CURRENT_PUBLISHED_SCRIPTS), {p.name for p in directory.iterdir()})
         self.assertEqual(18, len(HISTORICAL_SHA256))
-        self.assertEqual(32, len(CURRENT_SUPPORTED_SHA256))
-        self.assertEqual(33, len(CURRENT_PUBLISHED_SCRIPTS))
+        self.assertEqual(33, len(CURRENT_SUPPORTED_SHA256))
+        self.assertEqual(34, len(CURRENT_PUBLISHED_SCRIPTS))
         for name, fingerprint in CURRENT_SUPPORTED_SHA256.items():
             with self.subTest(script=name):
                 self.assertEqual(fingerprint, digest((directory / name).read_bytes().replace(b"\r\n", b"\n")))
 
-    def test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v33(self):
+    def test_OA01_real_publisher_and_package_consumer_preserve_both_policies_with_exact_v34(self):
         environment = {"SOURCE_SHA": "a" * 40, "BUILD_RUN_ID": "144", "BUILD_RUN_ATTEMPT": "1",
                        "ECR_REPOSITORY_URL": "123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/meet-me/server",
                        "IMAGE_DIGEST": "sha256:" + "b" * 64, "CI_RUN_ID": "143", "CI_SHA": "a" * 40}
@@ -308,9 +309,9 @@ class Issue144ProductionPublicationTests(unittest.TestCase):
                 try:
                     artifact = PUBLISHER.build_manifest(root, archive, environment)
                 except ValueError as error:
-                    self.fail("Approved exact V33 publication must accept either policy: " + str(error))
+                    self.fail("Approved exact V34 publication must accept either policy: " + str(error))
                 self.assertEqual(list(CURRENT_PUBLISHED_SCRIPTS), [row["script"] for row in artifact["migrations"]])
-                self.assertEqual([str(n) for n in range(1, 34)], [row["version"] for row in artifact["migrations"]])
+                self.assertEqual([str(n) for n in range(1, 35)], [row["version"] for row in artifact["migrations"]])
                 expected_catalog = []
                 for row, name in zip(artifact["migrations"], CURRENT_PUBLISHED_SCRIPTS):
                     body = files["migrations/" + name]

@@ -146,6 +146,9 @@ data class OutboxEventRecord(
     val deliveryCount: Int,
     val lastFailureKind: String?,
     val deadLetteredAt: OffsetDateTime?,
+    val nextAttemptAt: OffsetDateTime? = null,
+    val lastAttemptAt: OffsetDateTime? = null,
+    val unexpectedFailures: Int = 0,
 )
 
 @KomapperEntityDef(OutboxEventRecord::class)

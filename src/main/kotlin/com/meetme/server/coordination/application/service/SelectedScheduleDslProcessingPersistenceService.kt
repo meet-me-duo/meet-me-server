@@ -6,9 +6,12 @@ import com.meetme.server.coordination.application.port.output.AnalysisInvocation
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
 import com.meetme.server.coordination.application.port.output.CoordinationAttemptRepository
+import com.meetme.server.coordination.application.port.output.CoordinationRetryScheduled
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.FinalAnalysisAttemptBinding
 import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
+import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
+import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.ScheduleDslApprovedTermsResponseParser
@@ -65,6 +68,7 @@ open class SelectedScheduleDslProcessingPersistenceService(
     private val contextModeParser: ScheduleDslContextModeResponseParser? = null,
     private val structuralEnvelopes: ScheduleDslStructuralRepository? = null,
     private val structuralParser: ScheduleDslStructuralResponseParser? = null,
+    private val outbox: OutboxRepository? = null,
 ) {
     @Transactional
     open fun start(batchId: SubmissionBatchId): CoordinationRun? {
@@ -87,6 +91,91 @@ open class SelectedScheduleDslProcessingPersistenceService(
         remaining: Duration,
     ): SelectedScheduleDslInvocation? = admitFirst(run, ownerToken, remaining, AnalysisProvider.GEMINI)
 
+    @Transactional
+    open fun admitQueued(
+        run: CoordinationRun,
+        ownerToken: UUID,
+        remaining: Duration,
+    ): SelectedScheduleDslInvocation? {
+        val (room, current) = ActiveRunLock.acquire(rooms, runs, run) ?: return null
+        if (current.status != CoordinationStatus.STRUCTURING || current.version != run.version) return null
+        val route = routes.find(current.id.value) ?: return null
+        if (route.choice !is FinalAnalysisRouteChoice.DslStructuralV5) return null
+        val previous =
+            invocations.findByRunVersion(current.id, current.version)
+                ?: return admitFirst(current, ownerToken, remaining, AnalysisProvider.GEMINI, AnalysisInvocation.STREAM_POLICY_VERSION)
+        if (previous.policyVersion != AnalysisInvocation.STREAM_POLICY_VERSION || previous.finishedAt != null) return null
+        val now = clock.instant()
+        if (now >= previous.deadlineAt.minusSeconds(3)) {
+            terminate(room, current, previous)
+            return null
+        }
+        val binding = routes.bindAttempt(route, previous)
+        val due = previous.nextAttemptAt
+        val provider = previous.nextProvider
+        // No known finished failure means that an external send may be in doubt. Never authorize a new paid send.
+        if (due == null || provider == null) throw CoordinationRetryScheduled(previous.deadlineAt, "ATTEMPT_IN_DOUBT")
+        if (now < due) throw CoordinationRetryScheduled(due, "RETRY_NOT_DUE")
+        val dueProvider =
+            if (provider == AnalysisProvider.GEMINI &&
+                now >= previous.deadlineAt.minusSeconds(30)
+            ) {
+                AnalysisProvider.OPENAI
+            } else {
+                provider
+            }
+        val admitted = admitAttempt(binding, dueProvider)
+        if (admitted == null) {
+            terminate(room, current, previous)
+            return null
+        }
+        val updated = requireNotNull(invocations.findByRunVersion(current.id, current.version))
+        invocations.update(updated.copy(nextAttemptAt = null, nextProvider = null))
+        return SelectedScheduleDslInvocation(routes.bindAttempt(route, updated.copy(nextAttemptAt = null, nextProvider = null)), admitted)
+    }
+
+    open fun remainingBudget(binding: FinalAnalysisAttemptBinding): Duration =
+        Duration.between(clock.instant(), binding.invocation.deadlineAt).coerceAtLeast(Duration.ZERO)
+
+    @Transactional
+    open fun scheduleAttempt(
+        binding: FinalAnalysisAttemptBinding,
+        attempt: CoordinationAttempt,
+        kind: ParserFailureKind,
+        provider: AnalysisProvider,
+        delay: Duration,
+        usage: ParserUsage? = null,
+    ): java.time.Instant {
+        val owned = requireNotNull(current(binding)) { "Scheduled execution is no longer current" }
+        check(owned.invocation.policyVersion == AnalysisInvocation.STREAM_POLICY_VERSION)
+        val stored = requireNotNull(unfinishedAttempt(owned.invocation, attempt)) { "Attempt already finished" }
+        check(attempts.findLatestByInvocation(owned.invocation.id) == stored) { "Attempt is no longer current" }
+        require(!delay.isNegative)
+        val due = clock.instant().plus(delay).truncatedTo(ChronoUnit.MICROS)
+        check(due < owned.invocation.deadlineAt.minusSeconds(3)) { "Retry cannot extend invocation deadline" }
+        attempts.update(finished(stored, kind, usage))
+        invocations.update(owned.invocation.copy(nextAttemptAt = due, nextProvider = provider))
+        return due
+    }
+
+    @Transactional
+    open fun scheduleDelivery(
+        binding: FinalAnalysisAttemptBinding,
+        attempt: CoordinationAttempt,
+        kind: ParserFailureKind,
+        provider: AnalysisProvider,
+        delay: Duration,
+        usage: ParserUsage?,
+        claim: OutboxProcessingClaim,
+    ): java.time.Instant {
+        check(claim.event.aggregateType == "CoordinationRun" && claim.event.aggregateId == binding.invocation.runId.value) {
+            "Outbox continuation does not belong to the invocation"
+        }
+        val due = scheduleAttempt(binding, attempt, kind, provider, delay, usage)
+        check(requireNotNull(outbox).scheduleRetry(claim, kind.name, due)) { "Outbox processing ownership changed" }
+        return due
+    }
+
     /** Explicit C5 diagnostic selection; ordinary admission and old policies stay Gemini first. */
     @Transactional
     open fun admitLunaOnly(
@@ -100,6 +189,7 @@ open class SelectedScheduleDslProcessingPersistenceService(
         ownerToken: UUID,
         remaining: Duration,
         initialProvider: AnalysisProvider,
+        queuedPolicy: String? = null,
     ): SelectedScheduleDslInvocation? {
         val startedAt = clock.instant().truncatedTo(ChronoUnit.MICROS)
         val deadlineAt = startedAt.plus(remaining.coerceAtMost(Duration.ofSeconds(60))).truncatedTo(ChronoUnit.MICROS)
@@ -132,7 +222,7 @@ open class SelectedScheduleDslProcessingPersistenceService(
                 lunaAttempts = if (initialProvider == AnalysisProvider.OPENAI) 1 else 0,
                 policyVersion =
                     if (route.choice is FinalAnalysisRouteChoice.DslStructuralV5) {
-                        AnalysisInvocation.C5_POLICY_VERSION
+                        queuedPolicy ?: AnalysisInvocation.C5_POLICY_VERSION
                     } else {
                         AnalysisInvocation.POLICY_VERSION
                     },
@@ -219,7 +309,8 @@ open class SelectedScheduleDslProcessingPersistenceService(
                 AnalysisInvocationBudget.lunaCallTimeout(owned.invocation.policyVersion)
             }
         val phaseDeadline = owned.invocation.deadlineAt.minusSeconds(if (attempt.provider == AnalysisProvider.GEMINI) 30 else 3)
-        val residual = owned.invocation.policyVersion == AnalysisInvocation.C5_POLICY_VERSION
+        val residual =
+            owned.invocation.policyVersion in setOf(AnalysisInvocation.C5_POLICY_VERSION, AnalysisInvocation.STREAM_POLICY_VERSION)
         val providerDeadline = if (residual) minOf(phaseDeadline, persistedAttempt.startedAt.plus(cap)) else phaseDeadline
         val preparedAtNanos = System.nanoTime()
         val timeout =
@@ -324,7 +415,14 @@ open class SelectedScheduleDslProcessingPersistenceService(
         }
         checkPublicationDeadline(owned.invocation, canPublish)
         attempts.update(finished(persistedAttempt, null, response.usage))
-        invocations.update(owned.invocation.copy(finishedAt = clock.instant(), winnerAttemptId = persistedAttempt.id))
+        invocations.update(
+            owned.invocation.copy(
+                finishedAt = clock.instant(),
+                winnerAttemptId = persistedAttempt.id,
+                nextAttemptAt = null,
+                nextProvider = null,
+            ),
+        )
         runs.update(owned.run.finishStructuring())
         rooms.update(owned.room.transition())
         checkPublicationDeadline(owned.invocation, canPublish)
@@ -465,7 +563,7 @@ open class SelectedScheduleDslProcessingPersistenceService(
         run: CoordinationRun,
         invocation: AnalysisInvocation,
     ) {
-        invocations.update(invocation.copy(finishedAt = clock.instant()))
+        invocations.update(invocation.copy(finishedAt = clock.instant(), nextAttemptAt = null, nextProvider = null))
         runs.update(run.delayAnalysis())
         rooms.update(room.transition())
     }

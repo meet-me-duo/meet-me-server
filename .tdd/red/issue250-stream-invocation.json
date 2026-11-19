@@ -1,0 +1,26 @@
+{
+  "workItem": "issue250-stream-invocation",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/StreamRetryInvocationPostgresContractTest.kt",
+      "sha256": "cb0b8b18c4bb92428a13c0b5ba55d73128c6ad9c68d8c0a772fa808c526d35dd"
+    }
+  ],
+  "command": [
+    "sh",
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*StreamRetryInvocationPostgresContractTest"
+  ],
+  "failedTests": [
+    "SR08 stale Outbox claim rolls back attempt completion and invocation scheduling()",
+    "SR08 successful continuation atomically commits failed attempt invocation schedule and Outbox release()",
+    "SR08 database rejection during Outbox release rolls back the entire continuation()"
+  ],
+  "expectedFailureCategory": "TDD_TODO_REACHED",
+  "recordedAt": "2026-11-19T03:23:26.603416Z"
+}

@@ -13,7 +13,7 @@ const scripts = [...f.scripts,
   'V22__preserve_unverified_candidate_place.sql',
   'V23__add_account_room_archive_hidden_at.sql'];
 assert.equal(scripts.length, 23);
-// V23 reader, transition and package fixtures remain historical; current publication is exact V33.
+// V23 reader, transition and package fixtures remain historical; current publication is exact V34.
 const currentScripts = [...scripts,
   'V24__add_versioned_schedule_ir.sql',
   'V25__add_ir_execution_bindings.sql',
@@ -24,7 +24,7 @@ const currentScripts = [...scripts,
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql',
-  'V33__record_precheck_classifications.sql'];
+  'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 
 function release(count = 23) {
   const result = f.manifest();
@@ -73,10 +73,10 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V23C01 current publication binds exactly all thirty-three actual SQL CRCs and independent schema SHA', () => {
+test('V23C01 current publication binds exactly all thirty-four actual SQL CRCs and independent schema SHA', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V33 publication must be admitted');
+    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V34 publication must be admitted');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,
@@ -146,7 +146,7 @@ test('V23C05 V22 to V23 requires explicit transition and never bypasses pending 
   assert.deepEqual(f.judge(target, f.ready(target), 'automatic'), f.mode('AUTO_READY'));
 });
 
-test('V23C06 V33 publication changes only the mutated V23 CRC while historical V23 packages reject stale bytes', () => {
+test('V23C06 V34 publication changes only the mutated V23 CRC while historical V23 packages reject stale bytes', () => {
   const value = fixture(); try {
     const before = f.publish(value); assert.equal(before.ok, true);
     const exact = pack(value); assert.equal(verify(value, exact).ok, true);
@@ -157,7 +157,7 @@ test('V23C06 V33 publication changes only the mutated V23 CRC while historical V
     fs.appendFileSync(path.join(value.migrations, scripts[22]), '\n-- synthetic checksum probe\n');
     const after = f.publish(value); assert.equal(after.ok, true);
     assert.deepEqual(after.result.migrations.slice(0, 22), before.result.migrations.slice(0, 22));
-    assert.deepEqual(after.result.migrations.slice(23), before.result.migrations.slice(23), 'V24 through V33 remain immutable');
+    assert.deepEqual(after.result.migrations.slice(23), before.result.migrations.slice(23), 'V24 through V34 remain immutable');
     assert.notEqual(after.result.migrations[22].checksum, before.result.migrations[22].checksum);
     assert.notEqual(after.result.schemaFingerprint, before.result.schemaFingerprint);
     assert.equal(after.result.guardFingerprint, before.result.guardFingerprint);

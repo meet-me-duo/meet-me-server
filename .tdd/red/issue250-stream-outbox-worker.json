@@ -1,0 +1,25 @@
+{
+  "workItem": "issue250-stream-outbox-worker",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/StreamRetryOutboxPostgresContractTest.kt",
+      "sha256": "f77c34f04bbade69b6e7ae146285207179940daf2e14856cbc2ccc83f29f4062"
+    }
+  ],
+  "command": [
+    "sh",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1g -Dfile.encoding=UTF-8",
+    "test",
+    "--tests",
+    "*StreamRetryOutboxPostgresContractTest"
+  ],
+  "failedTests": [
+    "SR11 old claim cannot complete or reschedule after a later consumer has obtained the lease()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T03:32:22.981723Z"
+}

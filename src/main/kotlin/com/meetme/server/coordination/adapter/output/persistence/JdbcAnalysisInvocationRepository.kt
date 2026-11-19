@@ -64,8 +64,8 @@ class JdbcAnalysisInvocationRepository(
         jdbc.update(
             """
             INSERT INTO analysis_invocations(id, coordination_run_id, run_version, started_at, deadline_at, owner_token,
-                gemini_attempts, luna_attempts, finished_at, winner_attempt_id, policy_version)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                gemini_attempts, luna_attempts, finished_at, winner_attempt_id, policy_version, next_attempt_at, next_provider)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """.trimIndent(),
             invocation.id,
             invocation.runId.value,
@@ -78,6 +78,8 @@ class JdbcAnalysisInvocationRepository(
             invocation.finishedAt?.atOffset(ZoneOffset.UTC),
             invocation.winnerAttemptId,
             invocation.policyVersion,
+            invocation.nextAttemptAt?.atOffset(ZoneOffset.UTC),
+            invocation.nextProvider?.name,
         )
     }
 
@@ -85,7 +87,7 @@ class JdbcAnalysisInvocationRepository(
         val updated =
             jdbc.update(
                 """
-                UPDATE analysis_invocations SET gemini_attempts = ?, luna_attempts = ?, finished_at = ?, winner_attempt_id = ?
+                UPDATE analysis_invocations SET gemini_attempts = ?, luna_attempts = ?, finished_at = ?, winner_attempt_id = ?, next_attempt_at = ?, next_provider = ?
                 WHERE id = ? AND coordination_run_id = ? AND run_version = ? AND owner_token = ?
                     AND started_at = ? AND deadline_at = ? AND policy_version = ?
                 """.trimIndent(),
@@ -93,6 +95,8 @@ class JdbcAnalysisInvocationRepository(
                 invocation.lunaAttempts,
                 invocation.finishedAt?.atOffset(ZoneOffset.UTC),
                 invocation.winnerAttemptId,
+                invocation.nextAttemptAt?.atOffset(ZoneOffset.UTC),
+                invocation.nextProvider?.name,
                 invocation.id,
                 invocation.runId.value,
                 invocation.runVersion,
@@ -118,6 +122,8 @@ class JdbcAnalysisInvocationRepository(
                 rs.getTimestamp("finished_at")?.toInstant(),
                 rs.getObject("winner_attempt_id", UUID::class.java),
                 rs.getString("policy_version"),
+                rs.getTimestamp("next_attempt_at")?.toInstant(),
+                rs.getString("next_provider")?.let(com.meetme.server.coordination.application.port.output.AnalysisProvider::valueOf),
             )
         }
 }

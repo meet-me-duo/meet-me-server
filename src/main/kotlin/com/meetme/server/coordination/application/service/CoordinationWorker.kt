@@ -2,10 +2,12 @@ package com.meetme.server.coordination.application.service
 
 import com.meetme.server.coordination.application.port.output.CoordinationEventProcessor
 import com.meetme.server.coordination.application.port.output.CoordinationQueueMessage
+import com.meetme.server.coordination.application.port.output.CoordinationRetryScheduled
 import com.meetme.server.coordination.application.port.output.CoordinationWorkMessage
 import com.meetme.server.coordination.application.port.output.CoordinationWorkQueuePort
 import com.meetme.server.coordination.application.port.output.DeadLetterMessage
 import com.meetme.server.coordination.application.port.output.MalformedCoordinationWorkMessage
+import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.application.port.output.OutboxStatus
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
@@ -39,21 +41,23 @@ class CoordinationWorker(
         require(event.payload.contains(message.batchId.value.toString())) { "Stream batch does not match PostgreSQL Outbox" }
 
         val now = clock.instant()
+        if (event.nextAttemptAt?.let { now < it } == true) return
         val claim = outboxRepository.claimProcessing(message.eventId, now, now.plus(leaseDuration))
-        if (claim == null) {
-            workQueue.acknowledge(message.streamRecordId)
-            return
-        }
+        if (claim == null) return
 
         try {
-            eventProcessor.process(message.eventType, message.batchId)
-            outboxRepository.markProcessed(message.eventId, clock.instant())
+            eventProcessor.processDelivery(message.eventType, message.batchId, claim)
+            if (!outboxRepository.completeClaim(claim, clock.instant())) return
             workQueue.acknowledge(message.streamRecordId)
             metrics?.workerCompleted("PROCESSED")
+        } catch (scheduled: CoordinationRetryScheduled) {
+            outboxRepository.scheduleRetry(claim, scheduled.failureKind, scheduled.nextAttemptAt)
+            metrics?.workerCompleted("RETRY_PENDING")
         } catch (exception: Exception) {
             val failureKind = exception::class.simpleName ?: "WorkerFailure"
-            if (claim.deliveryCount >= MAX_DELIVERIES) {
-                deadLetterPersistence.persist(message.eventId, failureKind, claim.deliveryCount)
+            val failures = outboxRepository.recordUnexpectedFailure(claim, failureKind) ?: return
+            if (failures >= MAX_DELIVERIES) {
+                if (!deadLetterPersistence.persistClaim(claim, failureKind)) return
                 workQueue.deadLetter(
                     DeadLetterMessage(message.eventId, message.batchId, failureKind, claim.deliveryCount),
                 )
@@ -61,7 +65,14 @@ class CoordinationWorker(
                 metrics?.deadLettered(failureKind)
                 metrics?.workerCompleted("DEAD_LETTERED")
             } else {
-                outboxRepository.releaseAfterFailure(message.eventId, failureKind)
+                val upperMillis = 1000L shl (failures - 1).coerceIn(0, 3)
+                val retryAt =
+                    clock.instant().plusMillis(
+                        java.util.concurrent.ThreadLocalRandom
+                            .current()
+                            .nextLong(upperMillis + 1),
+                    )
+                outboxRepository.scheduleRetry(claim, failureKind, retryAt)
                 metrics?.workerCompleted("RETRY_PENDING")
             }
         }
@@ -94,6 +105,14 @@ class CoordinationWorker(
 }
 
 fun interface DeadLetterPersistence {
+    fun persistClaim(
+        claim: OutboxProcessingClaim,
+        failureKind: String,
+    ): Boolean {
+        persist(claim.event.id, failureKind, claim.deliveryCount)
+        return true
+    }
+
     fun persist(
         eventId: com.meetme.server.shared.domain.OutboxEventId,
         failureKind: String,

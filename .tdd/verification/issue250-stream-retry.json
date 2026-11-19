@@ -1,0 +1,48 @@
+{
+  "workItem": "issue250-stream-retry",
+  "state": "STREAM_RETRY_PHASE_COMPLETE_BEFORE_AFTER_COMMIT",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testDesigner": "/root/stream_retry_contract_tests",
+  "implementer": "/root",
+  "independentContractCount": 38,
+  "mutationResults": {
+    "faults": 5,
+    "detected": 5,
+    "restoredBaselineTests": 30,
+    "postFormatProviderAndRedisTests": 6,
+    "scopeNote": "Worker and persistence sources matched the phase source. The processor late-finalization helper was added after the mutation snapshot and has separate RED plus final 5134-test phase coverage; it was not part of those five mutations."
+  },
+  "experiments": {
+    "realPostgresAndRedis": true,
+    "syntheticHandler": true,
+    "paidModelCalls": 0,
+    "lifecycleEvents": 300,
+    "scheduledRetries": 900,
+    "prematureCalls": 0,
+    "completedDuplicateExtraCalls": 0,
+    "forceKills": 12,
+    "crashEvents": 1200,
+    "defaultLeaseSmokeMillis": 120000
+  },
+  "commands": [
+    "./gradlew ktlintCheck assemble test",
+    "./gradlew -I .codex/evaluation/reliability.gradle -Dportfolio.results=<outside-repository> portfolioReliabilityTest"
+  ],
+  "limitations": [
+    "No actual model-quality or operating traffic/DB-load reduction claim",
+    "No production deployment or ARM64 image CI run",
+    "Expired or in-doubt analysis terminates delayed within existing billing policy; message redelivery does not reset budget"
+  ],
+  "recordedAt": "2026-11-19T04:24:29.680203+00:00",
+  "finalWholeQualityGate": {
+    "tests": 5134,
+    "skipped": 43,
+    "failures": 0,
+    "errors": 0,
+    "suites": 572,
+    "passed": 5091,
+    "newContractTests": 38
+  },
+  "finalSourceFingerprintUnchanged": true,
+  "qualification": "This record belongs to the 5134-test stream-retry phase before the AFTER_COMMIT delta. Current final verification is recorded separately for the additive dispatch change."
+}

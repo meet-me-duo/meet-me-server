@@ -52,6 +52,7 @@ MIGRATION_SCRIPTS = (
     'V31__allow_explicit_c5_direct_luna.sql',
     'V32__add_operator_room_reanalysis.sql',
     'V33__record_precheck_classifications.sql',
+    'V34__add_stream_analysis_retry_schedule.sql',
 )
 
 

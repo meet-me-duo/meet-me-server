@@ -2,13 +2,16 @@ package com.meetme.server.coordination.application.service
 
 import com.meetme.server.config.ReliabilityProperties
 import com.meetme.server.coordination.application.port.output.CoordinationWorkQueuePort
+import com.meetme.server.coordination.application.port.output.OutboxEvent
 import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.shared.application.port.output.ApplicationMetricsPort
+import com.meetme.server.shared.domain.OutboxEventId
 import org.slf4j.LoggerFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.Clock
 
@@ -23,12 +26,21 @@ class OutboxRelay(
     @Transactional
     fun relayPending(): Int {
         val events = outboxRepository.findPendingForUpdate(properties.pollBatchSize)
-        events.forEach { event ->
-            workQueue.publish(event)
-            outboxRepository.markPublished(event.id, clock.instant())
-            metrics.outboxPublished(false)
-        }
+        events.forEach(::publishPending)
         return events.size
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    fun relayCommitted(eventId: OutboxEventId): Boolean {
+        val event = outboxRepository.findPendingByIdForUpdate(eventId) ?: return false
+        publishPending(event)
+        return true
+    }
+
+    private fun publishPending(event: OutboxEvent) {
+        workQueue.publish(event)
+        outboxRepository.markPublished(event.id, clock.instant())
+        metrics.outboxPublished(false)
     }
 
     fun recoverPublished(): Int {
@@ -48,7 +60,7 @@ class OutboxRelay(
 class OutboxRelayScheduler(
     private val relay: OutboxRelay,
 ) {
-    @Scheduled(fixedDelayString = "\${meetme.reliability.relay-delay:1000}")
+    @Scheduled(fixedDelayString = "\${meetme.reliability.relay-delay:5000}")
     fun relay() {
         runCatching(relay::relayPending).onFailure {
             logger.warn("outbox_relay_failed failure_kind={}", it::class.simpleName)

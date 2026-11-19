@@ -184,3 +184,22 @@ RAW_SCOPE TIME의 non-null timestamp 문법·달력/offset은 신규6에서 이�
 신규6의 제한적 명시 요일 목록 검증은 정식 요일명/욜 표기와 지원 구분자로 구성된 단독 숫자 범위에 적용한다. 원문 전체 요일 집합과 하나의 WEEKLY·빈 필터·양끝 시각/원자 근거를 대조하며, 부분집합·초과집합·단일 날짜/날짜별 분할로 바꾸지 않는다. 실제 조건이나 응답을 복구하는 기능이 아니며, 상대/주차/범위/선택·별도 날짜 상속·넓은 문맥·보완/정정·UNKNOWN은 판별 불가 경계를 유지한다. 기존5 요청/저장 복원은 그대로다. 같은 원문이 한 번 성공했더라도 사전 고정 반복 중 누락된 실행은 실패로 보존한다.
 
 신규6 native 생성 schema는 `temporal`을 `temporal_resolution`보다 먼저 배치해 반복 구조 선택 전 정밀도 값이 분기를 제한하는 순서를 피한다. 제약·required 배열·중립 schema·입력·지침은 그대로이며, 이전5 두 native 요청은 고정 바이트 digest로 대조한다. 같은 원문·설정으로 출력 순서만 바꾼 회귀에서도 모델의 비결정성과 표현 순서의 인과를 구분해 보고한다. 기존 INFERRED 경고를 숨기기 위한 라벨 변경이나 결과·사전 기대 수정은 하지 않는다.
+
+
+## Redis Streams 메시지 재시도·장애 재현 (유료 호출 없음)
+
+`reliability.gradle`의 `portfolioReliabilityTest`는 실제 PostgreSQL/Redis에서 프로덕션 Relay·Worker·Outbox repository·Streams adapter를 실행한다. `PortfolioStreamRetryExperimentTest`는 합성 이벤트 300개에 각각 세 번 예약을 적용한다. 예약 전 호출 0건, 종결된 중복 메시지의 추가 처리 0건과 재연결 후 재수신을 확인한다. 처리기는 합성이며 실제 최종 모델의 의미 정확도나 HTTP 처리량을 측정하지 않는다. `PortfolioQueueExperimentTest`는 네 중단 지점에서 자식 JVM 강제 종료와 복구를 반복하고 기본 2분 lease 경계도 별도로 확인한다. 일반 `test`에서는 두 실험을 건너뛰며 단위·실제 DB 계약 검증은 항상 실행한다.
+
+```bash
+GRADLE_USER_HOME=/workspace/.gradle ./gradlew --no-daemon \
+  -I .codex/evaluation/reliability.gradle \
+  -Dportfolio.results=/absolute/path/outside-repository \
+  portfolioReliabilityTest
+```
+
+새 정책은 한 수신당 공급자를 최대 한 번 호출하며, 메시지를 ACK하지 않고 DB의 예약 시각을 확인한 뒤 재수신한다. 시도 종료·동일 invocation 예약·Outbox 예약과 lease 반납은 원자 저장한다. 전체 60초, Gemini 4회·Luna 1회와 기존 비용 원장을 유지한다. 미완료 송신의 추가 자동 결제를 허용하지 않는다. 정상 재시도와 예기치 않은 오류는 별도로 세며, 참조 가능한 이벤트는 예기치 않은 오류 5회 소진 시 DLQ로 보낸다. 최종 기술 실패를 명시 종결해도 ACK하므로 ACK를 추천 성공으로 표시하지 않는다.
+
+측정은 브랜치·소스 지문·사전 합격 기준·원본 JSON·실패 및 재실행 로그·환경을 저장소 밖에 보관한다. 250ms lease·수동 복구 측정은 운영의 2분 lease·30초 recovery polling 지연으로 바꾸어 표시하지 않는다. 과거 프로세스 내부 재시도에서 측정한 HTTP 지터 감소율은 새 구조의 성과로 재사용하지 않는다. 실제 모델 정확도·처리량·비용·동시 모임 지연은 별도 검증이다.
+
+
+AFTER_COMMIT 발행 경계는 실제 PostgreSQL 트랜잭션으로 commit/rollback/no-transaction, 즉시 발행의 별도 commit, Polling 경합, Redis 및 상태 저장 실패, 실행기 포화를 검증한다. 일반 테스트에서 외부 모델은 호출하지 않는다. 즉시 발행을 우회해 수동 복구를 측정한 이전 장애 실험과 이 Listener 경계의 결과를 구분하며, 5초 간격을 실제 복구 지연이나 DB 부하 감소율로 바꾸어 표시하지 않는다.
