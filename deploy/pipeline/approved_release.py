@@ -30,7 +30,7 @@ LEGACY_CATALOGS = (
     tuple(range(1, 12)) + (13,),
     tuple(range(1, 11)) + (14, 15), tuple(range(1, 12)) + (14, 15),
 )
-NEW_CATALOGS = (tuple(range(1, 17)), tuple(range(1, 18)), tuple(range(1, 19)), tuple(range(1, 20)), tuple(range(1, 21)), tuple(range(1, 22)), tuple(range(1, 23)), tuple(range(1, 24)), tuple(range(1, 32)), tuple(range(1, 33)), tuple(range(1, 34)))
+NEW_CATALOGS = (tuple(range(1, 17)), tuple(range(1, 18)), tuple(range(1, 19)), tuple(range(1, 20)), tuple(range(1, 21)), tuple(range(1, 22)), tuple(range(1, 23)), tuple(range(1, 24)), tuple(range(1, 32)), tuple(range(1, 33)), tuple(range(1, 34)), tuple(range(1, 35)))
 COMPLETE_CATALOGS = LEGACY_CATALOGS + NEW_CATALOGS
 MIGRATION_NAMES = (
     'create_core_domain', 'add_anonymous_room_lifecycle', 'add_submission_gemini_pipeline',
@@ -61,6 +61,7 @@ MIGRATION_SCRIPTS.update({
     31: 'V31__allow_explicit_c5_direct_luna.sql',
     32: 'V32__add_operator_room_reanalysis.sql',
     33: 'V33__record_precheck_classifications.sql',
+    34: 'V34__add_stream_analysis_retry_schedule.sql',
 })
 
 

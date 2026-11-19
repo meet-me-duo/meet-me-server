@@ -834,3 +834,27 @@ ADR-027의 방식별 Plan 표시·candidate-only 확정은 신규 protocol 분�
 **이유**: 완료된 NO_MATCH와 오래된 생성 계약의 의미 오류는 지연 전용 retry로 복구할 수 없다. 운영자가 정당한 권한으로 동일 입력을 최신 구현에 재실행하되, 과거 해석을 덮어쓰거나 참가자 재입력·임의 답변에 의존하지 않는 경로가 필요하다.
 
 **트레이드오프**: 운영자 권한이 비용을 유발하는 쓰기 명령으로 확장되므로 별도 요청 멱등성·상태 CAS·변경 전 내구 감사와 원자적 접수 기록이 필요하다. 기존 결과를 보며 비교하는 shadow 실행은 제공하지 않으므로 재분석 중에는 이용자 화면도 분석 중으로 바뀌고 기술 실패 시 지연 상태가 된다. 일반 주최자 수정 횟수와 분리하되 동일 방의 기존 비용 원장·공급자 제한을 우회하지 않는다. 새 V32 schema/catalog 전환의 보호 승인과 운영자 실제 인증은 별도 실행 근거로 검증한다.
+
+
+### ADR-077: 신규 V5의 Redis Streams 재수신 기반 영속 재시도
+
+**상태**: Accepted for implementation; 운영 전환 미실행
+**날짜**: 2026-11-19
+
+**결정**: 신규 V5 Worker 실행은 `c5-stream-retry-v3` 정책으로 수신당 공급자 시도 하나만 수행한다. 일시 실패를 확정한 트랜잭션에서 시도 종료·동일 invocation의 다음 공급자/예약 시각·Outbox 예약/lease 반납을 함께 저장하며 ACK하지 않는다. pending 순회를 통해 재수신하고 DB 예약 시각 및 claim의 delivery count로 선행 실행·낡은 완료를 거부한다. 모든 대기는 최초 admission의 60초 안에 포함하며 Gemini 최대4회·Luna 최대1회, Gemini 단계30초와 완료 여유3초, 금전 원장·물리 dispatch fence를 유지한다. TIMEOUT/시도 소진은 다음 수신의 Luna로 넘기고 비일시 오류/최종 소진은 명시적인 ANALYSIS_DELAYED 종결 후 ACK한다. 기존 invocation의 정책과 직접 평가 경로는 유지한다.
+
+**이유**: 기존 Redis Streams 전달 계층을 유지하면서 프로세스 내부 sleep을 제거한다. 프로세스 내부 sleep은 Worker를 붙잡고 재시작 시 대기 정보를 잃는다. 미ACK 메시지와 영속 예약을 결합해 외부 호출 재시도를 메시지 수신 경계로 옮긴다. 재수신마다 새 invocation을 만들면 시간·횟수·비용 제한을 우회하므로 같은 실행을 이어간다.
+
+**트레이드오프**: Redis와 PostgreSQL 사이 원자적 commit은 없으므로 완료 DB 저장 후 ACK 실패는 중복 수신으로 정리한다. 확정 실패의 예약과 Outbox 반납은 같은 DB 트랜잭션으로 묶어 둘 사이의 crash 창을 없앤다. pending은 bounded round-robin으로 순회하며 정확한 예약 시각 실행을 보장하지 않는다. 미완료 시도는 외부 전송 여부를 알 수 없어 자동으로 유료 호출하지 않고 원래 deadline까지 기다린 뒤 지연 종결한다. Redis 유실은 DB의 PUBLISHED 복원에 의존한다. DB 상태·lease 조회와 저장은 계속하므로 DB 부하 감소를 주장하지 않는다. 현재 규모에서는 DB 작업 큐도 대안이며, Streams의 소비자 분배와 미확인 메시지 회수에 대한 운영 비용을 함께 부담한다. Exactly-once 외부 호출을 주장하지 않으며 구 binary로 rollback하려면 신규 정책 처리 중단·drain과 호환성을 별도 확인한다.
+
+
+### ADR-078: 커밋 이후 즉시 Outbox 발행과 5초 복구 조회
+
+**상태**: Accepted for implementation; 운영 전환 미실행
+**날짜**: 2026-11-19
+
+**결정**: Outbox 신규 저장과 명시 재큐잉은 트랜잭션 안에서 식별자만 담은 알림을 발행한다. AFTER_COMMIT Listener는 별도 실행기에 즉시 발행 작업을 제출한다. 실행기는 한 스레드·대기100건으로 제한하고 포화 시 호출자 스레드에서 Redis 작업을 수행하지 않는다. 즉시 발행은 REQUIRES_NEW 트랜잭션에서 해당 PENDING 행을 FOR UPDATE SKIP LOCKED로 선점한 뒤 Redis 발행과 PUBLISHED 기록을 수행한다. 기존 Polling Relay도 같은 행 잠금을 사용하며 PENDING 기본 fixed-delay를 실행 종료 후 5초로 변경한다. PUBLISHED 복구와 Worker 재수신 정책은 유지한다.
+
+**이유**: 정상 발행은 다음 Polling 시각을 기다리지 않게 하고, 빈 DB 조회의 기본 빈도는 낮춘다. 커밋 이후 알림은 내구성 있는 메시지가 아니므로 서버 중단·포화·Redis 장애 시 PostgreSQL PENDING과 Polling이 복구 기준이다. Redis 장애가 이미 커밋한 사용자 요청을 실패로 바꾸거나 HTTP 응답을 붙잡지 않도록 알림과 실제 발행을 분리한다.
+
+**트레이드오프**: 행 선점·발행 상태 저장의 DB 접근은 유지되므로 전체 DB 부하 감소율을 주장하지 않는다. 정상 경합에서는 한쪽만 발행하지만 XADD 성공 후 DB commit 전 중단에 따른 중복 가능성은 남으며 Worker 멱등 처리를 유지한다. 5초는 실행 후 대기 설정이며 실행 시간·스케줄러 지연을 포함한 복구 상한이 아니다. 트랜잭션 밖 쓰기는 AFTER_COMMIT 알림 대상이 아니며 Polling으로 복구한다. 즉시 발행 실패와 saturation은 분석 실패나 DLQ가 아니라 미발행 작업으로 남는다.

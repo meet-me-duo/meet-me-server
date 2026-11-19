@@ -21,10 +21,13 @@ data class AnalysisInvocation(
     val finishedAt: Instant? = null,
     val winnerAttemptId: UUID? = null,
     val policyVersion: String = POLICY_VERSION,
+    val nextAttemptAt: Instant? = null,
+    val nextProvider: AnalysisProvider? = null,
 ) {
     companion object {
         const val POLICY_VERSION = "bounded-luna-v1"
         const val C5_POLICY_VERSION = "c5-residual-luna-v2"
+        const val STREAM_POLICY_VERSION = "c5-stream-retry-v3"
     }
 }
 

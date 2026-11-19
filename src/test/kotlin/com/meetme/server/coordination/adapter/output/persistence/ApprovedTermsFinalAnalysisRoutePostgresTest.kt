@@ -86,7 +86,7 @@ class ApprovedTermsFinalAnalysisRoutePostgresTest {
 
     @Test
     fun `AV3R01 V27 is applied while existing route shape constraints remain strict`() {
-        assertEquals(33, jdbc.queryForObject("SELECT max(version::int) FROM flyway_schema_history WHERE success", Int::class.java))
+        assertEquals(34, jdbc.queryForObject("SELECT max(version::int) FROM flyway_schema_history WHERE success", Int::class.java))
         routes.freeze(F.ir.run, 1)
         val before = selectionRows()
         for (invalidAssignment in listOf("format_version=0", "route_fingerprint='invalid'", "selection='[]'::jsonb")) {

@@ -1,0 +1,29 @@
+{
+  "workItem": "issue250-v34-release",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": ".github/scripts/v34-stream-retry-release-catalog.test.cjs",
+      "sha256": "82bb76c82b69604f6e2366a473997ffab5771a76ce6b6bc9d33bebc613038743"
+    }
+  ],
+  "command": [
+    "node",
+    "--test",
+    ".github/scripts/v34-stream-retry-release-catalog.test.cjs"
+  ],
+  "failedTests": [
+    "V34C02 publisher binds exact thirty-four CRCs schema bytes and unchanged operational guards",
+    "V34C03 both readers retain published catalogs and admit only approved complete V34",
+    "V34C04 publisher rejects omitted historical rows and malformed or future V34 inventory",
+    "V34C07 retry SQL mutation invalidates previous archive authorization without altering historical CRCs",
+    "V34C08 V33 to V34 requires existing protected transition and unchanged published history",
+    "V34C09 the additive V34 gate preserves every prior CI command job boundary and protected production entry"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T03:06:48.772682+00:00",
+  "evidenceNote": "New V34 contract: 9 tests, 6 behavioral failures. Existing publisher/readers do not authorize exact V34 and current publisher erroneously admits missing V34; CI lacks the additive gate. Raw log .codex/tdd-evidence/issue250-v34-release-red.log. No setup/compile failures.",
+  "format": "node-python-red-review-1",
+  "evidenceKind": "NON_KOTLIN_RED_REVIEW",
+  "notKotlinRedSchema": true
+}

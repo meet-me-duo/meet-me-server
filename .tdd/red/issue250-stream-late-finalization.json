@@ -1,0 +1,24 @@
+{
+  "workItem": "issue250-stream-late-finalization",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/StreamRetryLateResponseContractTest.kt",
+      "sha256": "7da700d048659990dd81ad6e5e2c28b7acf1e108bf207858f5d69fc2e56f2aba"
+    }
+  ],
+  "command": [
+    "sh",
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*StreamRetryLateResponseContractTest"
+  ],
+  "failedTests": [
+    "SR17 queue late response explicitly delays its analysis without attempting publication()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T03:34:10.267192Z"
+}

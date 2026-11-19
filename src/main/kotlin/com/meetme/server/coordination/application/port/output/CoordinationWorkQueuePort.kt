@@ -3,6 +3,7 @@ package com.meetme.server.coordination.application.port.output
 import com.meetme.server.shared.domain.OutboxEventId
 import com.meetme.server.shared.domain.SubmissionBatchId
 import java.time.Duration
+import java.time.Instant
 
 sealed interface CoordinationQueueMessage {
     val streamRecordId: String
@@ -59,4 +60,16 @@ fun interface CoordinationEventProcessor {
         eventType: String,
         batchId: SubmissionBatchId,
     )
+
+    fun processDelivery(
+        eventType: String,
+        batchId: SubmissionBatchId,
+        claim: OutboxProcessingClaim,
+    ) = process(eventType, batchId)
 }
+
+/** A durable continuation, not an unexpected processor failure or permission to reset its budget. */
+class CoordinationRetryScheduled(
+    val nextAttemptAt: Instant,
+    val failureKind: String,
+) : RuntimeException("Coordination retry scheduled")

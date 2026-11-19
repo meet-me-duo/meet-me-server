@@ -16,12 +16,12 @@ object AnalysisInvocationBudget {
         structural: Boolean,
     ): Boolean =
         policyVersion == AnalysisInvocation.POLICY_VERSION ||
-            (structural && policyVersion == AnalysisInvocation.C5_POLICY_VERSION)
+            (structural && policyVersion in setOf(AnalysisInvocation.C5_POLICY_VERSION, AnalysisInvocation.STREAM_POLICY_VERSION))
 
     fun lunaCallTimeout(policyVersion: String): Duration =
         when (policyVersion) {
             AnalysisInvocation.POLICY_VERSION -> LUNA_CALL_TIMEOUT
-            AnalysisInvocation.C5_POLICY_VERSION -> C5_LUNA_CALL_TIMEOUT
+            AnalysisInvocation.C5_POLICY_VERSION, AnalysisInvocation.STREAM_POLICY_VERSION -> C5_LUNA_CALL_TIMEOUT
             else -> throw IllegalArgumentException("Unsupported analysis execution policy")
         }
 }

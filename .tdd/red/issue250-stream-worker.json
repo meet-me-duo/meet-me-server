@@ -1,0 +1,36 @@
+{
+  "workItem": "issue250-stream-worker",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/CoordinationStreamRetryWorkerContractTest.kt",
+      "sha256": "a69f32ac416186a809111f85240ce6059b9ab67ce72ee585050d525a7fe3d82b"
+    }
+  ],
+  "command": [
+    "sh",
+    "./gradlew",
+    "--no-daemon",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*CoordinationStreamRetryWorkerContractTest",
+    "--tests",
+    "*StreamRetryInvocationPostgresContractTest"
+  ],
+  "failedTests": [
+    "SR15 one unexpected failure after expected continuations is not five poison failures()",
+    "SR11 stale successful worker cannot acknowledge a newer owner's delivery()",
+    "SR01 known provider retry persists its due time and leaves the delivery unacknowledged()",
+    "SR14 early Redis delivery before Relay commits publication remains unacknowledged()",
+    "SR08 retry persistence failure cannot acknowledge the message()",
+    "SR14 active lease delivery remains unacknowledged and never invokes the processor()",
+    "SR15 expected retry on fifth delivery does not become a poison message()",
+    "SR07 acknowledged success follows durable fenced completion()",
+    "SR11 rejected retry ownership cannot acknowledge the message()",
+    "SR11 stale unexpected failure cannot advance another consumer's failure counter or acknowledge()",
+    "SR07 completion write failure cannot acknowledge the message()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T03:18:58.809466Z"
+}

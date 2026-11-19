@@ -1,0 +1,90 @@
+{
+  "workItem": "issue250-current-migration-expectations",
+  "recordedAt": "2026-11-19T03:44:56.080563+00:00",
+  "scope": "Independent search of all Kotlin33 occurrences; current-latest migration assertions advance to34 only. Explicit historicalV33 and non-migration33 values remain unchanged.",
+  "tests": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/CorePersistenceIntegrationTest.kt",
+      "beforeSha256": "268cfabe492630e9a23322b784450aec2f3a79bf66dcf3bbdb2a905c3dcf09bc",
+      "afterSha256": "073e9c7ca558ed8103f6bebcf26e8b341bcef03c44adbb7bbff7b511930b74af",
+      "classification": "Current unbounded Flyway latest expectation only; no production or historical target changes",
+      "replacements": [
+        {
+          "from": "            \"33\",",
+          "to": "            \"34\",",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/submission/adapter/output/persistence/ScheduleIrRepositoryPostgresTest.kt",
+      "beforeSha256": "1546bfe24e1644315326634145a383d6abf260095ae9fcc4e4ea4edf6d376ecb",
+      "afterSha256": "4c2fe6c50cddd3b1b60dca035311bc5773430f05ddf378fbdb2a97332f12e456",
+      "classification": "Current unbounded Flyway latest expectation only; no production or historical target changes",
+      "replacements": [
+        {
+          "from": "assertEquals(33, migrations.applied().size)",
+          "to": "assertEquals(34, migrations.applied().size)",
+          "count": 1
+        },
+        {
+          "from": "assertEquals(\"33\", migrations.current()!!.version.version)",
+          "to": "assertEquals(\"34\", migrations.current()!!.version.version)",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/ScheduleIrIntegrationPostgresTest.kt",
+      "beforeSha256": "c5ea67d51de001e9a9c97a513ba1e174ba868794c7f2448a5a1304ac02d4fac1",
+      "afterSha256": "d98d93cdef7449be943171f5674a0a12698feb162159036fd9e763b270d86949",
+      "classification": "Current unbounded Flyway latest expectation only; no production or historical target changes",
+      "replacements": [
+        {
+          "from": "            \"33\",",
+          "to": "            \"34\",",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/precheck/adapter/output/persistence/PrecheckClassificationSnapshotPostgresTest.kt",
+      "beforeSha256": "c70fc6e7f82b6954b75a964655049bfcbe668bfec14ec1e2b8a1410694c92a30",
+      "afterSha256": "ddf88fe57646ba36473982ac03af6da95743a432a350c5d9fe4fd3519a4f811c",
+      "classification": "Current unbounded Flyway latest expectation only; no production or historical target changes",
+      "replacements": [
+        {
+          "from": "assertEquals(1, flyway().migrate().migrationsExecuted)",
+          "to": "assertEquals(2, flyway().migrate().migrationsExecuted)",
+          "count": 1
+        },
+        {
+          "from": "            \"33\",",
+          "to": "            \"34\",",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/persistence/ApprovedTermsFinalAnalysisRoutePostgresTest.kt",
+      "beforeSha256": "894a3ee0d3f9a1e483446939c90fce50241e2c73795ed2d69305ff5454da9a18",
+      "afterSha256": "e260916fcb52af29f31b0eb48df7e4853f83ac3c24404a58d86b8589ff5e4f2a",
+      "classification": "Current unbounded Flyway latest expectation only; no production or historical target changes",
+      "replacements": [
+        {
+          "from": "assertEquals(33, jdbc.queryForObject(\"SELECT max(version::int) FROM flyway_schema_history WHERE success\", Int::class.java))",
+          "to": "assertEquals(34, jdbc.queryForObject(\"SELECT max(version::int) FROM flyway_schema_history WHERE success\", Int::class.java))",
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "historicalPreserved": [
+    "IntegratedLegacyUpgradePostgresTest history version33/scriptV33 exact assertions",
+    "StreamRetryOutboxPostgresContractTest explicit Flyway target33 baseline",
+    "PrecheckClassificationSnapshotPostgresTest explicit target32 setup and all business preservation/unknown checks",
+    "RecommendationPartialConfirmationMigrationPostgresTest PC06 owned by another designer: no edits here"
+  ],
+  "notExecuted": "No Gradle launched by this agent; parent owns focused and full execution",
+  "beforeCopies": ".codex/tdd-evidence/issue250-current-schema-before"
+}

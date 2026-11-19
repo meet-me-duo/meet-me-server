@@ -165,6 +165,9 @@ object PersistenceMappers {
             domain.deliveryCount,
             domain.lastFailureKind,
             domain.deadLetteredAt?.atOffset(ZoneOffset.UTC),
+            domain.nextAttemptAt?.atOffset(ZoneOffset.UTC),
+            domain.lastAttemptAt?.atOffset(ZoneOffset.UTC),
+            domain.unexpectedFailures,
         )
 
     fun toDomain(record: OutboxEventRecord): OutboxEvent =
@@ -182,6 +185,9 @@ object PersistenceMappers {
             record.deliveryCount,
             record.lastFailureKind,
             record.deadLetteredAt?.toInstant(),
+            record.nextAttemptAt?.toInstant(),
+            record.lastAttemptAt?.toInstant(),
+            record.unexpectedFailures,
         )
 }
 

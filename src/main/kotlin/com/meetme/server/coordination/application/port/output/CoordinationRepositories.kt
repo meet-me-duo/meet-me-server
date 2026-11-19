@@ -106,12 +106,17 @@ data class OutboxEvent(
     val deliveryCount: Int = 0,
     val lastFailureKind: String? = null,
     val deadLetteredAt: Instant? = null,
+    val nextAttemptAt: Instant? = null,
+    val lastAttemptAt: Instant? = null,
+    val unexpectedFailures: Int = 0,
 ) {
     init {
         require(aggregateType.isNotBlank())
         require(eventType.isNotBlank())
         require(payload.isNotBlank())
         require(deliveryCount >= 0)
+        require(unexpectedFailures >= 0)
+        require(nextAttemptAt == null || status == OutboxStatus.PUBLISHED)
         when (status) {
             OutboxStatus.PENDING -> {
                 require(publishedAt == null && processedAt == null && deadLetteredAt == null)
@@ -133,7 +138,7 @@ data class OutboxEvent(
 
     fun processed(at: Instant): OutboxEvent {
         check(status == OutboxStatus.PUBLISHED) { "Only a published event can be processed" }
-        return copy(status = OutboxStatus.PROCESSED, processedAt = at, processingLeaseUntil = null)
+        return copy(status = OutboxStatus.PROCESSED, processedAt = at, processingLeaseUntil = null, nextAttemptAt = null)
     }
 
     fun failed(failureKind: String): OutboxEvent {
@@ -153,6 +158,7 @@ data class OutboxEvent(
             processingLeaseUntil = null,
             lastFailureKind = failureKind,
             deadLetteredAt = at,
+            nextAttemptAt = null,
         )
     }
 
@@ -164,6 +170,9 @@ data class OutboxEvent(
             processedAt = null,
             processingLeaseUntil = null,
             deliveryCount = 0,
+            unexpectedFailures = 0,
+            nextAttemptAt = null,
+            lastAttemptAt = null,
             lastFailureKind = null,
             deadLetteredAt = null,
         )
@@ -192,6 +201,9 @@ interface OutboxRepository {
     ): Boolean
 
     fun findPendingForUpdate(limit: Int): List<OutboxEvent>
+
+    fun findPendingByIdForUpdate(eventId: OutboxEventId): OutboxEvent? =
+        throw UnsupportedOperationException("Targeted pending claim is not implemented")
 
     fun markPublished(
         eventId: OutboxEventId,
@@ -223,6 +235,29 @@ interface OutboxRepository {
         eventId: OutboxEventId,
         failureKind: String,
     )
+
+    fun recordUnexpectedFailure(
+        claim: OutboxProcessingClaim,
+        failureKind: String,
+    ): Int? = claim.deliveryCount
+
+    /** The claim delivery number fences an old consumer after a later claim. */
+    fun completeClaim(
+        claim: OutboxProcessingClaim,
+        at: Instant,
+    ): Boolean {
+        markProcessed(claim.event.id, at)
+        return true
+    }
+
+    fun scheduleRetry(
+        claim: OutboxProcessingClaim,
+        failureKind: String,
+        nextAttemptAt: Instant,
+    ): Boolean {
+        releaseAfterFailure(claim.event.id, failureKind)
+        return true
+    }
 
     fun markDeadLettered(
         eventId: OutboxEventId,

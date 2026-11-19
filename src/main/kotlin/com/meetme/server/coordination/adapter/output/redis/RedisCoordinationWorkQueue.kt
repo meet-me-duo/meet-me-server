@@ -32,6 +32,8 @@ class RedisCoordinationWorkQueue(
     private val properties: ReliabilityProperties,
     private val clock: Clock,
 ) : CoordinationWorkQueuePort {
+    private var pendingCursor: String? = null
+
     override fun publish(event: OutboxEvent) {
         ensureConsumerGroup()
         val payload = objectMapper.readTree(event.payload)
@@ -57,6 +59,7 @@ class RedisCoordinationWorkQueue(
             .map { record -> record.value.toMessage(record.id.value, 1) }
     }
 
+    @Synchronized
     override fun claimStale(
         minIdleTime: Duration,
         limit: Int,
@@ -66,10 +69,11 @@ class RedisCoordinationWorkQueue(
             stream().pending(
                 properties.streamKey,
                 properties.consumerGroup,
-                Range.unbounded<String>(),
+                pendingCursor?.let { Range.from(Range.Bound.exclusive(it)).to(Range.Bound.unbounded()) } ?: Range.unbounded<String>(),
                 limit.toLong(),
                 minIdleTime,
             )
+        pendingCursor = if (pending.count() < limit) null else pending.lastOrNull()?.idAsString
         if (pending.isEmpty) return emptyList()
         val deliveries = pending.associate { it.idAsString to (it.totalDeliveryCount + 1).toInt() }
         val ids: Array<RecordId> =

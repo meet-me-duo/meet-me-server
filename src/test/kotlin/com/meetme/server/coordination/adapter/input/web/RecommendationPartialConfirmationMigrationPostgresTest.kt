@@ -1,9 +1,11 @@
 package com.meetme.server.coordination.adapter.input.web
 
 import com.meetme.server.coordination.adapter.output.persistence.HistoricalCoordinationRunRepository
+import com.meetme.server.coordination.adapter.output.persistence.HistoricalOutboxRepository
 import com.meetme.server.coordination.adapter.output.persistence.HistoricalRecommendationRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.OperatorReanalysisCommandPort
+import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.shared.domain.CoordinationRunId
 import com.meetme.server.submission.adapter.output.persistence.HistoricalSubmissionRepository
@@ -58,6 +60,8 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
 
     @Autowired private lateinit var historicalRecommendations: HistoricalRecommendationRepository
 
+    @Autowired private lateinit var historicalOutbox: HistoricalOutboxRepository
+
     @Autowired private lateinit var partialStructured: StructuredSubmissionRepository
 
     @Autowired private lateinit var partialRuns: CoordinationRunRepository
@@ -102,14 +106,15 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
         verifyPendingSelection(pending, pendingOption)
         assertEquals(before, snapshot(), "The successful V18 guard probe is rolled back without creating a selection")
 
-        // Upgrade to the current V33 schema only after the historical V18 proof is complete.
+        // Upgrade to the current V34 schema only after the historical V18 proof is complete.
         val current = flyway()
         current.migrate()
         current.validate()
-        assertEquals("33", currentVersion())
+        assertEquals("34", currentVersion())
         historicalSubmissions.useCurrentSchema()
         historicalRecommendations.useCurrentSchema()
         historicalRuns.useCurrentSchema()
+        historicalOutbox.useCurrentSchema()
         assertEquals(0, jdbc.queryForObject("SELECT count(*) FROM candidate_participants WHERE place_unverified", Int::class.java))
         assertEquals(
             0,
@@ -184,6 +189,12 @@ class RecommendationPartialConfirmationMigrationPostgresTest : RecommendationPos
 
     @TestConfiguration(proxyBeanMethods = false)
     class HistoricalStoragePhase {
+        @Bean @Primary
+        fun historicalOutboxRepository(
+            jdbc: JdbcTemplate,
+            @Qualifier("komapperOutboxRepository") current: OutboxRepository,
+        ): HistoricalOutboxRepository = HistoricalOutboxRepository(jdbc, current)
+
         @Bean @Primary
         fun historicalRecommendationRepository(
             jdbc: JdbcTemplate,

@@ -1,0 +1,44 @@
+{
+  "workItem": "issue250-after-commit-dispatch",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/OutboxCommitListenerContractTest.kt",
+      "sha256": "5eb0f647899097d7974c583b351e2e455d31091cd193c2da98888c14f05d7352"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/OutboxAfterCommitPostgresContractTest.kt",
+      "sha256": "5f1a04cb531fd2697847918b52f52e80f21990ab48aa88da86c773ba79b71564"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*OutboxCommitListenerContractTest",
+    "--tests",
+    "*OutboxCommitConfigurationContractTest",
+    "--tests",
+    "*OutboxAfterCommitPostgresContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "OC05 slow Redis task cannot hold the original transaction commit response()",
+    "OC03 Redis failure preserves the committed Pending record and polling later recovers it()",
+    "OC08 targeted after-commit publication reaches a real Redis Stream and commits Published()",
+    "OC01 central Pending insert submits one wake-up only after commit for either event family(String) > [1] eventType = \"SubmissionBatchStructuringRequested\"",
+    "OC01 central Pending insert submits one wake-up only after commit for either event family(String) > [2] eventType = \"SubmissionBatchMatchingRequested\"",
+    "OC09 targeted relay commits independently of an enclosing transaction rollback()",
+    "OC01 explicit requeue emits a new commit wake-up through the same repository boundary()",
+    "OC04 concurrent immediate publication and polling share one row lock and publish once(boolean) > [1] listenerFirst = true",
+    "OC04 concurrent immediate publication and polling share one row lock and publish once(boolean) > [2] listenerFirst = false",
+    "OC01 task submission occurs after the actual Spring commit phase()",
+    "OC03 Published write failure rolls back the relay transaction while allowing duplicate Redis delivery on recovery()",
+    "OC05 executor rejection cannot escape the after commit handler()",
+    "OC05 publication failure inside the submitted task is isolated from its executor()",
+    "OC01 committed notification only submits work and the task invokes the targeted relay()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T05:14:26.462145Z"
+}

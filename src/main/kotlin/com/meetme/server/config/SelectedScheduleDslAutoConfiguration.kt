@@ -241,6 +241,7 @@ class SelectedScheduleDslAutoConfiguration {
         structuralEnvelopes: ScheduleDslStructuralRepository,
         contextModeParser: ScheduleDslContextModeResponseParser,
         structuralParser: ScheduleDslStructuralResponseParser,
+        outbox: OutboxRepository,
     ): SelectedScheduleDslProcessingPersistenceService =
         SelectedScheduleDslProcessingPersistenceService(
             runs,
@@ -258,6 +259,7 @@ class SelectedScheduleDslAutoConfiguration {
             contextModeParser,
             structuralEnvelopes,
             structuralParser,
+            outbox,
         )
 
     @Bean

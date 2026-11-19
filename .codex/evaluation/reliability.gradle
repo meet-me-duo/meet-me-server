@@ -1,0 +1,15 @@
+allprojects { p ->
+    p.afterEvaluate {
+        p.tasks.register('portfolioReliabilityTest', Test) {
+            testClassesDirs = p.sourceSets.test.output.classesDirs
+            classpath = p.sourceSets.test.runtimeClasspath
+            useJUnitPlatform()
+            filter { includeTestsMatching('*.Portfolio*ExperimentTest') }
+            systemProperty 'portfolio.run', 'true'
+            systemProperty 'portfolio.results', (System.getProperty('portfolio.results') ?: p.layout.buildDirectory.dir('portfolio-results').get().asFile.absolutePath)
+            systemProperty 'portfolio.classpath', p.sourceSets.test.runtimeClasspath.asPath
+            maxHeapSize = '1g'
+            outputs.upToDateWhen { false }
+        }
+    }
+}

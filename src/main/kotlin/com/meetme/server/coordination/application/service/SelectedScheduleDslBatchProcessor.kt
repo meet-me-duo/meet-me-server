@@ -4,9 +4,11 @@ import com.meetme.server.coordination.application.port.output.AnalysisInvocation
 import com.meetme.server.coordination.application.port.output.AnalysisInvocationBudget
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
+import com.meetme.server.coordination.application.port.output.CoordinationRetryScheduled
 import com.meetme.server.coordination.application.port.output.JitterPort
 import com.meetme.server.coordination.application.port.output.MonotonicTimePort
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
+import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.application.port.output.RetryDelayPort
 import com.meetme.server.coordination.application.port.output.ScheduleDslProviderResponse
@@ -34,6 +36,17 @@ class SelectedScheduleDslBatchProcessor(
         executionDeadlineNanos: Long,
     ) = processSelected(batchId, executionDeadlineNanos, false)
 
+    fun processQueuedBounded(
+        batchId: SubmissionBatchId,
+        executionDeadlineNanos: Long,
+    ) = processSelected(batchId, executionDeadlineNanos, false, true)
+
+    fun processQueuedDeliveryBounded(
+        batchId: SubmissionBatchId,
+        executionDeadlineNanos: Long,
+        claim: OutboxProcessingClaim,
+    ) = processSelected(batchId, executionDeadlineNanos, false, true, claim)
+
     /** Explicit direct provider evaluation only; never registered as the default worker route. */
     fun processLunaOnlyBounded(
         batchId: SubmissionBatchId,
@@ -44,16 +57,22 @@ class SelectedScheduleDslBatchProcessor(
         batchId: SubmissionBatchId,
         executionDeadlineNanos: Long,
         lunaOnly: Boolean,
+        queueDelivery: Boolean = false,
+        claim: OutboxProcessingClaim? = null,
     ) {
         val requestedDeadline = minOf(executionDeadlineNanos, monotonicTime.nanoTime() + AnalysisInvocationBudget.TOTAL_TIMEOUT.toNanos())
         val run = persistence.start(batchId) ?: return
         val admissionNanos = monotonicTime.nanoTime()
         val admitted =
-            if (lunaOnly) {
-                persistence.admitLunaOnly(run, UUID.randomUUID(), remaining(requestedDeadline))
-            } else {
-                persistence.admit(run, UUID.randomUUID(), remaining(requestedDeadline))
-            } ?: return
+            (
+                if (queueDelivery) {
+                    persistence.admitQueued(run, UUID.randomUUID(), remaining(requestedDeadline))
+                } else if (lunaOnly) {
+                    persistence.admitLunaOnly(run, UUID.randomUUID(), remaining(requestedDeadline))
+                } else {
+                    persistence.admit(run, UUID.randomUUID(), remaining(requestedDeadline))
+                }
+            ) ?: return
         val binding = admitted.binding
         val policyVersion = binding.invocation.policyVersion
         if (!AnalysisInvocationBudget.isAllowedPolicy(policyVersion, binding.route.choice is FinalAnalysisRouteChoice.DslStructuralV5)) {
@@ -61,7 +80,9 @@ class SelectedScheduleDslBatchProcessor(
             return
         }
         val deadline =
-            if (policyVersion == AnalysisInvocation.C5_POLICY_VERSION) {
+            if (policyVersion == AnalysisInvocation.STREAM_POLICY_VERSION) {
+                minOf(requestedDeadline, monotonicTime.nanoTime() + persistence.remainingBudget(binding).toNanos())
+            } else if (policyVersion == AnalysisInvocation.C5_POLICY_VERSION) {
                 minOf(
                     requestedDeadline,
                     admissionNanos + Duration.between(binding.invocation.startedAt, binding.invocation.deadlineAt).toNanos(),
@@ -73,8 +94,15 @@ class SelectedScheduleDslBatchProcessor(
             deadline - AnalysisInvocationBudget.PRIMARY_PHASE_RESERVE.toNanos()
         val fallbackDeadline = deadline - AnalysisInvocationBudget.COMPLETION_RESERVE.toNanos()
 
+        fun current(): Boolean {
+            val valid = persistence.isCurrent(binding)
+            // The persistence fence still rejects stale owners; an expired current run must terminate before ACK.
+            if (!valid && queueDelivery) persistence.delay(binding)
+            return valid
+        }
+
         fun delay() {
-            if (persistence.isCurrent(binding)) persistence.delay(binding)
+            if (queueDelivery || current()) persistence.delay(binding)
         }
 
         fun call(
@@ -82,7 +110,7 @@ class SelectedScheduleDslBatchProcessor(
             port: SelectedScheduleDslProviderPort,
             phaseDeadline: Long,
         ): Outcome? {
-            if (!persistence.isCurrent(binding)) return null
+            if (!current()) return null
             val started =
                 if (policyVersion == AnalysisInvocation.C5_POLICY_VERSION) {
                     admissionNanos + Duration.between(binding.invocation.startedAt, attempt.startedAt).toNanos()
@@ -119,22 +147,22 @@ class SelectedScheduleDslBatchProcessor(
 
         fun publish(outcome: Outcome) {
             val response = requireNotNull(outcome.response)
-            if (!persistence.isCurrent(binding)) return
+            if (!current()) return
             if (monotonicTime.nanoTime() >= fallbackDeadline) {
                 persistence.fail(binding, outcome.attempt, ParserFailureKind.TIMEOUT, response.usage)
                 return
             }
             try {
                 if (persistence.completeDsl(binding, outcome.attempt, response) { monotonicTime.nanoTime() < deadline }) return
-                if (persistence.isCurrent(binding)) persistence.fail(binding, outcome.attempt, ParserFailureKind.TIMEOUT, response.usage)
+                if (current()) persistence.fail(binding, outcome.attempt, ParserFailureKind.TIMEOUT, response.usage)
             } catch (failure: NaturalLanguageParserException) {
-                if (persistence.isCurrent(binding)) persistence.fail(binding, outcome.attempt, failure.kind, response.usage)
+                if (current()) persistence.fail(binding, outcome.attempt, failure.kind, response.usage)
             }
         }
 
-        if (lunaOnly) {
+        if (lunaOnly || admitted.attempt.provider == AnalysisProvider.OPENAI) {
             val outcome = call(admitted.attempt, luna, fallbackDeadline) ?: return
-            if (!persistence.isCurrent(binding)) return
+            if (!current()) return
             if (outcome.failure == null) {
                 publish(outcome)
             } else {
@@ -144,9 +172,10 @@ class SelectedScheduleDslBatchProcessor(
         }
 
         var attempt = admitted.attempt
-        for (index in 0 until 4) {
+        val firstIndex = if (queueDelivery) (binding.invocation.geminiAttempts - 1).coerceAtLeast(0) else 0
+        for (index in firstIndex until 4) {
             val outcome = call(attempt, gemini, primaryDeadline) ?: return
-            if (!persistence.isCurrent(binding)) return
+            if (!current()) return
             val failure = outcome.failure
             if (failure == null) {
                 publish(outcome)
@@ -156,29 +185,60 @@ class SelectedScheduleDslBatchProcessor(
                 persistence.fail(binding, attempt, failure.kind, outcome.response?.usage)
                 return
             }
+            if (queueDelivery) {
+                if (remaining(fallbackDeadline).toMillis() < 1) {
+                    persistence.fail(binding, attempt, failure.kind, outcome.response?.usage)
+                    return
+                }
+                var nextProvider = AnalysisProvider.OPENAI
+                var nextDelay = Duration.ZERO
+                if (failure.kind != ParserFailureKind.TIMEOUT && index < 3 && remaining(primaryDeadline).toMillis() >= 1) {
+                    val upper = 1000L shl index
+                    val candidate = Duration.ofMillis(failure.retryAfterMillis?.takeIf { it >= 0 } ?: jitter.nextLong(upper + 1))
+                    if (candidate < remaining(primaryDeadline)) {
+                        nextProvider = AnalysisProvider.GEMINI
+                        nextDelay = candidate
+                    }
+                }
+                val nextAt =
+                    if (claim == null) {
+                        persistence.scheduleAttempt(binding, attempt, failure.kind, nextProvider, nextDelay, outcome.response?.usage)
+                    } else {
+                        persistence.scheduleDelivery(
+                            binding,
+                            attempt,
+                            failure.kind,
+                            nextProvider,
+                            nextDelay,
+                            outcome.response?.usage,
+                            claim,
+                        )
+                    }
+                throw CoordinationRetryScheduled(nextAt, failure.kind.name)
+            }
             persistence.failAttempt(binding, attempt, failure.kind, outcome.response?.usage)
             if (failure.kind == ParserFailureKind.TIMEOUT) break
             if (index == 3 || remaining(primaryDeadline).toMillis() < 1) break
             val upper = 1000L shl index
             val sleep = Duration.ofMillis(failure.retryAfterMillis?.takeIf { it >= 0 } ?: jitter.nextLong(upper + 1))
             if (sleep >= remaining(primaryDeadline)) break
-            if (!persistence.isCurrent(binding)) return
+            if (!current()) return
             retryDelay.sleep(sleep)
-            if (!persistence.isCurrent(binding)) return
+            if (!current()) return
             attempt = persistence.admitAttempt(binding, AnalysisProvider.GEMINI) ?: break
         }
         if (remaining(fallbackDeadline).toMillis() < 1) {
             delay()
             return
         }
-        if (!persistence.isCurrent(binding)) return
+        if (!current()) return
         val fallbackAttempt = persistence.admitAttempt(binding, AnalysisProvider.OPENAI)
         if (fallbackAttempt == null) {
             delay()
             return
         }
         val outcome = call(fallbackAttempt, luna, fallbackDeadline) ?: return
-        if (!persistence.isCurrent(binding)) return
+        if (!current()) return
         if (outcome.failure == null) {
             publish(outcome)
         } else {

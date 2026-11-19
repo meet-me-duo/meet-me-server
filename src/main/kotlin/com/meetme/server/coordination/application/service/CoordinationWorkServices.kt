@@ -4,6 +4,7 @@ import com.meetme.server.config.ReliabilityProperties
 import com.meetme.server.coordination.application.port.output.CoordinationEventProcessor
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
 import com.meetme.server.coordination.application.port.output.CoordinationWorkQueuePort
+import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.application.port.output.OutboxStatus
 import com.meetme.server.meetingroom.application.service.CollectionClosureService
@@ -27,6 +28,16 @@ class CoordinationEventDispatcher(
     private val matchingProcessor: MatchingProcessor,
     private val selectedDispatcher: SelectedFinalAnalysisDispatchService? = null,
 ) : CoordinationEventProcessor {
+    override fun processDelivery(
+        eventType: String,
+        batchId: SubmissionBatchId,
+        claim: OutboxProcessingClaim,
+    ) {
+        require(eventType in setOf(CollectionClosureService.STRUCTURING_REQUESTED, CollectionClosureService.MATCHING_REQUESTED))
+        if (selectedDispatcher?.dispatchDeliveryIfSelected(batchId, claim) == true) return
+        process(eventType, batchId)
+    }
+
     override fun process(
         eventType: String,
         batchId: SubmissionBatchId,
@@ -56,6 +67,21 @@ class CoordinationDeadLetterPersistence(
         failureKind: String,
         deliveryCount: Int,
     ) {
+        persistOwned(eventId, failureKind, deliveryCount, null)
+    }
+
+    @Transactional
+    override fun persistClaim(
+        claim: OutboxProcessingClaim,
+        failureKind: String,
+    ): Boolean = persistOwned(claim.event.id, failureKind, claim.deliveryCount, claim)
+
+    private fun persistOwned(
+        eventId: OutboxEventId,
+        failureKind: String,
+        deliveryCount: Int,
+        claim: OutboxProcessingClaim?,
+    ): Boolean {
         val event = requireNotNull(outboxRepository.findById(eventId)) { "Outbox event does not exist" }
         val run =
             requireNotNull(coordinationRunRepository.findById(CoordinationRunId(event.aggregateId))) {
@@ -63,9 +89,24 @@ class CoordinationDeadLetterPersistence(
             }
         val failedAt = clock.instant()
         val locked = ActiveRunLock.acquire(roomRepository, coordinationRunRepository, run)
+        if (claim != null) {
+            val owned =
+                jdbcTemplate
+                    .queryForList(
+                        "SELECT status, delivery_count, processing_lease_until FROM outbox_events WHERE id = ? FOR UPDATE",
+                        eventId.value,
+                    ).singleOrNull()
+            if (owned == null ||
+                owned["status"] != "PUBLISHED" ||
+                (owned["delivery_count"] as? Number)?.toInt() != claim.deliveryCount ||
+                owned["processing_lease_until"] == null
+            ) {
+                return false
+            }
+        }
         if (locked == null || locked.second.status !in ACTIVE_STATUSES) {
             if (event.status == OutboxStatus.PUBLISHED) outboxRepository.markProcessed(eventId, failedAt)
-            return
+            return true
         }
         coordinationRunRepository.update(locked.second.deadLetter())
         roomRepository.update(locked.first.transition())
@@ -84,6 +125,7 @@ class CoordinationDeadLetterPersistence(
             deliveryCount,
             failedAt.atOffset(ZoneOffset.UTC),
         )
+        return true
     }
 
     @Transactional
@@ -166,7 +208,7 @@ class CoordinationWorkerScheduler(
     fun consume() {
         runCatching {
             workQueue.readNew(properties.pollBatchSize).forEach(worker::process)
-            workQueue.claimStale(properties.pendingMinIdle, properties.pollBatchSize).forEach(worker::process)
+            workQueue.claimStale(properties.retryPollMinIdle, properties.pollBatchSize).forEach(worker::process)
         }.onFailure {
             logger.warn("coordination_worker_poll_failed failure_kind={}", it::class.simpleName)
         }
