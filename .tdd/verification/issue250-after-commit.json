@@ -1,0 +1,30 @@
+{
+  "workItem": "issue250-after-commit-dispatch",
+  "state": "FINAL_LOCAL_QUALITY_GATE_PASS",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testDesigner": "/root/stream_retry_contract_tests",
+  "implementer": "/root",
+  "newTests": 23,
+  "focusedTests": 49,
+  "independentMutantsDetected": 5,
+  "restoredIndependentTestsPassed": 23,
+  "finalWholeQualityGate": {
+    "tests": 5157,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 43,
+    "suites": 576,
+    "passed": 5114
+  },
+  "sourceFingerprintUnchanged": true,
+  "localTestHeapMiB": 1024,
+  "aborted512MiBAttempt": "GC saturation; log preserved; no assertion failure claimed as pass",
+  "ciHeapUnchanged": true,
+  "command": "./gradlew ktlintCheck assemble test --console=plain",
+  "recordedAt": "2026-11-19T06:29:56.334640+00:00",
+  "qualifications": [
+    "The prior 1200 crash events and 300 retry events belong to the earlier common recovery/stream-retry phase, not an AFTER_COMMIT fast-path crash experiment.",
+    "No paid model invocation, production rollout, DB-load reduction or exactly-once provider claim.",
+    "Boot executor isolation is additional regression/mutation coverage, not retroactively asserted RED."
+  ]
+}

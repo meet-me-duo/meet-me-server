@@ -1,0 +1,199 @@
+{
+  "workItem": "issue250-v34-release-catalog",
+  "state": "FOCUSED_AND_NODE_PASS_CURRENT_FULL_PYTHON_HAS_TWO_TIMEOUTS_BOTH_FOCUSED_RECHECK_PASS",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "recordedAt": "2026-11-19T03:34:06.794426+00:00",
+  "scope": "Exact additive V34 release catalog and current-only inventory expectations; historical SQL/readers/archives and release authority preserved. No deployment.",
+  "roleSeparation": {
+    "testDesigner": "/root/stream_retry_release_contracts",
+    "catalogImplementer": "/root/stream_retry_release_contracts",
+    "independentReview": "/root reviewed exact additive V34 catalogs/names and additive CI step; no authority, timeout, historical catalog or checksum checks removed"
+  },
+  "sourceFiles": [
+    {
+      "path": ".github/scripts/ci-job-boundaries.test.cjs",
+      "sha256": "d2cd8b06317019b1cef8a7054da79cc06c321b66ab00b99f6dfa37e4f1f7ed39"
+    },
+    {
+      "path": ".github/scripts/fixtures/integrated-release-catalog.cjs",
+      "sha256": "a95706812d782b4ecbf65d5e769fb994d3ffd8622b8bf6a0a5041441286c2bcb"
+    },
+    {
+      "path": ".github/scripts/v18-release-catalog.test.cjs",
+      "sha256": "827411ca903abdd830942f3755943406eb18eaf7295d5a9282688a7137d29e47"
+    },
+    {
+      "path": ".github/scripts/v19-review-release-catalog.test.cjs",
+      "sha256": "67d4663991455ea1694dffc11320e48027859ad3cb93065b5b0d76718a4c1d4f"
+    },
+    {
+      "path": ".github/scripts/v20-account-room-index-release-catalog.test.cjs",
+      "sha256": "799b7064667ddd51e9e7cf223d483f5b5b47f2d8e9bd75a77646c05755e12892"
+    },
+    {
+      "path": ".github/scripts/v21-input-evidence-release-catalog.test.cjs",
+      "sha256": "b03138f6f7dc7bd11b68590b3e532098541238cd416c4b90b49b3cbc0cf11c8b"
+    },
+    {
+      "path": ".github/scripts/v22-conditional-place-release-catalog.test.cjs",
+      "sha256": "8d33df0b8e61ec2730cb2faea9dca23817f0cd1396bcf8be01e286a2051bbe2c"
+    },
+    {
+      "path": ".github/scripts/v23-account-room-hide-release-catalog.test.cjs",
+      "sha256": "a2847e0fd66fcf70ea8e7af8e4799b88995fb7ab4a58cac34c60c0084a11cdcc"
+    },
+    {
+      "path": ".github/scripts/v31-analysis-release-catalog.test.cjs",
+      "sha256": "56537fb6b19d84061812d99a628e0f123bb7c00999a7a0258cdc50ccea2819fd"
+    },
+    {
+      "path": ".github/scripts/v32-operator-reanalysis-release-catalog.test.cjs",
+      "sha256": "c2c85203a7258105192a9d3693b0cc68ccc9728bc314a46420a71252c2d9138e"
+    },
+    {
+      "path": ".github/scripts/v33-precheck-classification-release-catalog.test.cjs",
+      "sha256": "0bf2d2edc485dc063c6f1e0aa82b1b00667cf4e3accccd2ae5b5f6e04420b356"
+    },
+    {
+      "path": ".github/scripts/v34-stream-retry-release-catalog.test.cjs",
+      "sha256": "82bb76c82b69604f6e2366a473997ffab5771a76ce6b6bc9d33bebc613038743"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "sha256": "7e053f3ebbb8a2c55df6f43c0eb141dc98d8d41d95edc5617c8031cb03193280"
+    },
+    {
+      "path": "deploy/pipeline/approved_release.py",
+      "sha256": "7dad3f0002d9f069448a406352f4300223f6fb39f18f9248e3ddec0f84041f3b"
+    },
+    {
+      "path": "deploy/pipeline/host-approved-release.py",
+      "sha256": "e340480eb3e37688b3166e3a506c48f2fb420efa7b676bf1354f3a62e55afab4"
+    },
+    {
+      "path": "deploy/pipeline/publish_manifest.py",
+      "sha256": "c70d6446493d9943d2cfce20c0f801a271455d711730ae96ecf45c4d896b5a23"
+    },
+    {
+      "path": "deploy/tests/test_issue144_production_ai_deployment.py",
+      "sha256": "62fc173a5cfacbec25ff50d6e4e792f0e21b957afbc5ff0b8a23d6e1a788b4b8"
+    },
+    {
+      "path": "deploy/tests/test_issue154_state_reader_transport.py",
+      "sha256": "4f6de6323978badbe65e0853259967a0cea82b2955995d1c6638445dab13e4eb"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/DatabaseMigrationRunnerTest.kt",
+      "sha256": "d4d26ce95e5c67894da27f6877bbf9a4f5cc0a33045a4a4efa56ecf09d467504"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/shared/adapter/output/persistence/IntegratedLegacyUpgradePostgresTest.kt",
+      "sha256": "92619d1af787e2d982ceeb7016b587a29e313c0626255a57833dcd94f2545da8"
+    }
+  ],
+  "red": {
+    "summary": ".tdd/reviews/issue250-v34-release-red.json",
+    "raw": ".codex/tdd-evidence/issue250-v34-release-red.log",
+    "tests": 9,
+    "pass": 3,
+    "expectedBehavioralFailures": 6
+  },
+  "verification": [
+    {
+      "command": "JAVA_HOME=/workspace/.toolchains/jdk-17.0.21+9 PATH=/workspace/.toolchains/jdk-17.0.21+9/bin:$PATH node --test .github/scripts/*.test.cjs",
+      "tests": 240,
+      "passed": 240,
+      "failed": 0,
+      "durationSeconds": 69.239,
+      "log": ".codex/tdd-evidence/issue250-release-node-verified.log"
+    },
+    {
+      "command": "python3 -m unittest discover -s deploy/tests -p 'test_*.py'",
+      "tests": 437,
+      "passed": 436,
+      "failed": 1,
+      "durationSeconds": 634.797,
+      "log": ".codex/tdd-evidence/issue250-release-python-all.log",
+      "reason": "Current inventory digest count assertion still expected32 after publishedV33 digest added; only this outdated assertion failed. Correct expected historical/current lengths33/34, preserve all SQL SHA checks."
+    },
+    {
+      "command": "python3 -m unittest discover -s deploy/tests -p 'test_issue144_production_ai_deployment.py'",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "durationSeconds": 7.824,
+      "log": ".codex/tdd-evidence/issue250-release-python-publication-verified.log"
+    },
+    {
+      "command": "JAVA_HOME=/workspace/.toolchains/jdk-17.0.21+9 PATH=/workspace/.toolchains/jdk-17.0.21+9/bin:$PATH PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s deploy/tests -p 'test_*.py'",
+      "tests": 437,
+      "passed": 435,
+      "failed": 0,
+      "errors": 2,
+      "durationSeconds": 778.863,
+      "log": ".codex/tdd-evidence/issue250-release-python-verified.log",
+      "reason": "Two unchanged V8 host guard tests exceeded the original15-second installer subprocess deadline during concurrent Cloud work. No assertion failure; targeted retry underway, no production/test timeout changes."
+    },
+    {
+      "command": "JAVA_HOME=/workspace/.toolchains/jdk-17.0.21+9 PATH=/workspace/.toolchains/jdk-17.0.21+9/bin:$PATH PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s deploy/tests -p 'test_v8_release_guard.py' -k test_missing_policy_unapproved_or_malformed_digest_fails_before_aws -k test_new_unregistered_legacy_release_source_blocks_runtime_until_guarded",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "errors": 0,
+      "durationSeconds": 31.268,
+      "log": ".codex/tdd-evidence/issue250-release-python-guard-timeout-recheck.log",
+      "qualification": "Original installer15-second subprocess deadline, assertions, commands and source unchanged. This focused pass does not rewrite the two full-run timeout errors into a clean full-suite result."
+    }
+  ],
+  "initialEnvironmentLimit": "First Node run had2 standalone JDBC compile setup failures from missing JAVA_HOME. Proper configured JDK17 rerun passed21 affected checks and then entire240. No test behavior/timeout weakened.",
+  "mutations": {
+    "scope": "isolated repository copies; no live production mutation",
+    "results": [
+      {
+        "mutation": "publisher-omits-v34",
+        "test": "V34C02",
+        "detected": true,
+        "exit": 1
+      },
+      {
+        "mutation": "host-reader-omits-v34",
+        "test": "V34C03",
+        "detected": true,
+        "exit": 1
+      },
+      {
+        "mutation": "package-skips-crc",
+        "test": "V34C06",
+        "detected": true,
+        "exit": 1
+      },
+      {
+        "mutation": "ci-omits-v34-gate",
+        "test": "V34C09",
+        "detected": true,
+        "exit": 1
+      }
+    ]
+  },
+  "notRun": [
+    "ARM64 image build",
+    "production deployment",
+    "Kotlin migration tests: root owns single Gradle execution"
+  ],
+  "artifactPreservation": [
+    {
+      "generatedBy": "Offline release pipeline tests call _emit_inspection via reconcile_pipeline; only bounded synthetic projection",
+      "from": "recovery-inspection.json",
+      "preservedAt": "/workspace/artifacts/meetme-stream-retry-20261119/recovery-inspection-python-initial.json",
+      "sha256": "4776d352c75e8f2aa4ec43d84d989a0c14d980b0956c65b9eb1236e9206d7551"
+    },
+    {
+      "generatedBy": "deploy/tests/test_issue154_controller_audit.py execute() calls real execute_pipeline without private_cwd; _emit_inspection writes a bounded synthetic projection",
+      "from": "recovery-inspection.json",
+      "preservedAt": "/workspace/artifacts/meetme-stream-retry-20261119/recovery-inspection-python-final.json",
+      "sha256": "4776d352c75e8f2aa4ec43d84d989a0c14d980b0956c65b9eb1236e9206d7551"
+    }
+  ],
+  "qualification": "All240 Node checks passed together. All437 Python test identities passed across final435+focused2, but no clean437/437 single full execution is claimed. Initial source inventory assertion fix and later unchanged installer timing errors remain preserved separately.",
+  "independentReviewAt": "2026-11-19T03:38:13.351880+00:00"
+}

@@ -409,7 +409,7 @@ Redis 도입, Redis Streams를 통한 비동기 작업 전달과 제출 MVP 공�
 
 Gemini의 제한된 기술적 재시도 소진은 poison message가 아니라 `ANALYSIS_DELAYED` 전이 경로다. Worker는 PostgreSQL에 방 전체 배치의 실패 분류와 시도 메타데이터를 기록하되 매칭을 시작하지 않고 원본 Stream 메시지를 ACK한다. 이 실패는 지표와 구조화 로그로 관측하며 Redis DLQ에는 넣지 않는다. 제출 MVP에서는 예상하지 못한 AI 비용과 장애 중 재시도 폭주를 피하기 위해 `ANALYSIS_DELAYED` 자동 재시도를 하지 않는다. 주최자의 방 단위 재분석 요청만 같은 고정 배치를 참조하는 새 Outbox 이벤트를 멱등하게 만든다.
 
-Redis DLQ는 역직렬화 실패, 존재하지 않는 참조, 반복되는 불변식 위반 또는 같은 메시지에서 Worker가 계속 중단되는 poison message에만 사용한다. 첫 전달을 포함해 동일 메시지의 처리가 총 5회 실패하면 PostgreSQL Outbox와 `CoordinationRun`에 `DEAD_LETTERED` 영구 상태를 먼저 기록하고, 이벤트 ID·방 전체 제출 배치 ID·실패 분류·전달 횟수만 별도 Redis Stream에 추가한 뒤 원본을 ACK한다. 이 전달 횟수는 Gemini 논리 작업 안의 API 재시도 횟수와 별도로 센다. 원문, 사용자 식별자, Calendar 일정과 공급자 응답은 DLQ에 저장하지 않는다. DLQ는 30일 또는 최근 10,000건 중 먼저 도달한 기준으로 trimming한다. 운영자는 `--meetme.operations.replay-dead-letter-event-id=<UUID>` 시작 인자로 한 이벤트를 명시해 PostgreSQL 상태와 Outbox를 원자적으로 재대기시킨 뒤 인자를 제거한다.
+Redis DLQ는 역직렬화 실패, 존재하지 않는 참조, 반복되는 불변식 위반 또는 같은 메시지에서 Worker가 계속 중단되는 poison message에만 사용한다. 참조 가능한 이벤트의 예기치 않은 오류가 누적 5회 발생하면(정상적인 공급자 재시도 예약은 제외하며, 역직렬화 불가 메시지는 Redis 전달 횟수로 제한) PostgreSQL Outbox와 `CoordinationRun`에 `DEAD_LETTERED` 영구 상태를 먼저 기록하고, 이벤트 ID·방 전체 제출 배치 ID·실패 분류·전달 횟수만 별도 Redis Stream에 추가한 뒤 원본을 ACK한다. 이 전달 횟수는 Gemini 논리 작업 안의 API 재시도 횟수와 별도로 센다. 원문, 사용자 식별자, Calendar 일정과 공급자 응답은 DLQ에 저장하지 않는다. DLQ는 30일 또는 최근 10,000건 중 먼저 도달한 기준으로 trimming한다. 운영자는 `--meetme.operations.replay-dead-letter-event-id=<UUID>` 시작 인자로 한 이벤트를 명시해 PostgreSQL 상태와 Outbox를 원자적으로 재대기시킨 뒤 인자를 제거한다.
 
 Redis 장애나 데이터 유실이 영구 비즈니스 데이터 또는 반드시 실행해야 하는 작업의 유실로 이어지지 않아야 한다. 미전달·미완료 작업은 PostgreSQL Outbox의 상태, 처리 lease와 재발행으로 복구한다. Stream과 DLQ는 전달·운영 신호이며 최종 기준이 아니다.
 
@@ -1022,3 +1022,19 @@ V32는 명령 lineage의 source/created run을 같은 방 composite FK로 결속
 첫 분류 메타데이터는 claimed precheck attempt별 순수 메모리 capture에서 수집한다. 검증된 classifier 반환 assessment/reason/confidence/semanticAssessment/probabilities와 실제 provider/model, 실제 분기 effectiveAssessment를 분리한다. 새로운 시계 읽기·모델 호출·IO를 provider 마감 구간에 추가하지 않는다. 생성 실패·worker 응답 검증 실패에도 알려진 첫 결과는 기존 finishAttempt의 generation/owner fencing과 함께 nullable version1 JSONB로 기록한다. 기존 최종 provider/model과 결과·예외 의미는 유지한다. 기존 데이터는 null이며 최종 mutable status로 최초 판정을 채우지 않는다.
 
 운영 진단의 입력 기준 시각은 명시 InputEvidence.referenceAt을 우선하고, 선택된 native DSL 경로에만 IrEvidenceBindings의 version.createdAt 기준 정책을 적용한다. 개인 검사에 저장된 candidate referenceAt은 checks에 별도로 표시하며, 근거 없는 과거 LEGACY·현재 수집본의 최종 분석 기준 시각을 개인 검사 시각으로 채우지 않는다.
+
+
+### 신규 V5 메시지 재시도 정책 (ADR-077)
+
+2026-11-19 구현 대상 `c5-stream-retry-v3`: 최초 Worker admission부터 60초를 고정한다. 메시지 수신 → Outbox due/lease claim → 신규 또는 저장된 분석 실행/시도 확인 → 공급자 최대1호출 → 성공 시 구조화·결정론적 매칭 저장과 Outbox 완료 후 ACK/XDEL 순서다. 확정 일시 오류는 시도 종료·next_provider·next_attempt_at과 Outbox 예약/lease 반납을 같은 트랜잭션으로 저장한 뒤 미ACK로 남긴다. 재수신은 DB 시각 조건을 통과해야 하며 시도 횟수·owner·deadline·비용 예산을 초기화하지 않는다. 소유권 경합/조기 전달도 ACK하지 않는다.
+
+커밋 이후 Listener가 신규 PENDING의 즉시 발행을 시도하고, Relay는 fixed-delay5초로 미발행 작업을 복구한다. Worker는 fixed-delay500ms로 신규 및 idle pending을 순회한다. pending 조회는 커서를 이동해 앞 페이지의 미래 예약·활성 lease가 뒤의 due 작업을 영구 차단하지 않게 한다. 기존 2분 lease와 PUBLISHED 복구는 유지하며 pending 확인 최소 idle은 별도 설정한다. 이는 커밋 이후 알림과 polling 복구를 결합한 EDA이며 CDC나 스트림 자체 지연큐 기능을 사용하지 않는다. 정상 재시도 횟수와 Redis delivery/Outbox claim 횟수는 서로 다르다.
+
+미완료 외부 시도의 전송 여부가 불명인 crash는 추가 자동 결제를 허용하지 않는다. 호출이 끝난 확정 실패와 구별하고 원래 기한 만료/기존 recovery로 ANALYSIS_DELAYED 처리한다. 최종 실패를 명시 종결한 경우 PROCESSED/ACK는 추천 성공을 뜻하지 않는다. 사용자 원문·Jev/보완 흐름·의미 해석과 시간/장소 도메인 계산은 이 변경으로 바꾸지 않는다. 과거 invocation/직접 평가와 신규 queue 정책을 분리하며 운영 배포는 별도다.
+
+
+### Outbox 즉시 발행과 복구 조회 (ADR-078)
+
+공통 PostgreSQL Outbox adapter는 PENDING insert와 명시 requeue 성공 뒤 `OutboxEnqueued(eventId)`를 발행한다. 원문·모델 응답은 알림에 포함하지 않는다. 트랜잭션이 커밋된 경우에만 Listener가 실행되며 별도 bounded executor에 작업을 넘긴다. 실행기 거절·작업 실패는 호출자에게 전파하지 않고 DB PENDING을 보존한다. rollback은 즉시 발행을 만들지 않는다.
+
+`OutboxRelay.relayCommitted`는 별도 트랜잭션에서 대상 행만 선점하며 기존 `relayPending`의 행 잠금과 경합한다. Redis XADD 뒤 PUBLISHED를 기록한다. 기본 PENDING Polling은 실행 종료 후5초이며 항상 동작한다. Listener 성공 여부로 스케줄러를 켜거나 끄지 않는다. 기존 PUBLISHED 재발행30초/노후2분, Worker500ms·DB예약 기반 재수신은 그대로다. 실제 처리/스케줄러 지연을 제외한 공칭 간격이며 커밋 이후5초 내 완료를 보장하지 않는다.

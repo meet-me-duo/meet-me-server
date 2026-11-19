@@ -12,7 +12,7 @@ const scripts = [...f.scripts,
   'V21__add_submission_input_evidence.sql',
   'V22__preserve_unverified_candidate_place.sql'];
 assert.equal(scripts.length, 22);
-// Keep V22 metadata/package fixtures frozen; current publication additionally requires the reviewed inventory through V33.
+// Keep V22 metadata/package fixtures frozen; current publication additionally requires the reviewed inventory through V34.
 const currentScripts = [...scripts, 'V23__add_account_room_archive_hidden_at.sql',
   'V24__add_versioned_schedule_ir.sql',
   'V25__add_ir_execution_bindings.sql',
@@ -23,7 +23,7 @@ const currentScripts = [...scripts, 'V23__add_account_room_archive_hidden_at.sql
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql',
-  'V33__record_precheck_classifications.sql'];
+  'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 
 function release(count = 22) {
   const result = f.manifest();
@@ -72,10 +72,10 @@ with tarfile.open(dest,'w:gz') as archive:
 }
 const verify = (value, manifest) => f.python('_verify_package', [value.archive, manifest], 'run-approved-release.py');
 
-test('V22C01 current publication retains V22 in all thirty-three actual SQL CRCs and independent schema SHA', () => {
+test('V22C01 current publication retains V22 in all thirty-four actual SQL CRCs and independent schema SHA', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture(); try {
-    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V33 publication must be admitted');
+    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V34 publication must be admitted');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,

@@ -1,5 +1,6 @@
 package com.meetme.server.coordination.adapter.output.persistence
 
+import com.meetme.server.coordination.application.event.OutboxEnqueued
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
 import com.meetme.server.coordination.application.port.output.CoordinationAttemptRepository
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
@@ -9,6 +10,7 @@ import com.meetme.server.coordination.application.port.output.NormalizedPlaceSta
 import com.meetme.server.coordination.application.port.output.OutboxEvent
 import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
+import com.meetme.server.coordination.application.port.output.OutboxStatus
 import com.meetme.server.coordination.application.port.output.RecommendationRepository
 import com.meetme.server.coordination.domain.CoordinationRun
 import com.meetme.server.coordination.domain.location.GeoCoordinate
@@ -21,6 +23,7 @@ import org.komapper.core.dsl.Meta
 import org.komapper.core.dsl.QueryDsl
 import org.komapper.core.dsl.query.firstOrNull
 import org.komapper.jdbc.JdbcDatabase
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import java.time.Instant
@@ -318,9 +321,11 @@ class JdbcNormalizedPlaceRepository(
 class KomapperOutboxRepository(
     private val database: JdbcDatabase,
     private val jdbcTemplate: JdbcTemplate,
+    private val publisher: ApplicationEventPublisher? = null,
 ) : OutboxRepository {
     override fun insert(event: OutboxEvent) {
         database.runQuery { QueryDsl.insert(Meta.outboxEventRecord).single(PersistenceMappers.toRecord(event)) }
+        if (event.status == OutboxStatus.PENDING) publisher?.publishEvent(OutboxEnqueued(event.id))
     }
 
     override fun findById(id: OutboxEventId): OutboxEvent? =
@@ -379,6 +384,17 @@ class KomapperOutboxRepository(
                 limit,
             )
         return ids.mapNotNull(::findById)
+    }
+
+    override fun findPendingByIdForUpdate(eventId: OutboxEventId): OutboxEvent? {
+        val id =
+            jdbcTemplate
+                .query(
+                    "SELECT id FROM outbox_events WHERE id = ? AND status = 'PENDING' FOR UPDATE SKIP LOCKED",
+                    { rs, _ -> OutboxEventId(rs.getObject("id", UUID::class.java)) },
+                    eventId.value,
+                ).firstOrNull() ?: return null
+        return findById(id)
     }
 
     override fun markPublished(
@@ -441,14 +457,17 @@ class KomapperOutboxRepository(
                 .query(
                     """
                     UPDATE outbox_events
-                    SET processing_lease_until = ?, delivery_count = delivery_count + 1
+                    SET processing_lease_until = ?, delivery_count = delivery_count + 1, last_attempt_at = ?, next_attempt_at = NULL
                     WHERE id = ? AND status = 'PUBLISHED'
                       AND (processing_lease_until IS NULL OR processing_lease_until <= ?)
+                      AND (next_attempt_at IS NULL OR next_attempt_at <= ?)
                     RETURNING delivery_count
                     """.trimIndent(),
                     { rs, _ -> rs.getInt("delivery_count") },
                     leaseUntil.atOffset(ZoneOffset.UTC),
+                    now.atOffset(ZoneOffset.UTC),
                     eventId.value,
+                    now.atOffset(ZoneOffset.UTC),
                     now.atOffset(ZoneOffset.UTC),
                 ).firstOrNull() ?: return null
         return OutboxProcessingClaim(requireNotNull(findById(eventId)), deliveries)
@@ -462,7 +481,7 @@ class KomapperOutboxRepository(
             jdbcTemplate.update(
                 """
                 UPDATE outbox_events
-                SET status = 'PROCESSED', processed_at = ?, processing_lease_until = NULL
+                SET status = 'PROCESSED', processed_at = ?, processing_lease_until = NULL, next_attempt_at = NULL
                 WHERE id = ? AND status = 'PUBLISHED'
                 """.trimIndent(),
                 at.atOffset(ZoneOffset.UTC),
@@ -488,6 +507,53 @@ class KomapperOutboxRepository(
         check(changed == 1) { "Outbox failure could not be recorded" }
     }
 
+    override fun recordUnexpectedFailure(
+        claim: OutboxProcessingClaim,
+        failureKind: String,
+    ): Int? =
+        jdbcTemplate
+            .query(
+                """
+                UPDATE outbox_events SET unexpected_failures = unexpected_failures + 1, last_failure_kind = ?
+                WHERE id = ? AND status = 'PUBLISHED' AND delivery_count = ? AND processing_lease_until IS NOT NULL
+                RETURNING unexpected_failures
+                """.trimIndent(),
+                { rs, _ -> rs.getInt("unexpected_failures") },
+                failureKind,
+                claim.event.id.value,
+                claim.deliveryCount,
+            ).firstOrNull()
+
+    override fun completeClaim(
+        claim: OutboxProcessingClaim,
+        at: Instant,
+    ): Boolean =
+        jdbcTemplate.update(
+            """
+            UPDATE outbox_events SET status = 'PROCESSED', processed_at = ?, processing_lease_until = NULL, next_attempt_at = NULL
+            WHERE id = ? AND status = 'PUBLISHED' AND delivery_count = ? AND processing_lease_until IS NOT NULL
+            """.trimIndent(),
+            at.atOffset(ZoneOffset.UTC),
+            claim.event.id.value,
+            claim.deliveryCount,
+        ) == 1
+
+    override fun scheduleRetry(
+        claim: OutboxProcessingClaim,
+        failureKind: String,
+        nextAttemptAt: Instant,
+    ): Boolean =
+        jdbcTemplate.update(
+            """
+            UPDATE outbox_events SET processing_lease_until = NULL, last_failure_kind = ?, next_attempt_at = ?
+            WHERE id = ? AND status = 'PUBLISHED' AND delivery_count = ? AND processing_lease_until IS NOT NULL
+            """.trimIndent(),
+            failureKind,
+            nextAttemptAt.atOffset(ZoneOffset.UTC),
+            claim.event.id.value,
+            claim.deliveryCount,
+        ) == 1
+
     override fun markDeadLettered(
         eventId: OutboxEventId,
         at: Instant,
@@ -497,7 +563,7 @@ class KomapperOutboxRepository(
             jdbcTemplate.update(
                 """
                 UPDATE outbox_events
-                SET status = 'DEAD_LETTERED', processing_lease_until = NULL,
+                SET status = 'DEAD_LETTERED', processing_lease_until = NULL, next_attempt_at = NULL,
                     last_failure_kind = ?, dead_lettered_at = ?
                 WHERE id = ? AND status = 'PUBLISHED'
                 """.trimIndent(),
@@ -529,13 +595,14 @@ class KomapperOutboxRepository(
                 """
                 UPDATE outbox_events
                 SET status = 'PENDING', published_at = NULL, processed_at = NULL,
-                    processing_lease_until = NULL, delivery_count = 0,
+                    processing_lease_until = NULL, delivery_count = 0, unexpected_failures = 0, next_attempt_at = NULL, last_attempt_at = NULL,
                     last_failure_kind = NULL, dead_lettered_at = NULL
                 WHERE id = ? AND status = 'DEAD_LETTERED'
                 """.trimIndent(),
                 eventId.value,
             )
         check(changed == 1) { "Dead-lettered Outbox event could not be requeued" }
+        publisher?.publishEvent(OutboxEnqueued(eventId))
     }
 }
 

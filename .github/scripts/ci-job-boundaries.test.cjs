@@ -15,6 +15,7 @@ const analysisCatalogCommand = 'node --test .github/scripts/v31-analysis-release
 const defaultAnalysisRuntimeCommand = 'node --test deploy/tests/default-analysis-runtime-env.test.cjs';
 const operatorReanalysisCatalogCommand = 'node --test .github/scripts/v32-operator-reanalysis-release-catalog.test.cjs';
 const precheckClassificationCatalogCommand = 'node --test .github/scripts/v33-precheck-classification-release-catalog.test.cjs';
+const streamRetryCatalogCommand = 'node --test .github/scripts/v34-stream-retry-release-catalog.test.cjs';
 
 // This intentionally accepts the existing explicit block layout only. Exact
 // source comparisons below reject added conditions, authority, failure masking,
@@ -84,23 +85,24 @@ test('Issue178 Quality Gate retains Java17, the exact Gradle command and current
   assert.deepEqual(quality.steps, [...frozen.setupSteps, frozen.qualityRunSteps[0]], 'Only the existing checkout, Java17 and Gradle quality gate remain in this job');
 });
 
-test('Issue178 Deployment Contracts preserves all 16 original checks and the exact V23 V31 default analysis V32 and V33 checks', () => {
+test('Issue178 Deployment Contracts preserves all 16 original checks and the exact V23 V31 default analysis V32 V33 and V34 checks', () => {
   const contracts = job(workflow(read('.github/workflows/ci.yml')), 'deployment-contracts');
   const expectedHeader = frozen.qualityHeader.replace('  quality:', '  deployment-contracts:').replace('    name: Quality Gate', '    name: Deployment Contracts');
   assert.equal(contracts.header, expectedHeader, 'Deployment Contracts must run in parallel on ubuntu-latest for 30 minutes without needs, if, environment or added permissions');
-  assert.equal(contracts.steps.length, 24, 'Preserve all previously approved23 steps and append exactly one blocking V33 contract check');
+  assert.equal(contracts.steps.length, 25, 'Preserve all previously approved24 steps and append exactly one blocking V34 contract check');
   assert.deepEqual(contracts.steps.slice(0, 2), frozen.setupSteps, 'This job must check out source and configure Java17 independently');
   const boundaryStep = contracts.steps[2];
   assert.match(boundaryStep, /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/ci-job-boundaries\.test\.cjs$/, 'The only new execution is the unconditionally blocking boundary test');
-  assert.deepEqual(contracts.steps.slice(3, -5), frozen.qualityRunSteps.slice(1), 'All original deployment checks retain their exact strings and meaningful order');
-  assert.match(contracts.steps.at(-5), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v23-account-room-hide-release-catalog\.test\.cjs$/, 'The additive V23 catalog check must be unconditional and blocking');
-  assert.match(contracts.steps.at(-4), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v31-analysis-release-catalog\.test\.cjs$/, 'The additive V31 catalog check must follow V23 and stay unconditional and blocking');
-  assert.match(contracts.steps.at(-3), /^      - name: [^\n]+\n        run: node --test deploy\/tests\/default-analysis-runtime-env\.test\.cjs$/, 'The default analysis runtime check must follow V31 and stay unconditional and blocking');
-  assert.match(contracts.steps.at(-2), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v32-operator-reanalysis-release-catalog\.test\.cjs$/, 'The new V32 check follows all previously approved steps and is unconditional and blocking');
-  assert.match(contracts.steps.at(-1), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v33-precheck-classification-release-catalog\.test\.cjs$/, 'The new V33 check follows all previously approved steps and is unconditional and blocking');
+  assert.deepEqual(contracts.steps.slice(3, -6), frozen.qualityRunSteps.slice(1), 'All original deployment checks retain their exact strings and meaningful order');
+  assert.match(contracts.steps.at(-6), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v23-account-room-hide-release-catalog\.test\.cjs$/, 'The additive V23 catalog check must be unconditional and blocking');
+  assert.match(contracts.steps.at(-5), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v31-analysis-release-catalog\.test\.cjs$/, 'The additive V31 catalog check must follow V23 and stay unconditional and blocking');
+  assert.match(contracts.steps.at(-4), /^      - name: [^\n]+\n        run: node --test deploy\/tests\/default-analysis-runtime-env\.test\.cjs$/, 'The default analysis runtime check must follow V31 and stay unconditional and blocking');
+  assert.match(contracts.steps.at(-3), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v32-operator-reanalysis-release-catalog\.test\.cjs$/, 'The new V32 check follows all previously approved steps and is unconditional and blocking');
+  assert.match(contracts.steps.at(-2), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v33-precheck-classification-release-catalog\.test\.cjs$/, 'The new V33 check follows all previously approved steps and is unconditional and blocking');
+  assert.match(contracts.steps.at(-1), /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v34-stream-retry-release-catalog\.test\.cjs$/, 'The new V34 check follows all previously approved steps and is unconditional and blocking');
 });
 
-test('Issue178 executes each original command exactly once with the boundary V23 V31 default analysis V32 and additive V33 checks', () => {
+test('Issue178 executes each original command exactly once with the boundary V23 V31 default analysis V32 and additive V33 V34 checks', () => {
   const ci = workflow(read('.github/workflows/ci.yml'));
   const actual = [...ci.jobs.keys()].flatMap(id => job(ci, id).steps.map(command).filter(run => run !== null));
   for (const expected of frozen.originalRunCommands) {
@@ -112,7 +114,8 @@ test('Issue178 executes each original command exactly once with the boundary V23
   assert.equal(actual.filter(run => run === defaultAnalysisRuntimeCommand).length, 1, 'The additive default analysis runtime check must run exactly once');
   assert.equal(actual.filter(run => run === operatorReanalysisCatalogCommand).length, 1, 'The additive V32 catalog check must run exactly once');
   assert.equal(actual.filter(run => run === precheckClassificationCatalogCommand).length, 1, 'The additive V33 catalog check must run exactly once');
-  assert.equal(actual.length, 24, 'No omitted, copied or unreviewed execution commands');
+  assert.equal(actual.filter(run => run === streamRetryCatalogCommand).length, 1, 'The additive V34 catalog check must run exactly once');
+  assert.equal(actual.length, 25, 'No omitted, copied or unreviewed execution commands');
 });
 
 test('Issue178 preserves the complete isolated ARM64 job and successful whole main CI publication gate', () => {

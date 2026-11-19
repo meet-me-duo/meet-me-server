@@ -1,11 +1,15 @@
 package com.meetme.server.config
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
 import java.math.BigDecimal
 import java.time.Duration
+import java.util.concurrent.ThreadPoolExecutor
 
 @ConfigurationProperties("meetme.reliability")
 data class ReliabilityProperties(
@@ -16,6 +20,7 @@ data class ReliabilityProperties(
     val deadLetterStreamKey: String = "meetme:coordination:dlq:v1",
     val pollBatchSize: Int = 10,
     val pendingMinIdle: Duration = Duration.ofMinutes(2),
+    val retryPollMinIdle: Duration = Duration.ofMillis(500),
     val recoveryAge: Duration = Duration.ofMinutes(2),
     val dlqRetention: Duration = Duration.ofDays(30),
     val dlqMaxEntries: Long = 10_000,
@@ -25,6 +30,7 @@ data class ReliabilityProperties(
         require(deadLetterStreamKey.isNotBlank())
         require(pollBatchSize > 0)
         require(!pendingMinIdle.isNegative && !pendingMinIdle.isZero)
+        require(!retryPollMinIdle.isNegative && !retryPollMinIdle.isZero)
         require(!recoveryAge.isNegative && !recoveryAge.isZero)
         require(!dlqRetention.isNegative && !dlqRetention.isZero)
         require(dlqMaxEntries > 0)
@@ -45,4 +51,15 @@ data class AiCostProperties(
 @Configuration
 @EnableScheduling
 @EnableConfigurationProperties(ReliabilityProperties::class, AiCostProperties::class)
-class ReliabilityConfiguration
+class ReliabilityConfiguration {
+    @Bean(name = ["outboxCommitExecutor"], defaultCandidate = false)
+    @ConditionalOnProperty(prefix = "meetme.reliability", name = ["enabled"], havingValue = "true", matchIfMissing = true)
+    fun outboxCommitExecutor(): ThreadPoolTaskExecutor =
+        ThreadPoolTaskExecutor().apply {
+            corePoolSize = 1
+            maxPoolSize = 1
+            queueCapacity = 100
+            setThreadNamePrefix("outbox-commit-")
+            setRejectedExecutionHandler(ThreadPoolExecutor.AbortPolicy())
+        }
+}

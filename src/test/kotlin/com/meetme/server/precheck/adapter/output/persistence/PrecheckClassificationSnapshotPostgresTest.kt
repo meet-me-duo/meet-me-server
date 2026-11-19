@@ -83,10 +83,10 @@ class PrecheckClassificationSnapshotPostgresTest {
     fun `CSP01 additive migration keeps every old execution field and leaves its decision unknown`() {
         repository.finishAttempt(claim, RESULT, AT.plusSeconds(2))
         val before = executionWithoutClassification()
-        assertEquals(1, flyway().migrate().migrationsExecuted)
+        assertEquals(2, flyway().migrate().migrationsExecuted)
         flyway().validate()
         assertEquals(
-            "33",
+            "34",
             flyway()
                 .info()
                 .current()

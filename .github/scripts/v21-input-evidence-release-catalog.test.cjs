@@ -19,7 +19,7 @@ const currentScripts = [...scripts, 'V22__preserve_unverified_candidate_place.sq
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql',
-  'V33__record_precheck_classifications.sql'];
+  'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 
 function fixture() {
   const value = f.currentFixture();
@@ -31,7 +31,7 @@ function fixture() {
   return value;
 }
 
-test('V21C01 current publication retains V21 in all thirty-three real SQL files and exact independent checksums', () => {
+test('V21C01 current publication retains V21 in all thirty-four real SQL files and exact independent checksums', () => {
   assert.deepEqual(fs.readdirSync(path.join(root, 'src/main/resources/db/migration')).sort(), [...currentScripts].sort());
   const value = fixture();
   try {

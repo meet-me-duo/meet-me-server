@@ -4,7 +4,7 @@ const cp = require('node:child_process');
 const f = require('./fixtures/integrated-release-catalog.cjs');
 const { fs, path, root, range, hash, canonical, clone, crc } = f;
 
-// Historical V32 reader/archive contract; current publication advances to V33.
+// Historical V32 reader/archive contract; current publication advances to V34.
 // Historical V1..V32 SQL digests are copied
 // from the previously reviewed catalog, never calculated as their own oracle.
 const scripts = [...f.scripts,
@@ -23,7 +23,7 @@ const scripts = [...f.scripts,
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql'];
-const currentScripts = [...scripts, 'V33__record_precheck_classifications.sql'];
+const currentScripts = [...scripts, 'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 const historicalSqlHashes = [
   'f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515',
   '75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7',
@@ -71,9 +71,9 @@ function fixture() {
     const source = path.join(root, 'src/main/resources/db/migration', name);
     if (fs.existsSync(source)) fs.copyFileSync(source, path.join(value.migrations, name));
     else {
-      assert.equal(index, 32, 'Historical SQL absence is a fixture error, never valid RED');
+      assert.equal(index, 33, 'Historical SQL absence is a fixture error, never valid RED');
       // The new not-yet-authored SQL is synthetic only inside this isolated fixture.
-      fs.writeFileSync(path.join(value.migrations, name), '-- isolated synthetic V33 catalog fixture\nSELECT 33;\n');
+      fs.writeFileSync(path.join(value.migrations, name), '-- isolated synthetic V34 catalog fixture\nSELECT 34;\n');
     }
   }
   for (const name of f.currentGuardFiles) {
@@ -126,14 +126,14 @@ function bothReject(manifest, message) {
 
 test('V32C01 exact additive SQL inventory preserves all thirty-two reviewed migration bytes', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
-  assert.deepEqual(fs.readdirSync(directory).sort(), [...currentScripts].sort(), 'The only new migration after published V32 is V33');
+  assert.deepEqual(fs.readdirSync(directory).sort(), [...currentScripts].sort(), 'The current inventory after published V32 includes V33 and V34');
   assert.deepEqual(scripts.slice(0, 32).map(name => hash(fs.readFileSync(path.join(directory, name)))), historicalSqlHashes);
 });
 
 test('V32C02 actual publisher binds every current SQL CRC, SQL SHA and operational guard SHA independently', () => {
   const value = fixture(); try {
     const actual = f.publish(value);
-    assert.equal(actual.ok, true, 'Exact current V33 publication is now required');
+    assert.equal(actual.ok, true, 'Exact current V34 publication is now required');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,
@@ -156,7 +156,7 @@ test('V32C03 both metadata readers admit V32 and preserve every historically pub
 test('V32C04 neither reader invents unpublished V24 through V30 or future V34 complete catalogs', () => {
   for (let count = 24; count <= 30; count++) bothReject(release(count), `Unpublished V${count}`);
   const badName = release(); badName.migrations.push({ version: '33', script: 'V33__unapproved.sql', checksum: 1221 });
-  bothReject(badName, 'Unapproved current V33 identity');
+  bothReject(badName, 'Unapproved current V34 identity');
   const future = release(); future.migrations.push({ version: '34', script: 'V34__unapproved.sql', checksum: 1258 });
   bothReject(future, 'Unknown future migration');
 });
@@ -303,7 +303,8 @@ test('V32C11 additive catalog gate preserves original commands three jobs author
     'node --test .github/scripts/v23-account-room-hide-release-catalog.test.cjs',
     'node --test .github/scripts/v31-analysis-release-catalog.test.cjs',
     'node --test deploy/tests/default-analysis-runtime-env.test.cjs',
-    'node --test .github/scripts/v33-precheck-classification-release-catalog.test.cjs'];
+    'node --test .github/scripts/v33-precheck-classification-release-catalog.test.cjs',
+    'node --test .github/scripts/v34-stream-retry-release-catalog.test.cjs'];
   for (const expected of [...prior, added]) assert.equal(commands.filter(actual => actual === expected).length, 1, expected);
   assert.equal(commands.length, prior.length + 1, 'No existing gate omitted or duplicated');
   const deploy = workflow(fs.readFileSync(path.join(root, '.github/workflows/deploy.yml'), 'utf8'));

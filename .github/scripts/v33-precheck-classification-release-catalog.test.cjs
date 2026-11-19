@@ -23,6 +23,8 @@ const scripts = [...f.scripts,
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql',
   'V33__record_precheck_classifications.sql'];
+// V33 reader/archive defaults remain historical; only current publisher fixtures advance.
+const currentScripts = [...scripts, 'V34__add_stream_analysis_retry_schedule.sql'];
 const historicalSqlHashes = [
   'f840adc70a59de4f7085f419f4063c34f5ed96e87a54b2aa4f052c15df023515',
   '75535992de90d7eedc1700487503418a300df6ca668eb18d517646517ebd40e7',
@@ -66,13 +68,13 @@ function release(count = 33) {
 function fixture() {
   // The stable V17 fixture is historical; currentFixture may advance separately.
   const value = f.fixture();
-  for (const [index, name] of scripts.entries()) {
+  for (const [index, name] of currentScripts.entries()) {
     const source = path.join(root, 'src/main/resources/db/migration', name);
     if (fs.existsSync(source)) fs.copyFileSync(source, path.join(value.migrations, name));
     else {
-      assert.equal(index, 32, 'Historical SQL absence is a fixture error, never valid RED');
+      assert.equal(index, 33, 'Historical SQL absence is a fixture error, never valid RED');
       // The new not-yet-authored SQL is synthetic only inside this isolated fixture.
-      fs.writeFileSync(path.join(value.migrations, name), '-- isolated synthetic V33 catalog fixture\nSELECT 33;\n');
+      fs.writeFileSync(path.join(value.migrations, name), '-- isolated synthetic V34 catalog fixture\nSELECT 34;\n');
     }
   }
   for (const name of f.currentGuardFiles) {
@@ -123,18 +125,18 @@ function bothReject(manifest, message) {
   assert.deepEqual(f.readRecord(f.record(manifest)), rejectedRecord, `${message}: host reader`);
 }
 
-test('V33C01 current inventory adds only V33 and preserves every already published SQL byte through V32', () => {
+test('V33C01 current inventory advances through V34 and preserves the historical V1 to V32 byte contract', () => {
   const directory = path.join(root, 'src/main/resources/db/migration');
-  assert.deepEqual(fs.readdirSync(directory).sort(), [...scripts].sort());
+  assert.deepEqual(fs.readdirSync(directory).sort(), [...currentScripts].sort());
   assert.deepEqual(scripts.slice(0, 32).map(name => hash(fs.readFileSync(path.join(directory, name)))), historicalSqlHashes);
 });
 
-test('V33C02 actual publisher binds all thirty-three SQL checksums schema bytes and operational guards', () => {
+test('V33C02 actual publisher binds all current thirty-four SQL checksums schema bytes and operational guards', () => {
   const value = fixture(); try {
-    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V33 publication must be supported');
-    assert.deepEqual(actual.result.migrations, scripts.map((script, i) => ({ version: String(i + 1), script,
+    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V34 publication must be supported');
+    assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
-    assert.equal(actual.result.schemaFingerprint, hash(canonical(scripts.map((script, i) => ({ version: String(i + 1), script,
+    assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,
       sha256: hash(fs.readFileSync(path.join(value.migrations, script))) })))));
     assert.equal(actual.result.guardFingerprint, hash(canonical(f.currentGuardFiles.map(name => ({ path: name,
       sha256: hash(fs.readFileSync(path.join(value.directory, 'deploy', name))) })))));
@@ -152,7 +154,7 @@ test('V33C03 both readers admit the new V33 catalog and preserve complete histor
 test('V33C04 neither reader invents unpublished intermediate or unknown future complete catalogs', () => {
   for (let n = 24; n <= 30; n++) bothReject(release(n), `Unpublished V${n}`);
   const future = release(); future.migrations.push({ version: '34', script: 'V34__unapproved.sql', checksum: 1258 });
-  bothReject(future, 'Unknown future V34');
+  bothReject(future, 'Unapproved V34 name');
 });
 
 test('V33C05 current publisher rejects V32-only and omitted malformed duplicate linked directory or future migrations', () => {
@@ -271,7 +273,8 @@ test('V33C10 the additive V33 gate preserves every prior CI command job boundary
     'node --test .github/scripts/v23-account-room-hide-release-catalog.test.cjs',
     'node --test .github/scripts/v31-analysis-release-catalog.test.cjs',
     'node --test deploy/tests/default-analysis-runtime-env.test.cjs',
-    'node --test .github/scripts/v32-operator-reanalysis-release-catalog.test.cjs'];
+    'node --test .github/scripts/v32-operator-reanalysis-release-catalog.test.cjs',
+    'node --test .github/scripts/v34-stream-retry-release-catalog.test.cjs'];
   const actual = [...ci.jobs.keys()].flatMap(id => job(ci, id).steps.map(command).filter(value => value !== null));
   for (const expected of [...prior, next]) assert.equal(actual.filter(value => value === expected).length, 1, expected);
   assert.equal(actual.length, prior.length + 1);

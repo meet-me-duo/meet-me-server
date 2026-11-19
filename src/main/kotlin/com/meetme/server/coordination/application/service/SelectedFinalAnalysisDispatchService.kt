@@ -1,5 +1,6 @@
 package com.meetme.server.coordination.application.service
 
+import com.meetme.server.coordination.application.port.output.AnalysisInvocation
 import com.meetme.server.coordination.application.port.output.AnalysisInvocationBudget
 import com.meetme.server.coordination.application.port.output.AnalysisInvocationRepository
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
@@ -9,6 +10,7 @@ import com.meetme.server.coordination.application.port.output.FinalAnalysisAttem
 import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
 import com.meetme.server.coordination.application.port.output.MonotonicTimePort
 import com.meetme.server.coordination.application.port.output.NaturalLanguageParserException
+import com.meetme.server.coordination.application.port.output.OutboxProcessingClaim
 import com.meetme.server.coordination.application.port.output.OutboxRepository
 import com.meetme.server.coordination.application.port.output.ParserFailureKind
 import com.meetme.server.coordination.domain.CoordinationRun
@@ -32,7 +34,17 @@ class SelectedFinalAnalysisDispatchService(
     private val retryPayloads: SelectedMatchingRetryPayloadCodec? = null,
     private val attempts: CoordinationAttemptRepository? = null,
 ) {
-    fun dispatchIfSelected(batchId: SubmissionBatchId): Boolean {
+    fun dispatchIfSelected(batchId: SubmissionBatchId): Boolean = dispatch(batchId, null)
+
+    fun dispatchDeliveryIfSelected(
+        batchId: SubmissionBatchId,
+        claim: OutboxProcessingClaim,
+    ): Boolean = dispatch(batchId, claim)
+
+    private fun dispatch(
+        batchId: SubmissionBatchId,
+        claim: OutboxProcessingClaim?,
+    ): Boolean {
         val deadline = monotonicTime.nanoTime() + AnalysisInvocationBudget.TOTAL_TIMEOUT.toNanos()
         val run = runs.findByBatchId(batchId) ?: return false
         val route = routes.find(run.id.value) ?: return false
@@ -49,7 +61,15 @@ class SelectedFinalAnalysisDispatchService(
             CoordinationStatus.COMPLETED -> return true
             CoordinationStatus.MATCHING -> completeMatching(run, route, deadline)
             CoordinationStatus.QUEUED, CoordinationStatus.STRUCTURING -> {
-                processor.processBounded(batchId, deadline)
+                val previous = invocations?.findByRunVersion(run.id, run.version)
+                if (claim != null &&
+                    route.choice is FinalAnalysisRouteChoice.DslStructuralV5 &&
+                    (previous == null || previous.policyVersion == AnalysisInvocation.STREAM_POLICY_VERSION)
+                ) {
+                    processor.processQueuedDeliveryBounded(batchId, deadline, claim)
+                } else {
+                    processor.processBounded(batchId, deadline)
+                }
                 val current = runs.findById(run.id)
                 if (current?.status == CoordinationStatus.MATCHING) completeMatching(current, route, deadline)
             }

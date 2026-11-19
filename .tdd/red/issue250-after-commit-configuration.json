@@ -1,0 +1,24 @@
+{
+  "workItem": "issue250-after-commit-configuration",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/OutboxCommitConfigurationContractTest.kt",
+      "sha256": "9985cb86af225cfefad88fcad76b09d41231f6b5090f9c6e13fdfced07fc4822"
+    }
+  ],
+  "command": [
+    "./gradlew",
+    "ktlintFormat",
+    "test",
+    "--tests",
+    "*OutboxCommitConfigurationContractTest",
+    "--console=plain"
+  ],
+  "failedTests": [
+    "OC07 pending fallback uses five second fixed delay by default()",
+    "OC06 default enabled configuration registers one bounded aborting commit executor()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T05:15:34.895277Z"
+}

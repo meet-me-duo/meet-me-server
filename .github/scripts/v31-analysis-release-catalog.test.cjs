@@ -23,7 +23,7 @@ const scripts = [...f.scripts,
   'V31__allow_explicit_c5_direct_luna.sql'];
 assert.equal(scripts.length, 31);
 // Current publication advances once; historical release()/pack() fixtures remain exact V31.
-const currentScripts = [...scripts, 'V32__add_operator_room_reanalysis.sql', 'V33__record_precheck_classifications.sql'];
+const currentScripts = [...scripts, 'V32__add_operator_room_reanalysis.sql', 'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 
 function release(count = 31) {
   const result = f.manifest();
@@ -111,9 +111,9 @@ test('V31C01 the exact reviewed SQL inventory retains every historical migration
   assert.deepEqual(scripts.map(script => hash(fs.readFileSync(path.join(root, 'src/main/resources/db/migration', script)))), reviewedSqlHashes);
 });
 
-test('V31C02 current publisher binds all thirty-three actual SQL CRCs and schema SHA independently', () => {
+test('V31C02 current publisher binds all thirty-four actual SQL CRCs and schema SHA independently', () => {
   const value = fixture(); try {
-    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V33 publication must be admitted');
+    const actual = f.publish(value); assert.equal(actual.ok, true, 'Exact current V34 publication must be admitted');
     assert.deepEqual(actual.result.migrations, currentScripts.map((script, i) => ({ version: String(i + 1), script,
       checksum: crc(fs.readFileSync(path.join(value.migrations, script))) })));
     assert.equal(actual.result.schemaFingerprint, hash(canonical(currentScripts.map((script, i) => ({ version: String(i + 1), script,
@@ -218,7 +218,7 @@ test('V31C09 packaged V31 binds every new SQL byte and preserves historical V23 
     fs.appendFileSync(path.join(value.migrations, scripts[30]), '\n-- synthetic test-only checksum probe\n');
     const after = f.publish(value); assert.equal(after.ok, true);
     assert.deepEqual(after.result.migrations.slice(0, 30), before.result.migrations.slice(0, 30));
-    assert.deepEqual(after.result.migrations.slice(31), before.result.migrations.slice(31), 'Published V32 and current V33 are unchanged by a V31 byte probe');
+    assert.deepEqual(after.result.migrations.slice(31), before.result.migrations.slice(31), 'Published V32 and current V34 are unchanged by a V31 byte probe');
     assert.notEqual(after.result.migrations[30].checksum, before.result.migrations[30].checksum);
     assert.notEqual(after.result.schemaFingerprint, before.result.schemaFingerprint);
     assert.equal(after.result.guardFingerprint, before.result.guardFingerprint);

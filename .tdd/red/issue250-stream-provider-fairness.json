@@ -1,0 +1,36 @@
+{
+  "workItem": "issue250-stream-provider-fairness",
+  "sourceRevision": "ddc8383e2ec1a3dd813e76ff740b3320a68877ff",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/SelectedStreamRetryProcessorTest.kt",
+      "sha256": "d372caa62ba7ace6bdde99a6f104d0db1bbee50833cfe11e29a77f22fef14667"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/output/redis/RedisPendingFairnessTest.kt",
+      "sha256": "6853863b58781a979314c2b7aead5e544b0eb493d141f23344ce0334af1ef756"
+    }
+  ],
+  "command": [
+    "sh",
+    "./gradlew",
+    "--no-daemon",
+    "--max-workers=1",
+    "-Dorg.gradle.jvmargs=-Xmx1g -Dfile.encoding=UTF-8",
+    "test",
+    "--tests",
+    "*SelectedStreamRetryProcessorTest",
+    "--tests",
+    "*RedisPendingFairnessTest"
+  ],
+  "failedTests": [
+    "SR06 permanent failure terminates without fallback or retry()",
+    "SR01 retryable failures schedule one continuation with one call and no sleep()",
+    "SR05 Retry After wins and over budget reservation selects fallback without sleeping()",
+    "SR05 timeout and fourth failure schedule fallback on a later delivery()",
+    "SR04 resumed fallback uses remaining original sixty seconds without fresh Gemini()",
+    "SR10 pending scan reaches later messages even when earlier unACKed messages stay pending()"
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-19T03:33:32.948490Z"
+}

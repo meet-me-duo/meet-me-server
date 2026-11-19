@@ -17,7 +17,7 @@ const scripts = [
   'V15__add_parser_transport_observations.sql', 'V16__add_pre_submission_checks.sql',
   'V17__add_durable_ai_room_budgets.sql',
 ];
-// Current publication includes the reviewed V33 inventory; scripts/manifest keep historical V17 defaults.
+// Current publication includes the reviewed V34 inventory; scripts/manifest keep historical V17 defaults.
 const currentScripts = [...scripts, 'V18__align_recommendation_selection_attendance.sql', 'V19__add_confirmed_result_reviews.sql', 'V20__add_account_room_history_index.sql', 'V21__add_submission_input_evidence.sql', 'V22__preserve_unverified_candidate_place.sql', 'V23__add_account_room_archive_hidden_at.sql',
   'V24__add_versioned_schedule_ir.sql',
   'V25__add_ir_execution_bindings.sql',
@@ -28,7 +28,7 @@ const currentScripts = [...scripts, 'V18__align_recommendation_selection_attenda
   'V30__add_c5_residual_luna_policy.sql',
   'V31__allow_explicit_c5_direct_luna.sql',
   'V32__add_operator_room_reanalysis.sql',
-  'V33__record_precheck_classifications.sql'];
+  'V33__record_precheck_classifications.sql', 'V34__add_stream_analysis_retry_schedule.sql'];
 const guardFiles = [
   'scripts/host-release-guard.sh', 'scripts/install-host-release-guard.sh',
   'scripts/deploy-release.sh', 'scripts/rollback-release.sh',
@@ -127,9 +127,9 @@ function currentFixture() {
   for (const name of currentScripts.slice(17)) {
     const source = path.join(root, 'src/main/resources/db/migration', name);
     if (fs.existsSync(source)) fs.copyFileSync(source, path.join(value.migrations, name));
-    else if (name === 'V33__record_precheck_classifications.sql') {
-      // Only the unreleased V33 may be synthetic inside this isolated fixture.
-      fs.writeFileSync(path.join(value.migrations, name), '-- synthetic test-only V33\nSELECT 33;\n');
+    else if (name === 'V34__add_stream_analysis_retry_schedule.sql') {
+      // Only the unreleased V34 may be synthetic inside this isolated fixture.
+      fs.writeFileSync(path.join(value.migrations, name), '-- synthetic test-only V34\nSELECT 34;\n');
     } else {
       assert.equal(name, currentScripts[17], 'Approved V19 must use the real review migration');
       fs.writeFileSync(path.join(value.migrations, name), '-- synthetic test-only V18\nSELECT 18;\n');
