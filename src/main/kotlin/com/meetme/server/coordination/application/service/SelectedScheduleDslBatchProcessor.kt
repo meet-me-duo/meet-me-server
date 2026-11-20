@@ -181,7 +181,9 @@ class SelectedScheduleDslBatchProcessor(
                 publish(outcome)
                 return
             }
-            if (!failure.retryable) {
+            val fallbackOnGeminiRejection =
+                queueDelivery && (failure.kind == ParserFailureKind.BILLING || failure.kind == ParserFailureKind.QUOTA)
+            if (!failure.retryable && !fallbackOnGeminiRejection) {
                 persistence.fail(binding, attempt, failure.kind, outcome.response?.usage)
                 return
             }
@@ -192,7 +194,8 @@ class SelectedScheduleDslBatchProcessor(
                 }
                 var nextProvider = AnalysisProvider.OPENAI
                 var nextDelay = Duration.ZERO
-                if (failure.kind != ParserFailureKind.TIMEOUT && index < 3 && remaining(primaryDeadline).toMillis() >= 1) {
+                val retryGemini = failure.retryable && failure.kind != ParserFailureKind.TIMEOUT
+                if (retryGemini && index < 3 && remaining(primaryDeadline).toMillis() >= 1) {
                     val upper = 1000L shl index
                     val candidate = Duration.ofMillis(failure.retryAfterMillis?.takeIf { it >= 0 } ?: jitter.nextLong(upper + 1))
                     if (candidate < remaining(primaryDeadline)) {

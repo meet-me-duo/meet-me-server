@@ -12,14 +12,17 @@ import com.meetme.server.coordination.adapter.output.integration.OpenAiLunaSelec
 import com.meetme.server.coordination.adapter.output.integration.SelectedApprovedTermsProviderPostgresTest
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.CoordinationRunRepository
+import com.meetme.server.coordination.application.port.output.CoordinationWorkMessage
 import com.meetme.server.coordination.application.port.output.FinalAnalysisRouteRegistry
 import com.meetme.server.coordination.application.port.output.OutboxRepository
+import com.meetme.server.coordination.application.port.output.OutboxStatus
 import com.meetme.server.coordination.application.port.output.ParserUsage
 import com.meetme.server.coordination.application.port.output.ScheduleDslProviderResponse
 import com.meetme.server.coordination.application.port.output.SelectedScheduleDslInvocation
 import com.meetme.server.coordination.application.port.output.SelectedScheduleDslProviderPort
 import com.meetme.server.coordination.application.service.CoordinationEventDispatcher
 import com.meetme.server.coordination.application.service.MatchingProcessingPersistenceService
+import com.meetme.server.coordination.application.service.QueueLab
 import com.meetme.server.coordination.application.service.SelectedScheduleDslProcessingPersistenceService
 import com.meetme.server.coordination.domain.analysis.FinalAnalysisRouteChoice
 import com.meetme.server.coordination.domain.dsl.ScheduleDslContextModePolicy
@@ -43,6 +46,7 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -57,6 +61,8 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.context.bean.override.convention.TestBean
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.utility.DockerImageName
 import tools.jackson.databind.ObjectMapper
 import java.net.InetSocketAddress
 import java.net.URI
@@ -130,6 +136,7 @@ class SelectedContextModeOperatingHttpPostgresTest {
         providers.requests.clear()
         providers.failGemini = false
         providers.syntheticGeminiStatus = null
+        providers.syntheticGeminiError = null
         hostToken = tokens.issue(AccountPrincipal(HOST, "synthetic-host"))
         outsiderToken = tokens.issue(AccountPrincipal(OUTSIDER, "synthetic-outsider"))
         // Scope deterministic ids to the upcoming real closure transaction, not its domain behavior.
@@ -412,6 +419,74 @@ class SelectedContextModeOperatingHttpPostgresTest {
             jdbc.queryForObject("SELECT failure_kind FROM coordination_attempts WHERE provider='GEMINI'", String::class.java),
         )
         assertEquals(frozenRows, F.rows(jdbc, "submission_versions") + F.rows(jdbc, "submission_batch_items"))
+    }
+
+    @ParameterizedTest
+    @CsvSource("402,BILLING", "429,QUOTA")
+    fun `direct V5 billing or quota failure keeps its frozen terminal policy`(
+        statusCode: Int,
+        failure: String,
+    ) {
+        prepareStructuralFixture()
+        providers.syntheticGeminiStatus = statusCode
+        closeTyped("DSL_STRUCTURAL_V5")
+
+        events.process(CollectionClosureService.STRUCTURING_REQUESTED, SubmissionBatchId(F.ir.batch))
+
+        assertEquals("ANALYSIS_DELAYED", status())
+        assertEquals(failure, jdbc.queryForObject("SELECT failure_kind FROM coordination_attempts", String::class.java))
+        assertEquals(1, providers.calls.get())
+        assertEquals(0, providers.lunaCalls.get())
+    }
+
+    @ParameterizedTest
+    @CsvSource("402,BILLING", "429,QUOTA")
+    fun `stream billing or quota failure releases the same event immediately for one Luna call`(
+        statusCode: Int,
+        failure: String,
+    ) {
+        prepareStructuralFixture()
+        providers.syntheticGeminiStatus = statusCode
+        providers.syntheticGeminiError = if (statusCode == 429) """{"error":{"status":"QUOTA_EXCEEDED"}}""" else null
+        closeTyped("DSL_STRUCTURAL_V5")
+        GenericContainer(DockerImageName.parse("redis:8-alpine")).withExposedPorts(6379).use { redis ->
+            redis.start()
+            val connections =
+                mapOf(
+                    "LAB_DB_URL" to postgres.jdbcUrl,
+                    "LAB_DB_USER" to postgres.username,
+                    "LAB_DB_PASSWORD" to postgres.password,
+                    "LAB_REDIS_HOST" to redis.host,
+                    "LAB_REDIS_PORT" to redis.getMappedPort(6379).toString(),
+                )
+            QueueLab(connections, clock).use { lab ->
+                assertEquals(1, lab.relay())
+                val delivery = lab.queue.readNew(1).single() as CoordinationWorkMessage
+                val worker = lab.worker(processor = events)
+                worker.process(delivery)
+
+                val waiting = assertNotNull(lab.repo.findById(delivery.eventId))
+                assertEquals(OutboxStatus.PUBLISHED, waiting.status)
+                assertEquals(clock.instant(), waiting.nextAttemptAt)
+                assertEquals(null, waiting.processingLeaseUntil)
+                assertEquals(failure, waiting.lastFailureKind)
+                assertEquals("OPENAI", jdbc.queryForObject("SELECT next_provider FROM analysis_invocations", String::class.java))
+                assertEquals(failure, jdbc.queryForObject("SELECT failure_kind FROM coordination_attempts", String::class.java))
+                assertEquals(1L, lab.queue.backlog().pendingCount)
+                assertEquals(1, providers.calls.get())
+                assertEquals(0, providers.lunaCalls.get())
+
+                val next = lab.queue.claimStale(Duration.ZERO, 1).single()
+                assertEquals(delivery.streamRecordId, next.streamRecordId)
+                worker.process(next)
+                assertStructuralPublished(fallback = true)
+                assertEquals(OutboxStatus.PROCESSED, assertNotNull(lab.repo.findById(delivery.eventId)).status)
+                assertEquals(0L, lab.queue.backlog().pendingCount)
+                worker.process(next)
+                assertEquals(1, providers.calls.get())
+                assertEquals(1, providers.lunaCalls.get())
+            }
+        }
     }
 
     /** Seed a separate accepted synthetic cohort before closure; never mutate a frozen native version. */
@@ -1092,6 +1167,8 @@ class SelectedContextModeOperatingHttpPostgresTest {
         @Volatile var failGemini = false
 
         @Volatile var syntheticGeminiStatus: Int? = null
+
+        @Volatile var syntheticGeminiError: String? = null
         private val server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
         val endpoint: URI = URI("http://127.0.0.1:${server.address.port}")
 
@@ -1106,7 +1183,9 @@ class SelectedContextModeOperatingHttpPostgresTest {
                     return@createContext
                 }
                 if (!luna && syntheticGeminiStatus != null) {
-                    exchange.sendResponseHeaders(requireNotNull(syntheticGeminiStatus), -1)
+                    val error = syntheticGeminiError?.toByteArray(Charsets.UTF_8)
+                    exchange.sendResponseHeaders(requireNotNull(syntheticGeminiStatus), error?.size?.toLong() ?: -1)
+                    if (error != null) exchange.responseBody.use { it.write(error) }
                     exchange.close()
                     return@createContext
                 }
