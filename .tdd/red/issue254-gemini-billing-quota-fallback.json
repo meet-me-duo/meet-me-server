@@ -1,0 +1,32 @@
+{
+  "workItem": "issue254-gemini-billing-quota-fallback",
+  "sourceRevision": "a2646637623aa1372b7c15a5c3f02c2d37529deb",
+  "testFiles": [
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/application/service/SelectedStreamRetryProcessorTest.kt",
+      "sha256": "4af0604c85e3bb27ea4b9340eab9465581175f9410c959a8969d10d8a1635f58"
+    },
+    {
+      "path": "src/test/kotlin/com/meetme/server/coordination/adapter/input/web/SelectedContextModeOperatingHttpPostgresTest.kt",
+      "sha256": "35663c0997e870e33898a0c3ba6d8c012f503674b3f03b60803c6ed4f4ad2c12"
+    }
+  ],
+  "command": [
+    "sh",
+    "./gradlew",
+    "--max-workers=2",
+    "test",
+    "--tests",
+    "*SelectedContextModeOperatingHttpPostgresTest.stream billing*",
+    "--tests",
+    "*SelectedStreamRetryProcessorTest"
+  ],
+  "failedTests": [
+    "Gemini billing failure makes Luna due immediately with the original failure()",
+    "Gemini exhausted quota makes Luna due immediately even with Retry After()",
+    "[1] statusCode = \"402\", failure = \"BILLING\"",
+    "[2] statusCode = \"429\", failure = \"QUOTA\""
+  ],
+  "expectedFailureCategory": "MISSING_BEHAVIOR",
+  "recordedAt": "2026-11-20T00:59:54.307333Z"
+}

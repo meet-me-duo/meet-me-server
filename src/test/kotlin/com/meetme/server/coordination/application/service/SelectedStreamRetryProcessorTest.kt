@@ -2,6 +2,7 @@ package com.meetme.server.coordination.application.service
 
 import com.meetme.server.coordination.application.port.output.AnalysisProvider
 import com.meetme.server.coordination.application.port.output.CoordinationAttempt
+import com.meetme.server.coordination.application.port.output.CoordinationRetryScheduled
 import com.meetme.server.coordination.application.port.output.FinalAnalysisAttemptBinding
 import com.meetme.server.coordination.application.port.output.JitterPort
 import com.meetme.server.coordination.application.port.output.MonotonicTimePort
@@ -34,6 +35,54 @@ import com.meetme.server.support.ScheduleDslContextModeNativeFixture as N
 
 /** Public delivery contract: one bounded provider call, persisted continuation, no worker sleep. */
 class SelectedStreamRetryProcessorTest {
+    @Test
+    fun `Gemini billing failure makes Luna due immediately with the original failure`() {
+        assertImmediateLuna(ParserFailureKind.BILLING)
+    }
+
+    @Test
+    fun `Gemini exhausted quota makes Luna due immediately even with Retry After`() {
+        assertImmediateLuna(ParserFailureKind.QUOTA)
+    }
+
+    private fun assertImmediateLuna(kind: ParserFailureKind) {
+        val f = Fixture()
+        f.geminiAction = { throw NaturalLanguageParserException(kind, retryAfterMillis = 10_000) }
+        val continuation = kotlin.test.assertFailsWith<CoordinationRetryScheduled> { f.process() }
+
+        assertEquals(kind.name, continuation.failureKind)
+        assertEquals(F.selectedAt, continuation.nextAttemptAt)
+        assertEquals(listOf(kind), f.scheduledFailures)
+        assertEquals(listOf(AnalysisProvider.OPENAI to Duration.ZERO), f.scheduled)
+        assertEquals(listOf(AnalysisProvider.GEMINI), f.calls)
+        assertTrue(f.terminal.isEmpty())
+        assertTrue(f.additionalAdmissions.isEmpty())
+        assertTrue(f.jitterBounds.isEmpty())
+        assertTrue(f.delays.isEmpty())
+    }
+
+    @Test
+    fun `Gemini short rate limit with Retry After stays on Gemini`() {
+        val f = Fixture()
+        f.geminiAction = { throw NaturalLanguageParserException(ParserFailureKind.RATE_LIMIT, retryAfterMillis = 500) }
+        kotlin.test.assertFailsWith<CoordinationRetryScheduled> { f.process() }
+        assertEquals(listOf(AnalysisProvider.GEMINI to Duration.ofMillis(500)), f.scheduled)
+        assertTrue(f.jitterBounds.isEmpty())
+    }
+
+    @Test
+    fun `Luna billing or quota failure ends its single attempt`() {
+        for (kind in listOf(ParserFailureKind.BILLING, ParserFailureKind.QUOTA)) {
+            val f = Fixture(initialProvider = AnalysisProvider.OPENAI)
+            f.lunaAction = { throw NaturalLanguageParserException(kind) }
+            f.process()
+            assertEquals(listOf(kind), f.terminal)
+            assertEquals(listOf(AnalysisProvider.OPENAI), f.calls)
+            assertTrue(f.scheduled.isEmpty())
+            assertTrue(f.additionalAdmissions.isEmpty())
+        }
+    }
+
     @Test
     fun `SR01 retryable failures schedule one continuation with one call and no sleep`() {
         for ((count, bound) in listOf(1 to 1001L, 2 to 2001L, 3 to 4001L)) {
@@ -149,6 +198,7 @@ class SelectedStreamRetryProcessorTest {
         var completed = 0
         val calls = mutableListOf<AnalysisProvider>()
         val scheduled = mutableListOf<Pair<AnalysisProvider, Duration>>()
+        val scheduledFailures = mutableListOf<ParserFailureKind>()
         val additionalAdmissions = mutableListOf<AnalysisProvider>()
         val admissionRemaining = mutableListOf<Duration>()
         val deadlines = mutableListOf<Deadline>()
@@ -171,6 +221,7 @@ class SelectedStreamRetryProcessorTest {
             }
             `when`(persistence.remainingBudget(anyValue())).thenAnswer { Duration.ofNanos(seconds(60) - nanos) }
             `when`(persistence.scheduleAttempt(anyValue(), anyValue(), anyValue(), anyValue(), anyValue(), anyValue())).thenAnswer {
+                scheduledFailures += it.getArgument<ParserFailureKind>(2)
                 scheduled += it.getArgument<AnalysisProvider>(3) to it.getArgument<Duration>(4)
                 F.selectedAt.plusNanos(nanos).plus(it.getArgument<Duration>(4))
             }
