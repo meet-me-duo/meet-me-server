@@ -56,9 +56,26 @@ docker compose up -d postgres redis
 
 API는 `http://localhost:8080`에서 실행됩니다. Windows에서는 `./gradlew` 대신 `.\gradlew.bat`을 사용합니다.
 
+## 로컬 품질 검사
+
+새 클론에서 다음 명령으로 Git 훅을 활성화합니다. 기존에 별도 훅 경로를 사용하면 두 훅을 기존 체인에서 호출합니다.
+
 ```shell
-./gradlew --no-daemon ktlintCheck assemble test
+git config --local core.hooksPath .githooks
 ```
+
+| 시점 | 검사 |
+| --- | --- |
+| 커밋 전 | Kotlin 또는 빌드 설정을 스테이징하면 해당 Git 스냅샷으로 `ktlintCheck`를 실행합니다. |
+| 푸시 전 | 푸시할 브랜치의 커밋으로 `detekt architectureTest`를 실행합니다. ArchUnit은 컴파일된 코드의 Domain·Application 의존 방향을 검사합니다. |
+| PR 및 develop/main CI | detekt, ktlint, 빌드, ArchUnit을 포함한 전체 테스트가 Quality Gate에 포함됩니다. |
+
+```shell
+./gradlew ktlintCheck detekt architectureTest
+./gradlew --no-daemon ktlintCheck detekt assemble test
+```
+
+detekt는 직접 작성한 main/test Kotlin의 과도한 중첩, 빈 조건문, 예외 처리 등 선택한 규칙을 검사합니다. Kotlin 2.3.21 분석기와 맞춘 detekt 2.0.0-alpha.3을 고정했습니다. 기존 위반 4건은 `config/detekt/baseline.xml`에 개별 기록했으며, 새 위반은 빌드를 실패시킵니다. 기존 항목을 고칠 때 해당 항목도 삭제합니다. 런타임 동작과 기능 요구사항은 기존 단위·통합 테스트에서 검증합니다.
 
 ## API와 상세 문서
 

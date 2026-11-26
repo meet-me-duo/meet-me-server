@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>NestedBlockDepth:PortfolioQueueExperimentTest.kt:PortfolioQueueExperimentTest$@Test fun `QRX01 real subprocess crashes preserve accepted outbox work and suppress completed duplicates`</ID>
+    <ID>ThrowingExceptionFromFinally:GeminiNaturalLanguageParserAdapter.kt:GeminiNaturalLanguageParserAdapter$throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)</ID>
+    <ID>ThrowingExceptionFromFinally:OpenAiLunaNaturalLanguageParserAdapter.kt:OpenAiLunaNaturalLanguageParserAdapter$throw NaturalLanguageParserException(ParserFailureKind.CONFIGURATION)</ID>
+    <ID>ThrowingExceptionFromFinally:PrimaryGeminiSmokeDiagnostic.kt:PrimaryGeminiSmokeDiagnostic$throw writeFailure</ID>
+  </CurrentIssues>
+</SmellBaseline>

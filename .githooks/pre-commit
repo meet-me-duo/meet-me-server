@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+
+if git diff --cached --quiet -- '*.kt' '*.kts' '.editorconfig' 'gradle/*'; then
+    exit 0
+fi
+
+tree=$(git write-tree)
+exec sh .githooks/check-tree "$tree" ktlintCheck
