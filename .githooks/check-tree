@@ -1,0 +1,20 @@
+#!/bin/sh
+set -eu
+
+revision=$1
+shift
+cd "$(git rev-parse --show-toplevel)"
+
+# Reuse the working build cache when it contains exactly the requested sources.
+if git diff --quiet "$revision" -- && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+    exec sh ./gradlew "$@"
+fi
+
+# Partial commits and pushes from a dirty/different checkout must validate the
+# Git snapshot. Never stash, format, or overwrite the developer's changes.
+temp=$(mktemp -d)
+trap 'rm -rf "$temp"' EXIT
+git archive --format=tar --output="$temp/tree.tar" "$revision"
+tar -xf "$temp/tree.tar" -C "$temp"
+cd "$temp"
+sh ./gradlew "$@"

@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot") version "4.1.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
+    id("dev.detekt") version "2.0.0-alpha.3"
 }
 
 group = "com.meetme"
@@ -58,6 +59,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-validation-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("com.tngtech.archunit:archunit:1.4.1")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     testImplementation("com.squareup.okhttp3:okhttp-tls:4.12.0")
     testImplementation("org.komapper:komapper-spring-boot-starter-test-jdbc")
@@ -108,4 +110,27 @@ ktlint {
 
 tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask>("runKtlintCheckOverMainSourceSet") {
     setSource(fileTree("src/main/kotlin"))
+}
+
+tasks.named<org.jlleitschuh.gradle.ktlint.tasks.KtLintCheckTask>("runKtlintCheckOverTestSourceSet") {
+    setSource(fileTree("src/test/kotlin"))
+}
+
+detekt {
+    source.setFrom("src/main/kotlin", "src/test/kotlin")
+    config.setFrom("config/detekt/detekt.yml")
+    baseline.set(layout.projectDirectory.file("config/detekt/baseline.xml"))
+    buildUponDefaultConfig.set(false)
+}
+
+tasks.register<Test>("architectureTest") {
+    group = "verification"
+    description = "Runs the package and bytecode architecture checks without integration tests"
+    testClassesDirs =
+        sourceSets.test
+            .get()
+            .output.classesDirs
+    classpath = sourceSets.test.get().runtimeClasspath
+    inputs.dir("src/main/kotlin") // The package-layout tests also inspect source paths.
+    filter { includeTestsMatching("com.meetme.server.architecture.*") }
 }

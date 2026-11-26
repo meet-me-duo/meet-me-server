@@ -1,0 +1,27 @@
+# Initial gate for handwritten Kotlin; ktlint owns formatting.
+complexity:
+  active: true
+  NestedBlockDepth:
+    active: true
+    allowedDepth: 6
+
+empty-blocks:
+  active: true
+  EmptyIfBlock:
+    active: true
+  EmptyTryBlock:
+    active: true
+
+exceptions:
+  active: true
+  ReturnFromFinally:
+    active: true
+  ThrowingExceptionFromFinally:
+    active: true
+
+potential-bugs:
+  active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+  UnconditionalJumpStatementInLoop:
+    active: true

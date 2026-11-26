@@ -25,7 +25,7 @@
 - 변경 후 영향 범위가 가장 작은 테스트부터 실행하고 결과를 확인한다.
 - CI의 `Quality Gate`, `Deployment Contracts`, `ARM64 Built Image`는 독립 작업이며 모두 성공해야 전체 CI 성공이다. 문서·임시 파일 정리를 이유로 기존 검사·단언·명령·권한·timeout을 줄이거나 건너뛰지 않는다. 이번 변경에서 실행하지 않은 검사와 환경 제한은 실제 결과와 구분해 보고한다.
 - 프로덕션 Kotlin 코드를 변경할 때는 `src/test/kotlin` 아래의 관련 테스트를 먼저 추가하거나 함께 변경한다.
-- ArchUnit·Konsist 같은 자동 아키텍처 검사는 initial commit과 Phase 1의 선행 조건 또는 공통 품질 게이트에 넣지 않는다. 그동안 코드 리뷰에서 `domain <- application <- adapter` 의존 방향과 Domain의 프레임워크 독립성을 확인한다. 기능·Adapter 증가로 수동 검토 부담이 커지거나 실제 경계 위반이 발견되면 도구의 Kotlin 호환성·검사 범위·유지 비용을 다시 비교한 뒤 선택 도입한다.
+- 커밋 전 ktlint, 푸시 전 detekt·아키텍처 검사를 실행한다. 활성화 및 명령은 README의 로컬 품질 검사 절차를 따른다. PR의 Quality Gate에서 같은 규칙과 전체 기능 테스트를 검증한다.
 - Codex가 `git commit`을 실행하기 전 `.codex/hooks/tdd_guard.py`로 `ktlintCheck`, `assemble`, `test`를 모두 검증한다.
 - 사용자와의 대화에서 작업 범위, 우선순위 또는 결정이 변경되면 `implementation_plan.md`를 현재 합의와 일치시킨다.
 - 사용자가 작업 완료 후 커밋과 푸시를 요청하면 코드 커밋 전에 `implementation_plan.md`의 완료 항목, 현재 진행 요약, 최종 갱신일과 진행 기록을 먼저 갱신한다.
