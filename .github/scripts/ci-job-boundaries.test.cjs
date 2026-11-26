@@ -82,7 +82,9 @@ test('Issue178 keeps CI identity, triggers, concurrency, read authority and exac
 test('Issue178 Quality Gate retains Java17, the exact Gradle command and current 40 minute boundary', () => {
   const quality = job(workflow(read('.github/workflows/ci.yml')), 'quality');
   assert.equal(quality.header, frozen.qualityHeader.replace('    timeout-minutes: 30', '    timeout-minutes: 40'), 'Only the current Quality Gate job budget changes; authority and all other header fields stay exact');
-  assert.deepEqual(quality.steps, [...frozen.setupSteps, frozen.qualityRunSteps[0]], 'Only the existing checkout, Java17 and Gradle quality gate remain in this job');
+  assert.deepEqual(quality.steps, [...frozen.setupSteps,
+    '      - name: Run detekt\n        run: ./gradlew --no-daemon detekt',
+    frozen.qualityRunSteps[0]], 'Run blocking detekt and preserve the existing Gradle quality gate');
 });
 
 test('Issue178 Deployment Contracts preserves all 16 original checks and the exact V23 V31 default analysis V32 V33 and V34 checks', () => {
@@ -115,7 +117,7 @@ test('Issue178 executes each original command exactly once with the boundary V23
   assert.equal(actual.filter(run => run === operatorReanalysisCatalogCommand).length, 1, 'The additive V32 catalog check must run exactly once');
   assert.equal(actual.filter(run => run === precheckClassificationCatalogCommand).length, 1, 'The additive V33 catalog check must run exactly once');
   assert.equal(actual.filter(run => run === streamRetryCatalogCommand).length, 1, 'The additive V34 catalog check must run exactly once');
-  assert.equal(actual.length, 25, 'No omitted, copied or unreviewed execution commands');
+  assert.equal(actual.length, 26, 'No omitted, copied or unreviewed execution commands');
 });
 
 test('Issue178 preserves the complete isolated ARM64 job and successful whole main CI publication gate', () => {

@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+# Git supplies one line per ref; check the actual branches being pushed.
+while read -r local_ref local_oid remote_ref remote_oid; do
+    case "$remote_ref" in
+        refs/heads/*) ;;
+        *) continue ;;
+    esac
+    case "$local_oid" in
+        *[!0]*) ;;
+        *) continue ;; # Branch deletion
+    esac
+    sh .githooks/check-tree "$local_oid" detekt architectureTest </dev/null
+done

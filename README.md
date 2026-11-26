@@ -56,9 +56,34 @@ docker compose up -d postgres redis
 
 API는 `http://localhost:8080`에서 실행됩니다. Windows에서는 `./gradlew` 대신 `.\gradlew.bat`을 사용합니다.
 
+## 로컬 품질 검사
+
+새 클론에서 다음 명령으로 Git 훅을 활성화합니다. 기존에 별도 훅 경로를 사용하면 두 훅을 기존 체인에서 호출합니다.
+
 ```shell
-./gradlew --no-daemon ktlintCheck assemble test
+git config --local core.hooksPath .githooks
 ```
+
+| 시점 | 검사 |
+| --- | --- |
+| 커밋 전 | Kotlin 또는 빌드 설정을 스테이징하면 해당 Git 스냅샷으로 `ktlintCheck`를 실행합니다. |
+| 푸시 전 | 푸시할 브랜치의 커밋으로 `detekt architectureTest`를 실행합니다. ArchUnit은 컴파일된 코드의 Domain·Application 의존 방향을 검사합니다. |
+| PR 및 develop/main CI | detekt, ktlint, 빌드, ArchUnit을 포함한 전체 테스트가 Quality Gate에 포함됩니다. |
+
+```shell
+./gradlew ktlintCheck detekt architectureTest
+./gradlew --no-daemon ktlintCheck detekt assemble test
+```
+
+detekt는 직접 작성한 main/test Kotlin의 과도한 중첩, 빈 조건문, 예외 처리 등 선택한 규칙을 검사합니다. Kotlin 2.3.21 분석기와 맞춘 detekt 2.0.0-alpha.3을 고정했습니다. 기존 위반 4건은 `config/detekt/baseline.xml`에 개별 기록했으며, 새 위반은 빌드를 실패시킵니다. 기존 항목을 고칠 때 해당 항목도 삭제합니다. 런타임 동작과 기능 요구사항은 기존 단위·통합 테스트에서 검증합니다.
+
+### 기존 코드와 새 위반을 처리하는 기준
+
+기존 파일에도 새 파일과 같은 규칙을 적용합니다. 경고가 나오면 다음 기준으로 처리합니다.
+
+- 실제 오류 가능성이나 계층 의존 위반이 있으면 해당 코드를 고칩니다. 동작이 달라질 수 있으면 해당 동작을 확인하는 테스트를 함께 둡니다.
+- 여러 곳에서 의도적으로 사용하는 컨벤션이 규칙과 충돌하면 대표 사례와 근거를 PR에 적고 규칙을 조정합니다. 한 곳에만 예외가 필요하면 이유와 함께 해당 위치에만 적용합니다.
+- 도입 시점의 detekt 예외는 중첩 깊이 1건과 `finally`에서 예외를 던지는 코드 3건입니다. 수정한 항목은 기준선에서 삭제합니다. 이후 경고는 개별 검토하며, 기준선을 일괄 재생성해 통과시키지 않습니다.
 
 ## API와 상세 문서
 

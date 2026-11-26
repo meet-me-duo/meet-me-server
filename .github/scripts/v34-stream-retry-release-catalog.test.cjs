@@ -256,7 +256,7 @@ test('V34C09 the additive V34 gate preserves every prior CI command job boundary
   assert.equal(ci.rootSource, frozen.rootSource);
   assert.deepEqual([...ci.jobs.keys()].sort(), ['built-image', 'deployment-contracts', 'quality']);
   assert.equal(job(ci, 'quality').header, frozen.qualityHeader.replace('    timeout-minutes: 30', '    timeout-minutes: 40'));
-  assert.deepEqual(job(ci, 'quality').steps, [...frozen.setupSteps, frozen.qualityRunSteps[0]]);
+  assert.deepEqual(job(ci, 'quality').steps, [...frozen.setupSteps, '      - name: Run detekt\n        run: ./gradlew --no-daemon detekt', frozen.qualityRunSteps[0]]);
   assert.equal(ci.jobs.get('built-image'), frozen.arm64JobSource);
   const contracts = job(ci, 'deployment-contracts');
   assert.equal(contracts.header, frozen.qualityHeader.replace('  quality:', '  deployment-contracts:').replace('    name: Quality Gate', '    name: Deployment Contracts'));
@@ -264,7 +264,7 @@ test('V34C09 the additive V34 gate preserves every prior CI command job boundary
   const additions = contracts.steps.filter(step => command(step) === next);
   assert.equal(additions.length, 1);
   assert.match(additions[0], /^      - name: [^\n]+\n        run: node --test \.github\/scripts\/v34-stream-retry-release-catalog\.test\.cjs$/);
-  const prior = [...frozen.originalRunCommands, 'node --test .github/scripts/ci-job-boundaries.test.cjs',
+  const prior = [...frozen.originalRunCommands, './gradlew --no-daemon detekt', 'node --test .github/scripts/ci-job-boundaries.test.cjs',
     'node --test .github/scripts/v23-account-room-hide-release-catalog.test.cjs',
     'node --test .github/scripts/v31-analysis-release-catalog.test.cjs',
     'node --test deploy/tests/default-analysis-runtime-env.test.cjs',
