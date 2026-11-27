@@ -126,8 +126,8 @@ class ScheduleIrMatchSafetyExtrasTest {
             when {
                 gap && startBoundary -> "2018-11-04"
                 gap -> "2018-11-03"
-                startBoundary -> "2026-11-01"
-                else -> "2026-10-31"
+                startBoundary -> "2020-11-01"
+                else -> "2020-10-31"
             }
         // Noon endpoints are unambiguous; only the search start or end midnight is invalid.
         val valid = condition("noon", IrEffect.AVAILABLE, scope("${date}T12:00:00", "${date}T13:00:00"))
@@ -160,7 +160,7 @@ class ScheduleIrMatchSafetyExtrasTest {
     @ValueSource(strings = ["SAO_PAULO", "HAVANA"])
     fun `X04 ordinary search boundaries in the same zones remain calculable`(location: String) {
         val brazil = location == "SAO_PAULO"
-        val date = if (brazil) "2018-11-05" else "2026-11-02"
+        val date = if (brazil) "2018-11-05" else "2020-11-02"
         val zone = if (brazil) "America/Sao_Paulo" else "America/Havana"
         val valid = condition("noon", IrEffect.AVAILABLE, scope("${date}T12:00:00", "${date}T13:00:00"))
         val original = envelope(listOf(valid), listOf(valid))
@@ -174,12 +174,12 @@ class ScheduleIrMatchSafetyExtrasTest {
                     ),
             )
         val policy = IrMatchingPolicy("extras-synthetic-1", setOf(IrInterpretation.EXPLICIT), emptyList(), false)
-        // Sao Paulo UTC-02 after its 2018 transition; Havana UTC-05 after its 2026 transition.
+        // Sao Paulo UTC-02 after its 2018 transition; Havana UTC-05 after its 2020 transition.
         val expected =
             if (brazil) {
                 instant("2018-11-05T14:00:00Z", "2018-11-05T15:00:00Z")
             } else {
-                instant("2026-11-02T17:00:00Z", "2026-11-02T18:00:00Z")
+                instant("2020-11-02T17:00:00Z", "2020-11-02T18:00:00Z")
             }
 
         val prepared = ScheduleIrMatchInputPolicy.project(input, policy)
