@@ -228,12 +228,12 @@ class ScheduleIrMatchSafetyBoundaryTest {
     @ValueSource(strings = ["MIDNIGHT_GAP", "MIDNIGHT_OVERLAP"])
     fun `S08 ambiguous search midnight is not silently normalized into an unrestricted search interval`(transition: String) {
         val gap = transition == "MIDNIGHT_GAP"
-        val date = if (gap) "2018-11-04" else "2026-11-01"
+        val date = if (gap) "2018-11-04" else "2020-11-01"
         val wholeDay =
             if (gap) {
                 scope("2018-11-04T00:00:00", "2018-11-05T00:00:00")
             } else {
-                scope("2026-11-01T00:00:00", "2026-11-02T00:00:00")
+                scope("2020-11-01T00:00:00", "2020-11-02T00:00:00")
             }
         val unconstrained = condition("whole-search", IrEffect.UNCONSTRAINED, IrInterpretation.EXPLICIT, wholeDay)
         val input =
